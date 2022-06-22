@@ -58,7 +58,7 @@ export class NavComponent implements OnInit, AfterViewInit, OnDestroy {
     {title: 'Rooms', id:'rooms', route : 'passconfig', type: 'routerLink', imgUrl : 'Rooms', requiredRoles: ['_profile_admin', 'access_pass_config']},
     {title: 'Accounts', id:'accounts', route : 'accounts', type: 'routerLink', imgUrl : 'Users', requiredRoles: ['_profile_admin', 'access_user_config']},
     {title: 'My School', id:'mySchool', route : 'myschool', type: 'routerLink', imgUrl : 'School', requiredRoles: ['_profile_admin', 'manage_school']},
-    // {title: 'ID Cards', id:'idCards', route : 'idcards', type: 'routerLink', imgUrl : 'IDCards', requiredRoles: ['_profile_admin', 'manage_school']}
+    {title: 'ID Cards', id:'idCards', route : 'idcards', type: 'routerLink', imgUrl : 'DigitalIDCards', requiredRoles: ['_profile_admin', 'manage_school']}
   ];
 
   views: View = {

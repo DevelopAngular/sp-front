@@ -1,0 +1,33 @@
+@import '../../../design-system';
+@import '../../../sp-colors';
+:host {
+    width: 100%;
+    height: 100%;
+    overflow: hidden;
+}
+
+.host {
+    -webkit-overflow-scrolling: touch;
+    overflow: auto;
+    padding: 25px;
+    box-sizing: border-box;
+    display: flex;
+    justify-content: flex-start;
+    width: 100%;
+    height: 100%;
+    background-color: #FBFEFF;
+    .dashboard-wrapper {
+        display: flex;
+        -ms-flex: 1 1 auto;
+        -webkit-flex: 1 1 auto;
+        flex: 1 1 auto;
+    }
+    .start-page-wrapper {
+        width: 100%;
+    }
+}
+
+.description {
+    max-width: 492px;
+    text-align: center;
+}

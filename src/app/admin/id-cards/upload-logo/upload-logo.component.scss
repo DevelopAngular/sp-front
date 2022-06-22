@@ -1,0 +1,51 @@
+@import "../../../../design-system.scss";
+@import "../../../../sp-colors.scss";
+.dialog-wrapper {
+    height: 235px;
+    width: 400px;
+    padding: 20px;
+    .header {
+        margin-top: 0;
+        margin-bottom: 6px;
+    }
+    .instruction {
+        @include textSize(14px, normal, $gray500);
+        margin: 0px;
+    }
+    .main-wrapper {
+        border: 1px dashed $gray400;
+        border-radius: 10px;
+        height: 100px;
+        width: 100%;
+        background-color: $green100;
+        position: relative;
+        margin: 14px 0;
+        img {
+            height: 70px;
+            width: 70px;
+            margin: auto;
+            position: absolute;
+            top: 0;
+            bottom: 0;
+            right: 0;
+            left: 0;
+        }
+        .upload-file-wrapper {
+            margin: auto;
+            position: absolute;
+            top: 0;
+            bottom: 0;
+            right: 0;
+            left: 0;
+            height: fit-content;
+            width: fit-content;
+        }
+    }
+    .bottom-text {
+        @include textSize(14px, normal, $gray500);
+        a {
+            @include textSize(14px, normal, $gray500);
+            outline: 0 !important;
+        }
+    }
+}
