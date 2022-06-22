@@ -47,7 +47,7 @@
       >
         <li
           *ngFor="let entry of modes | keyvalue"
-          (click)="handleOptionSelected(entry)"
+            (click)="handleModeSelected(entry.key)"
         >
           {{entry.value.text}}
         </li>

@@ -8,8 +8,8 @@ import {SPSearchComponent} from '../../../sp-search/sp-search.component';
 
 type VisibilityMode = 'visible_all_students' | 'visible_certain_students' | 'hidden_certain_students';
 type ModeView = {text: string, classname: string};
-type ModeViews = Record<VisibilityMode, ModeView>;
-type Option<T> = {key: VisibilityMode, value: T};
+type ModeViewMap = Record<VisibilityMode, ModeView>;
+type Option<T> = {mode: VisibilityMode, over: T};
 
 type VisibilityData = Option<User[]>;
 
@@ -41,7 +41,7 @@ export class VisibilityRoomComponent implements OnInit, OnDestroy {
   modeView: ModeView;
  // options as they exists in database as IDs
   // with their displaying texts in view 
-  private modes: ModeViews = {
+  private modes: ModeViewMap = {
     'visible_all_students': {text: 'Show room for all students', classname: 'visibility-all'},
     'visible_certain_students': {text: 'Show room for certain students', classname: 'visibility-allow'},
     'hidden_certain_students': {text: 'Hide room for certain students', classname: 'visibility-denny'},
@@ -74,7 +74,7 @@ export class VisibilityRoomComponent implements OnInit, OnDestroy {
   }
 
   ngOnDestroy(): void {
-    //this.destroy$.next();
+    this.destroy$.next();
     this.destroy$.complete();
   }
 
@@ -97,8 +97,8 @@ export class VisibilityRoomComponent implements OnInit, OnDestroy {
     this.panelDialog.afterClosed()
     .pipe(
       take(1),
-      filter( v => !!v && (v.key !== this.mode)),
-      tap(v => {
+      filter( (v: VisibilityMode | null) => !!v && (v !== this.mode)),
+      tap((v: VisibilityMode) => {
         this.updateMode(v);
         this.resetSearchComponent();
       }),
@@ -109,17 +109,16 @@ export class VisibilityRoomComponent implements OnInit, OnDestroy {
     ).subscribe();
   }
 
-  handleOptionSelected(option: Option<string>): void {
+  handleModeSelected(modefromview: VisibilityMode): void {
     // hide options panel
-    this.panelDialog.close(option);
+    this.panelDialog.close(modefromview);
   }
 
-  private updateMode(option: Option<string>): void {
+  private updateMode(mode: VisibilityMode): void {
     // posible previous found students
     this.selectedStudents = [];
-
-    this.mode = option['key'];
-    this.modeView = this.modes[option['key']];
+    this.mode = mode;
+    this.modeView = this.modes[mode];
   }
 
   public addFoundStudents(found: User[]) {
@@ -132,7 +131,7 @@ export class VisibilityRoomComponent implements OnInit, OnDestroy {
 
   public visibilityChange() {
     // prepare data for external use
-    const data: VisibilityData = {key: this.mode, value: this.selectedStudents};
+    const data: VisibilityData = {mode: this.mode, over: this.selectedStudents};
     // notify parent of selected option
     this.optionSelectedEvent.emit(data);
   }
