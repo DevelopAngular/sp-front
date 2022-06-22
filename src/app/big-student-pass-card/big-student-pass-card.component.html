@@ -1,4 +1,4 @@
-<div class="wrapper" #wrapper [style.transform]="isMobile ? 'scale(1.15)' : 'scale(' + scalePage(wrapper) + ')'">
+<div class="wrapper" #wrapper>
   <div class="content">
     <div class="pass" [ngSwitch]="passLayout">
       <app-pass-card
@@ -42,6 +42,7 @@
     </div>
     <div class="metrics">
       <app-student-metrics></app-student-metrics>
+      <app-pass-limit-info [passLimitInfo]="passLimitInfo"></app-pass-limit-info>
     </div>
   </div>
 </div>

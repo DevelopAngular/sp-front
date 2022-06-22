@@ -19,6 +19,7 @@
          class="calendar"
     >
       <app-date-time-container [FORM_STATE]="FORM_STATE" (nextStepEvent)="onNextStep($event)" ></app-date-time-container>
+      <app-pass-limit-info [passLimitInfo]="dialogData?.passLimitInfo"></app-pass-limit-info>
     </div>
   </div>
 
@@ -35,6 +36,7 @@
          class="student-groups"
     >
       <app-groups-container [FORM_STATE]="FORM_STATE" (nextStepEvent)="onNextStep($event)"></app-groups-container>
+      <app-pass-limit-info [passLimitInfo]="dialogData?.passLimitInfo"></app-pass-limit-info>
     </div>
   </div>
 
@@ -51,7 +53,8 @@
          [attr.data-motion-scale]="(isScaled | async)"
          class="locations"
     >
-      <app-locations-group-container [currentPassLimit]="passLimitsRemaining" [FORM_STATE]="FORM_STATE" (nextStepEvent)="onNextStep($event)"></app-locations-group-container>
+      <app-locations-group-container [currentPassLimit]="dialogData?.passLimitInfo.current" [FORM_STATE]="FORM_STATE" (nextStepEvent)="onNextStep($event)"></app-locations-group-container>
+      <app-pass-limit-info [passLimitInfo]="dialogData?.passLimitInfo"></app-pass-limit-info>
     </div>
   </div>
 
@@ -63,18 +66,7 @@
        [@NextStep]="{ value: '', params: frameMotion$ | async}"
        (@NextStep.start)="setFormSize();setContainerSize('end')"
        (@NextStep.done)="setContainerSize('start')">
-    <app-form-factor-container [FORM_STATE]="FORM_STATE" [forStaff]="isStaff" (nextStepEvent)="onNextStep($event)"></app-form-factor-container>
-  </div>
-
-</div>
-
-<div class="pass-limits-info" style="position:relative;" *ngIf="user.isStudent() && passLimitsLoaded">
-  <p>{{passLimitsRemaining}}/{{passLimitsMax}} passes remaining today</p>
-  <p style="margin-top: -8px; font-size: 12px" *ngIf="passLimitsRemaining === 0">You must request a pass from your teacher</p>
-
-  <div class="pass-limits-counter-icon" [ngClass]="{'pass-limit-locked': passLimitsRemaining === 0, 'pass-limit-one-remaining': passLimitsRemaining === 1}">
-    <span *ngIf="passLimitsRemaining > 0">{{passLimitsRemaining}}</span>
-    <img style="width: 85%" *ngIf="passLimitsRemaining === 0" src="assets/Lock%20(White).svg">
+    <app-form-factor-container #formFactorContainer [passLimitInfo]="dialogData?.passLimitInfo" [FORM_STATE]="FORM_STATE" [forStaff]="isStaff"
+                               (nextStepEvent)="onNextStep($event)"></app-form-factor-container>
   </div>
 </div>
-
