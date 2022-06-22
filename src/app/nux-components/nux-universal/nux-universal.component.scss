@@ -11,23 +11,13 @@
   .new {
     width: 50px;
     background-color: $jade;
-    display: flex;
-    align-items: center;
-    justify-content: center;
     border-radius: 11px;
     color: #FFFFFF;
     font-size: 13px;
-    padding: 5px 10px;
+    font-weight: 600;
   }
 
   .info {
     color: #FFFFFF;
-    margin: 20px 0;
-  }
-
-  .buttons {
-    width: 100%;
-    display: flex;
-    justify-content: flex-end;
   }
 }
