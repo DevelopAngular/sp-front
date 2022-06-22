@@ -26,7 +26,7 @@ import {
   withLatestFrom
 } from 'rxjs/operators';
 import {CreateFormService} from '../create-hallpass-forms/create-form.service';
-import {CreateHallpassFormsComponent} from '../create-hallpass-forms/create-hallpass-forms.component';
+import {CreateHallpassFormsComponent, CreatePassDialogData} from '../create-hallpass-forms/create-hallpass-forms.component';
 import {LiveDataService} from '../live-data/live-data.service';
 import {exceptPasses} from '../models';
 import {HallPass} from '../models/HallPass';
@@ -247,7 +247,7 @@ export class PassesComponent implements OnInit, AfterViewInit, OnDestroy {
     private passesService: HallPassesService,
     private sideNavService: SideNavService,
     private locationsService: LocationsService,
-    private passLimits: PassLimitService
+    private passLimitsService: PassLimitService
   ) {
 
     this.userService.user$
@@ -451,10 +451,11 @@ export class PassesComponent implements OnInit, AfterViewInit, OnDestroy {
         backdropClass: 'custom-backdrop',
         maxWidth: '100vw',
         data: {
-          'forLater': forLater,
-          'forStaff': this.isStaff,
-          'forInput': true,
-        }
+          forLater: forLater,
+          forStaff: this.isStaff,
+          forInput: true,
+          passLimitInfo: this.passLimitInfo
+        } as Partial<CreatePassDialogData>
       });
 
       mainFormRef
@@ -506,7 +507,7 @@ export class PassesComponent implements OnInit, AfterViewInit, OnDestroy {
   }
 
   private requestPassLimitsInfo(id: string): Observable<PassLimitInfo> {
-    const current = this.passLimits.getRemainingLimits({studentId: id}).pipe(
+    const current = this.passLimitsService.getRemainingLimits({studentId: id}).pipe(
       take(1),
       map(r => {
         if (r.remainingPasses === -1) { // no pass limits enabled
@@ -518,7 +519,7 @@ export class PassesComponent implements OnInit, AfterViewInit, OnDestroy {
       })
     );
 
-    const max = this.passLimits.getPassLimit().pipe(
+    const max = this.passLimitsService.getPassLimit().pipe(
       take(1),
       map(l => {
         if (l.pass_limit === null) {

@@ -18,6 +18,7 @@ import {PassLike} from '../models';
 import {MAT_DIALOG_DATA} from '@angular/material/dialog';
 import {DeviceDetection} from '../device-detection.helper';
 import {StorageService} from '../services/storage.service';
+import {PassLimitInfo} from '../models/HallPassLimits';
 
 export type PassLayout = 'pass' | 'request' | 'inlinePass' | 'inlineRequest';
 
@@ -35,23 +36,37 @@ export class BigStudentPassCardComponent implements OnInit, OnDestroy {
   @Input() forInput: boolean = false;
   @Input() passLayout: PassLayout;
   @Input() forFuture: boolean = false;
-
+  @Input() passLimitInfo: PassLimitInfo;
   @Output() closeCard: EventEmitter<any> = new EventEmitter<any>();
 
-  @ViewChild('wrapper') wrapper: ElementRef;
+  // using ViewChild as a setter ensures the element is available for assigning values
+  @ViewChild('wrapper')
+  set wrapper(divRef: ElementRef<HTMLDivElement>) {
+    const wrapperDiv = divRef.nativeElement;
+    if (this.isMobile) {
+      wrapperDiv.style.transform = 'scale(1.15) translateY(-65px)';
+      return;
+    }
+    // we want the pass limit and bottom banners to be 90% of the
+    // screen height
+    const {height} = wrapperDiv.getBoundingClientRect();
+    const targetHeight = document.documentElement.clientHeight * 0.85;
+    const scalingFactor = targetHeight / height;
+    // translate happens before the scaling
+    wrapperDiv.style.transform = ` translateY(-60px) scale(${scalingFactor})`;
+  }
 
+  isMobile: boolean;
   destroy$: Subject<any> = new Subject<any>();
 
   constructor(
     @Optional() @Inject(MAT_DIALOG_DATA) private data: any,
     private storage: StorageService
-  ) { }
-
-  get isMobile() {
-    return DeviceDetection.isMobile();
+  ) {
   }
 
   ngOnInit(): void {
+    this.isMobile = DeviceDetection.isMobile();
     if (this.data['pass']) {
       this.pass = this.data['pass'];
       this.isActive = this.data['isActive'];
@@ -69,13 +84,4 @@ export class BigStudentPassCardComponent implements OnInit, OnDestroy {
     this.storage.setItem('pass_full_screen', false);
     this.closeCard.emit();
   }
-
-  scalePage(element: HTMLElement) {
-    const pageWidth = document.documentElement.clientWidth;
-    const pageHeight = document.documentElement.clientHeight / 100 * 90;
-    const popupWidth = 335;
-    const popupHeight = 527;
-    return Math.min(pageWidth / popupWidth, pageHeight / popupHeight, 1.6);
-  }
-
 }

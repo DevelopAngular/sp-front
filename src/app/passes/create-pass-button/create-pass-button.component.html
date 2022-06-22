@@ -38,6 +38,6 @@
   <div class="title">{{ title }}</div>
 
   <ng-template #nuxTemplate>
-    <app-nux-universal [description]="passLimitNuxDesc" (gotItEvent)="dismissNux()"></app-nux-universal>
+    <app-nux-universal [showBadge]="false" [description]="passLimitNuxDesc" (gotItEvent)="dismissNux()"></app-nux-universal>
   </ng-template>
 </div>
