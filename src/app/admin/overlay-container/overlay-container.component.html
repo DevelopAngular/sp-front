@@ -54,6 +54,7 @@
           [form]="form"
           *ngIf="currentPage === 1 || currentPage === 2"
           [passLimitForm]="passLimitForm"
+          [visibilityForm]="visibilityForm"
           [isEnableRoomTrigger$]="enableRoomTrigger"
           [showErrors]="showErrors"
           (roomDataResult)="roomResult($event)"

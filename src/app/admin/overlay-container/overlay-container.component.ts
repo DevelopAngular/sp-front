@@ -20,6 +20,7 @@ import {cloneDeep, differenceBy, filter as _filter, isString, pullAll} from 'lod
 import {ColorProfile} from '../../models/ColorProfile';
 import {ToastService} from '../../services/toast.service';
 import {ConsentMenuComponent} from '../../consent-menu/consent-menu.component';
+import {VisibilityOverStudents, DEFAULT_VISIBILITY_STUDENTS} from './visibility-room/visibility-room.component';
 
 @Component({
   selector: 'app-overlay-container',
@@ -82,6 +83,9 @@ export class OverlayContainerComponent implements OnInit, OnDestroy {
   enableRoomTrigger: Subject<boolean> = new Subject<boolean>();
   isOpenRoom: boolean;
   showErrors: boolean;
+
+  visibilityForm: FormGroup;
+  visibility: VisibilityOverStudents = DEFAULT_VISIBILITY_STUDENTS;
 
   showPublishSpinner: boolean;
   iconTextResult$: Subject<string> = new Subject<string>();
@@ -312,7 +316,6 @@ export class OverlayContainerComponent implements OnInit, OnDestroy {
     this.overlayService.pageState.pipe(filter(res => !!res)).subscribe(res => {
        this.currentPage = res.currentPage;
     });
-
       this.overlayType = this.dialogData['type'];
       if (this.dialogData['pinnable']) {
         this.pinnable = this.dialogData['pinnable'];
@@ -462,6 +465,11 @@ export class OverlayContainerComponent implements OnInit, OnDestroy {
         [Validators.required, Validators.pattern('^[0-9]*?[0-9]+$')]
       )
     });
+
+    this.visibilityForm = new FormGroup({
+      visibility: new FormControl(DEFAULT_VISIBILITY_STUDENTS), 
+    });
+
   }
 
   generateAdvOptionsModel(loc: Location) {

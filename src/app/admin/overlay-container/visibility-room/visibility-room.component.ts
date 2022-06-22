@@ -9,9 +9,10 @@ import {SPSearchComponent} from '../../../sp-search/sp-search.component';
 type VisibilityMode = 'visible_all_students' | 'visible_certain_students' | 'hidden_certain_students';
 type ModeView = {text: string, classname: string};
 type ModeViewMap = Record<VisibilityMode, ModeView>;
-type Option<T> = {mode: VisibilityMode, over: T};
+type VisibilityData<T> = {mode: VisibilityMode, over: T};
 
-type VisibilityData = Option<User[]>;
+export type VisibilityOverStudents = VisibilityData<User[]>;
+export const DEFAULT_VISIBILITY_STUDENTS: VisibilityOverStudents  = {mode: 'visible_all_students', over: []};
 
 @Component({
   selector: 'app-visibility-room',
@@ -28,7 +29,7 @@ export class VisibilityRoomComponent implements OnInit, OnDestroy {
   @ViewChild(SPSearchComponent) searchComponent: SPSearchComponent;
 
   // option element has been selected
-  @Output('onVisibilityChange') optionSelectedEvent: EventEmitter<VisibilityData> = new EventEmitter<VisibilityData>();
+  @Output('onVisibilityChange') optionSelectedEvent: EventEmitter<VisibilityOverStudents> = new EventEmitter<VisibilityOverStudents>();
 
   // reasons the component exists for
   // 1) the students to be subject of visibility room rule
@@ -131,7 +132,7 @@ export class VisibilityRoomComponent implements OnInit, OnDestroy {
 
   public visibilityChange() {
     // prepare data for external use
-    const data: VisibilityData = {mode: this.mode, over: this.selectedStudents};
+    const data: VisibilityOverStudents = {mode: this.mode, over: this.selectedStudents};
     // notify parent of selected option
     this.optionSelectedEvent.emit(data);
   }
