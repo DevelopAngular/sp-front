@@ -146,7 +146,8 @@ export class OverlayContainerComponent implements OnInit, OnDestroy {
         case 'editRoom':
             this.overlayService.changePage(Pages.EditRoom, 0, {
                 pinnable: this.pinnable,
-                advancedOptions: this.generateAdvOptionsModel(this.pinnable.location)
+                advancedOptions: this.generateAdvOptionsModel(this.pinnable.location),
+                visibility: this.getVisibilityStudents(this.pinnable.location),
             });
             colors = this.pinnable.color_profile.gradient_color;
             this.selectedIcon = this.pinnable.icon;
@@ -467,9 +468,13 @@ export class OverlayContainerComponent implements OnInit, OnDestroy {
     });
 
     this.visibilityForm = new FormGroup({
-      visibility: new FormControl(DEFAULT_VISIBILITY_STUDENTS), 
+      visibility: new FormControl(this.visibility), 
     });
 
+  }
+
+  getVisibilityStudents(loc: Location): VisibilityOverStudents {
+    return {mode: loc.visibility_type, over: loc.visibility_students};  
   }
 
   generateAdvOptionsModel(loc: Location) {

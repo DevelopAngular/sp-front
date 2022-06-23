@@ -316,7 +316,6 @@ export class RoomComponent implements OnInit, OnDestroy {
   }
 
   visibilityChange(visibility: VisibilityOverStudents){
-    console.log('room', visibility)
     this.data.visibility = visibility;
     this.change$.next();
   }

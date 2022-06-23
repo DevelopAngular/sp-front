@@ -1,4 +1,5 @@
-import { Component, OnInit, OnDestroy, Output, EventEmitter, ViewChild, ElementRef, TemplateRef} from '@angular/core';
+import { Component, OnInit, AfterViewInit, OnDestroy, Input, Output, EventEmitter, ViewChild, ElementRef, TemplateRef} from '@angular/core';
+import {FormGroup} from '@angular/forms';
 import {MatDialog, MatDialogRef} from '@angular/material/dialog';
 import {Subject} from 'rxjs';
 import {tap, take, takeUntil, filter, finalize} from 'rxjs/operators';
@@ -12,7 +13,7 @@ import {VisibilityMode, ModeView, ModeViewMap, VisibilityOverStudents, DEFAULT_V
   templateUrl: './visibility-room.component.html',
   styleUrls: ['./visibility-room.component.scss']
 })
-export class VisibilityRoomComponent implements OnInit, OnDestroy {
+export class VisibilityRoomComponent implements OnInit, AfterViewInit, OnDestroy {
 
   // element who trigger the opening and closing of options panel 
   @ViewChild('opener') openerRef: ElementRef<HTMLElement>;
@@ -20,6 +21,10 @@ export class VisibilityRoomComponent implements OnInit, OnDestroy {
   @ViewChild('panel') panelRef: TemplateRef<any>;
   // access to search component public methods: cancel, etc
   @ViewChild(SPSearchComponent) searchComponent: SPSearchComponent;
+  
+  @Input() data: VisibilityOverStudents = DEFAULT_VISIBILITY_STUDENTS; 
+
+  @Input() visibilityForm: FormGroup;
 
   // option element has been selected
   @Output('onVisibilityChange') optionSelectedEvent: EventEmitter<VisibilityOverStudents> = new EventEmitter<VisibilityOverStudents>();
@@ -61,10 +66,20 @@ export class VisibilityRoomComponent implements OnInit, OnDestroy {
   }
 
   ngOnInit(): void {
+    this.updateMode(this.data.mode);
+    this.addFoundStudents(this.data.over);
+    console.log('init', this.mode, this.selectedStudents);
+
     this.change$.pipe(
       takeUntil(this.destroy$),
       tap(() => this.visibilityChange())
     ).subscribe();
+  }
+
+  ngAfterViewInit() {
+    if (this.selectedStudents.length > 0) {
+      this.searchComponent.inputField = false;
+    }
   }
 
   ngOnDestroy(): void {
@@ -125,9 +140,9 @@ export class VisibilityRoomComponent implements OnInit, OnDestroy {
 
   public visibilityChange() {
     // prepare data for external use
-    const data: VisibilityOverStudents = {mode: this.mode, over: this.selectedStudents};
+     this.data = {mode: this.mode, over: this.selectedStudents};
     // notify parent of selected option
-    this.optionSelectedEvent.emit(data);
+    this.optionSelectedEvent.emit(this.data);
   }
 
   // call public method cancel of the search component
