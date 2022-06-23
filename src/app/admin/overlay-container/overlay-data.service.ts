@@ -5,7 +5,7 @@ import {BehaviorSubject, Subject} from 'rxjs';
 import {User} from '../../models/User';
 import {Pinnable} from '../../models/Pinnable';
 import {OptionState} from './advanced-options/advanced-options.component';
-import {VisibilityOverStudents} from './visibility-room/visibility-room.component';
+import {VisibilityOverStudents} from './visibility-room/visibility-room.type';
 
 export interface PageState {
     currentPage: number;

@@ -7,7 +7,7 @@ import {filter, pluck, takeUntil, tap} from 'rxjs/operators';
 
 import {OverlayDataService, Pages, RoomData} from '../overlay-data.service';
 import {ValidButtons} from '../advanced-options/advanced-options.component';
-import {VisibilityOverStudents, DEFAULT_VISIBILITY_STUDENTS} from '../visibility-room/visibility-room.component';
+import {VisibilityOverStudents, DEFAULT_VISIBILITY_STUDENTS} from '../visibility-room/visibility-room.type';
 
 import {Location} from '../../../models/Location';
 import {HallPassesService} from '../../../services/hall-passes.service';

@@ -20,7 +20,7 @@ import {cloneDeep, differenceBy, filter as _filter, isString, pullAll} from 'lod
 import {ColorProfile} from '../../models/ColorProfile';
 import {ToastService} from '../../services/toast.service';
 import {ConsentMenuComponent} from '../../consent-menu/consent-menu.component';
-import {VisibilityOverStudents, DEFAULT_VISIBILITY_STUDENTS} from './visibility-room/visibility-room.component';
+import {VisibilityOverStudents, DEFAULT_VISIBILITY_STUDENTS} from './visibility-room/visibility-room.type';
 
 @Component({
   selector: 'app-overlay-container',

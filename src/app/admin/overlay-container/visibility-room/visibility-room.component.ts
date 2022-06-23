@@ -5,14 +5,7 @@ import {tap, take, takeUntil, filter, finalize} from 'rxjs/operators';
 
 import {User} from '../../../models/User';
 import {SPSearchComponent} from '../../../sp-search/sp-search.component'; 
-
-type VisibilityMode = 'visible_all_students' | 'visible_certain_students' | 'hidden_certain_students';
-type ModeView = {text: string, classname: string};
-type ModeViewMap = Record<VisibilityMode, ModeView>;
-type VisibilityData<T> = {mode: VisibilityMode, over: T};
-
-export type VisibilityOverStudents = VisibilityData<User[]>;
-export const DEFAULT_VISIBILITY_STUDENTS: VisibilityOverStudents  = {mode: 'visible_all_students', over: []};
+import {VisibilityMode, ModeView, ModeViewMap, VisibilityOverStudents, DEFAULT_VISIBILITY_STUDENTS} from './visibility-room.type';
 
 @Component({
   selector: 'app-visibility-room',
