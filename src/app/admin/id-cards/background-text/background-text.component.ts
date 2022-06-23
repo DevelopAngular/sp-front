@@ -11,7 +11,7 @@ export class BackgroundTextComponent {
   public text: string = '';
 
   constructor(
-    private dialogRef: MatDialogRef<BackgroundTextComponent>,
+    public dialogRef: MatDialogRef<BackgroundTextComponent>,
   ) { }
 
 }

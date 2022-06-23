@@ -11,7 +11,7 @@ export class UploadLogoComponent {
   imageUrl: string | ArrayBuffer;
 
   constructor(
-    private dialogRef: MatDialogRef<UploadLogoComponent>,
+    public dialogRef: MatDialogRef<UploadLogoComponent>,
   ) { }
 
   showPreview(event: any): void {
