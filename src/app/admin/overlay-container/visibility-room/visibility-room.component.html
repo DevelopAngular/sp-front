@@ -18,7 +18,7 @@
     #opener
     class="chip with-triangle"
     [ngClass]="modeView.classname"
-    (click)="handleOpenClose($event)"
+    (click)="handleOpenClose()"
   >
     {{ modeView.text }}
   </span>
@@ -35,7 +35,10 @@
         (onUpdate)="addFoundStudents($event)"
       >
       </app-sp-search>
-        {{visibilityForm.errors | json}}
+      <ul *ngIf="dirty && visibilityForm.invalid">
+        <li *ngFor="let error of visibilityForm.get('visibility').errors | keyvalue">{{error.value}}
+        </li>
+      </ul>
     </div>
 
     <ng-template

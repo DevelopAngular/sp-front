@@ -65,7 +65,7 @@
             [placeholder]="'minutes'"
             (onUpdate)="data.timeLimit = +$event"
             [timeInput]="true"
-            [rightIcon]="'./assets/Support (Gray).svg'"
+            [rightIcon]="'./assets/Support (Gray).svg' | resolveAsset"
             [formGroup]="form"
             [controlName]="form.get('timeLimit')"
           >

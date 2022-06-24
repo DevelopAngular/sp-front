@@ -3,6 +3,7 @@ import {FormGroup} from '@angular/forms';
 import {MatDialog, MatDialogRef} from '@angular/material/dialog';
 import {Subject} from 'rxjs';
 import {tap, take, takeUntil, filter, finalize} from 'rxjs/operators';
+import {cloneDeep} from 'lodash';
 
 import {User} from '../../../models/User';
 import {SPSearchComponent} from '../../../sp-search/sp-search.component'; 
@@ -11,7 +12,7 @@ import {VisibilityMode, ModeView, ModeViewMap, VisibilityOverStudents, DEFAULT_V
 @Component({
   selector: 'app-visibility-room',
   templateUrl: './visibility-room.component.html',
-  styleUrls: ['./visibility-room.component.scss']
+  styleUrls: ['./visibility-room.component.scss'],
 })
 export class VisibilityRoomComponent implements OnInit, AfterViewInit, OnDestroy {
 
@@ -41,10 +42,13 @@ export class VisibilityRoomComponent implements OnInit, AfterViewInit, OnDestroy
  // options as they exists in database as IDs
   // with their displaying texts in view 
   private modes: ModeViewMap = {
-    'visible_all_students': {text: 'Show room for all students', classname: 'visibility-all'},
-    'visible_certain_students': {text: 'Show room for certain students', classname: 'visibility-allow'},
-    'hidden_certain_students': {text: 'Hide room for certain students', classname: 'visibility-denny'},
+    'visible_all_students': {text: 'All students', classname: 'visibility-all'},
+    'visible_certain_students': {text: 'Show for certain students', classname: 'visibility-allow'},
+    'hidden_certain_students': {text: 'Hide for certain students', classname: 'visibility-denny'},
   };
+
+  // keeps previous changes
+  private prevdata: Partial<{[key in Exclude<VisibilityMode, 'visible_all_students'>]: VisibilityOverStudents}> = {};
 
   private change$ = new Subject();
   destroy$ = new Subject();
@@ -66,19 +70,11 @@ export class VisibilityRoomComponent implements OnInit, AfterViewInit, OnDestroy
   }
 
   ngOnInit(): void {
-    // don't trigger an output  event
-    this.updateData(this.data);
-
-    /*this.visibilityForm.valueChanges.pipe(
-      takeUntil(this.destroy$)
-    ).subscribe((v: {visibility: VisibilityOverStudents}) =>  {
-      this.checkValidVisibility({visibility: v})
-    });
-    
-    checkValidVisibility(v: VisibilityOverStudents) {
-      console.log('ility', v);
-      this.visibilityForm.dirty;
-    }*/
+    this.mode = this.data.mode;
+    this.modeView = this.modes[this.data.mode];
+    this.selectedStudents = this.data.over; 
+    // keep last non-all data
+    this.updatePrevData();
 
     this.change$.pipe(
       takeUntil(this.destroy$),
@@ -97,15 +93,12 @@ export class VisibilityRoomComponent implements OnInit, AfterViewInit, OnDestroy
     this.destroy$.complete();
   }
 
-  updateData(data: VisibilityOverStudents) {
-    this.updateMode(data.mode);
-    this.addFoundStudents(data.over);
-  }
-
   private panelDialog: MatDialogRef<TemplateRef<any>> | undefined;
 
-  handleOpenClose(evt) {
-    const PANEL_ID =  'opener-visibility-options';
+  private dirty: boolean;
+
+  handleOpenClose() {
+    const PANEL_ID = 'opener-visibility-options';
 
     const panelDialogExists = this.dialog.getDialogById(PANEL_ID);
     if (panelDialogExists) return;
@@ -118,17 +111,27 @@ export class VisibilityRoomComponent implements OnInit, AfterViewInit, OnDestroy
     this.panelDialog = this.dialog.open(this.panelRef, conf);
     this.positionPanelDialog();
     this.didOpen = true;
+
     this.panelDialog.afterClosed()
     .pipe(
       take(1),
       filter( (v: VisibilityMode | null) => !!v && (v !== this.mode)),
       tap((v: VisibilityMode) => {
-        this.updateMode(v);
-        this.resetSearchComponent();
+        // init new mode
+        this.selectedStudents = [];
+        this.mode = v;
+        this.modeView = this.modes[v];
+        if (!this.prevdata[v]) {
+          this.resetSearchComponent();
+        } else {
+          this.setSearchComponent(this.prevdata[v].over);
+        }
       }),
       finalize(() => {
         this.didOpen = false;
         this.panelDialog = undefined;
+        // component is untouched
+        this.dirty = false;
       }),
     ).subscribe();
   }
@@ -138,17 +141,8 @@ export class VisibilityRoomComponent implements OnInit, AfterViewInit, OnDestroy
     this.panelDialog.close(modefromview);
   }
 
-  private updateMode(mode: VisibilityMode): void {
-    // posible previous found students
-    this.selectedStudents = [];
-    this.mode = mode;
-    this.modeView = this.modes[mode];
-  }
-
   public addFoundStudents(found: User[]) {
-    // not found - we add only found students
-    if (!found.length) return; 
-
+    this.dirty = true;
     this.selectedStudents = found; 
     this.change$.next();
   }
@@ -156,9 +150,32 @@ export class VisibilityRoomComponent implements OnInit, AfterViewInit, OnDestroy
   public visibilityChange() {
     // prepare data for external use
     this.data = {mode: this.mode, over: this.selectedStudents};
+
     this.visibilityForm.setValue({visibility: this.data});
     // notify parent of selected option
     this.optionSelectedEvent.emit(this.data);
+
+    // keep last modification
+    this.updatePrevData();
+
+    // no data? shows the search input
+    if (this.data.over.length === 0 && !!this.searchComponent) {
+      setTimeout(() => this.searchComponent.inputField = true, 0);
+    }
+  }
+
+  private updatePrevData(data: VisibilityOverStudents | null = null) {
+    if (data === null) data = this.data;
+    
+    if (data.mode === 'visible_all_students') return;
+
+    this.prevdata = {
+      ...this.prevdata,
+      [data.mode]: {
+        mode: data.mode, 
+        over: cloneDeep(data.over),
+      }
+    };
   }
 
   // call public method cancel of the search component
@@ -177,6 +194,13 @@ export class VisibilityRoomComponent implements OnInit, AfterViewInit, OnDestroy
     }, 0);
   }
 
+  public setSearchComponent(ss: User[]) {
+    setTimeout(() => {
+      this.selectedStudents = ss;
+      this.searchComponent.inputField = (ss.length === 0);
+    }, 0);
+  }
+
   private positionPanelDialog() {
     // input search should exists
     const $rect = this.openerRef.nativeElement;
@@ -189,5 +213,4 @@ export class VisibilityRoomComponent implements OnInit, AfterViewInit, OnDestroy
     };
     this.panelDialog.updatePosition(position)
   }
-
 }

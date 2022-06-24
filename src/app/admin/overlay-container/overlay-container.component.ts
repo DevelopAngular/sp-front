@@ -214,6 +214,10 @@ export class OverlayContainerComponent implements OnInit, OnDestroy {
       }
     }
 
+    if (this.visibilityForm.invalid) {
+      return true;
+    }
+
     return !this.roomValidButtons.getValue().publish;
   }
 
@@ -470,9 +474,16 @@ export class OverlayContainerComponent implements OnInit, OnDestroy {
     this.visibilityForm = new FormGroup(
       {visibility: new FormControl(
         this.visibility,
-        [ (c: AbstractControl): ValidationErrors | null => {
-          console.log('valid', c.value);
-          return {strange: 'yeah!!!'};
+        // TODO: move validator to its own file
+        [(c: AbstractControl): ValidationErrors | null => {
+          // abort, skip, abanton do not engage validation
+          if (c.value === null) return null;
+          // only visible_all_students do not need a group of students
+          // ensures non-all modes have a non-empty over array (students) 
+          if (c.value.mode !== 'visible_all_students' && c.value.over.length === 0) {
+            return {needover: 'select, at least a student'};
+          }
+          return null;
         }]
       )}, 
     );
