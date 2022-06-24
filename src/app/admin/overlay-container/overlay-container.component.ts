@@ -1,5 +1,5 @@
 import {Component, ElementRef, Inject, OnDestroy, OnInit, ViewChild} from '@angular/core';
-import {AbstractControl, FormControl, FormGroup, Validators} from '@angular/forms';
+import {AbstractControl, FormControl, FormGroup, Validators, ValidationErrors} from '@angular/forms';
 import {MAT_DIALOG_DATA, MatDialog, MatDialogRef} from '@angular/material/dialog';
 import {DomSanitizer} from '@angular/platform-browser';
 
@@ -467,9 +467,15 @@ export class OverlayContainerComponent implements OnInit, OnDestroy {
       )
     });
 
-    this.visibilityForm = new FormGroup({
-      visibility: new FormControl(this.visibility), 
-    });
+    this.visibilityForm = new FormGroup(
+      {visibility: new FormControl(
+        this.visibility,
+        [ (c: AbstractControl): ValidationErrors | null => {
+          console.log('valid', c.value);
+          return {strange: 'yeah!!!'};
+        }]
+      )}, 
+    );
 
   }
 
@@ -674,6 +680,14 @@ export class OverlayContainerComponent implements OnInit, OnDestroy {
       this.passLimitForm.get('to').markAsDirty();
       this.passLimitForm.get('to').setErrors(this.passLimitForm.get('to').errors);
     }
+
+    const visibilityControl = this.visibilityForm.get('visibility');
+    
+    if (visibilityControl.invalid) {
+      visibilityControl.markAsDirty();
+      visibilityControl.setErrors(visibilityControl.errors);
+    }
+
     this.showErrors = true;
   }
 

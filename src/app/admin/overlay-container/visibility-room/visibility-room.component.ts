@@ -66,9 +66,19 @@ export class VisibilityRoomComponent implements OnInit, AfterViewInit, OnDestroy
   }
 
   ngOnInit(): void {
-    this.updateMode(this.data.mode);
-    this.addFoundStudents(this.data.over);
-    console.log('init', this.mode, this.selectedStudents);
+    // don't trigger an output  event
+    this.updateData(this.data);
+
+    /*this.visibilityForm.valueChanges.pipe(
+      takeUntil(this.destroy$)
+    ).subscribe((v: {visibility: VisibilityOverStudents}) =>  {
+      this.checkValidVisibility({visibility: v})
+    });
+    
+    checkValidVisibility(v: VisibilityOverStudents) {
+      console.log('ility', v);
+      this.visibilityForm.dirty;
+    }*/
 
     this.change$.pipe(
       takeUntil(this.destroy$),
@@ -85,6 +95,11 @@ export class VisibilityRoomComponent implements OnInit, AfterViewInit, OnDestroy
   ngOnDestroy(): void {
     this.destroy$.next();
     this.destroy$.complete();
+  }
+
+  updateData(data: VisibilityOverStudents) {
+    this.updateMode(data.mode);
+    this.addFoundStudents(data.over);
   }
 
   private panelDialog: MatDialogRef<TemplateRef<any>> | undefined;
@@ -140,7 +155,8 @@ export class VisibilityRoomComponent implements OnInit, AfterViewInit, OnDestroy
 
   public visibilityChange() {
     // prepare data for external use
-     this.data = {mode: this.mode, over: this.selectedStudents};
+    this.data = {mode: this.mode, over: this.selectedStudents};
+    this.visibilityForm.setValue({visibility: this.data});
     // notify parent of selected option
     this.optionSelectedEvent.emit(this.data);
   }
