@@ -20,8 +20,8 @@ import {PassLimitService} from '../services/pass-limit.service';
 import {HttpErrorResponse} from '@angular/common/http';
 import {MatDialog} from '@angular/material/dialog';
 import {
-  ConfirmationDialogComponent,
-  ConfirmationTemplates
+  ConfirmationDialogComponent, ConfirmationTemplates,
+  RecommendedDialogConfig
 } from '../shared/shared-components/confirmation-dialog/confirmation-dialog.component';
 
 @Component({
@@ -91,24 +91,24 @@ export class TeacherPinStudentComponent implements OnInit, OnDestroy {
                   mapTo(true),
                   catchError((error: HttpErrorResponse) => {
                     if (error.error.detail === 'Override confirmation needed') {
-                      const overrideDialogRef = this.dialog.open<ConfirmationDialogComponent, ConfirmationTemplates, boolean>(ConfirmationDialogComponent, {
-                        panelClass: 'overlay-dialog',
-                        backdropClass: 'custom-backdrop',
-                        closeOnNavigation: true,
+                      const overrideDialogRef = this.dialog.open(ConfirmationDialogComponent, {
+                        ...RecommendedDialogConfig,
                         data: {
-                          body: this.confirmDialogBody,
+                          headerText: `Student's Pass limit reached: ${this.request.student.display_name} has had ${this.passLimit}/${this.passLimit} passes today`,
                           buttons: {
-                            confirmText: 'Override',
+                            confirmText: 'Override limits',
                             denyText: 'Cancel'
                           },
-                          templateData: {
-                            student: this.request.student,
-                            passLimit: this.passLimit
-                          },
-                          icon: './assets/Pass Limit (Purple).svg'
+                          body: this.confirmDialogBody,
+                          templateData: {},
+                          icon: {
+                            name: 'Pass Limit (White).svg',
+                            background: '#6651F1'
+                          }
                         } as ConfirmationTemplates
                       });
                       return overrideDialogRef.afterClosed().pipe(concatMap((override) => {
+                        console.log(override);
                         if (!override) {
                           this.pinResult.emit();
                           return of(null);

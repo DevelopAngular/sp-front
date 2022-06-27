@@ -165,29 +165,30 @@
                     <div class="icon" style="background-color: #5E4FED">
                       <img style="position: absolute; z-index: 10;" height="14px" [src]="'./assets/Pass Limit (White).svg' | resolveAsset" alt="">
                     </div>
-                    <div style="display: flex; flex-direction: column">
-                      <div class="title" style="font-weight: 600">Pass Limits
-                        <span class="support-icon"><img width="13px" [src]="'./assets/Support (Gray-200).svg' | resolveAsset"></span>
-                      </div>
-                      <div style="color: #7F879D; font-size: 15px; margin: 4px 8px" *ngIf="passLimit">
+                    <div class="ds-ml-10" style="display: flex; flex-direction: column">
+                      <span class="ds-dialog-heading" style="display: flex; padding-bottom: 0">
+                        Pass Limits
+                        <div style="display: inline" customToolTip [contentTemplate]="passLimitLearnMore">
+                          <img
+                            class="custom-tooltip-icon support-icon"
+                            [src]="'./assets/Support (Gray).svg' | resolveAsset">
+                        </div>
+                        <ng-template #passLimitLearnMore>
+                          <div class="ds-tooltip">
+                            <span>
+                              Limit the number of passes students can have per day.
+                              <a href="https://www.smartpass.app/passlimits" style="color: white"> Learn more</a>
+                            </span>
+                          </div>
+                        </ng-template>
+                      </span>
+                      <div class="ds-dialog-normal-text" *ngIf="passLimit">
                         <span>{{passLimit.passLimit}} passes per {{passLimit.frequency}}</span>
                       </div>
                     </div>
                   </div>
-                  <app-icon-button nuxTooltip [contentTemplate]="passLimitNuxTemplate" [showToolTip$]="showPassLimitNux" [position]="passLimitNuxWrapperPosition" (clickEvent)="openPassLimitsDialog()" style="transform:
-                  rotate(270deg)" srcString="Arrow Down" [size]="17" ></app-icon-button>
-                </div>
-
-                <div class="groups" *ngIf="(exclusionGroups$ | async) && (exclusionGroups$ | async).length">
-                  <div class="group"
-                       *ngFor="let group of exclusionGroups$ | async"
-                       [showToolTip]="!!group.notes"
-                       [customToolTip]="group.notes"
-                       [editable]="true"
-                       [positionStrategy]="{originX: 'center',originY: 'top',overlayX: 'center',overlayY: 'top',offsetX: 210}"
-                  >
-                    <app-encounter-group [group]="group" [backgroundColor]="'#FFFFFF'" (clickEvent)="openEncounterPrevention('groupDescription', group)"></app-encounter-group>
-                  </div>
+                  <app-icon-button nuxTooltip [contentTemplate]="passLimitNuxTemplate" [showToolTip$]="showPassLimitNux" [position]="passLimitNuxWrapperPosition"
+                                   (clickEvent)="openPassLimitsDialog()" srcString="Chevron Right" color="Blue-Gray" [size]="17" ></app-icon-button>
                 </div>
               </div>
               <ng-template #fakeForm>

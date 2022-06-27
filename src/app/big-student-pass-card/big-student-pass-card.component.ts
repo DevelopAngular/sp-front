@@ -43,8 +43,14 @@ export class BigStudentPassCardComponent implements OnInit, OnDestroy {
   @ViewChild('wrapper')
   set wrapper(divRef: ElementRef<HTMLDivElement>) {
     const wrapperDiv = divRef.nativeElement;
+    const translationDistance = this.passLimitInfo === undefined
+      ? `0px`
+      : this.isMobile
+        ? `-65px`
+        : `-60px`;
+
     if (this.isMobile) {
-      wrapperDiv.style.transform = 'scale(1.15) translateY(-65px)';
+      wrapperDiv.style.transform = `scale(1.15) translateY(${translationDistance})`;
       return;
     }
     // we want the pass limit and bottom banners to be 90% of the
@@ -53,7 +59,7 @@ export class BigStudentPassCardComponent implements OnInit, OnDestroy {
     const targetHeight = document.documentElement.clientHeight * 0.85;
     const scalingFactor = targetHeight / height;
     // translate happens before the scaling
-    wrapperDiv.style.transform = ` translateY(-60px) scale(${scalingFactor})`;
+    wrapperDiv.style.transform = `translateY(${translationDistance}) scale(${scalingFactor})`;
   }
 
   isMobile: boolean;
