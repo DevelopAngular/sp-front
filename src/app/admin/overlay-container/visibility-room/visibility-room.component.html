@@ -35,10 +35,6 @@
         (onUpdate)="addFoundStudents($event)"
       >
       </app-sp-search>
-      <ul *ngIf="visibilityForm.invalid">
-        <li *ngFor="let error of visibilityForm.get('visibility').errors | keyvalue">{{error.value}}
-        </li>
-      </ul>
     </div>
 
     <ng-template

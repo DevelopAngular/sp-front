@@ -861,12 +861,10 @@ export class OverlayContainerComponent implements OnInit, OnDestroy {
             enable: this.roomData.enable,
 
             visibility_type: this.visibility.mode,
-            visibility_students: this.visibility.over,
+            visibility_students: this.visibility.over.map((el: User) => el.id),
         };
 
         const mergedData = {...location, ...this.normalizeAdvOptData()};
-
-        console.log(mergedData);return;
 
         this.locationService.updateLocationRequest(this.pinnable.location.id, mergedData)
             .pipe(
