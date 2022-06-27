@@ -386,7 +386,6 @@ export class PassCardComponent implements OnInit, OnDestroy {
       retryWhen((errors: Observable<HttpErrorResponse>) => {
         return errors.pipe(
           filter(errorResponse => {
-            console.log(errorResponse);
             return errorResponse.error.message === 'one or more pass limits reached!';
           }),
           concatMap(errorResponse => {
@@ -419,7 +418,6 @@ export class PassCardComponent implements OnInit, OnDestroy {
             }).afterClosed().pipe(tap(console.log), map(override => ({override, students: errorResponse.error.students.map(s => s.id)})));
           }),
           concatMap(({override, students}: { override: boolean, students: number[] }) => {
-            console.log(override);
             if (override === undefined) {
               this.dialogRef.close();
               throw new Error('confirmation closed, no options selected');
@@ -431,15 +429,24 @@ export class PassCardComponent implements OnInit, OnDestroy {
 
             if (override === false) {
               remove(body['students'] as number[], elem => students.includes(elem));
+              if (body['students'].length === 0) {
+                throw new Error('No students to create passes for');
+              }
               return of(null);
             }
           })
         );
       })
-    ).subscribe((data) => {
-      this.performingAction = false;
-      this.hallPassService.createPassEvent$.next(true);
-      this.dialogRef.close();
+    ).subscribe({
+      next: () => {
+        this.performingAction = false;
+        this.hallPassService.createPassEvent$.next(true);
+        this.dialogRef.close();
+      },
+      error: () => {
+        this.performingAction = false;
+        this.dialogRef.close();
+      }
     });
   }
 
