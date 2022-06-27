@@ -324,6 +324,8 @@ export class OverlayContainerComponent implements OnInit, OnDestroy {
       this.overlayType = this.dialogData['type'];
       if (this.dialogData['pinnable']) {
         this.pinnable = this.dialogData['pinnable'];
+        // initial visibility
+        this.visibility = this.getVisibilityStudents(this.pinnable.location);
       }
       if (this.dialogData['rooms']) {
         this.pinnableToDeleteIds = this.dialogData['rooms'].map(pin => +pin.id);
@@ -357,6 +359,15 @@ export class OverlayContainerComponent implements OnInit, OnDestroy {
 
       this.getHeaderData();
       this.buildForm();
+
+    this.visibilityForm.valueChanges.pipe(
+      filter((v: {visibility: VisibilityOverStudents | null}) => {
+        return !!v?.visibility;
+      }),
+      map(({visibility: v}: {visibility: VisibilityOverStudents}): VisibilityOverStudents => v),
+    ).subscribe((v: VisibilityOverStudents) => {
+      this.visibility = v;  
+    });
 
       if (this.currentPage === Pages.EditFolder || this.currentPage === Pages.EditRoom || this.currentPage === Pages.EditRoomInFolder) {
           this.icons$ = merge(
@@ -847,10 +858,15 @@ export class OverlayContainerComponent implements OnInit, OnDestroy {
             max_passes_from_active: this.passLimitForm.get('fromEnabled').value,
             max_passes_to: this.passLimitForm.get('to').valid ? +this.passLimitForm.get('to').value : 0,
             max_passes_to_active: this.passLimitForm.get('toEnabled').value && this.passLimitForm.get('to').valid,
-            enable: this.roomData.enable
+            enable: this.roomData.enable,
+
+            visibility_type: this.visibility.mode,
+            visibility_students: this.visibility.over,
         };
 
         const mergedData = {...location, ...this.normalizeAdvOptData()};
+
+        console.log(mergedData);return;
 
         this.locationService.updateLocationRequest(this.pinnable.location.id, mergedData)
             .pipe(

@@ -198,6 +198,7 @@ export class VisibilityRoomComponent implements OnInit, AfterViewInit, OnDestroy
     setTimeout(() => {
       this.selectedStudents = ss;
       this.searchComponent.inputField = (ss.length === 0);
+      this.change$.next();
     }, 0);
   }
 
