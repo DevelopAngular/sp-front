@@ -1,7 +1,7 @@
-import { Component, ErrorHandler, OnInit, ViewEncapsulation } from "@angular/core";
+import { Component, ErrorHandler, OnDestroy, OnInit, ViewEncapsulation } from "@angular/core";
 import { MatDialog } from "@angular/material/dialog";
-import { of } from "rxjs";
-import { catchError, map } from "rxjs/operators";
+import { merge, of, ReplaySubject, Subject } from "rxjs";
+import { catchError, filter, map, takeUntil, tap } from "rxjs/operators";
 import { AdminService } from "../../../services/admin.service";
 import { BackgroundTextComponent } from "../background-text/background-text.component";
 import { UploadLogoComponent } from "../upload-logo/upload-logo.component";
@@ -11,6 +11,10 @@ import { DomSanitizer } from "@angular/platform-browser";
 import { UserService } from "../../../services/user.service";
 import { User } from "../../../models/User";
 import { DarkThemeSwitch } from "../../../dark-theme-switch";
+import { SettingsDescriptionPopupComponent } from "../../../settings-description-popup/settings-description-popup.component";
+import { ProfilePictureComponent } from "../../accounts/profile-picture/profile-picture.component";
+
+export const UNANIMATED_CONTAINER: ReplaySubject<boolean> = new ReplaySubject(1);
 
 export interface IDCard {
   profilePicture?: string;
@@ -22,9 +26,11 @@ export interface IDCard {
 }
 
 export interface BarcodeTypes {
-  title: string;
-  value: string;
+  label: string;
+  action: string;
   icon: string;
+  textColor: string;
+  backgroundColor: string
 }
 
 @Component({
@@ -33,17 +39,42 @@ export interface BarcodeTypes {
   styleUrls: ["./id-card-editor.component.scss"],
   encapsulation: ViewEncapsulation.None
 })
-export class IdCardEditorComponent implements OnInit {
+export class IdCardEditorComponent implements OnInit, OnDestroy {
   backgroundColor: string = '#00b476';
-  backsideText: string = "This is demo backside text";
+  backsideText: string = '';
   IDNumberData: any = {};
   logoURL: string = '';
+  greadLevel: number;
 
-  selectedCode: string = 'qr-code';
+  isLogoAdded: boolean = false;
+
+  
   typeOfBarcodes: BarcodeTypes[] = [
-    {title: 'Traditional', value: 'code39', icon: 'barcode'},
-    {title: 'QR Code', value: 'qr-code', icon: 'qr_code'},
-  ]
+    {
+      label: 'Traditional',
+      icon: './assets/barcode.svg',
+      textColor: '#7f879d',
+      backgroundColor: '#F4F4F4',
+      action: 'code39'
+    },
+    {
+      label: 'QR Code',
+      icon: './assets/qr_code.svg',
+      textColor: '#7f879d',
+      backgroundColor: '#F4F4F4',
+      action: 'qr-code'
+    }
+  ];
+  selectedBarcode: BarcodeTypes = {
+    label: 'QR Code',
+    icon: './assets/qr_code.svg',
+    textColor: '#7f879d',
+    backgroundColor: '#F4F4F4',
+    action: 'qr-code'
+  };
+  isUploadedProfilePictures: boolean;
+  status: 'disconnect' | 'approved' | 'done' = 'disconnect';
+  destroy$ = new Subject();
 
   constructor(
     public adminService: AdminService,
@@ -54,22 +85,34 @@ export class IdCardEditorComponent implements OnInit {
     private errorHandler: ErrorHandler,
   ) {}
 
-  ngOnInit(): void {}
+  ngOnInit(): void {
+    merge(of(this.userService.getUserSchool()), this.userService.getCurrentUpdatedSchool$().pipe(filter(s => !!s)))
+        .pipe(takeUntil(this.destroy$))
+        .subscribe(school => {
+          this.isUploadedProfilePictures = school.profile_pictures_completed;
+        });
+        this.isUploadedProfilePictures ? this.status = 'done' : 'disconnect';
+  }
+
+  ngOnDestroy() {
+    this.destroy$.next();
+    this.destroy$.complete();
+  }
 
   async setUpProfilePicture() {
-  //   console.log("Set profile picture : ", this.userService.getUser())
-  //  await this.userService.getUser().pipe(
-  //   map((user: User) => {
-  //     console.log("User : ", user)
-  //   }),
-  //   catchError(error => of())
-  // );
+    const PPD = this.dialog.open(ProfilePictureComponent, {
+      panelClass: 'accounts-profiles-dialog',
+      backdropClass: 'custom-bd',
+      width: '425px',
+      height: '500px'
+    });
   }
 
   addBackgroundText() {
     const dialogRef = this.dialog.open(BackgroundTextComponent, {
       panelClass: "search-pass-card-dialog-container",
       backdropClass: "custom-bd",
+      data: {text: this.backsideText}
     });
 
     dialogRef.afterClosed().subscribe((result) => {
@@ -79,17 +122,64 @@ export class IdCardEditorComponent implements OnInit {
     });
   }
 
+  urlify(text) {
+    var urlRegex = /(((https?:\/\/)|(www\.))[^\s]+)/g;
+    //var urlRegex = /(https?:\/\/[^\s]+)/g;
+    return text.replace(urlRegex, function(url,b,c) {
+        var url2 = (c == 'www.') ?  'http://' +url : url;
+        return '<a href="' +url2+ '" target="_blank">' + url + '</a>';
+    }) 
+}
+
   uploadLogo() {
     const dialogRef = this.dialog.open(UploadLogoComponent, {
       panelClass: "search-pass-card-dialog-container",
       backdropClass: "custom-bd",
+      data: {isLogoAdded: this.isLogoAdded}
     });
 
     dialogRef.afterClosed().subscribe((result) => {
       if (result) {
+        this.isLogoAdded = true;
         this.logoURL = result;
       }
     });
+  }
+
+  editLogoOptions(elem){
+    const settings = [
+      {
+        label: 'Update logo',
+        icon: './assets/Refresh (Blue-Gray).svg',
+        textColor: '#7f879d',
+        backgroundColor: '#F4F4F4',
+        action: 'update'
+      },
+      {
+        label: 'Delete logo',
+        icon: './assets/Delete (Red).svg',
+        textColor: '#E32C66',
+        backgroundColor: '#F4F4F4',
+        action: 'delete'
+      }
+    ];
+
+    UNANIMATED_CONTAINER.next(true);
+    const st = this.dialog.open(SettingsDescriptionPopupComponent, {
+      panelClass: 'consent-dialog-container',
+      backdropClass: 'invis-backdrop',
+      data: {trigger: elem.currentTarget, settings}
+    });
+
+    st.afterClosed().pipe(tap(() => UNANIMATED_CONTAINER.next(false)), filter(r => !!r))
+      .subscribe((action) => {
+        if (action == 'update') {
+          this.uploadLogo();
+        }else if (action == 'delete') {
+          
+        }
+      });
+
   }
 
   setUpIDNumber() {
@@ -99,7 +189,11 @@ export class IdCardEditorComponent implements OnInit {
 
   selectBarcodeType(value) {
     if (value == 'qr-code') {
-      QRCode.toDataURL(this.IDNumberData.idNumber.toString())
+      this.IDNumberData['type'] = 'qr-code';
+      var opts = {
+        margin: 3,
+      }
+      QRCode.toDataURL(this.IDNumberData.idNumber.toString(), opts)
         .then((url) => {
           this.IDNumberData['url'] = url;
         })
@@ -108,6 +202,7 @@ export class IdCardEditorComponent implements OnInit {
           this.errorHandler.handleError(err)
         });
     } else {
+      this.IDNumberData['type'] = 'code39';
       const svgNode = document.createElementNS(
         "http://www.w3.org/2000/svg",
         "svg"
@@ -125,4 +220,25 @@ export class IdCardEditorComponent implements OnInit {
         this.domSanitizer.bypassSecurityTrustUrl(dataURL);
     }
   }
+
+  openBarcodeTypePopup(elem) {
+    const settings = this.typeOfBarcodes
+    UNANIMATED_CONTAINER.next(true);
+    const st = this.dialog.open(SettingsDescriptionPopupComponent, {
+      panelClass: 'consent-dialog-container',
+      backdropClass: 'invis-backdrop',
+      data: {trigger: elem.currentTarget, settings}
+    });
+
+    st.afterClosed().pipe(tap(() => UNANIMATED_CONTAINER.next(false)), filter(r => !!r))
+      .subscribe((action) => {
+        this.selectedBarcode = this.typeOfBarcodes.find(o => o.action === action);
+        this.selectBarcodeType(action);
+      });
+  }
+
+  setUpGreadLevel(){
+    this.greadLevel = 10;
+  }
+
 }

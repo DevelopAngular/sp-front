@@ -1,10 +1,15 @@
 @import '../../../../design-system';
 @import '../../../../sp-colors';
+.main-wrapper {
+    width: 323px;
+    margin: auto;
+}
+
 .id-card-wrapper {
-    width: 303px;
+    width: 323px;
     position: relative;
     min-height: 320px;
-    height: 388px;
+    // height: 388px;
     .design {
         position: absolute;
         top: 0;
@@ -15,7 +20,7 @@
         border-radius: 15px;
         min-height: 100%;
         .details-wrapper {
-            padding: 10px;
+            padding: 10px 20px;
         }
         .school-name-wrapper {
             display: flex;
@@ -71,6 +76,7 @@
                 img {
                     height: 60px;
                     border-radius: 10px;
+                    box-shadow: inset 0px 1px 3px 0px rgba(0, 0, 0, 0.5);
                 }
             }
             .status {
@@ -90,6 +96,9 @@
             ul {
                 margin: 0;
             }
+            ul {
+                padding-inline-start: 22px;
+            }
         }
         .id-detail-wrapper {
             background-color: white;
@@ -98,7 +107,8 @@
             bottom: 0;
             width: 100%;
             .id-number {
-                margin-top: 0;
+                margin: 0 0 14px;
+                line-height: 5px;
                 @include textSize(14px, normal, $gray900);
             }
         }
@@ -108,7 +118,7 @@
 .flip-box {
     background-color: white;
     border-radius: 15px;
-    box-shadow: 0 1px 5px 0 rgba(0, 0, 0, 0.2);
+    // box-shadow: 0 1px 20px 0 rgba(0, 0, 0, 0.16);
     perspective: 1000px;
     /* Remove this if you don't want the 3D effect */
 }
@@ -155,9 +165,17 @@
 
 .flip-box-back {
     transform: rotateY(180deg);
-    p {
+    pre {
         @include textSize(15px, normal, $navy500);
         padding: 10px 15px;
+        white-space: break-spaces;
+        text-align: left;
+        font-family: inherit;
+        height: 88%;
+        overflow-y: auto;
+        a {
+            word-break: break-word;
+        }
     }
 }
 

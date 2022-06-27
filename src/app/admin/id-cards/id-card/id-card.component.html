@@ -1,6 +1,6 @@
-<div>
+<div class="main-wrapper">
     <p class="ds-dialog-title" [style.color]="darkTheme.getColor({white: '#1F195E', dark: '#FFFFFF'})">Preview</p>
-    <div class="id-card-wrapper flip-box">
+    <div class="id-card-wrapper flip-box" [ngStyle]="{'height': selectedBarcodeType == 'qr-code' ? '388px' : '348px'}">
         <div class="flip-box-inner" id="flip-box-inner">
             <div class="flip-box-front">
                 <div class="top" [ngStyle]="{'background': backgroundColor}">
@@ -24,8 +24,8 @@
                             <p class="card-holder-name">Nicholas Demarco</p>
                             <div class="ds-flex-center-start role-grade">
                                 <p>Student</p>
-                                <ul>
-                                    <li>Grade 10</li>
+                                <ul *ngIf="greadLevel">
+                                    <li>Grade {{greadLevel}}</li>
                                 </ul>
                             </div>
                         </div>
@@ -37,7 +37,7 @@
                 </div>
             </div>
             <div class="flip-box-back">
-                <p>{{backsideText}}</p>
+                <pre [innerHTML]="urlify(backsideText)"></pre>
             </div>
         </div>
         <img class="design" [src]="'./assets/DIgital ID Card Design.svg' | resolveAsset" alt="">
