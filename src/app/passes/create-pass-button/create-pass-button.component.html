@@ -15,8 +15,8 @@
 >
   <div nuxTooltip [contentTemplate]="nuxTemplate" [showToolTip$]="showPassLimitNux" [position]="nuxWrapperPosition" class="pass-limit-nux-wrapper">
     <ng-container *ngIf="title === 'Now' && passLimitInfo.showPasses" [ngSwitch]="passLimitInfo.current">
-      <div *ngSwitchCase="'0'" class="pass-limit-counter pass-limit-locked">
-        <img src="assets/Lock%20(White).svg" style="width: 85%">
+      <div *ngSwitchCase="'0'" class="pass-limit-counter pass-limit-locked" customToolTip [contentTemplate]="passLimitToolTip">
+        <img [src]="'assets/Pass Limit Lock (White).svg' | resolveAsset" style="width: 85%">
       </div>
 
       <div *ngSwitchCase="'1'" class="pass-limit-counter pass-limit-one-remaining">
@@ -30,7 +30,7 @@
       <ng-template #passLimitToolTip>
         <div class="ds-tooltip" style="width: 200px">
           <span>{{passLimitInfo.current}}/{{passLimitInfo.max}} passes remaining today.</span>
-          <span *ngIf="passLimitInfo.current === 0">You must request a pass from a teacher.</span>
+          <span *ngIf="passLimitInfo.current === 0"> You must request a pass from a teacher.</span>
         </div>
       </ng-template>
     </ng-container>

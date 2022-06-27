@@ -34,10 +34,6 @@ export class AdminPassLimitDialogComponent implements OnInit, OnDestroy {
 
   pageNumber = 1;
   frameMotion$: BehaviorSubject<any>;
-  showInfoMessage = true; // TODO: hide this message based on database value in the future
-  passLimitToggleTooltip = `Some help text about pass limits`; // TODO: Get text for this
-  individualLimitsTooltop = `Some help text about individual limits`; // TODO: Get text for this
-  individualStudentLimits = [];
   hasPassLimit: boolean;
   passLimit: HallPassLimit;
   passLimitForm = new FormGroup({
