@@ -10,6 +10,7 @@
   display: flex;
   align-items: center;
   flex-direction: column;
+
   .pass-card-wrapper {
     width: 335px;
     border-radius: 14px;
@@ -37,12 +38,12 @@
       flex-direction: column;
       align-items: center;
 
-        .header-content {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            height: 85px;
-            width: 291px;
+      .header-content {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        height: 85px;
+        width: 291px;
 
         .header-info {
           display: flex;
@@ -105,9 +106,9 @@
       flex-direction: column;
       align-items: center;
 
-        .center-block {
-            height: 211px;
-        }
+      .center-block {
+        height: 211px;
+      }
 
       .top-block {
         height: 102px;
@@ -130,27 +131,27 @@
       .student-footer {
         border-bottom-left-radius: 15px;
         border-bottom-right-radius: 15px;
-        background: rgba(200,200,200,.7);
+        background: rgba(200, 200, 200, .7);
         mix-blend-mode: soft-light;
         overflow: hidden;
         width: 100%;
         height: 100%;
       }
 
-        .student-text {
-            position: absolute;
-            z-index: 10;
-            top: 0;
-            bottom: 0;
-            right: 0;
-            left: 0;
-            color: white;
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            font-size: 17px;
-            text-align: center;
-        }
+      .student-text {
+        position: absolute;
+        z-index: 10;
+        top: 0;
+        bottom: 0;
+        right: 0;
+        left: 0;
+        color: white;
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        font-size: 17px;
+        text-align: center;
+      }
     }
 
     mat-divider {
@@ -160,7 +161,8 @@
     }
   }
 }
-.message{
+
+.message {
   font-size: 16px;
   width: 225px;
   text-align: left;
@@ -170,86 +172,86 @@
   //user-select: all !important;
 }
 
-  .student-footer-info {
-    min-height: 95px;
-    margin-top: 8px;
-  }
+.student-footer-info {
+  min-height: 95px;
+  margin-top: 8px;
+}
 
 
-
-.card-body-right{
-    display: flex;
-    flex-direction: column;
-    justify-content: space-around;
-    align-items: center;
-    margin-top: 15px;
-    //margin-bottom: 55px;
-    //height: 97px;
+.card-body-right {
+  display: flex;
+  flex-direction: column;
+  justify-content: space-around;
+  align-items: center;
+  margin-top: 15px;
+  //margin-bottom: 55px;
+  //height: 97px;
 }
 
 .card-body-left {
-    display: flex;
-    flex-flow: column-reverse;
+  display: flex;
+  flex-flow: column-reverse;
 }
 
 .card-container {
-    -webkit-user-select: none;
-    -moz-user-select: none;
-    -ms-user-select: none;
-    width: 100%;
-    height: 100%;
+  -webkit-user-select: none;
+  -moz-user-select: none;
+  -ms-user-select: none;
+  width: 100%;
+  height: 100%;
 }
 
-.button-content{
-    width: 288px;
-    height: 79px;
-    display: flex;
-    flex-direction: row;
-    justify-content: center;
-    align-items: center;
-    user-select: none;
-    cursor: pointer;
-    position: relative;
-    margin: -79px 0 0 0%;
-    font-weight: bold;
-    color: #FFFFFF;
-    font-size: 22px;
+.button-content {
+  width: 288px;
+  height: 79px;
+  display: flex;
+  flex-direction: row;
+  justify-content: center;
+  align-items: center;
+  user-select: none;
+  cursor: pointer;
+  position: relative;
+  margin: -79px 0 0 0%;
+  font-weight: bold;
+  color: #FFFFFF;
+  font-size: 22px;
 }
 
-.start-pass-content{
-    @extend .button-content;
-    .spinner {
-      margin-left: 25px;
-    }
+.start-pass-content {
+  @extend .button-content;
+
+  .spinner {
+    margin-left: 25px;
+  }
 }
 
-.end-pass-content{
-    @extend .button-content;
+.end-pass-content {
+  @extend .button-content;
 }
 
-.button-icon-right{
-    width: 30px;
-    height: 30px;
-    position: absolute;
-    right: 20px;
+.button-icon-right {
+  width: 30px;
+  height: 30px;
+  position: absolute;
+  right: 20px;
 }
 
 
-.teacher-details{
-    width: 100%;
-    height: 70px !important;
-    align-items: center;
-    justify-content: center;
-    text-align: center;
-    //padding-bottom: 20px;
-    //margin-top: 36px;
+.teacher-details {
+  width: 100%;
+  height: 70px !important;
+  align-items: center;
+  justify-content: center;
+  text-align: center;
+  //padding-bottom: 20px;
+  //margin-top: 36px;
 }
 
-.bold{
-    font-size: 22px;
-    font-weight: bold;
+.bold {
+  font-size: 22px;
+  font-weight: bold;
 }
 
-.smaller{
-    font-size: 16px;
+.smaller {
+  font-size: 16px;
 }

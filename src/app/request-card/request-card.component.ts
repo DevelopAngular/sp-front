@@ -34,7 +34,8 @@ import {
 import {PassLimitService} from '../services/pass-limit.service';
 import {
   ConfirmationDialogComponent,
-  ConfirmationTemplates
+  ConfirmationTemplates,
+  RecommendedDialogConfig
 } from '../shared/shared-components/confirmation-dialog/confirmation-dialog.component';
 
 const sleep = (ms: number) => new Promise(resolve => {
@@ -572,27 +573,27 @@ export class RequestCardComponent implements OnInit, OnDestroy {
 
     // expresses opening the student pass limit override dialog and getting the result as a function
     const openStudentPassLimitDialog = (): Observable<boolean> => this.dialog.open(ConfirmationDialogComponent, {
-      panelClass: 'overlay-dialog',
-      backdropClass: 'custom-backdrop',
-      closeOnNavigation: true,
+      ...RecommendedDialogConfig,
+      width: '450px',
       data: {
-        body: this.overriderBody,
+        headerText: `Student's Pass limit reached: ${this.request.student.display_name} has had ${studentPassLimit}/${studentPassLimit} passes today`,
         buttons: {
-          confirmText: 'Override',
+          confirmText: 'Override limits',
           denyText: 'Cancel'
         },
-        templateData: {
-          student: this.request.student,
-          passLimit: studentPassLimit
-        },
-        icon: './assets/Pass Limit (Purple).svg'
+        body: this.overriderBody,
+        templateData: {},
+        icon: {
+          name: 'Pass Limit (White).svg',
+          background: '#6651F1'
+        }
       } as ConfirmationTemplates
-    }).afterClosed();
+    }).afterClosed().pipe(tap(console.log));
 
     // Since both pass limits must be checked, chaining together the dialog Observable results is a clean way to perform this
     // if the room pass limit is reached, then open the room pass limit dialog, else continue as normal
     // add a 200ms sleep to cater for the dialog closing and the other one opening
-    let flow = (passLimitReached
+    let flow = (true
       ? openRoomPassLimitDialog()
       : of(true)).pipe(concatMap(overrideRoomPassLimit => from(sleep(200)).pipe(map(() => overrideRoomPassLimit))));
 
@@ -600,15 +601,22 @@ export class RequestCardComponent implements OnInit, OnDestroy {
       concatMap((overrideRoomPassLimit) => {
         // Wait until the previous dialog is closed to perform these checks
         // If the room pass limit override is denied, then immediately return false and deny the pass request
-        console.log(`Override room pass limit: ${overrideRoomPassLimit}`)
+        console.log(`Override room pass limit: ${overrideRoomPassLimit}`);
         if (!overrideRoomPassLimit) {
           return of(false);
         }
 
+        console.log('potato');
+
         // If the room pass limit is allowed and the student pass limit is reached then
         // open the student pass limit dialog and check its result,
         // else, allow the creation of the result
-        return studentPassLimitReached ? openStudentPassLimitDialog().pipe(tap(console.log)) : of(true);
+        return studentPassLimitReached ? openStudentPassLimitDialog().pipe(tap(approvePass => {
+          console.log(approvePass);
+          if (approvePass) {
+            this.approveRequest();
+          }
+        })) : of(true);
       })
     );
 
@@ -689,7 +697,7 @@ export class RequestCardComponent implements OnInit, OnDestroy {
 
   goToPin() {
     this.passLimitPromise().then(approved => {
-      console.log(`Approved: ${approved}`)
+      console.log(`Approved: ${approved}`);
       this.activeTeacherPin = true;
     });
   }
