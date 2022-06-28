@@ -18,6 +18,7 @@ import {CreateFormService} from '../../create-hallpass-forms/create-form.service
 import {FolderData, OverlayDataService, Pages, RoomData} from './overlay-data.service';
 import {cloneDeep, differenceBy, filter as _filter, isString, pullAll} from 'lodash';
 import {ColorProfile} from '../../models/ColorProfile';
+import {User} from '../../models/User';
 import {ToastService} from '../../services/toast.service';
 import {ConsentMenuComponent} from '../../consent-menu/consent-menu.component';
 import {VisibilityOverStudents, DEFAULT_VISIBILITY_STUDENTS} from './visibility-room/visibility-room.type';
