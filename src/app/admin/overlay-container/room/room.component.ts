@@ -33,7 +33,7 @@ export class RoomComponent implements OnInit, OnDestroy {
 
   @Input() passLimitForm: FormGroup;
 
-  @Input() visibilityForm: FormGroup;
+  @Input() visibilityForm?: FormGroup;
 
   @Input() isEnableRoomTrigger$: Subject<boolean>;
 
@@ -176,6 +176,7 @@ export class RoomComponent implements OnInit, OnDestroy {
                   restricted: !!data.restricted,
                   scheduling_restricted: !!data.scheduling_restricted,
                   advOptState: this.overlayService.pageState.getValue().data.advancedOptions,
+                  visibility: this.overlayService.pageState.getValue().data?.visibility,
                   enable: data.enable
               };
           }
@@ -215,7 +216,7 @@ export class RoomComponent implements OnInit, OnDestroy {
     this.destroy$.next();
     this.destroy$.complete();
     this.passLimitForm.reset();
-    this.visibilityForm.reset();
+    this.visibilityForm?.reset();
   }
 
   checkValidRoomOptions() {

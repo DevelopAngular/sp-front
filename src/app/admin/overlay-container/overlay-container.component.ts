@@ -503,6 +503,7 @@ export class OverlayContainerComponent implements OnInit, OnDestroy {
   }
 
   getVisibilityStudents(loc: Location): VisibilityOverStudents {
+    if (!loc) return DEFAULT_VISIBILITY_STUDENTS;
     return {mode: loc.visibility_type, over: loc.visibility_students};  
   }
 
@@ -731,6 +732,8 @@ export class OverlayContainerComponent implements OnInit, OnDestroy {
                 max_passes_to: this.passLimitForm.get('to').valid ? +this.passLimitForm.get('to').value : 0,
                 max_passes_to_active: this.passLimitForm.get('toEnabled').value && this.passLimitForm.get('to').valid,
                 enable: this.isOpenRoom,
+                visibility_type: this.visibility.mode,
+                visibility_students: this.visibility.over.map((el: User) => el.id),
                 ...this.normalizeAdvOptData()
         };
        this.locationService.createLocationRequest(location)

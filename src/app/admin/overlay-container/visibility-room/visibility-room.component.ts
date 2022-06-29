@@ -8,6 +8,7 @@ import {cloneDeep} from 'lodash';
 import {User} from '../../../models/User';
 import {SPSearchComponent} from '../../../sp-search/sp-search.component'; 
 import {VisibilityMode, ModeView, ModeViewMap, VisibilityOverStudents, DEFAULT_VISIBILITY_STUDENTS} from './visibility-room.type';
+import {OverlayDataService} from '../overlay-data.service';
 
 @Component({
   selector: 'app-visibility-room',
@@ -23,7 +24,7 @@ export class VisibilityRoomComponent implements OnInit, AfterViewInit, OnDestroy
   // access to search component public methods: cancel, etc
   @ViewChild(SPSearchComponent) searchComponent: SPSearchComponent;
   
-  @Input() data: VisibilityOverStudents = DEFAULT_VISIBILITY_STUDENTS; 
+  @Input() data?: VisibilityOverStudents = DEFAULT_VISIBILITY_STUDENTS; 
 
   @Input() visibilityForm: FormGroup;
 
@@ -65,11 +66,16 @@ export class VisibilityRoomComponent implements OnInit, AfterViewInit, OnDestroy
 
   constructor(
     public dialog: MatDialog,
+    public overlayService: OverlayDataService,
   ) {
     this.modeView = this.modes[this.mode];
   }
 
   ngOnInit(): void {
+    if (!this.data) {
+      this.data = this.overlayService.pageState.getValue().data?.visibility ?? DEFAULT_VISIBILITY_STUDENTS;
+    }
+      console.log('vis:init', this.data)
     this.mode = this.data.mode;
     this.modeView = this.modes[this.data.mode];
     this.selectedStudents = this.data.over; 
@@ -150,6 +156,9 @@ export class VisibilityRoomComponent implements OnInit, AfterViewInit, OnDestroy
   public visibilityChange() {
     // prepare data for external use
     this.data = {mode: this.mode, over: this.selectedStudents};
+    
+    // sync with page state
+    this.overlayService.patchData({data: this.data});
 
     this.visibilityForm.setValue({visibility: this.data});
     // notify parent of selected option

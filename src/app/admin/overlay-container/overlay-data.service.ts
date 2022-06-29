@@ -92,6 +92,24 @@ export class OverlayDataService {
       });
   }
 
+  replaceData(data) {
+      this.pageState.next({
+          ...this.pageState.getValue(),
+          data,
+      });
+  }
+
+  patchData(data) {
+    const old = this.pageState.getValue();
+    data = {...old.data, ...data};
+    console.log('data', data)
+      this.pageState.next({
+        currentPage: old.currentPage,
+        previousPage: old.previousPage,
+        data,
+      });
+  }
+
   back(data) {
       this.changePage(this.pageState.getValue().previousPage, this.pageState.getValue().currentPage, data);
   }
