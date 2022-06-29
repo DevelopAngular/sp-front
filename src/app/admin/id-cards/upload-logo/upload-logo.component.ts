@@ -4,6 +4,7 @@ import { MatDialogRef, MAT_DIALOG_DATA } from '@angular/material/dialog';
 import { fromEvent, Subject } from 'rxjs';
 import { switchMap, takeUntil } from 'rxjs/operators';
 import { User } from '../../../models/User';
+import { SupportService } from '../../../services/support.service';
 
 @Component({
   selector: 'app-upload-logo',
@@ -59,6 +60,7 @@ export class UploadLogoComponent  implements OnInit {
   constructor(
     @Inject(MAT_DIALOG_DATA) public data: any,
     public dialogRef: MatDialogRef<UploadLogoComponent>,
+    private supportService: SupportService,
   ) {
     data?.isLogoAdded ? this.isLogoAdded = data?.isLogoAdded : null
    }
@@ -135,6 +137,16 @@ complete() {
     this.uploadingProgress.inProgress = false;
     this.uploadingProgress.completed = true;
   }, 1500);
+}
+
+openChat(event) {
+  this.supportService.openSupportTrigger$.next();
+  // this.supportService.openChat(event);
+  // this.dialogRef.close()
+}
+
+closeChat(event) {
+  this.supportService.closeChat(event);
 }
 
 }

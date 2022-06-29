@@ -279,7 +279,16 @@ export class StudentInfoCardComponent implements OnInit, AfterViewInit, OnDestro
         backgroundColor: '#F4F4F4',
         action: 'link',
         tooltip: 'Copy a private link to this student and send it to another staff member at your school.'
-      }];
+      },
+      {
+        label: 'Open ID Card',
+        icon: './assets/Digital ID Card (Gray).svg',
+        textColor: '#7f879d',
+        backgroundColor: '#F4F4F4',
+        action: 'link',
+        // tooltip: 'Copy a private link to this student and send it to another staff member at your school.'
+      },
+    ];
     if (this.user.isAdmin()) {
       settings.push(
         {

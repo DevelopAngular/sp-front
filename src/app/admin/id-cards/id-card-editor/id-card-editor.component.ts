@@ -1,7 +1,7 @@
 import { Component, ErrorHandler, OnDestroy, OnInit, ViewEncapsulation } from "@angular/core";
 import { MatDialog } from "@angular/material/dialog";
 import { merge, of, ReplaySubject, Subject } from "rxjs";
-import { catchError, filter, map, takeUntil, tap } from "rxjs/operators";
+import { filter, takeUntil, tap } from "rxjs/operators";
 import { AdminService } from "../../../services/admin.service";
 import { BackgroundTextComponent } from "../background-text/background-text.component";
 import { UploadLogoComponent } from "../upload-logo/upload-logo.component";
@@ -9,10 +9,10 @@ import * as QRCode from "qrcode";
 import * as Barcode from "jsbarcode";
 import { DomSanitizer } from "@angular/platform-browser";
 import { UserService } from "../../../services/user.service";
-import { User } from "../../../models/User";
 import { DarkThemeSwitch } from "../../../dark-theme-switch";
 import { SettingsDescriptionPopupComponent } from "../../../settings-description-popup/settings-description-popup.component";
-import { ProfilePictureComponent } from "../../accounts/profile-picture/profile-picture.component";
+import { IdCardProfilePictureComponent } from "../id-card-profile-picture/id-card-profile-picture.component";
+import { ConfirmationComponent } from "../../../shared/shared-components/confirmation/confirmation.component";
 
 export const UNANIMATED_CONTAINER: ReplaySubject<boolean> = new ReplaySubject(1);
 
@@ -22,7 +22,7 @@ export interface IDCard {
   greadLevel?: number;
   backgroundColor?: string;
   logoURL?: string;
-  backsideText?: string; 
+  backsideText?: string;
 }
 
 export interface BarcodeTypes {
@@ -100,11 +100,11 @@ export class IdCardEditorComponent implements OnInit, OnDestroy {
   }
 
   async setUpProfilePicture() {
-    const PPD = this.dialog.open(ProfilePictureComponent, {
+    const PPD = this.dialog.open(IdCardProfilePictureComponent, {
       panelClass: 'accounts-profiles-dialog',
       backdropClass: 'custom-bd',
       width: '425px',
-      height: '500px'
+      height: '500px',
     });
   }
 
@@ -176,7 +176,12 @@ export class IdCardEditorComponent implements OnInit, OnDestroy {
         if (action == 'update') {
           this.uploadLogo();
         }else if (action == 'delete') {
-          
+          let data = {
+            title : 'Delete logo?',
+            message: 'Are you sure you want to delete the logo?',
+            okButtonText: 'Delete logo'
+          };
+          this.openConfirmationDialog(data);
         }
       });
 
@@ -241,4 +246,19 @@ export class IdCardEditorComponent implements OnInit, OnDestroy {
     this.greadLevel = 10;
   }
 
+  openConfirmationDialog(data){
+    const dialogRef = this.dialog.open(ConfirmationComponent, {
+      panelClass: "search-pass-card-dialog-container",
+      backdropClass: "custom-bd",
+      disableClose: true,
+      data: data
+    });
+
+    dialogRef.afterClosed().subscribe((result) => {
+      if (result) {
+        this.isLogoAdded = false;
+        this.logoURL = '';
+      }
+    });
+  }
 }

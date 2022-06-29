@@ -47,7 +47,6 @@
             .set-img {
                 width: 62px;
                 height: 62px;
-                border-radius: 50%;
             }
             .buttons {
                 width: 100%;
@@ -93,7 +92,6 @@
             .set-img {
                 width: 62px;
                 height: 62px;
-                border-radius: 50%;
             }
             .buttons {
                 width: 100%;
@@ -112,9 +110,11 @@
     }
     .bottom-text {
         @include textSize(14px, normal, $gray500);
-        a {
+        span {
             @include textSize(14px, normal, $gray500);
             outline: 0 !important;
+            text-decoration: underline;
+            cursor: pointer;
         }
     }
 }

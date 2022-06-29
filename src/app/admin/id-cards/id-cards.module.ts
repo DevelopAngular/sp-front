@@ -9,10 +9,11 @@ import { IdCardEditorComponent } from './id-card-editor/id-card-editor.component
 import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { BackgroundTextComponent } from './background-text/background-text.component';
 import { UploadLogoComponent } from './upload-logo/upload-logo.component';
+import { IdCardProfilePictureComponent } from './id-card-profile-picture/id-card-profile-picture.component';
 
 
 @NgModule({
-  declarations: [IdCardsComponent, IdCardComponent, IdCardEditorComponent, BackgroundTextComponent, UploadLogoComponent],
+  declarations: [IdCardsComponent, IdCardComponent, IdCardEditorComponent, BackgroundTextComponent, UploadLogoComponent, IdCardProfilePictureComponent],
   imports: [
     CommonModule,
     IdCardsRoutingModule,
