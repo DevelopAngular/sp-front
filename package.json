@@ -2,6 +2,10 @@
   "name": "hallpass",
   "version": "0.0.0",
   "license": "MIT",
+  "engines": {
+    "node": "12.x",
+    "npm": "6.x"
+  },
   "scripts": {
     "ng": "ng",
     "start": "ng serve",
