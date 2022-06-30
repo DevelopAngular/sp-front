@@ -180,7 +180,11 @@
 </svg>
 
 <ng-template #confirmDialogBody let-students="students" let-passLimit="passLimit">
-  <div class="ds-dialog-normal-text">
+  <div *ngIf="students.length > 1" class="ds-dialog-normal-text">
     <p *ngFor="let s of students">{{s.displayName}}: {{passLimit}}/{{passLimit}} passes today</p>
+  </div>
+
+  <div *ngIf="students.length === 1" class="ds-dialog-normal-text">
+    <span>If it's an emergency, you can override the limit.</span>
   </div>
 </ng-template>
