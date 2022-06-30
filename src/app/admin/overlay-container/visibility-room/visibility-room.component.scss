@@ -90,7 +90,10 @@ ul.error {
   padding: 0;
   font-size: 0.9rem;
   position: relative;
-  top: 0;
+  top: 0; // for animation
+  & > li:first-letter {
+    text-transform: uppercase;
+  }
 }
 
 .panel {

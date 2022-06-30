@@ -493,7 +493,7 @@ export class OverlayContainerComponent implements OnInit, OnDestroy {
           // only visible_all_students do not need a group of students
           // ensures non-all modes have a non-empty over array (students) 
           if (c.value.mode !== 'visible_all_students' && c.value.over.length === 0) {
-            return {needover: 'select, at least a student'};
+            return {needover: 'you must select at least 1 student.'};
           }
           return null;
         }]
