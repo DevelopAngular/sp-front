@@ -2,7 +2,7 @@ import {User} from '../../../models/User';
 
 export type VisibilityMode = 'visible_all_students' | 'visible_certain_students' | 'hidden_certain_students';
 
-export type ModeView = {text: string, classname: string};
+export type ModeView = {text: string, textmenu: string, classname: string};
 export type ModeViewMap = Record<VisibilityMode, ModeView>;
 
 type VisibilityData<T> = {mode: VisibilityMode, over: T};

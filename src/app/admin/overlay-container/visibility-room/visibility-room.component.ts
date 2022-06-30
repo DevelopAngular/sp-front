@@ -48,9 +48,9 @@ export class VisibilityRoomComponent implements OnInit, AfterViewInit, OnDestroy
  // options as they exists in database as IDs
   // with their displaying texts in view 
   private modes: ModeViewMap = {
-    'visible_all_students': {text: 'All students', classname: 'visibility-all'},
-    'visible_certain_students': {text: 'Show for certain students', classname: 'visibility-allow'},
-    'hidden_certain_students': {text: 'Hide for certain students', classname: 'visibility-denny'},
+    'visible_all_students': {text: 'All students', textmenu: 'Show room for all students', classname: 'visibility-all'},
+    'visible_certain_students': {text: 'Show for certain students', textmenu: 'Show room for certain students',  classname: 'visibility-allow'},
+    'hidden_certain_students': {text: 'Hide for certain students', textmenu: 'Hide room for certain students', classname: 'visibility-denny'},
   };
 
   // keeps previous changes
