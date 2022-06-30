@@ -35,6 +35,7 @@
         [pending$]="pending$"
         (ontextupdate)="onSearch($event); studentInput.valueLength = $event.length"
         (blurEvent)="onBlur($event)"
+        (focusEvent)="onFocus($event)"
         #studentInput="roundInputRef"
       >
       </app-round-input>

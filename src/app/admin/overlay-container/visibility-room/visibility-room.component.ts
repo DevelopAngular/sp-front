@@ -1,4 +1,4 @@
-import { Component, OnInit, AfterViewInit, OnDestroy, Input, Output, EventEmitter, ViewChild, ElementRef, TemplateRef} from '@angular/core';
+import { Component, OnInit, AfterViewInit, OnDestroy, Input, Output, EventEmitter, ViewChild, ElementRef, TemplateRef, Renderer2} from '@angular/core';
 import {FormGroup} from '@angular/forms';
 import {MatDialog, MatDialogRef} from '@angular/material/dialog';
 import {Subject} from 'rxjs';
@@ -9,11 +9,13 @@ import {User} from '../../../models/User';
 import {SPSearchComponent} from '../../../sp-search/sp-search.component'; 
 import {VisibilityMode, ModeView, ModeViewMap, VisibilityOverStudents, DEFAULT_VISIBILITY_STUDENTS} from './visibility-room.type';
 import {OverlayDataService} from '../overlay-data.service';
+import {slideOpacity} from '../../../animations';
 
 @Component({
   selector: 'app-visibility-room',
   templateUrl: './visibility-room.component.html',
   styleUrls: ['./visibility-room.component.scss'],
+  animations: [slideOpacity],
 })
 export class VisibilityRoomComponent implements OnInit, AfterViewInit, OnDestroy {
 
@@ -25,6 +27,9 @@ export class VisibilityRoomComponent implements OnInit, AfterViewInit, OnDestroy
   @ViewChild(SPSearchComponent) searchComponent: SPSearchComponent;
   
   @Input() data?: VisibilityOverStudents = DEFAULT_VISIBILITY_STUDENTS; 
+
+  @Input() showErrors: boolean
+  private showErrorsVisibility: boolean = false;
 
   @Input() visibilityForm: FormGroup;
 
@@ -67,6 +72,7 @@ export class VisibilityRoomComponent implements OnInit, AfterViewInit, OnDestroy
   constructor(
     public dialog: MatDialog,
     public overlayService: OverlayDataService,
+    private renderer: Renderer2,
   ) {
     this.modeView = this.modes[this.mode];
   }
@@ -75,7 +81,6 @@ export class VisibilityRoomComponent implements OnInit, AfterViewInit, OnDestroy
     if (!this.data) {
       this.data = this.overlayService.pageState.getValue().data?.visibility ?? DEFAULT_VISIBILITY_STUDENTS;
     }
-      console.log('vis:init', this.data)
     this.mode = this.data.mode;
     this.modeView = this.modes[this.data.mode];
     this.selectedStudents = this.data.over; 
@@ -88,15 +93,33 @@ export class VisibilityRoomComponent implements OnInit, AfterViewInit, OnDestroy
     ).subscribe();
   }
 
+  unlisten: () => void;
+
   ngAfterViewInit() {
     if (this.selectedStudents.length > 0) {
       this.searchComponent.inputField = false;
     }
+    // TODO: it assumes that div.right-button exists in the upper componet's hierachy
+    this.unlisten = this.renderer.listen('document', 'click', event => {
+      const $el = event.target.closest('div.right-button');
+      // click on that button allows errors to be shown
+      if (!!$el) {
+        this.showErrorsVisibility = true;
+        return;
+      }
+      this.showErrorsVisibility = false;
+    });
+  }
+  // the focus of internal input native of app-search
+  // triggers this method in order to hide the errors 
+  public onFocus() {
+    this.showErrorsVisibility = false;
   }
 
   ngOnDestroy(): void {
     this.destroy$.next();
     this.destroy$.complete();
+    this.unlisten();
   }
 
   private panelDialog: MatDialogRef<TemplateRef<any>> | undefined;

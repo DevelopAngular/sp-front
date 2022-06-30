@@ -102,12 +102,11 @@ export class OverlayDataService {
   patchData(data) {
     const old = this.pageState.getValue();
     data = {...old.data, ...data};
-    console.log('data', data)
-      this.pageState.next({
-        currentPage: old.currentPage,
-        previousPage: old.previousPage,
-        data,
-      });
+    this.pageState.next({
+      currentPage: old.currentPage,
+      previousPage: old.previousPage,
+      data,
+    });
   }
 
   back(data) {

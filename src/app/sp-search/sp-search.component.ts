@@ -136,6 +136,7 @@ export class SPSearchComponent implements OnInit, OnDestroy {
 
   @Output() onUpdate: EventEmitter<any> = new EventEmitter();
   @Output() blurEvent: EventEmitter<boolean> = new EventEmitter<boolean>();
+  @Output() focusEvent: EventEmitter<boolean> = new EventEmitter<boolean>();
   @Output() isOpenedOptions: EventEmitter<boolean> = new EventEmitter<boolean>();
 
   @ViewChild('studentInput') input: ElementRef;
@@ -309,6 +310,7 @@ export class SPSearchComponent implements OnInit, OnDestroy {
 
     this.user$ = this.userService.user$;
     this.isEnableProfilePictures$ = this.userService.isEnableProfilePictures$;
+
   }
 
 
@@ -458,6 +460,12 @@ export class SPSearchComponent implements OnInit, OnDestroy {
   addLocalTeacher(teacher) {
     this.teacherCollection$.next(null);
     this.onUpdate.emit(teacher);
+  }
+
+  onFocus(event) {
+    setTimeout(() => {
+      this.focusEvent.emit(null);
+    }, 500);
   }
 
   onBlur(event) {

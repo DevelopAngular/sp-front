@@ -1,4 +1,4 @@
-<div class="background">
+<div class="background" tabindex="0">
     
   <img 
     class="head-icon"
@@ -33,8 +33,19 @@
         [textAddButton]="'Add student'"
         [selectedOptions]="selectedStudents"
         (onUpdate)="addFoundStudents($event)"
+        (focusEvent)="onFocus()"
       >
       </app-sp-search>
+      <ul class="error" 
+        *ngIf="showErrors && showErrorsVisibility && visibilityForm.invalid"
+          [@slideOpacityAnimate]="{value: ':enter', params: {delta: -5}}"
+      >
+        <li 
+          *ngFor="let error of visibilityForm.get('visibility').errors | keyvalue"
+        >
+          {{error.value}}
+        </li>
+      </ul>
     </div>
 
     <ng-template

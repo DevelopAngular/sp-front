@@ -171,12 +171,12 @@
             (futureRestEmit)="schedulingRestrictedEvent($event)"
     ></app-advanced-options>
   </div>
-
   <div class="visibility-room">
     <app-visibility-room
       *ngIf="!!visibilityForm"
       [visibilityForm]="visibilityForm"
       [data]="data.visibility"
+      [showErrors]="showErrors"
       (onVisibilityChange)="visibilityChange($event)"      
     ></app-visibility-room>
   </div>

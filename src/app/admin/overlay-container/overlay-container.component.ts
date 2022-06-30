@@ -706,7 +706,6 @@ export class OverlayContainerComponent implements OnInit, OnDestroy {
     }
 
     const visibilityControl = this.visibilityForm.get('visibility');
-    
     if (visibilityControl.invalid) {
       visibilityControl.markAsDirty();
       visibilityControl.setErrors(visibilityControl.errors);
