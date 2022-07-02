@@ -498,17 +498,19 @@ export class StudentInfoCardComponent implements OnInit, AfterViewInit, OnDestro
   }
 
   openPassLimitsDialog() {
-    this.dialog.open(PassLimitsDialogComponent, {
-      closeOnNavigation: true,
-      panelClass: 'overlay-dialog',
-      backdropClass: 'custom-bd',
-      width: '425px',
-      height: '500px',
-      data: {
-        profile: this.profile,
-        passLimit: this.passLimit
-      }
-    });
+    if (this.passLimit) {
+      this.dialog.open(PassLimitsDialogComponent, {
+        closeOnNavigation: true,
+        panelClass: 'overlay-dialog',
+        backdropClass: 'custom-bd',
+        width: '425px',
+        height: '500px',
+        data: {
+          profile: this.profile,
+          passLimit: this.passLimit
+        }
+      });
+    }
   }
 
   editWindow(event) {

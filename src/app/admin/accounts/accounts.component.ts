@@ -27,6 +27,7 @@ import {PollingService} from '../../services/polling-service';
 import {ProfilePictureComponent} from './profile-picture/profile-picture.component';
 import {XlsxService} from '../../services/xlsx.service';
 import {EncounterPreventionDialogComponent} from './encounter-prevention-dialog/encounter-prevention-dialog.component';
+import {AdminPassLimitDialogComponent} from './admin-pass-limits-dialog/admin-pass-limits-dialog.component';
 
 declare const window;
 
@@ -51,7 +52,7 @@ export class AccountsComponent implements OnInit, OnDestroy {
 
   currentPage: string;
 
-  onboardProcess$: Observable<{[id: string]: Onboard}>;
+  onboardProcess$: Observable<{ [id: string]: Onboard }>;
   onboardProcessLoaded$: Observable<boolean>;
 
   public dataTableEditState: BehaviorSubject<boolean> = new BehaviorSubject<boolean>(false);
@@ -73,7 +74,8 @@ export class AccountsComponent implements OnInit, OnDestroy {
     private xlsxService: XlsxService,
     private tableService: TableService,
     private polingService: PollingService
-  ) {}
+  ) {
+  }
 
   formatDate(date) {
     return Util.formatDateTime(new Date(date));
@@ -81,6 +83,10 @@ export class AccountsComponent implements OnInit, OnDestroy {
 
   ngOnInit() {
     this.route.queryParams.subscribe(res => {
+      if ('pass-limits' in res) {
+        this.openPassLimitDialog();
+        return;
+      }
       if (res['profile-pictures'] === '') {
         this.openProfilePictures();
       }
@@ -117,8 +123,8 @@ export class AccountsComponent implements OnInit, OnDestroy {
     this.polingService.listen('admin.user_sync.sync_start')
       .pipe(takeUntil(this.destroy$))
       .subscribe(res => {
-      this.adminService.syncLoading();
-    });
+        this.adminService.syncLoading();
+      });
 
     this.polingService.listen('admin.user_sync.sync_end')
       .pipe(takeUntil(this.destroy$))
@@ -128,7 +134,7 @@ export class AccountsComponent implements OnInit, OnDestroy {
         } else if (res.data.sync_type === 'gsuite') {
           this.adminService.updateGsuiteInfo(res.data);
         }
-    });
+      });
 
     this.toastService.toastButtonClick$
       .pipe(
@@ -155,13 +161,13 @@ export class AccountsComponent implements OnInit, OnDestroy {
       .subscribe(res => {
         this.xlsxService.generate(res);
         // this.tableService.loadingCSV$.next(false);
-    });
+      });
 
     this.userService.user$.pipe(
       takeUntil(this.destroy$))
       .subscribe((user) => {
-      this.user = user;
-    });
+        this.user = user;
+      });
 
     this.router.events
       .pipe(takeUntil(this.destroy$), filter(event => event instanceof NavigationEnd))
@@ -193,7 +199,7 @@ export class AccountsComponent implements OnInit, OnDestroy {
         backdropClass: 'custom-bd',
         width: '425px',
         height: '500px',
-        data: { status, action }
+        data: {status, action}
       });
     } else if (action === 'g_suite') {
       const g_suite = this.matDialog.open(GSuiteSettingsComponent, {
@@ -244,6 +250,16 @@ export class AccountsComponent implements OnInit, OnDestroy {
       width: '425px',
       height: '500px',
       data
+    });
+  }
+
+  openPassLimitDialog() {
+    this.matDialog.open(AdminPassLimitDialogComponent, {
+      hasBackdrop: true,
+      panelClass: 'overlay-dialog',
+      backdropClass: 'custom-bd',
+      width: '425px',
+      height: '500px',
     });
   }
 }

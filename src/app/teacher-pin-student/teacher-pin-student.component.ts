@@ -96,7 +96,7 @@ export class TeacherPinStudentComponent implements OnInit, OnDestroy {
                         data: {
                           headerText: `Student's Pass limit reached: ${this.request.student.display_name} has had ${this.passLimit}/${this.passLimit} passes today`,
                           buttons: {
-                            confirmText: 'Override limits',
+                            confirmText: 'Override limit',
                             denyText: 'Cancel'
                           },
                           body: this.confirmDialogBody,
