@@ -4,8 +4,8 @@
       <div class="background-header"></div>
       <img class="back-button" (click)="dialogRef.close()" [src]="'./assets/Back Button (Blue-White).svg' | resolveAsset">
       <div class="title-header ds-flex-center-center" style="z-index: 10" [attr.data-motion-translate]="(frameMotion$ | async).direction">
-        <div class="pass-limit-white ds-p-10 ds-flex-center-center" style="background: rgb(102, 81, 241); border-radius: 10px">
-          <img style="width: 30px" [src]="'./assets/Pass Limit (White).svg' | resolveAsset" alt="">
+        <div class="pass-limit-white ds-flex-center-center" style="background: rgb(102, 81, 241); border-radius: 6px; padding: 7px">
+          <img style="width: 25px" [src]="'./assets/Pass Limit (White).svg' | resolveAsset" alt="">
         </div>
         <div class="ds-dialog-title" [style.margin-left]="'12px'">Pass Limits</div>
       </div>
@@ -36,15 +36,15 @@
           <img [src]="'./assets/Pass Limit (Purple).svg' | resolveAsset" alt="Options">
         </div>
         <div style="width: 80%">
-          <p class="ds-dialog-heading" style="margin-top: 0">Limit the number of passes students can have per day</p>
-          <p class="ds-dialog-normal-text">
+          <p class="ds-dialog-heading ds-mb-5" style="margin-top: 0">Limit the number of passes students can have per day</p>
+          <p class="ds-dialog-normal-text" style="margin-top: 0">
             Set them school-wide, or just for individual students. Teachers can override it if the pass limit has been reached.
-            <a href="https://www.smartpass.app/passlimits">Learn more.</a>
+            <a href="https://www.smartpass.app/passlimits" target="_blank">Learn more.</a>
           </p>
         </div>
 
         <button id="closePassLimitsIntro" (click)="dismissPassLimitNux()">
-          <img style="width: 25px" src="assets/Cancel%20(Blue-Gray).svg">
+          <img style="width: 14px; height: 14px" src="assets/Close%20(Grey).svg">
         </button>
       </div>
       <div class="accent-background-section ds-flex-column">
@@ -53,8 +53,8 @@
              School Pass Limit
              <div style="display: inline" customToolTip [contentTemplate]="passLimitLearnMore">
                 <img
-                  class="custom-tooltip-icon support-icon"
-                  [src]="'./assets/Support (Gray).svg' | resolveAsset">
+                  class="support-icon"
+                  [src]="'./assets/Support (Gray-200).svg' | resolveAsset">
              </div>
              <ng-template #passLimitLearnMore>
                <div class="ds-tooltip">
