@@ -396,17 +396,28 @@ export class PassCardComponent implements OnInit, OnDestroy {
           }),
           concatMap(({errorResponse, passLimit}) => {
             const numPasses = body['students']?.length || 1;
-            const headerText = numPasses > 1
-              ? `Creating these ${numPasses} passes will exceed the Pass Limits for the following students:`
-              : `Student's Pass limit reached: ${this.selectedStudents[0].display_name} has had ${passLimit}/${passLimit} passes today`;
+            let headerText: string;
+            let buttons: ConfirmationTemplates['buttons'];
+            if (numPasses > 1) {
+              headerText = `Creating these ${numPasses} passes will exceed the Pass Limits for the following students:`;
+              buttons = {
+                confirmText: 'Override limits',
+                denyText: 'Skip these students'
+              };
+            } else if (numPasses === 1) {
+              headerText = `Student's Pass limit reached: ${this.selectedStudents[0].display_name} has had ${passLimit}/${passLimit} passes today`;
+              buttons = {
+                confirmText: 'Override limit',
+                denyText: 'Cancel'
+              };
+            }
+
             return this.dialog.open(ConfirmationDialogComponent, {
               ...RecommendedDialogConfig,
+              width: '335px',
               data: {
                 headerText,
-                buttons: {
-                  confirmText: 'Override limits',
-                  denyText: 'Skip these students'
-                },
+                buttons,
                 body: this.confirmDialogTemplate,
                 templateData: {
                   students: errorResponse.error.students,

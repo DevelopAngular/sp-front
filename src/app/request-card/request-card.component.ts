@@ -578,7 +578,7 @@ export class RequestCardComponent implements OnInit, OnDestroy {
       data: {
         headerText: `Student's Pass limit reached: ${this.request.student.display_name} has had ${studentPassLimit}/${studentPassLimit} passes today`,
         buttons: {
-          confirmText: 'Override limits',
+          confirmText: 'Override limit',
           denyText: 'Cancel'
         },
         body: this.overriderBody,
