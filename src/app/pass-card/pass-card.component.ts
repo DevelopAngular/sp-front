@@ -55,6 +55,7 @@ export class PassCardComponent implements OnInit, OnDestroy {
 
   @ViewChild('cardWrapper') cardWrapper: ElementRef;
   @ViewChild('confirmDialogBody') confirmDialog: TemplateRef<HTMLElement>;
+  @ViewChild('confirmDialogBodyVisibility') confirmDialogVisibility: TemplateRef<HTMLElement>;
 
   timeLeft: string = '';
   valid: boolean = true;
@@ -319,6 +320,16 @@ export class PassCardComponent implements OnInit, OnDestroy {
     this.pagerPages++;
   }
 
+
+  private prepareTemplateDataVisibility(mapTitle, alerts) {
+    const out = [];
+    for (let a of alerts) {
+      out.push({title: mapTitle[a['location_id']], students: a['room_students'].join(', ')});
+    }
+    console.log('tdata', out)
+    return out;
+  }
+
   newPass() {
     this.performingAction = true;
     const body = {
@@ -326,6 +337,10 @@ export class PassCardComponent implements OnInit, OnDestroy {
       'origin': this.pass.origin.id,
       'destination': this.pass.destination.id,
       'travel_type': this.selectedTravelType
+    };
+    const mapIdTitleLocation = {
+      [this.pass.origin.id]: this.pass.origin.title,
+      [this.pass.destination.id]: this.pass.destination.title,
     };
     if (this.forStaff) {
       body['students'] = this.selectedStudents.map(user => user.id);
@@ -382,10 +397,52 @@ export class PassCardComponent implements OnInit, OnDestroy {
         }
         return of(null);
       }),
+
+      retryWhen((errors: Observable<HttpErrorResponse>) => {
+        return errors.pipe(
+          tap(errorResponse => {
+            const isVisibilityError = ('visibility_alerts' in errorResponse.error);
+            console.log('me', errorResponse, isVisibilityError)
+            if (! isVisibilityError) throw errorResponse;
+          }),
+          concatMap(({error}) => this.dialog.open(ConfirmationDialogComponent, {
+            panelClass: 'overlay-dialog',
+            backdropClass: 'custom-backdrop',
+            closeOnNavigation: true,
+            data: {
+              body: this.confirmDialogVisibility,
+              buttons: {
+                confirmText: 'Override',
+                denyText: 'Skip these students',
+              },
+              templateData: {alerts: this.prepareTemplateDataVisibility(mapIdTitleLocation, error['visibility_alerts'])},
+              icon: './assets/Eye (Green-White).svg'
+            } as ConfirmationTemplates
+          }).afterClosed().pipe(
+          map(override => ({override, students: error['visibility_alerts']['room_students']})))),
+          concatMap(({override, students}: { override: boolean, students: number[] }) => {
+            console.log(override);
+            if (override === undefined) {
+              this.dialogRef.close();
+              throw 'confirmation closed';
+            }
+            if (override === true) {
+              body['override_visibility'] = true;
+              return of(null);
+            }
+
+            if (override === false) {
+              remove(body['students'] as number[], elem => students.includes(elem));
+              return of(null);
+            }
+          })
+        );
+      }),
+/*
       retryWhen((errors: Observable<HttpErrorResponse>) => {
         return errors.pipe(
           filter(errorResponse => {
-            console.log(errorResponse);
+            console.log('you', errorResponse);
             return errorResponse.error.message === 'one or more pass limits reached!';
           }),
           concatMap(errorResponse => {
@@ -430,6 +487,7 @@ export class PassCardComponent implements OnInit, OnDestroy {
           })
         );
       })
+     */
     ).subscribe((data) => {
       this.performingAction = false;
       this.hallPassService.createPassEvent$.next(true);

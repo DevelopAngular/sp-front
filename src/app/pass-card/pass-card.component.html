@@ -188,3 +188,16 @@
     <p *ngFor="let s of students">{{s.displayName}}: {{passLimit}}/{{passLimit}} passes today</p>
   </div>
 </ng-template>
+
+<ng-template let-alerts="alerts" #confirmDialogBodyVisibility>
+  <div class="ds-dialog-title">
+    <span>Overides rooms visibility</span>
+  </div>
+
+  <div class="ds-dialog-normal-text ds-mb-10">
+    <ng-container *ngFor="let a of alerts">
+      <p>{{a.title}}</p>
+      <p>{{a.students}}</p>
+    </ng-container>
+  </div>
+</ng-template>
