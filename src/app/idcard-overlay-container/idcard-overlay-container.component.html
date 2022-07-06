@@ -1,0 +1,6 @@
+<div class="overlay-main-wrapper host">
+    <img class="cancelSVG" width="35" height="35" [src]="'./assets/Cancel (Gray-White).svg' | resolveAsset" (click)="dialogRef.close()">
+    <div style="width: 100%;">
+        <app-id-card [buttonBackColor]="'#F0F2F5'" [backgroundColor]="dialogData?.backgroundColor" [logoURL]="dialogData?.logoURL" [backsideText]="dialogData?.backsideText" [IDNumberData]="dialogData?.idNumberData" [greadLevel]="dialogData?.greadLevel"></app-id-card>
+    </div>
+</div>

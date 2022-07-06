@@ -1,6 +1,6 @@
 @import '../../../../design-system';
 @import '../../../../sp-colors';
-.main-wrapper {
+.id-card-main-wrapper {
     width: 323px;
     margin: auto;
 }
@@ -14,7 +14,7 @@
         position: absolute;
         top: 0;
         right: 32px;
-        height: 388px;
+        height: inherit;
     }
     .top {
         border-radius: 15px;

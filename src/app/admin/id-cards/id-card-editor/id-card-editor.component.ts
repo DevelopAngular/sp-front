@@ -17,8 +17,11 @@ import { ConfirmationComponent } from "../../../shared/shared-components/confirm
 export const UNANIMATED_CONTAINER: ReplaySubject<boolean> = new ReplaySubject(1);
 
 export interface IDCard {
+  userName?: string;
+  schoolName?: string;
+  userRole?: string;
   profilePicture?: string;
-  idNumberData?: {idNumber: number, barcodeURL: string};
+  idNumberData?: {idNumber: number, barcodeURL: any};
   greadLevel?: number;
   backgroundColor?: string;
   logoURL?: string;
@@ -52,14 +55,14 @@ export class IdCardEditorComponent implements OnInit, OnDestroy {
   typeOfBarcodes: BarcodeTypes[] = [
     {
       label: 'Traditional',
-      icon: './assets/barcode.svg',
+      icon: './assets/Barcode (Black).svg',
       textColor: '#7f879d',
       backgroundColor: '#F4F4F4',
       action: 'code39'
     },
     {
       label: 'QR Code',
-      icon: './assets/qr_code.svg',
+      icon: './assets/QR Code (Black).svg',
       textColor: '#7f879d',
       backgroundColor: '#F4F4F4',
       action: 'qr-code'
@@ -67,11 +70,14 @@ export class IdCardEditorComponent implements OnInit, OnDestroy {
   ];
   selectedBarcode: BarcodeTypes = {
     label: 'QR Code',
-    icon: './assets/qr_code.svg',
+    icon: './assets/QR Code (Black).svg',
     textColor: '#7f879d',
     backgroundColor: '#F4F4F4',
     action: 'qr-code'
   };
+
+  IDCardVisibleTo: string = 'Students only';
+  IDCardEnabled: boolean = false;
   isUploadedProfilePictures: boolean;
   status: 'disconnect' | 'approved' | 'done' = 'disconnect';
   destroy$ = new Subject();
@@ -181,7 +187,12 @@ export class IdCardEditorComponent implements OnInit, OnDestroy {
             message: 'Are you sure you want to delete the logo?',
             okButtonText: 'Delete logo'
           };
-          this.openConfirmationDialog(data);
+          this.openConfirmationDialog(data).then((res) => {
+            if (res) {
+              this.isLogoAdded = false;
+              this.logoURL = '';
+            }
+          });
         }
       });
 
@@ -200,7 +211,7 @@ export class IdCardEditorComponent implements OnInit, OnDestroy {
       }
       QRCode.toDataURL(this.IDNumberData.idNumber.toString(), opts)
         .then((url) => {
-          this.IDNumberData['url'] = url;
+          this.IDNumberData['barcodeURL'] = url;
         })
         .catch((err) => {
           console.error(err);
@@ -221,7 +232,7 @@ export class IdCardEditorComponent implements OnInit, OnDestroy {
       });
       const svgText = xmlSerializer.serializeToString(svgNode);
       var dataURL = "data:image/svg+xml," + encodeURIComponent(svgText);
-      this.IDNumberData['url'] =
+      this.IDNumberData['barcodeURL'] =
         this.domSanitizer.bypassSecurityTrustUrl(dataURL);
     }
   }
@@ -247,6 +258,7 @@ export class IdCardEditorComponent implements OnInit, OnDestroy {
   }
 
   openConfirmationDialog(data){
+    return new Promise(resolve => {
     const dialogRef = this.dialog.open(ConfirmationComponent, {
       panelClass: "search-pass-card-dialog-container",
       backdropClass: "custom-bd",
@@ -255,10 +267,60 @@ export class IdCardEditorComponent implements OnInit, OnDestroy {
     });
 
     dialogRef.afterClosed().subscribe((result) => {
-      if (result) {
-        this.isLogoAdded = false;
-        this.logoURL = '';
-      }
+      return resolve(result);
     });
+  });
+  }
+
+  openVisibleToPopup(elem) {
+    const settings = [
+      {
+        label: 'Students only',
+        textColor: '#7f879d',
+        backgroundColor: '#F4F4F4',
+        action: 'students'
+      },
+      {
+        label: 'Staff only',
+        textColor: '#7f879d',
+        backgroundColor: '#F4F4F4',
+        action: 'staff'
+      },
+      {
+        label: 'Students and Staff',
+        textColor: '#7f879d',
+        backgroundColor: '#F4F4F4',
+        action: 'students_staff'
+      }
+    ];
+    UNANIMATED_CONTAINER.next(true);
+    const st = this.dialog.open(SettingsDescriptionPopupComponent, {
+      panelClass: 'consent-dialog-container',
+      backdropClass: 'invis-backdrop',
+      data: {trigger: elem.currentTarget, settings}
+    });
+
+    st.afterClosed().pipe(tap(() => UNANIMATED_CONTAINER.next(false)), filter(r => !!r))
+      .subscribe((action) => {
+        this.IDCardVisibleTo = settings.find(o => o.action === action).label;
+      });
+  }
+
+  enableIDCard(){
+    if (this.IDCardEnabled) {
+      let data = {
+        title : 'Disable ID Cards?',
+        message: 'Are you sure you want to disable ID cards?',
+        okButtonText: 'Disable',
+        okButtonBackgroundColor: '#7083A0'
+      };
+      this.openConfirmationDialog(data).then((res) => {
+        if (res) {
+          this.IDCardEnabled = false
+        }
+      });
+    }else {
+      this.IDCardEnabled = true
+    }
   }
 }

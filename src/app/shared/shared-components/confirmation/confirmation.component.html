@@ -5,7 +5,7 @@
         <app-gradient-button [style.margin-left]="'15px'" [textColor]="'#7083A0'" [gradient]="'#F0F2F5, #F0F2F5'" [hoverColor]="'#00B476'" [cursor]="'pointer'" (buttonClick)="dialogRef.close(false)">
             Cancel
         </app-gradient-button>
-        <app-gradient-button [style.margin-left]="'15px'" [textColor]="'#FFFFFF'" [gradient]="'#E32C66, #E32C66'" [hoverColor]="'#00B476'" [cursor]="'pointer'" (buttonClick)="dialogRef.close(true)">
+        <app-gradient-button [style.margin-left]="'15px'" [textColor]="'#FFFFFF'" [gradient]="data?.okButtonBackgroundColor ? data?.okButtonBackgroundColor : '#E32C66, #E32C66'" [hoverColor]="'#00B476'" [cursor]="'pointer'" (buttonClick)="dialogRef.close(true)">
             {{data?.okButtonText}}
         </app-gradient-button>
     </div>

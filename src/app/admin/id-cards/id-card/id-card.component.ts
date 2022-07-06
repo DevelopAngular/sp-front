@@ -1,5 +1,7 @@
 import { Component, Input } from "@angular/core";
 import { DarkThemeSwitch } from "../../../dark-theme-switch";
+import { User } from "../../../models/User";
+import { UserService } from "../../../services/user.service";
 
 @Component({
   selector: "app-id-card",
@@ -13,8 +15,21 @@ export class IdCardComponent {
   @Input() logoURL: string;
   @Input() IDNumberData: any = {};
   @Input() greadLevel: number;
+  @Input() buttonBackColor: string = '#FFFFFF';
 
-  constructor(public darkTheme: DarkThemeSwitch) {}
+  userDetails: any;
+
+  constructor(
+    public darkTheme: DarkThemeSwitch,
+    private userService: UserService,
+    ) {
+    this.userService.user$.subscribe({
+      next: user => {
+        this.userDetails = User.fromJSON(user)
+        console.log("User : ",this.userDetails, this.userDetails.isStudent(), this.userDetails.isAdmin(), this.userDetails.isAssistant())
+      }
+    })
+  }
 
   get getButtonText(): string {
     return document.getElementById("flip-box-inner").style.transform ==

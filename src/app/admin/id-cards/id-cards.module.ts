@@ -3,7 +3,6 @@ import { CommonModule } from '@angular/common';
 
 import { IdCardsRoutingModule } from './id-cards-routing.module';
 import { IdCardsComponent } from './id-cards.component';
-import { IdCardComponent } from './id-card/id-card.component';
 import { AdminSharedModule } from '../shared/admin-shared.module';
 import { IdCardEditorComponent } from './id-card-editor/id-card-editor.component';
 import { FormsModule, ReactiveFormsModule } from '@angular/forms';
@@ -13,7 +12,7 @@ import { IdCardProfilePictureComponent } from './id-card-profile-picture/id-card
 
 
 @NgModule({
-  declarations: [IdCardsComponent, IdCardComponent, IdCardEditorComponent, BackgroundTextComponent, UploadLogoComponent, IdCardProfilePictureComponent],
+  declarations: [IdCardsComponent, IdCardEditorComponent, BackgroundTextComponent, UploadLogoComponent, IdCardProfilePictureComponent],
   imports: [
     CommonModule,
     IdCardsRoutingModule,

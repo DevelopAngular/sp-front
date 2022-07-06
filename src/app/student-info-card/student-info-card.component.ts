@@ -48,6 +48,9 @@ import {PassLimitService} from '../services/pass-limit.service';
 import {HallPassLimit} from '../models/HallPassLimits';
 import {ConnectedPosition} from '@angular/cdk/overlay';
 import {IntroData} from '../ngrx/intros';
+import { IDCard } from '../admin/id-cards/id-card-editor/id-card-editor.component';
+import { IdcardOverlayContainerComponent } from '../idcard-overlay-container/idcard-overlay-container.component';
+import { QRBarcodeGeneratorService } from '../services/qrbarcode-generator.service';
 
 declare const window;
 
@@ -125,6 +128,7 @@ export class StudentInfoCardComponent implements OnInit, AfterViewInit, OnDestro
     private http: HttpService,
     private darkTheme: DarkThemeSwitch,
     private passLimitsService: PassLimitService,
+    private qrBarcodeGenerator: QRBarcodeGeneratorService
   ) {
   }
 
@@ -285,7 +289,7 @@ export class StudentInfoCardComponent implements OnInit, AfterViewInit, OnDestro
         icon: './assets/Digital ID Card (Gray).svg',
         textColor: '#7f879d',
         backgroundColor: '#F4F4F4',
-        action: 'link',
+        action: 'idcard',
         // tooltip: 'Copy a private link to this student and send it to another staff member at your school.'
       },
     ];
@@ -326,7 +330,7 @@ export class StudentInfoCardComponent implements OnInit, AfterViewInit, OnDestro
     });
 
     st.afterClosed().pipe(tap(() => UNANIMATED_CONTAINER.next(false)))
-      .subscribe((action) => {
+      .subscribe(async (action) => {
         if (action === 'link') {
           navigator.clipboard.writeText(`${window.location.href}?student_id=${this.profile.id}`).then(() => {
             this.toast.openToast({
@@ -344,6 +348,29 @@ export class StudentInfoCardComponent implements OnInit, AfterViewInit, OnDestro
           });
         } else if (action === 'delete') {
           this.userService.deleteUserRequest(this.profile, '_profile_student');
+        }else if (action === 'idcard') {
+          let idCardData: IDCard = {
+            backgroundColor: '#00b476',
+            greadLevel: 10,
+            idNumberData: {
+              idNumber: 123456,
+              barcodeURL: await this.qrBarcodeGenerator.selectBarcodeType('code39', 123456)
+            },
+            backsideText: 'Demo text is here',
+            logoURL: '',
+            profilePicture: '',
+            schoolName: 'Demo School',
+            userName: 'Demo User',
+            userRole:'Student'
+          };
+      
+          // idCardData.idNumberData.barcodeURL = await this.qrBarcodeGenerator.selectBarcodeType('code39', 123456);
+      
+          const dialogRef = this.dialog.open(IdcardOverlayContainerComponent, {
+            panelClass: "id-card-overlay-container",
+            backdropClass: "custom-bd",
+            data: idCardData
+          });
         }
       });
   }

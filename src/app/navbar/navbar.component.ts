@@ -52,6 +52,9 @@ import {SpAppearanceComponent} from '../sp-appearance/sp-appearance.component';
 import {MyProfileDialogComponent} from '../my-profile-dialog/my-profile-dialog.component';
 import {SpLanguageComponent} from '../sp-language/sp-language.component';
 import * as moment from 'moment';
+import { IDCard } from '../admin/id-cards/id-card-editor/id-card-editor.component';
+import { QRBarcodeGeneratorService } from '../services/qrbarcode-generator.service';
+import { IdcardOverlayContainerComponent } from '../idcard-overlay-container/idcard-overlay-container.component';
 
 declare const window;
 
@@ -168,7 +171,8 @@ export class NavbarComponent implements AfterViewInit, OnInit, OnDestroy {
       private cdr: ChangeDetectorRef,
       private rendered: Renderer2,
       private navbarElementsService: NavbarElementsRefsService,
-      private shortcutsService: KeyboardShortcutsService
+      private shortcutsService: KeyboardShortcutsService,
+      private qrBarcodeGenerator: QRBarcodeGeneratorService
   ) {}
 
   get optionsOpen() {
@@ -555,5 +559,30 @@ export class NavbarComponent implements AfterViewInit, OnInit, OnDestroy {
     } else {
       this.rendered.setStyle(clickedTab, 'opacity', pressed ? 0.8 : 1);
     }
+  }
+
+ async openIDCard(){
+    let idCardData: IDCard = {
+      backgroundColor: '#00b476',
+      greadLevel: 10,
+      idNumberData: {
+        idNumber: 123456,
+        barcodeURL: await this.qrBarcodeGenerator.selectBarcodeType('code39', 123456)
+      },
+      backsideText: 'Demo text is here',
+      logoURL: '',
+      profilePicture: '',
+      schoolName: 'Demo School',
+      userName: 'Demo User',
+      userRole:'Student'
+    };
+
+    // idCardData.idNumberData.barcodeURL = await this.qrBarcodeGenerator.selectBarcodeType('code39', 123456);
+
+    const dialogRef = this.dialog.open(IdcardOverlayContainerComponent, {
+      panelClass: "id-card-overlay-container",
+      backdropClass: "custom-bd",
+      data: idCardData
+    });
   }
 }

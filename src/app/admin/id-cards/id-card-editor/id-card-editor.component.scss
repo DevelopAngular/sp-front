@@ -140,6 +140,10 @@
     }
     .right {
         width: calc(100vw - 686px);
+        .main-wrapper {
+            width: fit-content;
+            margin: auto;
+        }
     }
     // }
 }

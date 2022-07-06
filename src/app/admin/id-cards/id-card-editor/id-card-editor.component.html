@@ -7,10 +7,10 @@
                         <div>
                             <p class="ds-big-title" [style.color]="darkTheme.getColor({white: '#1F195E', dark: '#FFFFFF'})">ID Cards</p>
                         </div>
-                        <div>
+                        <div *ngIf="!IDCardEnabled">
                             <div class="button">
-                                <app-gradient-button [style.margin-left]="'15px'" [hoverColor]="'#00B476'" [cursor]="'pointer'" (buttonClick)="setUpProfilePicture()">
-                                    Save
+                                <app-gradient-button [style.margin-left]="'15px'" [leftIcon]="'./assets/Play (White).svg'" [hoverColor]="'#00B476'" [cursor]="'pointer'" (buttonClick)="enableIDCard()">
+                                    Set live
                                 </app-gradient-button>
                             </div>
                         </div>
@@ -22,7 +22,7 @@
                                 <div class="card">
                                     <div class="label">
                                         <div class="icon">
-                                            <img style="z-index: 10;" [src]="'./assets/color-picker.svg' | resolveAsset" alt="">
+                                            <img style="z-index: 10;" [src]="'./assets/Color Picker.svg' | resolveAsset" alt="">
                                         </div>
                                         <div class="title" style="font-weight: 500">Color</div>
                                     </div>
@@ -148,6 +148,45 @@
                                 </div>
                             </div>
                         </div>
+                        <div>
+                            <p [style.color]="darkTheme.getColor({white: '#1F195E', dark: '#FFFFFF'})" class="ds-dialog-title">Settings</p>
+                            <div class="form" style="flex-direction: column;">
+                                <div class="card">
+                                    <div class="label">
+                                        <div class="icon">
+                                            <img style="z-index: 10;" [src]="'./assets/Visible To (White).svg' | resolveAsset" alt="">
+                                        </div>
+                                        <div class="title" style="font-weight: 500">Visible to
+                                            <span class="support-icon" customToolTip [contentTemplate]="visibleToHelp"><img width="13px" [src]="'./assets/Support (Gray-200).svg' | resolveAsset"></span>
+                                        </div>
+                                        <ng-template #visibleToHelp>
+                                            <div class="ds-tooltip" style="width: 200px">This text will appear for students on the back of the ID Card.</div>
+                                        </ng-template>
+                                    </div>
+                                    <div>
+                                        <div class="ds-flex-center-between">
+                                            <app-gradient-button [rightIcon]="'./assets/Rect (Blue-Gray).svg'" [rightIconWidth]="'9px'" (buttonClick)="openVisibleToPopup($event)" [textColor]="'#7083A0'" [gradient]="'#F5F6F8, #F5F6F8'">{{IDCardVisibleTo}}</app-gradient-button>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="form" style="flex-direction: column;" *ngIf="IDCardEnabled">
+                                <div class="card">
+                                    <div class="label">
+                                        <!-- <div class="icon">
+                                            <img style="z-index: 10;" [src]="'./assets/Logo Upload.svg' | resolveAsset" alt="">
+                                        </div> -->
+                                        <div class="title" style="font-weight: 500">Disable ID Cards</div>
+                                    </div>
+                                    <div class="button">
+                                        <app-gradient-button [style.margin-left]="'15px'" [fontWeight]="'400'" [textColor]="'#7083A0'" [gradient]="'#F5F6F8, #F5F6F8'" [hoverColor]="'#00B476'" [cursor]="'pointer'" (buttonClick)="enableIDCard()">
+                                            <!-- {{IDCardEnabled ? 'Disable' : 'Enable'}} -->
+                                            Disable
+                                        </app-gradient-button>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
                     </div>
                 </div>
             </div>
@@ -155,7 +194,10 @@
 
         <div class="right">
             <div style="width: 100%;">
-                <app-id-card [backgroundColor]="backgroundColor" [logoURL]="logoURL" [backsideText]="backsideText" [IDNumberData]="IDNumberData" [greadLevel]="greadLevel"></app-id-card>
+                <div class="main-wrapper">
+                    <p class="ds-dialog-title" [style.color]="darkTheme.getColor({white: '#1F195E', dark: '#FFFFFF'})">Preview</p>
+                    <app-id-card [backgroundColor]="backgroundColor" [logoURL]="logoURL" [backsideText]="backsideText" [IDNumberData]="IDNumberData" [greadLevel]="greadLevel"></app-id-card>
+                </div>
             </div>
         </div>
     </div>
