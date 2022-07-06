@@ -18,6 +18,7 @@ import {ScreenService} from '../../../services/screen.service';
 import {DeviceDetection} from '../../../device-detection.helper';
 import {filter, map} from 'rxjs/operators';
 import {Location} from '../../../models/Location';
+import {PassLimitInfo} from '../../../models/HallPassLimits';
 
 export enum States { from = 1, toWhere = 2, category = 3, restrictedTarget = 4, message = 5 }
 
@@ -30,7 +31,7 @@ export enum States { from = 1, toWhere = 2, category = 3, restrictedTarget = 4, 
 export class LocationsGroupContainerComponent implements OnInit {
 
   @Input() FORM_STATE: Navigation;
-  @Input() currentPassLimit: number;
+  @Input() passLimitInfo: PassLimitInfo;
   @Output() nextStepEvent: EventEmitter<any> = new EventEmitter<any>();
 
   @ViewChild(FromWhereComponent) fromWhereComp;
@@ -130,7 +131,11 @@ export class LocationsGroupContainerComponent implements OnInit {
       // restrict all rooms, so the teacher request is mandatory
       filter(pins => pins.length > 0),
       map(pins => {
-        if (this.currentPassLimit === 0) {
+        if (!this?.passLimitInfo?.showPasses) {
+          return pins;
+        }
+
+        if (this.passLimitInfo.current === 0) {
           pins.forEach(p => {
             if (p.location === null) {
               p.location = {};

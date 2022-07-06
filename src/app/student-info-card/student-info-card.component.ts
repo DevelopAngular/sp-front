@@ -10,7 +10,7 @@ import {
   ViewChild
 } from '@angular/core';
 import {User} from '../models/User';
-import {MatDialog} from '@angular/material/dialog';
+import {MatDialog, MatDialogRef} from '@angular/material/dialog';
 import {HallPassesService} from '../services/hall-passes.service';
 import {Observable, Subject, Subscription} from 'rxjs';
 import {QuickPreviewPasses} from '../models/QuickPreviewPasses';
@@ -112,6 +112,7 @@ export class StudentInfoCardComponent implements OnInit, AfterViewInit, OnDestro
     offsetX: 50
   };
   showPassLimitNux = new Subject<boolean>();
+  passLimitDialogRef: MatDialogRef<PassLimitsDialogComponent>;
 
   constructor(
     private dialog: MatDialog,
@@ -197,9 +198,12 @@ export class StudentInfoCardComponent implements OnInit, AfterViewInit, OnDestro
         this.userService.clearCurrentUpdatedAccounts();
       });
 
-    this.passLimitsService.getPassLimit().subscribe({
+    this.passLimitsService.watchPassLimits().subscribe({
       next: pl => {
-        this.passLimit = pl.pass_limit;
+        this.passLimit = pl;
+        if (this.passLimitDialogRef) {
+          this.passLimitDialogRef.componentInstance.data.passLimit = this.passLimit;
+        }
       }
     });
   }
@@ -498,8 +502,8 @@ export class StudentInfoCardComponent implements OnInit, AfterViewInit, OnDestro
   }
 
   openPassLimitsDialog() {
-    if (this.passLimit) {
-      this.dialog.open(PassLimitsDialogComponent, {
+    if (this?.passLimit?.limitEnabled) {
+      this.passLimitDialogRef = this.dialog.open(PassLimitsDialogComponent, {
         closeOnNavigation: true,
         panelClass: 'overlay-dialog',
         backdropClass: 'custom-bd',
@@ -515,6 +519,7 @@ export class StudentInfoCardComponent implements OnInit, AfterViewInit, OnDestro
 
   editWindow(event) {
     this.isOpenAvatarDialog = true;
+
     if (!this.userService.getUserSchool().profile_pictures_completed) {
       this.consentDialogOpen(this.editIcon.nativeElement);
     } else {
