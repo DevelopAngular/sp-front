@@ -24,6 +24,12 @@ import {
   RecommendedDialogConfig
 } from '../shared/shared-components/confirmation-dialog/confirmation-dialog.component';
 
+/**
+ * TODO: Restructure component
+ *  This component should only tell if the teacher's pin was entered correctly or not
+ *  It shouldn't have any request or pass limit logic in here.
+ */
+
 @Component({
   selector: 'app-teacher-pin-student',
   templateUrl: './teacher-pin-student.component.html',
