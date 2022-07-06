@@ -32,7 +32,8 @@ export class PassLimitsDialogComponent implements OnInit {
     private passLimit: PassLimitService,
     private router: Router,
     private userService: UserService
-  ) { }
+  ) {
+  }
 
   ngOnInit(): void {
     this.frameMotion$ = this.formService.getFrameMotionDirection();
@@ -43,6 +44,11 @@ export class PassLimitsDialogComponent implements OnInit {
 
   navigateToAdminPage() {
     this.dialogRef.close();
-    this.router.navigateByUrl('/admin/accounts/_profile_student');
+    const urlTree = this.router.createUrlTree(
+      ['admin', 'accounts', '_profile_student'],
+      {queryParams: {'pass-limits': ''}}
+    );
+    const url = this.router.serializeUrl(urlTree);
+    window.open(url, '_blank');
   }
 }

@@ -78,16 +78,19 @@ import {EncounterPreventionDialogComponent} from '../admin/accounts/encounter-pr
 import {CreateGroupComponent} from '../admin/accounts/encounter-prevention-dialog/create-group/create-group.component';
 import {ReportDescriptionComponent} from '../admin/accounts/encounter-prevention-dialog/report-description/report-description.component';
 import {EncounterOptionsComponent} from '../admin/accounts/encounter-prevention-dialog/encounter-options/encounter-options.component';
-import {EncounterGroupDescriptionComponent} from '../admin/accounts/encounter-prevention-dialog/encounter-group-description/encounter-group-description.component';
+import {
+  EncounterGroupDescriptionComponent
+} from '../admin/accounts/encounter-prevention-dialog/encounter-group-description/encounter-group-description.component';
 import {WhiteButtonComponent} from '../ds-buttons/white-button/white-button.component';
 import {WhiteRoundButtonComponent} from '../ds-buttons/white-round-button/white-round-button.component';
 import {IconOnlyButtonComponent} from '../ds-buttons/icon-only-button/icon-only-button.component';
 import {EditAvatarComponent} from '../admin/profile-card-dialog/edit-avatar/edit-avatar.component';
 import {ProfilePictureComponent} from '../admin/accounts/profile-picture/profile-picture.component';
 import {LinkGeneratedDialogComponent} from '../admin/link-generated-dialog/link-generated-dialog.component';
-import { StatusChipComponent } from '../admin/explore/status-chip/status-chip.component';
-import { ConfirmationDialogComponent } from './shared-components/confirmation-dialog/confirmation-dialog.component';
+import {StatusChipComponent} from '../admin/explore/status-chip/status-chip.component';
+import {ConfirmationDialogComponent} from './shared-components/confirmation-dialog/confirmation-dialog.component';
 import {NuxUniversalComponent} from '../nux-components/nux-universal/nux-universal.component';
+import {PassLimitInfoComponent} from '../pass-limit-info/pass-limit-info.component';
 
 const DEFAULT_SWIPER_CONFIG: SwiperConfigInterface = {
   direction: 'horizontal',
@@ -183,9 +186,10 @@ const DEFAULT_SWIPER_CONFIG: SwiperConfigInterface = {
     EditAvatarComponent,
     ProfilePictureComponent,
     LinkGeneratedDialogComponent,
-    StatusChipComponent, 
+    StatusChipComponent,
     ConfirmationDialogComponent,
     NuxUniversalComponent,
+    PassLimitInfoComponent
   ],
   exports: [
     ReactiveFormsModule,
@@ -263,8 +267,9 @@ const DEFAULT_SWIPER_CONFIG: SwiperConfigInterface = {
     EditAvatarComponent,
     ProfilePictureComponent,
     LinkGeneratedDialogComponent,
-    StatusChipComponent, 
+    StatusChipComponent,
     NuxUniversalComponent,
+    PassLimitInfoComponent
   ],
   providers: [
     {
