@@ -14,11 +14,11 @@
     <ng-template #changedFormHeader>
       <div class="header" style="justify-content: space-around">
         <div class="background-header"></div>
-        <app-gradient-button (buttonClick)="resetPassLimitsForm()" customBackground="transparent">Cancel</app-gradient-button>
+        <app-gradient-button (buttonClick)="resetPassLimitsForm()" customBackground="#7083A0">Cancel</app-gradient-button>
         <div class="title-header" style="z-index: 10; display: flex" [attr.data-motion-translate]="(frameMotion$ | async).direction">
           <div class="ds-dialog-title" [style.margin-left]="'12px'">Pass Limits</div>
         </div>
-        <app-gradient-button (buttonClick)="updatePassLimits()" gradient="#FFFFFF,#FFFFFF" textColor="black" [disabled]="passLimitForm.invalid">
+        <app-gradient-button (buttonClick)="updatePassLimits()" customBackground="#00B476" textColor="white" [disabled]="passLimitForm.invalid">
           <ng-container *ngIf='requestLoading; else update'>
             <mat-spinner class="request-loading" [diameter]="25"></mat-spinner>
           </ng-container>
@@ -30,7 +30,13 @@
       </div>
     </ng-template>
 
-    <div class="content">
+    <ng-template #contentSpinner>
+      <div class="ds-w-100 ds-flex-center-center" style="height: 150px">
+        <mat-spinner [diameter]="75" class="content-spinner"></mat-spinner>
+      </div>
+    </ng-template>
+
+    <div class="content"  *ngIf="!contentLoading; else contentSpinner">
       <div *ngIf="showPassLimitNux" class="accent-background-section ds-flex-row" style="position:relative">
         <div style="width: 50px">
           <img [src]="'./assets/Pass Limit (Purple).svg' | resolveAsset" alt="Options">
@@ -77,8 +83,9 @@
 
         <div *ngIf="passLimitForm.value['limitEnabled']" style="display: flex; column-gap: 2px; flex-wrap: wrap;" class="ds-flex-row">
           <app-input
-            [isFocus]="true"
-            width="125px"
+            [showUnits]="true"
+            [units]="passLimitForm?.value?.passLimit === '1' ? 'pass' : 'passes'"
+            width="150px"
             placeholder="# of passes"
             [formGroup]="passLimitForm"
             [controlName]="passLimitForm.get('passLimit')"></app-input>
@@ -91,7 +98,7 @@
             gradient="#F4F4F4">
             per day
           </app-gradient-button>
-          <p style="width: 100%; opacity: 0.8; font-size: 12px" *ngIf="showLimitFormatError">Hint: 1 pass, 4 passes, 10 passes</p>
+          <p style="width: 100%; opacity: 0.8; font-size: 12px" *ngIf="showLimitFormatError">Passes must be greater than 0 and must be a whole number</p>
         </div>
       </div>
 

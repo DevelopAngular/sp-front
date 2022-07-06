@@ -549,8 +549,13 @@ export class RequestCardComponent implements OnInit, OnDestroy {
   async passLimitPromise(): Promise<boolean> {
     const passLimit = this.passLimits[this.request.destination.id]; // room pass limit
     const passLimitReached = passLimit.max_passes_to_active && passLimit.max_passes_to < (passLimit.to_count + 1);
-    const studentPassLimitReached = ((await this.passLimitsService.getRemainingLimits({studentId: this.request.student.id}).toPromise()).remainingPasses) === 0;
-    const studentPassLimit = (await this.passLimitsService.getPassLimit().toPromise()).pass_limit.passLimit;
+
+    let studentPassLimitReached = false;
+    const studentPassLimit = (await this.passLimitsService.getPassLimit().toPromise()).pass_limit;
+    if (studentPassLimit.limitEnabled) {
+      const remainingPasses = (await this.passLimitsService.getRemainingLimits({studentId: this.request.student.id}).toPromise()).remainingPasses;
+      studentPassLimitReached = remainingPasses === 0;
+    }
 
     // If neither pass limits are reached, then immediately allow accepting the request
     if (!passLimitReached && !studentPassLimitReached) {
@@ -593,7 +598,7 @@ export class RequestCardComponent implements OnInit, OnDestroy {
     // Since both pass limits must be checked, chaining together the dialog Observable results is a clean way to perform this
     // if the room pass limit is reached, then open the room pass limit dialog, else continue as normal
     // add a 200ms sleep to cater for the dialog closing and the other one opening
-    let flow = (true
+    let flow = (passLimitReached
       ? openRoomPassLimitDialog()
       : of(true)).pipe(concatMap(overrideRoomPassLimit => from(sleep(200)).pipe(map(() => overrideRoomPassLimit))));
 
@@ -601,12 +606,9 @@ export class RequestCardComponent implements OnInit, OnDestroy {
       concatMap((overrideRoomPassLimit) => {
         // Wait until the previous dialog is closed to perform these checks
         // If the room pass limit override is denied, then immediately return false and deny the pass request
-        console.log(`Override room pass limit: ${overrideRoomPassLimit}`);
         if (!overrideRoomPassLimit) {
           return of(false);
         }
-
-        console.log('potato');
 
         // If the room pass limit is allowed and the student pass limit is reached then
         // open the student pass limit dialog and check its result,
