@@ -250,7 +250,7 @@ export class PassesComponent implements OnInit, AfterViewInit, OnDestroy {
     private passesService: HallPassesService,
     private sideNavService: SideNavService,
     private locationsService: LocationsService,
-    private passLimits: PassLimitService
+    private passLimits: PassLimitService,
     private updateService: CheckForUpdateService
   ) {
 
