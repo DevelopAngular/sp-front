@@ -552,7 +552,7 @@ export class RequestCardComponent implements OnInit, OnDestroy {
 
     let studentPassLimitReached = false;
     const studentPassLimit = (await this.passLimitsService.getPassLimit().toPromise()).pass_limit;
-    if (studentPassLimit.limitEnabled) {
+    if (studentPassLimit?.limitEnabled) {
       const remainingPasses = (await this.passLimitsService.getRemainingLimits({studentId: this.request.student.id}).toPromise()).remainingPasses;
       studentPassLimitReached = remainingPasses === 0;
     }
@@ -606,6 +606,7 @@ export class RequestCardComponent implements OnInit, OnDestroy {
       concatMap((overrideRoomPassLimit) => {
         // Wait until the previous dialog is closed to perform these checks
         // If the room pass limit override is denied, then immediately return false and deny the pass request
+        console.log(`Override room pass limit: ${overrideRoomPassLimit}`);
         if (!overrideRoomPassLimit) {
           return of(false);
         }
