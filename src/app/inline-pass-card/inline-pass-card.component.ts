@@ -34,10 +34,10 @@ export class InlinePassCardComponent implements OnInit, OnDestroy {
   returnData: any = {};
   overlayWidth: string = '0px';
   buttonWidth: number = 288;
+  isExpiring: boolean;
 
   selectedDuration: number;
   selectedTravelType: string;
-  performingAction: boolean;
   subscribers$;
   endPassLoading$: Observable<boolean>;
 
@@ -81,6 +81,7 @@ export class InlinePassCardComponent implements OnInit, OnDestroy {
           const start: Date = this.pass.start_time;
           const dur: number = Math.floor((end.getTime() - start.getTime()) / 1000);
           this.overlayWidth = (this.buttonWidth * (diff / dur)) + 'px';
+          this.isExpiring = Date.now() > this.pass.expiration_time.getTime();
           return x;
       }
     })).subscribe(() => {

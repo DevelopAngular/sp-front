@@ -7,9 +7,11 @@ import {catchError, delay, exhaustMap, filter, map, mapTo, mergeMap, switchMap, 
 import {BUILD_DATE, RELEASE_NAME} from '../../build-info';
 import {environment} from '../../environments/environment';
 import {School} from '../models/School';
+import {Report} from '../models/Report';
 import {AppState} from '../ngrx/app-state/app-state';
 import {clearSchools, getSchools} from '../ngrx/schools/actions';
 import {getCurrentSchool, getLoadedSchools, getSchoolsCollection, getSchoolsLength} from '../ngrx/schools/states';
+import {getCurrentReportId} from '../ngrx/reports/states';
 import {GoogleLoginService, isCleverLogin, isDemoLogin, isGg4lLogin} from './google-login.service';
 import {StorageService} from './storage.service';
 import {SafeHtml} from '@angular/platform-browser';
@@ -188,6 +190,7 @@ export class HttpService implements OnDestroy {
       }),
       exhaustMap(() => this.schoolsCollection$.pipe(filter(s => !!s.length), take(1)))
   );
+  public langToggle$: Subject<string> = new Subject<string>();
   public schoolsCollection$: Observable<School[]> = this.store.select(getSchoolsCollection);
   public schoolsLoaded$: Observable<boolean> = this.store.select(getLoadedSchools);
   public currentUpdateSchool$: Observable<School> = this.store.select(getCurrentSchool);
@@ -195,6 +198,12 @@ export class HttpService implements OnDestroy {
 
   public currentSchoolSubject = new BehaviorSubject<School>(null);
   public currentSchool$: Observable<School> = this.currentSchoolSubject.asObservable();
+
+  public currentLangSubject = new BehaviorSubject<string>('en');
+  public currentLang$: Observable<string> = this.currentLangSubject.asObservable();
+  // should come from server 
+  public langs$: Observable<string[]> = of(['en', 'es']);
+
   public kioskTokenSubject$ = new BehaviorSubject<any>(null);
 
   public globalReload$ = this.currentSchool$.pipe(
@@ -271,6 +280,36 @@ export class HttpService implements OnDestroy {
             return;
           }
           this.currentSchoolSubject.next(null);
+          return;
+        });
+
+      this.langs$.pipe(
+            takeUntil(this.destroyed$),
+            filter(lang => !!lang),
+        )
+        .subscribe((langs) => {
+          const lang = this.storage.getItem('codelang');
+          if ( !!lang) {
+            if (langs.includes(lang)) {
+              this.currentLangSubject.next(lang);
+              //this.setLang((selectedLang);
+              return;
+            } else {
+              this.setLang(null);
+              return;
+            }
+          }
+          const chosenLang = this.currentLangSubject.getValue();
+          if (chosenLang !== null && langs.includes(chosenLang)) {
+            this.currentLangSubject.next(chosenLang);
+            return;
+          }
+
+          if (langs.length > 0) {
+            this.currentLangSubject.next(langs[0]);
+            return;
+          }
+          this.currentLangSubject.next(null);
           return;
         });
 
@@ -805,6 +844,19 @@ export class HttpService implements OnDestroy {
 
   getSchool() {
     return this.currentSchoolSubject.getValue();
+  }
+
+  setLang(lang: string) {
+    if (!!lang) {
+      this.storage.setItem('codelang', lang);
+    } else {
+      this.storage.removeItem('codelang');
+    }
+    this.currentLangSubject.next(lang);
+  }
+
+  getLang() {
+    return this.currentLangSubject.getValue();
   }
 
   getEffectiveUserId() {

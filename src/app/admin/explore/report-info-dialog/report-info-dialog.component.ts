@@ -2,11 +2,16 @@ import {Component, ElementRef, HostListener, Inject, OnDestroy, OnInit, ViewChil
 import {MAT_DIALOG_DATA, MatDialogRef} from '@angular/material/dialog';
 import {Subject} from 'rxjs';
 
-import {Report} from '../../../models/Report';
+import {Report, ReportDataUpdate} from '../../../models/Report';
+import {HallPass} from '../../../models/HallPass';
+import {PassLike} from '../../../models';
+import {ReportUpdateService} from '../../../services/report-update.service';
+import {AdminService} from '../../../services/admin.service';
+import {TimeService} from '../../../services/time.service';
 import {PdfGeneratorService} from '../../pdf-generator.service';
 
 import * as moment from 'moment';
-import {takeUntil} from 'rxjs/operators';
+import {takeUntil, switchMap} from 'rxjs/operators';
 
 declare const window;
 
@@ -20,6 +25,7 @@ export class ReportInfoDialogComponent implements OnInit, OnDestroy {
   @ViewChild('content') content: ElementRef;
 
   report: Report;
+  isReportedPassActive: boolean | null = null;
   showBottomShadow: boolean = true;
 
   pdfUrl: string;
@@ -38,8 +44,11 @@ export class ReportInfoDialogComponent implements OnInit, OnDestroy {
   constructor(
     @Inject(MAT_DIALOG_DATA) public data: any,
     private dialogRef: MatDialogRef<ReportInfoDialogComponent>,
-    private pdfService: PdfGeneratorService
-  ) { }
+    private pdfService: PdfGeneratorService,
+    private reportUpdateService: ReportUpdateService,
+    private adminService: AdminService,
+    private timeService: TimeService,
+  ) {}
 
   get dateFormat() {
     return moment(this.report.created).format('MMM DD, YYYY') + ' at ' + moment(this.report.created).format('hh:mm A');
@@ -47,7 +56,51 @@ export class ReportInfoDialogComponent implements OnInit, OnDestroy {
 
   ngOnInit(): void {
     this.report = this.data['report'];
+
+    if (this.report.reported_pass_id) {
+      // reported pass is always a HallPass
+      let pass : HallPass | null;
+      if (this.report.reported_pass instanceof HallPass) {
+        pass = this.report.reported_pass;
+      } else {
+        try {
+          pass = HallPass.fromJSON(this.report.reported_pass);
+        } catch(e) {
+          console.log(e);
+        }
+      }
+
+      if (pass instanceof HallPass) {
+        // change reported_pass from being an 'object type' to a "HallPass'
+        // to properly initialize the pass tile
+        this.report.reported_pass = pass;
+        let isActive = false; 
+        const now = this.timeService.nowDate();
+        isActive = 
+          new Date(pass.start_time).getTime() <= now.getTime() && 
+          now.getTime() < new Date(pass.end_time).getTime();
+        this.isReportedPassActive = isActive;
+      }
+    }
+
     this.generatePDF();
+
+    this.reportUpdateService.notifier()
+      .pipe(
+        takeUntil(this.destroy$),
+        switchMap(v => this.updateReport(v)), 
+      )
+      .subscribe();
+  }
+
+  // wrapper for an external function available on object window
+  // it will open reported pass
+  // it is set to window by parent component explore-component
+  // TODO should be that a service?
+  reportedPassClick() {
+    if (window?.reportedPassClick) {
+      window.reportedPassClick(this.report.reported_pass.id);
+    }
   }
 
   ngOnDestroy() {
@@ -58,6 +111,11 @@ export class ReportInfoDialogComponent implements OnInit, OnDestroy {
   close() {
     this.dialogRef.close();
   }
+
+  updateReport(updata: ReportDataUpdate) {
+    return this.adminService.updateReportRequest(updata);
+  }
+  
 
   generatePDF() {
     const report = {

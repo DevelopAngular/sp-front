@@ -73,20 +73,21 @@
           </ng-template>
 
           <app-square-button
+            class="report-student-button"
             [backgroundColor]="'#edcbd9'"
             (buttonClick)="openReportForm()"
             customToolTip
-            [contentTemplate]="tooltip"
+            [contentTemplate]="reportStudentTooltip"
             [nonDisappearing]="false"
             [editable]="true"
             [width]="'40px'"
             [height]="'40px'"
           >
-            <ng-template #tooltip>
-              <div class="ds-tooltip">
-                Report Student
-              </div>
-            </ng-template>
+          <ng-template #reportStudentTooltip>
+            <div class="ds-tooltip">
+              Report a student
+            </div>
+          </ng-template>
             <img width="20" [src]="'./assets/Report (Red).svg' | resolveAsset">
           </app-square-button>
 

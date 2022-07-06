@@ -98,6 +98,7 @@
             [currentPage]="currentPage"
             [passLimit]="getPassLimit(choice)"
             (onSelect)="choiceSelected($event)"
+            [disabledRoom]="!choice.enable"
             (onStar)="star($event)"
             [allowOnStar]="allowOnStar"
             [value]="normalizeLocations(choice)"

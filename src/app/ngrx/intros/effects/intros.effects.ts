@@ -24,6 +24,9 @@ export class IntrosEffects {
       );
   });
 
+  // TODO: Create a function that creates effects
+  // The only thing that changes in most of these is a simple object key
+  // Definitely lots of room for refactoring here
   updateIntrosMain$ = createEffect(() => {
     return this.action$
       .pipe(
@@ -58,7 +61,7 @@ export class IntrosEffects {
                 const updatedData = {
                   ...action.intros,
                   referral_reminder: {
-                  [action.device]: {seen_version: action.version}
+                    [action.device]: {seen_version: action.version}
                   }
                 };
                 return introsActions.updateIntrosSuccess({data: updatedData});
@@ -101,7 +104,7 @@ export class IntrosEffects {
               map(data => {
                 const updatedData = {
                   ...action.intros,
-                  encounter_reminder: {
+                  search_reminder: {
                     [action.device]: {seen_version: action.version}
                   }
                 };
@@ -113,9 +116,76 @@ export class IntrosEffects {
       );
   });
 
+  updateIntrosDisableRoom$ = createEffect(() => {
+    return this.action$
+      .pipe(
+        ofType(introsActions.updateIntrosDisableRoom),
+        switchMap((action) => {
+          return this.userService.updateIntrosDisableRoom(action.device, action.version)
+            .pipe(
+              map(data => {
+                const updatedData = {
+                  ...action.intros,
+                  disable_room_reminder: {
+                    [action.device]: {seen_version: action.version}
+                  }
+                };
+                return introsActions.updateIntrosDisableRoomSuccess({data: updatedData});
+              }),
+              catchError(error => of(introsActions.updateIntrosDisableRoomFailure({errorMessage: error.message})))
+            );
+        })
+      );
+  });
+
+  updateIntroStudentPassLimit$ = createEffect(() => {
+    return this.action$
+      .pipe(
+        ofType(introsActions.updateIntrosStudentPassLimits),
+        switchMap((action) => {
+          return this.userService.updateIntrosStudentPassLimit(action.device, action.version)
+            .pipe(
+              map(data => {
+                const updatedData = {
+                  ...action.intros,
+                  student_pass_limit: {
+                    [action.device]: {seen_version: action.version}
+                  }
+                };
+                return introsActions.updateIntrosStudentPassLimitsSuccess({data: updatedData});
+              }),
+              catchError(error => of(introsActions.updateIntrosStudentPassLimitsFailure({errorMessage: error.message})))
+            );
+        })
+      );
+  });
+
+  updateIntroAdminPassLimitsMessage$ = createEffect(() => {
+    return this.action$
+      .pipe(
+        ofType(introsActions.updateIntrosAdminPassLimitsMessage),
+        switchMap((action) => {
+          return this.userService.updateIntrosAdminPassLimitMessage(action.device, action.version)
+            .pipe(
+              map(data => {
+                const updatedData = {
+                  ...action.intros,
+                  admin_pass_limit_message: {
+                    [action.device]: {seen_version: action.version}
+                  }
+                };
+                return introsActions.updateIntrosAdminPassLimitsMessageSuccess({data: updatedData});
+              }),
+              catchError(error => of(introsActions.updateIntrosAdminPassLimitsMessageFailure({errorMessage: error.message})))
+            );
+        })
+      );
+  });
+
   constructor(
     private action$: Actions,
     private userService: UserService
-  ) {}
+  ) {
+  }
 
 }

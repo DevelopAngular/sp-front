@@ -7,6 +7,7 @@ export class HallPass extends BaseModel {
   constructor(public id: string,
               public student: User,
               public issuer: User,
+              public reported_pass_id: number | null,
               public created: Date,
               public last_updated: Date,
               public start_time: Date,
@@ -37,6 +38,7 @@ export class HallPass extends BaseModel {
     const id: string = '' + JSON['id'],
       student: User = User.fromJSON(JSON['student']),
       issuer: User = User.fromJSON(JSON['issuer']),
+      reported_pass_id: number | null = JSON['reported_pass_id'] ?? null,
       created: Date = new Date(JSON['created']),
       last_updated: Date = new Date(JSON['last_updated']),
       start_time: Date = new Date(JSON['start_time']),
@@ -55,8 +57,8 @@ export class HallPass extends BaseModel {
       cancellable_by_student: boolean = !!JSON['cancellable_by_student'],
       issuer_message: string = JSON['issuer_message'];
 
-    const pass =  new HallPass(id, student, issuer, created,
-      last_updated, start_time, expiration_time,
+    const pass =  new HallPass(id, student, issuer, reported_pass_id,
+      created, last_updated, start_time, expiration_time,
       end_time, origin, destination, travel_type,
       gradient_color, icon, color_profile, flow_start,
       parent_invitation, parent_request, cancelled, issuer_message, cancellable_by_student);

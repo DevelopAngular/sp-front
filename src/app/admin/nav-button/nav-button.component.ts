@@ -1,5 +1,7 @@
 import {Component, EventEmitter, Input, OnChanges, OnInit, Output} from '@angular/core';
+import { Subscription } from 'rxjs';
 import {DarkThemeSwitch} from '../../dark-theme-switch';
+import { ComponentsService } from '../../services/components.service';
 
 @Component({
   selector: 'app-nav-button',
@@ -11,6 +13,8 @@ export class NavButtonComponent implements OnInit, OnChanges {
   @Input() icon: string;
   @Input() content: string;
   @Input() selected: boolean = false;
+  @Input() isExpand: boolean = false;
+  @Input() button:  any  = {};
 
   @Output() selectedButton: EventEmitter<any> = new EventEmitter();
   @Output() onClick: EventEmitter<any> = new EventEmitter();
@@ -21,8 +25,13 @@ export class NavButtonComponent implements OnInit, OnChanges {
     return this.selected ? '#00B476' : this.darkTheme.isEnabled$.value ? '#FFFFFF' : ' #7E879D';
   }
 
+  get iconColor() {
+    return this.selected ? '(Green)' : '(Blue-Gray)';
+  }
+
   constructor(
     private darkTheme: DarkThemeSwitch,
+    private componentService: ComponentsService
   ) { }
 
   ngOnInit() {
@@ -36,6 +45,13 @@ export class NavButtonComponent implements OnInit, OnChanges {
   }
 
   doClick() {
+    // if (this.button.id == 'explore') {
+    //   this.onClick.emit(this.selected);
+    //   setTimeout(() => {
+    //     this.componentService.sendClickEvent();
+    //   }, 100);
+    //   return;
+    // }
     this.onClick.emit(this.selected);
   }
 

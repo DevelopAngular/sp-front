@@ -2,6 +2,7 @@ import {Injectable} from '@angular/core';
 
 import {HttpService} from './http-service';
 import {School} from '../models/School';
+import {ReportDataUpdate} from '../models/Report';
 import {Observable, of, Subject} from 'rxjs';
 import {GSuiteOrgs} from '../models/GSuiteOrgs';
 import {AppState} from '../ngrx/app-state/app-state';
@@ -9,6 +10,7 @@ import {Store} from '@ngrx/store';
 import {
   getAddedReports,
   getFoundReports,
+  getCurrentReport, 
   getIsLoadedReports,
   getIsLoadingReports,
   getReportsCollection,
@@ -16,7 +18,7 @@ import {
   getReportsLength,
   getReportsNextUrl
 } from '../ngrx/reports/states/reports-getters.state';
-import {getMoreReports, getReports, postReport, searchReports} from '../ngrx/reports/actions';
+import {getMoreReports, getReports, postReport, searchReports, patchReport} from '../ngrx/reports/actions';
 import {getCountAccountsResult} from '../ngrx/accounts/nested-states/count-accounts/state/count-accouns-getters.state';
 import {getCountAccounts} from '../ngrx/accounts/nested-states/count-accounts/actions';
 import {getDashboardData} from '../ngrx/dashboard/actions';
@@ -58,6 +60,7 @@ export class AdminService {
     length: this.store.select(getReportsLength),
     foundReports: this.store.select(getFoundReports),
     addedReports: this.store.select(getAddedReports),
+    currentReport$: this.store.select(getCurrentReport),
     nextUrl$: this.store.select(getReportsNextUrl),
     entities$: this.store.select(getReportsEntities)
   };
@@ -106,6 +109,18 @@ export class AdminService {
 
   sendReport(data) {
     return this.http.post('v1/event_reports/bulk_create', data);
+  }
+
+  updateReportRequest(updata: ReportDataUpdate) {
+    this.store.dispatch(patchReport({updata}));
+    return this.reports.currentReport$;
+  }
+
+  updateReport(updata: ReportDataUpdate) {
+    const id = updata.id;
+    delete updata.id;
+    const data = {...updata};
+    return this.http.patch(`v1/event_reports/${id}`, data);
   }
 
   searchReportsRequest(before, after) {

@@ -1,5 +1,6 @@
 import {
   AfterViewInit,
+  ChangeDetectorRef,
   Component,
   ElementRef,
   EventEmitter,
@@ -18,15 +19,20 @@ import {User} from '../../models/User';
 import {UserService} from '../../services/user.service';
 import {MatDialog, MatDialogRef} from '@angular/material/dialog';
 import {SettingsComponent} from '../settings/settings.component';
-import {filter, map, pluck, takeUntil} from 'rxjs/operators';
+import {filter, map, pluck, takeUntil, tap} from 'rxjs/operators';
 import {DarkThemeSwitch} from '../../dark-theme-switch';
 import {UNANIMATED_CONTAINER} from '../../consent-menu-overlay';
 import {KeyboardShortcutsService} from '../../services/keyboard-shortcuts.service';
 import {SpAppearanceComponent} from '../../sp-appearance/sp-appearance.component';
+import {SpLanguageComponent} from '../../sp-language/sp-language.component';
 import {MyProfileDialogComponent} from '../../my-profile-dialog/my-profile-dialog.component';
 
 import * as moment from 'moment';
 import {DeviceDetection} from '../../device-detection.helper';
+import { PagesDialogComponent } from '../explore/pages-dialog/pages-dialog.component';
+import { View } from '../explore/explore.component';
+import { StorageService } from '../../services/storage.service';
+import { ComponentsService } from '../../services/components.service';
 
 declare const window;
 
@@ -45,14 +51,24 @@ export class NavComponent implements OnInit, AfterViewInit, OnDestroy {
 
   // gettingStarted = {title: '', route : 'gettingstarted', type: 'routerLink', imgUrl : 'Lamp', requiredRoles: ['_profile_admin']};
   buttons = [
-    {title: 'Dashboard', route : 'dashboard', type: 'routerLink', imgUrl : 'Dashboard', requiredRoles: ['_profile_admin', 'access_admin_dashboard']},
-    {title: 'Hall Monitor', route : 'hallmonitor', type: 'routerLink', imgUrl : 'Walking', requiredRoles: ['_profile_admin', 'admin_hall_monitor']},
-    // {title: 'Search', route : 'search', type: 'routerLink', imgUrl : 'SearchEye', requiredRoles: ['_profile_admin', 'access_admin_search']},
-    {title: 'Explore', route : 'explore', type: 'routerLink', imgUrl : 'SearchEye', requiredRoles: ['_profile_admin', 'access_admin_search']},
-    {title: 'Rooms', route : 'passconfig', type: 'routerLink', imgUrl : 'Rooms', requiredRoles: ['_profile_admin', 'access_pass_config']},
-    {title: 'Accounts', route : 'accounts', type: 'routerLink', imgUrl : 'Users', requiredRoles: ['_profile_admin', 'access_user_config']},
-    {title: 'My School', route : 'myschool', type: 'routerLink', imgUrl : 'School', requiredRoles: ['_profile_admin', 'manage_school']}
+    {title: 'Dashboard', id:'dashboard', route : 'dashboard', type: 'routerLink', imgUrl : 'Dashboard', requiredRoles: ['_profile_admin', 'access_admin_dashboard']},
+    {title: 'Hall Monitor', id:'hallMonitor', route : 'hallmonitor', type: 'routerLink', imgUrl : 'Walking', requiredRoles: ['_profile_admin', 'admin_hall_monitor']},
+    // {title: 'Search', id:'dashboard', route : 'search', type: 'routerLink', imgUrl : 'SearchEye', requiredRoles: ['_profile_admin', 'access_admin_search']},
+    {title: 'Explore', id:'explore', route : 'explore', type: 'openMenu', imgUrl : 'SearchEye', requiredRoles: ['_profile_admin', 'access_admin_search'], isExpand: true},
+    {title: 'Rooms', id:'rooms', route : 'passconfig', type: 'routerLink', imgUrl : 'Rooms', requiredRoles: ['_profile_admin', 'access_pass_config']},
+    {title: 'Accounts', id:'accounts', route : 'accounts', type: 'routerLink', imgUrl : 'Users', requiredRoles: ['_profile_admin', 'access_user_config']},
+    {title: 'My School', id:'mySchool', route : 'myschool', type: 'routerLink', imgUrl : 'School', requiredRoles: ['_profile_admin', 'manage_school']},
+    // {title: 'ID Cards', id:'idCards', route : 'idcards', type: 'routerLink', imgUrl : 'IDCards', requiredRoles: ['_profile_admin', 'manage_school']}
   ];
+
+  views: View = {
+    'pass_search': {id: 1, title: 'Passes', color: '#00B476', icon: 'Pass Search', action: 'pass_search'},
+    'report_search': {id: 2, title: 'Report Submissions', color: '#E32C66', icon: 'Report Search', action: 'report_search'},
+    'contact_trace': {id: 3, title: 'Contact trace', color: '#139BE6', icon: 'Contact Trace', action: 'contact_trace'},
+    // 'rooms_usage': {id: 4, title: 'Rooms Usage', color: 'orange', icon: 'Rooms Usage', action: 'rooms_usage'}
+  };
+
+  currentView$: BehaviorSubject<string> = new BehaviorSubject<string>(this.storage.getItem('explore_page') || 'pass_search');
 
   // progress = 0;
 
@@ -79,6 +95,9 @@ export class NavComponent implements OnInit, AfterViewInit, OnDestroy {
         private _zone: NgZone,
         public darkTheme: DarkThemeSwitch,
         private shortcutsService: KeyboardShortcutsService,
+        private storage: StorageService,
+        private cdr: ChangeDetectorRef,
+        private componentService: ComponentsService
     ) { }
 
   get pointerTopSpace() {
@@ -191,11 +210,40 @@ export class NavComponent implements OnInit, AfterViewInit, OnDestroy {
           window.open(button.link);
         }
         break;
+      case 'openMenu':
+        // this.tab = ['admin', button.route];
+        if (button.id == 'explore') {
+          const pagesDialog = this.dialog.open(PagesDialogComponent, {
+            panelClass: 'consent-dialog-container',
+            backdropClass: 'invis-backdrop',
+            data: {
+              // 'trigger': event.currentTarget,
+              'trigger': document.getElementById('explore'),
+              'pages': Object.values(this.views),
+              'selectedPage': this.views[this.currentView$.getValue()]
+            }
+          });
+      
+          pagesDialog.afterClosed()
+            .pipe(
+              tap(() => UNANIMATED_CONTAINER.next(false)),
+              filter(res => !!res)
+            )
+            .subscribe(action => {
+              this.tab = ['admin', button.route];
+              this.router.navigate(this.tab);
+              this.componentService.sendClickEvent(action);
+              this.currentView$.next(action);
+              this.storage.setItem('explore_page', action);
+              this.cdr.detectChanges();
+          });
+        }
+        // this.router.navigate(this.tab);
+        break;
     }
   }
 
   openSettings(event) {
-
     if (!this.selectedSettings) {
       this.selectedSettings = true;
       const target = new ElementRef(event.currentTarget);
@@ -231,6 +279,10 @@ export class NavComponent implements OnInit, AfterViewInit, OnDestroy {
           window.open('https://smartpass.app/about');
         } else if (action === 'appearance') {
           this.dialog.open(SpAppearanceComponent, {
+            panelClass: 'sp-form-dialog',
+          });
+        } else if (action === 'language') {
+          this.dialog.open(SpLanguageComponent, {
             panelClass: 'sp-form-dialog',
           });
         } else if (action === 'wishlist') {

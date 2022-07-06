@@ -45,6 +45,7 @@ export interface RoomData {
     restricted: boolean;
     scheduling_restricted: boolean;
     advOptState: OptionState;
+    enable: boolean;
 }
 
 export interface FolderData {

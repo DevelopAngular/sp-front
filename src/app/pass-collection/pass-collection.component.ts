@@ -91,7 +91,6 @@ export class PassCollectionComponent implements OnInit, OnDestroy {
 
   currentPasses$: Observable<any>;
   activePassTime$;
-  randomObject$: Observable<string>;
   search: string;
   timers: number[] = [];
   timerEvent: Subject<void> = new BehaviorSubject(null);
@@ -312,6 +311,7 @@ export class PassCollectionComponent implements OnInit, OnDestroy {
         forStaff: this.forStaff,
       };
     }
+    if (data.isActive) data.hideReport = true;
     const dialogRef = this.dialog.open(PassCollectionComponent.getDetailDialog(pass), {
       panelClass: (this.forStaff ? 'teacher-' : 'student-') + 'pass-card-dialog-container',
       backdropClass: 'custom-backdrop',
@@ -325,7 +325,7 @@ export class PassCollectionComponent implements OnInit, OnDestroy {
           width: '425px',
           height: '500px',
           panelClass: 'form-dialog-container',
-          backdropClass: 'custom-backdrop',
+          backdropClass: 'cdk-overlay-transparent-backdrop',
           data: {'report': dialogData['report']}
         });
       }

@@ -43,11 +43,13 @@
 
 .toasts-wrapper {
   //position: absolute;
+  position: relative;
+  pointer-events: none;
   //top: 0;
   //bottom: 0;
   //right: 0;
   //left: 0;
-  //z-index: 9999999999999;
+  z-index: 9999999999999;
   .toasts {
     position: relative;
 

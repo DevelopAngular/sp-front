@@ -10,8 +10,21 @@ import {
   ViewChild
 } from '@angular/core';
 import {MatDialog} from '@angular/material/dialog';
-import {BehaviorSubject, combineLatest, interval, merge, Observable, of, Subject} from 'rxjs';
-import {filter, map, pluck, publishReplay, refCount, startWith, switchMap, take, takeUntil, withLatestFrom} from 'rxjs/operators';
+import {BehaviorSubject, combineLatest, forkJoin, interval, merge, Observable, of, Subject} from 'rxjs';
+import {
+  catchError,
+  concatMap,
+  filter,
+  map,
+  pluck,
+  publishReplay,
+  refCount,
+  startWith,
+  switchMap,
+  take,
+  takeUntil,
+  withLatestFrom
+} from 'rxjs/operators';
 import {CreateFormService} from '../create-hallpass-forms/create-form.service';
 import {CreateHallpassFormsComponent} from '../create-hallpass-forms/create-hallpass-forms.component';
 import {LiveDataService} from '../live-data/live-data.service';
@@ -39,6 +52,8 @@ import {SideNavService} from '../services/side-nav.service';
 import {StartPassNotificationComponent} from './start-pass-notification/start-pass-notification.component';
 import {LocationsService} from '../services/locations.service';
 import * as moment from 'moment';
+import {PassLimitService} from '../services/pass-limit.service';
+import {PassLimitInfo} from '../models/HallPassLimits';
 import {CheckForUpdateService} from '../services/check-for-update.service';
 
 @Component({
@@ -138,6 +153,9 @@ export class PassesComponent implements OnInit, AfterViewInit, OnDestroy {
 
   user$: Observable<User>;
   user: User;
+  maxPasses: number;
+  remainingPasses: number;
+  passLimitInfo: PassLimitInfo;
   isStaff = false;
   currentScrollPosition: number;
 
@@ -227,11 +245,12 @@ export class PassesComponent implements OnInit, AfterViewInit, OnDestroy {
     private scrollPosition: ScrollPositionService,
     private userService: UserService,
     private shortcutsService: KeyboardShortcutsService,
-    private  notificationButtonService: NotificationButtonService,
+    private notificationButtonService: NotificationButtonService,
     private httpService: HttpService,
     private passesService: HallPassesService,
     private sideNavService: SideNavService,
     private locationsService: LocationsService,
+    private passLimits: PassLimitService
     private updateService: CheckForUpdateService
   ) {
 
@@ -259,7 +278,7 @@ export class PassesComponent implements OnInit, AfterViewInit, OnDestroy {
           this.receivedRequests = this.liveDataService.requests$;
           this.sentRequests = this.liveDataService.invitations$;
         }
-    });
+      });
 
     this.isActivePass$ = combineLatest(this.currentPass$, this.timeService.now$, (pass, now) => {
       return pass !== null
@@ -275,10 +294,12 @@ export class PassesComponent implements OnInit, AfterViewInit, OnDestroy {
 
     this.dataService.currentUser.pipe(
       takeUntil(this.destroy$),
+
       switchMap((user: User) => {
-        return user.roles.includes('hallpass_student') ? this.liveDataService.watchActivePassLike(user) : of(null);
-      }
-    ))
+          console.log(user);
+          return user.roles.includes('hallpass_student') ? this.liveDataService.watchActivePassLike(user) : of(null);
+        }
+      ))
       .subscribe(passLike => {
         this._zone.run(() => {
           if ((passLike instanceof HallPass || passLike instanceof Request) && this.currentScrollPosition) {
@@ -329,6 +350,9 @@ export class PassesComponent implements OnInit, AfterViewInit, OnDestroy {
     this.futurePasses = this.liveDataService.futurePasses$;
     this.activePasses = this.getActivePasses();
     this.pastPasses = this.liveDataService.expiredPasses$;
+    this.requestPassLimitsInfo(this.user.id).subscribe(info => {
+      this.passLimitInfo = info;
+    });
     this.expiredPassesSelectedSort$ = this.passesService.passFilters$.pipe(
       filter(res => !!res),
       map(filters => {
@@ -364,10 +388,10 @@ export class PassesComponent implements OnInit, AfterViewInit, OnDestroy {
       this.liveDataService.invitationsTotalNumber$,
       this.liveDataService.invitationsLoaded$,
       (length1, loaded1, length2, loaded2) => {
-            if (loaded1 && loaded2) {
-              return (length1 + length2) > 0;
-            }
-          }
+        if (loaded1 && loaded2) {
+          return (length1 + length2) > 0;
+        }
+      }
     );
 
     this.inboxLoaded = combineLatest(
@@ -434,13 +458,17 @@ export class PassesComponent implements OnInit, AfterViewInit, OnDestroy {
         data: {
           'forLater': forLater,
           'forStaff': this.isStaff,
-          'forInput': true
+          'forInput': true,
         }
       });
 
-      mainFormRef.afterClosed().subscribe(res => {
-        this.isOpenedModal = false;
-      });
+      mainFormRef
+        .afterClosed()
+        .pipe(concatMap(() => this.requestPassLimitsInfo(this.user.id)))
+        .subscribe(passLimitInfo => {
+          this.isOpenedModal = false;
+          this.passLimitInfo = passLimitInfo;
+        });
     }
   }
 
@@ -480,5 +508,42 @@ export class PassesComponent implements OnInit, AfterViewInit, OnDestroy {
     } else {
       this.filterPasses(collection, null);
     }
+  }
+
+  private requestPassLimitsInfo(id: string): Observable<PassLimitInfo> {
+    const current = this.passLimits.getRemainingLimits({studentId: id}).pipe(
+      take(1),
+      map(r => {
+        if (r.remainingPasses === -1) { // no pass limits enabled
+          throw new Error('no pass limits enabled');
+        }
+
+        this.remainingPasses = r.remainingPasses;
+        return r.remainingPasses;
+      })
+    );
+
+    const max = this.passLimits.getPassLimit().pipe(
+      take(1),
+      map(l => {
+        if (l.pass_limit === null) {
+          throw new Error('no pass limits enabled');
+        }
+        this.maxPasses = l.pass_limit.passLimit;
+        return l.pass_limit.passLimit;
+      })
+    );
+
+    const request = this.user.roles.includes('hallpass_student')
+      ? forkJoin({
+        current,
+        max,
+        showPasses: of(true)
+      })
+      : of({showPasses: false});
+
+    return request.pipe(catchError(() => {
+      return of({showPasses: false});
+    }));
   }
 }

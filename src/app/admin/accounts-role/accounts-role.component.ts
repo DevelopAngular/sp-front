@@ -22,7 +22,6 @@ import {ToastService} from '../../services/toast.service';
 
 export const TABLE_RELOADING_TRIGGER =  new Subject<any>();
 
-
 @Component({
   selector: 'app-accounts-role',
   templateUrl: './accounts-role.component.html',
@@ -72,9 +71,7 @@ export class AccountsRoleComponent implements OnInit, OnDestroy {
     private sanitizer: DomSanitizer,
     private storage: StorageService,
     private toast: ToastService
-  ) {
-
-  }
+  ) {}
 
   ngOnInit() {
     this.schools$ = this.http.schoolsCollection$;
@@ -266,15 +263,15 @@ export class AccountsRoleComponent implements OnInit, OnDestroy {
     let objectToTable;
     if (this.role === '_profile_admin' || this.role === '_profile_student') {
       objectToTable = {...roleObject, ...{
-          'Status': `<span class="status">${account.status}</span>`,
+          'Status': this.sanitizer.bypassSecurityTrustHtml(`<span class="status">${account.status}</span>`),
           'Last sign-in': account.last_login && account.last_login !== new Date() ? Util.formatDateTime(new Date(account.last_login)) : 'Never signed in',
           'Type': account.demo_account ? 'Demo' : account.sync_types[0] === 'google' ? 'G Suite' : (account.sync_types[0] === 'gg4l' ? 'GG4L' : account.sync_types[0] === 'clever' ? 'Clever' : 'Standard'),
           'Permissions': `<div class="no-wrap">` + permissions + `</div>`
       }};
     } else if (this.role === '_profile_teacher') {
       objectToTable = {...roleObject, ...{
-          'rooms': this.sanitizer.bypassSecurityTrustHtml(`<div class="no-wrap">` + (account.assignedTo && account.assignedTo.length ? uniqBy(account.assignedTo, 'title').map((room: any) => room.title).join(', ') : 'No rooms assigned') + `</div>`),
-          'Status': `<span class="status">${account.status}</span>`,
+          'rooms': this.sanitizer.bypassSecurityTrustHtml(`<div class="no-wrap">` + (account.assignedTo && account.assignedTo.length ? uniqBy(account.assignedTo, 'id').map((room: any) => room.title).join(', ') : 'No rooms assigned') + `</div>`),
+          'Status': this.sanitizer.bypassSecurityTrustHtml(`<span class="status">${account.status}</span>`),
           'Last sign-in': account.last_login ? Util.formatDateTime(new Date(account.last_login)) : 'Never signed in',
           'Type': account.demo_account ? 'Demo' : account.sync_types[0] === 'google' ? 'G Suite' : (account.sync_types[0] === 'gg4l' ? 'GG4L' : account.sync_types[0] === 'clever' ? 'Clever' : 'Standard'),
           'Permissions': `<div class="no-wrap">` + permissions + `</div>`
@@ -284,7 +281,7 @@ export class AccountsRoleComponent implements OnInit, OnDestroy {
           'Acting on Behalf Of': this.sanitizer.bypassSecurityTrustHtml(`<div class="no-wrap">` + (account.canActingOnBehalfOf && account.canActingOnBehalfOf.length ? account.canActingOnBehalfOf.map((u: RepresentedUser) => {
             return `${u.user.display_name} (${u.user.primary_email.slice(0, u.user.primary_email.indexOf('@'))})`;
           }).join(', ') : 'No Teachers') + `</div>`),
-          'Status': `<span class="status">${account.status}</span>`,
+          'Status': this.sanitizer.bypassSecurityTrustHtml(`<span class="status">${account.status}</span>`),
           'Last sign-in': account.last_login && account.last_login !== new Date() ? Util.formatDateTime(new Date(account.last_login)) : 'Never signed in',
           'Type': account.demo_account ? 'Demo' : account.sync_types[0] === 'google' ? 'G Suite' : (account.sync_types[0] === 'gg4l' ? 'GG4L' : account.sync_types[0] === 'clever' ? 'Clever' : 'Standard'),
           'Permissions': `<div class="no-wrap">` + permissions + `</div>`
@@ -343,7 +340,7 @@ export class AccountsRoleComponent implements OnInit, OnDestroy {
     this.userService.getMoreUserListRequest(this.role);
   }
 
-  sortingTable(sortColumn) {
+  sortingTable(sortColumn: string) {
     const queryParams: any = {};
     this.sortingColumn = sortColumn;
     this.sortLoading$.next(true);
@@ -356,6 +353,9 @@ export class AccountsRoleComponent implements OnInit, OnDestroy {
             break;
           case 'Email/username':
             queryParams.sort = sort && sort === 'asc' ? '-email' : 'email';
+            break;
+          case 'Status':
+            queryParams.sort = sort && sort === 'asc' ? '-status' : 'status';
             break;
           case 'Last sign-in':
             queryParams.sort = sort && sort === 'asc' ? '-last_sign_in' : 'last_sign_in';
@@ -370,9 +370,13 @@ export class AccountsRoleComponent implements OnInit, OnDestroy {
             this.sortLoading$.next(false);
             return;
         }
-        if (sort === 'desc') {
-          delete queryParams.sort;
-        }
+        // in accounts.effects handling sort is bellow 
+        //const sortValue = action.queryParams.sort ? action.queryParams.sort.includes('-') ? 'desc' : 'asc' : '';
+        // the following code ignore intention 'desc' as accounts.effects will consider missing sort as 'no sort'
+        // it is not corect to replace sort desc with no sort 
+        //if (sort === 'desc') {
+          //delete queryParams.sort;
+        //}
         queryParams.limit = 50;
         queryParams.role = this.role;
         this.userService.sortTableHeaderRequest(this.role, queryParams);
