@@ -10,14 +10,14 @@ import {
   ViewChild
 } from '@angular/core';
 import {User} from '../models/User';
-import {MatDialog, MatDialogRef} from '@angular/material/dialog';
+import {MatDialog, MatDialogRef, MatDialogState} from '@angular/material/dialog';
 import {HallPassesService} from '../services/hall-passes.service';
 import {Observable, Subject, Subscription} from 'rxjs';
 import {QuickPreviewPasses} from '../models/QuickPreviewPasses';
 import {UserService} from '../services/user.service';
 import {School} from '../models/School';
 import {HallPass} from '../models/HallPass';
-import {filter, map, switchMap, take, takeUntil, tap} from 'rxjs/operators';
+import {concatMap, filter, map, switchMap, take, takeUntil, tap} from 'rxjs/operators';
 import {UNANIMATED_CONTAINER} from '../consent-menu-overlay';
 import {SettingsDescriptionPopupComponent} from '../settings-description-popup/settings-description-popup.component';
 import {UserStats} from '../models/UserStats';
@@ -45,7 +45,7 @@ import {ProfilePictureComponent} from '../admin/accounts/profile-picture/profile
 import {DarkThemeSwitch} from '../dark-theme-switch';
 import {PassLimitsDialogComponent} from '../teacher/pass-limits-dialog/pass-limits-dialog.component';
 import {PassLimitService} from '../services/pass-limit.service';
-import {HallPassLimit} from '../models/HallPassLimits';
+import {HallPassLimit, IndividualPassLimit} from '../models/HallPassLimits';
 import {ConnectedPosition} from '@angular/cdk/overlay';
 import {IntroData} from '../ngrx/intros';
 import { IDCard } from '../admin/id-cards/id-card-editor/id-card-editor.component';
@@ -84,6 +84,8 @@ export class StudentInfoCardComponent implements OnInit, AfterViewInit, OnDestro
 
   school: School;
   passLimit: HallPassLimit;
+  individualLimit: IndividualPassLimit;
+  activePassLimit: number;
 
   adminCalendarOptions = {
     rangeId: 'range_6',
@@ -179,16 +181,22 @@ export class StudentInfoCardComponent implements OnInit, AfterViewInit, OnDestro
         switchMap((params) => {
           return this.userService.searchProfileById(params['id']);
         }),
+        concatMap(user => {
+          this.profile = user;
+          this.school = this.userService.getUserSchool();
+          this.passesService.getQuickPreviewPassesRequest(this.profile.id, true);
+          this.getUserStats();
+          this.studentStats$ = this.userService.studentsStats$.pipe(map(stats => stats[this.profile.id]));
+          this.encounterPreventionService.getExclusionGroupsRequest({student: this.profile.id});
+
+          return this.passLimitsService.getStudentPassLimit(this.profile.id);
+        }),
         takeUntil(this.destroy$)
       ).subscribe(res => {
-      this.profile = res;
-      this.school = this.userService.getUserSchool();
+      this.passLimit = res.schoolLimit;
+      this.individualLimit = res.individualLimit;
+      this.activePassLimit = res.activeLimit;
       this.cdr.detectChanges();
-      this.getUserStats();
-      this.passesService.getQuickPreviewPassesRequest(this.profile.id, true);
-      this.studentStats$ = this.userService.studentsStats$.pipe(map(stats => stats[this.profile.id]));
-
-      this.encounterPreventionService.getExclusionGroupsRequest({student: this.profile.id});
     });
     this.exclusionGroups$ = this.encounterPreventionService.exclusionGroups$;
     this.exclusionGroupsLoading$ = this.encounterPreventionService.exclusionGroupsLoading$;
@@ -211,8 +219,8 @@ export class StudentInfoCardComponent implements OnInit, AfterViewInit, OnDestro
     this.passLimitsService.watchPassLimits().subscribe({
       next: pl => {
         this.passLimit = pl;
-        if (this.passLimitDialogRef) {
-          this.passLimitDialogRef.componentInstance.data.passLimit = this.passLimit;
+        if (this.passLimitDialogRef && this.passLimitDialogRef.getState() === MatDialogState.OPEN) {
+          this.passLimitDialogRef.componentInstance.data.schoolPassLimit = this.passLimit;
         }
       }
     });
@@ -576,7 +584,8 @@ export class StudentInfoCardComponent implements OnInit, AfterViewInit, OnDestro
         height: '500px',
         data: {
           profile: this.profile,
-          passLimit: this.passLimit
+          schoolPassLimit: this.passLimit,
+          individualLimit: this.individualLimit
         }
       });
     }
@@ -584,7 +593,6 @@ export class StudentInfoCardComponent implements OnInit, AfterViewInit, OnDestro
 
   editWindow(event) {
     this.isOpenAvatarDialog = true;
-
     if (!this.userService.getUserSchool().profile_pictures_completed) {
       this.consentDialogOpen(this.editIcon.nativeElement);
     } else {
@@ -712,13 +720,17 @@ export class StudentInfoCardComponent implements OnInit, AfterViewInit, OnDestro
   dateText({start, end}): string {
     if (start.isSame(moment().subtract(3, 'days'), 'day')) {
       return 'Last 3 days';
-    } else if (start.isSame(moment().subtract(7, 'days'), 'day')) {
+    }
+    if (start.isSame(moment().subtract(7, 'days'), 'day')) {
       return 'Last 7 days';
-    } else if (start.isSame(moment().subtract(30, 'days'), 'day')) {
+    }
+    if (start.isSame(moment().subtract(30, 'days'), 'day')) {
       return 'Last 30 days';
-    } else if (start.isSame(moment().subtract(90, 'days'), 'day')) {
+    }
+    if (start.isSame(moment().subtract(90, 'days'), 'day')) {
       return 'Last 90 days';
-    } else if (start.isSame(moment('1/8/' + moment().subtract(1, 'year').year(), 'DD/MM/YYYY'))) {
+    }
+    if (start.isSame(moment('1/8/' + moment().subtract(1, 'year').year(), 'DD/MM/YYYY'))) {
       return 'This school year';
     }
     if (start && end) {

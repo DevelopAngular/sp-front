@@ -1,7 +1,7 @@
 import {Injectable} from '@angular/core';
 
-import {Observable} from 'rxjs';
-import {distinctUntilChanged, map} from 'rxjs/operators';
+import {forkJoin, Observable} from 'rxjs';
+import {distinctUntilChanged, map, take} from 'rxjs/operators';
 
 import {LiveDataService} from '../live-data/live-data.service';
 import {HttpService} from './http-service';
@@ -49,11 +49,28 @@ export class PassLimitService {
     );
   }
 
+  getIndividualLimit(studentId: string | number): Observable<IndividualPassLimit> {
+    return this.http.get(`${PASS_LIMIT_ENDPOINT}/individual_override?student_id=${studentId}`);
+  }
+
   getIndividualLimits(): Observable<IndividualPassLimit[]> {
     return this.http.get(`${PASS_LIMIT_ENDPOINT}/individual_overrides`);
   }
 
   createIndividualLimits(limit: IndividualPassLimitCollection) {
     return this.http.post(`${PASS_LIMIT_ENDPOINT}/create_override`, limit, undefined, false);
+  }
+
+  getStudentPassLimit(studentId: string | number): Observable<{ schoolLimit: HallPassLimit, individualLimit: IndividualPassLimit, activeLimit: number }> {
+    return forkJoin({
+      schoolLimit: this.getPassLimit().pipe(take(1)),
+      individualLimit: this.getIndividualLimit(studentId).pipe(take(1))
+    }).pipe(map(({schoolLimit, individualLimit}): any => {
+      return {
+        schoolLimit: schoolLimit.pass_limit,
+        individualLimit,
+        activeLimit: individualLimit.passLimit !== -1 ? individualLimit.passLimit : schoolLimit.pass_limit.passLimit
+      };
+    }));
   }
 }

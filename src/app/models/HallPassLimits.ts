@@ -19,6 +19,7 @@ export interface PassLimitInfo {
 }
 
 export interface IndividualPassLimit {
+  name: string;
   passLimit: number;
   description: string;
   studentId: number;
