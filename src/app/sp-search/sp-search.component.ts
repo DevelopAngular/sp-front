@@ -596,6 +596,7 @@ export class SPSearchComponent implements OnInit, OnDestroy {
   }
 
   reset() {
-    this.onUpdate.emit([]);
+    this.selectedOptions = [];
+    this.onUpdate.emit(undefined);
   }
 }

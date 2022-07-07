@@ -37,7 +37,7 @@ export class AdminPassLimitDialogComponent implements OnInit, OnDestroy {
   showInfoMessage = true; // TODO: hide this message based on database value in the future
   passLimitToggleTooltip = `Some help text about pass limits`; // TODO: Get text for this
   individualLimitsTooltip = `These override the school-wide pass limit on a per-student basis`; // TODO: Get text for this
-  individualStudentLimits: IndividualPassLimit[];
+  individualStudentLimits: IndividualPassLimit[] = [];
   hasPassLimit: boolean;
   passLimit: HallPassLimit;
   passLimitForm = new FormGroup({
@@ -129,7 +129,7 @@ export class AdminPassLimitDialogComponent implements OnInit, OnDestroy {
       map(v => JSON.stringify(v) !== JSON.stringify(this.individualFormPreviousValue))
     );
 
-    this.passLimitService.getIndividualLimits().subscribe(limits => this.individualStudentLimits = limits);
+    // this.passLimitService.getIndividualLimits().subscribe(limits => this.individualStudentLimits = limits);
   }
 
   // TODO: This is for when multiple pass frequencies are implemented
@@ -221,6 +221,9 @@ export class AdminPassLimitDialogComponent implements OnInit, OnDestroy {
   }
 
   private goToPage(pageNumber: number) {
+    if (pageNumber < 1) {
+      throw new Error('Page Numbers cannot be less than 1');
+    }
     this.dialogPages.selectedIndex = pageNumber - 1;
   }
 
@@ -228,7 +231,7 @@ export class AdminPassLimitDialogComponent implements OnInit, OnDestroy {
     this.goToPage(2);
   }
 
-  back() {
+  goToHomePage() {
     this.goToPage(1);
   }
 
@@ -238,9 +241,14 @@ export class AdminPassLimitDialogComponent implements OnInit, OnDestroy {
   }
 
   updateStudentList(selectedUsers: User[]) {
+    if (selectedUsers === undefined) {
+      this.individualOverrideForm.markAsPristine();
+      return;
+    }
     this.individualOverrideForm.removeControl('students');
     const controls = selectedUsers.map(u => new FormControl(u.id));
     this.individualOverrideForm.addControl('students', new FormArray(controls));
+    this.individualOverrideForm.markAsDirty();
   }
 
   submitIndividualLimits() {

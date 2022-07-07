@@ -1,21 +1,22 @@
-<ng-container [ngSwitch]="pageNumber">
-  <div class="sp-dialog wrapper" *ngSwitchCase="1" [@NextStep]="{ value: '', params: frameMotion$ | async}">
-    <div class="header" *ngIf="!(passLimitFormChanged | async); else changedFormHeader">
-      <div class="background-header"></div>
-      <img class="back-button" (click)="dialogRef.close()" [src]="'./assets/Back Button (Blue-White).svg' | resolveAsset">
-      <div class="title-header ds-flex-center-center" style="z-index: 10" [attr.data-motion-translate]="(frameMotion$ | async).direction">
-        <div class="pass-limit-white ds-flex-center-center" style="background: rgb(102, 81, 241); border-radius: 6px; padding: 7px">
-          <img style="width: 25px; height: 25px" [src]="'./assets/Pass Limit (White).svg' | resolveAsset" alt="">
+<mat-tab-group #tabGroup>
+  <mat-tab>
+    <div class="sp-dialog wrapper">
+      <div class="header" *ngIf="!(passLimitFormChanged | async); else changedFormHeader">
+        <div class="background-header"></div>
+        <img class="back-button" (click)="dialogRef.close()" [src]="'./assets/Back Button (Blue-White).svg' | resolveAsset">
+        <div class="title-header ds-flex-center-center" style="z-index: 10" [attr.data-motion-translate]="(frameMotion$ | async).direction">
+          <div class="pass-limit-white ds-flex-center-center" style="background: rgb(102, 81, 241); border-radius: 6px; padding: 7px">
+            <img style="width: 25px" [src]="'./assets/Pass Limit (White).svg' | resolveAsset" alt="">
+          </div>
+          <div class="ds-dialog-title" [style.margin-left]="'12px'">Pass Limits</div>
         </div>
-        <div class="ds-dialog-title" [style.margin-left]="'12px'">Pass Limits</div>
       </div>
-    </div>
 
     <ng-template #changedFormHeader>
       <div class="header" style="justify-content: space-around">
         <div class="background-header"></div>
         <app-gradient-button (buttonClick)="resetPassLimitsForm()" customBackground="#7083A0">Cancel</app-gradient-button>
-        <div class="title-header" style="z-index: 10; display: flex" [attr.data-motion-translate]="(frameMotion$ | async).direction">
+        <div class="title-header" style="z-index: 10; display: flex">
           <div class="ds-dialog-title" [style.margin-left]="'12px'">Pass Limits</div>
         </div>
         <app-gradient-button (buttonClick)="updatePassLimits()" customBackground="#00B476" textColor="white" [disabled]="passLimitForm.invalid">
@@ -81,68 +82,129 @@
           ></app-toggle-input>
         </div>
 
-        <div *ngIf="passLimitForm.value['limitEnabled']" style="display: flex; column-gap: 2px; flex-wrap: wrap;" class="ds-flex-row">
-          <app-input
-            [showUnits]="true"
-            [units]="passLimitForm?.value?.passLimit == '1' ? 'pass' : 'passes'"
-            width="150px"
-            placeholder="# of passes"
-            [formGroup]="passLimitForm"
-            [controlName]="passLimitForm.get('passLimit')"></app-input>
+        <ng-container *ngIf="passLimitForm.value['limitEnabled']">
+          <ng-template [ngTemplateOutlet]="passLimitInput" [ngTemplateOutletContext]="{formGroup: passLimitForm, control: passLimitForm.get('passLimit')}"></ng-template>
+        </ng-container>
 
-          <!-- TODO: Change this to dropdown when multiple frequencies are implemented -->
-          <app-gradient-button
-            id="passLimitFrequencyButton"
-            style="margin-top: 4px"
-            textColor="#000000"
-            gradient="#F4F4F4">
-            per day
-          </app-gradient-button>
-          <p style="width: 100%; opacity: 0.8; font-size: 12px" *ngIf="showLimitFormatError">Passes must be greater than 0 and must be a whole number</p>
+        <div class="accent-background-section ds-flex-column ds-flex-center-between" style="margin-bottom: 40px">
+          <span class="ds-section-header">
+            Limits for Individual Students
+             <div class="tooltip-container" style="display: inline">
+                <img
+                  [customToolTip]="individualLimitsTooltop"
+                  class="custom-tooltip-icon support-icon"
+                  [src]="'./assets/Support (Gray).svg' | resolveAsset">
+                <div class="arrow-down-container">
+                  <div class="arrow-down"></div>
+                </div>
+              </div>
+          </span>
+
+          <div class="individual-limits-list">
+            <div *ngFor="let individualLimit of individualStudentLimits"></div>
+            <p class="ds-dialog-subtitle" *ngIf="individualStudentLimits.length === 0" style="opacity: 0.5">
+              No individual limits set
+            </p>
+
+            <app-gradient-button
+              gradient="#00B476"
+              textColor="#FFFFFF"
+              text="Add Limit"
+              leftIcon="assets/Plus (White).svg"
+              (buttonClick)="goToIndividualLimitPage()">
+              Add Pass Limit
+            </app-gradient-button>
+          </div>
+        </div>
+      </div>
+    </div>
+  </mat-tab>
+  <mat-tab>
+    <div class="sp-dialog wrapper">
+      <div class="header" *ngIf="!individualOverrideForm.dirty; else changeIndividualForm">
+        <div class="background-header"></div>
+        <img class="back-button" (click)="dialogRef.close()" [src]="'./assets/Back Button (Blue-White).svg' | resolveAsset">
+        <div class="title-header" style="z-index: 10; display: flex">
+          <div class="ds-dialog-title-white" [style.margin-left]="'12px'">New Individual Limit</div>
         </div>
       </div>
 
-<!-- TODO: Uncomment the following when individual pass limits are implemented -->
-<!--      -->
-<!--      <div class="accent-background-section ds-flex-column ds-flex-center-between" style="margin-bottom: 40px">-->
-<!--        <span class="ds-section-header">-->
-<!--          Limits for Individual Students-->
-<!--           <div class="tooltip-container" style="display: inline">-->
-<!--              <img-->
-<!--                [customToolTip]="individualLimitsTooltop"-->
-<!--                class="custom-tooltip-icon support-icon"-->
-<!--                [src]="'./assets/Support (Gray).svg' | resolveAsset">-->
-<!--              <div class="arrow-down-container">-->
-<!--                <div class="arrow-down"></div>-->
-<!--              </div>-->
-<!--            </div>-->
-<!--        </span>-->
+      <ng-template #changeIndividualForm>
+        <div class="header" style="justify-content: space-around">
+          <div class="background-header"></div>
+          <app-gradient-button (buttonClick)="resetIndividualForm()" customBackground="transparent">Cancel</app-gradient-button>
+          <div class="title-header" style="z-index: 10; display: flex">
+            <div class="ds-dialog-title-white" [style.margin-left]="'12px'">New Individual Limit</div>
+          </div>
+          <app-gradient-button (buttonClick)="submitIndividualLimits()" gradient="#FFFFFF,#FFFFFF" textColor="black" [disabled]="passLimitForm.invalid">
+            <ng-container *ngIf='requestLoading; else update'>
+              <mat-spinner class="request-loading" [diameter]="25"></mat-spinner>
+            </ng-container>
 
-<!--        <div class="individual-limits-list">-->
-<!--          <div *ngFor="let individualLimit of individualLimits"></div>-->
-<!--          <p class="ds-dialog-subtitle" *ngIf="individualLimits.length === 0" style="opacity: 0.5">-->
-<!--            No individual limits set-->
-<!--          </p>-->
+            <ng-template #update>
+              Save
+            </ng-template>
+          </app-gradient-button>
+        </div>
+      </ng-template>
 
-<!--          <app-gradient-button-->
-<!--            gradient="#00B476"-->
-<!--            textColor="#FFFFFF"-->
-<!--            text="Add Limit"-->
-<!--            leftIcon="assets/Plus (White).svg"-->
-<!--            (buttonClick)="addIndividualLimit()">-->
-<!--            Add Pass Limit-->
-<!--          </app-gradient-button>-->
-<!--        </div>-->
-<!--      </div>-->
+      <div class="content">
+        <div *ngIf="showPassLimitNux" class="accent-background-section ds-flex-row" style="position:relative">
+          <div style="width: 50px">
+            <img [src]="'./assets/Pass Limit (Purple).svg' | resolveAsset" alt="Options">
+          </div>
+          <div style="width: 80%">
+            <p class="ds-section-header" style="margin-top: 0">Limit the number of passes students can have per day</p>
+            <p>
+              Set them school-wide, or just for individual students. Teachers can override it if the pass limit has been reached.
+              <a href="#">Learn more.</a>
+            </p>
+          </div>
+
+          <button (click)="goToHomePage()">
+            <img style="width: 25px" src="assets/Cancel%20(Blue-Gray).svg">
+          </button>
+        </div>
+
+        <section class="individual-name ds-mb-20">
+          <span class="ds-section-header">Student Name</span>
+          <app-sp-search #studentSearch (onUpdate)="updateStudentList($event)"></app-sp-search>
+        </section>
+
+        <section class="individual-limit-override ds-mb-20">
+          <span class="ds-section-header">Limit</span>
+          <p class="ds-blue-gray">This limit overrides the School Pass Limit of {{passLimit?.passLimit}} passes/day</p>
+          <ng-template [ngTemplateOutlet]="passLimitInput" [ngTemplateOutletContext]="{formGroup: individualOverrideForm, control: individualOverrideForm.get('passLimit')}"></ng-template>
+        </section>
+
+        <section class="individual-limit-description" style="margin-bottom: 60px">
+          <span class="ds-section-header">Description</span>
+          <p class="ds-blue-gray">This description will only be visible to staff, not students.</p>
+          <app-textarea width="85%" [control]="individualOverrideForm.get('description')" placeholder="Ex. Parents requested"></app-textarea>
+        </section>
+
+      </div>
     </div>
+  </mat-tab>
+</mat-tab-group>
+
+<ng-template #passLimitInput let-formGroup="formGroup" let-control="control">
+  <div style="display: flex; column-gap: 2px; flex-wrap: wrap;" class="ds-flex-row">
+    <app-input
+      [showUnits]="true"
+      [units]="control.value === '1' ? 'pass' : 'passes'"
+      [isFocus]="true"
+      width="125px"
+      placeholder="# of passes"
+      [formGroup]="formGroup"
+      [controlName]="control"></app-input>
+
+    <app-gradient-button
+      style="margin-top: 4px"
+      textColor="#000000"
+      gradient="#F4F4F4">
+      per day
+    </app-gradient-button>
+    <p style="width: 100%; opacity: 0.8; font-size: 12px" *ngIf="control.errors">Passes must be greater than 0 and must be a whole number</p>
   </div>
-
-</ng-container>
-
-<!--TODO: Implement when multiple pass frequencies are implemented -->
-<!--<ng-template #passLimitsFrequencyDialog>-->
-<!--  <p (click)="selectFrequency('day')">per day</p>-->
-<!--  <p (click)="selectFrequency('week')">per week</p>-->
-<!--  <p (click)="selectFrequency('month')">per month</p>-->
-<!--  <p (click)="selectFrequency('semester')">per semester</p>-->
-<!--</ng-template>-->
+</ng-template>
