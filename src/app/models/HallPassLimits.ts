@@ -17,3 +17,9 @@ export interface PassLimitInfo {
   current?: number;
   max?: number;
 }
+
+export interface IndividualPassLimit {
+  passLimit: number;
+  description: string;
+  studentId: number;
+}

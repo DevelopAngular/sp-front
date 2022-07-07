@@ -5,7 +5,7 @@ import {distinctUntilChanged, map} from 'rxjs/operators';
 
 import {LiveDataService} from '../live-data/live-data.service';
 import {HttpService} from './http-service';
-import {HallPassLimit} from '../models/HallPassLimits';
+import {HallPassLimit, IndividualPassLimit} from '../models/HallPassLimits';
 
 @Injectable({
   providedIn: 'root'
@@ -45,5 +45,9 @@ export class PassLimitService {
         return a.limitEnabled === b.limitEnabled && a.passLimit === b.passLimit;
       }),
     );
+  }
+
+  getIndividualLimits(): Observable<IndividualPassLimit[]> {
+    return this.http.get('v1/pass_limits/individual_overrides');
   }
 }

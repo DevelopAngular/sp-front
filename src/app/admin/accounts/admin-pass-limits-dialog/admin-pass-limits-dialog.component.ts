@@ -1,40 +1,43 @@
-import {Component, OnDestroy, OnInit} from '@angular/core';
-import {MatDialog, MatDialogRef} from '@angular/material/dialog';
-import {BehaviorSubject, Observable, of, Subscription} from 'rxjs';
-import {CreateFormService} from '../../../create-hallpass-forms/create-form.service';
-import {FormControl, FormGroup, Validators} from '@angular/forms';
-import {NextStep} from '../../../animations';
+import {Component, OnInit, ViewChild, OnDestroy} from '@angular/core';
+import {FormArray, FormControl, FormGroup, Validators} from '@angular/forms';
+
+import {MatDialogRef} from '@angular/material/dialog';
+import {MatTabGroup} from '@angular/material/tabs';
+import {cloneDeep} from 'lodash';
+import {Observable, of, Subscription} from 'rxjs';
+import {concatMap, delay, map, tap} from 'rxjs/operators';
+
 import {ScreenService} from '../../../services/screen.service';
 import {PassLimitService} from '../../../services/pass-limit.service';
-import {concatMap, delay, map, tap} from 'rxjs/operators';
-import {HallPassLimit} from '../../../models/HallPassLimits';
+import {HallPassLimit, IndividualPassLimit} from '../../../models/HallPassLimits';
+import {User} from '../../../models/User';
+import {SPSearchComponent} from '../../../sp-search/sp-search.component';
 import {UserService} from '../../../services/user.service';
 import {IntroData} from '../../../ngrx/intros';
-import {cloneDeep} from 'lodash';
+
 
 /**
- * TODOS for individual pass limits
- * TODO: Add student label with Student search
- * TODO: Hook up output of student search component with new individual limit form
- * TODO: Make the number of limits input into it's own component
+ * TODOS for pass limits v2
  * TODO: Put a Number of limits per day
- * TODO: Put the description input
- * TODO: Hook up inputs to forms
- * TODO: Put the save button on the top right of the new individual form header
  * TODO: Create shared component for pass limit drop down
+ * TODO: Hook up spinner loading animation to individual form limits
+ * TODO: Hook up spinner loading animation to current school-wide limits
+ * TODO: Re-fetch the individual limits when coming back to page one (should we re-fetch the school-wide limits too?)
+ * TODO: Add fade animation to angular material tabs
  */
 
 @Component({
   selector: 'app-admin-pass-limits-dialog',
   templateUrl: './admin-pass-limits-dialog.component.html',
-  styleUrls: ['./admin-pass-limits-dialog.component.scss'],
-  animations: [NextStep]
+  styleUrls: ['./admin-pass-limits-dialog.component.scss']
 })
 export class AdminPassLimitDialogComponent implements OnInit, OnDestroy {
   // TODO: This is for when multiple pass frequencies are implemented
 
-  pageNumber = 1;
-  frameMotion$: BehaviorSubject<any>;
+  showInfoMessage = true; // TODO: hide this message based on database value in the future
+  passLimitToggleTooltip = `Some help text about pass limits`; // TODO: Get text for this
+  individualLimitsTooltip = `These override the school-wide pass limit on a per-student basis`; // TODO: Get text for this
+  individualStudentLimits: IndividualPassLimit[];
   hasPassLimit: boolean;
   passLimit: HallPassLimit;
   passLimitForm = new FormGroup({
@@ -51,12 +54,20 @@ export class AdminPassLimitDialogComponent implements OnInit, OnDestroy {
   showPassLimitNux: boolean;
   introsData: IntroData;
   introSubs: Subscription;
+  individualOverrideForm: FormGroup = new FormGroup({
+    students: new FormArray([], Validators.required),
+    passLimit: new FormControl(null, Validators.pattern(/^((1 pass)|(((1\d+)|[2-9]\d*) passes))$/)),
+    description: new FormControl(null, Validators.required)
+  });
+  individualFormPreviousValue: { student: string[], passLimit: string, description: string };
+  individualFormChanged: Observable<boolean>;
+
+  @ViewChild('tabGroup') dialogPages: MatTabGroup;
+  @ViewChild('studentSearch') studentSearcher: SPSearchComponent;
 
   constructor(
-    private dialog: MatDialog,
     public dialogRef: MatDialogRef<AdminPassLimitDialogComponent>,
     public screenService: ScreenService,
-    private formService: CreateFormService,
     private passLimitService: PassLimitService,
     private userService: UserService
   ) {
@@ -74,7 +85,6 @@ export class AdminPassLimitDialogComponent implements OnInit, OnDestroy {
      * If a pass limit already exists, then the slider enables/disables the limit
      */
 
-    this.frameMotion$ = this.formService.getFrameMotionDirection();
     this.passLimitFormSubs = this.passLimitForm.valueChanges.subscribe((v) => {
       v.enabled
         ? this.passLimitForm.controls['passLimit'].setValidators([Validators.required, Validators.pattern(/^[1-9]\d*$/)])
@@ -114,6 +124,12 @@ export class AdminPassLimitDialogComponent implements OnInit, OnDestroy {
       this.introsData = intros;
       this.showPassLimitNux = !intros?.admin_pass_limit_message?.universal?.seen_version;
     });
+    this.individualFormPreviousValue = this.individualOverrideForm.value;
+    this.individualFormChanged = this.individualOverrideForm.valueChanges.pipe(
+      map(v => JSON.stringify(v) !== JSON.stringify(this.individualFormPreviousValue))
+    );
+
+    this.passLimitService.getIndividualLimits().subscribe(limits => this.individualStudentLimits = limits);
   }
 
   // TODO: This is for when multiple pass frequencies are implemented
@@ -202,6 +218,33 @@ export class AdminPassLimitDialogComponent implements OnInit, OnDestroy {
   dismissPassLimitNux() {
     this.userService.updateIntrosAdminPassLimitsMessageRequest(this.introsData, 'universal', '1');
     this.showPassLimitNux = false;
+  }
+
+  private goToPage(pageNumber: number) {
+    this.dialogPages.selectedIndex = pageNumber - 1;
+  }
+
+  goToIndividualLimitPage() {
+    this.goToPage(2);
+  }
+
+  back() {
+    this.goToPage(1);
+  }
+
+  resetIndividualForm() {
+    this.studentSearcher.reset();
+    this.individualOverrideForm.reset(this.individualFormPreviousValue);
+  }
+
+  updateStudentList(selectedUsers: User[]) {
+    this.individualOverrideForm.removeControl('students');
+    const controls = selectedUsers.map(u => new FormControl(u.id));
+    this.individualOverrideForm.addControl('students', new FormArray(controls));
+  }
+
+  submitIndividualLimits() {
+    console.log(this.individualOverrideForm.value);
   }
 
   ngOnDestroy() {
