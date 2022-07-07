@@ -23,3 +23,9 @@ export interface IndividualPassLimit {
   description: string;
   studentId: number;
 }
+
+export interface IndividualPassLimitCollection {
+  students: number[];
+  passLimit: number;
+  description: string;
+}

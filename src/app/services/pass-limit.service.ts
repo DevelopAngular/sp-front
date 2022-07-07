@@ -5,7 +5,9 @@ import {distinctUntilChanged, map} from 'rxjs/operators';
 
 import {LiveDataService} from '../live-data/live-data.service';
 import {HttpService} from './http-service';
-import {HallPassLimit, IndividualPassLimit} from '../models/HallPassLimits';
+import {HallPassLimit, IndividualPassLimit, IndividualPassLimitCollection} from '../models/HallPassLimits';
+
+const PASS_LIMIT_ENDPOINT = 'v1/pass_limits';
 
 @Injectable({
   providedIn: 'root'
@@ -19,19 +21,19 @@ export class PassLimitService {
   }
 
   getPassLimit(): Observable<{ pass_limit: HallPassLimit }> {
-    return this.http.get<{ pass_limit: HallPassLimit }>(`v1/pass_limits/`);
+    return this.http.get<{ pass_limit: HallPassLimit }>(`${PASS_LIMIT_ENDPOINT}/`);
   }
 
   createPassLimit(pl: HallPassLimit) {
-    return this.http.post('v1/pass_limits/create', pl, undefined, false);
+    return this.http.post(`${PASS_LIMIT_ENDPOINT}/create`, pl, undefined, false);
   }
 
   getRemainingLimits({studentId}: { studentId: number | string }): Observable<{ remainingPasses: number }> {
-    return this.http.get<{ remainingPasses: number }>(`v1/pass_limits/remaining?student_id=${studentId}`);
+    return this.http.get<{ remainingPasses: number }>(`${PASS_LIMIT_ENDPOINT}/remaining?student_id=${studentId}`);
   }
 
   updatePassLimits(pl: HallPassLimit) {
-    return this.http.put('v1/pass_limits/update', pl);
+    return this.http.put(`${PASS_LIMIT_ENDPOINT}/update`, pl);
   }
 
   /**
@@ -48,6 +50,10 @@ export class PassLimitService {
   }
 
   getIndividualLimits(): Observable<IndividualPassLimit[]> {
-    return this.http.get('v1/pass_limits/individual_overrides');
+    return this.http.get(`${PASS_LIMIT_ENDPOINT}/individual_overrides`);
+  }
+
+  createIndividualLimits(limit: IndividualPassLimitCollection) {
+    return this.http.post(`${PASS_LIMIT_ENDPOINT}/create_override`, limit, undefined, false);
   }
 }

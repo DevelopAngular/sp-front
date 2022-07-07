@@ -9,20 +9,17 @@ import {concatMap, delay, map, tap} from 'rxjs/operators';
 
 import {ScreenService} from '../../../services/screen.service';
 import {PassLimitService} from '../../../services/pass-limit.service';
-import {HallPassLimit, IndividualPassLimit} from '../../../models/HallPassLimits';
+import {HallPassLimit, IndividualPassLimit, IndividualPassLimitCollection} from '../../../models/HallPassLimits';
 import {User} from '../../../models/User';
 import {SPSearchComponent} from '../../../sp-search/sp-search.component';
 import {UserService} from '../../../services/user.service';
 import {IntroData} from '../../../ngrx/intros';
 
-
 /**
  * TODOS for pass limits v2
- * TODO: Put a Number of limits per day
  * TODO: Create shared component for pass limit drop down
  * TODO: Hook up spinner loading animation to individual form limits
  * TODO: Hook up spinner loading animation to current school-wide limits
- * TODO: Re-fetch the individual limits when coming back to page one (should we re-fetch the school-wide limits too?)
  * TODO: Add fade animation to angular material tabs
  */
 
@@ -56,11 +53,12 @@ export class AdminPassLimitDialogComponent implements OnInit, OnDestroy {
   introSubs: Subscription;
   individualOverrideForm: FormGroup = new FormGroup({
     students: new FormArray([], Validators.required),
-    passLimit: new FormControl(null, Validators.pattern(/^((1 pass)|(((1\d+)|[2-9]\d*) passes))$/)),
+    passLimit: new FormControl(null, Validators.pattern(/^[1-9]\d*$/)),
     description: new FormControl(null, Validators.required)
   });
   individualFormPreviousValue: { student: string[], passLimit: string, description: string };
   individualFormChanged: Observable<boolean>;
+  individualLoading: boolean;
 
   @ViewChild('tabGroup') dialogPages: MatTabGroup;
   @ViewChild('studentSearch') studentSearcher: SPSearchComponent;
@@ -129,7 +127,9 @@ export class AdminPassLimitDialogComponent implements OnInit, OnDestroy {
       map(v => JSON.stringify(v) !== JSON.stringify(this.individualFormPreviousValue))
     );
 
-    // this.passLimitService.getIndividualLimits().subscribe(limits => this.individualStudentLimits = limits);
+    this.passLimitService.getIndividualLimits().subscribe(limits => {
+      this.individualStudentLimits = limits;
+    });
   }
 
   // TODO: This is for when multiple pass frequencies are implemented
@@ -252,7 +252,26 @@ export class AdminPassLimitDialogComponent implements OnInit, OnDestroy {
   }
 
   submitIndividualLimits() {
-    console.log(this.individualOverrideForm.value);
+    const parsedForm: IndividualPassLimitCollection = {
+      students: this.individualOverrideForm.value.students,
+      passLimit: parseInt(this.individualOverrideForm.value.passLimit, 10),
+      description: (this.individualOverrideForm?.value?.description || '').trim()
+    };
+
+    if (parsedForm.students.length === 0) {
+      throw new Error('Invalid form: must have at least one student and a properly formatted pass limit string');
+    }
+
+    this.individualLoading = true;
+    this.passLimitService.createIndividualLimits(parsedForm).pipe(
+      concatMap(() => this.passLimitService.getIndividualLimits())
+    ).subscribe({
+      next: value => {
+        this.individualStudentLimits = value;
+        this.individualLoading = false;
+        this.goToHomePage();
+      },
+    });
   }
 
   ngOnDestroy() {
