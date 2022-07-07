@@ -49,7 +49,8 @@ export interface Navigation {
     message?: string,
     requestTarget?: User,
     hasClose?: boolean,
-    roomStudents?: User[]; // filtered students after skiping some of selected ones to comply with the room visibility rules
+    // filtered students after skiping some of selected ones to comply with the room visibility rules
+    roomStudents?: User[];
   };
   quickNavigator?: boolean;
   forInput?: boolean;

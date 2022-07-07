@@ -409,13 +409,9 @@ export class PassCardComponent implements OnInit, OnDestroy {
       }),
 
       retryWhen((errors: Observable<HttpErrorResponse>) => {
-        return errors.pipe(
-          tap(errorResponse => {
-            const isVisibilityError = ('visibility_alerts' in errorResponse.error);
-            console.log('me', errorResponse, isVisibilityError)
-            if (! isVisibilityError) throw errorResponse;
-          }),
-          concatMap(({error}) => this.dialog.open(ConfirmationDialogComponent, {
+        const getOverrideFromDialog = error => {
+
+          const afterDialogClosed$ = this.dialog.open(ConfirmationDialogComponent, {
             panelClass: 'overlay-dialog',
             backdropClass: 'custom-backdrop',
             closeOnNavigation: true,
@@ -428,10 +424,21 @@ export class PassCardComponent implements OnInit, OnDestroy {
               templateData: {alerts: this.prepareTemplateDataVisibility(error, body.origin, body.destination)},
               icon: './assets/Eye (Green-White).svg'
             } as ConfirmationTemplates
-          }).afterClosed().pipe(
-          map(override => {
-            return {override, students: error.students.map(s => s.User.id)};
-          }))),
+          }).afterClosed();
+          
+          return afterDialogClosed$.pipe(
+            map(override => ({override, students: error.students.map(s => s.User.id)})),
+          );
+        }
+
+        return errors.pipe(
+          tap(errorResponse => {
+            const isVisibilityError = ('visibility_alerts' in errorResponse.error);
+            console.log('me', errorResponse, isVisibilityError)
+            // not our error case? dispatch it to the next retryWhen
+            if (! isVisibilityError) throw errorResponse;
+          }),
+          concatMap(({error}) => getOverrideFromDialog(error)),
           concatMap(({override, students}: { override: boolean, students: number[] }) => {
             if (override === undefined) {
               this.dialogRef.close();
@@ -460,7 +467,7 @@ export class PassCardComponent implements OnInit, OnDestroy {
           })
         );
       }),
-/*
+
       retryWhen((errors: Observable<HttpErrorResponse>) => {
         return errors.pipe(
           filter(errorResponse => {
@@ -504,12 +511,21 @@ export class PassCardComponent implements OnInit, OnDestroy {
 
             if (override === false) {
               remove(body['students'] as number[], elem => students.includes(elem));
+              // server side "no students" case is seen as bad request
+              if (body['students'].length === 0) {
+                this.toastService.openToast({
+                  title: 'Skiping left no students to operate on',
+                  subtitle: 'Last operation did not proceeed',
+                  type: 'error',
+                });
+                this.dialogRef.close();
+                throw 'no students after skiping';
+              }
               return of(null);
             }
           })
         );
       })
-     */
     ).subscribe((data) => {
       this.performingAction = false;
       this.hallPassService.createPassEvent$.next(true);
