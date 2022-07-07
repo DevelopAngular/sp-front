@@ -1,4 +1,6 @@
-import {Component, ElementRef, EventEmitter, HostListener, Inject, Input, OnInit, Output, ViewChild} from '@angular/core';
+import {Component, ElementRef, EventEmitter, HostListener, Inject, Input, OnInit, OnDestroy, Output, TemplateRef, ViewChild} from '@angular/core';
+import {MatDialogRef} from '@angular/material/dialog';
+import {ToastService} from '../../../../services/toast.service';
 import {Pinnable} from '../../../../models/Pinnable';
 import {Navigation} from '../../main-hall-pass-form.component';
 import {CreateFormService} from '../../../create-form.service';
@@ -9,13 +11,19 @@ import {ToWhereGridRestrictionLg} from '../../../../models/to-where-grid-restric
 import {ToWhereGridRestrictionSm} from '../../../../models/to-where-grid-restrictions/ToWhereGridRestrictionSm';
 import {ToWhereGridRestrictionMd} from '../../../../models/to-where-grid-restrictions/ToWhereGridRestrictionMd';
 import {MAT_DIALOG_DATA, MatDialog} from '@angular/material/dialog';
-import {BehaviorSubject, fromEvent, Observable} from 'rxjs';
+import {Subject, BehaviorSubject, fromEvent, Observable} from 'rxjs';
+import {concatMap, filter, map, pluck, retryWhen, switchMap, take, takeUntil, tap} from 'rxjs/operators';
 import {DeviceDetection} from '../../../../device-detection.helper';
 import {StorageService} from '../../../../services/storage.service';
 import {TooltipDataService} from '../../../../services/tooltip-data.service';
 import {PassLimit} from '../../../../models/PassLimit';
 import {LocationsService} from '../../../../services/locations.service';
 import {PassLimitDialogComponent} from '../pass-limit-dialog/pass-limit-dialog.component';
+import {
+  ConfirmationDialogComponent,
+  ConfirmationTemplates
+} from '../../../../shared/shared-components/confirmation-dialog/confirmation-dialog.component';
+import {LocationVisibilityService} from '../../../../services/location-visibility.service';
 
 @Component({
   selector: 'app-to-where',
@@ -52,6 +60,8 @@ export class ToWhereComponent implements OnInit {
   @Output() selectedLocation: EventEmitter<any> = new EventEmitter<any>();
   @Output() backButton: EventEmitter<any> = new EventEmitter<any>();
 
+  @ViewChild('confirmDialogBodyVisibility') confirmDialogVisibility: TemplateRef<HTMLElement>;
+
   public states;
 
   public teacherRooms: Pinnable[] = [];
@@ -69,7 +79,12 @@ export class ToWhereComponent implements OnInit {
     'to-header_animation-back': false
   };
 
+  destroy$: Subject<any> = new Subject<any>();
+
   constructor(
+    public dialogRef: MatDialogRef<ToWhereComponent>,
+    private visibilityService: LocationVisibilityService,
+    private toastService: ToastService,
     @Inject(MAT_DIALOG_DATA) public dialogData: any,
     private formService: CreateFormService,
     public screenService: ScreenService,
@@ -108,6 +123,11 @@ export class ToWhereComponent implements OnInit {
     this.locationsService.pass_limits_entities$.subscribe(res => {
       this.passLimits = res;
     });
+  }
+
+  ngOnDestroy() {
+    this.destroy$.next();
+    this.destroy$.complete();
   }
 
   isValidPinnable(pinnable: Pinnable) {
@@ -177,6 +197,49 @@ export class ToWhereComponent implements OnInit {
   pinnableSelected(pinnable) {
     const emitSelectedPinnable = (allowed) => {
       if (!allowed) return;
+
+    
+ const students = (this.formState.data.roomStudents ?? this.formState.data.selectedStudents).map(s => s.id);
+ console.log('to', students)
+     const ruleStudents = pinnable.location.visibility_students.map(s => s.id);
+     const rule = pinnable.location.visibility_type;
+                     
+     let skipped = this.visibilityService.calculateSkipped(students, ruleStudents, rule);
+
+    if (!!skipped) {
+      const studentNames = this.formState.data.selectedStudents.filter(s => skipped.includes(s.id)).map(s => s.display_name);      
+      // TODO: dialog.open
+       this.dialog.open(ConfirmationDialogComponent, {
+            panelClass: 'overlay-dialog',
+            backdropClass: 'custom-backdrop',
+            closeOnNavigation: true,
+            data: {
+              body: this.confirmDialogVisibility,
+              buttons: {
+                confirmText: 'Override',
+                denyText: 'Skip these students',
+              },
+              templateData: {alerts: [{phrase: 'These students do not have permission to go to this room', students: studentNames.join(', ')}]},
+              icon: './assets/Eye (Green-White).svg'
+            } as ConfirmationTemplates
+          }).afterClosed().pipe(
+            takeUntil(this.destroy$),
+            tap(override => console.log(override))
+          ).subscribe(res => {
+            console.log(res)
+            if (!res) {
+              // filter out the skipped students
+              const roomStudents = this.formState.data.selectedStudents.filter(s => (!skipped.includes(s.id)));
+              if (roomStudents.length === 0) {
+                this.toastService.openToast({
+                  title: 'Skiping left no students to operate on',
+                  subtitle: 'Last operation did not proceeed',
+                  type: 'error',
+                });
+              } else {
+
+
+                this.formState.data.roomStudents = roomStudents; 
       if (this.formState.formMode.role === 1 && pinnable.type === 'location') {
         this.formService.setFrameMotionDirection('disable');
       } else {
@@ -189,6 +252,30 @@ export class ToWhereComponent implements OnInit {
         this.formState.previousState = 2;
         this.selectedPinnable.emit(pinnable);
       }, 100);
+
+              }
+            }
+          }); 
+      } else {
+
+
+      if (this.formState.formMode.role === 1 && pinnable.type === 'location') {
+        this.formService.setFrameMotionDirection('disable');
+      } else {
+        this.formService.setFrameMotionDirection('forward');
+      }
+
+      this.formService.scalableBoxController.next(true);
+
+      setTimeout(() => {
+        this.formState.previousState = 2;
+        this.selectedPinnable.emit(pinnable);
+      }, 100);
+
+      }
+ 
+
+
     };
 
     if (pinnable.type !== 'location')
@@ -200,11 +287,11 @@ export class ToWhereComponent implements OnInit {
   locationSelected(location) {
     this.passLimitPromise(location).then((allowed) => {
       if (!allowed) return;
-      this.formService.setFrameMotionDirection('disable');
-      this.formService.scalableBoxController.next(true);
-      setTimeout(() => {
-        this.selectedLocation.emit(location);
-      }, 100);
+       this.formService.setFrameMotionDirection('disable');
+        this.formService.scalableBoxController.next(true);
+        setTimeout(() => {
+          this.selectedLocation.emit(location);
+        }, 100);
     });
   }
 

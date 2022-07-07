@@ -190,14 +190,13 @@
 </ng-template>
 
 <ng-template let-alerts="alerts" #confirmDialogBodyVisibility>
+  <ng-container *ngFor="let a of alerts">
   <div class="ds-dialog-title">
-    <span>Overides rooms visibility</span>
+    <span>{{a.phrase}}</span>
   </div>
 
   <div class="ds-dialog-normal-text ds-mb-10">
-    <ng-container *ngFor="let a of alerts">
-      <p>{{a.title}}</p>
       <p>{{a.students}}</p>
-    </ng-container>
   </div>
+  </ng-container>
 </ng-template>

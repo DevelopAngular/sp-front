@@ -321,10 +321,22 @@ export class PassCardComponent implements OnInit, OnDestroy {
   }
 
 
-  private prepareTemplateDataVisibility(mapTitle, alerts) {
+  private prepareTemplateDataVisibility({visibility_alerts, students}, origin, destination) {
     const out = [];
-    for (let a of alerts) {
-      out.push({title: mapTitle[a['location_id']], students: a['room_students'].join(', ')});
+    for (let a of visibility_alerts) {
+      const ss = a['room_students'].map(sid => {
+        const found = students.find(s => s.User.id === sid);
+        if (! found) return '<unknown name>';
+        return found.User['first_name'] + ' ' + found.User['last_name']
+      });
+      let joint = 'for';
+      if (a['location_id'] == origin) {
+        joint = 'to come from';
+      } else if (a['location_id'] == destination) {
+        joint = 'to go to';
+      }
+      const phrase = `These students do not have permission ${joint} this room "${a['location_title']}"`;
+      out.push({phrase, students: ss.join(', ')});
     }
     console.log('tdata', out)
     return out;
@@ -338,12 +350,10 @@ export class PassCardComponent implements OnInit, OnDestroy {
       'destination': this.pass.destination.id,
       'travel_type': this.selectedTravelType
     };
-    const mapIdTitleLocation = {
-      [this.pass.origin.id]: this.pass.origin.title,
-      [this.pass.destination.id]: this.pass.destination.title,
-    };
     if (this.forStaff) {
-      body['students'] = this.selectedStudents.map(user => user.id);
+      let ss: User[] = this.selectedStudents;
+      if (this.formState.data.roomStudents.length > 0) ss = this.formState.data.roomStudents;
+      body['students'] = ss.map(user => user.id);
     } else {
       body['student'] = this.pass.student.id;
     }
@@ -415,13 +425,14 @@ export class PassCardComponent implements OnInit, OnDestroy {
                 confirmText: 'Override',
                 denyText: 'Skip these students',
               },
-              templateData: {alerts: this.prepareTemplateDataVisibility(mapIdTitleLocation, error['visibility_alerts'])},
+              templateData: {alerts: this.prepareTemplateDataVisibility(error, body.origin, body.destination)},
               icon: './assets/Eye (Green-White).svg'
             } as ConfirmationTemplates
           }).afterClosed().pipe(
-          map(override => ({override, students: error['visibility_alerts']['room_students']})))),
+          map(override => {
+            return {override, students: error.students.map(s => s.User.id)};
+          }))),
           concatMap(({override, students}: { override: boolean, students: number[] }) => {
-            console.log(override);
             if (override === undefined) {
               this.dialogRef.close();
               throw 'confirmation closed';
@@ -433,6 +444,17 @@ export class PassCardComponent implements OnInit, OnDestroy {
 
             if (override === false) {
               remove(body['students'] as number[], elem => students.includes(elem));
+              // removal left us with no students
+              // this is as canceling the process 
+              if (body['students'].length === 0) {
+                this.toastService.openToast({
+                  title: 'Skiping left no students to operate on',
+                  subtitle: 'Last operation did not proceeed',
+                  type: 'error',
+                });
+                this.dialogRef.close();
+                throw 'no students after skiping';
+              }
               return of(null);
             }
           })

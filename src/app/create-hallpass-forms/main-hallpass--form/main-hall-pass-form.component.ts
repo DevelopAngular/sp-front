@@ -48,7 +48,8 @@ export interface Navigation {
     gradient?: string;
     message?: string,
     requestTarget?: User,
-    hasClose?: boolean
+    hasClose?: boolean,
+    roomStudents?: User[]; // filtered students after skiping some of selected ones to comply with the room visibility rules
   };
   quickNavigator?: boolean;
   forInput?: boolean;
@@ -135,6 +136,7 @@ export class MainHallPassFormComponent implements OnInit, OnDestroy {
         direction: {
           from: this.dialogData['kioskModeRoom'] || null
         },
+        roomStudents: [],
       },
       forInput: this.dialogData['forInput'] || false,
       forLater: this.dialogData['forLater'],

@@ -101,3 +101,15 @@
     <app-teacher-footer *ngIf="isStaff" (locsViewEvent)="switchView($event)" [fromLocation]="location" [formState]="formState" [state]="'to'" [studentText]="studentText" [date]="date"></app-teacher-footer>
   </ng-container>
 </div>
+
+<ng-template let-alerts="alerts" #confirmDialogBodyVisibility>
+  <ng-container *ngFor="let a of alerts">
+  <div class="ds-dialog-title">
+    <span>{{a.phrase}}</span>
+  </div>
+
+  <div class="ds-dialog-normal-text ds-mb-10">
+      <p>{{a.students}}</p>
+  </div>
+  </ng-container>
+</ng-template>
