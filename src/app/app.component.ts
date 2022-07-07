@@ -31,6 +31,9 @@ import {ScreenService} from './services/screen.service';
 import {ToastService} from './services/toast.service';
 import _refiner from 'refiner-js';
 import {LocalizejsService} from './services/localizejs.service';
+import {CheckForUpdateService} from './services/check-for-update.service';
+import {ColorProfile} from './models/ColorProfile';
+import {Util} from '../Util';
 
 declare const window;
 
@@ -50,6 +53,8 @@ export class AppComponent implements OnInit, AfterViewInit, OnDestroy {
 
   shortcuts: ShortcutInput[];
   currentRoute: string;
+
+  needToUpdateApp$: Subject<{active: boolean, color: ColorProfile}>;
 
   private dialogContainer: HTMLElement;
   @ViewChild('dialogContainer', { static: true }) set content(content: ElementRef) {
@@ -102,9 +107,11 @@ export class AppComponent implements OnInit, AfterViewInit, OnDestroy {
     private screen: ScreenService,
     private toastService: ToastService,
     private localize: LocalizejsService,
+    private updateService: CheckForUpdateService,
   ) {}
 
   ngOnInit() {
+    this.updateService.check();
     this.customToastOpen$ = this.toastService.isOpen$;
     this.toasts$ = this.toastService.toasts$;
     this.user$ = this.userService.user$.pipe(map(user => User.fromJSON(user)));
@@ -115,6 +122,8 @@ export class AppComponent implements OnInit, AfterViewInit, OnDestroy {
         window.history.pushState({}, '');
       }
     });
+
+    this.needToUpdateApp$ = this.updateService.needToUpdate$;
 
     // set only an already set up language is found
     // otherwise let the language component try to translate
@@ -411,6 +420,16 @@ export class AppComponent implements OnInit, AfterViewInit, OnDestroy {
 
   }
 
+  getBarBg(color, hovered, pressed) {
+    if (hovered) {
+      if (pressed) {
+        return Util.convertHex(color, 20);
+      }
+      return Util.convertHex(color, 15);
+    }
+    return Util.convertHex(color, 10);
+  }
+
   ngOnDestroy() {
     this.subscriber$.next(null);
     this.subscriber$.complete();
@@ -430,6 +449,10 @@ export class AppComponent implements OnInit, AfterViewInit, OnDestroy {
           (this.overlayContainer as ConsentMenuOverlay).restoreContainer();
         }
       });
+  }
+
+  updateApp() {
+    this.updateService.update();
   }
 
 }
