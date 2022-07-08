@@ -87,7 +87,9 @@
                                         </ng-template>
                                     </div>
                                     <div class="button">
-                                        <app-gradient-button [style.margin-left]="'15px'" [textColor]="(status === 'disconnect' ? '#7083A0' : '#FFFFFF')" [gradient]="(status === 'disconnect' ? '#F5F6F8, #F5F6F8' : '#07ABC3, #07ABC3')" (buttonClick)="setUpProfilePicture()">{{ status === 'disconnect' ? 'Set up' : (status === 'approved' ? 'Finish set-up' : 'Settings') }}
+                                        <!-- <app-gradient-button [style.margin-left]="'15px'" [textColor]="(status === 'disconnect' ? '#7083A0' : '#FFFFFF')" [gradient]="(status === 'disconnect' ? '#F5F6F8, #F5F6F8' : '#07ABC3, #07ABC3')" (buttonClick)="setUpProfilePicture()">{{ status === 'disconnect' ? 'Set up' : (status === 'approved' ? 'Finish set-up' : 'Settings') }}
+                                        </app-gradient-button> -->
+                                        <app-gradient-button [style.margin-left]="'15px'" [textColor]="profile_picture == '' ? '#7083A0' : '#FFFFFF'" [gradient]="profile_picture == '' ? '#F5F6F8, #F5F6F8' : '#07ABC3, #07ABC3'" (buttonClick)="setUpProfilePicture()">{{ profile_picture == '' ? 'Set up' : 'Settings' }}
                                         </app-gradient-button>
                                         <!-- <app-gradient-button [style.margin-left]="'15px'" [fontWeight]="'400'" [textColor]="'#7083A0'" [gradient]="'#F5F6F8, #F5F6F8'" [hoverColor]="'#00B476'" [cursor]="'pointer'" (buttonClick)="setUpProfilePicture()">
                                             Set up
@@ -160,7 +162,7 @@
                                             <span class="support-icon" customToolTip [contentTemplate]="visibleToHelp"><img width="13px" [src]="'./assets/Support (Gray-200).svg' | resolveAsset"></span>
                                         </div>
                                         <ng-template #visibleToHelp>
-                                            <div class="ds-tooltip" style="width: 200px">This text will appear for students on the back of the ID Card.</div>
+                                            <div class="ds-tooltip" style="width: 200px">Choose who will see the ID cards in their SmartPass app.</div>
                                         </ng-template>
                                     </div>
                                     <div>
@@ -196,7 +198,7 @@
             <div style="width: 100%;">
                 <div class="main-wrapper">
                     <p class="ds-dialog-title" [style.color]="darkTheme.getColor({white: '#1F195E', dark: '#FFFFFF'})">Preview</p>
-                    <app-id-card [backgroundColor]="backgroundColor" [logoURL]="logoURL" [backsideText]="backsideText" [IDNumberData]="IDNumberData" [greadLevel]="greadLevel"></app-id-card>
+                    <app-id-card [isDummyCard]="true" [backgroundColor]="backgroundColor" [logoURL]="logoURL" [backsideText]="backsideText" [IDNumberData]="IDNumberData" [profile_picture]="profile_picture" [greadLevel]="greadLevel"></app-id-card>
                 </div>
             </div>
         </div>

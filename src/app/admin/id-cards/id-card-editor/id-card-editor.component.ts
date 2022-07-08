@@ -45,6 +45,7 @@ export interface BarcodeTypes {
 export class IdCardEditorComponent implements OnInit, OnDestroy {
   backgroundColor: string = '#00b476';
   backsideText: string = '';
+  profile_picture: string = '';
   IDNumberData: any = {};
   logoURL: string = '';
   greadLevel: number;
@@ -106,12 +107,13 @@ export class IdCardEditorComponent implements OnInit, OnDestroy {
   }
 
   async setUpProfilePicture() {
-    const PPD = this.dialog.open(IdCardProfilePictureComponent, {
-      panelClass: 'accounts-profiles-dialog',
-      backdropClass: 'custom-bd',
-      width: '425px',
-      height: '500px',
-    });
+    // const PPD = this.dialog.open(IdCardProfilePictureComponent, {
+    //   panelClass: 'accounts-profiles-dialog',
+    //   backdropClass: 'custom-bd',
+    //   width: '425px',
+    //   height: '500px',
+    // });
+    this.profile_picture = "assets/Dummy_Profile.png";
   }
 
   addBackgroundText() {

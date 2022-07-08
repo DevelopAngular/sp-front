@@ -9,6 +9,10 @@ import { UserService } from "../../../services/user.service";
   styleUrls: ["./id-card.component.scss"],
 })
 export class IdCardComponent {
+
+  @Input() userName: string = 'Nicholas Demarco';
+  @Input() schoolName: string = 'Walt Whitman High School';
+  @Input() userRole: string = 'Student';
   @Input() backgroundColor: string = "#00B476";
   @Input() profile_picture: string;
   @Input() backsideText: string;
@@ -16,6 +20,7 @@ export class IdCardComponent {
   @Input() IDNumberData: any = {};
   @Input() greadLevel: number;
   @Input() buttonBackColor: string = '#FFFFFF';
+  @Input() isDummyCard: boolean = false;
 
   userDetails: any;
 
@@ -23,12 +28,17 @@ export class IdCardComponent {
     public darkTheme: DarkThemeSwitch,
     private userService: UserService,
     ) {
-    this.userService.user$.subscribe({
-      next: user => {
-        this.userDetails = User.fromJSON(user)
-        console.log("User : ",this.userDetails, this.userDetails.isStudent(), this.userDetails.isAdmin(), this.userDetails.isAssistant())
-      }
-    })
+    if (!this.isDummyCard) {
+      this.userService.user$.subscribe({
+        next: user => {
+          this.userDetails = User.fromJSON(user);
+          this.userName = this.userDetails.display_name;
+           this.userRole = this.userDetails.isStudent() ? 'Student' : 'Staff'
+           this.profile_picture = this.userDetails?.profile_picture;
+          console.log("User : ",this.userDetails, this.userDetails.isStudent(), this.userDetails.isAdmin(), this.userDetails.isAssistant())
+        }
+      })
+    }
   }
 
   get getButtonText(): string {
