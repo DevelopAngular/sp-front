@@ -23,7 +23,9 @@ import {
   ConfirmationDialogComponent,
   ConfirmationTemplates
 } from '../../../../shared/shared-components/confirmation-dialog/confirmation-dialog.component';
-import {LocationVisibilityService} from '../../../../services/location-visibility.service';
+import {LocationVisibilityService} from '../../location-visibility.service';
+import {UserService} from '../../../../services/user.service';
+import {User} from '../../../../models/User';
 
 @Component({
   selector: 'app-to-where',
@@ -91,7 +93,8 @@ export class ToWhereComponent implements OnInit {
     private storage: StorageService,
     private tooltipDataService: TooltipDataService,
     private locationsService: LocationsService,
-    private dialog: MatDialog
+    private dialog: MatDialog,
+    private userService: UserService,
   ) {
     this.states = States;
   }
@@ -123,7 +126,16 @@ export class ToWhereComponent implements OnInit {
     this.locationsService.pass_limits_entities$.subscribe(res => {
       this.passLimits = res;
     });
+
+   this.userService.userData
+    .pipe(
+      filter(u => !!u),
+      take(1),
+    )
+    .subscribe((u: User) => this.student = u);
   }
+
+  private student: User;
 
   ngOnDestroy() {
     this.destroy$.next();
@@ -195,87 +207,113 @@ export class ToWhereComponent implements OnInit {
   }
 
   pinnableSelected(pinnable) {
+    const location = pinnable.location;
+
+    const forwardAndEmit = () => {
+      if (this.formState.formMode.role === 1 && pinnable.type === 'location') {
+        this.formService.setFrameMotionDirection('disable');
+      } else {
+        this.formService.setFrameMotionDirection('forward');
+      }
+
+      this.formService.scalableBoxController.next(true);
+
+      setTimeout(() => {
+        this.formState.previousState = 2;
+        this.selectedPinnable.emit(pinnable);
+      }, 100);
+    };
+
     const emitSelectedPinnable = (allowed) => {
       if (!allowed) return;
 
-    
- const students = (this.formState.data.roomStudents ?? this.formState.data.selectedStudents).map(s => s.id);
- console.log('to', students)
-     const ruleStudents = pinnable.location.visibility_students.map(s => s.id);
-     const rule = pinnable.location.visibility_type;
-                     
+      // students go forward
+      /*if (!this.isStaff) {
+        this.formState.data.roomStudents = [this.student]; 
+        this.forwardAndEmit();
+        return;
+      }*/
+     
+     /* 
+      this.visibilityService.howToActOnChooseLocation(
+        this.formState,
+        location,
+        this.confirmDialogVisibility, 
+        this.forwardAndEmit.bind(this),
+        this.destroy$,
+      );
+     */
+     // staff only
+     const selectedStudents = this.formState.data.roomStudents ?? this.formState.data.selectedStudents;
+     const students = selectedStudents.map(s => ''+s.id);
+     const ruleStudents = location.visibility_students.map(s => ''+s.id);
+     const rule = location.visibility_type;
+          
+     // skipped are students that do not qualify to go forward     
      let skipped = this.visibilityService.calculateSkipped(students, ruleStudents, rule);
 
-    if (!!skipped) {
-      const studentNames = this.formState.data.selectedStudents.filter(s => skipped.includes(s.id)).map(s => s.display_name);      
-      // TODO: dialog.open
-       this.dialog.open(ConfirmationDialogComponent, {
-            panelClass: 'overlay-dialog',
-            backdropClass: 'custom-backdrop',
-            closeOnNavigation: true,
-            data: {
-              body: this.confirmDialogVisibility,
-              buttons: {
-                confirmText: 'Override',
-                denyText: 'Skip these students',
-              },
-              templateData: {alerts: [{phrase: 'These students do not have permission to go to this room', students: studentNames.join(', ')}]},
-              icon: './assets/Eye (Green-White).svg'
-            } as ConfirmationTemplates
-          }).afterClosed().pipe(
-            takeUntil(this.destroy$),
-            tap(override => console.log(override))
-          ).subscribe(res => {
-            console.log(res)
-            if (!res) {
-              // filter out the skipped students
-              const roomStudents = this.formState.data.selectedStudents.filter(s => (!skipped.includes(s.id)));
-              if (roomStudents.length === 0) {
-                this.toastService.openToast({
-                  title: 'Skiping left no students to operate on',
-                  subtitle: 'Last operation did not proceeed',
-                  type: 'error',
-                });
-              } else {
-
-
-                this.formState.data.roomStudents = roomStudents; 
-      if (this.formState.formMode.role === 1 && pinnable.type === 'location') {
-        this.formService.setFrameMotionDirection('disable');
-      } else {
-        this.formService.setFrameMotionDirection('forward');
+      if (!skipped || skipped.length === 0) {
+        forwardAndEmit();
+        return; 
       }
 
-      this.formService.scalableBoxController.next(true);
-
-      setTimeout(() => {
-        this.formState.previousState = 2;
-        this.selectedPinnable.emit(pinnable);
-      }, 100);
-
-              }
-            }
-          }); 
-      } else {
-
-
-      if (this.formState.formMode.role === 1 && pinnable.type === 'location') {
-        this.formService.setFrameMotionDirection('disable');
-      } else {
-        this.formService.setFrameMotionDirection('forward');
+      let text =  'This room is only available to certain students';
+      let title =  'Student does not have permission to come from this room';
+      let denyText =  'Cancel';
+      if (selectedStudents.length > 1) {
+        text = selectedStudents.filter(s => skipped.includes(''+s.id)).map(s => s.display_name)?.join(', ') ?? 'This room is only available to certain students'
+        title = 'These students do not have permission to come from this room';
+        denyText = 'Skip these students';
       }
 
-      this.formService.scalableBoxController.next(true);
+      this.dialog.open(ConfirmationDialogComponent, {
+        panelClass: 'overlay-dialog',
+        backdropClass: 'custom-backdrop',
+        closeOnNavigation: true,
+        data: {
+          body: this.confirmDialogVisibility,
+          buttons: {
+            confirmText: 'Override',
+            denyText,
+          },
+          templateData: {alerts: [{title, text}]},
+          icon: './assets/Eye (Green-White).svg'
+        } as ConfirmationTemplates
+      }).afterClosed().pipe(
+        takeUntil(this.destroy$),
+      ).subscribe(override => {
+        this.formState.data.roomOverride = !!override; 
+       
+        if (override === undefined) {
+          return;     
+        }
+       
+        // override case
+        if (override) {
+          forwardAndEmit();
+          return; 
+        }
 
-      setTimeout(() => {
-        this.formState.previousState = 2;
-        this.selectedPinnable.emit(pinnable);
-      }, 100);
+        // SKIPPING case
+        // avoid a certain no students case
+        if (selectedStudents.length === 1) return;
 
-      }
- 
+        this.formState.data.roomOverride = !!override; 
+        // filter out the skipped students
+        const roomStudents = selectedStudents.filter(s => (!skipped.includes(''+s.id)));
+        // avoid no students case
+        if (roomStudents.length === 0) {
+          this.toastService.openToast({
+            title: 'Skiping will left no students to operate on',
+            subtitle: 'Last operation did not proceeed',
+            type: 'error',
+          });
+          return;
+        }
 
-
+        this.formState.data.roomStudents = roomStudents; 
+        forwardAndEmit();
+      }); 
     };
 
     if (pinnable.type !== 'location')
@@ -284,14 +322,109 @@ export class ToWhereComponent implements OnInit {
       this.passLimitPromise(pinnable.location).then(emitSelectedPinnable);
   }
 
+  /*
+  private forwardAndEmit() {
+    this.formService.setFrameMotionDirection('disable');
+    this.formService.scalableBoxController.next(true);
+    setTimeout(() => {
+      this.selectedLocation.emit(location);
+    }, 100);
+  }*/
+
   locationSelected(location) {
+    const forwardAndEmit = () => {
+      this.formService.setFrameMotionDirection('disable');
+      this.formService.scalableBoxController.next(true);
+      setTimeout(() => {
+        this.selectedLocation.emit(location);
+      }, 100);
+    };
+
     this.passLimitPromise(location).then((allowed) => {
       if (!allowed) return;
-       this.formService.setFrameMotionDirection('disable');
-        this.formService.scalableBoxController.next(true);
-        setTimeout(() => {
-          this.selectedLocation.emit(location);
-        }, 100);
+
+      // students go forward
+      /*if (!this.isStaff) {
+        this.formState.data.roomStudents = [this.student]; 
+        forwardAndEmit();
+        return;
+      }
+
+      this.visibilityService.howToActOnChooseLocation(
+        this.formState,
+        location,
+        this.confirmDialogVisibility, 
+        this.forwardAndEmit.bind(this),
+        this.destroy$,
+      );*/
+
+     // staff only
+     const selectedStudents = this.formState.data.roomStudents ?? this.formState.data.selectedStudents;
+     const students = selectedStudents.map(s => ''+s.id);
+     const ruleStudents = location.visibility_students.map(s => ''+s.id);
+     const rule = location.visibility_type;
+          
+     // skipped are students that do not qualify to go forward     
+     let skipped = this.visibilityService.calculateSkipped(students, ruleStudents, rule);
+
+      if (!skipped || skipped.length === 0) {
+        forwardAndEmit();
+        return; 
+      }
+
+      let text =  'This room is only available to certain students';
+      let title =  'Student does not have permission to come from this room';
+      let denyText =  'Cancel';
+      if (selectedStudents.length > 1) {
+        text = selectedStudents.filter(s => skipped.includes(''+s.id)).map(s => s.display_name)?.join(', ') ?? 'This room is only available to certain students'
+        title = 'These students do not have permission to come from this room';
+        denyText = 'Skip these students';
+      }
+
+      this.dialog.open(ConfirmationDialogComponent, {
+        panelClass: 'overlay-dialog',
+        backdropClass: 'custom-backdrop',
+        closeOnNavigation: true,
+        data: {
+          body: this.confirmDialogVisibility,
+          buttons: {
+            confirmText: 'Override',
+            denyText,
+          },
+          templateData: {alerts: [{title, text}]},
+          icon: './assets/Eye (Green-White).svg'
+        } as ConfirmationTemplates
+      }).afterClosed().pipe(
+        takeUntil(this.destroy$),
+      ).subscribe(override => {
+        this.formState.data.roomOverride = !!override; 
+       
+        // override case
+        if (override) {
+          forwardAndEmit();
+          return; 
+        }
+
+        // SKIPPING case
+        // avoid a certain no students case
+        if (selectedStudents.length === 1) return;
+
+        this.formState.data.roomOverride = !!override; 
+        // filter out the skipped students
+        const roomStudents = selectedStudents.filter(s => (!skipped.includes(''+s.id)));
+        // avoid no students case
+        if (roomStudents.length === 0) {
+          this.toastService.openToast({
+            title: 'Skiping will left no students to operate on',
+            subtitle: 'Last operation did not proceeed',
+            type: 'error',
+          });
+          return;
+        }
+
+        this.formState.data.roomStudents = roomStudents; 
+        forwardAndEmit();
+      }); 
     });
   }
 

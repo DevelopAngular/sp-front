@@ -48,11 +48,11 @@
 <ng-template let-alerts="alerts" #confirmDialogBodyVisibility>
   <ng-container *ngFor="let a of alerts">
   <div class="ds-dialog-title">
-    <span>{{a.phrase}}</span>
+    <span>{{a.title}}</span>
   </div>
 
   <div class="ds-dialog-normal-text ds-mb-10">
-      <p>{{a.students}}</p>
+      <p>{{a.text}}</p>
   </div>
   </ng-container>
 </ng-template>

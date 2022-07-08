@@ -16,6 +16,7 @@ import {HallPassesService} from '../../services/hall-passes.service';
 import {CreateHallpassFormsComponent} from '../create-hallpass-forms.component';
 import {UserService} from '../../services/user.service';
 import {PassLimitService} from '../../services/pass-limit.service';
+import {LocationVisibilityService} from './location-visibility.service';
 
 export enum Role { Teacher = 1, Student = 2 }
 
@@ -51,6 +52,7 @@ export interface Navigation {
     hasClose?: boolean,
     // filtered students after skiping some of selected ones to comply with the room visibility rules
     roomStudents?: User[];
+    roomOverride?: boolean;
   };
   quickNavigator?: boolean;
   forInput?: boolean;
@@ -65,6 +67,7 @@ export interface Navigation {
   templateUrl: './main-hall-pass-form.component.html',
   styleUrls: ['./main-hall-pass-form.component.scss'],
   animations: [NextStep],
+  providers: [LocationVisibilityService]
 })
 export class MainHallPassFormComponent implements OnInit, OnDestroy {
 

@@ -357,6 +357,7 @@ export class PassCardComponent implements OnInit, OnDestroy {
     } else {
       body['student'] = this.pass.student.id;
     }
+    body['override_visibility'] = this.formState.data.roomOverride;
 
     if (this.forFuture) {
       body['issuer_message'] = this.pass.issuer_message;
@@ -472,7 +473,7 @@ export class PassCardComponent implements OnInit, OnDestroy {
         return errors.pipe(
           filter(errorResponse => {
             console.log('you', errorResponse);
-            return errorResponse.error.message === 'one or more pass limits reached!';
+            return errorResponse.error?.message === 'one or more pass limits reached!';
           }),
           concatMap(errorResponse => {
             return this.passLimitService.getPassLimit().pipe(map(pl => ({

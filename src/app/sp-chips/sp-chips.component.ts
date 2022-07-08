@@ -27,6 +27,7 @@ export class SpChipsComponent implements OnInit {
     private sanitizer: DomSanitizer,
   ) { }
 
+  // TODO: when profiles have no title?!
   get results() {
     return uniqBy(this.selectedProfiles, 'title');
   }

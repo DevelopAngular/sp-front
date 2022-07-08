@@ -10,7 +10,9 @@ import {
   ConfirmationDialogComponent,
   ConfirmationTemplates
 } from '../../../../shared/shared-components/confirmation-dialog/confirmation-dialog.component';
-import {LocationVisibilityService} from '../../../../services/location-visibility.service';
+import {LocationVisibilityService} from '../../location-visibility.service';
+import {UserService} from '../../../../services/user.service';
+import {User} from '../../../../models/User';
 
 @Component({
   selector: 'app-from-where',
@@ -79,7 +81,8 @@ export class FromWhereComponent implements OnInit, OnDestroy {
     private visibilityService: LocationVisibilityService,
     private toastService: ToastService,
     private formService: CreateFormService,
-    public screenService: ScreenService
+    public screenService: ScreenService,
+    private userService: UserService,
   ) {}
 
   ngOnInit() {
@@ -100,71 +103,56 @@ export class FromWhereComponent implements OnInit, OnDestroy {
           this.headerTransition['from-header_animation-back'] = false;
       }
     });
+
+     this.userService.userData
+      .pipe(
+        filter(u => !!u),
+        take(1),
+      )
+      .subscribe((u: User) => this.student = u);
   }
+
+  private student: User;
 
   ngOnDestroy() {
     this.destroy$.next();
     this.destroy$.complete();
   }
 
+  /*
+  private forwardAndEmit() {
+    this.formService.setFrameMotionDirection('forward');
+    this.formService.compressableBoxController.next(false);
+
+    setTimeout(() => {
+      this.formState.previousState = 1;
+      this.selectedLocation.emit(location);
+    }, 100);
+  }
+ */
+
   locationChosen(location) {
-     const students = this.formState.data.selectedStudents.map(s => s.id);
-     const ruleStudents = location.visibility_students.map(s => s.id);
-     const rule = location.visibility_type;
-                     
-     let skipped = this.visibilityService.calculateSkipped(students, ruleStudents, rule);
+    // students go forward
+    /*
+    if (!this.isStaff) {
+      this.forwardAndEmit();
+      return;
+    }
+    */
 
-    if (!!skipped) {
-      const studentNames = this.formState.data.selectedStudents.filter(s => skipped.includes(s.id)).map(s => s.display_name);      
-      // TODO: dialog.open
-       this.dialog.open(ConfirmationDialogComponent, {
-            panelClass: 'overlay-dialog',
-            backdropClass: 'custom-backdrop',
-            closeOnNavigation: true,
-            data: {
-              body: this.confirmDialogVisibility,
-              buttons: {
-                confirmText: 'Override',
-                denyText: 'Skip these students',
-              },
-              templateData: {alerts: [{phrase: 'These students do not have permission to come from this room', students: studentNames.join(', ')}]},
-              icon: './assets/Eye (Green-White).svg'
-            } as ConfirmationTemplates
-          }).afterClosed().pipe(
-            takeUntil(this.destroy$),
-            tap(override => console.log(override))
-          ).subscribe(res => {
-            console.log(res)
-            if (!res) {
-              // filter out the skipped students
-              const roomStudents = this.formState.data.selectedStudents.filter(s => (!skipped.includes(s.id)));
-              if (roomStudents.length === 0) {
-                this.toastService.openToast({
-                  title: 'Skiping left no students to operate on',
-                  subtitle: 'Last operation did not proceeed',
-                  type: 'error',
-                });
-              } else {
-                this.formState.data.roomStudents = roomStudents; 
-                this.formService.setFrameMotionDirection('forward');
-                this.formService.compressableBoxController.next(false);
+    /*
+    this.visibilityService.howToActOnChooseLocation(
+      this.formState,
+      location,
+      this.confirmDialogVisibility, 
+      this.forwardAndEmit.bind(this),
+      this.destroy$,
+    );
+   */
 
-                setTimeout(() => {
-                  this.formState.previousState = 1;
-                  this.selectedLocation.emit(location);
-                }, 100);
-              }
-            } else {
-                this.formService.setFrameMotionDirection('forward');
-                this.formService.compressableBoxController.next(false);
-
-                setTimeout(() => {
-                  this.formState.previousState = 1;
-                  this.selectedLocation.emit(location);
-                }, 100);
-            }
-          }); 
-    } else {
+    // advance form to next componet
+    // emit chosen location
+    const forwardAndEmit = () => {
       this.formService.setFrameMotionDirection('forward');
       this.formService.compressableBoxController.next(false);
 
@@ -172,9 +160,84 @@ export class FromWhereComponent implements OnInit, OnDestroy {
         this.formState.previousState = 1;
         this.selectedLocation.emit(location);
       }, 100);
+    };
+
+    // students go forward
+    if (!this.isStaff) {
+      forwardAndEmit();
+      return;
     }
 
+    // staff only
+     const selectedStudents = this.formState.data.selectedStudents;
+     const students = selectedStudents.map(s => ''+s.id);
+     const ruleStudents = location.visibility_students.map(s => ''+s.id);
+     const rule = location.visibility_type;
+          
+    // skipped are students that do not qualify to go forward     
+     let skipped = this.visibilityService.calculateSkipped(students, ruleStudents, rule);
 
+      if (!skipped || skipped.length === 0) {
+        forwardAndEmit();
+        return; 
+      }
+
+      let text =  'This room is only available to certain students';
+      let title =  'Student does not have permission to come from this room';
+      let denyText =  'Cancel';
+      if (selectedStudents.length > 1) {
+        text = selectedStudents.filter(s => skipped.includes(''+s.id)).map(s => s.display_name)?.join(', ') ?? 'This room is only available to certain students'
+        title = 'These students do not have permission to come from this room';
+        denyText = 'Skip these students';
+      }
+
+      this.dialog.open(ConfirmationDialogComponent, {
+        panelClass: 'overlay-dialog',
+        backdropClass: 'custom-backdrop',
+        closeOnNavigation: true,
+        data: {
+          body: this.confirmDialogVisibility,
+          buttons: {
+            confirmText: 'Override',
+            denyText,
+          },
+          templateData: {alerts: [{title, text}]},
+          icon: './assets/Eye (Green-White).svg'
+        } as ConfirmationTemplates
+      }).afterClosed().pipe(
+        takeUntil(this.destroy$),
+      ).subscribe(override => {
+        this.formState.data.roomOverride = !!override; 
+
+        if (override === undefined) {
+        
+        }
+       
+        // override case
+        if (override) {
+          forwardAndEmit();
+          return; 
+        }
+
+        // SKIPPING case
+        // avoid a certain no students case
+        if (selectedStudents.length === 1) return;
+
+        // filter out the skipped students
+        const roomStudents = selectedStudents.filter(s => (!skipped.includes(''+s.id)));
+        // avoid no students case
+        if (roomStudents.length === 0) {
+          this.toastService.openToast({
+            title: 'Skiping will left no students to operate on',
+            subtitle: 'Last operation did not proceeed',
+            type: 'error',
+          });
+          return;
+        }
+
+        this.formState.data.roomStudents = roomStudents; 
+        forwardAndEmit();
+      }); 
   }
 
 
