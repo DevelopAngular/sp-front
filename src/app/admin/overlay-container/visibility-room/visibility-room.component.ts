@@ -52,6 +52,7 @@ export class VisibilityRoomComponent implements OnInit, AfterViewInit, OnDestroy
     'visible_certain_students': {text: 'Show for certain students', textmenu: 'Show room for certain students',  classname: 'visibility-allow'},
     'hidden_certain_students': {text: 'Hide for certain students', textmenu: 'Hide room for certain students', classname: 'visibility-denny'},
   };
+  private asIs = () => 0;
 
   // keeps previous changes
   private prevdata: Partial<{[key in Exclude<VisibilityMode, 'visible_all_students'>]: VisibilityOverStudents}> = {};

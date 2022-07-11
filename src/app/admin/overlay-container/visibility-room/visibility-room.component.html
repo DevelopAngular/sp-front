@@ -57,7 +57,7 @@
         *ngIf="didOpen"
       >
         <li
-          *ngFor="let entry of modes | keyvalue"
+            *ngFor="let entry of modes | keyvalue: asIs"
             (click)="handleModeSelected(entry.key)"
         >
           {{entry.value.textmenu}}
