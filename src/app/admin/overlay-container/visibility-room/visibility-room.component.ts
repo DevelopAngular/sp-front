@@ -9,7 +9,7 @@ import {User} from '../../../models/User';
 import {SPSearchComponent} from '../../../sp-search/sp-search.component'; 
 import {VisibilityMode, ModeView, ModeViewMap, VisibilityOverStudents, DEFAULT_VISIBILITY_STUDENTS} from './visibility-room.type';
 import {OverlayDataService} from '../overlay-data.service';
-import {slideOpacity} from '../../../animations';
+import {slideOpacity } from '../../../animations';
 
 @Component({
   selector: 'app-visibility-room',
@@ -112,7 +112,7 @@ export class VisibilityRoomComponent implements OnInit, AfterViewInit, OnDestroy
   }
   // the focus of internal input native of app-search
   // triggers this method in order to hide the errors 
-  public onFocus() {
+  public onSearchComponentFocus() {
     this.showErrorsVisibility = false;
   }
 

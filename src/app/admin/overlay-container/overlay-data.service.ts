@@ -99,7 +99,7 @@ export class OverlayDataService {
       });
   }
 
-  patchData(data) {
+  public patchData(data) {
     const old = this.pageState.getValue();
     data = {...old.data, ...data};
     this.pageState.next({

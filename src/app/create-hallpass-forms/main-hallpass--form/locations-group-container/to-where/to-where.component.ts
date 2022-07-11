@@ -271,13 +271,17 @@ export class ToWhereComponent implements OnInit {
         backdropClass: 'custom-backdrop',
         closeOnNavigation: true,
         data: {
+          headerText: '',
           body: this.confirmDialogVisibility,
           buttons: {
             confirmText: 'Override',
             denyText,
           },
           templateData: {alerts: [{title, text}]},
-          icon: './assets/Eye (Green-White).svg'
+          icon: {
+            name: './assets/Eye (Green-White).svg',
+            background: '',
+          }
         } as ConfirmationTemplates
       }).afterClosed().pipe(
         takeUntil(this.destroy$),
@@ -386,13 +390,17 @@ export class ToWhereComponent implements OnInit {
         backdropClass: 'custom-backdrop',
         closeOnNavigation: true,
         data: {
+          headerText: '',
           body: this.confirmDialogVisibility,
           buttons: {
             confirmText: 'Override',
             denyText,
           },
           templateData: {alerts: [{title, text}]},
-          icon: './assets/Eye (Green-White).svg'
+          icon: {
+            name: './assets/Eye (Green-White).svg',
+            background: '',
+          }
         } as ConfirmationTemplates
       }).afterClosed().pipe(
         takeUntil(this.destroy$),

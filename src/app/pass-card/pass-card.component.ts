@@ -417,13 +417,17 @@ export class PassCardComponent implements OnInit, OnDestroy {
             backdropClass: 'custom-backdrop',
             closeOnNavigation: true,
             data: {
+              headerText: '',
               body: this.confirmDialogVisibility,
               buttons: {
                 confirmText: 'Override',
                 denyText: 'Skip these students',
               },
               templateData: {alerts: this.prepareTemplateDataVisibility(error, body.origin, body.destination)},
-              icon: './assets/Eye (Green-White).svg'
+              icon: {
+                name: './assets/Eye (Green-White).svg',
+                background: ''
+              }
             } as ConfirmationTemplates
           }).afterClosed();
           
@@ -505,7 +509,7 @@ export class PassCardComponent implements OnInit, OnDestroy {
               data: {
                 headerText,
                 buttons,
-                body: this.confirmDialogTemplate,
+                body: this.confirmDialog,
                 templateData: {
                   students: errorResponse.error.students,
                   passLimit,

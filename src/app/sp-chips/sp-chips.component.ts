@@ -27,8 +27,13 @@ export class SpChipsComponent implements OnInit {
     private sanitizer: DomSanitizer,
   ) { }
 
-  // TODO: when profiles have no title?!
   get results() {
+    // here for room visibility feature
+    // not having a title...
+    if (this.selectedProfiles.length > 0 && !('title' in this.selectedProfiles[0])) {
+      return this.selectedProfiles;
+    }
+    // this is expected for a teacher instance
     return uniqBy(this.selectedProfiles, 'title');
   }
 
