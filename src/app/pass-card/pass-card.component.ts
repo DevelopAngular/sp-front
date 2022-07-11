@@ -425,7 +425,7 @@ export class PassCardComponent implements OnInit, OnDestroy {
               },
               templateData: {alerts: this.prepareTemplateDataVisibility(error, body.origin, body.destination)},
               icon: {
-                name: './assets/Eye (Green-White).svg',
+                name: 'Eye (Green-White).svg',
                 background: ''
               }
             } as ConfirmationTemplates

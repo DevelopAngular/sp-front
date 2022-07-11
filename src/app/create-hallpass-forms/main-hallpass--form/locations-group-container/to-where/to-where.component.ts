@@ -279,7 +279,7 @@ export class ToWhereComponent implements OnInit {
           },
           templateData: {alerts: [{title, text}]},
           icon: {
-            name: './assets/Eye (Green-White).svg',
+            name: 'Eye (Green-White).svg',
             background: '',
           }
         } as ConfirmationTemplates

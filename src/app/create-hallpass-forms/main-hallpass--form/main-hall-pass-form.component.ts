@@ -51,7 +51,7 @@ export interface Navigation {
     requestTarget?: User,
     hasClose?: boolean,
     // filtered students after skiping some of selected ones to comply with the room visibility rules
-    roomStudents?: User[];
+    roomStudents?: User[] | null;
     roomOverride?: boolean;
   };
   quickNavigator?: boolean;
@@ -137,7 +137,7 @@ export class MainHallPassFormComponent implements OnInit, OnDestroy {
         direction: {
           from: this.dialogData.kioskModeRoom || null
         },
-        roomStudents: [],
+        roomStudents: null,
       },
       forInput: this.dialogData.forInput || false,
       forLater: this.dialogData.forLater,
