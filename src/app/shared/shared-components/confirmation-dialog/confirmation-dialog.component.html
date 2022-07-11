@@ -1,9 +1,13 @@
 <div class="confirm-dialog">
-  <div class="icon-wrapper">
-    <img width="30" [src]="data.icon | resolveAsset">
+  <div class="icon-wrapper" [style.background]="data.icon.background">
+    <img *ngIf="data.icon?.name" [src]="'./assets/' + data.icon.name | resolveAsset">
   </div>
   <div class="main-wrapper">
-    <ng-container *ngIf="data.body" [ngTemplateOutlet]="data.body" [ngTemplateOutletContext]="$implicit"></ng-container>
+    <div class="ds-mb-10">
+      <p class="ds-dialog-title" style="margin: 0">{{data.headerText}}</p>
+    </div>
+
+    <ng-template [ngTemplateOutlet]="data.body" [ngTemplateOutletContext]="templateData"></ng-template>
     <div class="buttons">
       <app-gradient-button
         textColor="#7083A0"

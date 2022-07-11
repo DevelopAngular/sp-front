@@ -10,6 +10,7 @@ import {concatMap, delay, map, tap} from 'rxjs/operators';
 import {HallPassLimit} from '../../../models/HallPassLimits';
 import {UserService} from '../../../services/user.service';
 import {IntroData} from '../../../ngrx/intros';
+import {cloneDeep} from 'lodash';
 
 /**
  * TODOS for individual pass limits
@@ -34,22 +35,19 @@ export class AdminPassLimitDialogComponent implements OnInit, OnDestroy {
 
   pageNumber = 1;
   frameMotion$: BehaviorSubject<any>;
-  showInfoMessage = true; // TODO: hide this message based on database value in the future
-  passLimitToggleTooltip = `Some help text about pass limits`; // TODO: Get text for this
-  individualLimitsTooltop = `Some help text about individual limits`; // TODO: Get text for this
-  individualStudentLimits = [];
   hasPassLimit: boolean;
   passLimit: HallPassLimit;
   passLimitForm = new FormGroup({
     limitEnabled: new FormControl(false),
-    passLimit: new FormControl(null, Validators.pattern(/^((1 pass)|(((1\d+)|[2-9]\d*) passes))$/)),
+    passLimit: new FormControl(null, Validators.pattern(/^[1-9]\d*$/)),
     frequency: new FormControl(null, Validators.required)
   }); // TODO: disable while fetching the pass limit status
   passLimitFormSubs: Subscription;
   passLimitFormChanged: Observable<boolean> = of(false);
-  passLimitFormLastValue: { enabled: boolean, limits: string, frequency: string };
+  passLimitFormLastValue: { limitEnabled: boolean, passLimit: string, frequency: string };
   showLimitFormatError = false;
   requestLoading = false;
+  contentLoading = true;
   showPassLimitNux: boolean;
   introsData: IntroData;
   introSubs: Subscription;
@@ -79,8 +77,8 @@ export class AdminPassLimitDialogComponent implements OnInit, OnDestroy {
     this.frameMotion$ = this.formService.getFrameMotionDirection();
     this.passLimitFormSubs = this.passLimitForm.valueChanges.subscribe((v) => {
       v.enabled
-        ? this.passLimitForm.controls['passLimit'].setValidators([Validators.required, Validators.pattern(/^((1 pass)|(((1\d+)|[2-9]\d*) passes))$/)])
-        : this.passLimitForm.controls['passLimit'].setValidators([Validators.pattern(/^((1 pass)|(((1\d+)|[2-9]\d*) passes))$/)]);
+        ? this.passLimitForm.controls['passLimit'].setValidators([Validators.required, Validators.pattern(/^[1-9]\d*$/)])
+        : this.passLimitForm.controls['passLimit'].setValidators([Validators.pattern(/^[1-9]\d*$/)]);
     });
     this.passLimitForm.disable();
     this.passLimitService.getPassLimit().pipe(
@@ -88,6 +86,7 @@ export class AdminPassLimitDialogComponent implements OnInit, OnDestroy {
         this.hasPassLimit = !!pl.pass_limit;
         if (this.hasPassLimit) {
           this.passLimit = pl.pass_limit;
+          this.contentLoading = false;
           this.passLimitForm.patchValue({limitEnabled: this.passLimit.limitEnabled});
           return of(true).pipe(delay(100));
         }
@@ -95,10 +94,7 @@ export class AdminPassLimitDialogComponent implements OnInit, OnDestroy {
       }),
       tap(() => {
         if (this.hasPassLimit) {
-          this.passLimitForm.patchValue({
-            passLimit: `${this.passLimit.passLimit} passes`,
-            frequency: this.passLimit.frequency
-          });
+          this.passLimitForm.patchValue(this.passLimit);
         }
         this.passLimitFormLastValue = this.passLimitForm.value;
         this.passLimitFormChanged = this.passLimitForm.valueChanges.pipe(
@@ -146,7 +142,7 @@ export class AdminPassLimitDialogComponent implements OnInit, OnDestroy {
 
   updatePassLimits() {
     this.requestLoading = true;
-    const passLimit = parseInt(this.passLimitForm.value['passLimit'].split(' ')[0], 10);
+    const passLimit = parseInt(this.passLimitForm.value['passLimit'], 10);
     const newValue = {
       ...this.passLimit,
       ...this.passLimitForm.value,
@@ -161,6 +157,7 @@ export class AdminPassLimitDialogComponent implements OnInit, OnDestroy {
       next: () => {
         this.hasPassLimit = true;
         this.requestLoading = false;
+        this.passLimitFormLastValue = cloneDeep(this.passLimitForm.value);
         this.passLimitFormChanged = this.passLimitForm.valueChanges.pipe(
           map(v => {
             const {invalid, dirty} = this.passLimitForm.get('passLimit');
@@ -183,12 +180,12 @@ export class AdminPassLimitDialogComponent implements OnInit, OnDestroy {
     if (change) {
       if (this.hasPassLimit) {
         this.passLimitForm.patchValue({
-          passLimit: `${this.passLimit.passLimit} passes`,
+          passLimit: `${this.passLimit.passLimit}`,
           frequency: this.passLimit.frequency
         });
       } else {
         this.passLimitForm.patchValue({
-          passLimit: '5 passes',
+          passLimit: '5',
           frequency: 'day'
         });
       }
