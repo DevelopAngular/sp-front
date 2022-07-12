@@ -12,7 +12,7 @@ import {ToWhereGridRestrictionSm} from '../../../../models/to-where-grid-restric
 import {ToWhereGridRestrictionMd} from '../../../../models/to-where-grid-restrictions/ToWhereGridRestrictionMd';
 import {MAT_DIALOG_DATA, MatDialog} from '@angular/material/dialog';
 import {Subject, BehaviorSubject, fromEvent, Observable} from 'rxjs';
-import {concatMap, filter, map, pluck, retryWhen, switchMap, take, takeUntil, tap} from 'rxjs/operators';
+import {filter, take, takeUntil} from 'rxjs/operators';
 import {DeviceDetection} from '../../../../device-detection.helper';
 import {StorageService} from '../../../../services/storage.service';
 import {TooltipDataService} from '../../../../services/tooltip-data.service';
@@ -377,11 +377,11 @@ export class ToWhereComponent implements OnInit {
       }
 
       let text =  'This room is only available to certain students';
-      let title =  'Student does not have permission to come from this room';
+      let title =  'Student does not have permission to go to this room';
       let denyText =  'Cancel';
       if (selectedStudents.length > 1) {
         text = selectedStudents.filter(s => skipped.includes(''+s.id)).map(s => s.display_name)?.join(', ') ?? 'This room is only available to certain students'
-        title = 'These students do not have permission to come from this room';
+        title = 'These students do not have permission to go to this room';
         denyText = 'Skip these students';
       }
 
@@ -398,7 +398,7 @@ export class ToWhereComponent implements OnInit {
           },
           templateData: {alerts: [{title, text}]},
           icon: {
-            name: './assets/Eye (Green-White).svg',
+            name: 'Eye (Green-White).svg',
             background: '',
           }
         } as ConfirmationTemplates

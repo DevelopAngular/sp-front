@@ -4,7 +4,7 @@ import {ToastService} from '../../../../services/toast.service';
 import {Navigation} from '../../main-hall-pass-form.component';
 import {CreateFormService} from '../../../create-form.service';
 import {Subject, BehaviorSubject, fromEvent} from 'rxjs';
-import {concatMap, filter, map, pluck, retryWhen, switchMap, take, takeUntil, tap} from 'rxjs/operators';
+import {filter, take, takeUntil} from 'rxjs/operators';
 import {ScreenService} from '../../../../services/screen.service';
 import {
   ConfirmationDialogComponent,
@@ -214,7 +214,7 @@ export class FromWhereComponent implements OnInit, OnDestroy {
         this.formState.data.roomOverride = !!override; 
 
         if (override === undefined) {
-        
+          return;        
         }
        
         // override case
