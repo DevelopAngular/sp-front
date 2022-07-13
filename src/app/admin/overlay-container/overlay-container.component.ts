@@ -617,6 +617,7 @@ export class OverlayContainerComponent implements OnInit, OnDestroy {
       } else if (roomData.advOptState.future.data.selectedTeachers.length) {
           data.scheduling_request_teachers = roomData.advOptState.future.data.selectedTeachers.map(t => t.id);
       }
+      data.enable = roomData.enable;
       return data;
   }
 
