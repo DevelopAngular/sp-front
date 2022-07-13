@@ -552,7 +552,7 @@ export class RequestCardComponent implements OnInit, OnDestroy {
 
     let studentPassLimitReached = false;
     const studentPassLimit = (await this.passLimitsService.getPassLimit().toPromise()).pass_limit;
-    if (studentPassLimit.limitEnabled) {
+    if (studentPassLimit?.limitEnabled) {
       const remainingPasses = (await this.passLimitsService.getRemainingLimits({studentId: this.request.student.id}).toPromise()).remainingPasses;
       studentPassLimitReached = remainingPasses === 0;
     }
