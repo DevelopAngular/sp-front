@@ -53,7 +53,7 @@
          [attr.data-motion-scale]="(isScaled | async)"
          class="locations"
     >
-      <app-locations-group-container [currentPassLimit]="dialogData?.passLimitInfo" [FORM_STATE]="FORM_STATE" (nextStepEvent)="onNextStep($event)"></app-locations-group-container>
+      <app-locations-group-container [passLimitInfo]="dialogData?.passLimitInfo" [FORM_STATE]="FORM_STATE" (nextStepEvent)="onNextStep($event)"></app-locations-group-container>
       <app-pass-limit-info [passLimitInfo]="dialogData?.passLimitInfo"></app-pass-limit-info>
     </div>
   </div>

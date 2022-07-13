@@ -606,7 +606,6 @@ export class RequestCardComponent implements OnInit, OnDestroy {
       concatMap((overrideRoomPassLimit) => {
         // Wait until the previous dialog is closed to perform these checks
         // If the room pass limit override is denied, then immediately return false and deny the pass request
-        console.log(`Override room pass limit: ${overrideRoomPassLimit}`);
         if (!overrideRoomPassLimit) {
           return of(false);
         }
