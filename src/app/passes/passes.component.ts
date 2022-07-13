@@ -58,7 +58,6 @@ import {PassLimitService} from '../services/pass-limit.service';
 import {PassLimitInfo} from '../models/HallPassLimits';
 import {MainHallPassFormComponent} from '../create-hallpass-forms/main-hallpass--form/main-hall-pass-form.component';
 import {CheckForUpdateService} from '../services/check-for-update.service';
-import {MainHallPassFormComponent} from '../create-hallpass-forms/main-hallpass--form/main-hall-pass-form.component';
 
 @Component({
   selector: 'app-passes',
