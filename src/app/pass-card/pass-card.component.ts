@@ -448,7 +448,7 @@ export class PassCardComponent implements OnInit, OnDestroy {
             if (!this.forStaff) {
                 this.toastService.openToast({
                   title: 'Rooms are not available this time',
-                  subtitle: 'Ask your teacher for accessi, or choose other room',
+                  subtitle: 'Ask your teacher for access, or choose other room',
                   type: 'error',
                 });
 
@@ -482,7 +482,8 @@ export class PassCardComponent implements OnInit, OnDestroy {
                   subtitle: 'Last operation did not proceeed',
                   type: 'error',
                 });
-                this.dialogRef.close();
+                this.performingAction = false;
+                //this.dialogRef.close();
                 throw 'no students after skiping';
               }
               return of(null);
@@ -595,7 +596,6 @@ export class PassCardComponent implements OnInit, OnDestroy {
         this.header = '';
       } else {
         if (this.forInput) {
-          this.formState.data.roomStudents = null;
           this.formState.step = 3;
           this.formState.previousStep = 4;
           this.formService.setFrameMotionDirection('disable');
