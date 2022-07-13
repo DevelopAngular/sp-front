@@ -1,7 +1,7 @@
 import { Component, ErrorHandler, OnDestroy, OnInit, ViewEncapsulation } from "@angular/core";
 import { MatDialog } from "@angular/material/dialog";
 import { merge, of, ReplaySubject, Subject } from "rxjs";
-import { filter, takeUntil, tap } from "rxjs/operators";
+import { catchError, filter, map, takeUntil, tap } from "rxjs/operators";
 import { AdminService } from "../../../services/admin.service";
 import { BackgroundTextComponent } from "../background-text/background-text.component";
 import { UploadLogoComponent } from "../upload-logo/upload-logo.component";
@@ -13,6 +13,8 @@ import { DarkThemeSwitch } from "../../../dark-theme-switch";
 import { SettingsDescriptionPopupComponent } from "../../../settings-description-popup/settings-description-popup.component";
 import { IdCardProfilePictureComponent } from "../id-card-profile-picture/id-card-profile-picture.component";
 import { ConfirmationComponent } from "../../../shared/shared-components/confirmation/confirmation.component";
+import { IDCardService } from "../../../services/IDCardService";
+// import * as PassFunctions from '../../../support/fun';
 
 export const UNANIMATED_CONTAINER: ReplaySubject<boolean> = new ReplaySubject(1);
 
@@ -90,6 +92,7 @@ export class IdCardEditorComponent implements OnInit, OnDestroy {
     private userService: UserService,
     public darkTheme: DarkThemeSwitch,
     private errorHandler: ErrorHandler,
+    public idCardService: IDCardService
   ) {}
 
   ngOnInit(): void {
@@ -318,11 +321,32 @@ export class IdCardEditorComponent implements OnInit, OnDestroy {
       };
       this.openConfirmationDialog(data).then((res) => {
         if (res) {
-          this.IDCardEnabled = false
+          this.idCardService.disableIDCard().subscribe(result => {
+            console.log("Result : ", result)
+            this.IDCardEnabled = false
+          })
+          
         }
       });
     }else {
-      this.IDCardEnabled = true
+
+
+      this.idCardService.enableIDCard().subscribe({
+        next: result => {
+          console.log("Result : ", result)
+          this.IDCardEnabled = true
+        },
+        error: error => {
+          console.log("Result : ", error)
+        }
+      })
+
+      
+
+
+      // this.idCardService.getIDCardDetails().subscribe(result => {
+      //   console.log("result : ", result)
+      // });
     }
   }
 }
