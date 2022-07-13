@@ -366,6 +366,10 @@ export class PassCardComponent implements OnInit, OnDestroy {
     if (this.forKioskMode) {
       body['self_issued'] = true;
     }
+    if (!this.forStaff) {
+      delete body['override_visibility'];
+      body['isNotBulk'] = true;
+    } 
 
     of(body).pipe(
       concatMap(b => this.forStaff ? this.hallPassService.bulkCreatePass(b) : this.hallPassService.createPass(b)),
@@ -440,6 +444,20 @@ export class PassCardComponent implements OnInit, OnDestroy {
           tap(errorResponse => {
             const isVisibilityError = ('visibility_alerts' in errorResponse.error);
             console.log('me', errorResponse, isVisibilityError)
+            // a student has been checked server side and had no room visibility 
+            if (!this.forStaff) {
+                this.toastService.openToast({
+                  title: 'Rooms are not available this time',
+                  subtitle: 'Ask your teacher for accessi, or choose other room',
+                  type: 'error',
+                });
+
+                this.performingAction = false;
+                //this.dialogRef.close();
+                throw 'this student has been subject of room visibility rules';
+              
+              return
+            }
             // not our error case? dispatch it to the next retryWhen
             if (! isVisibilityError) throw errorResponse;
           }),
@@ -577,6 +595,7 @@ export class PassCardComponent implements OnInit, OnDestroy {
         this.header = '';
       } else {
         if (this.forInput) {
+          this.formState.data.roomStudents = null;
           this.formState.step = 3;
           this.formState.previousStep = 4;
           this.formService.setFrameMotionDirection('disable');

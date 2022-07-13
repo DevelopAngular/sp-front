@@ -228,6 +228,12 @@ export class ToWhereComponent implements OnInit {
       if (!allowed) return;
 
       // students go forward
+      if (!this.isStaff) {
+        forwardAndEmit();
+        return;
+      }
+
+      // students go forward
       /*if (!this.isStaff) {
         this.formState.data.roomStudents = [this.student]; 
         this.forwardAndEmit();
@@ -302,7 +308,6 @@ export class ToWhereComponent implements OnInit {
         // avoid a certain no students case
         if (selectedStudents.length === 1) return;
 
-        this.formState.data.roomOverride = !!override; 
         // filter out the skipped students
         const roomStudents = selectedStudents.filter(s => (!skipped.includes(''+s.id)));
         // avoid no students case
@@ -406,6 +411,10 @@ export class ToWhereComponent implements OnInit {
         takeUntil(this.destroy$),
       ).subscribe(override => {
         this.formState.data.roomOverride = !!override; 
+       
+        if (override === undefined) {
+          return;     
+        }
        
         // override case
         if (override) {
