@@ -104,6 +104,7 @@ export class AdminPassLimitDialogComponent implements OnInit, OnDestroy {
             return JSON.stringify(v) !== JSON.stringify(this.passLimitFormLastValue);
           }));
         this.passLimitForm.enable();
+        this.contentLoading = false;
       })
     ).subscribe();
     this.introSubs = this.userService.introsData$.subscribe(intros => {
