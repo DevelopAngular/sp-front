@@ -234,8 +234,11 @@ export class FromWhereComponent implements OnInit, OnDestroy {
 
         // override is false now
         // SKIPPING case
-        // avoid a certain no students case
-        if (selectedStudents.length === 1) return;
+        // only one student means cancel
+        if (selectedStudents.length === 1) {
+          this.dialogRef.close(); 
+          return;
+        }
 
         // filter out the skipped students
         const roomStudents = selectedStudents.filter(s => (!skipped.includes(''+s.id)));
