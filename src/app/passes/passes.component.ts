@@ -56,8 +56,8 @@ import {LocationsService} from '../services/locations.service';
 import * as moment from 'moment';
 import {PassLimitService} from '../services/pass-limit.service';
 import {PassLimitInfo} from '../models/HallPassLimits';
-import {CheckForUpdateService} from '../services/check-for-update.service';
 import {MainHallPassFormComponent} from '../create-hallpass-forms/main-hallpass--form/main-hall-pass-form.component';
+import {CheckForUpdateService} from '../services/check-for-update.service';
 
 @Component({
   selector: 'app-passes',
@@ -534,44 +534,4 @@ export class PassesComponent implements OnInit, AfterViewInit, OnDestroy {
       this.filterPasses(collection, null);
     }
   }
-
-  // private requestPassLimitsInfo(id: string): Observable<PassLimitInfo> {
-  //   const current = this.passLimitsService.getRemainingLimits({studentId: id}).pipe(
-  //     take(1),
-  //     map(r => {
-  //       if (r.remainingPasses === -1) { // no pass limits enabled
-  //         throw new Error('no pass limits enabled');
-  //       }
-  //
-  //       this.remainingPasses = r.remainingPasses;
-  //       return r.remainingPasses;
-  //     })
-  //   );
-  //
-  //   const max = this.passLimitsService.getPassLimit().pipe(
-  //     take(1),
-  //     map(l => {
-  //       if (l.pass_limit === null) {
-  //         throw new Error('no pass limits enabled');
-  //       }
-  //       if (!l.pass_limit.limitEnabled) {
-  //         throw new Error('no pass limits enabled');
-  //       }
-  //       this.maxPasses = l.pass_limit.passLimit;
-  //       return l.pass_limit.passLimit;
-  //     })
-  //   );
-  //
-  //   const request = this.user.roles.includes('hallpass_student')
-  //     ? forkJoin({
-  //       current,
-  //       max,
-  //       showPasses: of(true)
-  //     })
-  //     : of({showPasses: false});
-  //
-  //   return request.pipe(catchError(() => {
-  //     return of({showPasses: false});
-  //   }));
-  // }
 }

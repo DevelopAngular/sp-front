@@ -30,8 +30,8 @@ import {NextReleaseService} from './next-release/services/next-release.service';
 import {ScreenService} from './services/screen.service';
 import {ToastService} from './services/toast.service';
 import _refiner from 'refiner-js';
-import {LocalizejsService} from './services/localizejs.service';
 import {CheckForUpdateService} from './services/check-for-update.service';
+import {LocalizejsService} from './services/localizejs.service';
 import {ColorProfile} from './models/ColorProfile';
 import {Util} from '../Util';
 
