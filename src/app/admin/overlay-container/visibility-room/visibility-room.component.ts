@@ -29,7 +29,7 @@ export class VisibilityRoomComponent implements OnInit, AfterViewInit, OnDestroy
   @Input() data?: VisibilityOverStudents = DEFAULT_VISIBILITY_STUDENTS; 
 
   @Input() showErrors: boolean
-  private showErrorsVisibility: boolean = false;
+  showErrorsVisibility: boolean = false;
 
   @Input() visibilityForm: FormGroup;
 
