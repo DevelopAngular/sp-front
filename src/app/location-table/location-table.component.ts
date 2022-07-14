@@ -69,7 +69,8 @@ export class LocationTableComponent implements OnInit, OnDestroy {
     return this._choices;
   }
   set choices(values: any[]) {
-    if (values.length > 0) {
+    // filtering apply only for a student
+    if (values.length > 0 && !this.forStaff) {
       // test if we have Location's
       let v = values[0];
       try {
