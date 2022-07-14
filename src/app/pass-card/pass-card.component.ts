@@ -150,11 +150,12 @@ export class PassCardComponent implements OnInit, OnDestroy {
     if (this.formState && this.formState.data.selectedGroup) {
       return this.formState.data.selectedGroup.title;
     } else {
-      return (this.selectedStudents ?
-        (this.selectedStudents.length > 2 ?
-          this.selectedStudents[0].display_name + ' and ' + (this.selectedStudents.length - 1) + ' more' :
-          this.selectedStudents[0].display_name + (this.selectedStudents.length > 1 ?
-            ' and ' + this.selectedStudents[1].display_name : '')) :
+      const selectedStudents = this.formState.data.roomStudents ?? this.selectedStudents;
+      return (selectedStudents ?
+        (selectedStudents.length > 2 ?
+          selectedStudents[0].display_name + ' and ' + (selectedStudents.length - 1) + ' more' :
+          selectedStudents[0].display_name + (selectedStudents.length > 1 ?
+            ' and ' + selectedStudents[1].display_name : '')) :
         this.pass.student.display_name + ` (${this.studentEmail})`);
     }
   }
@@ -336,7 +337,8 @@ export class PassCardComponent implements OnInit, OnDestroy {
       } else if (a['location_id'] == destination) {
         joint = 'to go to';
       }
-      const phrase = `These students do not have permission ${joint} this room "${a['location_title']}"`;
+      //const phrase = `These students do not have permission ${joint} this room "${a['location_title']}"`;
+      const phrase = `These students do not have permission ${joint} this room`;
       out.push({phrase, students: ss.join(', ')});
     }
     return out;
@@ -446,9 +448,11 @@ export class PassCardComponent implements OnInit, OnDestroy {
             console.log('me', errorResponse, isVisibilityError)
             // a student has been checked server side and had no room visibility 
             if (!this.forStaff) {
+                const roomNames = errorResponse.error.visibility_alerts.map(r => r.location_title);
+                const title = ((roomNames.length > 1) ? 'Rooms ' : 'Room ') + roomNames.join(', ') + ' not available'; 
                 this.toastService.openToast({
-                  title: 'Rooms are not available this time',
-                  subtitle: 'Ask your teacher for access, or choose other room',
+                  title,
+                  subtitle: 'Please ask your teacher to create a pass for you.',
                   type: 'error',
                 });
 

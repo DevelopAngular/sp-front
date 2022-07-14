@@ -52,6 +52,8 @@ export interface Navigation {
     hasClose?: boolean,
     // filtered students after skiping some of selected ones to comply with the room visibility rules
     roomStudents?: User[] | null;
+    // needed when back from pass card
+    roomStudentsAfterFromStep?: User[];
     roomOverride?: boolean;
   };
   quickNavigator?: boolean;

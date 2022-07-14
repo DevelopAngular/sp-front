@@ -127,6 +127,9 @@ export class ToWhereComponent implements OnInit {
       this.passLimits = res;
     });
 
+    if (this.formState.data.roomStudentsAfterFromStep)
+      this.formState.data.roomStudents = [...this.formState.data.roomStudentsAfterFromStep];
+
    this.userService.userData
     .pipe(
       filter(u => !!u),
@@ -171,8 +174,9 @@ export class ToWhereComponent implements OnInit {
 
   countStudents(): number {
     let sum = 0;
-    if (this.formState.data.selectedStudents)
-      sum += this.formState.data.selectedStudents.length;
+    const selectedStudents = this.formState.data.roomStudents ?? this.formState.data.selectedStudents;
+    if (selectedStudents)
+      sum += selectedStudents.length;
     return sum;
   }
 
@@ -264,12 +268,15 @@ export class ToWhereComponent implements OnInit {
       }
 
       let text =  'This room is only available to certain students';
-      let title =  'Student does not have permission to come from this room';
+      let names = selectedStudents.filter(s => skipped.includes(''+s.id)).map(s => s.display_name);
+      let title =  'Student does not have permission to go to this room';
       let denyText =  'Cancel';
-      if (selectedStudents.length > 1) {
-        text = selectedStudents.filter(s => skipped.includes(''+s.id)).map(s => s.display_name)?.join(', ') ?? 'This room is only available to certain students'
-        title = 'These students do not have permission to come from this room';
+      if (names.length > 1) {
+        text = names?.join(', ') ?? 'This room is only available to certain students'
+        title = 'These students do not have permission to go to this room:';
         denyText = 'Skip these students';
+      } else {
+        title = (names?.join(', ') ?? 'Student') + ' does not have permission to go to this room'; 
       }
 
       this.dialog.open(ConfirmationDialogComponent, {
@@ -382,12 +389,15 @@ export class ToWhereComponent implements OnInit {
       }
 
       let text =  'This room is only available to certain students';
+      let names = selectedStudents.filter(s => skipped.includes(''+s.id)).map(s => s.display_name);
       let title =  'Student does not have permission to go to this room';
       let denyText =  'Cancel';
-      if (selectedStudents.length > 1) {
-        text = selectedStudents.filter(s => skipped.includes(''+s.id)).map(s => s.display_name)?.join(', ') ?? 'This room is only available to certain students'
-        title = 'These students do not have permission to go to this room';
+      if (names.length > 1) {
+        text = names?.join(', ') ?? 'This room is only available to certain students'
+        title = 'These students do not have permission to go to this room:';
         denyText = 'Skip these students';
+      } else {
+        title = (names?.join(', ') ?? 'Student') + ' does not have permission to go to this room'; 
       }
 
       this.dialog.open(ConfirmationDialogComponent, {

@@ -74,6 +74,9 @@ export class FromWhereComponent implements OnInit, OnDestroy {
 
   destroy$: Subject<any> = new Subject<any>();
 
+  // keep unfiltered students before entering (with posible filtering) to pass card view
+  beforeBackStudents: User[] = [];
+
   constructor(
     public dialog: MatDialog,
     public dialogRef: MatDialogRef<FromWhereComponent>,
@@ -183,12 +186,16 @@ export class FromWhereComponent implements OnInit, OnDestroy {
       }
 
       let text =  'This room is only available to certain students';
+      let names = selectedStudents.filter(s => skipped.includes(''+s.id)).map(s => s.display_name);
       let title =  'Student does not have permission to come from this room';
       let denyText =  'Cancel';
-      if (selectedStudents.length > 1) {
-        text = selectedStudents.filter(s => skipped.includes(''+s.id)).map(s => s.display_name)?.join(', ') ?? 'This room is only available to certain students'
-        title = 'These students do not have permission to come from this room';
+      if (names.length > 1) {
+        text = names?.join(', ') ?? 'This room is only available to certain students'
+        title = 'These students do not have permission to come from this room:';
         denyText = 'Skip these students';
+      } else {
+        title = (names?.join(', ') ?? 'Student') + ' does not have permission to come from this room'; 
+        if (selectedStudents.length > 1) denyText = 'Skip this student';
       }
 
       this.dialog.open(ConfirmationDialogComponent, {
@@ -219,10 +226,13 @@ export class FromWhereComponent implements OnInit, OnDestroy {
        
         // override case
         if (override) {
+          this.formState.data.roomStudents = [...this.formState.data.selectedStudents]; 
+          this.formState.data.roomStudentsAfterFromStep = [...this.formState.data.roomStudents]; 
           forwardAndEmit();
           return; 
         }
 
+        // override is false now
         // SKIPPING case
         // avoid a certain no students case
         if (selectedStudents.length === 1) return;
@@ -240,6 +250,7 @@ export class FromWhereComponent implements OnInit, OnDestroy {
         }
 
         this.formState.data.roomStudents = roomStudents; 
+        this.formState.data.roomStudentsAfterFromStep = [...roomStudents]; 
         forwardAndEmit();
       }); 
   }
