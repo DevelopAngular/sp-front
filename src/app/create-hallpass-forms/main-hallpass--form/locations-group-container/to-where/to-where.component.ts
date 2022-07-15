@@ -231,6 +231,12 @@ export class ToWhereComponent implements OnInit {
     const emitSelectedPinnable = (allowed) => {
       if (!allowed) return;
 
+      // is folder
+      if (!!pinnable.category && pinnable.location === null) {
+        forwardAndEmit();
+        return;
+      }
+
       // students go forward
       if (!this.isStaff) {
         forwardAndEmit();
@@ -313,7 +319,10 @@ export class ToWhereComponent implements OnInit {
 
         // SKIPPING case
         // avoid a certain no students case
-        if (selectedStudents.length === 1) return;
+        if (selectedStudents.length === 1) {
+          this.dialogRef.close();
+          return;
+        }
 
         // filter out the skipped students
         const roomStudents = selectedStudents.filter(s => (!skipped.includes(''+s.id)));
