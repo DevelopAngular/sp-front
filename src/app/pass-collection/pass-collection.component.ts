@@ -33,6 +33,7 @@ import {SpAppearanceComponent} from '../sp-appearance/sp-appearance.component';
 import {User} from '../models/User';
 import {UserService} from '../services/user.service';
 import * as moment from 'moment';
+import {Router} from '@angular/router';
 
 export class SortOption {
   constructor(private name: string, public value: string) {
@@ -138,6 +139,7 @@ export class PassCollectionComponent implements OnInit, OnDestroy {
       private cdr: ChangeDetectorRef,
       private passesService: HallPassesService,
       private userService: UserService,
+      private router: Router,
   ) {}
 
   get gridTemplate() {
@@ -181,6 +183,19 @@ export class PassCollectionComponent implements OnInit, OnDestroy {
           // const studentName = pass.student.display_name;
           const random = [destinationName];
           this.randomString.emit(random[Math.floor(Math.random() * random.length)]);
+
+          const dialog = window.history.state.open_on_load?.dialog;
+          const id = window.history.state.id;
+          passes.forEach(p => {
+              if ((p instanceof HallPass || pass instanceof Invitation) &&
+                  dialog === 'main/passes/open_pass' && p.id === id) {
+                  this.initializeDialog(p);
+              }
+
+              if (pass instanceof Request && dialog === 'main/passes/open_request' && p.id === id) {
+                  this.initializeDialog(p);
+              }
+          });
       });
     }
 
