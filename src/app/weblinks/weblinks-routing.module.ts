@@ -4,13 +4,6 @@ import {RouterModule, Routes} from '@angular/router';
 import {PredemoComponent} from '../forms/predemo/predemo.component';
 import {AuthGuardCallbackComponent} from './auth-guard-callback/auth-guard-callback.component';
 
-// https://smartpass.app/app/forms/predemo
-// https://smartpass.app/app/weblinks/reports
-// https://smartpass.app/app/weblinks/encounters
-// https://smartpass.app/app/weblinks/create
-// https://smartpass.app/app/weblinks/pass?id=20977
-// https://smartpass.app/app/weblinks/request?id=2482
-
 const routes: Routes = [
   {
     path: 'reports', component: AuthGuardCallbackComponent, data: {
