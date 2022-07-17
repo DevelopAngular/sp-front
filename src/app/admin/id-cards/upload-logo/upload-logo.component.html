@@ -20,7 +20,7 @@
         <p class="bottom-text">Need help? <span (click)="openChat($event)">Chat with us</span></p>
         <ng-container #img>
             <div class="buttons">
-                <app-gradient-button [disabled]="!imageUrl" appCrossPointerEventTarget (pointerClickEvent)="dialogRef.close(imageUrl)">{{isLogoAdded ? 'Update' : 'Add'}} logo</app-gradient-button>
+                <app-gradient-button [disabled]="!imageUrl" appCrossPointerEventTarget (pointerClickEvent)="addLogo()">{{isLogoAdded ? 'Update' : 'Add'}} logo</app-gradient-button>
             </div>
         </ng-container>
     </div>

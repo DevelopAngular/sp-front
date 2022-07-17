@@ -1,4 +1,4 @@
-import { Component, Input } from "@angular/core";
+import { Component, Input, OnInit } from "@angular/core";
 import { DarkThemeSwitch } from "../../../dark-theme-switch";
 import { User } from "../../../models/User";
 import { UserService } from "../../../services/user.service";
@@ -8,7 +8,7 @@ import { UserService } from "../../../services/user.service";
   templateUrl: "./id-card.component.html",
   styleUrls: ["./id-card.component.scss"],
 })
-export class IdCardComponent {
+export class IdCardComponent implements OnInit {
 
   @Input() userName: string = 'Nicholas Demarco';
   @Input() schoolName: string = 'Walt Whitman High School';
@@ -21,6 +21,7 @@ export class IdCardComponent {
   @Input() greadLevel: number;
   @Input() buttonBackColor: string = '#FFFFFF';
   @Input() isDummyCard: boolean = false;
+  @Input() isLoggedIn: boolean = true;
 
   userDetails: any;
 
@@ -28,7 +29,11 @@ export class IdCardComponent {
     public darkTheme: DarkThemeSwitch,
     private userService: UserService,
     ) {
-    if (!this.isDummyCard) {
+  }
+
+  ngOnInit(): void {
+    console.log("isLoggedIn : ", this.isLoggedIn)
+    if (this.isLoggedIn) {
       this.userService.user$.subscribe({
         next: user => {
           this.userDetails = User.fromJSON(user);
