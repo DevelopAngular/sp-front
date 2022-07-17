@@ -1,4 +1,12 @@
-import { Component, ElementRef, ErrorHandler, OnDestroy, OnInit, ViewChild, ViewEncapsulation } from "@angular/core";
+import {
+  Component,
+  ElementRef,
+  ErrorHandler,
+  OnDestroy,
+  OnInit,
+  ViewChild,
+  ViewEncapsulation,
+} from "@angular/core";
 import { MatDialog } from "@angular/material/dialog";
 import { merge, of, ReplaySubject, Subject } from "rxjs";
 import { filter, takeUntil, tap } from "rxjs/operators";
@@ -15,14 +23,16 @@ import { IDCardService } from "../../../services/IDCardService";
 import { QRBarcodeGeneratorService } from "../../../services/qrbarcode-generator.service";
 import { ToastService } from "../../../services/toast.service";
 
-export const UNANIMATED_CONTAINER: ReplaySubject<boolean> = new ReplaySubject(1);
+export const UNANIMATED_CONTAINER: ReplaySubject<boolean> = new ReplaySubject(
+  1
+);
 
 export interface IDCard {
   userName?: string;
   schoolName?: string;
   userRole?: string;
   profilePicture?: string;
-  idNumberData?: {idNumber: number, barcodeURL: any};
+  idNumberData?: { idNumber: number; barcodeURL: any };
   greadLevel?: number;
   backgroundColor?: string;
   logoURL?: string;
@@ -34,62 +44,60 @@ export interface BarcodeTypes {
   action: string;
   icon: string;
   textColor: string;
-  backgroundColor: string
+  backgroundColor: string;
 }
 
 @Component({
   selector: "app-id-card-editor",
   templateUrl: "./id-card-editor.component.html",
   styleUrls: ["./id-card-editor.component.scss"],
-  encapsulation: ViewEncapsulation.None
+  encapsulation: ViewEncapsulation.None,
 })
 export class IdCardEditorComponent implements OnInit, OnDestroy {
-
   idCardFormData: FormData = new FormData();
 
-  backgroundColor: string = '#00b476';
-  backsideText: string = '';
-  profile_picture: string = '';
+  backgroundColor: string = "#00b476";
+  backsideText: string = "";
+  profile_picture: string = "";
   IDNumberData: any = {};
-  logoURL: string = '';
+  logoURL: string = "";
   greadLevel: number;
 
   isInEditingMode: boolean = false;
 
   isLogoAdded: boolean = false;
 
-  
   typeOfBarcodes: BarcodeTypes[] = [
     {
-      label: 'Traditional',
-      icon: './assets/Barcode (Black).svg',
-      textColor: '#7f879d',
-      backgroundColor: '#F4F4F4',
-      action: 'code39'
+      label: "Traditional",
+      icon: "./assets/Barcode (Black).svg",
+      textColor: "#7f879d",
+      backgroundColor: "#F4F4F4",
+      action: "code39",
     },
     {
-      label: 'QR Code',
-      icon: './assets/QR Code (Black).svg',
-      textColor: '#7f879d',
-      backgroundColor: '#F4F4F4',
-      action: 'qr-code'
-    }
+      label: "QR Code",
+      icon: "./assets/QR Code (Black).svg",
+      textColor: "#7f879d",
+      backgroundColor: "#F4F4F4",
+      action: "qr-code",
+    },
   ];
   selectedBarcode: BarcodeTypes = {
-    label: 'QR Code',
-    icon: './assets/QR Code (Black).svg',
-    textColor: '#7f879d',
-    backgroundColor: '#F4F4F4',
-    action: 'qr-code'
+    label: "QR Code",
+    icon: "./assets/QR Code (Black).svg",
+    textColor: "#7f879d",
+    backgroundColor: "#F4F4F4",
+    action: "qr-code",
   };
 
-  IDCardVisibleTo: string = 'Students only';
+  IDCardVisibleTo: string = "Students only";
   IDCardEnabled: boolean = false;
   isUploadedProfilePictures: boolean;
-  status: 'disconnect' | 'approved' | 'done' = 'disconnect';
+  status: "disconnect" | "approved" | "done" = "disconnect";
   destroy$ = new Subject();
 
-  @ViewChild('colorInputEl') colorInputEl: ElementRef;
+  @ViewChild("colorInputEl") colorInputEl: ElementRef;
 
   constructor(
     public adminService: AdminService,
@@ -98,10 +106,10 @@ export class IdCardEditorComponent implements OnInit, OnDestroy {
     public darkTheme: DarkThemeSwitch,
     public idCardService: IDCardService,
     private qrBarcodeGenerator: QRBarcodeGeneratorService,
-    private toast: ToastService,
+    private toast: ToastService
   ) {
     this.idCardService.getIDCardDetails().subscribe({
-      next: (result:any) => {
+      next: (result: any) => {
         if (result?.results?.digital_id_card) {
           this.IDCardEnabled = true;
           const IDCARDDETAILS = result.results.digital_id_card;
@@ -110,21 +118,26 @@ export class IdCardEditorComponent implements OnInit, OnDestroy {
           this.IDCardVisibleTo = IDCARDDETAILS.visible_to_who;
           this.logoURL = IDCARDDETAILS.logo_signed_url;
           // this.setUpProfilePicture()
-          IDCARDDETAILS.barcode_type != '' ? this.setUpIDNumber(IDCARDDETAILS.barcode_type) : null
-          
+          IDCARDDETAILS.barcode_type != ""
+            ? this.setUpIDNumber(IDCARDDETAILS.barcode_type)
+            : null;
+
           // this.setUpGreadLevel()
         }
-      }
-    })
+      },
+    });
   }
 
   ngOnInit(): void {
-    merge(of(this.userService.getUserSchool()), this.userService.getCurrentUpdatedSchool$().pipe(filter(s => !!s)))
-        .pipe(takeUntil(this.destroy$))
-        .subscribe(school => {
-          this.isUploadedProfilePictures = school.profile_pictures_completed;
-        });
-        this.isUploadedProfilePictures ? this.status = 'done' : 'disconnect';
+    merge(
+      of(this.userService.getUserSchool()),
+      this.userService.getCurrentUpdatedSchool$().pipe(filter((s) => !!s))
+    )
+      .pipe(takeUntil(this.destroy$))
+      .subscribe((school) => {
+        this.isUploadedProfilePictures = school.profile_pictures_completed;
+      });
+    this.isUploadedProfilePictures ? (this.status = "done") : "disconnect";
   }
 
   ngOnDestroy() {
@@ -132,38 +145,37 @@ export class IdCardEditorComponent implements OnInit, OnDestroy {
     this.destroy$.complete();
   }
 
-  setBackgroundColor(){
-    
-    this.idCardFormData.delete('color');
-    this.idCardFormData.append('color', this.backgroundColor);
+  setBackgroundColor() {
+    this.idCardFormData.delete("color");
+    this.idCardFormData.append("color", this.backgroundColor);
     this.autoSave();
   }
-  
-  saveIDCardFields(){
+
+  saveIDCardFields() {
     this.idCardService.updateIDCardField(this.idCardFormData).subscribe({
-      next: (result:any) => {
-        this.toast.openToast({title: 'ID Cards updated', type: 'success'});
+      next: (result: any) => {
+        this.toast.openToast({ title: "ID Cards updated", type: "success" });
         this.isInEditingMode = false;
-      }
-    })
+      },
+    });
   }
 
-  autoSave(){
+  autoSave() {
     if (this.IDCardEnabled) {
       this.isInEditingMode = true;
-      return
-    }else {
+      return;
+    } else {
       this.isInEditingMode = false;
       this.idCardService.updateIDCardField(this.idCardFormData).subscribe({
-        next: (result:any) => {
-          this.idCardFormData = new FormData()
-        }
-      })
+        next: (result: any) => {
+          this.idCardFormData = new FormData();
+        },
+      });
     }
   }
 
-  cancelEditing(){
-    this.idCardFormData = new FormData()
+  cancelEditing() {
+    this.idCardFormData = new FormData();
     this.isInEditingMode = false;
   }
 
@@ -182,14 +194,14 @@ export class IdCardEditorComponent implements OnInit, OnDestroy {
     const dialogRef = this.dialog.open(BackgroundTextComponent, {
       panelClass: "search-pass-card-dialog-container",
       backdropClass: "custom-bd",
-      data: {text: this.backsideText}
+      data: { text: this.backsideText },
     });
 
     dialogRef.afterClosed().subscribe((result) => {
       if (result) {
         this.backsideText = result;
-        this.idCardFormData.delete('backside_text');
-        this.idCardFormData.append('backside_text', this.backsideText);
+        this.idCardFormData.delete("backside_text");
+        this.idCardFormData.append("backside_text", this.backsideText);
         this.autoSave();
       }
     });
@@ -198,203 +210,213 @@ export class IdCardEditorComponent implements OnInit, OnDestroy {
   urlify(text) {
     var urlRegex = /(((https?:\/\/)|(www\.))[^\s]+)/g;
     //var urlRegex = /(https?:\/\/[^\s]+)/g;
-    return text.replace(urlRegex, function(url,b,c) {
-        var url2 = (c == 'www.') ?  'http://' +url : url;
-        return '<a href="' +url2+ '" target="_blank">' + url + '</a>';
-    }) 
-}
+    return text.replace(urlRegex, function (url, b, c) {
+      var url2 = c == "www." ? "http://" + url : url;
+      return '<a href="' + url2 + '" target="_blank">' + url + "</a>";
+    });
+  }
 
   uploadLogo() {
     const dialogRef = this.dialog.open(UploadLogoComponent, {
       panelClass: "search-pass-card-dialog-container",
       backdropClass: "custom-bd",
-      data: {isLogoAdded: this.isLogoAdded}
+      data: { isLogoAdded: this.isLogoAdded },
     });
 
     dialogRef.afterClosed().subscribe((result) => {
       if (result) {
         this.isLogoAdded = true;
         this.logoURL = result.logo_url;
-        this.idCardFormData.delete('logo_file_name');
-        this.idCardFormData.delete('logo_file');
-        this.idCardFormData.append('logo_file_name', result.file_name);
-        this.idCardFormData.append('logo_file', result.logo_file);
+        this.idCardFormData.delete("logo_file_name");
+        this.idCardFormData.delete("logo_file");
+        this.idCardFormData.append("logo_file_name", result.file_name);
+        this.idCardFormData.append("logo_file", result.logo_file);
         this.autoSave();
       }
     });
   }
 
-  editLogoOptions(elem){
+  editLogoOptions(elem) {
     const settings = [
       {
-        label: 'Update logo',
-        icon: './assets/Refresh (Blue-Gray).svg',
-        textColor: '#7f879d',
-        backgroundColor: '#F4F4F4',
-        action: 'update'
+        label: "Update logo",
+        icon: "./assets/Refresh (Blue-Gray).svg",
+        textColor: "#7f879d",
+        backgroundColor: "#F4F4F4",
+        action: "update",
       },
       {
-        label: 'Delete logo',
-        icon: './assets/Delete (Red).svg',
-        textColor: '#E32C66',
-        backgroundColor: '#F4F4F4',
-        action: 'delete'
-      }
+        label: "Delete logo",
+        icon: "./assets/Delete (Red).svg",
+        textColor: "#E32C66",
+        backgroundColor: "#F4F4F4",
+        action: "delete",
+      },
     ];
 
     UNANIMATED_CONTAINER.next(true);
     const st = this.dialog.open(SettingsDescriptionPopupComponent, {
-      panelClass: 'consent-dialog-container',
-      backdropClass: 'invis-backdrop',
-      data: {trigger: elem.currentTarget, settings}
+      panelClass: "consent-dialog-container",
+      backdropClass: "invis-backdrop",
+      data: { trigger: elem.currentTarget, settings },
     });
 
-    st.afterClosed().pipe(tap(() => UNANIMATED_CONTAINER.next(false)), filter(r => !!r))
+    st.afterClosed()
+      .pipe(
+        tap(() => UNANIMATED_CONTAINER.next(false)),
+        filter((r) => !!r)
+      )
       .subscribe((action) => {
-        if (action == 'update') {
+        if (action == "update") {
           this.uploadLogo();
-        }else if (action == 'delete') {
+        } else if (action == "delete") {
           let data = {
-            title : 'Delete logo?',
-            message: 'Are you sure you want to delete the logo?',
-            okButtonText: 'Delete logo'
+            title: "Delete logo?",
+            message: "Are you sure you want to delete the logo?",
+            okButtonText: "Delete logo",
           };
           this.openConfirmationDialog(data).then((res) => {
             if (res) {
               this.isLogoAdded = false;
-              this.logoURL = '';
+              this.logoURL = "";
             }
           });
         }
       });
-
   }
 
-  setUpIDNumber(type: string = 'qr-code', byUser:boolean = false) {
+  setUpIDNumber(type: string = "qr-code", byUser: boolean = false) {
     // this.IDNumberData['idNumber'] = Math.floor(100000 + Math.random() * 900000);
-    this.IDNumberData['idNumber'] = 123456;
+    this.IDNumberData["idNumber"] = 123456;
     this.selectBarcodeType(type, byUser);
   }
 
- async selectBarcodeType(value, byUser:boolean = false) {
-   this.IDNumberData['barcodeURL'] = await this.qrBarcodeGenerator.selectBarcodeType(value, 123456);
-    if (value == 'qr-code') {
-      this.IDNumberData['type'] = 'qr-code';
+  async selectBarcodeType(value, byUser: boolean = false) {
+    this.IDNumberData["barcodeURL"] =
+      await this.qrBarcodeGenerator.selectBarcodeType(value, 123456);
+    if (value == "qr-code") {
+      this.IDNumberData["type"] = "qr-code";
     } else {
-      this.IDNumberData['type'] = 'code39';
+      this.IDNumberData["type"] = "code39";
     }
     if (byUser) {
-      this.idCardFormData.delete('barcode_type');
-      this.idCardFormData.append('barcode_type', this.IDNumberData.type);
+      this.idCardFormData.delete("barcode_type");
+      this.idCardFormData.append("barcode_type", this.IDNumberData.type);
       this.autoSave();
     }
   }
 
   openBarcodeTypePopup(elem) {
-    const settings = this.typeOfBarcodes
+    const settings = this.typeOfBarcodes;
     UNANIMATED_CONTAINER.next(true);
     const st = this.dialog.open(SettingsDescriptionPopupComponent, {
-      panelClass: 'consent-dialog-container',
-      backdropClass: 'invis-backdrop',
-      data: {trigger: elem.currentTarget, settings}
+      panelClass: "consent-dialog-container",
+      backdropClass: "invis-backdrop",
+      data: { trigger: elem.currentTarget, settings },
     });
 
-    st.afterClosed().pipe(tap(() => UNANIMATED_CONTAINER.next(false)), filter(r => !!r))
+    st.afterClosed()
+      .pipe(
+        tap(() => UNANIMATED_CONTAINER.next(false)),
+        filter((r) => !!r)
+      )
       .subscribe((action) => {
-        this.selectedBarcode = this.typeOfBarcodes.find(o => o.action === action);
+        this.selectedBarcode = this.typeOfBarcodes.find(
+          (o) => o.action === action
+        );
         this.selectBarcodeType(action, true);
       });
   }
 
-  setUpGreadLevel(){
+  setUpGreadLevel() {
     this.greadLevel = 10;
     // this.isInEditingMode = true;
   }
 
-  openConfirmationDialog(data){
-    return new Promise(resolve => {
-    const dialogRef = this.dialog.open(ConfirmationComponent, {
-      panelClass: "search-pass-card-dialog-container",
-      backdropClass: "custom-bd",
-      disableClose: true,
-      data: data
-    });
+  openConfirmationDialog(data) {
+    return new Promise((resolve) => {
+      const dialogRef = this.dialog.open(ConfirmationComponent, {
+        panelClass: "search-pass-card-dialog-container",
+        backdropClass: "custom-bd",
+        disableClose: true,
+        data: data,
+      });
 
-    dialogRef.afterClosed().subscribe((result) => {
-      return resolve(result);
+      dialogRef.afterClosed().subscribe((result) => {
+        return resolve(result);
+      });
     });
-  });
   }
 
   openVisibleToPopup(elem) {
     const settings = [
       {
-        label: 'Students only',
-        textColor: '#7f879d',
-        backgroundColor: '#F4F4F4',
-        action: 'students'
+        label: "Students only",
+        textColor: "#7f879d",
+        backgroundColor: "#F4F4F4",
+        action: "students",
       },
       {
-        label: 'Staff only',
-        textColor: '#7f879d',
-        backgroundColor: '#F4F4F4',
-        action: 'staff'
+        label: "Staff only",
+        textColor: "#7f879d",
+        backgroundColor: "#F4F4F4",
+        action: "staff",
       },
       {
-        label: 'Students and Staff',
-        textColor: '#7f879d',
-        backgroundColor: '#F4F4F4',
-        action: 'students_staff'
-      }
+        label: "Students and Staff",
+        textColor: "#7f879d",
+        backgroundColor: "#F4F4F4",
+        action: "students_staff",
+      },
     ];
     UNANIMATED_CONTAINER.next(true);
     const st = this.dialog.open(SettingsDescriptionPopupComponent, {
-      panelClass: 'consent-dialog-container',
-      backdropClass: 'invis-backdrop',
-      data: {trigger: elem.currentTarget, settings}
+      panelClass: "consent-dialog-container",
+      backdropClass: "invis-backdrop",
+      data: { trigger: elem.currentTarget, settings },
     });
 
-    st.afterClosed().pipe(tap(() => UNANIMATED_CONTAINER.next(false)), filter(r => !!r))
+    st.afterClosed()
+      .pipe(
+        tap(() => UNANIMATED_CONTAINER.next(false)),
+        filter((r) => !!r)
+      )
       .subscribe((action) => {
-        this.IDCardVisibleTo = settings.find(o => o.action === action).label;
-        this.idCardFormData.delete('visible_to_who');
-        this.idCardFormData.append('visible_to_who', this.IDCardVisibleTo);
+        this.IDCardVisibleTo = settings.find((o) => o.action === action).label;
+        this.idCardFormData.delete("visible_to_who");
+        this.idCardFormData.append("visible_to_who", this.IDCardVisibleTo);
         this.autoSave();
       });
   }
 
-  enableIDCard(){
+  enableIDCard() {
     if (this.IDCardEnabled) {
       let data = {
-        title : 'Disable ID Cards?',
-        message: 'Are you sure you want to disable ID cards?',
-        okButtonText: 'Disable',
-        okButtonBackgroundColor: '#7083A0'
+        title: "Disable ID Cards?",
+        message: "Are you sure you want to disable ID cards?",
+        okButtonText: "Disable",
+        okButtonBackgroundColor: "#7083A0",
       };
       this.openConfirmationDialog(data).then((res) => {
         if (res) {
-          this.idCardService.disableIDCard().subscribe(result => {
-            this.toast.openToast({title: 'ID Cards disabled', type: 'info'});
-            this.IDCardEnabled = false
-          })
-          
+          this.idCardService.disableIDCard().subscribe((result) => {
+            this.toast.openToast({ title: "ID Cards disabled", type: "info" });
+            this.IDCardEnabled = false;
+          });
         }
       });
-    }else {
-      this.toast.openToast({title: 'ID Cards are live', type: 'success'});
+    } else {
+      this.toast.openToast({ title: "ID Cards are live", type: "success" });
 
       this.idCardService.enableIDCard().subscribe({
-        next: result => {
-          console.log("Result : ", result)
-          this.IDCardEnabled = true
+        next: (result) => {
+          console.log("Result : ", result);
+          this.IDCardEnabled = true;
         },
-        error: error => {
-          console.log("Result : ", error)
-        }
-      })
-
-      
-
+        error: (error) => {
+          console.log("Result : ", error);
+        },
+      });
 
       // this.idCardService.getIDCardDetails().subscribe(result => {
       //   console.log("result : ", result)
