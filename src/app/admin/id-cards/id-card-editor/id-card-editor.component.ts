@@ -5,8 +5,6 @@ import { filter, takeUntil, tap } from "rxjs/operators";
 import { AdminService } from "../../../services/admin.service";
 import { BackgroundTextComponent } from "../background-text/background-text.component";
 import { UploadLogoComponent } from "../upload-logo/upload-logo.component";
-import * as QRCode from "qrcode";
-import * as Barcode from "jsbarcode";
 import { DomSanitizer } from "@angular/platform-browser";
 import { UserService } from "../../../services/user.service";
 import { DarkThemeSwitch } from "../../../dark-theme-switch";
@@ -96,10 +94,8 @@ export class IdCardEditorComponent implements OnInit, OnDestroy {
   constructor(
     public adminService: AdminService,
     private dialog: MatDialog,
-    private domSanitizer: DomSanitizer,
     private userService: UserService,
     public darkTheme: DarkThemeSwitch,
-    private errorHandler: ErrorHandler,
     public idCardService: IDCardService,
     private qrBarcodeGenerator: QRBarcodeGeneratorService,
     private toast: ToastService,
