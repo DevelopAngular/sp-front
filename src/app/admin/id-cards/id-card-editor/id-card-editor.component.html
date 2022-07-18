@@ -1,7 +1,7 @@
 <div class="host" appSafariScroll>
     <div class="start-page-wrapper ds-flex-center-center">
         <div class="left">
-            <div class="">
+            <div>
                 <div class="card card__role ds-mr-10">
                     <div class="ds-flex-center-between">
                         <div>
@@ -16,7 +16,7 @@
                         </div>
                         <div *ngIf="isInEditingMode">
                             <div class="buttons">
-                                <app-gradient-button [style.margin-left]="'15px'" [gradient]="'#F0F2F5'" [textColor]="'#7083A0'" [hoverColor]="'#00B476'" [cursor]="'pointer'" (buttonClick)="cancelEditing()">
+                                <app-gradient-button [style.margin-left]="'15px'" [gradient]="'#F0F2F5, #F0F2F5'" [textColor]="'#7083A0'" [hoverColor]="'#00B476'" [cursor]="'pointer'" (buttonClick)="cancelEditing()">
                                     Cancel
                                 </app-gradient-button>
                                 <app-gradient-button [style.margin-left]="'15px'" [hoverColor]="'#00B476'" [cursor]="'pointer'" (buttonClick)="saveIDCardFields()">
@@ -38,7 +38,7 @@
                                     </div>
                                     <div>
                                         <div class="input-color-container">
-                                            <input #colorInputEl id="input-color" [(value)]="backgroundColor" [(ngModel)]="backgroundColor" class="input-color" type="color" (change)="setBackgroundColor()">
+                                            <input id="input-color" [(value)]="backgroundColor" [(ngModel)]="backgroundColor" class="input-color" type="color" (change)="setBackgroundColor()">
                                         </div>
                                     </div>
                                 </div>
@@ -122,7 +122,7 @@
                                     </div>
                                     <div class="button">
                                         <app-gradient-button [style.margin-left]="'15px'" [fontWeight]="'400'" [textColor]="IDNumberData.idNumber ? '#FFFFFF' : '#7083A0'" [gradient]="IDNumberData.idNumber ? '#1F195E, #1F195E' : '#F5F6F8, #F5F6F8'" [hoverColor]="'#00B476'" [cursor]="'pointer'"
-                                            (buttonClick)="setUpIDNumber(true)">
+                                            (buttonClick)="setUpIDNumber('qr-code',true)">
                                             {{IDNumberData.idNumber ? 'Settings' : 'Set up'}}
                                         </app-gradient-button>
                                     </div>

@@ -97,7 +97,6 @@ export class IdCardEditorComponent implements OnInit, OnDestroy {
   status: "disconnect" | "approved" | "done" = "disconnect";
   destroy$ = new Subject();
 
-  @ViewChild("colorInputEl") colorInputEl: ElementRef;
 
   constructor(
     public adminService: AdminService,
