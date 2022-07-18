@@ -799,6 +799,9 @@ export class OverlayContainerComponent implements OnInit, OnDestroy {
             if (data.teachers) {
               data.teachers = data.teachers.map(teacher => +teacher.id);
             }
+            if (data?.visibility_students) {
+              data.visibility_students = data.visibility_students.map(s => s.id);
+            }
 
             return this.locationService.updateLocation(id, data);
           }
