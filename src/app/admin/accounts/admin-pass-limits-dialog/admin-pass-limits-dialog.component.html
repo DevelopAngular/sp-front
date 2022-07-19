@@ -5,7 +5,7 @@
       <img class="back-button" (click)="dialogRef.close()" [src]="'./assets/Back Button (Blue-White).svg' | resolveAsset">
       <div class="title-header ds-flex-center-center" style="z-index: 10" [attr.data-motion-translate]="(frameMotion$ | async).direction">
         <div class="pass-limit-white ds-flex-center-center" style="background: rgb(102, 81, 241); border-radius: 6px; padding: 7px">
-          <img style="width: 25px" [src]="'./assets/Pass Limit (White).svg' | resolveAsset" alt="">
+          <img style="width: 25px; height: 25px" [src]="'./assets/Pass Limit (White).svg' | resolveAsset" alt="">
         </div>
         <div class="ds-dialog-title" [style.margin-left]="'12px'">Pass Limits</div>
       </div>
@@ -66,7 +66,7 @@
                <div class="ds-tooltip">
                   <span>
                     Limit the number of passes students can have per day.
-                    <a href="https://www.smartpass.app/passlimits" style="color: white"> Learn more</a>
+                    <a href="https://www.smartpass.app/passlimits" target="_blank" style="color: white"> Learn more</a>
                   </span>
                </div>
              </ng-template>
