@@ -1,10 +1,10 @@
 import {Component, ElementRef, Inject, OnDestroy, OnInit, ViewChild} from '@angular/core';
-import {AbstractControl, FormControl, FormGroup, Validators} from '@angular/forms';
+import {AbstractControl, AsyncValidatorFn, FormControl, FormGroup, ValidationErrors, Validators} from '@angular/forms';
 import {MAT_DIALOG_DATA, MatDialog, MatDialogRef} from '@angular/material/dialog';
 import {DomSanitizer} from '@angular/platform-browser';
 
 import {BehaviorSubject, combineLatest, forkJoin, fromEvent, merge, Observable, of, Subject, zip} from 'rxjs';
-import {debounceTime, distinctUntilChanged, filter, map, switchMap, take, takeUntil, tap} from 'rxjs/operators';
+import {debounceTime, distinctUntilChanged, filter, first, map, switchMap, take, takeUntil, tap} from 'rxjs/operators';
 
 import {bumpIn, NextStep} from '../../animations';
 import {Pinnable} from '../../models/Pinnable';
@@ -429,11 +429,11 @@ export class OverlayContainerComponent implements OnInit, OnDestroy {
         file: new FormControl(),
         roomName: new FormControl('',
             [Validators.required, Validators.maxLength(15)],
-            this.uniqueRoomNameValidator.bind(this)
+             this.uniqueRoomNameValidator()
         ),
         folderName: new FormControl('',
             [Validators.required, Validators.maxLength(17)],
-            this.uniqueFolderNameValidator.bind(this)
+            this.uniqueFolderNameValidator()
         ),
         roomNumber: new FormControl('',
             [Validators.required, Validators.maxLength(5)]),
@@ -515,41 +515,47 @@ export class OverlayContainerComponent implements OnInit, OnDestroy {
       return this.advOptState;
   }
 
-  uniqueRoomNameValidator(control: AbstractControl) {
-      if (control.dirty) {
-        return this.locationService.checkLocationName(control.value)
-          .pipe(
-            filter(() => this.currentPage !== Pages.NewFolder && this.currentPage !== Pages.EditFolder),
-            map((res: any) => {
-              if (this.currentPage === Pages.NewRoom || this.currentPage === Pages.NewRoomInFolder) {
-                return res.title_used ? { room_name: true } : null;
-              } else {
-                let currentRoomName: string;
-                if (this.currentPage === Pages.EditRoomInFolder || this.currentPage === Pages.NewRoomInFolder) {
-                  currentRoomName = this.overlayService.pageState.getValue().data.selectedRoomsInFolder[0].title;
-                } else {
-                  currentRoomName = this.pinnable.location.title;
-                }
-                return res.title_used && (currentRoomName !== this.roomData.roomName) ? { room_name: true } : null;
-              }
-            }));
-      } else {
-          return of(null);
-      }
+  uniqueRoomNameValidator(): AsyncValidatorFn {
+    return (control: AbstractControl): Observable<ValidationErrors> => {
+      return control.valueChanges.pipe(
+        filter(() => control.dirty),
+        debounceTime(250),
+        distinctUntilChanged(),
+        switchMap(roomName => this.locationService.checkLocationName(roomName)),
+        map((response: { title_used: boolean }) => {
+          if (this.currentPage === Pages.NewRoom || this.currentPage === Pages.NewRoomInFolder) {
+            return response.title_used ? { room_name: true } : null;
+          } else {
+            let currentRoomName: string;
+            if (this.currentPage === Pages.EditRoomInFolder || this.currentPage === Pages.NewRoomInFolder) {
+              currentRoomName = this.overlayService.pageState.getValue().data.selectedRoomsInFolder[0].title;
+            } else {
+              currentRoomName = this.pinnable.location.title;
+            }
+            return response.title_used && (currentRoomName !== this.roomData.roomName) ? { room_name: true } : null;
+          }
+        }),
+        first()
+      );
+    };
   }
 
-  uniqueFolderNameValidator(control: AbstractControl) {
-    if (control.dirty) {
-      return this.hallPassService.checkPinnableName(control.value)
-        .pipe(map((res: any) => {
+  uniqueFolderNameValidator(): AsyncValidatorFn {
+    return (control: AbstractControl): Observable<ValidationErrors> => {
+      return control.valueChanges.pipe(
+        filter(() => control.dirty),
+        debounceTime(250),
+        distinctUntilChanged(),
+        switchMap(folderName => this.hallPassService.checkPinnableName(folderName)),
+        map((response: { title_used: boolean }) => {
           if (this.currentPage === Pages.NewFolder) {
-            return res.title_used ? { folder_name: true } : null;
+            return response.title_used ? { folder_name: true } : null;
           }
-          return res.title_used && this.pinnable.title !== this.folderData.folderName ? { folder_name: true } : null;
-        }));
-    } else {
-      return of(null);
-    }
+          return response.title_used && this.pinnable.title !== this.folderData.folderName ? { folder_name: true } : null;
+        }),
+        first()
+      );
+    };
   }
 
   changeColor(color) {
