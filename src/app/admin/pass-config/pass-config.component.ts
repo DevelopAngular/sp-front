@@ -156,8 +156,6 @@ export class PassConfigComponent implements OnInit, OnDestroy {
             filter((r: Pinnable[]) => !!r.length));
         }),
         map((pinnables) => {
-          console.log('global reload fired');
-          console.log(pinnables);
           this.pinnables = pinnables;
         }),
       ).subscribe();

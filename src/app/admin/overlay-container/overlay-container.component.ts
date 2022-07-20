@@ -672,7 +672,6 @@ export class OverlayContainerComponent implements OnInit, OnDestroy {
   }
 
   onPublish() {
-    console.log('IN ON PUBLISH FUNCTION');
     this.showPublishSpinner = true;
 
     if (this.currentPage === Pages.NewRoom) {
@@ -714,57 +713,38 @@ export class OverlayContainerComponent implements OnInit, OnDestroy {
 
     if (this.currentPage === Pages.NewFolder || this.currentPage === Pages.EditFolder) {
       const salt = ' ' + this.generateRandomString();
-      console.log(`1 Generated Salt: ${salt}`);
       if (!this.folderData.roomsInFolder.length) {
-        console.log('1.1 No rooms in new folder');
         const newFolder = {
           title: this.folderData.folderName,
           color_profile: this.color_profile.id,
           icon: this.selectedIcon.inactive_icon,
           category: this.folderData.folderName + salt
         };
-        console.log(newFolder);
         if (this.pinnable) {
-          console.log('1.1.1 this.pinnable = true');
           this.hallPassService.updatePinnableRequest(this.pinnable.id, newFolder).pipe(takeUntil(this.destroy$))
             .subscribe(res => this.dialogRef.close(true));
         }
       }
       if (this.folderData.roomsToDelete.length) {
-        console.log('1.2 Rooms to delete > 0');
         const deleteRequest$ = this.folderData.roomsToDelete.map(room => {
           return this.locationService.deleteLocationRequest(room.id).pipe(filter(res => !!res));
         });
 
-        console.log('1.2 About to send DELETE Location request');
-        forkJoin(deleteRequest$).pipe(takeUntil(this.destroy$)).subscribe({
-          next: v => {
-            console.log('1.2.1 deletion completed successfully');
-            console.log(v);
-          },
-          error: error => {
-            console.log('1.2.2 deletion error');
-            console.log(error);
-          }
-        });
+        forkJoin(deleteRequest$).pipe(takeUntil(this.destroy$)).subscribe();
       }
 
-      console.log('1 before touchedRooms');
       let locationsToDb$;
       const touchedRooms = this.folderData.roomsInFolder.filter(room => room.isEdit || !room.category);
 
       if (touchedRooms.length) {
-        console.log('1.3 touchedRooms.length > 0');
         locationsToDb$ = touchedRooms.map(location => {
           let id;
           let data;
           if (isString(location.id)) {
-            console.log('1.3.1 is string location.id');
             location.category = this.folderData.folderName + salt;
             location.teachers = location.teachers.map(t => t.id);
             return this.locationService.createLocation(location);
           } else {
-            console.log('1.3.2 is not string location id');
             id = location.id;
             data = location;
             data.category = this.folderData.folderName + salt;
@@ -774,78 +754,51 @@ export class OverlayContainerComponent implements OnInit, OnDestroy {
             if (data.teachers) {
               data.teachers = data.teachers.map(teacher => +teacher.id);
             }
-            console.log(data);
 
-            console.log('1.3.2 before creating UPDATE location observable');
             return this.locationService.updateLocation(id, data);
           }
         });
       } else {
-        console.log('1.4 no touched rooms');
         locationsToDb$ = [of(null)];
       }
 
-      console.log('1 Before zip');
       zip(...locationsToDb$).pipe( // after all locations observables emit, emit responses as an array
         switchMap(locations => { // map each location to a switched observable request
-          console.log('1.5 inside switchmap');
-          console.log(locations);
           const newFolder = {
             title: this.folderData.folderName,
             color_profile: this.color_profile.id,
             icon: this.selectedIcon.inactive_icon,
             category: this.folderData.folderName + salt
           };
-          console.log('New folder');
-          console.log(newFolder);
           if (this.currentPage === Pages.EditFolder) {
-            console.log('1.5.1 Editing folder');
-            console.log('1.5.1 making UPDATE pinnable request now');
             this.hallPassService.updatePinnableRequest(this.pinnable.id, newFolder);
             return of(null);
           } else {
-            console.log('1.5.2 Not editing folder');
-            console.log('before zip, posting pinnable request');
             return zip(
               this.hallPassService.pinnables$.pipe(take(1)),
               this.hallPassService.postPinnableRequest(newFolder).pipe(filter(res => !!res)),
             ).pipe(
               switchMap((result: any[]) => {
-                console.log('1.5.2.1 inside switchmap');
                 const arrengedSequence = result[0].map(item => item.id);
                 arrengedSequence.push(result[1].id);
-                console.log('1.5.2.1 before pinnable arranged sequence');
                 return this.hallPassService.createArrangedPinnableRequest( { order: arrengedSequence.join(',')});
               })
             );
           }
       }),
       switchMap((res) => {
-        console.log('1.6 inside switchmap after pinnable arranged request');
-        console.log(res);
         if (this.pinnableToDeleteIds.length) {
-          console.log('1.6.1 pinnableToDeleteIds.length > 0');
           const deleteRequests = this.pinnableToDeleteIds.map(id => {
             return this.hallPassService.deletePinnableRequest(id);
           });
-          console.log('1.6.1 created DELETE pinnable requests');
           return zip(...deleteRequests);
         } else {
           return of(null);
         }
       }),
-      tap((v) => {
-        console.log('Tap function before takeUntil');
-        console.log(v);
-      }),
-      takeUntil(this.destroy$),
-      tap((v) => {
-        console.log('Tap function after takeUntil');
-        console.log(v);
-      }),
+      takeUntil(this.destroy$)
       )
       .subscribe(() => {
-        console.log('closing dialog');
         this.toast.openToast({title: this.currentPage === Pages.NewFolder ? 'New folder added' : 'Folder updated', type: 'success'});
         this.dialogRef.close(true);
       });
