@@ -84,7 +84,7 @@
         <div *ngIf="passLimitForm.value['limitEnabled']" style="display: flex; column-gap: 2px; flex-wrap: wrap;" class="ds-flex-row">
           <app-input
             [showUnits]="true"
-            [units]="passLimitForm?.value?.passLimit === '1' ? 'pass' : 'passes'"
+            [units]="passLimitForm?.value?.passLimit == '1' ? 'pass' : 'passes'"
             width="150px"
             placeholder="# of passes"
             [formGroup]="passLimitForm"
