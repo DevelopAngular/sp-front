@@ -68,8 +68,14 @@
         </div>
 
     <div class="search-button" *ngIf="views[currentView].id === 1 && passSearchState.countPasses$ | async as countPasses">
+      <app-round-button 
+        *ngIf="selectedRows.length"
+        [size]="'small'" 
+        [icon]="'Dots'"
+        [customToolTip]="'Delete selected passes'"
+        (buttonClick)="openConsentDeletePasses($event)"
+      ></app-round-button>
       <app-filter-button
-        *ngIf="!selectedRows.length; else selected" [openedFilter]="true"
         [title]="(numberWithCommas(countPasses) + ' pass' + (countPasses > 1 ? 'es' : ''))"
         [isDownloadButton]="true"
         [customToolTip]="'Click to export passes'"

@@ -1,13 +1,11 @@
 import {ChangeDetectionStrategy, ChangeDetectorRef, Component, ElementRef, OnDestroy, OnInit} from '@angular/core';
 import {BehaviorSubject, combineLatest, iif, Observable, of, Subject, Subscription} from 'rxjs';
 import {MatDialog} from '@angular/material/dialog';
-import {PagesDialogComponent} from './pages-dialog/pages-dialog.component';
 import {filter, map, switchMap, take, takeUntil, tap, withLatestFrom} from 'rxjs/operators';
 import {StudentFilterComponent} from './student-filter/student-filter.component';
 import {StatusFilterComponent} from './status-filter/status-filter.component';
 import {User} from '../../models/User';
 import {HallPass} from '../../models/HallPass';
-import {PassLike} from '../../models';
 import {HallPassesService} from '../../services/hall-passes.service';
 import {DomSanitizer} from '@angular/platform-browser';
 import {HttpService} from '../../services/http-service';
@@ -25,12 +23,13 @@ import {AdminService} from '../../services/admin.service';
 import {constructUrl} from '../../live-data/helpers';
 import {UserService} from '../../services/user.service';
 import * as moment from 'moment';
-import {Report, Status, ReportDataUpdate} from '../../models/Report';
+import {Report, Status} from '../../models/Report';
 import {Util} from '../../../Util';
 import {Dictionary} from '@ngrx/entity';
 import {ReportInfoDialogComponent} from './report-info-dialog/report-info-dialog.component';
 import {XlsxService} from '../../services/xlsx.service';
 import { ComponentsService } from '../../services/components.service';
+import {ConsentMenuComponent} from '../../consent-menu/consent-menu.component';
 
 declare const window;
 
@@ -489,6 +488,33 @@ export class ExploreComponent implements OnInit, OnDestroy {
     //     this.storage.setItem('explore_page', action);
     //     this.cdr.detectChanges();
     // });
+  }
+
+  openConsentDeletePasses(event: Event) {
+    type ActionPassDeletion = 'deletePasses';
+
+    const deletePasses = {
+      display: this.selectedRows.length > 1 ? 'Delete passes' : 'Delete the pass',
+      color: 'red',
+      action: 'deletePasses',
+      icon: './assets/Delete (Red).svg',
+    };
+    const consent = this.dialog.open(ConsentMenuComponent, {
+      panelClass: 'consent-dialog-container',
+      backdropClass: 'invis-backdrop',
+      data: {
+        trigger: new ElementRef(event.currentTarget),
+        options: [deletePasses],
+      }
+    });
+
+    consent.afterClosed().subscribe((action: ActionPassDeletion | undefined) => {
+      if (action === undefined) return;
+      
+      // open dialog to "after 90 days deletion"
+      //this.dialog.open(...
+    });
+  
   }
 
   passClick(id) {
