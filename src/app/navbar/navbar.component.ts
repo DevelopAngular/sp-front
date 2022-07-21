@@ -53,6 +53,7 @@ import {MyProfileDialogComponent} from '../my-profile-dialog/my-profile-dialog.c
 import {SpLanguageComponent} from '../sp-language/sp-language.component';
 import * as moment from 'moment';
 import {CheckForUpdateService} from '../services/check-for-update.service';
+import {KioskSettingsDialogComponent} from '../kiosk-settings-dialog/kiosk-settings-dialog.component';
 
 declare const window;
 
@@ -514,6 +515,12 @@ export class NavbarComponent implements AfterViewInit, OnInit, OnDestroy {
           this.userService.updateIntrosRequest(this.introsData, 'universal', '1');
         }
         window.open('https://www.smartpass.app/referrals');
+      } else if (action === 'kioskSettings') {
+        this.dialog.open(KioskSettingsDialogComponent, {
+          panelClass: 'sp-form-dialog',
+          width: '425px',
+          height: '500px'
+        });
       }
   }
 

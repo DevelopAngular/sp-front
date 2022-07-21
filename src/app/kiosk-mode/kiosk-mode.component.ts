@@ -1,9 +1,9 @@
 import {AfterViewInit, Component, ElementRef, HostListener, OnDestroy, OnInit, ViewChild} from '@angular/core';
 import {CreateHallpassFormsComponent} from '../create-hallpass-forms/create-hallpass-forms.component';
-import {KioskModeService} from '../services/kiosk-mode.service';
+import {KioskModeService, KioskSettings} from '../services/kiosk-mode.service';
 import {MatDialog} from '@angular/material/dialog';
 import {LiveDataService} from '../live-data/live-data.service';
-import {combineLatest, Observable, of, Subject} from 'rxjs';
+import {BehaviorSubject, combineLatest, Observable, of, Subject} from 'rxjs';
 import {UserService} from '../services/user.service';
 import {User} from '../models/User';
 import {HallPassesService} from '../services/hall-passes.service';
@@ -30,38 +30,37 @@ export class KioskModeComponent implements OnInit, AfterViewInit, OnDestroy {
   hideInput: boolean;
 
   userData: {
-      email: string
-      exp: number
-      kiosk_location_id: number
-      kiosk_mode: boolean
-      school_ids: number[]
-      secret_id: string
-      user_id: number
+    email: string
+    exp: number
+    kiosk_location_id: number
+    kiosk_mode: boolean
+    school_ids: number[]
+    secret_id: string
+    user_id: number
   };
 
   destroy$: Subject<any> = new Subject<any>();
 
+  showButtons = new BehaviorSubject(true);
+  showScanner = new BehaviorSubject(false);
+
   @ViewChild('input', { read: ElementRef, static: true }) input: ElementRef;
 
   @HostListener('window:keyup', ['$event'])
-    setFocus() {
-      this.inputFocus();
+  setFocus() {
+    this.inputFocus();
   }
 
   constructor(
-      private dialog: MatDialog,
-      private kioskMode: KioskModeService,
-      private locationService: LocationsService,
-      private liveDataService: LiveDataService,
-      private userService: UserService,
-      private passesService: HallPassesService,
-      private storage: StorageService,
-      private timeService: TimeService
-  ) { }
-
-  get showProfilePicture() {
-    return this.userService.getUserSchool()?.profile_pictures_enabled
-  }
+    private dialog: MatDialog,
+    private kioskMode: KioskModeService,
+    private locationService: LocationsService,
+    private liveDataService: LiveDataService,
+    private userService: UserService,
+    private passesService: HallPassesService,
+    private storage: StorageService,
+    private timeService: TimeService
+  ) {}
 
   ngOnInit() {
     this.locationService.getPassLimitRequest();
@@ -92,9 +91,14 @@ export class KioskModeComponent implements OnInit, AfterViewInit, OnDestroy {
           this.timeService.nowDate()
         );
         this.kioskMode.setCurrentRoom(kioskLocation);
-    });
+      });
 
     this.activePassesKiosk = this.liveDataService.myRoomActivePasses$;
+
+    this.kioskMode.getKioskModeSettingsSubject().subscribe((settings: KioskSettings) => {
+      this.showButtons.next(settings.findById || settings.findByName);
+      this.showScanner.next(settings.findByScan);
+    });
   }
 
   ngAfterViewInit() {

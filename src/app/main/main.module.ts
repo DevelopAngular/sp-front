@@ -37,6 +37,7 @@ import {InvitationCardComponent} from '../invitation-card/invitation-card.compon
 import {ReportFormComponent} from '../report-form/report-form.component';
 import {NotificationFormComponent} from '../notification-form/notification-form.component';
 import {OfflineBarComponent} from '../offline-bar/offline-bar.component';
+import {KioskSettingsDialogComponent} from '../kiosk-settings-dialog/kiosk-settings-dialog.component';
 
 
 @NgModule({
@@ -83,6 +84,7 @@ import {OfflineBarComponent} from '../offline-bar/offline-bar.component';
       ReportFormComponent,
       NotificationFormComponent,
       OfflineBarComponent,
+      KioskSettingsDialogComponent,
     ],
     providers: []
 })
