@@ -31,7 +31,6 @@ export class PassLimitsDialogComponent implements OnInit {
   }
 
   ngOnInit(): void {
-    console.log(this.data);
     this.userService.user$.pipe(take(1)).subscribe(user => {
       this.canNavigate = user.roles.includes('manage_school');
     });
@@ -45,21 +44,6 @@ export class PassLimitsDialogComponent implements OnInit {
     );
     const url = this.router.serializeUrl(urlTree);
     window.open(url, '_blank');
-  }
-
-  private goToPage(pageNumber: number) {
-    if (pageNumber < 1) {
-      throw new Error('Page Numbers cannot be less than 1');
-    }
-    this.dialogPages.selectedIndex = pageNumber - 1;
-  }
-
-  goToIndividualLimitPage() {
-    this.goToPage(2);
-  }
-
-  goToHomePage() {
-    this.goToPage(1);
   }
 
   private goToPage(pageNumber: number) {
