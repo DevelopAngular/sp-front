@@ -72,9 +72,10 @@
         *ngIf="selectedRows.length"
         [size]="'small'" 
         [icon]="'Dots'"
+        [borderRadius]="'15%'"
         [customToolTip]="'Delete selected passes'"
-        (buttonClick)="openConsentDeletePasses($event)"
-      ></app-round-button>
+        (buttonClick)="openConsentDeletePasses($event)">
+      </app-round-button>
       <app-filter-button
         [title]="(numberWithCommas(countPasses) + ' pass' + (countPasses > 1 ? 'es' : ''))"
         [isDownloadButton]="true"
