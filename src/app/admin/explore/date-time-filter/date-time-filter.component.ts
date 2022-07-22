@@ -56,7 +56,6 @@ export class DateTimeFilterComponent implements OnInit {
   }
 
   calendarResult(dates) {
-    debugger;
       this._matDialogRef.close({ date: dates, options: this.options });
   }
 

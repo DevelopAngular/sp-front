@@ -178,7 +178,7 @@ export class AdminCalendarToggleComponent implements OnInit, OnDestroy {
       this.selectedDate.end = this.currentDate;
       this.selectedDate.start = moment().subtract(3, 'days').startOf('day');
     } else if (id === 'range_6') {
-      this.selectedDate.start = moment('1/8/' + this.currentDate.subtract(1, 'year').year(), 'DD/MM/YYYY');
+      this.selectedDate.start = moment('1/8/2022', 'DD/MM/YYYY');
       this.selectedDate.end = moment(moment(), 'DD/MM/YYYY');
     }
     this.settingsRes.emit({ toggleResult: this.toggleResult, rangeId: id });

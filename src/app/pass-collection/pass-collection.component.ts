@@ -164,8 +164,8 @@ export class PassCollectionComponent implements OnInit, OnDestroy {
       return 'Past 3 days';
     } else if (this.selectedSort === 'past-seven-days') {
       return 'Past 7 days';
-    } else if (this.selectedSort === 'past-seven-days') {
-      return null;
+    } else if (this.selectedSort === 'school-year') {
+      return 'This school year';
     }
   }
 
@@ -235,6 +235,7 @@ export class PassCollectionComponent implements OnInit, OnDestroy {
       { display: 'Today', color: this.darkTheme.getColor(), action: 'today'},
       { display: 'Past 3 days', color: this.darkTheme.getColor(), action: 'past-three-days'},
       { display: 'Past 7 days', color: this.darkTheme.getColor(), action: 'past-seven-days'},
+      { display: 'This school year', color: this.darkTheme.getColor(), action: 'school-year' },
       { display: 'All Time', color: this.darkTheme.getColor(), action: 'all_time', divider: this.user.show_expired_passes && !User.fromJSON(this.user).isStudent() }
     ];
     if (this.user.show_expired_passes && User.fromJSON(this.user).isTeacher()) {
