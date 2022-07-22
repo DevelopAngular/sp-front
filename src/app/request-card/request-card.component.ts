@@ -1,4 +1,5 @@
 import {Component, ElementRef, EventEmitter, Inject, Input, OnDestroy, OnInit, Output, TemplateRef, ViewChild} from '@angular/core';
+import {HttpErrorResponse} from '@angular/common/http';
 import {Request} from '../models/Request';
 import {User} from '../models/User';
 import {Util} from '../../Util';
@@ -8,12 +9,12 @@ import {Navigation} from '../create-hallpass-forms/main-hallpass--form/main-hall
 import {getInnerPassName} from '../pass-tile/pass-display-util';
 import {DataService} from '../services/data-service';
 import {LoadingService} from '../services/loading.service';
-import {concatMap, filter, map, pluck, switchMap, takeUntil, tap} from 'rxjs/operators';
+import {catchError, concatMap, filter, map, pluck, switchMap, takeUntil, tap} from 'rxjs/operators';
 import {CreateHallpassFormsComponent} from '../create-hallpass-forms/create-hallpass-forms.component';
 import {CreateFormService} from '../create-hallpass-forms/create-form.service';
 import {RequestsService} from '../services/requests.service';
 import {NextStep, scalePassCards} from '../animations';
-import {BehaviorSubject, from, interval, Observable, of, Subject} from 'rxjs';
+import {BehaviorSubject, from, interval, Observable, of, Subject, throwError} from 'rxjs';
 
 import * as moment from 'moment';
 import {isNull, uniq, uniqBy} from 'lodash';
@@ -581,7 +582,7 @@ export class RequestCardComponent implements OnInit, OnDestroy {
       ...RecommendedDialogConfig,
       width: '450px',
       data: {
-        headerText: `Student's Pass limit reached: ${this.request.student.display_name} has had ${studentPassLimit}/${studentPassLimit} passes today`,
+        headerText: `Student's Pass limit reached: ${this.request.student.display_name} has had ${studentPassLimit.passLimit}/${studentPassLimit.passLimit} passes today`,
         buttons: {
           confirmText: 'Override limit',
           denyText: 'Cancel'
@@ -593,7 +594,7 @@ export class RequestCardComponent implements OnInit, OnDestroy {
           background: '#6651F1'
         }
       } as ConfirmationTemplates
-    }).afterClosed().pipe(tap(console.log));
+    }).afterClosed();
 
     // Since both pass limits must be checked, chaining together the dialog Observable results is a clean way to perform this
     // if the room pass limit is reached, then open the room pass limit dialog, else continue as normal
@@ -613,12 +614,7 @@ export class RequestCardComponent implements OnInit, OnDestroy {
         // If the room pass limit is allowed and the student pass limit is reached then
         // open the student pass limit dialog and check its result,
         // else, allow the creation of the result
-        return studentPassLimitReached ? openStudentPassLimitDialog().pipe(tap(approvePass => {
-          console.log(approvePass);
-          if (approvePass) {
-            this.approveRequest();
-          }
-        })) : of(true);
+        return studentPassLimitReached ? openStudentPassLimitDialog() : of(true);
       })
     );
 
@@ -626,25 +622,31 @@ export class RequestCardComponent implements OnInit, OnDestroy {
   }
 
   approveRequest() {
-    const approvePass = () => {
-      this.performingAction = true;
-      const body = [];
-      this.requestService.acceptRequest(this.request.id, body)
-        .pipe(takeUntil(this.destroy$))
-        .subscribe(() => {
-          this.dialogRef.close();
-        });
-    };
-
-    if (this.request.destination.id in this.passLimits) {
-      this.passLimitPromise().then(allowed => {
-        if (allowed) {
-          approvePass();
+    this.performingAction = true;
+    this.requestService.acceptRequest(this.request.id, {}).pipe(
+      catchError((errorResponse: HttpErrorResponse) => {
+        try {
+          if (errorResponse?.error?.errors?.[0] !== 'Override confirmation needed') {
+            return throwError(errorResponse);
+          }
+        } catch {
+          return throwError(errorResponse);
         }
-      });
-    } else {
-      approvePass();
-    }
+
+        return from(this.passLimitPromise()).pipe(
+          concatMap(overrideResponse => {
+            if (overrideResponse) {
+              return this.requestService.acceptRequest(this.request.id, {override: true});
+            }
+
+            return of(null);
+          })
+        );
+      })
+    ).subscribe(() => {
+      this.performingAction = false;
+      this.dialogRef.close();
+    });
   }
 
   cancelClick() {

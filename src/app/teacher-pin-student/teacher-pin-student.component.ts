@@ -99,6 +99,7 @@ export class TeacherPinStudentComponent implements OnInit, OnDestroy {
                     if (error.error.detail === 'Override confirmation needed') {
                       const overrideDialogRef = this.dialog.open(ConfirmationDialogComponent, {
                         ...RecommendedDialogConfig,
+                        width: '450px',
                         data: {
                           headerText: `Student's Pass limit reached: ${this.request.student.display_name} has had ${this.passLimit}/${this.passLimit} passes today`,
                           buttons: {
