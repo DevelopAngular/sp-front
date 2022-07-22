@@ -30,6 +30,10 @@ import {ReportInfoDialogComponent} from './report-info-dialog/report-info-dialog
 import {XlsxService} from '../../services/xlsx.service';
 import { ComponentsService } from '../../services/components.service';
 import {ConsentMenuComponent} from '../../consent-menu/consent-menu.component';
+import {
+  ConfirmationDialogComponent, ConfirmationTemplates,
+  RecommendedDialogConfig
+} from '../../shared/shared-components/confirmation-dialog/confirmation-dialog.component';
 
 declare const window;
 
@@ -491,12 +495,12 @@ export class ExploreComponent implements OnInit, OnDestroy {
   }
 
   openConsentDeletePasses(event: Event) {
-    type ActionPassDeletion = 'deletePasses';
+    const ActionPassDeletion = 'deletePasses';
 
     const deletePasses = {
       display: this.selectedRows.length > 1 ? 'Delete passes' : 'Delete the pass',
-      color: 'red',
-      action: 'deletePasses',
+      color: '#E32C66',// $red500
+      action: ActionPassDeletion,
       icon: './assets/Delete (Red).svg',
     };
     const consent = this.dialog.open(ConsentMenuComponent, {
@@ -508,11 +512,30 @@ export class ExploreComponent implements OnInit, OnDestroy {
       }
     });
 
-    consent.afterClosed().subscribe((action: ActionPassDeletion | undefined) => {
-      if (action === undefined) return;
+    consent.afterClosed().subscribe((action: string | undefined) => {
+      if (action === undefined || action !== ActionPassDeletion) return;
       
+      const num = this.selectedRows.length;
+      const headerText = num === 1 ? 'Delete the pass ?' : `Delete ${num} passes ?`;
+      const detailText = `You are about to delete ${num} ${num === 1 ? 'pass' : 'passes'}. Deleted records can\'t be restored after 90 days.`;
+
       // open dialog to "after 90 days deletion"
-      //this.dialog.open(...
+      this.dialog.open(ConfirmationDialogComponent, {
+        ...RecommendedDialogConfig,
+        data: {
+          headerText,
+          buttons: {
+            confirmText: 'Delete',
+            denyText: 'Cancel'
+          },
+          body: null,
+          templateData: {detailText},
+        } as ConfirmationTemplates
+      }).afterClosed().subscribe(res => {
+        console.log(res);
+        this.tableService.clearSelectedUsers.next(true)
+      });
+
     });
   
   }

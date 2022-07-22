@@ -1,5 +1,5 @@
 <div class="confirm-dialog">
-  <div class="icon-wrapper" [style.background]="data.icon.background">
+  <div *ngIf="data?.icon" class="icon-wrapper" [style.background]="data.icon.background">
     <img *ngIf="data.icon?.name" [src]="'./assets/' + data.icon.name | resolveAsset">
   </div>
   <div class="main-wrapper">
@@ -26,3 +26,7 @@
     </div>
   </div>
 </div>
+
+<ng-template #default let-text="detailText">
+  <p class="ds-dialog-normal-text">{{text}}</p>
+</ng-template>
