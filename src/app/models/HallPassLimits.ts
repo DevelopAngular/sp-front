@@ -18,11 +18,22 @@ export interface PassLimitInfo {
   max?: number;
 }
 
+interface ReducedUser {
+  display_name: string;
+  first_name: string;
+  id: number;
+  is_active: boolean;
+  is_deleted: boolean;
+  last_name: string;
+  primary_email: string;
+  profile_picture: string;
+  username: string;
+}
+
 export interface IndividualPassLimit {
-  name: string;
+  student?: ReducedUser;
   passLimit: number;
   description: string;
-  studentId: number;
 }
 
 export interface IndividualPassLimitCollection {
