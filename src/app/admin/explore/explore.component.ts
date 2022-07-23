@@ -535,7 +535,10 @@ export class ExploreComponent implements OnInit, OnDestroy {
     });
 
     consent.afterClosed().subscribe((action: string | undefined) => {
-      if (action === undefined || action !== ActionPassDeletion) return;
+      if (action === undefined || action !== ActionPassDeletion) {
+        this.clearTableSelection();
+        return;
+      }
       
       const num = this.selectedRows.length;
       const headerText = num === 1 ? 'Delete the pass ?' : `Delete ${num} passes ?`;
@@ -554,12 +557,17 @@ export class ExploreComponent implements OnInit, OnDestroy {
           templateData: {detailText},
         } as ConfirmationTemplates
       }).afterClosed().subscribe(res => {
-        console.log(res);
-        this.tableService.clearSelectedUsers.next(true)
+        console.log('HIDE PASS', res);
+        this.clearTableSelection();
       });
 
     });
   
+  }
+
+  clearTableSelection() {
+    this.tableService.clearSelectedUsers.next(true)
+    this.selectedRows = [];
   }
 
   passClick(id) {
