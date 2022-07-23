@@ -147,8 +147,9 @@
     justify-content: center;
     background-color: #F0F3FA;
     border-radius: 15px;
-    width: 123px;
+    //width: 123px;
     height: 31px;
+    padding: 0 8px;
 
     .selected-title {
       color: $navy;

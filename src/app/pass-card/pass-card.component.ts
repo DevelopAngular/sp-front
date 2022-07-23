@@ -414,13 +414,14 @@ export class PassCardComponent implements OnInit, OnDestroy {
 
             return this.dialog.open(ConfirmationDialogComponent, {
               ...RecommendedDialogConfig,
-              width: '335px',
+              width: '450px',
               data: {
                 headerText,
                 buttons,
                 body: this.confirmDialogTemplate,
                 templateData: {
-                  students: errorResponse.error.students,
+                  totalStudents: numPasses,
+                  limitReachedStudents: errorResponse.error.students,
                   passLimit,
                 },
                 icon: {

@@ -159,7 +159,7 @@
                 <app-nux-universal description="Limit the number of passes students can have per day" (gotItEvent)="dismissPassLimitNux()"></app-nux-universal>
               </ng-template>
 
-              <div class="form pass-limit-card" style="flex-direction: column" [ngClass]="{ 'pass-limit-enabled': passLimit }" (click)="openPassLimitsDialog()">
+              <div class="form pass-limit-card" style="flex-direction: column; cursor: pointer" [ngClass]="{ 'pass-limit-enabled': passLimit }" (click)="openPassLimitsDialog()">
                 <div class="card ds-flex-center-between">
                   <div class="label">
                     <div class="icon" style="background-color: #5E4FED">
