@@ -131,6 +131,10 @@ export class HallPassesService {
         return this.http.post('v1/hall_passes/bulk_create', data);
     }
 
+    hidePasses(data) {
+        return this.http.patch('v1/hall_passes/hide', data);
+    }
+
     cancelPass(id, data) {
         return this.http.post(`v1/hall_passes/${id}/cancel`, data);
     }

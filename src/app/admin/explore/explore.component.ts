@@ -556,9 +556,17 @@ export class ExploreComponent implements OnInit, OnDestroy {
           body: null,
           templateData: {detailText},
         } as ConfirmationTemplates
-      }).afterClosed().subscribe(res => {
-        console.log('HIDE PASS', res);
-        this.clearTableSelection();
+      }).afterClosed().subscribe((choice: boolean | undefined) => {
+        console.log('HIDE PASS', choice);
+        if (! choice) this.clearTableSelection();
+        console.log('SELECTED PASSES', this.selectedRows);
+        const data: any = {};
+        data['removed'] = true;
+        data['ids'] = this.selectedRows.map(s => +s.id);
+        this.hallPassService.hidePasses(data).pipe(
+          tap(r => console.log(r)),
+          takeUntil(this.destroy$),
+        ).subscribe();
       });
 
     });
