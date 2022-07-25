@@ -1,7 +1,7 @@
 import {ChangeDetectionStrategy, ChangeDetectorRef, Component, ElementRef, OnDestroy, OnInit} from '@angular/core';
 import {BehaviorSubject, combineLatest, iif, Observable, of, Subject, Subscription} from 'rxjs';
 import {MatDialog} from '@angular/material/dialog';
-import {filter, map, switchMap, take, takeUntil, tap, withLatestFrom} from 'rxjs/operators';
+import {filter, map, switchMap, take, takeUntil, tap, withLatestFrom, retryWhen, delay} from 'rxjs/operators';
 import {StudentFilterComponent} from './student-filter/student-filter.component';
 import {StatusFilterComponent} from './status-filter/status-filter.component';
 import {User} from '../../models/User';
@@ -557,15 +557,29 @@ export class ExploreComponent implements OnInit, OnDestroy {
           templateData: {detailText},
         } as ConfirmationTemplates
       }).afterClosed().subscribe((choice: boolean | undefined) => {
-        console.log('HIDE PASS', choice);
-        if (! choice) this.clearTableSelection();
-        console.log('SELECTED PASSES', this.selectedRows);
+        if (! choice) return this.clearTableSelection();
         const data: any = {};
         data['removed'] = true;
         data['ids'] = this.selectedRows.map(s => +s.id);
         this.hallPassService.hidePasses(data).pipe(
-          tap(r => console.log(r)),
+          tap(r => {
+            console.log(this.selectedRows, r.dids);
+            this.selectedRows = this.selectedRows.filter(s => !r.dids.includes(+s.id))
+            // TODO is incorect
+            this.tableService.dataSource.allData(this.selectedRows)
+            this.cdr.detectChanges();
+            console.log(this.selectedRows);
+          }),
           takeUntil(this.destroy$),
+          retryWhen(
+            (errors: Observable<HttpErrorResponse>) => {
+              return errors.pipe(
+                take(2),
+                tap(e => console.log(e)),
+                delay(3000),
+                map(e => of(null))
+              )
+            }),
         ).subscribe();
       });
 
