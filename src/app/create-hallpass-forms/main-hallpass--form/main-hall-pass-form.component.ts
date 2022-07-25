@@ -47,7 +47,8 @@ export interface Navigation {
     gradient?: string;
     message?: string,
     requestTarget?: User,
-    hasClose?: boolean
+    hasClose?: boolean,
+    kioskModeStudent?: User,
   };
   quickNavigator?: boolean;
   forInput?: boolean;

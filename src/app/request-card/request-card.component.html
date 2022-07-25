@@ -51,7 +51,7 @@
       </div>
     </div>
 
-    <div class="request-card-content-modal" *ngIf="isModal">
+    <div class="request-card-content-modal" *ngIf="!forInput">
       <div class="student-view" [@.disabled]="activeTeacherPin" *ngIf="!forStaff">
 
         <div class="content-container" *ngIf="!activeTeacherPin; else teacherPin">

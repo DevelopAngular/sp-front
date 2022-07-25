@@ -313,6 +313,9 @@ export class LocationsGroupContainerComponent implements OnInit {
   private postComposetData(close: boolean = false, isMessage?: boolean) {
     const restricted = ((this.FORM_STATE.data.direction.to.restricted && !this.FORM_STATE.forLater) ||
       (this.FORM_STATE.data.direction.to.scheduling_restricted && !!this.FORM_STATE.forLater));
+    if (this.FORM_STATE.kioskMode && this.FORM_STATE.data.kioskModeStudent && restricted) {
+      this.isStaff =  false;
+    }
     if (!this.isStaff && !restricted) {
       this.FORM_STATE.formMode.formFactor = FormFactor.HallPass;
     }

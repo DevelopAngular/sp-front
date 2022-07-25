@@ -301,14 +301,21 @@ export class RequestCardComponent implements OnInit, OnDestroy {
       'travel_type': this.selectedTravelType,
       'duration': this.selectedDuration * 60,
     };
-    if (this.isFutureOrNowTeachers) {
+
+    if (this.isFutureOrNowTeachers && !this.formState.kioskMode) {
       if (this.forFuture) {
         body.teachers = uniq(this.futureTeachers.map(t => t.id));
       } else {
         body.teachers = uniq(this.nowTeachers.map(t => t.id));
       }
     } else {
-      body.teacher = this.request.teacher.id;
+      if (this.formState.kioskMode) {
+        this.forStaff = false;
+        body.teachers = uniq(this.formState.data.direction.from.teachers.map(t => t.id));
+        body.student_id = this.formState.data.kioskModeStudent.id;
+      } else {
+        body.teacher = this.request.teacher.id;
+      }
     }
 
     if (this.forStaff) {
@@ -332,17 +339,21 @@ export class RequestCardComponent implements OnInit, OnDestroy {
     } else {
       this.requestService.createRequest(body).pipe(
         takeUntil(this.destroy$),
-        switchMap(res => {
+        switchMap((res: Request) => {
+          this.request = res;
+          this.forInput = false;
           return this.formState.previousStep === 1 ? this.requestService.cancelRequest(this.request.id) :
             (this.formState.missedRequest ? this.requestService.cancelInvitation(this.formState.data.request.id, '') : of(null));
         }))
         .subscribe((res) => {
           this.performingAction = true;
-          if ((DeviceDetection.isAndroid() || DeviceDetection.isIOSMobile()) && this.forFuture) {
-            this.dataService.openRequestPageMobile();
-            this.navbarData.inboxClick$.next(true);
+          if (!this.formState.kioskMode) {
+            if ((DeviceDetection.isAndroid() || DeviceDetection.isIOSMobile()) && this.forFuture) {
+              this.dataService.openRequestPageMobile();
+              this.navbarData.inboxClick$.next(true);
+            }
+            this.dialogRef.close();
           }
-          this.dialogRef.close();
         });
     }
   }
