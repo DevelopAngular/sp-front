@@ -31,7 +31,7 @@ interface ReducedUser {
 }
 
 export interface IndividualPassLimit {
-  student?: ReducedUser;
+  student: ReducedUser;
   passLimit: number;
   description: string;
 }

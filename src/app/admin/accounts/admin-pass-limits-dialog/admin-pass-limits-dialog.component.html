@@ -20,7 +20,7 @@
             <div class="ds-dialog-title" [style.margin-left]="'12px'">Pass Limits</div>
           </div>
           <app-gradient-button (buttonClick)="updatePassLimits()" customBackground="#00B476" textColor="white" [disabled]="passLimitForm.invalid">
-            <ng-template [ngTemplateOutlet]="buttonLoading" [ngTemplateOutletContext]="{loading: requestLoading, text: 'Update'}"></ng-template>
+            <ng-template [ngTemplateOutlet]="buttonLoading" [ngTemplateOutletContext]="{loading: requestLoading, text: 'Save'}"></ng-template>
           </app-gradient-button>
         </div>
       </ng-template>
@@ -134,7 +134,7 @@
           <div class="title-header" style="z-index: 10; display: flex">
             <div class="ds-dialog-title" [style.margin-left]="'12px'">New Individual Limit</div>
           </div>
-          <app-gradient-button (buttonClick)="submitIndividualLimits()" gradient="#FFFFFF,#FFFFFF" textColor="black" [disabled]="passLimitForm.invalid">
+          <app-gradient-button (buttonClick)="submitIndividualLimits()" customBackground="#00B476" textColor="white" [disabled]="!!(individualOverrideForm?.invalid)">
             <ng-template [ngTemplateOutlet]="buttonLoading" [ngTemplateOutletContext]="{ loading: individualLoading, text: 'Save' }"></ng-template>
           </app-gradient-button>
         </div>

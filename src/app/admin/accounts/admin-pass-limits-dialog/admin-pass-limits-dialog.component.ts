@@ -17,9 +17,6 @@ import {IntroData} from '../../../ngrx/intros';
 
 /**
  * TODOS for pass limits v2
- * TODO: Create shared component for pass limit drop down
- * TODO: Hook up spinner loading animation to individual form limits
- * TODO: Hook up spinner loading animation to current school-wide limits
  * TODO: Add fade animation to angular material tabs
  */
 
@@ -29,8 +26,6 @@ import {IntroData} from '../../../ngrx/intros';
   styleUrls: ['./admin-pass-limits-dialog.component.scss']
 })
 export class AdminPassLimitDialogComponent implements OnInit, OnDestroy {
-  // TODO: This is for when multiple pass frequencies are implemented
-
   individualLimitsTooltip = `These override the school-wide pass limit on a per-student basis`; // TODO: Get text for this
   individualStudentLimits: IndividualPassLimit[] = [];
   hasPassLimit: boolean;
@@ -39,7 +34,7 @@ export class AdminPassLimitDialogComponent implements OnInit, OnDestroy {
     limitEnabled: new FormControl(false),
     passLimit: new FormControl(null, Validators.pattern(/^[1-9]\d*$/)),
     frequency: new FormControl(null, Validators.required)
-  }); // TODO: disable while fetching the pass limit status
+  });
   passLimitFormSubs: Subscription;
   passLimitFormChanged: Observable<boolean> = of(false);
   passLimitFormLastValue: { limitEnabled: boolean, passLimit: string, frequency: string };
@@ -219,8 +214,8 @@ export class AdminPassLimitDialogComponent implements OnInit, OnDestroy {
     this.dialogPages.selectedIndex = pageNumber - 1;
   }
 
-  async goToIndividualLimitPage(limit?: IndividualPassLimit) {
-    await this.initIndividualForm(limit);
+  goToIndividualLimitPage(limit?: IndividualPassLimit) {
+    this.initIndividualForm(limit);
     this.goToPage(2);
   }
 
@@ -229,7 +224,7 @@ export class AdminPassLimitDialogComponent implements OnInit, OnDestroy {
     this.goToPage(1);
   }
 
-  private async initIndividualForm(limit?: IndividualPassLimit) {
+  private initIndividualForm(limit?: IndividualPassLimit) {
     this.selectedExistingIndividualLimit = limit;
     const controls: FormControl[] = [];
 
@@ -240,23 +235,15 @@ export class AdminPassLimitDialogComponent implements OnInit, OnDestroy {
     this.individualOverrideForm = new FormGroup({
       students: new FormArray(controls, Validators.required),
       passLimit: new FormControl(limit?.passLimit?.toString() || '10', Validators.pattern(/^[1-9]\d*$/)),
-      description: new FormControl(limit?.description || null, Validators.required)
+      description: new FormControl(limit?.description || '')
     });
-    console.log(this.individualOverrideForm.value);
-    const sleep = (ms: number = 100) => new Promise(resolve => {
-      setTimeout(() => resolve(), ms);
-    });
-    await sleep();
-
     this.individualFormPreviousValue = this.individualOverrideForm.value;
-    this.individualFormChanged = this.individualOverrideForm.valueChanges.pipe(
-      map(v => {
-        console.log('inside individual form changed');
-        console.log(v);
-        console.log(this.individualFormPreviousValue);
-        return JSON.stringify(v) !== JSON.stringify(this.individualFormPreviousValue);
-      })
-    );
+    this.individualFormChanged = this.individualOverrideForm.valueChanges.pipe(map(v => {
+      return JSON.stringify(v) !== JSON.stringify(this.individualFormPreviousValue);
+    }));
+    setTimeout(() => {
+      this.individualOverrideForm.patchValue({ passLimit: limit?.passLimit?.toString() || '10' }, { emitEvent: true });
+    }, 100);
   }
 
   private destroyIndividualForm() {
@@ -267,7 +254,11 @@ export class AdminPassLimitDialogComponent implements OnInit, OnDestroy {
   }
 
   resetIndividualForm() {
-    this.studentSearcher.reset();
+    if (this.studentSearcher) {
+      this.studentSearcher.reset();
+    }
+    this.individualOverrideForm.removeControl('students');
+    this.individualOverrideForm.addControl('students', new FormArray([]));
     this.individualOverrideForm.reset(this.individualFormPreviousValue);
   }
 
@@ -294,7 +285,15 @@ export class AdminPassLimitDialogComponent implements OnInit, OnDestroy {
     }
 
     this.individualLoading = true;
-    this.passLimitService.createIndividualLimits(parsedForm).pipe(
+    const request = this.selectedExistingIndividualLimit
+      ? this.passLimitService.updateIndividualLimit({
+        student: this.selectedExistingIndividualLimit.student,
+        passLimit: parsedForm.passLimit,
+        description: parsedForm.description || this.selectedExistingIndividualLimit.description
+      })
+      : this.passLimitService.createIndividualLimits(parsedForm);
+
+    request.pipe(
       concatMap(() => this.passLimitService.getIndividualLimits())
     ).subscribe({
       next: value => {

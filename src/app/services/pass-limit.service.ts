@@ -73,4 +73,8 @@ export class PassLimitService {
       };
     }));
   }
+
+  updateIndividualLimit(override: IndividualPassLimit): Observable<null> {
+    return this.http.put<null>(`${PASS_LIMIT_ENDPOINT}/update_override`, override, undefined);
+  }
 }
