@@ -70,13 +70,15 @@ export class LocationsService {
     private pollingService: PollingService
   ) { }
 
-    getLocationsWithCategory(category: string) {
-      return this.http.get('v1/locations', {
-        params: {
-          category: category}
-        }
-      );
-    }
+  // TODO: Convert params of function into an object
+  getLocationsWithCategory(category: string, show_removed: boolean = false) {
+    return this.http.get('v1/locations', {
+      params: {
+        category: category,
+        show_removed
+      }
+    });
+  }
 
     getLocationsWithTeacherRequest(teacher: User): Observable<Location[]> {
       this.store.dispatch(getLocsWithTeachers({teacher}));

@@ -16,7 +16,7 @@ import {
 import {arrangedPinnable, getPinnables, postPinnables, removePinnable, updatePinnable} from '../ngrx/pinnables/actions';
 import {getPassStats} from '../ngrx/pass-stats/actions';
 import {getPassStatsResult} from '../ngrx/pass-stats/state/pass-stats-getters.state';
-import {bufferCount, mergeMap, reduce} from 'rxjs/operators';
+import {bufferCount, filter, mergeMap, reduce} from 'rxjs/operators';
 import {constructUrl} from '../live-data/helpers';
 import {endPassAction, getMorePasses, searchPasses, sortPasses} from '../ngrx/passes/actions';
 import {
@@ -163,7 +163,14 @@ export class HallPassesService {
 
     postPinnableRequest(data) {
       this.store.dispatch(postPinnables({data}));
-      return this.currentPinnable$;
+      return this.store.select(getCurrentPinnable).pipe(
+        filter(p => {
+          if (!p) {
+            return true;
+          }
+          return data.title === p.title;
+        })
+      );
     }
 
     createPinnable(data) {
