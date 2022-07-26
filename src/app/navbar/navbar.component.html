@@ -114,8 +114,8 @@
                     </div>
                 </div>
 
-                <div class="id-card" (click)="openIDCard()" *ngIf="!user.isAssistant()">
-                    <div class="wrapper">
+                <div class="id-card" (click)="openIDCard()" *ngIf="!user.isAssistant() && IDCardEnabled">
+                    <div class="wrapper" [style.background-color]="IDCARDDETAILS.color">
                         <img width="18px" [src]="'./assets/Digital ID Card (White).svg'" alt="">
                         <div class="title">ID</div>
                     </div>

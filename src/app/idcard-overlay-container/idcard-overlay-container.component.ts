@@ -9,14 +9,15 @@ import { IDCard } from '../admin/id-cards/id-card-editor/id-card-editor.componen
 })
 export class IdcardOverlayContainerComponent implements OnInit {
 
-
+  IDCARDDETAILS: any;
 
   constructor(
     public dialogRef: MatDialogRef<IdcardOverlayContainerComponent>,
-    @Inject(MAT_DIALOG_DATA) public dialogData: IDCard,
+    @Inject(MAT_DIALOG_DATA) public dialogData: any,
   ) { }
 
   ngOnInit(): void {
+    this.IDCARDDETAILS = this.dialogData.idCardData
   }
 
 }

@@ -139,6 +139,14 @@ complete() {
   }, 1500);
 }
 
+addLogo(){
+  this.dialogRef.close({
+    file_name: this.selectedFile.name,
+    logo_url: this.imageUrl,
+    logo_file: this.selectedFile
+  })
+}
+
 openChat(event) {
   this.supportService.openSupportTrigger$.next();
   // this.supportService.openChat(event);

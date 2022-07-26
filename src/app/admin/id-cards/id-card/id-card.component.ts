@@ -1,4 +1,4 @@
-import { Component, Input } from "@angular/core";
+import { Component, Input, OnInit } from "@angular/core";
 import { DarkThemeSwitch } from "../../../dark-theme-switch";
 import { User } from "../../../models/User";
 import { UserService } from "../../../services/user.service";
@@ -8,7 +8,11 @@ import { UserService } from "../../../services/user.service";
   templateUrl: "./id-card.component.html",
   styleUrls: ["./id-card.component.scss"],
 })
-export class IdCardComponent {
+export class IdCardComponent implements OnInit {
+
+  @Input() userName: string = 'Dan San Buenaventura';
+  @Input() schoolName: string = 'Walt Whitman High School';
+  @Input() userRole: string = 'Staff';
   @Input() backgroundColor: string = "#00B476";
   @Input() profile_picture: string;
   @Input() backsideText: string;
@@ -16,6 +20,8 @@ export class IdCardComponent {
   @Input() IDNumberData: any = {};
   @Input() greadLevel: number;
   @Input() buttonBackColor: string = '#FFFFFF';
+  @Input() isDummyCard: boolean = false;
+  @Input() isLoggedIn: boolean = true;
 
   userDetails: any;
 
@@ -23,12 +29,22 @@ export class IdCardComponent {
     public darkTheme: DarkThemeSwitch,
     private userService: UserService,
     ) {
-    this.userService.user$.subscribe({
-      next: user => {
-        this.userDetails = User.fromJSON(user)
-        console.log("User : ",this.userDetails, this.userDetails.isStudent(), this.userDetails.isAdmin(), this.userDetails.isAssistant())
-      }
-    })
+  }
+
+  ngOnInit(): void {
+    console.log("isLoggedIn : ", this.isLoggedIn)
+    if (this.isLoggedIn) {
+      this.userService.user$.subscribe({
+        next: user => {
+          this.userDetails = User.fromJSON(user);
+          this.userName = this.userDetails.display_name;
+           this.userRole = this.userDetails.isStudent() ? 'Student' : 'Staff'
+           this.profile_picture = this.userDetails?.profile_picture;
+           this.greadLevel = this.userDetails?.grade_level;
+          console.log("User : ",this.userDetails, this.userDetails.isStudent(), this.userDetails.isAdmin(), this.userDetails.isAssistant())
+        }
+      })
+    }
   }
 
   get getButtonText(): string {
