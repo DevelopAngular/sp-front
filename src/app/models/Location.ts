@@ -1,5 +1,6 @@
 import {BaseModel} from './base';
 import {User} from './User';
+import {VisibilityMode, DEFAULT_VISIBILITY_STUDENTS} from '../admin/overlay-container/visibility-room/visibility-room.type';
 
 export class Location extends BaseModel {
   constructor(public id: string,
@@ -27,6 +28,8 @@ export class Location extends BaseModel {
               public max_passes_to: number,
               public max_passes_to_active: boolean,
               public enable: boolean,
+              public visibility_type: VisibilityMode,
+              public visibility_students: User[], 
               public current_active_pass_count_as_destination?: number,
               public current_active_pass_count_as_origin?: number,
               public has_reached_limit_as_destination?: boolean,
@@ -98,6 +101,10 @@ export class Location extends BaseModel {
       teachers.push(User.fromJSON(teachersJSON[i]));
     }
 
+    console.log(JSON)
+    const visibility_type: VisibilityMode = JSON['visibility_type'] ?? DEFAULT_VISIBILITY_STUDENTS.mode;
+    const visibility_students: User[] = JSON['visibility_students'] ? JSON['visibility_students'].map(s => User.fromJSON(s)) : DEFAULT_VISIBILITY_STUDENTS.over
+
     return new Location(
         id,
         title,
@@ -124,10 +131,12 @@ export class Location extends BaseModel {
         max_passes_to,
         max_passes_to_active,
         enable,
+        visibility_type,
+        visibility_students,
         current_active_pass_count_as_destination,
         current_active_pass_count_as_origin,
         has_reached_limit_as_destination,
-        has_reached_limit_as_origin
+        has_reached_limit_as_origin,
         );
   }
 

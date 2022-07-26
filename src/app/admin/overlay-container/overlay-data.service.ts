@@ -5,19 +5,21 @@ import {BehaviorSubject, Subject} from 'rxjs';
 import {User} from '../../models/User';
 import {Pinnable} from '../../models/Pinnable';
 import {OptionState} from './advanced-options/advanced-options.component';
+import {VisibilityOverStudents} from './visibility-room/visibility-room.type';
 
 export interface PageState {
     currentPage: number;
     previousPage: number;
     data: {
-      pinnable: Pinnable,
-      advancedOptions: OptionState,
+      pinnable: Pinnable;
+      advancedOptions: OptionState;
+      visibility?: VisibilityOverStudents;
       roomsInFolder;
       selectedRoomsInFolder: any[];
       roomsInFolderLoaded: boolean;
       folderName: string;
-      oldFolderData: FolderData,
-      roomsToDelete?: any[]
+      oldFolderData: FolderData;
+      roomsToDelete?: any[];
     };
 }
 
@@ -45,6 +47,7 @@ export interface RoomData {
     restricted: boolean;
     scheduling_restricted: boolean;
     advOptState: OptionState;
+    visibility?: VisibilityOverStudents;
     enable: boolean;
 }
 
@@ -87,6 +90,23 @@ export class OverlayDataService {
           previousPage: previous,
           data: data
       });
+  }
+
+  replaceData(data) {
+      this.pageState.next({
+          ...this.pageState.getValue(),
+          data,
+      });
+  }
+
+  public patchData(data) {
+    const old = this.pageState.getValue();
+    data = {...old.data, ...data};
+    this.pageState.next({
+      currentPage: old.currentPage,
+      previousPage: old.previousPage,
+      data,
+    });
   }
 
   back(data) {

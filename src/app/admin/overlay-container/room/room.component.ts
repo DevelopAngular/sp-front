@@ -7,6 +7,7 @@ import {filter, pluck, takeUntil, tap} from 'rxjs/operators';
 
 import {OverlayDataService, Pages, RoomData} from '../overlay-data.service';
 import {ValidButtons} from '../advanced-options/advanced-options.component';
+import {VisibilityOverStudents, DEFAULT_VISIBILITY_STUDENTS} from '../visibility-room/visibility-room.type';
 
 import {Location} from '../../../models/Location';
 import {HallPassesService} from '../../../services/hall-passes.service';
@@ -32,6 +33,8 @@ export class RoomComponent implements OnInit, OnDestroy {
 
   @Input() passLimitForm: FormGroup;
 
+  @Input() visibilityForm?: FormGroup;
+
   @Input() isEnableRoomTrigger$: Subject<boolean>;
 
   @Output() back = new EventEmitter();
@@ -52,6 +55,7 @@ export class RoomComponent implements OnInit, OnDestroy {
           now: { state: '', data: { all_teach_assign: null, any_teach_assign: null, selectedTeachers: [] } },
           future: { state: '', data: { all_teach_assign: null, any_teach_assign: null, selectedTeachers: [] } }
       },
+      visibility: DEFAULT_VISIBILITY_STUDENTS,
       enable: true
   };
 
@@ -151,6 +155,7 @@ export class RoomComponent implements OnInit, OnDestroy {
                   scheduling_restricted: !!pinnable.location.scheduling_restricted,
                   timeLimit: pinnable.location.max_allowed_time,
                   advOptState: this.overlayService.pageState.getValue().data.advancedOptions,
+                  visibility: this.overlayService.pageState.getValue().data?.visibility,
                   enable: pinnable.location.enable
               };
           } else if (this.currentPage === Pages.EditRoomInFolder) {
@@ -171,6 +176,7 @@ export class RoomComponent implements OnInit, OnDestroy {
                   restricted: !!data.restricted,
                   scheduling_restricted: !!data.scheduling_restricted,
                   advOptState: this.overlayService.pageState.getValue().data.advancedOptions,
+                  visibility: this.overlayService.pageState.getValue().data?.visibility,
                   enable: data.enable
               };
           }
@@ -210,6 +216,7 @@ export class RoomComponent implements OnInit, OnDestroy {
     this.destroy$.next();
     this.destroy$.complete();
     this.passLimitForm.reset();
+    this.visibilityForm?.reset();
   }
 
   checkValidRoomOptions() {
@@ -307,6 +314,11 @@ export class RoomComponent implements OnInit, OnDestroy {
       this.data.advOptState = options;
       this.advOptionsValidButtons = validButtons;
       this.change$.next();
+  }
+
+  visibilityChange(visibility: VisibilityOverStudents){
+    this.data.visibility = visibility;
+    this.change$.next();
   }
 
   deleteRoom(target: HTMLElement) {
