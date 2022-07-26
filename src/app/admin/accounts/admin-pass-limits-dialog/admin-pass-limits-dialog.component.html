@@ -167,6 +167,8 @@
   </mat-tab>
 </mat-tab-group>
 
+<app-pass-limit-feedback *ngIf="!contentLoading" style="position: absolute; width: 385px; margin-top: -15px;"></app-pass-limit-feedback>
+
 <ng-template #passLimitInput let-formGroup="formGroup" let-control="control">
   <div style="display: flex; column-gap: 2px; flex-wrap: wrap;" class="ds-flex-row">
     <app-input
