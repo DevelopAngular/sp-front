@@ -1,113 +1,57 @@
 <div class="wrapper" *ngIf="page === 1" [@NextStep]="{ value: '', params: frameMotion$ | async}">
-  <div class="header">
-    <div class="background-header"></div>
-    <img class="back-button" (click)="dialogRef.close()" [src]="'./assets/Back Button (Blue-White).svg' | resolveAsset">
-    <div class="title-header" style="z-index: 10; display: flex" [attr.data-motion-translate]="(frameMotion$ | async).direction">
-      <img width="21" height="21" [src]="'./assets/Integrations (Navy).svg' | resolveAsset" alt="Options">
-      <div class="ds-dialog-title" [style.margin-left]="'12px'">Integrations</div>
+    <div class="header">
+        <div class="background-header"></div>
+        <img class="back-button" (click)="dialogRef.close()" [src]="'./assets/Back Button (Blue-White).svg' | resolveAsset">
+        <div class="title-header" style="z-index: 10; display: flex" [attr.data-motion-translate]="(frameMotion$ | async).direction">
+            <img width="21" height="21" [src]="'./assets/Integrations (Navy).svg' | resolveAsset" alt="Options">
+            <div class="ds-dialog-title" [style.margin-left]="'12px'">Integrations</div>
+        </div>
     </div>
-  </div>
-  <div class="content" *ngIf="schoolSyncInfo$ | async as schoolSyncInfo" [attr.data-motion-translate]="(frameMotion$ | async).direction">
-    <div class="using" *ngIf="schoolSyncInfo.is_gg4l_enabled || schoolSyncInfo.is_gsuite_enabled || schoolSyncInfo.is_clever_enabled || isUploadedProfilePictures">
-      <div class="title">Integrations You’re Using</div>
-      <app-integration-card
-        *ngIf="schoolSyncInfo.is_clever_enabled"
-        [icon]="'./assets/Clever (Blue).svg'"
-        [title]="'Clever'"
-        [style.padding]="'10px'"
-        [status]="schoolSyncInfo.is_clever_enabled ? 'done' : 'disconnect'"
-        [subtitle]="schoolSyncInfo.is_clever_enabled ? ((cleverSyncLoading$ | async) ? 'Sync in Progress...' : 'Last Sync: ' + getLastSync(cleverSyncInfo$ | async)) : 'Sync accounts automatically from any SIS with Clever.'"
-        [learnMoreLink]="'https://www.smartpass.app/clever'"
-        (setUp)="openSettings($event,'clever')"
-      ></app-integration-card>
-      <app-integration-card
-        *ngIf="schoolSyncInfo.is_gsuite_enabled"
-        [icon]="'./assets/Google (Color).svg'"
-        [title]="'G Suite'"
-        [style.padding]="'10px'"
-        [status]="schoolSyncInfo.is_gsuite_enabled ? 'done' : 'disconnect'"
-        [subtitle]="schoolSyncInfo.is_gsuite_enabled ? !(gSuiteOrgs$ | async).last_successful_sync ? 'Never synced before' : 'Last Sync: ' + formatDate((gSuiteOrgs$ | async).last_successful_sync) : 'Sync accounts from your org units.'"
-        [learnMoreLink]="'https://www.smartpass.app/gsuite'"
-        (setUp)="openSettings($event,'g_suite')"
-      ></app-integration-card>
-      <app-integration-card
-        *ngIf="isUploadedProfilePictures"
-        [icon]="'./assets/Folder.svg'"
-        [title]="'Profile Pictures'"
-        [style.padding]="'10px'"
-        [status]="'done'"
-        [subtitle]="'Bulk add or update profile pictures.'"
-        [learnMoreLink]="'https://www.smartpass.app/profile-pictures'"
-        (setUp)="openSettings($event,'profile_pictures')"
-      ></app-integration-card>
-      <app-integration-card
-        *ngIf="schoolSyncInfo.is_gg4l_enabled"
-        [icon]="'./assets/GG4L (Blue).svg'"
-        [title]="'GG4L'"
-        [style.padding]="'10px'"
-        [status]="schoolSyncInfo.is_gg4l_enabled ? (!schoolSyncInfo.login_provider ? 'approved' : 'done') : 'disconnect'"
-        [subtitle]="schoolSyncInfo.is_gg4l_enabled ? (!schoolSyncInfo.login_provider ? 'Almost done! Adjust settings for account sync.' : !(gg4lSyncInfo$ | async).last_successful_sync ? 'Never synced before' : 'Last Sync: ' + formatDate((gg4lSyncInfo$ | async).last_successful_sync)) : 'Sync accounts automatically from any SIS through GG4L.'"
-        [learnMoreLink]="'https://www.smartpass.app/gg4l'"
-        (setUp)="openSettings($event,'gg4l')"
-      >
-      </app-integration-card>
+    <div class="content" *ngIf="schoolSyncInfo$ | async as schoolSyncInfo" [attr.data-motion-translate]="(frameMotion$ | async).direction">
+        <div class="using" *ngIf="schoolSyncInfo.is_gg4l_enabled || schoolSyncInfo.is_gsuite_enabled || schoolSyncInfo.is_clever_enabled || isUploadedProfilePictures">
+            <div class="title">Integrations You’re Using</div>
+            <app-integration-card *ngIf="schoolSyncInfo.is_clever_enabled" [icon]="'./assets/Clever (Blue).svg'" [title]="'Clever'" [style.padding]="'10px'" [status]="schoolSyncInfo.is_clever_enabled ? 'done' : 'disconnect'" [subtitle]="schoolSyncInfo.is_clever_enabled ? ((cleverSyncLoading$ | async) ? 'Sync in Progress...' : 'Last Sync: ' + getLastSync(cleverSyncInfo$ | async)) : 'Sync accounts automatically from any SIS with Clever.'"
+                [learnMoreLink]="'https://www.smartpass.app/clever'" (setUp)="openSettings($event,'clever')"></app-integration-card>
+            <app-integration-card *ngIf="schoolSyncInfo.is_gsuite_enabled" [icon]="'./assets/Google (Color).svg'" [title]="'G Suite'" [style.padding]="'10px'" [status]="schoolSyncInfo.is_gsuite_enabled ? 'done' : 'disconnect'" [subtitle]="schoolSyncInfo.is_gsuite_enabled ? !(gSuiteOrgs$ | async).last_successful_sync ? 'Never synced before' : 'Last Sync: ' + formatDate((gSuiteOrgs$ | async).last_successful_sync) : 'Sync accounts from your org units.'"
+                [learnMoreLink]="'https://www.smartpass.app/gsuite'" (setUp)="openSettings($event,'g_suite')"></app-integration-card>
+            <app-integration-card *ngIf="isUploadedProfilePictures" [icon]="'./assets/Folder.svg'" [title]="'Profile Pictures'" [style.padding]="'10px'" [status]="'done'" [subtitle]="'Bulk add or update profile pictures.'" [learnMoreLink]="'https://www.smartpass.app/profile-pictures'"
+                (setUp)="openSettings($event,'profile_pictures')"></app-integration-card>
+            <app-integration-card *ngIf="isUploadedGradeLevels" [icon]="'./assets/Grade level (Navy).svg'" [title]="'Grade Levels'" [style.padding]="'10px'" [status]="'disconnect'" [subtitle]="'Add grade levels to your accounts.'" [learnMoreLink]="'https://www.smartpass.app/grade-levels'"
+                (setUp)="openSettings($event,'grade_level')"></app-integration-card>
+            <app-integration-card *ngIf="schoolSyncInfo.is_gg4l_enabled" [icon]="'./assets/GG4L (Blue).svg'" [title]="'GG4L'" [style.padding]="'10px'" [status]="schoolSyncInfo.is_gg4l_enabled ? (!schoolSyncInfo.login_provider ? 'approved' : 'done') : 'disconnect'"
+                [subtitle]="schoolSyncInfo.is_gg4l_enabled ? (!schoolSyncInfo.login_provider ? 'Almost done! Adjust settings for account sync.' : !(gg4lSyncInfo$ | async).last_successful_sync ? 'Never synced before' : 'Last Sync: ' + formatDate((gg4lSyncInfo$ | async).last_successful_sync)) : 'Sync accounts automatically from any SIS through GG4L.'"
+                [learnMoreLink]="'https://www.smartpass.app/gg4l'" (setUp)="openSettings($event,'gg4l')">
+            </app-integration-card>
+        </div>
+
+        <mat-divider *ngIf="schoolSyncInfo.is_gg4l_enabled || schoolSyncInfo.is_gsuite_enabled || schoolSyncInfo.is_clever_enabled" [style.width]="'100%'"></mat-divider>
+
+        <div class="using" *ngIf="!schoolSyncInfo.is_gg4l_enabled || !schoolSyncInfo.is_gsuite_enabled || !schoolSyncInfo.is_clever_enabled">
+            <app-integration-card *ngIf="!schoolSyncInfo.is_clever_enabled" [icon]="'./assets/Clever (Blue).svg'" [title]="'Clever'" [style.padding]="'10px'" [status]="'disconnect'" [subtitle]="'Sync accounts automatically from any SIS with Clever.'" [learnMoreLink]="'https://www.smartpass.app/clever'"
+                (setUp)="openSettings($event,'clever')"></app-integration-card>
+            <app-integration-card *ngIf="!schoolSyncInfo.is_gsuite_enabled" [style.padding]="'10px'" [icon]="'./assets/Google (Color).svg'" [title]="'G Suite'" [status]="'disconnect'" [subtitle]="'Sync accounts from your org units.'" [learnMoreLink]="'https://www.smartpass.app/gsuite'"
+                (setUp)="openSettings($event,'g_suite')">
+            </app-integration-card>
+            <app-integration-card *ngIf="!isUploadedProfilePictures" [icon]="'./assets/Folder.svg'" [title]="'Profile Pictures'" [style.padding]="'10px'" [status]="'disconnect'" [subtitle]="'Bulk upload profile pictures for your accounts.'" [learnMoreLink]="'https://www.smartpass.app/profile-pictures'"
+                (setUp)="openSettings($event,'profile_pictures')"></app-integration-card>
+            <app-integration-card *ngIf="!isUploadedGradeLevels" [icon]="'./assets/Grade level (Navy).svg'" [title]="'Grade Levels'" [style.padding]="'10px'" [status]="'disconnect'" [subtitle]="'Add grade levels to your accounts.'" [learnMoreLink]="'https://www.smartpass.app/grade-levels'"
+                (setUp)="openSettings($event,'grade_level')"></app-integration-card>
+            <app-integration-card *ngIf="!schoolSyncInfo.is_gg4l_enabled" [icon]="'./assets/GG4L (Blue).svg'" [title]="'GG4L'" [status]="'disconnect'" [style.padding]="'10px'" [subtitle]="'Sync accounts automatically from any SIS through GG4L.'" [learnMoreLink]="'https://www.smartpass.app/gg4l'"
+                (setUp)="openSettings($event,'gg4l')">
+            </app-integration-card>
+        </div>
+
     </div>
-
-    <mat-divider *ngIf="schoolSyncInfo.is_gg4l_enabled || schoolSyncInfo.is_gsuite_enabled || schoolSyncInfo.is_clever_enabled" [style.width]="'100%'"></mat-divider>
-
-    <div class="using" *ngIf="!schoolSyncInfo.is_gg4l_enabled || !schoolSyncInfo.is_gsuite_enabled || !schoolSyncInfo.is_clever_enabled">
-      <app-integration-card
-        *ngIf="!schoolSyncInfo.is_clever_enabled"
-        [icon]="'./assets/Clever (Blue).svg'"
-        [title]="'Clever'"
-        [style.padding]="'10px'"
-        [status]="'disconnect'"
-        [subtitle]="'Sync accounts automatically from any SIS with Clever.'"
-        [learnMoreLink]="'https://www.smartpass.app/clever'"
-        (setUp)="openSettings($event,'clever')"
-      ></app-integration-card>
-      <app-integration-card
-        *ngIf="!schoolSyncInfo.is_gsuite_enabled"
-        [style.padding]="'10px'"
-        [icon]="'./assets/Google (Color).svg'"
-        [title]="'G Suite'"
-        [status]="'disconnect'"
-        [subtitle]="'Sync accounts from your org units.'"
-        [learnMoreLink]="'https://www.smartpass.app/gsuite'"
-        (setUp)="openSettings($event,'g_suite')"
-      >
-      </app-integration-card>
-      <app-integration-card
-        *ngIf="!isUploadedProfilePictures"
-        [icon]="'./assets/Folder.svg'"
-        [title]="'Profile Pictures'"
-        [style.padding]="'10px'"
-        [status]="'disconnect'"
-        [subtitle]="'Bulk upload profile pictures for your accounts.'"
-        [learnMoreLink]="'https://www.smartpass.app/profile-pictures'"
-        (setUp)="openSettings($event,'profile_pictures')"
-      ></app-integration-card>
-      <app-integration-card
-        *ngIf="!schoolSyncInfo.is_gg4l_enabled"
-        [icon]="'./assets/GG4L (Blue).svg'"
-        [title]="'GG4L'"
-        [status]="'disconnect'"
-        [style.padding]="'10px'"
-        [subtitle]="'Sync accounts automatically from any SIS through GG4L.'"
-        [learnMoreLink]="'https://www.smartpass.app/gg4l'"
-        (setUp)="openSettings($event,'gg4l')"
-      >
-      </app-integration-card>
-    </div>
-
-  </div>
 </div>
 <div *ngIf="page === 2 && (settingsData.action === 'clever' || settingsData.action === 'gg4l')" [@NextStep]="{ value: '', params: frameMotion$ | async}">
-  <app-ggl4-settings [dialogAction]="settingsData.action" [status]="settingsData.status" (backEvent)="back()"></app-ggl4-settings>
+    <app-ggl4-settings [dialogAction]="settingsData.action" [status]="settingsData.status" (backEvent)="back()"></app-ggl4-settings>
 </div>
 <div *ngIf="page === 2 && settingsData.action === 'g_suite'" [@NextStep]="{ value: '', params: frameMotion$ | async}">
-  <app-g-suite-settings (backEvent)="back()"></app-g-suite-settings>
+    <app-g-suite-settings (backEvent)="back()"></app-g-suite-settings>
 </div>
 <div *ngIf="page === 2 && settingsData.action === 'profile_pictures'" [@NextStep]="{ value: '', params: frameMotion$ | async}">
-  <app-profile-picture [page]="isUploadedProfilePictures ? 5 : 2" (backEmit)="back()"></app-profile-picture>
+    <app-profile-picture [page]="isUploadedProfilePictures ? 5 : 2" (backEmit)="back()"></app-profile-picture>
+</div>
+<div *ngIf="page === 2 && settingsData.action === 'grade_level'" [@NextStep]="{ value: '', params: frameMotion$ | async}">
+    <app-grade-levels (backEmit)="back()"></app-grade-levels>
 </div>

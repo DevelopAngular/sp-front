@@ -909,4 +909,9 @@ export class UserService implements OnDestroy {
   getNux() {
     return this.http.get('v1/nux');
   }
+
+  uploadGradeLevels(body){
+    return this.http.post('v1/integrations/upload/grade_levels', body);
+  }
+
 }
