@@ -1,8 +1,8 @@
-import {ChangeDetectionStrategy, ChangeDetectorRef, Component, ElementRef, OnDestroy, OnInit} from '@angular/core';
+import {ChangeDetectionStrategy, ChangeDetectorRef, Component, ElementRef, OnDestroy, OnInit, ViewChild} from '@angular/core';
 import {HttpErrorResponse} from '@angular/common/http';
 import {BehaviorSubject, combineLatest, iif, Observable, of, Subject, Subscription, throwError} from 'rxjs';
 import {MatDialog} from '@angular/material/dialog';
-import {filter, map, switchMap, take, takeUntil, tap, withLatestFrom, retryWhen, delay, scan, mergeMap} from 'rxjs/operators';
+import {filter, map, switchMap, take, takeUntil, tap, withLatestFrom, retryWhen, delay, scan, concatMap, catchError} from 'rxjs/operators';
 import {StudentFilterComponent} from './student-filter/student-filter.component';
 import {StatusFilterComponent} from './status-filter/status-filter.component';
 import {User} from '../../models/User';
@@ -35,8 +35,10 @@ import {
   ConfirmationDialogComponent, ConfirmationTemplates,
   RecommendedDialogConfig
 } from '../../shared/shared-components/confirmation-dialog/confirmation-dialog.component';
+import {SpDataTableComponent} from '../sp-data-table/sp-data-table.component';
+declare const window: Window & typeof globalThis & {passClick: any, reportedPassClick: any};
 
-declare const window: Window;
+type OverflownTries = HttpErrorResponse & {overflown: boolean};
 
 export interface View {
   [view: string]: CurrentView;
@@ -78,6 +80,8 @@ export type PassRemovedResponse = {
   changeDetection: ChangeDetectionStrategy.OnPush
 })
 export class ExploreComponent implements OnInit, OnDestroy {
+
+  @ViewChild(SpDataTableComponent) passtable!: SpDataTableComponent;
 
   views: View = {
     'pass_search': {id: 1, title: 'Passes', color: '#00B476', icon: 'Pass Search', action: 'pass_search'},
@@ -569,46 +573,59 @@ export class ExploreComponent implements OnInit, OnDestroy {
         data['ids'] = this.selectedRows.map(s => +s.id);
         this.hallPassService.hidePasses(data).pipe(
           tap((r:PassRemovedResponse) => {
-            throw new Error('error boss!!!')
-            /*if (!('dids' in r)) throwError('missing in data shape');
+            if (!('dids' in r)) throw new Error('missing in data shape');
 
-            console.log(this.selectedRows, r.dids);
-            this.selectedRows = this.selectedRows.filter(s => !r.dids.includes(+s.id))
-            // TODO is incorect
-            //this.tableService.dataSource.allData(this.selectedRows)
+            this.passtable.dataSource.allData = this.passtable.dataSource.allData.filter(s => !r.dids.includes(+s.id));
+            this.clearTableSelection();
             this.cdr.detectChanges();
-            console.log(this.selectedRows);
-           */
           }),
           takeUntil(this.destroy$),
           retryWhen((errors: Observable<HttpErrorResponse>) => errors.pipe(
-                delay(1000),
-                scan((num, err) => {
-                  if (num > 1) {
-                    return err;
-                  } else {
-                    return ++num;
-                  }
-                }, 0), 
-                mergeMap((retryOrErr: Error | number) => iif(
-                  () => (retryOrErr instanceof Error),
-                  of((<Error>retryOrErr)).pipe(
-                    take(1),
-                    tap(err => {
-                      this.toastService.openToast(
-                        { title: `${err.message}`,
-                          subtitle: `Trying 2 times but did not succeed to remove the passes`,
-                          type: 'error',
-                          showButton: false }
-                      );
-                      return of(null);
-                    })
-                  ),
-                  of(<number>retryOrErr).pipe(tap(n => console.log(`retrying ${n}`))),
-                )),
-                //map(_ => of(null))
-             )
-            ),
+            // deal with errors secquentially
+            concatMap((e: HttpErrorResponse, i: number) => iif(
+              () => {
+                const s: number = +e.status;
+                // error is related to the client
+                // so do not retry, jump directly toast
+                if (s >= 400 && s < 500) {
+                  return true;
+                };
+                // only server errors have to be retried for more times
+                // as they can dissapear meanwhile
+                return i > 1;
+              },// after 3 tries shows a toast
+              of(e).pipe(
+                take(1),
+                tap(e => {
+                  const message: string = !!e?.error ? e.error.message : e.message;
+                  // progress-interceptor have hall_pass as excepted url 
+                  // so it will not catch any error thrown under hall_pass urls
+                  // notify the admin is how we deal with this kind of error
+                  this.toastService.openToast(
+                    { title: `${message}`,
+                      subtitle: `Trying ${i+1} times but did not succeed to remove the passes`,
+                      type: 'error',
+                      showButton: false }
+                  );
+                  // throw a special error that dies silently
+                  const eo = <OverflownTries>e;
+                  eo.overflown = true;
+                  throw eo;
+              })),
+              of(e).pipe(
+                delay(300), 
+                tap(e => console.log(`retrying ${e.message}`)),
+              ),
+            )),
+           )),
+
+          catchError(e => {
+            // an OverflownTries error has been dealt with it above
+            if ('overflown' in e) return of(null);
+            // other errors are thrown  
+            throw e;
+          }),
+
         ).subscribe();
       });
 
