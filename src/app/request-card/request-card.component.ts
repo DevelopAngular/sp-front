@@ -94,6 +94,7 @@ export class RequestCardComponent implements OnInit, OnDestroy {
   solidColorRgba2: string;
   removeShadow: boolean;
   leftTextShadow: boolean;
+  kioskModeRestricted: boolean;
 
   passLimits: { [id: number]: PassLimit };
 
@@ -342,6 +343,7 @@ export class RequestCardComponent implements OnInit, OnDestroy {
         switchMap((res: Request) => {
           this.request = res;
           this.forInput = false;
+          this.kioskModeRestricted = true;
           return this.formState.previousStep === 1 ? this.requestService.cancelRequest(this.request.id) :
             (this.formState.missedRequest ? this.requestService.cancelInvitation(this.formState.data.request.id, '') : of(null));
         }))
