@@ -45,7 +45,6 @@
             *ngIf="showIntegrations$ | async"
             [gradient]="'#F4F4F4, #F4F4F4'"
             [leftIcon]="'./assets/Integrations (Navy).svg'"
-            [size]="'medium'"
             [cursor]="'pointer'"
             [textColor]="'#1F194E'"
             (buttonClick)="openIntegrations()"
@@ -59,7 +58,6 @@
             gradient="#6651F1, #6651F1"
             [style.margin-left]="'15px'"
             leftIcon="./assets/Pass Limit (White).svg"
-            size="medium"
             cursor="pointer"
             (buttonClick)="openPassLimits()"
           >Pass Limits</app-gradient-button>
@@ -67,7 +65,6 @@
           <app-gradient-button
             [style.margin-left]="'15px'"
             [gradient]="'#1F195E, #1F195E'"
-            [size]="'medium'"
             [cursor]="'pointer'"
             (buttonClick)="openEncounterPrevention()"
             nuxTooltip
@@ -94,7 +91,6 @@
 
           <app-gradient-button
             [style.margin-left]="'15px'"
-            [size]="'medium'"
             [hoverColor]="'#00B476'"
             [cursor]="'pointer'"
             [leftIcon]="'./assets/Plus (White).svg'"
