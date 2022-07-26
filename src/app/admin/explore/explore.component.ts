@@ -1,7 +1,8 @@
 import {ChangeDetectionStrategy, ChangeDetectorRef, Component, ElementRef, OnDestroy, OnInit} from '@angular/core';
-import {BehaviorSubject, combineLatest, iif, Observable, of, Subject, Subscription} from 'rxjs';
+import {HttpErrorResponse} from '@angular/common/http';
+import {BehaviorSubject, combineLatest, iif, Observable, of, Subject, Subscription, throwError} from 'rxjs';
 import {MatDialog} from '@angular/material/dialog';
-import {filter, map, switchMap, take, takeUntil, tap, withLatestFrom, retryWhen, delay} from 'rxjs/operators';
+import {filter, map, switchMap, take, takeUntil, tap, withLatestFrom, retryWhen, delay, scan, mergeMap} from 'rxjs/operators';
 import {StudentFilterComponent} from './student-filter/student-filter.component';
 import {StatusFilterComponent} from './status-filter/status-filter.component';
 import {User} from '../../models/User';
@@ -35,7 +36,7 @@ import {
   RecommendedDialogConfig
 } from '../../shared/shared-components/confirmation-dialog/confirmation-dialog.component';
 
-declare const window;
+declare const window: Window;
 
 export interface View {
   [view: string]: CurrentView;
@@ -63,6 +64,11 @@ export interface SearchData {
   selectedOriginRooms?: any[];
   selectedTeachers?: User[];
   selectedStatus?: Status;
+}
+
+export type PassRemovedResponse = {
+  dids: number[];
+  error: Error | null;
 }
 
 @Component({
@@ -562,24 +568,47 @@ export class ExploreComponent implements OnInit, OnDestroy {
         data['removed'] = true;
         data['ids'] = this.selectedRows.map(s => +s.id);
         this.hallPassService.hidePasses(data).pipe(
-          tap(r => {
+          tap((r:PassRemovedResponse) => {
+            throw new Error('error boss!!!')
+            /*if (!('dids' in r)) throwError('missing in data shape');
+
             console.log(this.selectedRows, r.dids);
             this.selectedRows = this.selectedRows.filter(s => !r.dids.includes(+s.id))
             // TODO is incorect
-            this.tableService.dataSource.allData(this.selectedRows)
+            //this.tableService.dataSource.allData(this.selectedRows)
             this.cdr.detectChanges();
             console.log(this.selectedRows);
+           */
           }),
           takeUntil(this.destroy$),
-          retryWhen(
-            (errors: Observable<HttpErrorResponse>) => {
-              return errors.pipe(
-                take(2),
-                tap(e => console.log(e)),
-                delay(3000),
-                map(e => of(null))
-              )
-            }),
+          retryWhen((errors: Observable<HttpErrorResponse>) => errors.pipe(
+                delay(1000),
+                scan((num, err) => {
+                  if (num > 1) {
+                    return err;
+                  } else {
+                    return ++num;
+                  }
+                }, 0), 
+                mergeMap((retryOrErr: Error | number) => iif(
+                  () => (retryOrErr instanceof Error),
+                  of((<Error>retryOrErr)).pipe(
+                    take(1),
+                    tap(err => {
+                      this.toastService.openToast(
+                        { title: `${err.message}`,
+                          subtitle: `Trying 2 times but did not succeed to remove the passes`,
+                          type: 'error',
+                          showButton: false }
+                      );
+                      return of(null);
+                    })
+                  ),
+                  of(<number>retryOrErr).pipe(tap(n => console.log(`retrying ${n}`))),
+                )),
+                //map(_ => of(null))
+             )
+            ),
         ).subscribe();
       });
 
