@@ -10,9 +10,9 @@ import { UserService } from "../../../services/user.service";
 })
 export class IdCardComponent implements OnInit {
 
-  @Input() userName: string = 'Nicholas Demarco';
+  @Input() userName: string = 'Dan San Buenaventura';
   @Input() schoolName: string = 'Walt Whitman High School';
-  @Input() userRole: string = 'Student';
+  @Input() userRole: string = 'Staff';
   @Input() backgroundColor: string = "#00B476";
   @Input() profile_picture: string;
   @Input() backsideText: string;
@@ -21,6 +21,7 @@ export class IdCardComponent implements OnInit {
   @Input() greadLevel: number;
   @Input() buttonBackColor: string = '#FFFFFF';
   @Input() isDummyCard: boolean = false;
+  @Input() isLoggedIn: boolean = true;
 
   userDetails: any;
 
@@ -31,13 +32,15 @@ export class IdCardComponent implements OnInit {
   }
 
   ngOnInit(): void {
-    if (!this.isDummyCard) {
+    console.log("isLoggedIn : ", this.isLoggedIn)
+    if (this.isLoggedIn) {
       this.userService.user$.subscribe({
         next: user => {
           this.userDetails = User.fromJSON(user);
           this.userName = this.userDetails.display_name;
            this.userRole = this.userDetails.isStudent() ? 'Student' : 'Staff'
            this.profile_picture = this.userDetails?.profile_picture;
+           this.greadLevel = this.userDetails?.grade_level;
           console.log("User : ",this.userDetails, this.userDetails.isStudent(), this.userDetails.isAdmin(), this.userDetails.isAssistant())
         }
       })

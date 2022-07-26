@@ -20,7 +20,8 @@ export class User extends BaseModel {
               public show_profile_pictures: string,
               public profile_picture: string,
               public extras: any,
-              public first_login: Date
+              public first_login: Date,
+              public grade_level: string
               ) {
     super();
   }
@@ -50,7 +51,8 @@ export class User extends BaseModel {
       show_profile_pictures: string = JSON['show_profile_pictures'],
       profile_picture: string = JSON['profile_picture'],
       extras: any = JSON['extras'],
-      first_login: Date = new Date(JSON['first_login']);
+      first_login: Date = new Date(JSON['first_login']),
+      grade_level: string = JSON['grade_level']
 
     const rolesJSON = JSON['roles'];
     const sync_types_json = JSON['sync_types'];
@@ -81,7 +83,8 @@ export class User extends BaseModel {
       show_profile_pictures,
       profile_picture,
       extras,
-      first_login
+      first_login,
+      grade_level
     );
   }
 

@@ -10,6 +10,10 @@ export class IDCardService {
     private http: HttpService,
   ) { }
 
+  addIDCard(body){
+    return this.http.post('v1/id_card', body);
+  }
+
   enableIDCard() {
    return this.http.patch('v1/id_card/enable');
   }
@@ -21,4 +25,13 @@ export class IDCardService {
   getIDCardDetails(){
     return this.http.get('v1/id_card');
   }
+
+  getIDCardDetailsEdit(){
+    return this.http.get('v1/id_card/edit');
+  }
+
+  updateIDCardField(body){
+    return this.http.patch('v1/id_card', body);
+  }
+
 }

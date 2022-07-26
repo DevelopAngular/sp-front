@@ -28,7 +28,7 @@
                                     <!-- <span *ngIf="userDetails.isStudent()">Student</span>
                                     <span *ngIf="userDetails.isAdmin() || userDetails.isAssistant()">Staff</span> -->
                                 </p>
-                                <ul *ngIf="greadLevel">
+                                <ul *ngIf="(isDummyCard && greadLevel) || (greadLevel && userRole == 'Student')">
                                     <li>Grade {{greadLevel}}</li>
                                 </ul>
                             </div>

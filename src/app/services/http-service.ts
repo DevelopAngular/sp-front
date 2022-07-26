@@ -108,7 +108,8 @@ function makeUrl(server: LoginServer, endpoint: string) {
       url = environment.preferEnvironment.api_root + endpoint;
     } else {
       // url = 'https://smartpass.app/api/prod-us-central' + endpoint;
-      url = server.api_root + endpoint;
+      // url = server.api_root + endpoint;
+      url = 'https://smartpass.app/api/staging/' + endpoint;
     }
   }
   return url;

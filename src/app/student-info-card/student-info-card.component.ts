@@ -51,6 +51,7 @@ import {IntroData} from '../ngrx/intros';
 import { IDCard } from '../admin/id-cards/id-card-editor/id-card-editor.component';
 import { IdcardOverlayContainerComponent } from '../idcard-overlay-container/idcard-overlay-container.component';
 import { QRBarcodeGeneratorService } from '../services/qrbarcode-generator.service';
+import { IDCardService } from '../services/IDCardService';
 
 declare const window;
 
@@ -116,6 +117,10 @@ export class StudentInfoCardComponent implements OnInit, AfterViewInit, OnDestro
   };
   showPassLimitNux = new Subject<boolean>();
 
+  IDCardEnabled: boolean = false;
+
+  IDCARDDETAILS: any;
+
   constructor(
     private dialog: MatDialog,
     private passesService: HallPassesService,
@@ -128,7 +133,8 @@ export class StudentInfoCardComponent implements OnInit, AfterViewInit, OnDestro
     private http: HttpService,
     private darkTheme: DarkThemeSwitch,
     private passLimitsService: PassLimitService,
-    private qrBarcodeGenerator: QRBarcodeGeneratorService
+    private qrBarcodeGenerator: QRBarcodeGeneratorService,
+    private idCardService: IDCardService
   ) {
   }
 
@@ -206,6 +212,17 @@ export class StudentInfoCardComponent implements OnInit, AfterViewInit, OnDestro
         this.passLimit = pl.pass_limit;
       }
     });
+    
+    this.idCardService.getIDCardDetails().subscribe({
+      next: (result:any) => {
+        if (result?.results?.digital_id_card) {
+          this.IDCARDDETAILS = result.results.digital_id_card;
+          if (this.IDCARDDETAILS.visible_to_who != 'Staff only') {
+            this.IDCardEnabled = true;
+          }
+        }
+      }
+    })
   }
 
   ngAfterViewInit() {
@@ -284,15 +301,19 @@ export class StudentInfoCardComponent implements OnInit, AfterViewInit, OnDestro
         action: 'link',
         tooltip: 'Copy a private link to this student and send it to another staff member at your school.'
       },
-      {
-        label: 'Open ID Card',
-        icon: './assets/Digital ID Card (Gray).svg',
-        textColor: '#7f879d',
-        backgroundColor: '#F4F4F4',
-        action: 'idcard',
-        // tooltip: 'Copy a private link to this student and send it to another staff member at your school.'
-      },
     ];
+    if (this.IDCardEnabled) {
+      settings.push(
+        {
+          label: 'Open ID Card',
+          icon: './assets/Digital ID Card (Gray).svg',
+          textColor: '#7f879d',
+          backgroundColor: '#F4F4F4',
+          action: 'idcard',
+          // tooltip: 'Copy a private link to this student and send it to another staff member at your school.'
+        }
+      )
+    }
     if (this.user.isAdmin()) {
       settings.push(
         {
@@ -350,18 +371,19 @@ export class StudentInfoCardComponent implements OnInit, AfterViewInit, OnDestro
           this.userService.deleteUserRequest(this.profile, '_profile_student');
         }else if (action === 'idcard') {
           let idCardData: IDCard = {
-            backgroundColor: '#00b476',
-            greadLevel: 10,
+            backgroundColor: this.IDCARDDETAILS.color,
+            greadLevel: this.IDCARDDETAILS.show_grade_levels ? this.profile.grade_level : null,
             idNumberData: {
               idNumber: 123456,
-              barcodeURL: await this.qrBarcodeGenerator.selectBarcodeType('code39', 123456)
+              barcodeURL: await this.qrBarcodeGenerator.selectBarcodeType(this.IDCARDDETAILS.barcode_type, 123456)
             },
-            backsideText: 'Demo text is here',
-            logoURL: '',
-            profilePicture: '',
+            backsideText: this.IDCARDDETAILS.backside_text,
+            logoURL: this.IDCARDDETAILS.signed_url,
+            profilePicture: this.profile.profile_picture,
             schoolName: 'Demo School',
-            userName: 'Demo User',
-            userRole:'Student'
+            userName: this.profile.display_name,
+            userRole: 'Student'
+            // userRole: this.profile.isStudent() ?  'Student' : 'Staff'
           };
       
           // idCardData.idNumberData.barcodeURL = await this.qrBarcodeGenerator.selectBarcodeType('code39', 123456);
@@ -369,7 +391,7 @@ export class StudentInfoCardComponent implements OnInit, AfterViewInit, OnDestro
           const dialogRef = this.dialog.open(IdcardOverlayContainerComponent, {
             panelClass: "id-card-overlay-container",
             backdropClass: "custom-bd",
-            data: idCardData
+            data: {idCardData: idCardData, isLoggedIn: false}
           });
         }
       });
