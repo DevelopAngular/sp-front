@@ -96,6 +96,7 @@ export class IdNumbersComponent implements OnInit {
   showProcessingSpinner$: Observable<boolean>;
   accountsWithoutPictures$: Observable<User[]>;
   accountMissingGradeLevels$: number = 8;
+  accountMissingIDNumbers$: any[] = [];
   // uploadErrors$: Observable<ProfilePicturesError[]>;
   // lastUploadedGroup$: Observable<ProfilePicturesUploadGroup>;
   // uploadedGroups$: Observable<GradeLevelsUploadGroup[]>;
@@ -130,6 +131,8 @@ export class IdNumbersComponent implements OnInit {
       images: new FormControl(),
       csvFile: new FormControl()
     });
+
+    this.page == 5 ? this.getMissingIDNumbers() : null
   }
 
   getUploadedGroupTime(date: Date): string {
@@ -139,6 +142,14 @@ export class IdNumbersComponent implements OnInit {
   nextPage() {
     this.page += 1;
     if (this.page === 3) {
+      let body: FormData = new FormData();
+      body.append('csv_file', this.selectedMapFile)
+      this.userService.uploadIDNumbers(body).subscribe({
+        next: result => {
+          this.page = 4
+          console.log("result : ", result);
+        }
+      })
       // this.errors = this.findIssues();
       // const userIds = this.filesToDB.map(f => f.user_id);
       // const files = this.filesToDB.map(f => f.file);
@@ -158,9 +169,17 @@ export class IdNumbersComponent implements OnInit {
       // }
     } else if (this.page === 5) {
       this.userService.clearUploadedData();
-      this.userService.getMissingProfilePicturesRequest();
-      this.userService.getUploadedGroupsRequest();
+      this.getMissingIDNumbers();
     }
+  }
+
+  getMissingIDNumbers(){
+    this.userService.getMissingIDNumbers().subscribe({
+      next: (result: any) => {
+        console.log("result : ", result);
+        this.accountMissingIDNumbers$ = result
+      }
+    });
   }
 
   clearData() {

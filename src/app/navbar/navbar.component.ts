@@ -662,10 +662,10 @@ export class NavbarComponent implements AfterViewInit, OnInit, OnDestroy {
       backgroundColor: this.IDCARDDETAILS.color,
       greadLevel: this.IDCARDDETAILS.show_grade_levels ? '10' : null,
       idNumberData: {
-        idNumber: 21158,
+        idNumber: '21158',
         barcodeURL: await this.qrBarcodeGenerator.selectBarcodeType(
           this.IDCARDDETAILS.barcode_type,
-          123456
+          '123456'
         ),
       },
       backsideText: this.IDCARDDETAILS.backside_text,
@@ -674,6 +674,7 @@ export class NavbarComponent implements AfterViewInit, OnInit, OnDestroy {
       schoolName: "Demo School",
       userName: "Demo User",
       userRole: "Student",
+      showCustomID: this.IDCARDDETAILS.show_custom_ids
     };
 
     // idCardData.idNumberData.barcodeURL = await this.qrBarcodeGenerator.selectBarcodeType('code39', 123456);

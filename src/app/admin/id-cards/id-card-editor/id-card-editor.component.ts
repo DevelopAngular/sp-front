@@ -33,11 +33,12 @@ export interface IDCard {
   schoolName?: string;
   userRole?: string;
   profilePicture?: string;
-  idNumberData?: { idNumber: number; barcodeURL: any };
+  idNumberData?: { idNumber: string; barcodeURL: any };
   greadLevel?: string;
   backgroundColor?: string;
   logoURL?: string;
   backsideText?: string;
+  showCustomID?: boolean
 }
 
 export interface BarcodeTypes {

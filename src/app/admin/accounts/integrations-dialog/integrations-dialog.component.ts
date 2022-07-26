@@ -32,6 +32,7 @@ export class IntegrationsDialogComponent implements OnInit, OnDestroy {
   };
   isUploadedProfilePictures: boolean;
   isUploadedGradeLevels: boolean;
+  isUploadedIDNumbers: boolean;
 
   frameMotion$: BehaviorSubject<any>;
 
@@ -60,6 +61,22 @@ export class IntegrationsDialogComponent implements OnInit, OnDestroy {
           console.log("school : ", school)
           this.isUploadedProfilePictures = school.profile_pictures_completed;
         });
+
+        this.userService.getStatusOfGradeLevel().subscribe({
+          next: (result: any) => {
+            if (result?.results?.setup) {
+              this.isUploadedGradeLevels = true;
+            }
+          }
+        });
+
+        this.userService.getStatusOfIDNumber().subscribe({
+          next: (result: any) => {
+            if (result?.results?.setup) {
+              this.isUploadedIDNumbers = true;
+            }
+          }
+        })
   }
 
   ngOnDestroy() {

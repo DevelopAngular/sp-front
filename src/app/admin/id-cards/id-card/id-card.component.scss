@@ -127,6 +127,9 @@
                 line-height: 5px;
                 @include textSize(14px, normal, $gray900);
             }
+            img {
+                max-width: 90%;
+            }
         }
     }
 }

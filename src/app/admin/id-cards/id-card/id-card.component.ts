@@ -1,6 +1,7 @@
 import { Component, Input, OnInit } from "@angular/core";
 import { DarkThemeSwitch } from "../../../dark-theme-switch";
 import { User } from "../../../models/User";
+import { QRBarcodeGeneratorService } from "../../../services/qrbarcode-generator.service";
 import { UserService } from "../../../services/user.service";
 
 @Component({
@@ -22,16 +23,19 @@ export class IdCardComponent implements OnInit {
   @Input() buttonBackColor: string = '#FFFFFF';
   @Input() isDummyCard: boolean = false;
   @Input() isLoggedIn: boolean = true;
+  @Input() showCustomID: boolean = false;
 
   userDetails: any;
 
   constructor(
     public darkTheme: DarkThemeSwitch,
     private userService: UserService,
+    private qrBarcodeGenerator: QRBarcodeGeneratorService
     ) {
   }
 
   ngOnInit(): void {
+    this.showCustomID == false ? this.IDNumberData = {} : null
     console.log("isLoggedIn : ", this.isLoggedIn)
     if (this.isLoggedIn) {
       this.userService.user$.subscribe({
@@ -41,6 +45,13 @@ export class IdCardComponent implements OnInit {
            this.userRole = this.userDetails.isStudent() ? 'Student' : 'Staff'
            this.profile_picture = this.userDetails?.profile_picture;
            this.greadLevel = this.userDetails?.grade_level;
+          if (this.showCustomID) {
+            this.IDNumberData.idNumber = this.userDetails?.custom_id || '123456'
+            this.IDNumberData.barcodeURL =  this.qrBarcodeGenerator.selectBarcodeType(
+              'qr-code',
+              this.IDNumberData.idNumber
+            )
+          }
           console.log("User : ",this.userDetails, this.userDetails.isStudent(), this.userDetails.isAdmin(), this.userDetails.isAssistant())
         }
       })

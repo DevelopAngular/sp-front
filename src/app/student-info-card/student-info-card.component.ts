@@ -374,8 +374,8 @@ export class StudentInfoCardComponent implements OnInit, AfterViewInit, OnDestro
             backgroundColor: this.IDCARDDETAILS.color,
             greadLevel: this.IDCARDDETAILS.show_grade_levels ? this.profile.grade_level : null,
             idNumberData: {
-              idNumber: 123456,
-              barcodeURL: await this.qrBarcodeGenerator.selectBarcodeType(this.IDCARDDETAILS.barcode_type, 123456)
+              idNumber: this.profile.custom_id,
+              barcodeURL: await this.qrBarcodeGenerator.selectBarcodeType(this.IDCARDDETAILS.barcode_type, this.profile.custom_id)
             },
             backsideText: this.IDCARDDETAILS.backside_text,
             logoURL: this.IDCARDDETAILS.signed_url,

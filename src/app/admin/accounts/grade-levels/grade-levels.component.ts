@@ -132,6 +132,8 @@ export class GradeLevelsComponent implements OnInit {
       images: new FormControl(),
       csvFile: new FormControl()
     });
+
+    this.page == 5 ? this.getMissingGradeLevels() : null
   }
 
   getUploadedGroupTime(date: Date): string {
@@ -168,14 +170,18 @@ export class GradeLevelsComponent implements OnInit {
       // }
     } else if (this.page === 5) {
       this.userService.clearUploadedData();
-      this.userService.getMissingGradeLevels().subscribe({
-        next: (result: any) => {
-          console.log("result : ", result);
-          this.accountMissingGradeLevels$ = result
-        }
-      });
+      this.getMissingGradeLevels();
       // this.userService.getUploadedGroupsRequest();
     }
+  }
+
+  getMissingGradeLevels(){
+    this.userService.getMissingGradeLevels().subscribe({
+      next: (result: any) => {
+        console.log("result : ", result);
+        this.accountMissingGradeLevels$ = result
+      }
+    });
   }
 
   clearData() {
