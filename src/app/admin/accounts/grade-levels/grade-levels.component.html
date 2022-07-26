@@ -165,14 +165,14 @@
                         </div>
                         <app-gradient-button [rightIconWidth]="'15px'" [rightIcon]="'./assets/Chevron Right (White).svg'" [gradient]="'#1F195E, #1F195E'" (buttonClick)="clearData(); page = 2">New Upload</app-gradient-button>
                     </div>
-                    <mat-divider *ngIf="accountMissingGradeLevels$ > 0"></mat-divider>
-                    <div class="missing" *ngIf="accountMissingGradeLevels$ > 0">
+                    <mat-divider *ngIf="accountMissingGradeLevels$.length > 0"></mat-divider>
+                    <div class="missing" *ngIf="accountMissingGradeLevels$.length > 0">
                         <div style="display: flex; align-items: center">
                             <img [src]="'./assets/Warning (Orange).svg'" alt="">
                             <div class="info-title">Missing Grade Levels:</div>
                         </div>
                         <div class="info">
-                            {{ accountMissingGradeLevels$ }} students don’t have Grade Levels.
+                            {{ accountMissingGradeLevels$.length }} students don’t have Grade Levels.
                         </div>
                         <div class="info-icon">
                             <app-icon-button (clickEvent)="generateStudentsCsv(accountMissingGradeLevels$)" [size]="24" [srcString]="'Circle Download'"></app-icon-button>

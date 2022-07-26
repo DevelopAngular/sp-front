@@ -95,7 +95,7 @@ export class GradeLevelsComponent implements OnInit {
   picturesLoaderPercent$: Observable<number>;
   showProcessingSpinner$: Observable<boolean>;
   accountsWithoutPictures$: Observable<User[]>;
-  accountMissingGradeLevels$: number = 8;
+  accountMissingGradeLevels$: any[] = [];
   // uploadErrors$: Observable<ProfilePicturesError[]>;
   // lastUploadedGroup$: Observable<ProfilePicturesUploadGroup>;
   // uploadedGroups$: Observable<GradeLevelsUploadGroup[]>;
@@ -145,6 +145,7 @@ export class GradeLevelsComponent implements OnInit {
       body.append('csv_file', this.selectedMapFile)
       this.userService.uploadGradeLevels(body).subscribe({
         next: result => {
+          this.page = 4
           console.log("result : ", result);
         }
       })
@@ -167,8 +168,13 @@ export class GradeLevelsComponent implements OnInit {
       // }
     } else if (this.page === 5) {
       this.userService.clearUploadedData();
-      this.userService.getMissingProfilePicturesRequest();
-      this.userService.getUploadedGroupsRequest();
+      this.userService.getMissingGradeLevels().subscribe({
+        next: (result: any) => {
+          console.log("result : ", result);
+          this.accountMissingGradeLevels$ = result
+        }
+      });
+      // this.userService.getUploadedGroupsRequest();
     }
   }
 
