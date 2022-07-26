@@ -45,7 +45,7 @@ export class PassLimitsDialogComponent implements OnInit {
   navigateToAdminPage() {
     this.dialogRef.close();
     const urlTree = this.router.createUrlTree(
-      ['admin', 'accounts', '_profile_student'],
+      ['app', 'admin', 'accounts', '_profile_student'],
       {queryParams: {'pass-limits': ''}}
     );
     const url = this.router.serializeUrl(urlTree);

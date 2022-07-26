@@ -99,6 +99,9 @@ export class AdminPassLimitDialogComponent implements OnInit, OnDestroy {
         this.passLimitFormLastValue = this.passLimitForm.value;
         this.passLimitFormChanged = this.passLimitForm.valueChanges.pipe(
           map(v => {
+            if (v?.passLimit) {
+              v.passLimit = parseInt(v.passLimit, 10);
+            }
             const {invalid, dirty} = this.passLimitForm.get('passLimit');
             this.showLimitFormatError = invalid && dirty;
             return JSON.stringify(v) !== JSON.stringify(this.passLimitFormLastValue);
@@ -163,6 +166,9 @@ export class AdminPassLimitDialogComponent implements OnInit, OnDestroy {
           map(v => {
             const {invalid, dirty} = this.passLimitForm.get('passLimit');
             this.showLimitFormatError = invalid && dirty;
+            if (v?.passLimit) {
+              v.passLimit = parseInt(v.passLimit, 10);
+            }
             return JSON.stringify(v) !== JSON.stringify(this.passLimitFormLastValue);
           }));
       },
