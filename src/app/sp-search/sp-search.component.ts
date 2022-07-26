@@ -124,6 +124,7 @@ export class SPSearchComponent implements OnInit, OnDestroy {
   @Input() gSuiteRoles: string[];
   @Input() dummyRoleText: string = 'students';
   @Input() placeholder: string = 'Search students';
+  @Input() textAddButton: string | null = null;
   @Input() type: string = 'alternative'; // Can be alternative or G_Suite or GG4L, endpoint will depend on that.
   @Input() isProposed: boolean;
   @Input() proposedSearchString: string;
@@ -135,6 +136,7 @@ export class SPSearchComponent implements OnInit, OnDestroy {
 
   @Output() onUpdate: EventEmitter<any> = new EventEmitter();
   @Output() blurEvent: EventEmitter<boolean> = new EventEmitter<boolean>();
+  @Output() focusEvent: EventEmitter<boolean> = new EventEmitter<boolean>();
   @Output() isOpenedOptions: EventEmitter<boolean> = new EventEmitter<boolean>();
 
   @ViewChild('studentInput') input: ElementRef;
@@ -308,6 +310,7 @@ export class SPSearchComponent implements OnInit, OnDestroy {
 
     this.user$ = this.userService.user$;
     this.isEnableProfilePictures$ = this.userService.isEnableProfilePictures$;
+
   }
 
 
@@ -459,6 +462,12 @@ export class SPSearchComponent implements OnInit, OnDestroy {
     this.onUpdate.emit(teacher);
   }
 
+  onFocus(event) {
+    setTimeout(() => {
+      this.focusEvent.emit(null);
+    }, 500);
+  }
+
   onBlur(event) {
     setTimeout(() => {
       this.blurEvent.emit(null);
@@ -480,6 +489,15 @@ export class SPSearchComponent implements OnInit, OnDestroy {
       this.isOpenedOptions.emit(false);
       this.onUpdate.emit(this.getEmitedValue());
     }
+  }
+
+  removeStudents() {
+    this.students = of([]).toPromise();
+    this.inputValue$.next('');
+    this.onSearch('');
+    this.isOpenedOptions.emit(false);
+    this.onUpdate.emit(this.getEmitedValue());
+    this.selectedOptions = [];
   }
 
   removeDuplicateStudents(students: User[] | GSuiteSelector[]): User[] | GSuiteSelector[] {

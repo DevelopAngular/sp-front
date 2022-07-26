@@ -333,3 +333,13 @@ export const tooltipAnimation = trigger('tooltipAnimate', [
     animate('200ms', style({ opacity: 0 }))
   ])
 ]);
+
+export const slideOpacity = trigger('slideOpacityAnimate', [
+  transition(':enter', [
+    style({ opacity: 0, top: '{{delta}}px' }),
+    animate('200ms', style({ opacity: 1, top: 0 })),
+  ], {params: {delta: -10}}),
+  transition(':leave', [
+    animate('200ms', style({ opacity: 0, top: '{{delta}}px' }))
+  ], {params: {delta: -10}})
+]);

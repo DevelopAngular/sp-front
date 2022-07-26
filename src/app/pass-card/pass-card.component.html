@@ -188,3 +188,15 @@
     <span>If it's an emergency, you can override the limit.</span>
   </div>
 </ng-template>
+
+<ng-template let-alerts="alerts" #confirmDialogBodyVisibility>
+  <ng-container *ngFor="let a of alerts">
+  <div class="ds-dialog-title">
+    <span>{{a.phrase}}</span>
+  </div>
+
+  <div class="ds-dialog-normal-text ds-mb-10">
+      <p>{{a.students}}</p>
+  </div>
+  </ng-container>
+</ng-template>
