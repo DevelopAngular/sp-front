@@ -372,13 +372,13 @@ export class StudentInfoCardComponent implements OnInit, AfterViewInit, OnDestro
         }else if (action === 'idcard') {
           let idCardData: IDCard = {
             backgroundColor: this.IDCARDDETAILS.color,
-            greadLevel: 10,
+            greadLevel: this.IDCARDDETAILS.show_grade_levels ? this.profile.grade_level : null,
             idNumberData: {
               idNumber: 123456,
               barcodeURL: await this.qrBarcodeGenerator.selectBarcodeType(this.IDCARDDETAILS.barcode_type, 123456)
             },
             backsideText: this.IDCARDDETAILS.backside_text,
-            logoURL: this.IDCARDDETAILS.logo_signed_url,
+            logoURL: this.IDCARDDETAILS.signed_url,
             profilePicture: this.profile.profile_picture,
             schoolName: 'Demo School',
             userName: this.profile.display_name,

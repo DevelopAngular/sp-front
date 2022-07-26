@@ -660,7 +660,7 @@ export class NavbarComponent implements AfterViewInit, OnInit, OnDestroy {
   async openIDCard() {
     let idCardData: IDCard = {
       backgroundColor: this.IDCARDDETAILS.color,
-      greadLevel: 10,
+      greadLevel: this.IDCARDDETAILS.show_grade_levels ? '10' : null,
       idNumberData: {
         idNumber: 21158,
         barcodeURL: await this.qrBarcodeGenerator.selectBarcodeType(
@@ -669,7 +669,7 @@ export class NavbarComponent implements AfterViewInit, OnInit, OnDestroy {
         ),
       },
       backsideText: this.IDCARDDETAILS.backside_text,
-      logoURL: this.IDCARDDETAILS.logo_signed_url,
+      logoURL: this.IDCARDDETAILS.signed_url,
       profilePicture: "",
       schoolName: "Demo School",
       userName: "Demo User",

@@ -54,11 +54,11 @@ export class NavComponent implements OnInit, AfterViewInit, OnDestroy {
     {title: 'Dashboard', id:'dashboard', route : 'dashboard', type: 'routerLink', imgUrl : 'Dashboard', requiredRoles: ['_profile_admin', 'access_admin_dashboard']},
     {title: 'Hall Monitor', id:'hallMonitor', route : 'hallmonitor', type: 'routerLink', imgUrl : 'Walking', requiredRoles: ['_profile_admin', 'admin_hall_monitor']},
     // {title: 'Search', id:'dashboard', route : 'search', type: 'routerLink', imgUrl : 'SearchEye', requiredRoles: ['_profile_admin', 'access_admin_search']},
-    {title: 'Explore', id:'explore', route : 'explore', type: 'openMenu', imgUrl : 'SearchEye', requiredRoles: ['_profile_admin', 'access_admin_search'], isExpand: true},
-    {title: 'Rooms', id:'rooms', route : 'passconfig', type: 'routerLink', imgUrl : 'Rooms', requiredRoles: ['_profile_admin', 'access_pass_config']},
+    {title: 'Explore', id:'explore', route : 'explore', type: 'openMenu', imgUrl : 'Search Eye', requiredRoles: ['_profile_admin', 'access_admin_search'], isExpand: true},
+    {title: 'Rooms', id:'rooms', route : 'passconfig', type: 'routerLink', imgUrl : 'Room', requiredRoles: ['_profile_admin', 'access_pass_config']},
     {title: 'Accounts', id:'accounts', route : 'accounts', type: 'routerLink', imgUrl : 'Users', requiredRoles: ['_profile_admin', 'access_user_config']},
     {title: 'My School', id:'mySchool', route : 'myschool', type: 'routerLink', imgUrl : 'School', requiredRoles: ['_profile_admin', 'manage_school']},
-    {title: 'ID Cards', id:'idCards', route : 'idcards', type: 'routerLink', imgUrl : 'DigitalIDCards', requiredRoles: ['_profile_admin', 'manage_school']}
+    {title: 'ID Cards', id:'idCards', route : 'idcards', type: 'routerLink', imgUrl : 'Digital ID Cards', requiredRoles: ['_profile_admin', 'manage_school']}
   ];
 
   views: View = {
@@ -223,7 +223,7 @@ export class NavComponent implements OnInit, AfterViewInit, OnDestroy {
               'selectedPage': this.views[this.currentView$.getValue()]
             }
           });
-      
+
           pagesDialog.afterClosed()
             .pipe(
               tap(() => UNANIMATED_CONTAINER.next(false)),

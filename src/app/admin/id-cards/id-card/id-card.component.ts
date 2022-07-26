@@ -40,6 +40,7 @@ export class IdCardComponent implements OnInit {
           this.userName = this.userDetails.display_name;
            this.userRole = this.userDetails.isStudent() ? 'Student' : 'Staff'
            this.profile_picture = this.userDetails?.profile_picture;
+           this.greadLevel = this.userDetails?.grade_level;
           console.log("User : ",this.userDetails, this.userDetails.isStudent(), this.userDetails.isAdmin(), this.userDetails.isAssistant())
         }
       })
