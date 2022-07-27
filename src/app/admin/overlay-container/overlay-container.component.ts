@@ -428,11 +428,11 @@ export class OverlayContainerComponent implements OnInit, OnDestroy {
     this.form = new FormGroup({
         file: new FormControl(),
         roomName: new FormControl('',
-            [Validators.required, Validators.maxLength(15)],
+            [Validators.maxLength(15)],
             this.uniqueRoomNameValidator.bind(this)
         ),
         folderName: new FormControl('',
-            [Validators.required, Validators.maxLength(17)],
+            [Validators.maxLength(17)],
             this.uniqueFolderNameValidator.bind(this)
         ),
         roomNumber: new FormControl('',
