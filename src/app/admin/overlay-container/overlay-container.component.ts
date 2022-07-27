@@ -1,10 +1,10 @@
 import {Component, ElementRef, Inject, OnDestroy, OnInit, ViewChild} from '@angular/core';
-import {AbstractControl, FormControl, FormGroup, Validators} from '@angular/forms';
+import {AbstractControl, AsyncValidatorFn, FormControl, FormGroup, ValidationErrors, Validators} from '@angular/forms';
 import {MAT_DIALOG_DATA, MatDialog, MatDialogRef} from '@angular/material/dialog';
 import {DomSanitizer} from '@angular/platform-browser';
 
 import {BehaviorSubject, combineLatest, forkJoin, fromEvent, merge, Observable, of, Subject, zip} from 'rxjs';
-import {debounceTime, distinctUntilChanged, filter, map, switchMap, take, takeUntil, tap} from 'rxjs/operators';
+import {debounceTime, distinctUntilChanged, filter, first, map, switchMap, take, takeUntil, tap} from 'rxjs/operators';
 
 import {bumpIn, NextStep} from '../../animations';
 import {Pinnable} from '../../models/Pinnable';
@@ -428,11 +428,11 @@ export class OverlayContainerComponent implements OnInit, OnDestroy {
     this.form = new FormGroup({
         file: new FormControl(),
         roomName: new FormControl('',
-            [Validators.required, Validators.maxLength(15)],
+            [Validators.maxLength(15)],
             this.uniqueRoomNameValidator.bind(this)
         ),
         folderName: new FormControl('',
-            [Validators.required, Validators.maxLength(17)],
+            [Validators.maxLength(17)],
             this.uniqueFolderNameValidator.bind(this)
         ),
         roomNumber: new FormControl('',
@@ -516,26 +516,26 @@ export class OverlayContainerComponent implements OnInit, OnDestroy {
   }
 
   uniqueRoomNameValidator(control: AbstractControl) {
-      if (control.dirty) {
-        return this.locationService.checkLocationName(control.value)
-          .pipe(
-            filter(() => this.currentPage !== Pages.NewFolder && this.currentPage !== Pages.EditFolder),
-            map((res: any) => {
-              if (this.currentPage === Pages.NewRoom || this.currentPage === Pages.NewRoomInFolder) {
-                return res.title_used ? { room_name: true } : null;
+    if (control.dirty) {
+      return this.locationService.checkLocationName(control.value)
+        .pipe(
+          filter(() => this.currentPage !== Pages.NewFolder && this.currentPage !== Pages.EditFolder),
+          map((res: any) => {
+            if (this.currentPage === Pages.NewRoom || this.currentPage === Pages.NewRoomInFolder) {
+              return res.title_used ? { room_name: true } : null;
+            } else {
+              let currentRoomName: string;
+              if (this.currentPage === Pages.EditRoomInFolder || this.currentPage === Pages.NewRoomInFolder) {
+                currentRoomName = this.overlayService.pageState.getValue().data.selectedRoomsInFolder[0].title;
               } else {
-                let currentRoomName: string;
-                if (this.currentPage === Pages.EditRoomInFolder || this.currentPage === Pages.NewRoomInFolder) {
-                  currentRoomName = this.overlayService.pageState.getValue().data.selectedRoomsInFolder[0].title;
-                } else {
-                  currentRoomName = this.pinnable.location.title;
-                }
-                return res.title_used && (currentRoomName !== this.roomData.roomName) ? { room_name: true } : null;
+                currentRoomName = this.pinnable.location.title;
               }
-            }));
-      } else {
-          return of(null);
-      }
+              return res.title_used && (currentRoomName !== this.roomData.roomName) ? { room_name: true } : null;
+            }
+          }));
+    } else {
+      return of(null);
+    }
   }
 
   uniqueFolderNameValidator(control: AbstractControl) {
@@ -617,6 +617,7 @@ export class OverlayContainerComponent implements OnInit, OnDestroy {
       } else if (roomData.advOptState.future.data.selectedTeachers.length) {
           data.scheduling_request_teachers = roomData.advOptState.future.data.selectedTeachers.map(t => t.id);
       }
+      data.enable = roomData.enable;
       return data;
   }
 
@@ -725,6 +726,7 @@ export class OverlayContainerComponent implements OnInit, OnDestroy {
 
         forkJoin(deleteRequest$).pipe(takeUntil(this.destroy$)).subscribe();
       }
+
       let locationsToDb$;
       const touchedRooms = this.folderData.roomsInFolder.filter(room => room.isEdit || !room.category);
 
@@ -754,8 +756,8 @@ export class OverlayContainerComponent implements OnInit, OnDestroy {
         locationsToDb$ = [of(null)];
       }
 
-      zip(...locationsToDb$).pipe(
-        switchMap(locations => {
+      zip(...locationsToDb$).pipe( // after all locations observables emit, emit responses as an array
+        switchMap(locations => { // map each location to a switched observable request
           const newFolder = {
             title: this.folderData.folderName,
             color_profile: this.color_profile.id,
@@ -778,17 +780,17 @@ export class OverlayContainerComponent implements OnInit, OnDestroy {
             );
           }
       }),
-        switchMap((res) => {
-          if (this.pinnableToDeleteIds.length) {
-            const deleteRequests = this.pinnableToDeleteIds.map(id => {
-              return this.hallPassService.deletePinnableRequest(id);
-            });
-            return zip(...deleteRequests);
-          } else {
-            return of(null);
-          }
-        }),
-        takeUntil(this.destroy$)
+      switchMap((res) => {
+        if (this.pinnableToDeleteIds.length) {
+          const deleteRequests = this.pinnableToDeleteIds.map(id => {
+            return this.hallPassService.deletePinnableRequest(id, true);
+          });
+          return zip(...deleteRequests);
+        } else {
+          return of(null);
+        }
+      }),
+      takeUntil(this.destroy$)
       )
       .subscribe(() => {
         this.toast.openToast({title: this.currentPage === Pages.NewFolder ? 'New folder added' : 'Folder updated', type: 'success'});

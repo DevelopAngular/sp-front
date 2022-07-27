@@ -44,7 +44,10 @@ export class NotificationService {
     return NotificationService.hasSupport && window.Notification.permission !== 'denied' && window.Notification.permission !== 'granted';
   }
 
-  constructor(private afm: AngularFireMessaging, private http: HttpService) {
+  constructor(
+    private afm: AngularFireMessaging,
+    private http: HttpService
+  ) {
     this.afm.messages.subscribe((message) => {
       const notif: Notif = Notif.fromJSON(message);
       this.displayNotification(notif);

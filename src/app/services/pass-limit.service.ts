@@ -1,6 +1,10 @@
 import {Injectable} from '@angular/core';
-import {HttpService} from './http-service';
+
 import {Observable} from 'rxjs';
+import {distinctUntilChanged, map} from 'rxjs/operators';
+
+import {LiveDataService} from '../live-data/live-data.service';
+import {HttpService} from './http-service';
 import {HallPassLimit} from '../models/HallPassLimits';
 
 @Injectable({
@@ -8,7 +12,10 @@ import {HallPassLimit} from '../models/HallPassLimits';
 })
 export class PassLimitService {
 
-  constructor(private http: HttpService) {
+  constructor(
+    private http: HttpService,
+    private liveDataService: LiveDataService
+  ) {
   }
 
   getPassLimit(): Observable<{ pass_limit: HallPassLimit }> {
@@ -25,5 +32,18 @@ export class PassLimitService {
 
   updatePassLimits(pl: HallPassLimit) {
     return this.http.put('v1/pass_limits/update', pl);
+  }
+
+  /**
+   * Watches for create and update pass limit messages from the backend
+   * and fetches the latest pass limit from the server
+   */
+  watchPassLimits() {
+    return this.liveDataService.watchPassLimits().pipe(
+      map(d => d[0]),
+      distinctUntilChanged((a, b) => {
+        return a.limitEnabled === b.limitEnabled && a.passLimit === b.passLimit;
+      }),
+    );
   }
 }

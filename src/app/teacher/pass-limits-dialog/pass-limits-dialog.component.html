@@ -11,12 +11,17 @@
     <div class="content">
       <div class="accent-background-section ds-flex-row ds-flex-center-between" style="display: flex; gap: 10px">
         <div class="pass-limits-info">
-          <p class="ds-dialog-heading" style="margin-top: 4px; margin-bottom: 0; display: inline-block">School Pass Limit</p>
+          <p class="ds-dialog-heading" style="margin-top: 4px; margin-bottom: 0; display: inline-block; font-weight: 600 !important">School Pass Limit</p>
           <span class="support-icon" customToolTip [contentTemplate]="text" style="margin-left: 10px"><img width="13px" [src]="'./assets/Support (Gray-200).svg' | resolveAsset"></span>
           <ng-template #text>
-            <div class="ds-tooltip" style="width: 200px">This is set by the school admin</div>
+            <div class="ds-tooltip" style="width: 200px">
+              <span>
+                Limit the number of passes students can have per day.
+                <a href="https://www.smartpass.app/passlimits" target="_blank" style="color: white"> Learn more</a>
+              </span>
+            </div>
           </ng-template>
-          <p *ngIf="data.passLimit" class="ds-dialog-normal-text" style="margin-top: 4px">{{data.passLimit.passLimit}} passes/{{data.passLimit.frequency}}</p>
+          <p *ngIf="data.passLimit" class="ds-dialog-normal-text" style="margin-top: 4px">{{data.passLimit.passLimit}} {{data.passLimit.passLimit === 1 ? 'pass' : 'passes'}}/{{data.passLimit.frequency}}</p>
           <p *ngIf="!data.passLimit" class="ds-dialog-normal-text" style="margin-top: 4px">No pass limits set. Contact your school admin to get started.</p>
         </div>
         <div class="pass-limits-actions">
@@ -32,9 +37,9 @@
             Edit
           </app-gradient-button>
           <ng-template #editButtonAdminRedirect>
-            <div class="ds-tooltip" style="text-align: left">
+            <div *ngIf="!canNavigate" class="ds-tooltip" style="text-align: left">
               <div class="only-admin">ADMIN ONLY</div>
-              Only admins are able to change the account status.
+              Only admins are able to manage pass limits.
             </div>
           </ng-template>
         </div>

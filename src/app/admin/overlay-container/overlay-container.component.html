@@ -111,6 +111,7 @@
           *ngIf="currentPage === 10" [form]="form"
           [passLimitForm]="passLimitForm"
           [showErrors]="showErrors"
+          [isEnableRoomTrigger$]="enableRoomTrigger"
           (bulkEditResult)="bulkEditInFolder($event)"
           (errorsEmit)="showFormErrors()"
           (back)="back(false)"

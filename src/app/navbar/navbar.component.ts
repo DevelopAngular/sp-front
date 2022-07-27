@@ -22,40 +22,11 @@ import { ActivatedRoute, NavigationEnd, Router } from "@angular/router";
 import { combineLatest, Observable, ReplaySubject, Subject } from "rxjs";
 import { filter, map, pluck, switchMap, takeUntil } from "rxjs/operators";
 
-import { DataService } from "../services/data-service";
-import { GoogleLoginService } from "../services/google-login.service";
-import { LoadingService } from "../services/loading.service";
-import { NavbarDataService } from "../main/navbar-data.service";
-import { User } from "../models/User";
-import { UserService } from "../services/user.service";
-import { SettingsComponent } from "../settings/settings.component";
-import { FavoriteFormComponent } from "../favorite-form/favorite-form.component";
-import { NotificationFormComponent } from "../notification-form/notification-form.component";
-import { LocationsService } from "../services/locations.service";
-import { DarkThemeSwitch } from "../dark-theme-switch";
-import { NotificationService } from "../services/notification-service";
-import { DropdownComponent } from "../dropdown/dropdown.component";
-import { HttpService } from "../services/http-service";
-import { IntroDialogComponent } from "../intro-dialog/intro-dialog.component";
-import { ScreenService } from "../services/screen.service";
-import { NavbarAnimations } from "./navbar.animations";
-import { StorageService } from "../services/storage.service";
-import { KioskModeService } from "../services/kiosk-mode.service";
-import { SideNavService } from "../services/side-nav.service";
-import { UNANIMATED_CONTAINER } from "../consent-menu-overlay";
-import { DeviceDetection } from "../device-detection.helper";
-import { TeacherPinComponent } from "../teacher-pin/teacher-pin.component";
-import { NavbarElementsRefsService } from "../services/navbar-elements-refs.service";
-import { KeyboardShortcutsService } from "../services/keyboard-shortcuts.service";
-import { filter as _filter } from "lodash";
-import { SpAppearanceComponent } from "../sp-appearance/sp-appearance.component";
-import { MyProfileDialogComponent } from "../my-profile-dialog/my-profile-dialog.component";
-import { SpLanguageComponent } from "../sp-language/sp-language.component";
-import * as moment from "moment";
 import { IDCard } from "../admin/id-cards/id-card-editor/id-card-editor.component";
 import { QRBarcodeGeneratorService } from "../services/qrbarcode-generator.service";
 import { IdcardOverlayContainerComponent } from "../idcard-overlay-container/idcard-overlay-container.component";
 import { IDCardService } from "../services/IDCardService";
+import {CheckForUpdateService} from '../services/check-for-update.service';
 
 declare const window;
 
@@ -193,7 +164,8 @@ export class NavbarComponent implements AfterViewInit, OnInit, OnDestroy {
     private navbarElementsService: NavbarElementsRefsService,
     private shortcutsService: KeyboardShortcutsService,
     private qrBarcodeGenerator: QRBarcodeGeneratorService,
-    private idCardService: IDCardService
+    private idCardService: IDCardService,
+    private updateService: CheckForUpdateService
   ) {}
 
   get optionsOpen() {
@@ -206,10 +178,6 @@ export class NavbarComponent implements AfterViewInit, OnInit, OnDestroy {
 
   get showNav() {
     return this.tab !== "intro" && this.hasNav;
-  }
-
-  get pointerTopSpace() {
-    return this.pts;
   }
 
   get isIOSTablet() {
@@ -244,6 +212,7 @@ export class NavbarComponent implements AfterViewInit, OnInit, OnDestroy {
   }
 
   ngOnInit() {
+    this.isUpdateBar$ = this.updateService.needToUpdate$;
     this.isEnabledProfilePictures$ = this.userService.isEnableProfilePictures$;
     this.shortcutsService.onPressKeyEvent$
       .pipe(
