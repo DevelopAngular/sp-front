@@ -90,6 +90,7 @@ import {LinkGeneratedDialogComponent} from '../admin/link-generated-dialog/link-
 import {StatusChipComponent} from '../admin/explore/status-chip/status-chip.component';
 import {ConfirmationDialogComponent} from './shared-components/confirmation-dialog/confirmation-dialog.component';
 import {NuxUniversalComponent} from '../nux-components/nux-universal/nux-universal.component';
+import { ConfirmationComponent } from './shared-components/confirmation/confirmation.component';
 import {PassLimitInfoComponent} from '../pass-limit-info/pass-limit-info.component';
 
 const DEFAULT_SWIPER_CONFIG: SwiperConfigInterface = {
@@ -189,7 +190,8 @@ const DEFAULT_SWIPER_CONFIG: SwiperConfigInterface = {
     StatusChipComponent,
     ConfirmationDialogComponent,
     NuxUniversalComponent,
-    PassLimitInfoComponent
+    PassLimitInfoComponent,
+    ConfirmationComponent
   ],
   exports: [
     ReactiveFormsModule,

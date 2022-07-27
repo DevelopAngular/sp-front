@@ -1,7 +1,7 @@
 import {Component, ElementRef, HostListener, OnDestroy, OnInit, ViewChild} from '@angular/core';
 import {MatDialog} from '@angular/material/dialog';
 
-import {BehaviorSubject, forkJoin, interval, Observable, of, ReplaySubject, Subject, zip} from 'rxjs';
+import {BehaviorSubject, forkJoin, interval, Observable, of, ReplaySubject, Subject, Subscription, zip} from 'rxjs';
 import {filter, map, switchMap, take, takeUntil, tap} from 'rxjs/operators';
 
 import {HttpService} from '../../services/http-service';
@@ -104,6 +104,7 @@ export class PassConfigComponent implements OnInit, OnDestroy {
 
     destroy$ = new Subject();
     showRooms: boolean;
+    globalReloadSubs: Subscription;
 
     @HostListener('window:scroll', ['$event'])
     scroll(event) {
@@ -146,7 +147,7 @@ export class PassConfigComponent implements OnInit, OnDestroy {
     this.isLoadingArranged$ = this.hallPassService.isLoadingArranged$;
     this.onboardLoading$ = this.adminService.loadingOnboardProcess$;
 
-    this.httpService.globalReload$
+    this.globalReloadSubs = this.httpService.globalReload$
       .pipe(
         takeUntil(this.destroy$),
         tap(() => this.onboardProcess$ = this.adminService.getOnboardProcessRequest().pipe(filter(res => !!res))),
@@ -188,6 +189,9 @@ export class PassConfigComponent implements OnInit, OnDestroy {
     this.scrollPosition.saveComponentScroll(this.scrollableAreaName, this.scrollableArea.scrollTop);
     this.destroy$.next();
     this.destroy$.complete();
+    if (this.globalReloadSubs) {
+      this.globalReloadSubs.unsubscribe();
+    }
   }
 
   setNewArrangedOrder(newOrder) {
