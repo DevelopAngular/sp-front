@@ -2,13 +2,13 @@ import {Component, Inject, NgZone, OnDestroy, OnInit} from '@angular/core';
 import {MatDialog, MatDialogRef, MAT_DIALOG_DATA} from '@angular/material/dialog';
 import {FormArray, FormBuilder, FormControl, FormGroup, Validators} from '@angular/forms';
 
-import {Observable, of, forkJoin} from 'rxjs';
-import {take, map} from 'rxjs/operators';
+import {Observable, of, forkJoin, Subject, BehaviorSubject} from 'rxjs';
+import {take, map, flatMap, switchMap, filter, combineLatest} from 'rxjs/operators';
 
 import {User} from '../models/User';
 import {LocationsService} from '../services/locations.service';
 import {UserService} from '../services/user.service';
-import {NotificationService} from '../services/notification-service';
+import {MyRoomsType, NotificationService, UserNotificationSettings} from '../services/notification-service';
 import {DeviceDetection} from '../device-detection.helper';
 import {NotificationRoomFormComponent} from './notification-room-form/notification-room-form.component';
 import {HallPassesService} from '../services/hall-passes.service';
@@ -19,21 +19,81 @@ import {HallPassesService} from '../services/hall-passes.service';
   templateUrl: './notification-form.component.html',
   styleUrls: ['./notification-form.component.scss']
 })
-export class NotificationFormComponent implements OnInit {
+export class NotificationFormComponent implements OnInit, OnDestroy {
 
-  user: User;
-  rooms: Observable<any[]> = of([]);
-  form: FormGroup = new FormGroup({});
+  user$: BehaviorSubject<User> = new BehaviorSubject<User>(null);
+  rooms$: Observable<any[]> = of([]);
+  form: FormGroup = null;
 
   constructor(
     private dialogRef: MatDialogRef<NotificationFormComponent>,
     private userService: UserService,
     private locationsService: LocationsService,
+    private notificationService: NotificationService,
     private hallPassService: HallPassesService,
     private dialog: MatDialog,
     private fb: FormBuilder,
     @Inject(MAT_DIALOG_DATA) private data: any
   ) {
+  }
+
+  ngOnInit() {
+    if (this.data && this.data['profile']) {
+      this.user$.next(User.fromJSON(this.data['profile']));
+    } else {
+      this.userService.user$
+        .subscribe(user => {
+          this.user$.next(User.fromJSON(user));
+        });
+    }
+
+
+    const settings$: Subject<any> = new Subject();
+    this.user$.pipe(switchMap(user => this.notificationService.getUserNotification(user)))
+      .subscribe((settings: UserNotificationSettings) => {
+        this.form = this.generateForm(settings);
+        settings$.next(settings);
+        settings$.complete();
+      });
+
+    this.rooms$ = this.generateRooms();
+
+    forkJoin([settings$, this.rooms$]).subscribe(
+      ([settings, rooms]: [UserNotificationSettings, any[]]) => {
+        const roomIds = [];
+        rooms.forEach(room => {
+          let roomSettings;
+          roomIds.push(room.id);
+          if (room.id in settings.myRooms) {
+            roomSettings = this.fb.group(settings.myRooms[room.id]);
+          } else {
+            roomSettings = this.fb.group({
+              to: true,
+              from: true,
+              expired: true,
+            });
+          }
+
+          this.getRooms().addControl(room.id, roomSettings);
+        });
+
+        const roomsToRemove = [];
+        Object.entries(settings.myRooms).forEach((roomId) => {
+          if (!roomIds.includes(roomId[0])) {
+            roomsToRemove.push(roomId[0]);
+          }
+        });
+        roomsToRemove.forEach(roomId => {
+          delete settings.myRooms[roomId];
+        });
+      });
+  }
+
+  ngOnDestroy(): void {
+    this.user$.subscribe(user => {
+      this.notificationService.updateUserNotification(user, this.form.getRawValue()).subscribe(res => {
+      });
+    });
   }
 
   get isDisabledNotif() {
@@ -45,7 +105,11 @@ export class NotificationFormComponent implements OnInit {
   }
 
   get hasEmail() {
-    return !this.user.primary_email.endsWith('spnx.local');
+    if (this.user$.value == null) {
+      return false;
+    }
+
+    return !this.user$.value.primary_email.endsWith('spnx.local');
   }
 
   get isIOSTablet() {
@@ -53,15 +117,19 @@ export class NotificationFormComponent implements OnInit {
   }
 
   get isUserLoaded() {
-    return this.user !== undefined;
+    return this.user$.value != null;
   }
 
   get isStudent() {
-    return this.user.isStudent();
+    if (this.user$.value == null) {
+      return true;
+    }
+
+    return this.user$.value.isStudent();
   }
 
   get isAdmin() {
-    return this.user.isAdmin();
+    return this.user$.value.isAdmin();
   }
 
   get isUsingEmail() {
@@ -100,37 +168,25 @@ export class NotificationFormComponent implements OnInit {
 
   get emailByline() {
     if (this.hasEmail) {
-      return this.user.primary_email;
+      return this.user$.value.primary_email;
     } else {
       return 'Email notifications are not supported for usernames';
     }
   }
 
-  ngOnInit() {
-    if (this.data && this.data['profile']) {
-      this.user = User.fromJSON(this.data['profile']);
-    } else {
-      this.userService.user$
-        .subscribe(user => {
-          this.user = User.fromJSON(user);
-        });
-    }
-
-    this.form = this.generateForm();
-    this.rooms = this.generateRooms();
-    this.rooms.subscribe(rooms => {
-      rooms.forEach(room => {
-        this.getRoomsArray().push(this.fb.group({
-          to: true,
-          from: true,
-          expired: true,
-        }));
-      });
-    });
+  get students() {
+    return this.form.get('studentIds') as FormArray;
   }
 
-  getRoomsArray() {
-    return this.form.get('myRooms') as FormArray;
+  getRooms() {
+    return this.form.get('myRooms') as FormGroup;
+  }
+
+  getRoom(id: string): FormGroup {
+    if (this.getRooms().contains(id)) {
+      return this.getRooms().controls[id] as FormGroup;
+    }
+    return null;
   }
 
   roomBackground(gradient): string {
@@ -152,8 +208,12 @@ export class NotificationFormComponent implements OnInit {
     }
   }
 
-  activeRoomsNotifications(i) {
-    const room = this.getRoomsArray().at(i) as FormGroup;
+  activeRoomsNotifications(roomId: string): string {
+    const room = this.getRoom(roomId);
+    if (room == null) {
+      return '';
+    }
+
     let result = [];
     if (room.get('to').value) {
       result.push('To');
@@ -172,7 +232,11 @@ export class NotificationFormComponent implements OnInit {
   }
 
   send() {
-    this.userService.sendTestNotification(this.user.id).subscribe(res => {
+    if (this.user$.value == null) {
+      return;
+    }
+
+    this.userService.sendTestNotification(this.user$.value.id).subscribe(res => {
     });
   }
 
@@ -180,13 +244,18 @@ export class NotificationFormComponent implements OnInit {
     this.dialogRef.close();
   }
 
-  openRoomInfo(room, i) {
+  openRoomInfo(room) {
+    const roomControl = this.getRoom(room.id as string);
+    if (roomControl == null) {
+      return;
+    }
+
     this.dialog.open(NotificationRoomFormComponent, {
       panelClass: 'form-dialog-container',
       backdropClass: 'custom-backdrop',
       data: {
         room: room,
-        roomData: this.getRoomsArray().at(i) as FormGroup,
+        roomData: roomControl,
       },
       height: '285px',
       width: '450px',
@@ -197,7 +266,10 @@ export class NotificationFormComponent implements OnInit {
 
   generateRooms(): Observable<any[]> {
     return forkJoin([
-      this.locationsService.getLocationsWithTeacher(this.user),
+      this.user$
+        .pipe(filter<User>(Boolean))
+        .pipe(switchMap(user => this.locationsService.getLocationsWithTeacher(user)))
+        .pipe(take(1)),
       this.hallPassService.getPinnables().pipe(take(1)),
     ]).pipe(map(data => {
       const locations = data[0];
@@ -210,6 +282,7 @@ export class NotificationFormComponent implements OnInit {
         for (let i = 0; i < pinnables.length; i++) {
           if (location.id === pinnables[i].id || location.category === pinnables[i].category) {
             return {
+              'id': location['id'],
               'title': location['title'],
               'color_profile': pinnables[i]['color_profile'],
               'icon': pinnables[i]['icon'],
@@ -221,28 +294,34 @@ export class NotificationFormComponent implements OnInit {
     }));
   }
 
-  generateForm(): FormGroup {
+  generateForm(settings: UserNotificationSettings): FormGroup {
     if (this.isStudent) {
       return new FormGroup({});
     }
 
     const result = this.fb.group({
-      passRequestsPush: [true],
-      passRequestsEmail: [true],
-      scheduledPassesPush: [true],
-      scheduledPassesEmail: [true],
-      myRoomsPush: [true],
-      myRooms: this.fb.array([]),
-      studentPassesPush: [true],
-      studentPassesEmail: [true],
+      passRequestsPush: [settings.passRequestsPush],
+      passRequestsEmail: [settings.passRequestsEmail],
+      scheduledPassesPush: [settings.scheduledPassesPush],
+      scheduledPassesEmail: [settings.scheduledPassesEmail],
+      myRoomsPush: [settings.myRoomsPush],
+      myRooms: this.fb.group({}),
+      studentPassesPush: [settings.studentPassesPush],
+      studentPassesEmail: [settings.studentPassesEmail],
+      studentIds: this.fb.array([]),
+      settingsVersion: [settings.settingsVersion],
     });
 
     if (this.isAdmin) {
-      result.addControl('reportsEmail', this.fb.control({value: true}));
-      result.addControl('encounterPreventionEmail', this.fb.control({value: true}));
-      result.addControl('weeklySummaryEmail', this.fb.control({value: true}));
+      result.addControl('reportsEmail', this.fb.control(settings.reportsEmail));
+      result.addControl('encounterPreventionEmail', this.fb.control(settings.encounterPreventionEmail));
+      result.addControl('weeklySummaryEmail', this.fb.control(settings.weeklySummaryEmail));
     }
 
     return result;
+  }
+
+  setForm(): void {
+
   }
 }

@@ -26,7 +26,7 @@
       </app-notification-form-info>
     </div>
   </div>
-  <div class="notif-bottom-wrapper-wrapper">
+  <div class="notif-bottom-wrapper-wrapper" *ngIf="form != null">
     <div class="notif-bottom-wrapper">
       <ng-container *ngIf="isUserLoaded && isStudent">
         <div class="notif-student-info">
@@ -53,7 +53,7 @@
             Pass Requests
           </div>
           <div byline>
-            {{activeNotifications('passRequests')}}
+            {{ activeNotifications('passRequests') }}
           </div>
           <div class="notif-pass-requests">
             <app-notification-option icon="./assets/Devices (Navy).svg" text="Push"
@@ -68,7 +68,7 @@
             Scheduled Passes
           </div>
           <div byline>
-            {{activeNotifications('scheduledPasses')}}
+            {{ activeNotifications('scheduledPasses') }}
           </div>
           <div class="notif-pass-requests">
             <app-notification-option icon="./assets/Devices (Navy).svg" text="Push"
@@ -85,7 +85,7 @@
             My Rooms
           </div>
           <div byline>
-            {{activeNotifications('myRooms')}}
+            {{ activeNotifications('myRooms') }}
           </div>
           <div>
             <div class="notif-scheduled-passes">
@@ -93,7 +93,7 @@
                                        [form]="this.form" control="myRoomsPush"></app-notification-option>
               <div class="div"></div>
               <div class="room-list">
-                <div *ngFor="let room of (rooms | async); let i = index" (click)="openRoomInfo(room, i)" class="room-wrapper">
+                <div *ngFor="let room of (rooms$ | async)" (click)="openRoomInfo(room)" class="room-wrapper">
                   <div class="room">
                     <div class="room-image"
                          [style.background-image]="roomBackground(room['color_profile']['gradient_color'])">
@@ -101,7 +101,7 @@
                     </div>
                     <div class="room-info">
                       <span class="room-name">{{ room['title'] }}</span>
-                      <span class="room-events">{{activeRoomsNotifications(i)}}</span>
+                      <span class="room-events">{{ activeRoomsNotifications(room['id']) }}</span>
                     </div>
                   </div>
                 </div>
@@ -115,7 +115,7 @@
             When Certain Students Make Passes
           </div>
           <div byline>
-            {{activeNotifications('studentPasses')}}
+            {{ activeNotifications('studentPasses') }}
           </div>
           <div>
             <div class="notif-pass-requests">
@@ -126,7 +126,7 @@
             </div>
             <div class="div"></div>
             <div class="app-notif-select-students">
-              <app-notification-select-students></app-notification-select-students>
+              <app-notification-select-students [ids]="students"></app-notification-select-students>
             </div>
             <span class="setting-info unwrapped">Notifications when certain students have an active pass.</span>
           </div>
@@ -139,7 +139,7 @@
             Reports
           </div>
           <div byline>
-            {{activeNotifications('reports')}}
+            {{ activeNotifications('reports') }}
           </div>
           <div class="notif-pass-requests">
             <app-notification-option icon="./assets/Mail (Navy).svg" text="Email"
@@ -152,7 +152,7 @@
             Encounter Prevention
           </div>
           <div byline>
-            {{activeNotifications('encounterPrevention')}}
+            {{ activeNotifications('encounterPrevention') }}
           </div>
           <div class="notif-pass-requests">
             <app-notification-option icon="./assets/Mail (Navy).svg" text="Email"
@@ -165,7 +165,7 @@
             Weekly Summary
           </div>
           <div byline>
-            {{activeNotifications('weeklySummary')}}
+            {{ activeNotifications('weeklySummary') }}
           </div>
           <div class="notif-pass-requests">
             <app-notification-option icon="./assets/Mail (Navy).svg" text="Email"
@@ -191,7 +191,7 @@
             Email
           </div>
           <div byline>
-            {{emailByline}}
+            {{ emailByline }}
           </div>
         </app-notification-form-info>
         <span class="notif-big-text">Having Issues With Notifications?</span>

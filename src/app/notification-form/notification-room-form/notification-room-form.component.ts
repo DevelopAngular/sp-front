@@ -9,6 +9,7 @@ import {FormControl, FormGroup} from '@angular/forms';
 })
 export class NotificationRoomFormComponent implements OnInit {
 
+  id: string;
   roomName: string;
   gradient: string;
   icon: string;
@@ -18,6 +19,7 @@ export class NotificationRoomFormComponent implements OnInit {
     @Inject(MAT_DIALOG_DATA) public data: any,
     public dialogRef: MatDialogRef<NotificationRoomFormComponent>
   ) {
+    this.id = data['room']['id'];
     this.roomName = data['room']['title'];
     this.gradient = data['room']['color_profile']['gradient_color'];
     this.icon = data['room']['icon'];
@@ -28,7 +30,10 @@ export class NotificationRoomFormComponent implements OnInit {
   }
 
   close() {
-    this.dialogRef.close();
+    this.dialogRef.close({
+      id: this.id,
+      form: this.form,
+    });
   }
 
   get roomBackground(): string {

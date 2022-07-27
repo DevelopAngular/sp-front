@@ -1,4 +1,4 @@
-import {Component, EventEmitter, OnInit, Output} from '@angular/core';
+import {Component, EventEmitter, Input, OnInit, Output} from '@angular/core';
 import {User} from '../../models/User';
 import {UserService} from '../../services/user.service';
 import {NotificationRoomFormComponent} from '../notification-room-form/notification-room-form.component';
@@ -7,6 +7,13 @@ import {
   NotificationSelectStudentsDialogComponent
 } from '../notification-select-students-dialog/notification-select-students-dialog.component';
 import {Subject} from 'rxjs';
+import {FormArray, FormControl} from '@angular/forms';
+
+interface StudentDisplay {
+  id: string;
+  name: string;
+  icon: string;
+}
 
 @Component({
   selector: 'app-notification-select-students',
@@ -15,35 +22,36 @@ import {Subject} from 'rxjs';
 })
 export class NotificationSelectStudentsComponent implements OnInit {
 
-  @Output() update = new EventEmitter();
+  @Input() ids: FormArray;
+
   students: User[] = [];
 
   constructor(
     private userService: UserService,
     private dialog: MatDialog,
-  ) {
-  }
+  ) {}
 
   ngOnInit(): void {
-    this.update.emit(this.students);
+    this.ids.value.forEach(id => {
+      this.userService.searchProfileById(id).subscribe(user => {
+        this.students.push(user);
+      });
+    });
   }
 
-  updateStudents() {
-    this.update.emit(
-      this.students.map(student => {
-        console.log(student.profile_picture === undefined ? './assets/Avatar Default.svg' : student.profile_picture);
-        return {
-          id: student.id,
-          name: student.display_name,
-          icon: student.profile_picture === null ? './assets/Avatar Default.svg' : student.profile_picture,
-        };
-      })
-    );
+  displayedStudents(): StudentDisplay[] {
+    return this.students.map<StudentDisplay>(student => {
+      return {
+        id: student.id,
+        name: student.display_name,
+        icon: student.profile_picture === null ? './assets/Avatar Default.svg' : student.profile_picture,
+      };
+    });
   }
 
   removeStudent(studentIndex) {
     this.students.splice(studentIndex, 1);
-    this.updateStudents();
+    this.ids.removeAt(studentIndex);
   }
 
   beginSearch() {
@@ -54,7 +62,7 @@ export class NotificationSelectStudentsComponent implements OnInit {
       width: '450px',
     });
 
-    dialog.afterClosed().subscribe(newStudent => {
+    dialog.afterClosed().subscribe((newStudent: User[]) => {
       if (newStudent === undefined || newStudent.length !== 1) {
         return;
       }
@@ -64,7 +72,8 @@ export class NotificationSelectStudentsComponent implements OnInit {
       }
 
       this.students.push(newStudent[0]);
-      this.updateStudents();
+      this.ids.push(new FormControl(newStudent[0].id));
+      console.log(this.students, this.ids);
     });
   }
 }
