@@ -1,9 +1,9 @@
 import {Component, ElementRef, EventEmitter, Input, OnDestroy, OnInit, Output} from '@angular/core';
-import {FormGroup} from '@angular/forms';
+import {FormGroup, Validators} from '@angular/forms';
 import {MatDialog, MatDialogRef} from '@angular/material/dialog';
 
-import {merge, Subject} from 'rxjs';
-import {filter, pluck, takeUntil, tap} from 'rxjs/operators';
+import {combineLatest, merge, Subject} from 'rxjs';
+import {concatMap, filter, pluck, switchMap, takeUntil, tap} from 'rxjs/operators';
 
 import {OverlayDataService, Pages, RoomData} from '../overlay-data.service';
 import {ValidButtons} from '../advanced-options/advanced-options.component';
@@ -136,6 +136,7 @@ export class RoomComponent implements OnInit, OnDestroy {
   }
 
   ngOnInit() {
+    this.form.get('roomName').setValidators([Validators.required, Validators.maxLength(15)]);
       this.tooltipText = this.overlayService.tooltipText;
       this.currentPage = this.overlayService.pageState.getValue().currentPage;
 
@@ -194,7 +195,7 @@ export class RoomComponent implements OnInit, OnDestroy {
 
       this.initialData = cloneDeep(this.data);
 
-      merge(this.form.valueChanges, this.change$).pipe(
+      merge(combineLatest(this.form.valueChanges, this.form.statusChanges), this.change$).pipe(
         // debounceTime(450)
       ).subscribe(() => {
           this.checkValidRoomOptions();
@@ -207,6 +208,7 @@ export class RoomComponent implements OnInit, OnDestroy {
   }
 
   ngOnDestroy(): void {
+    this.form.get('roomName').setValidators([Validators.maxLength(15)]);
     this.destroy$.next();
     this.destroy$.complete();
     this.passLimitForm.reset();
