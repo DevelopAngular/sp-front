@@ -1,8 +1,8 @@
 import {ChangeDetectionStrategy, ChangeDetectorRef, Component, ElementRef, OnDestroy, OnInit, ViewChild} from '@angular/core';
 import {HttpErrorResponse} from '@angular/common/http';
-import {BehaviorSubject, combineLatest, iif, Observable, of, Subject, Subscription, throwError} from 'rxjs';
+import {BehaviorSubject, combineLatest, iif, Observable, of, Subject, Subscription} from 'rxjs';
 import {MatDialog} from '@angular/material/dialog';
-import {filter, map, switchMap, take, takeUntil, tap, withLatestFrom, retryWhen, delay, scan, concatMap, catchError} from 'rxjs/operators';
+import {filter, map, switchMap, take, takeUntil, tap, withLatestFrom, retryWhen, delay, concatMap, catchError} from 'rxjs/operators';
 import {StudentFilterComponent} from './student-filter/student-filter.component';
 import {StatusFilterComponent} from './status-filter/status-filter.component';
 import {User} from '../../models/User';
@@ -571,13 +571,24 @@ export class ExploreComponent implements OnInit, OnDestroy {
         const data: any = {};
         data['removed'] = true;
         data['ids'] = this.selectedRows.map(s => +s.id);
+        const replacedRows = this.passtable.dataSource.allData.map(s => {
+          // a soon to be deleted case?
+          if (data['ids'].includes(+s.id)) return this.passtable.generateOneFakeData();
+          // just keep the old row
+          return {...s};
+        });
+        // keep original data
+        const originalRows = [...this.passtable.dataSource.allData];
+        // replace soon to be deleted rows with fake rows
+        this.passtable.dataSource.setFakeData([...replacedRows]);
         this.hallPassService.hidePasses(data).pipe(
           tap((r:PassRemovedResponse) => {
             if (!('dids' in r)) throw new Error('missing in data shape');
 
-            this.passtable.dataSource.allData = this.passtable.dataSource.allData.filter(s => !r.dids.includes(+s.id));
+            this.passtable.dataSource.allData = originalRows.filter(s => !r.dids.includes(+s.id));
+            //TODO calculate new count and show it
+            //this.passSearchState.countPasses = this.passtable.dataSource.allData.length;  
             this.clearTableSelection();
-            this.cdr.detectChanges();
           }),
           takeUntil(this.destroy$),
           retryWhen((errors: Observable<HttpErrorResponse>) => errors.pipe(
@@ -586,14 +597,14 @@ export class ExploreComponent implements OnInit, OnDestroy {
               () => {
                 const s: number = +e.status;
                 // error is related to the client
-                // so do not retry, jump directly toast
+                // so do not retry, jump directly to the toast
                 if (s >= 400 && s < 500) {
                   return true;
                 };
                 // only server errors have to be retried for more times
                 // as they can dissapear meanwhile
                 return i > 1;
-              },// after 3 tries shows a toast
+              },// after 1 original try + 2 retries shows a toast
               of(e).pipe(
                 take(1),
                 tap(e => {
