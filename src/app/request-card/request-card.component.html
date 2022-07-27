@@ -286,8 +286,8 @@
 
   </div>
 
-  <div 
-    class="student-footer-info" 
+  <div
+    class="student-footer-info"
     *ngIf="forStaff && isModal"
     [style.marginTop]="'58px'"
     >
@@ -318,12 +318,8 @@
   </defs>
 </svg>
 
-<ng-template let-student="student" let-passLimit="passLimit" #PassLimitOverride>
-  <div class="main-text">
-    <span>Student's Pass limit reached: {{student.display_name}} has had {{passLimit}}/{{passLimit}} passes today</span>
-  </div>
-
-  <div class="supporting-text ds-mt-10">
+<ng-template #PassLimitOverride>
+  <div class="ds-dialog-normal-text">
     <span>If it's an emergency, you can override the limit.</span>
   </div>
 </ng-template>

@@ -2,6 +2,10 @@
   "name": "hallpass",
   "version": "0.0.0",
   "license": "MIT",
+  "engines": {
+    "node": "12.x",
+    "npm": "6.x"
+  },
   "scripts": {
     "ng": "ng",
     "start": "ng serve",
@@ -18,7 +22,8 @@
     "fcm": "concat ./dist/ngsw-worker.js ./dist/firebase-messaging-sw.js -o ./dist/combined-worker.js",
     "proxy": "ng serve --configuration=proxy --proxyConfig=src/proxy.conf.json --host=192.168.2.209",
     "local": "ng serve --configuration=local",
-    "staging": "ng serve --configuration=staging"
+    "staging": "ng serve --configuration=staging",
+    "prod": "ng serve --configuration=production"
   },
   "private": true,
   "dependencies": {
@@ -53,7 +58,7 @@
     "font-awesome": "^4.7.0",
     "fuse.js": "^3.4.4",
     "hammerjs": "^2.0.8",
-    "http-server": "^0.11.1",
+    "http-server": "^0.11.2",
     "jsbarcode": "^3.11.5",
     "jspdf": "^1.5.3",
     "jszip": "^3.4.0",

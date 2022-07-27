@@ -1,0 +1,28 @@
+.pass-limits-info {
+  padding: 5px;
+  background: #E2E6EC;
+  color: #7083A0;
+  border-radius: 8px;
+  margin-top: 20px;
+  text-align: center;
+}
+
+.pass-limits-counter-icon {
+  position: absolute;
+  width: 20px;
+  height: 20px;
+  padding: 5px;
+  top: 5px;
+  right: 5px;
+  border-radius: 50%;
+}
+
+.pass-limit-one-remaining {
+  color: white;
+  background: #EBBB00
+}
+
+.pass-limit-locked {
+  color: white;
+  background: #E32C66
+}

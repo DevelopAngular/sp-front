@@ -243,12 +243,13 @@
               [input_value]="passLimitForm.get('to').value"
               [formGroup]="passLimitForm"
               [controlName]="passLimitForm.get('to')"
-              [placeholder]="'# of passes'">
+              [placeholder]="'# of passes'"
+              [showUnits]="true"
+              units="passes max">
             </app-input>
           </div>
         </div>
       </div>
-
 
       <!-- TODO uncomment when branch SP-1050 is available -->
 
@@ -291,7 +292,5 @@
 <!--      </div>-->
 
     </div>
-
-    </div>
   </div>
-
+</div>

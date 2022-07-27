@@ -10,7 +10,7 @@ import {
   ViewChild
 } from '@angular/core';
 import {User} from '../models/User';
-import {MatDialog} from '@angular/material/dialog';
+import {MatDialog, MatDialogRef} from '@angular/material/dialog';
 import {HallPassesService} from '../services/hall-passes.service';
 import {Observable, Subject, Subscription} from 'rxjs';
 import {QuickPreviewPasses} from '../models/QuickPreviewPasses';
@@ -48,6 +48,10 @@ import {PassLimitService} from '../services/pass-limit.service';
 import {HallPassLimit} from '../models/HallPassLimits';
 import {ConnectedPosition} from '@angular/cdk/overlay';
 import {IntroData} from '../ngrx/intros';
+import { IDCard } from '../admin/id-cards/id-card-editor/id-card-editor.component';
+import { IdcardOverlayContainerComponent } from '../idcard-overlay-container/idcard-overlay-container.component';
+import { QRBarcodeGeneratorService } from '../services/qrbarcode-generator.service';
+import { IDCardService } from '../services/IDCardService';
 
 declare const window;
 
@@ -86,7 +90,7 @@ export class StudentInfoCardComponent implements OnInit, AfterViewInit, OnDestro
     toggleResult: 'Range'
   };
   selectedDate: { start: moment.Moment, end: moment.Moment } = {
-    start: moment('1/8/' + moment().subtract(1, 'year').year(), 'DD/MM/YYYY'),
+    start: moment('1/8/2022', 'DD/MM/YYYY'),
     end: moment().endOf('day')
   };
   isFullScreenPasses: boolean;
@@ -112,6 +116,11 @@ export class StudentInfoCardComponent implements OnInit, AfterViewInit, OnDestro
     offsetX: 50
   };
   showPassLimitNux = new Subject<boolean>();
+  passLimitDialogRef: MatDialogRef<PassLimitsDialogComponent>;
+
+  IDCardEnabled: boolean = false;
+
+  IDCARDDETAILS: any;
 
   constructor(
     private dialog: MatDialog,
@@ -125,6 +134,8 @@ export class StudentInfoCardComponent implements OnInit, AfterViewInit, OnDestro
     private http: HttpService,
     private darkTheme: DarkThemeSwitch,
     private passLimitsService: PassLimitService,
+    private qrBarcodeGenerator: QRBarcodeGeneratorService,
+    private idCardService: IDCardService
   ) {
   }
 
@@ -197,11 +208,28 @@ export class StudentInfoCardComponent implements OnInit, AfterViewInit, OnDestro
         this.userService.clearCurrentUpdatedAccounts();
       });
 
-    this.passLimitsService.getPassLimit().subscribe({
+    this.passLimitsService.watchPassLimits().subscribe({
       next: pl => {
-        this.passLimit = pl.pass_limit;
+        this.passLimit = pl;
+        if (this.passLimitDialogRef) {
+          this.passLimitDialogRef.componentInstance.data.passLimit = this.passLimit;
+        }
       }
     });
+
+    if (this.userService.getFeatureFlagDigitalID()) {
+      this.idCardService.getIDCardDetails().subscribe({
+        next: (result:any) => {
+          if (result?.results?.digital_id_card) {
+            this.IDCARDDETAILS = result.results.digital_id_card;
+            if (this.IDCARDDETAILS.enabled && this.IDCARDDETAILS.visible_to_who != 'Staff only') {
+              this.IDCardEnabled = true;
+            }
+          }
+        }
+      })
+    }
+    
   }
 
   ngAfterViewInit() {
@@ -279,7 +307,20 @@ export class StudentInfoCardComponent implements OnInit, AfterViewInit, OnDestro
         backgroundColor: '#F4F4F4',
         action: 'link',
         tooltip: 'Copy a private link to this student and send it to another staff member at your school.'
-      }];
+      },
+    ];
+    if (this.IDCardEnabled) {
+      settings.push(
+        {
+          label: 'Open ID Card',
+          icon: './assets/Digital ID Card (Gray).svg',
+          textColor: '#7f879d',
+          backgroundColor: '#F4F4F4',
+          action: 'idcard',
+          // tooltip: 'Copy a private link to this student and send it to another staff member at your school.'
+        }
+      )
+    }
     if (this.user.isAdmin()) {
       settings.push(
         {
@@ -317,7 +358,7 @@ export class StudentInfoCardComponent implements OnInit, AfterViewInit, OnDestro
     });
 
     st.afterClosed().pipe(tap(() => UNANIMATED_CONTAINER.next(false)))
-      .subscribe((action) => {
+      .subscribe(async (action) => {
         if (action === 'link') {
           navigator.clipboard.writeText(`${window.location.href}?student_id=${this.profile.id}`).then(() => {
             this.toast.openToast({
@@ -335,6 +376,32 @@ export class StudentInfoCardComponent implements OnInit, AfterViewInit, OnDestro
           });
         } else if (action === 'delete') {
           this.userService.deleteUserRequest(this.profile, '_profile_student');
+        }else if (action === 'idcard') {
+          console.log("this.profile : ", this.profile);
+          let idCardData: IDCard = {
+            backgroundColor: this.IDCARDDETAILS.color,
+            greadLevel: this.IDCARDDETAILS.show_grade_levels ? this.profile.grade_level : null,
+            idNumberData: this.profile?.custom_id ? {
+              idNumber: this.profile?.custom_id,
+              barcodeURL: await this.qrBarcodeGenerator.selectBarcodeType(this.IDCARDDETAILS.barcode_type, this.profile?.custom_id)
+            } : {idNumber: '', barcodeURL: ''},
+            backsideText: this.IDCARDDETAILS.backside_text,
+            logoURL: this.IDCARDDETAILS.signed_url,
+            profilePicture: this.profile.profile_picture,
+            schoolName: 'Demo School',
+            userName: this.profile.display_name,
+            userRole: 'Student',
+            showCustomID: this.IDCARDDETAILS.show_custom_ids
+            // userRole: this.profile.isStudent() ?  'Student' : 'Staff'
+          };
+      
+          // idCardData.idNumberData.barcodeURL = await this.qrBarcodeGenerator.selectBarcodeType('code39', 123456);
+      
+          const dialogRef = this.dialog.open(IdcardOverlayContainerComponent, {
+            panelClass: "id-card-overlay-container",
+            backdropClass: "custom-bd",
+            data: {idCardData: idCardData, isLoggedIn: false}
+          });
         }
       });
   }
@@ -500,21 +567,24 @@ export class StudentInfoCardComponent implements OnInit, AfterViewInit, OnDestro
   }
 
   openPassLimitsDialog() {
-    this.dialog.open(PassLimitsDialogComponent, {
-      closeOnNavigation: true,
-      panelClass: 'overlay-dialog',
-      backdropClass: 'custom-bd',
-      width: '425px',
-      height: '500px',
-      data: {
-        profile: this.profile,
-        passLimit: this.passLimit
-      }
-    });
+    if (this?.passLimit?.limitEnabled) {
+      this.passLimitDialogRef = this.dialog.open(PassLimitsDialogComponent, {
+        closeOnNavigation: true,
+        panelClass: 'overlay-dialog',
+        backdropClass: 'custom-bd',
+        width: '425px',
+        height: '500px',
+        data: {
+          profile: this.profile,
+          passLimit: this.passLimit
+        }
+      });
+    }
   }
 
   editWindow(event) {
     this.isOpenAvatarDialog = true;
+
     if (!this.userService.getUserSchool().profile_pictures_completed) {
       this.consentDialogOpen(this.editIcon.nativeElement);
     } else {

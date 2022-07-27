@@ -24,8 +24,8 @@ import {EncounterPreventionService} from '../services/encounter-prevention.servi
 import {isEmpty, remove} from 'lodash';
 import {HttpErrorResponse} from '@angular/common/http';
 import {
-  ConfirmationDialogComponent,
-  ConfirmationTemplates
+  ConfirmationDialogComponent, ConfirmationTemplates,
+  RecommendedDialogConfig
 } from '../shared/shared-components/confirmation-dialog/confirmation-dialog.component';
 import {PassLimitService} from '../services/pass-limit.service';
 
@@ -55,6 +55,7 @@ export class PassCardComponent implements OnInit, OnDestroy {
 
   @ViewChild('cardWrapper') cardWrapper: ElementRef;
   @ViewChild('confirmDialogBody') confirmDialog: TemplateRef<HTMLElement>;
+  @ViewChild('confirmDialogBodyVisibility') confirmDialogVisibility: TemplateRef<HTMLElement>;
 
   timeLeft: string = '';
   valid: boolean = true;
@@ -106,6 +107,7 @@ export class PassCardComponent implements OnInit, OnDestroy {
   cancelEditClick: boolean;
   frameMotion$: BehaviorSubject<any>;
   currentSchool: School;
+  passLimitDialog: MatDialogRef<HTMLElement>;
 
   isEnableProfilePictures$: Observable<boolean>;
 
@@ -148,11 +150,12 @@ export class PassCardComponent implements OnInit, OnDestroy {
     if (this.formState && this.formState.data.selectedGroup) {
       return this.formState.data.selectedGroup.title;
     } else {
-      return (this.selectedStudents ?
-        (this.selectedStudents.length > 2 ?
-          this.selectedStudents[0].display_name + ' and ' + (this.selectedStudents.length - 1) + ' more' :
-          this.selectedStudents[0].display_name + (this.selectedStudents.length > 1 ?
-            ' and ' + this.selectedStudents[1].display_name : '')) :
+      const selectedStudents = this.formState.data.roomStudents ?? this.selectedStudents;
+      return (selectedStudents ?
+        (selectedStudents.length > 2 ?
+          selectedStudents[0].display_name + ' and ' + (selectedStudents.length - 1) + ' more' :
+          selectedStudents[0].display_name + (selectedStudents.length > 1 ?
+            ' and ' + selectedStudents[1].display_name : '')) :
         this.pass.student.display_name + ` (${this.studentEmail})`);
     }
   }
@@ -319,6 +322,28 @@ export class PassCardComponent implements OnInit, OnDestroy {
     this.pagerPages++;
   }
 
+
+  private prepareTemplateDataVisibility({visibility_alerts, students}, origin, destination) {
+    const out = [];
+    for (let a of visibility_alerts) {
+      const ss = a['room_students'].map(sid => {
+        const found = students.find(s => s.User.id === sid);
+        if (! found) return '<unknown name>';
+        return found.User['first_name'] + ' ' + found.User['last_name']
+      });
+      let joint = 'for';
+      if (a['location_id'] == origin) {
+        joint = 'to come from';
+      } else if (a['location_id'] == destination) {
+        joint = 'to go to';
+      }
+      //const phrase = `These students do not have permission ${joint} this room "${a['location_title']}"`;
+      const phrase = `These students do not have permission ${joint} this room`;
+      out.push({phrase, students: ss.join(', ')});
+    }
+    return out;
+  }
+
   newPass() {
     this.performingAction = true;
     const body = {
@@ -328,10 +353,13 @@ export class PassCardComponent implements OnInit, OnDestroy {
       'travel_type': this.selectedTravelType
     };
     if (this.forStaff) {
-      body['students'] = this.selectedStudents.map(user => user.id);
+      let ss: User[] = this.selectedStudents;
+      if (this.formState.data.roomStudents.length > 0) ss = this.formState.data.roomStudents;
+      body['students'] = ss.map(user => user.id);
     } else {
       body['student'] = this.pass.student.id;
     }
+    body['override_visibility'] = this.formState.data.roomOverride;
 
     if (this.forFuture) {
       body['issuer_message'] = this.pass.issuer_message;
@@ -340,6 +368,10 @@ export class PassCardComponent implements OnInit, OnDestroy {
     if (this.forKioskMode) {
       body['self_issued'] = true;
     }
+    if (!this.forStaff) {
+      delete body['override_visibility'];
+      body['isNotBulk'] = true;
+    } 
 
     of(body).pipe(
       concatMap(b => this.forStaff ? this.hallPassService.bulkCreatePass(b) : this.hallPassService.createPass(b)),
@@ -382,11 +414,93 @@ export class PassCardComponent implements OnInit, OnDestroy {
         }
         return of(null);
       }),
+
+      retryWhen((errors: Observable<HttpErrorResponse>) => {
+        const getOverrideFromDialog = error => {
+
+          const afterDialogClosed$ = this.dialog.open(ConfirmationDialogComponent, {
+            panelClass: 'overlay-dialog',
+            backdropClass: 'custom-backdrop',
+            closeOnNavigation: true,
+            data: {
+              headerText: '',
+              body: this.confirmDialogVisibility,
+              buttons: {
+                confirmText: 'Override',
+                denyText: 'Skip these students',
+              },
+              templateData: {alerts: this.prepareTemplateDataVisibility(error, body.origin, body.destination)},
+              icon: {
+                name: 'Eye (Green-White).svg',
+                background: ''
+              }
+            } as ConfirmationTemplates
+          }).afterClosed();
+          
+          return afterDialogClosed$.pipe(
+            map(override => ({override, students: error.students.map(s => s.User.id)})),
+          );
+        }
+
+        return errors.pipe(
+          tap(errorResponse => {
+            const isVisibilityError = ('visibility_alerts' in errorResponse.error);
+            console.log('me', errorResponse, isVisibilityError)
+            // a student has been checked server side and had no room visibility 
+            if (!this.forStaff) {
+                const roomNames = errorResponse.error.visibility_alerts.map(r => r.location_title);
+                const title = ((roomNames.length > 1) ? 'Rooms ' : 'Room ') + roomNames.join(', ') + ' not available'; 
+                this.toastService.openToast({
+                  title,
+                  subtitle: 'Please ask your teacher to create a pass for you.',
+                  type: 'error',
+                });
+
+                this.performingAction = false;
+                //this.dialogRef.close();
+                throw 'this student has been subject of room visibility rules';
+              
+              return
+            }
+            // not our error case? dispatch it to the next retryWhen
+            if (! isVisibilityError) throw errorResponse;
+          }),
+          concatMap(({error}) => getOverrideFromDialog(error)),
+          concatMap(({override, students}: { override: boolean, students: number[] }) => {
+            if (override === undefined) {
+              this.dialogRef.close();
+              throw 'confirmation closed';
+            }
+            if (override === true) {
+              body['override_visibility'] = true;
+              return of(null);
+            }
+
+            if (override === false) {
+              remove(body['students'] as number[], elem => students.includes(elem));
+              // removal left us with no students
+              // this is as canceling the process 
+              if (body['students'].length === 0) {
+                this.toastService.openToast({
+                  title: 'Skiping left no students to operate on',
+                  subtitle: 'Last operation did not proceeed',
+                  type: 'error',
+                });
+                this.performingAction = false;
+                //this.dialogRef.close();
+                throw 'no students after skiping';
+              }
+              return of(null);
+            }
+          })
+        );
+      }),
+
       retryWhen((errors: Observable<HttpErrorResponse>) => {
         return errors.pipe(
           filter(errorResponse => {
-            console.log(errorResponse);
-            return errorResponse.error.message === 'one or more pass limits reached!';
+            console.log('you', errorResponse);
+            return errorResponse.error?.message === 'one or more pass limits reached!';
           }),
           concatMap(errorResponse => {
             return this.passLimitService.getPassLimit().pipe(map(pl => ({
@@ -394,29 +508,47 @@ export class PassCardComponent implements OnInit, OnDestroy {
               errorResponse
             })));
           }),
-          concatMap(({errorResponse, passLimit}) => this.dialog.open(ConfirmationDialogComponent, {
-            panelClass: 'overlay-dialog',
-            backdropClass: 'custom-backdrop',
-            closeOnNavigation: true,
-            data: {
-              body: this.confirmDialog,
-              buttons: {
+          concatMap(({errorResponse, passLimit}) => {
+            const numPasses = body['students']?.length || 1;
+            let headerText: string;
+            let buttons: ConfirmationTemplates['buttons'];
+            if (numPasses > 1) {
+              headerText = `Creating these ${numPasses} passes will exceed the Pass Limits for the following students:`;
+              buttons = {
                 confirmText: 'Override limits',
-                denyText: 'Skip these students',
-              },
-              templateData: {
-                students: errorResponse.error.students,
-                passLimit,
-                numPasses: body['students']?.length || 1
-              },
-              icon: './assets/Pass Limit (Purple).svg'
-            } as ConfirmationTemplates
-          }).afterClosed().pipe(map(override => ({override, students: errorResponse.error.students.map(s => s.id)})))),
+                denyText: 'Skip these students'
+              };
+            } else if (numPasses === 1) {
+              headerText = `Student's Pass limit reached: ${this.selectedStudents[0].display_name} has had ${passLimit}/${passLimit} passes today`;
+              buttons = {
+                confirmText: 'Override limit',
+                denyText: 'Cancel'
+              };
+            }
+
+            return this.dialog.open(ConfirmationDialogComponent, {
+              ...RecommendedDialogConfig,
+              width: '450px',
+              data: {
+                headerText,
+                buttons,
+                body: this.confirmDialog,
+                templateData: {
+                  totalStudents: numPasses,
+                  limitReachedStudents: errorResponse.error.students,
+                  passLimit,
+                },
+                icon: {
+                  name: 'Pass Limit (White).svg',
+                  background: '#6651F1'
+                }
+              } as ConfirmationTemplates
+            }).afterClosed().pipe(map(override => ({override, students: errorResponse.error.students.map(s => s.id)})));
+          }),
           concatMap(({override, students}: { override: boolean, students: number[] }) => {
-            console.log(override);
             if (override === undefined) {
               this.dialogRef.close();
-              throw 'confirmation closed';
+              throw new Error('confirmation closed, no options selected');
             }
             if (override === true) {
               body['override'] = true;
@@ -425,15 +557,31 @@ export class PassCardComponent implements OnInit, OnDestroy {
 
             if (override === false) {
               remove(body['students'] as number[], elem => students.includes(elem));
+              // server side "no students" case is seen as bad request
+              if (body['students'].length === 0) {
+                this.toastService.openToast({
+                  title: 'Skiping left no students to operate on',
+                  subtitle: 'Last operation did not proceeed',
+                  type: 'error',
+                });
+                this.dialogRef.close();
+                throw new Error('No students to create passes for');
+              }
               return of(null);
             }
           })
         );
       })
-    ).subscribe((data) => {
-      this.performingAction = false;
-      this.hallPassService.createPassEvent$.next(true);
-      this.dialogRef.close();
+    ).subscribe({
+      next: () => {
+        this.performingAction = false;
+        this.hallPassService.createPassEvent$.next(true);
+        this.dialogRef.close();
+      },
+      error: () => {
+        this.performingAction = false;
+        this.dialogRef.close();
+      }
     });
   }
 

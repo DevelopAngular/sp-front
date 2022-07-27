@@ -16,7 +16,8 @@ export class School extends BaseModel {
         public display_username: boolean,
         public show_active_passes_number: boolean,
         public profile_pictures_completed: boolean,
-        public profile_pictures_enabled: boolean
+        public profile_pictures_enabled: boolean,
+        public feature_flag_digital_id: boolean
     ) {
         super();
     }
@@ -41,7 +42,8 @@ export class School extends BaseModel {
             display_username: boolean = JSON['display_username'],
             show_active_passes_number: boolean = JSON['show_active_passes_number'],
             profile_pictures_completed: boolean = !!JSON['profile_pictures_completed'],
-            profile_pictures_enabled: boolean = !!JSON['profile_pictures_enabled'];
+            profile_pictures_enabled: boolean = !!JSON['profile_pictures_enabled'],
+            feature_flag_digital_id: boolean = !!JSON['feature_flag_digital_id'];
 
         return new School(
             display_card_room,
@@ -56,7 +58,8 @@ export class School extends BaseModel {
             display_username,
             show_active_passes_number,
             profile_pictures_completed,
-            profile_pictures_enabled
+            profile_pictures_enabled,
+            feature_flag_digital_id
         );
     }
 }

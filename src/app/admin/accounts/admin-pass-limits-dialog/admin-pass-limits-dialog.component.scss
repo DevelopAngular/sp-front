@@ -1,7 +1,7 @@
 #closePassLimitsIntro {
   position: absolute;
-  top: 20px;
-  right: 15px;
+  top: 12px;
+  right: 10px;
   outline: 0;
   border: 0;
   background: transparent;
@@ -27,10 +27,6 @@
   }
 }
 
-::ng-deep .request-loading svg > circle {
-  stroke: black;
-}
-
-.header {
-  background: rgb(102, 81, 241)
+::ng-deep .content-spinner svg > circle {
+  stroke: #00B476;
 }

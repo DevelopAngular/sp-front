@@ -422,6 +422,10 @@ export class UserService implements OnDestroy {
     return this.http.getSchool();
   }
 
+  getFeatureFlagDigitalID(): boolean {
+    return this.getUserSchool().feature_flag_digital_id
+  }
+
   getCurrentUpdatedSchool$(): Observable<School> {
     return this.http.currentUpdateSchool$;
   }
@@ -897,4 +901,29 @@ export class UserService implements OnDestroy {
   getNux() {
     return this.http.get('v1/nux');
   }
+
+  getStatusOfIDNumber(){
+    return this.http.get(`v1/integrations/upload/custom_ids/setup`);
+  }
+
+  uploadIDNumbers(body){
+    return this.http.post('v1/integrations/upload/custom_ids', body);
+  }
+
+  getMissingIDNumbers() {
+    return this.http.get(`v1/users?has_custom_id=false`);
+  }
+
+  getStatusOfGradeLevel(){
+    return this.http.get(`v1/integrations/upload/grade_levels/setup`);
+  }
+
+  uploadGradeLevels(body){
+    return this.http.post('v1/integrations/upload/grade_levels', body);
+  }
+
+  getMissingGradeLevels() {
+    return this.http.get(`v1/users?role=_profile_student&has_grade_level=false`);
+  }
+
 }

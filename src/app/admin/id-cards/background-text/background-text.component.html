@@ -1,10 +1,10 @@
 <div class="dialog-wrapper">
-    <p class="ds-dialog-title header">Add Backside Text</p>
+    <p class="ds-dialog-title header">{{data?.text ? 'Edit' : 'Add'}} Backside Text</p>
     <p class="instruction">This text will appear for students on the back of the ID card.</p>
     <textarea [(ngModel)]="text"></textarea>
     <div class="button">
-        <app-gradient-button [style.margin-left]="'15px'" [hoverColor]="'#00B476'" [cursor]="'pointer'" (buttonClick)="dialogRef.close(text)">
-            Save text
+        <app-gradient-button [disabled]="!text" [style.margin-left]="'15px'" [hoverColor]="'#00B476'" [cursor]="'pointer'" (buttonClick)="dialogRef.close(text)">
+            {{data?.text ? 'Save text' : 'Add text'}}
         </app-gradient-button>
     </div>
 </div>

@@ -1,5 +1,5 @@
 <div class="assigned-teachers">
-  <div *ngFor="let teacher of selectedProfiles; let i = index" #chip class="teacher"
+  <div *ngFor="let teacher of results; let i = index" #chip class="teacher"
     (mouseenter)="chipHover(chip, true)"
     (mouseleave)="chipHover(chip, false)"
     [style.opacity]="chip.hovered && !buttonDown ? 0.85 : (buttonDown ? 0.7 :  1)"
@@ -13,7 +13,7 @@
 
       <img
         (click)="selectedProfiles.splice(i, 1); updateSelectedEvent.emit(this.selectedProfiles)"
-        [src]="'./assets/Cancel (Navy).svg'" width="16" alt="Check.svg">
+        [src]="'./assets/Cancel (Navy).svg' | resolveAsset" width="16" alt="Check.svg">
     </div>
   </div>
   <app-gradient-button class=""
@@ -23,13 +23,13 @@
     [textColor]="'#7F879D'"
     [gradient]="'#F4F4F4, #F4F4F4'"
     [hoverColor]="'#F4F4F4'"
-    [leftIcon]="'./assets/Plus (Blue-Gray).svg'"
+    [leftIcon]="'./assets/Plus (Blue-Gray).svg' | resolveAsset"
     [leftImageWidth]="'16px'"
     [leftImageHeight]="'16px'"
     [withShadow]="false"
     [fontSize]="'14px'"
     (buttonClick)="add.emit(true)"
-  >Add</app-gradient-button>
+ >{{textAddButton}}</app-gradient-button>
 
   <app-gradient-button
    *ngIf="!!suggestedTeacher && isProposed"
@@ -40,7 +40,7 @@
    [textColor]="'#7F879D'"
    [gradient]="'#F4F4F4, #F4F4F4'"
    [hoverColor]="'#F4F4F4'"
-   [leftIcon]="'./assets/Plus (Blue-Gray).svg'"
+   [leftIcon]="'./assets/Plus (Blue-Gray).svg' | resolveAsset"
    [leftImageWidth]="'16px'"
    [leftImageHeight]="'16px'"
    [withShadow]="false"

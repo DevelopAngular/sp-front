@@ -1,5 +1,5 @@
-import { Component } from '@angular/core';
-import { MatDialogRef } from '@angular/material/dialog';
+import { Component, Inject } from '@angular/core';
+import { MatDialogRef, MAT_DIALOG_DATA } from '@angular/material/dialog';
 
 @Component({
   selector: 'app-background-text',
@@ -11,7 +11,10 @@ export class BackgroundTextComponent {
   public text: string = '';
 
   constructor(
-    private dialogRef: MatDialogRef<BackgroundTextComponent>,
-  ) { }
+    public dialogRef: MatDialogRef<BackgroundTextComponent>,
+    @Inject(MAT_DIALOG_DATA) public data: any
+  ) {
+    data?.text ? this.text = data.text : null
+  }
 
 }
