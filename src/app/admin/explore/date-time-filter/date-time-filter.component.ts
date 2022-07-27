@@ -26,6 +26,7 @@ export class DateTimeFilterComponent implements OnInit {
     this.calendarOptions = this.data['options'];
     this.selectedDate = this.data['date'];
     this.updateCalendarPosition();
+    console.log("data : ", this.data)
 
     // fromEvent(window, 'resize').subscribe(() => {
     //     const  selfRect = (this.selfRef.nativeElement as HTMLElement).getBoundingClientRect();

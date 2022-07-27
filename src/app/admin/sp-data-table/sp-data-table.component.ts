@@ -6,6 +6,7 @@ import {
   HostListener,
   Injectable,
   Input,
+  OnChanges,
   OnDestroy,
   OnInit,
   Output,
@@ -42,9 +43,11 @@ export class GridTableDataSource extends DataSource<any> {
   }
 
   set allData(data: any[]) {
+    console.log("data : ", data);
+    
     this._data = data;
     // this.viewport.scrollToOffset(this.offset);
-    this.viewport.setTotalContentSize(this.itemSize * data.length);
+    this.viewport.setTotalContentSize(this.itemSize * data?.length);
     this.visibleData.next(this._data);
   }
 
@@ -104,7 +107,7 @@ export class CustomVirtualScrollStrategy extends FixedSizeVirtualScrollStrategy 
   changeDetection: ChangeDetectionStrategy.OnPush,
   providers: [{provide: VIRTUAL_SCROLL_STRATEGY, useClass: CustomVirtualScrollStrategy}]
 })
-export class SpDataTableComponent implements OnInit, OnDestroy {
+export class SpDataTableComponent implements OnInit, OnDestroy, OnChanges {
 
   @Input() isCheckbox: BehaviorSubject<boolean> = new BehaviorSubject<boolean>(true);
   @Input() data$: Observable<any>;
@@ -175,6 +178,7 @@ export class SpDataTableComponent implements OnInit, OnDestroy {
   }
 
   ngOnInit() {
+    console.log("showEmptyState : ", this.showEmptyState)
     this.dataSource = new GridTableDataSource(this.data$, this.viewport, this.itemSize);
     this.fakedata = this.generateFakeData();
     this.fakeTemplate = this.domSanitizer.bypassSecurityTrustHtml(
@@ -240,6 +244,10 @@ export class SpDataTableComponent implements OnInit, OnDestroy {
         this.selectedObjects = {};
         this.cdr.detectChanges();
       });
+  }
+
+  ngOnChanges(){
+    console.log("showEmptyState : ", this.showEmptyState)
   }
 
   ngOnDestroy() {

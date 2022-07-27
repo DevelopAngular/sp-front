@@ -65,6 +65,7 @@ function makeConfig(config: Config, school: School, effectiveUserId): Config & {
   const headers: any = {
     'build-release-name': RELEASE_NAME,
     'build-date': BUILD_DATE,
+    'Content-Type': 'application/octet-stream',
   };
 
   if (school) {
@@ -88,6 +89,7 @@ function makeConfig(config: Config, school: School, effectiveUserId): Config & {
   //   headers: headers,
   //   responseType: 'json',
   // }) as any);
+  // console.log("headers : ", headers)
 
   return Object.assign({}, config || {}, {
     headers: headers,

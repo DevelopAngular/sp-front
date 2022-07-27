@@ -13,6 +13,11 @@ export const getLoadedSchools = createSelector(
   (state: SchoolsState) => state.loaded
 );
 
+export const getEncounterDetectionState = createSelector(
+  getSchoolsState,
+  (state: SchoolsState) => state.encounterDetection
+);
+
 export const getGG4LInfoData = createSelector(
   getSchoolsState,
   (state: SchoolsState) => state.gg4lInfo

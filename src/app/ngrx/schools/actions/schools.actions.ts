@@ -4,6 +4,7 @@ import {GG4LSync} from '../../../models/GG4LSync';
 import {SchoolSyncInfo} from '../../../models/SchoolSyncInfo';
 import {GSuiteOrgs} from '../../../models/GSuiteOrgs';
 import {CleverInfo} from '../../../models/CleverInfo';
+import { EncounterDetection } from '../../../models/EncounterDetection';
 
 const COMPONENT = 'Schools';
 
@@ -52,6 +53,10 @@ export const syncGsuiteFailure = createAction(`[${COMPONENT}] Sync Gsuite Failur
 
 export const updateCleverInfo = createAction(`[${COMPONENT}] Update Clever Info`, props<{cleverInfo: CleverInfo}>());
 export const updateGSuiteInfo = createAction(`[${COMPONENT}] Update GsuiteInfo`, props<{gsuiteInfo: GSuiteOrgs}>());
+
+export const getEncounterDetection = createAction(`[${COMPONENT}] Get Encounter Detection`, props<{url: string}>());
+export const getEncounterDetectionSuccess = createAction(`[${COMPONENT}] Get Encounter Detection Success`, props<{encounterDetection: EncounterDetection}>());
+export const getEncounterDetectionFailure = createAction(`[${COMPONENT}] Get Encounter Detection Failure`, props<{errorMessage: string}>());
 
 export const clearSchools = createAction(`[${COMPONENT}] Clear Schools`);
 
