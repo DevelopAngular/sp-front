@@ -60,8 +60,13 @@ describe('Student - Passes Dashboard', () => {
     cy.log('Clean out scheduled passes on the teacher side');
     cy.log('Logging in teacher');
     cy.login(Cypress.env('teacherUsername'), Cypress.env('teacherPassword'));
-    if (cy.$$('div.end-pass-content').length) {
-      endPass();
+    cy.log(cy.$$('div.end-pass-content').length);
+    try {
+      if (cy.$$('div.end-pass-content').length) {
+        endPass();
+        cy.wait(500);
+      }
+    } catch {
       cy.wait(500);
     }
     cy.intercept({
@@ -138,7 +143,7 @@ describe('Student - Passes Dashboard', () => {
           }
 
           PassFunctions.openCreatePassDialog('now');
-          waitForElement('div.cdk-global-overlay-wrapper mat-dialog-container app-create-hallpass-forms app-location-cell');
+          waitForElement('div.cdk-global-overlay-wrapper mat-dialog-container app-main-hallpass-form app-location-cell');
           selectCurrentRoom('Bathroom');
           waitForElement('app-main-hallpass-form app-to-where');
           selectDestination('Nurse');
@@ -175,7 +180,7 @@ describe('Student - Passes Dashboard', () => {
 
       it('should mark an expired pass as "Expiring"', () => {
         PassFunctions.openCreatePassDialog('now');
-        waitForElement('div.cdk-global-overlay-wrapper mat-dialog-container app-create-hallpass-forms app-location-cell');
+        waitForElement('div.cdk-global-overlay-wrapper mat-dialog-container app-main-hallpass-form app-location-cell');
         selectCurrentRoom('Bathroom');
         waitForElement('app-main-hallpass-form app-to-where');
         selectDestination('Nurse');
