@@ -95,7 +95,6 @@ export class IdNumbersComponent implements OnInit {
   picturesLoaderPercent$: Observable<number>;
   showProcessingSpinner$: Observable<boolean>;
   accountsWithoutPictures$: Observable<User[]>;
-  accountMissingGradeLevels$: number = 8;
   accountMissingIDNumbers$: any[] = [];
   // uploadErrors$: Observable<ProfilePicturesError[]>;
   // lastUploadedGroup$: Observable<ProfilePicturesUploadGroup>;
@@ -145,9 +144,10 @@ export class IdNumbersComponent implements OnInit {
       let body: FormData = new FormData();
       body.append('csv_file', this.selectedMapFile)
       this.userService.uploadIDNumbers(body).subscribe({
-        next: result => {
+        next: (result: any) => {
           this.page = 4
           console.log("result : ", result);
+          this.errors = result.response.errors
         }
       })
       // this.errors = this.findIssues();
@@ -205,7 +205,7 @@ export class IdNumbersComponent implements OnInit {
     const normalizeAccounts = accounts.map(account => {
       return { 'Name': account.display_name, 'Email': account.primary_email  };
     });
-    this.xlsxService.generate(normalizeAccounts, 'Missing Pictures');
+    this.xlsxService.generate(normalizeAccounts, 'Missing ID Numbers');
   }
 
   prepareErrorsToCsv(group) {

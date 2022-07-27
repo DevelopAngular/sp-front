@@ -212,17 +212,20 @@ export class StudentInfoCardComponent implements OnInit, AfterViewInit, OnDestro
         this.passLimit = pl.pass_limit;
       }
     });
-    
-    this.idCardService.getIDCardDetails().subscribe({
-      next: (result:any) => {
-        if (result?.results?.digital_id_card) {
-          this.IDCARDDETAILS = result.results.digital_id_card;
-          if (this.IDCARDDETAILS.visible_to_who != 'Staff only') {
-            this.IDCardEnabled = true;
+
+    if (this.userService.getFeatureFlagDigitalID()) {
+      this.idCardService.getIDCardDetails().subscribe({
+        next: (result:any) => {
+          if (result?.results?.digital_id_card) {
+            this.IDCARDDETAILS = result.results.digital_id_card;
+            if (this.IDCARDDETAILS.enabled && this.IDCARDDETAILS.visible_to_who != 'Staff only') {
+              this.IDCardEnabled = true;
+            }
           }
         }
-      }
-    })
+      })
+    }
+    
   }
 
   ngAfterViewInit() {
@@ -370,19 +373,21 @@ export class StudentInfoCardComponent implements OnInit, AfterViewInit, OnDestro
         } else if (action === 'delete') {
           this.userService.deleteUserRequest(this.profile, '_profile_student');
         }else if (action === 'idcard') {
+          console.log("this.profile : ", this.profile);
           let idCardData: IDCard = {
             backgroundColor: this.IDCARDDETAILS.color,
             greadLevel: this.IDCARDDETAILS.show_grade_levels ? this.profile.grade_level : null,
-            idNumberData: {
-              idNumber: this.profile.custom_id,
-              barcodeURL: await this.qrBarcodeGenerator.selectBarcodeType(this.IDCARDDETAILS.barcode_type, this.profile.custom_id)
-            },
+            idNumberData: this.profile?.custom_id ? {
+              idNumber: this.profile?.custom_id,
+              barcodeURL: await this.qrBarcodeGenerator.selectBarcodeType(this.IDCARDDETAILS.barcode_type, this.profile?.custom_id)
+            } : {idNumber: '', barcodeURL: ''},
             backsideText: this.IDCARDDETAILS.backside_text,
             logoURL: this.IDCARDDETAILS.signed_url,
             profilePicture: this.profile.profile_picture,
             schoolName: 'Demo School',
             userName: this.profile.display_name,
-            userRole: 'Student'
+            userRole: 'Student',
+            showCustomID: this.IDCARDDETAILS.show_custom_ids
             // userRole: this.profile.isStudent() ?  'Student' : 'Staff'
           };
       

@@ -146,9 +146,10 @@ export class GradeLevelsComponent implements OnInit {
       let body: FormData = new FormData();
       body.append('csv_file', this.selectedMapFile)
       this.userService.uploadGradeLevels(body).subscribe({
-        next: result => {
+        next: (result: any) => {
           this.page = 4
           console.log("result : ", result);
+          this.errors = result.response.errors
         }
       })
       // this.errors = this.findIssues();
@@ -207,7 +208,7 @@ export class GradeLevelsComponent implements OnInit {
     const normalizeAccounts = accounts.map(account => {
       return { 'Name': account.display_name, 'Email': account.primary_email  };
     });
-    this.xlsxService.generate(normalizeAccounts, 'Missing Pictures');
+    this.xlsxService.generate(normalizeAccounts, 'Missing Grade Levels');
   }
 
   prepareErrorsToCsv(group) {

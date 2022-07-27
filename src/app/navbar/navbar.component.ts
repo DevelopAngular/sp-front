@@ -171,7 +171,7 @@ export class NavbarComponent implements AfterViewInit, OnInit, OnDestroy {
 
   constructor(
     private dataService: DataService,
-    private userService: UserService,
+    public userService: UserService,
     public dialog: MatDialog,
     public router: Router,
     private location: Location,
@@ -318,6 +318,37 @@ export class NavbarComponent implements AfterViewInit, OnInit, OnDestroy {
           this.user = User.fromJSON(user);
           this.isStaff = this.user.isTeacher();
           this.isAssistant = this.user.isAssistant();
+          if (this.userService.getFeatureFlagDigitalID()) {
+            this.idCardService.getIDCardDetails().subscribe({
+              next: (result: any) => {
+                if (result?.results?.digital_id_card) {
+                  if (result.results.digital_id_card.enabled) {
+                    this.IDCardEnabled = true
+                  }else {
+                    return;
+                  }
+                  this.IDCARDDETAILS = result.results.digital_id_card;
+                  switch (this.IDCARDDETAILS.visible_to_who) {
+                    case "Staff only":
+                      this.user.isTeacher() || this.user.isAdmin()
+                        ? (this.IDCardEnabled = true)
+                        : (this.IDCardEnabled = false);
+                      break;
+                    case "Students only":
+                      this.user.isStudent()
+                        ? (this.IDCardEnabled = true)
+                        : (this.IDCardEnabled = false);
+                      break;
+                    case "Students and Staff":
+                      this.IDCardEnabled = true;
+                      break;
+                    default:
+                      break;
+                  }
+                }
+              },
+            });
+          }
           this.showSwitchButton =
             [
               this.user.isAdmin(),
@@ -394,39 +425,7 @@ export class NavbarComponent implements AfterViewInit, OnInit, OnDestroy {
         this.introsData = data;
       });
 
-    this.idCardService.getIDCardDetails().subscribe({
-      next: (result: any) => {
-        if (result?.results?.digital_id_card) {
-          console.log(
-            "Student : ",
-            this.user.isStudent(),
-            "Staff : ",
-            this.user.isTeacher(),
-            "Assistant : ",
-            this.user.isAssistant()
-          );
-
-          this.IDCARDDETAILS = result.results.digital_id_card;
-          switch (this.IDCARDDETAILS.visible_to_who) {
-            case "Staff only":
-              this.user.isTeacher() || this.user.isAdmin()
-                ? (this.IDCardEnabled = true)
-                : (this.IDCardEnabled = false);
-              break;
-            case "Students only":
-              this.user.isStudent()
-                ? (this.IDCardEnabled = true)
-                : (this.IDCardEnabled = false);
-              break;
-            case "Students and Staff":
-              this.IDCardEnabled = true;
-              break;
-            default:
-              break;
-          }
-        }
-      },
-    });
+    
   }
 
   ngAfterViewInit(): void {

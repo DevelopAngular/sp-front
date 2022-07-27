@@ -34,7 +34,7 @@
                             </div>
                         </div>
                     </div>
-                    <div *ngIf="IDNumberData.idNumber" class="id-detail-wrapper">
+                    <div *ngIf="IDNumberData.barcodeURL && IDNumberData.idNumber && showCustomID" class="id-detail-wrapper">
                         <img [src]="IDNumberData.barcodeURL" alt="">
                         <p class="id-number">{{IDNumberData.idNumber}}</p>
                     </div>

@@ -422,6 +422,10 @@ export class UserService implements OnDestroy {
     return this.http.getSchool();
   }
 
+  getFeatureFlagDigitalID(): boolean {
+    return this.getUserSchool().feature_flag_digital_id
+  }
+
   getCurrentUpdatedSchool$(): Observable<School> {
     return this.http.currentUpdateSchool$;
   }

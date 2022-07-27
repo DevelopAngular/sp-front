@@ -49,11 +49,11 @@
             <div class="buttons">
                 <app-gradient-button [gradient]="!uploadingProgress.csv.inProcess && !uploadingProgress.csv.complete ? '#7F879D, #7F879D' : '#07ABC3, #07ABC3'" [hoverColor]="'#7F879D'" [leftIcon]="'./assets/Simple CSV (White).svg'" (buttonClick)="csvFile.click()" [size]="'small'">{{ !uploadingProgress.csv.inProcess && !uploadingProgress.csv.complete ? 'Choose CSV' : 'File selected' }}
                 </app-gradient-button>
-                <app-gradient-button [style.margin-left]="'7px'" [size]="'small'" [gradient]="'#F4F4F4, #F4F4F4'" [buttonLink]="'./assets/xlsx/SmartPass Grade Levels.xlsx'" [linkType]="'_self'" [download]="true" [hoverColor]="'#F4F4F4'" [textColor]="'#1E194F'" [leftIcon]="'./assets/Download (Navy).svg'"
+                <app-gradient-button [style.margin-left]="'7px'" [size]="'small'" [gradient]="'#F4F4F4, #F4F4F4'" [buttonLink]="'./assets/xlsx/SmartPass Grade Levels.csv'" [linkType]="'_self'" [download]="true" [hoverColor]="'#F4F4F4'" [textColor]="'#1E194F'" [leftIcon]="'./assets/Download (Navy).svg'"
                     [text]="'Download Template'" [cursor]="'pointer'">
                 </app-gradient-button>
 
-                <input type="file" [formControl]="form.get('csvFile')" #csvFile style="display: none" />
+                <input type="file" accept=".csv" [formControl]="form.get('csvFile')" #csvFile style="display: none" />
             </div>
             <!-- </div> -->
 
@@ -180,7 +180,7 @@
                     </div>
                 </div>
             </div>
-            <mat-divider></mat-divider>
+            <!-- <mat-divider></mat-divider>
             <div class="upload-history">
                 <div class="ds-dialog-title" style="padding: 20px">Upload History</div>
                 <div class="block" *ngFor="let group of uploadedGroups$">
@@ -192,14 +192,14 @@
                         </div>
                     </div>
                 </div>
-            </div>
+            </div> -->
         </div>
 
         <div class="footer" *ngIf="page !== 4">
             <mat-divider></mat-divider>
             <div class="footer-content">
                 <div class="link" style="color: #7f879d">Need some help?</div>
-                <div class="link"><a style="color: #7f879d" href="https://www.smartpass.app/profile-pictures" target="_blank">Watch tutorial</a></div>
+                <div class="link"><a style="color: #7f879d" href="https://www.smartpass.app/grade-levels" target="_blank">Watch tutorial</a></div>
                 <div class="link"><a style="color: #7f879d" href="https://www.smartpass.app/schedule-a-support-meeting" target="_blank">Schedule a call</a></div>
             </div>
         </div>

@@ -12,27 +12,28 @@ import {
   ViewChild,
   ViewChildren
 } from '@angular/core';
-import {ActivatedRoute, NavigationEnd, Router} from '@angular/router';
-import {BehaviorSubject, Observable, Subject} from 'rxjs';
-import {DataService} from '../../services/data-service';
-import {User} from '../../models/User';
-import {UserService} from '../../services/user.service';
-import {MatDialog, MatDialogRef} from '@angular/material/dialog';
-import {SettingsComponent} from '../settings/settings.component';
-import {filter, map, pluck, takeUntil, tap} from 'rxjs/operators';
-import {DarkThemeSwitch} from '../../dark-theme-switch';
-import {UNANIMATED_CONTAINER} from '../../consent-menu-overlay';
-import {KeyboardShortcutsService} from '../../services/keyboard-shortcuts.service';
-import {SpAppearanceComponent} from '../../sp-appearance/sp-appearance.component';
-import {SpLanguageComponent} from '../../sp-language/sp-language.component';
-import {MyProfileDialogComponent} from '../../my-profile-dialog/my-profile-dialog.component';
+import { ActivatedRoute, NavigationEnd, Router } from '@angular/router';
+import { BehaviorSubject, Observable, Subject } from 'rxjs';
+import { DataService } from '../../services/data-service';
+import { User } from '../../models/User';
+import { UserService } from '../../services/user.service';
+import { MatDialog, MatDialogRef } from '@angular/material/dialog';
+import { SettingsComponent } from '../settings/settings.component';
+import { filter, map, pluck, takeUntil, tap } from 'rxjs/operators';
+import { DarkThemeSwitch } from '../../dark-theme-switch';
+import { UNANIMATED_CONTAINER } from '../../consent-menu-overlay';
+import { KeyboardShortcutsService } from '../../services/keyboard-shortcuts.service';
+import { SpAppearanceComponent } from '../../sp-appearance/sp-appearance.component';
+import { SpLanguageComponent } from '../../sp-language/sp-language.component';
+import { MyProfileDialogComponent } from '../../my-profile-dialog/my-profile-dialog.component';
 
 import * as moment from 'moment';
-import {DeviceDetection} from '../../device-detection.helper';
+import { DeviceDetection } from '../../device-detection.helper';
 import { PagesDialogComponent } from '../explore/pages-dialog/pages-dialog.component';
 import { View } from '../explore/explore.component';
 import { StorageService } from '../../services/storage.service';
 import { ComponentsService } from '../../services/components.service';
+import { School } from '../../models/School';
 
 declare const window;
 
@@ -51,20 +52,20 @@ export class NavComponent implements OnInit, AfterViewInit, OnDestroy {
 
   // gettingStarted = {title: '', route : 'gettingstarted', type: 'routerLink', imgUrl : 'Lamp', requiredRoles: ['_profile_admin']};
   buttons = [
-    {title: 'Dashboard', id:'dashboard', route : 'dashboard', type: 'routerLink', imgUrl : 'Dashboard', requiredRoles: ['_profile_admin', 'access_admin_dashboard']},
-    {title: 'Hall Monitor', id:'hallMonitor', route : 'hallmonitor', type: 'routerLink', imgUrl : 'Walking', requiredRoles: ['_profile_admin', 'admin_hall_monitor']},
+    { title: 'Dashboard', id: 'dashboard', route: 'dashboard', type: 'routerLink', imgUrl: 'Dashboard', requiredRoles: ['_profile_admin', 'access_admin_dashboard'] },
+    { title: 'Hall Monitor', id: 'hallMonitor', route: 'hallmonitor', type: 'routerLink', imgUrl: 'Walking', requiredRoles: ['_profile_admin', 'admin_hall_monitor'] },
     // {title: 'Search', id:'dashboard', route : 'search', type: 'routerLink', imgUrl : 'SearchEye', requiredRoles: ['_profile_admin', 'access_admin_search']},
-    {title: 'Explore', id:'explore', route : 'explore', type: 'openMenu', imgUrl : 'Search Eye', requiredRoles: ['_profile_admin', 'access_admin_search'], isExpand: true},
-    {title: 'Rooms', id:'rooms', route : 'passconfig', type: 'routerLink', imgUrl : 'Room', requiredRoles: ['_profile_admin', 'access_pass_config']},
-    {title: 'Accounts', id:'accounts', route : 'accounts', type: 'routerLink', imgUrl : 'Users', requiredRoles: ['_profile_admin', 'access_user_config']},
-    {title: 'My School', id:'mySchool', route : 'myschool', type: 'routerLink', imgUrl : 'School', requiredRoles: ['_profile_admin', 'manage_school']},
-    {title: 'ID Cards', id:'idCards', route : 'idcards', type: 'routerLink', imgUrl : 'Digital ID Cards', requiredRoles: ['_profile_admin', 'manage_school']}
+    { title: 'Explore', id: 'explore', route: 'explore', type: 'openMenu', imgUrl: 'Search Eye', requiredRoles: ['_profile_admin', 'access_admin_search'], isExpand: true },
+    { title: 'Rooms', id: 'rooms', route: 'passconfig', type: 'routerLink', imgUrl: 'Room', requiredRoles: ['_profile_admin', 'access_pass_config'] },
+    { title: 'Accounts', id: 'accounts', route: 'accounts', type: 'routerLink', imgUrl: 'Users', requiredRoles: ['_profile_admin', 'access_user_config'] },
+    { title: 'My School', id: 'mySchool', route: 'myschool', type: 'routerLink', imgUrl: 'School', requiredRoles: ['_profile_admin', 'manage_school'] },
+    { title: 'ID Cards', id: 'idCards', route: 'idcards', type: 'routerLink', imgUrl: 'Digital ID Cards', requiredRoles: ['_profile_admin', 'manage_school'] }
   ];
 
   views: View = {
-    'pass_search': {id: 1, title: 'Passes', color: '#00B476', icon: 'Pass Search', action: 'pass_search'},
-    'report_search': {id: 2, title: 'Report Submissions', color: '#E32C66', icon: 'Report Search', action: 'report_search'},
-    'contact_trace': {id: 3, title: 'Contact trace', color: '#139BE6', icon: 'Contact Trace', action: 'contact_trace'},
+    'pass_search': { id: 1, title: 'Passes', color: '#00B476', icon: 'Pass Search', action: 'pass_search' },
+    'report_search': { id: 2, title: 'Report Submissions', color: '#E32C66', icon: 'Report Search', action: 'report_search' },
+    'contact_trace': { id: 3, title: 'Contact trace', color: '#139BE6', icon: 'Contact Trace', action: 'contact_trace' },
     // 'rooms_usage': {id: 4, title: 'Rooms Usage', color: 'orange', icon: 'Rooms Usage', action: 'rooms_usage'}
   };
 
@@ -86,19 +87,21 @@ export class NavComponent implements OnInit, AfterViewInit, OnDestroy {
 
   destroy$: Subject<any> = new Subject<any>();
 
-    constructor(
-        public router: Router,
-        private activeRoute: ActivatedRoute,
-        private dataService: DataService,
-        private userService: UserService,
-        private dialog: MatDialog,
-        private _zone: NgZone,
-        public darkTheme: DarkThemeSwitch,
-        private shortcutsService: KeyboardShortcutsService,
-        private storage: StorageService,
-        private cdr: ChangeDetectorRef,
-        private componentService: ComponentsService
-    ) { }
+  currentSchool: School;
+
+  constructor(
+    public router: Router,
+    private activeRoute: ActivatedRoute,
+    private dataService: DataService,
+    private userService: UserService,
+    private dialog: MatDialog,
+    private _zone: NgZone,
+    public darkTheme: DarkThemeSwitch,
+    private shortcutsService: KeyboardShortcutsService,
+    private storage: StorageService,
+    private cdr: ChangeDetectorRef,
+    private componentService: ComponentsService
+  ) { }
 
   get pointerTopSpace() {
     return this.pts;
@@ -120,18 +123,18 @@ export class NavComponent implements OnInit, AfterViewInit, OnDestroy {
     const url: string[] = this.router.url.split('/');
     this.currentTab = url[url.length - 1];
     this.tab = url.slice(1);
-    this.tab = ( (this.tab === [''] || this.tab === ['admin']) ? ['dashboard'] : this.tab );
+    this.tab = ((this.tab === [''] || this.tab === ['admin']) ? ['dashboard'] : this.tab);
     this.router.events
       .pipe(takeUntil(this.destroy$))
       .subscribe(value => {
-      if ( value instanceof NavigationEnd ) {
-        const urlSplit: string[] = value.url.split('/');
-        this.currentTab = urlSplit[urlSplit.length - 1];
-        this.tab = urlSplit.slice(1);
-        this.tab = ( (this.tab === [''] || this.tab === ['admin']) ? ['dashboard'] : this.tab );
-        this.hidePointer = this.process === 100 && this.tab.indexOf('gettingstarted') !== -1;
-      }
-    });
+        if (value instanceof NavigationEnd) {
+          const urlSplit: string[] = value.url.split('/');
+          this.currentTab = urlSplit[urlSplit.length - 1];
+          this.tab = urlSplit.slice(1);
+          this.tab = ((this.tab === [''] || this.tab === ['admin']) ? ['dashboard'] : this.tab);
+          this.hidePointer = this.process === 100 && this.tab.indexOf('gettingstarted') !== -1;
+        }
+      });
 
     this.userService.user$
       .pipe(filter(user => !!user), takeUntil(this.destroy$))
@@ -152,8 +155,8 @@ export class NavComponent implements OnInit, AfterViewInit, OnDestroy {
 
         this.user = user;
         this.showButton = user.roles.includes('_profile_admin') &&
-                        ( user.roles.includes('_profile_teacher') ||
-                          user.roles.includes('_profile_student') );
+          (user.roles.includes('_profile_teacher') ||
+            user.roles.includes('_profile_student'));
         this.dataService.updateInbox(!this.tab.includes('settings'));
       });
 
@@ -167,7 +170,7 @@ export class NavComponent implements OnInit, AfterViewInit, OnDestroy {
           const settingButton = this.settingsButton.nativeElement.querySelector('.icon-button-container');
           (settingButton as HTMLElement).click();
         } else if
-        (
+          (
           (key[0] === '1' || key[0] === '2' || key[0] === '3' || key[0] === '4' || key[0] === '5' || key[0] === '6') &&
           !this.dialog.openDialogs || !this.dialog.openDialogs.length) {
           const route = {
@@ -184,12 +187,16 @@ export class NavComponent implements OnInit, AfterViewInit, OnDestroy {
             this.setCurrentUnderlinePos(this.tabRefs, this.navButtonsContainterRef);
           }
         }
-    });
+      });
 
     this.userService.introsData$.pipe(filter(res => !!res), takeUntil(this.destroy$))
       .subscribe(data => {
         this.introsData = data;
       });
+    if (!this.userService.getFeatureFlagDigitalID()) {
+      const removeIndex = this.buttons.map(item => { return item.id; }).indexOf('idCards');
+      this.buttons.splice(removeIndex, 1);
+    }
   }
 
   ngOnDestroy() {
@@ -197,7 +204,7 @@ export class NavComponent implements OnInit, AfterViewInit, OnDestroy {
     this.destroy$.complete();
   }
 
-  route( button: any) {
+  route(button: any) {
     switch (button.type) {
       case 'routerLink':
         this.tab = ['admin', button.route];
@@ -236,7 +243,7 @@ export class NavComponent implements OnInit, AfterViewInit, OnDestroy {
               this.currentView$.next(action);
               this.storage.setItem('explore_page', action);
               this.cdr.detectChanges();
-          });
+            });
         }
         // this.router.navigate(this.tab);
         break;
@@ -315,7 +322,7 @@ export class NavComponent implements OnInit, AfterViewInit, OnDestroy {
 
   selectTab(evt: HTMLElement, container: HTMLElement) {
     const containerRect = container.getBoundingClientRect();
-    const selectedTabRect = (evt as HTMLElement ).getBoundingClientRect();
+    const selectedTabRect = (evt as HTMLElement).getBoundingClientRect();
     setTimeout(() => {
       this.pts = Math.round(selectedTabRect.top - containerRect.top) + 'px';
     }, 10);

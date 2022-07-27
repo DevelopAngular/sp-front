@@ -99,6 +99,7 @@ export class IdCardEditorComponent implements OnInit, OnDestroy {
   status: "disconnect" | "approved" | "done" = "disconnect";
   destroy$ = new Subject();
   isAdded: boolean = false;
+  showCustomID: boolean = false;
 
 
   constructor(
@@ -143,6 +144,7 @@ export class IdCardEditorComponent implements OnInit, OnDestroy {
     )
       .pipe(takeUntil(this.destroy$))
       .subscribe((school) => {
+        console.log("school : ", school);
         this.isUploadedProfilePictures = school.profile_pictures_completed;
       });
     this.isUploadedProfilePictures ? (this.status = "done") : "disconnect";
@@ -294,9 +296,8 @@ export class IdCardEditorComponent implements OnInit, OnDestroy {
   }
 
   setUpIDNumber(type: string = "qr-code", byUser: boolean = false) {
-    console.log("type : ", type)
-    // this.IDNumberData['idNumber'] = Math.floor(100000 + Math.random() * 900000);
     this.IDNumberData["idNumber"] = 123456;
+    this.showCustomID = true;
     this.selectBarcodeType(type, byUser);
     if (byUser) {
       this.idCardFormData.delete("show_custom_ids");

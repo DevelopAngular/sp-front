@@ -35,7 +35,7 @@ export class IdCardComponent implements OnInit {
   }
 
   ngOnInit(): void {
-    this.showCustomID == false ? this.IDNumberData = {} : null
+    // this.showCustomID == false ? this.IDNumberData = {} : null
     console.log("isLoggedIn : ", this.isLoggedIn)
     if (this.isLoggedIn) {
       this.userService.user$.subscribe({
@@ -45,12 +45,14 @@ export class IdCardComponent implements OnInit {
            this.userRole = this.userDetails.isStudent() ? 'Student' : 'Staff'
            this.profile_picture = this.userDetails?.profile_picture;
            this.greadLevel = this.userDetails?.grade_level;
-          if (this.showCustomID) {
+          if (this.showCustomID && this.userDetails?.custom_id) {
             this.IDNumberData.idNumber = this.userDetails?.custom_id || '123456'
             this.IDNumberData.barcodeURL =  this.qrBarcodeGenerator.selectBarcodeType(
               'qr-code',
               this.IDNumberData.idNumber
             )
+          }else {
+            this.showCustomID = false;
           }
           console.log("User : ",this.userDetails, this.userDetails.isStudent(), this.userDetails.isAdmin(), this.userDetails.isAssistant())
         }
