@@ -27,6 +27,7 @@ import {HttpService} from '../services/http-service';
 import {HallPass} from '../models/HallPass';
 import {PdfGeneratorService} from '../admin/pdf-generator.service';
 import * as moment from 'moment';
+import {CheckForUpdateService} from '../services/check-for-update.service';
 
 @Component({
   selector: 'app-hall-monitor',
@@ -117,6 +118,8 @@ export class HallMonitorComponent implements OnInit, OnDestroy {
   selectedSortOption: any = {id: 1, title: 'pass expiration time', action: 'expiration_time'};
   sortMode: string = '';
 
+  isUpdateBar$: Subject<any>;
+
   destroy$: Subject<any> = new Subject();
 
   constructor(
@@ -131,6 +134,7 @@ export class HallMonitorComponent implements OnInit, OnDestroy {
     private scrollPosition: ScrollPositionService,
     private http: HttpService,
     private pdf: PdfGeneratorService,
+    private updateService: CheckForUpdateService
   ) {
     this.activePassProvider = this.liveDataService.hallMonitorPasses$;
   }
@@ -144,6 +148,7 @@ export class HallMonitorComponent implements OnInit, OnDestroy {
   }
 
   ngOnInit() {
+    this.isUpdateBar$ = this.updateService.needToUpdate$;
     this.detectDevice();
     this.schoolsLength$ = this.http.schoolsLength$;
 

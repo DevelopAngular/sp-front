@@ -44,3 +44,15 @@
     <app-teacher-footer *ngIf="isStaff" [formState]="formState" [date]="date" [studentText]="studentText" [state]="'from'"></app-teacher-footer>
   </ng-container>
 </div>
+
+<ng-template let-alerts="alerts" #confirmDialogBodyVisibility>
+  <ng-container *ngFor="let a of alerts">
+  <div class="ds-dialog-title">
+    <span>{{a.title}}</span>
+  </div>
+
+  <div class="ds-dialog-normal-text ds-mb-10">
+      <p>{{a.text}}</p>
+  </div>
+  </ng-container>
+</ng-template>

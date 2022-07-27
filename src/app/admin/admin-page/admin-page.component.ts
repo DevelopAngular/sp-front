@@ -6,6 +6,7 @@ import {ActivatedRoute, Router} from '@angular/router';
 import {delay, exhaustMap, filter, map, skip, take, takeUntil, tap} from 'rxjs/operators';
 import {environment} from '../../../environments/environment';
 import {HttpService} from '../../services/http-service';
+import {CheckForUpdateService} from '../../services/check-for-update.service';
 
 declare const window;
 
@@ -22,13 +23,16 @@ export class AdminPageComponent implements OnInit, AfterViewInit, OnDestroy {
   public showDummySwitcher$: Observable<boolean>;
   public schoolsLength$: Observable<number>;
 
+  isUpdate$: Subject<any>;
+
   private destroy$: Subject<any> = new Subject<any>();
 
   constructor(
     private router: Router,
     private route: ActivatedRoute,
     private userService: UserService,
-    private httpService: HttpService
+    private httpService: HttpService,
+    private updateService: CheckForUpdateService
   ) {
 
     this.userService.userData
@@ -42,6 +46,7 @@ export class AdminPageComponent implements OnInit, AfterViewInit, OnDestroy {
   }
 
   ngOnInit() {
+    this.isUpdate$ = this.updateService.needToUpdate$;
     this.schoolsLength$ = this.httpService.schoolsLength$;
 
     this.adminPageReload$.pipe(

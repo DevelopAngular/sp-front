@@ -52,6 +52,7 @@ import {SpAppearanceComponent} from '../sp-appearance/sp-appearance.component';
 import {MyProfileDialogComponent} from '../my-profile-dialog/my-profile-dialog.component';
 import {SpLanguageComponent} from '../sp-language/sp-language.component';
 import * as moment from 'moment';
+import {CheckForUpdateService} from '../services/check-for-update.service';
 
 declare const window;
 
@@ -129,6 +130,8 @@ export class NavbarComponent implements AfterViewInit, OnInit, OnDestroy {
 
   isAssistant: boolean;
 
+  isUpdateBar$: Subject<any>;
+
   @HostListener('window:resize')
     checkDeviceWidth() {
         this.islargeDeviceWidth = this.screenService.isDeviceLargeExtra;
@@ -168,12 +171,9 @@ export class NavbarComponent implements AfterViewInit, OnInit, OnDestroy {
       private cdr: ChangeDetectorRef,
       private rendered: Renderer2,
       private navbarElementsService: NavbarElementsRefsService,
-      private shortcutsService: KeyboardShortcutsService
+      private shortcutsService: KeyboardShortcutsService,
+      private updateService: CheckForUpdateService
   ) {}
-
-  get optionsOpen() {
-    return this.tab === 'settings';
-  }
 
   get isMobile() {
     return DeviceDetection.isMobile();
@@ -181,10 +181,6 @@ export class NavbarComponent implements AfterViewInit, OnInit, OnDestroy {
 
   get showNav() {
     return this.tab !== 'intro' && this.hasNav;
-  }
-
-  get pointerTopSpace() {
-    return this.pts;
   }
 
   get isIOSTablet() {
@@ -215,6 +211,7 @@ export class NavbarComponent implements AfterViewInit, OnInit, OnDestroy {
   }
 
   ngOnInit() {
+    this.isUpdateBar$ = this.updateService.needToUpdate$;
     this.isEnabledProfilePictures$ = this.userService.isEnableProfilePictures$;
     this.shortcutsService.onPressKeyEvent$
       .pipe(

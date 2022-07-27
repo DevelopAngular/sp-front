@@ -79,14 +79,14 @@ sans-serif;
 
 /* === Common Text Options === */
 
-@mixin textSize ($px,
+@mixin textSize($px,
 $fw: normal,
 $color: $navy,
 $applyColor: true) {
     font-size: $px !important;
     font-weight: $fw !important;
     @if $applyColor {
-        color: $color;
+        color: $color !important;
     }
 }
 
@@ -282,6 +282,11 @@ $justify) {
     flex-end);
 }
 
+.ds-flex-start-start {
+    @include flexLayout(flex-start,
+    flex-start);
+}
+
 .ds-flex-center-between {
     @include flexLayout(center,
     space-between);
@@ -307,6 +312,11 @@ $justify) {
     flex-end);
 }
 
+.ds-flex-center-center {
+    @include flexLayout(center,
+    center);
+}
+
 .ds-flex-end-between {
     @include flexLayout(flex-end,
     space-between);
@@ -325,6 +335,11 @@ $justify) {
 .ds-flex-end-center {
     @include flexLayout(flex-end,
     center);
+}
+
+.ds-flex-end-end {
+    @include flexLayout(flex-end,
+    flex-end);
 }
 
 .ds-flex-end-end {
@@ -659,6 +674,11 @@ $side) {
 .ds-p-25 {
     @include padding(25px,
     all)
+}
+
+.ds-px-0 {
+    @include padding(0px,
+    x)
 }
 
 .ds-px-5 {

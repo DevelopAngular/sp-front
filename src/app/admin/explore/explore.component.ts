@@ -266,11 +266,18 @@ export class ExploreComponent implements OnInit, OnDestroy {
         this.allData = [];
         if (view === 'pass_search') {
           this.isCheckbox$.next(true);
+          this.adminCalendarOptions = {
+            rangeId: 'range_6',
+            toggleResult: 'Range'
+          };
           this.passSearchData = {
             selectedStudents: null,
             selectedDestinationRooms: null,
             selectedOriginRooms: null,
-            selectedDate: null,
+            selectedDate: {
+              start: moment('1/8/2022', 'DD/MM/YYYY'),
+              end: moment(moment(), 'DD/MM/YYYY')
+            },
           };
           this.search(300);
           return this.hallPassService.passesLoaded$;
@@ -278,17 +285,32 @@ export class ExploreComponent implements OnInit, OnDestroy {
           this.isCheckbox$.next(true);
           this.showContactTraceTable = false;
           this.clearContactTraceData();
-          this.adminCalendarOptions = null;
+          this.adminCalendarOptions = {
+            rangeId: 'range_6',
+            toggleResult: 'Range'
+          };
+          // this.adminCalendarOptions = null;
           this.contactTraceData = {
             selectedStudents: null,
-            selectedDate: null
+            selectedDate: {
+              start: moment('1/8/' + moment().year(), 'DD/MM/YYYY'),
+              end: moment(moment(), 'DD/MM/YYYY')
+            }
           };
+          this.cdr.detectChanges();
           return this.contactTraceService.contactTraceLoaded$;
         } else if (view === 'report_search') {
+          this.adminCalendarOptions = {
+            rangeId: 'range_6',
+            toggleResult: 'Range'
+          };
           this.isCheckbox$.next(false);
           this.reportSearchData = {
             selectedStudents: null,
-            selectedDate: null,
+            selectedDate: {
+              start: moment('1/8/' + moment().year(), 'DD/MM/YYYY'),
+              end: moment(moment(), 'DD/MM/YYYY')
+            },
             selectedStatus: null,
             selectedTeachers: null
           };
@@ -464,109 +486,110 @@ export class ExploreComponent implements OnInit, OnDestroy {
     console.log("this.encounterDetectionData$ : ", this.encounterDetectionData$);
 
     this.contactTraceData$ = this.contactTraceService.contactTraceData$
-      .pipe(
-        filter(() => this.currentView$.getValue() === 'contact_trace'),
-        map((contacts: ContactTrace[]) => {
-          if (!contacts.length) {
-            this.contactTraceState.isEmpty = true;
-            return [{
-              'Student Name': null,
-              'Degree': null,
-              'Contact connection': null,
-              'Contact date': null,
-              'Duration': null,
-              'Passes': null
-            }];
-          }
-          this.contactTraceState.isEmpty = false;
-          this.contact_trace_passes = {};
-          const response = contacts.map(contact => {
-            const duration = moment.duration(contact.total_contact_duration, 'seconds');
-            const connection: any[] =
-              contact.contact_paths.length === 2 && isEqual(contact.contact_paths[0], contact.contact_paths[1]) ?
-                [contact.contact_paths[0]] :
-                contact.contact_paths.length === 4 && isEqual(contact.contact_paths[0], contact.contact_paths[1]) && isEqual(contact.contact_paths[2], contact.contact_paths[3]) ?
-                  [contact.contact_paths[0], contact.contact_paths[2]] : contact.contact_paths;
+        .pipe(
+          filter(() => this.currentView$.getValue() === 'contact_trace'),
+          map((contacts: ContactTrace[]) => {
+            if (!contacts.length) {
+              this.contactTraceState.isEmpty = true;
+              return [{
+                'Student Name': null,
+                'Degree': null,
+                'Contact connection': null,
+                'Contact date': null,
+                'Duration': null,
+                'Passes': null
+              }];
+            }
+            this.contactTraceState.isEmpty = false;
+            this.contact_trace_passes = {};
+            const response = contacts.map(contact => {
+              const duration = moment.duration(contact.total_contact_duration, 'seconds');
+              const connection: any[] =
+                contact.contact_paths.length === 2 && isEqual(contact.contact_paths[0], contact.contact_paths[1]) ?
+                  [contact.contact_paths[0]] :
+                  contact.contact_paths.length === 4 && isEqual(contact.contact_paths[0], contact.contact_paths[1]) && isEqual(contact.contact_paths[2], contact.contact_paths[3]) ?
+                    [contact.contact_paths[0], contact.contact_paths[2]] : contact.contact_paths;
 
-            const result = {
-              'Student Name': contact.student.display_name,
-              'Degree': contact.degree,
-              'Contact connection': this.domSanitizer.bypassSecurityTrustHtml(
-                `<div class="no-wrap" style="display: flex; width: 300px !important;">` +
-                connection.map(path => {
+              const result = {
+                'Student Name': contact.student.display_name,
+                'Degree': contact.degree,
+                'Contact connection': this.domSanitizer.bypassSecurityTrustHtml(
+                  `<div class="no-wrap" style="display: flex; width: 300px !important;">` +
+                  connection.map(path => {
                   if (path.length === 1) {
                     return `<span style="margin-left: 5px">${path[0].display_name}</span>`;
                   } else {
                     return `<span style="margin-left: 5px">${path[0].display_name + ' to ' + path[1].display_name}</span>`;
                   }
                 }).join() + `</div>`),
-              'Contact date': moment(contact.initial_contact_date).format('M/DD h:mm A'),
-              'Duration': moment((Number.isInteger(duration.asMilliseconds()) ? duration.asMilliseconds() : duration.asMilliseconds())).format('mm:ss') + ' min',
-              'Passes': this.domSanitizer.bypassSecurityTrustHtml(`<div style="display: flex">` +
-                contact.contact_passes
-                  .map(({ contact_pass, student_pass }, index) => {
-                    this.contact_trace_passes = {
-                      ...this.contact_trace_passes,
-                      [contact_pass.id]: contact_pass,
-                      [student_pass.id]: student_pass
-                    };
+                'Contact date': moment(contact.initial_contact_date).format('M/DD h:mm A'),
+                'Duration': moment((Number.isInteger(duration.asMilliseconds()) ? duration.asMilliseconds() : duration.asMilliseconds())).format('mm:ss') + ' min',
+                'Passes': this.domSanitizer.bypassSecurityTrustHtml(`<div style="display: flex">` +
+                  contact.contact_passes
+                    .map(({contact_pass, student_pass}, index) => {
+                      this.contact_trace_passes = {
+                        ...this.contact_trace_passes,
+                        [contact_pass.id]: contact_pass,
+                        [student_pass.id]: student_pass
+                      };
                     return `<div style="display: flex; ${(index > 0 ? 'margin-left: 5px' : '')}">
                             <div class="pass-icon" onClick="passClick(${contact_pass.id})" style="background: ${this.getGradient(contact_pass.gradient_color)}; cursor: pointer"></div>
                             <div class="pass-icon" onClick="passClick(${student_pass.id})" style="background: ${this.getGradient(student_pass.gradient_color)}; margin-left: 5px; cursor: pointer"></div>
                         </div>`;
                   }).join('') + `</div>`
-              )
+                )
+              };
+
+              Object.defineProperty(result, 'id', { enumerable: false, value: contact.contact_passes[0].contact_pass.id});
+              Object.defineProperty(result, 'date', {enumerable: false, value: moment(contact.initial_contact_date) });
+
+              return result;
+            });
+            this.allData = response;
+            return response;
+          })
+        );
+
+      this.reportsSearchData$ = this.adminService.reports.reports$.pipe(
+        filter(res => this.currentView$.getValue() === 'report_search'),
+        map((reports: Report[]) => {
+          if (!reports.length) {
+            this.reportSearchState.isEmpty = true;
+            return [{
+              'Student Name': null,
+              'Message': null,
+              'Status': null,
+              'Pass': null,
+              'Submitted by': null,
+              'Date submitted': null,
+            }];
+          }
+          this.reportSearchState.isEmpty = false;
+          return reports.map(report => {
+              const data = report as any;
+              const _passTile = (
+                data?.reported_pass?.gradient_color &&
+                data?.reported_pass?.id
+              ) ?
+                `<div class="pass-icon" onClick="reportedPassClick(${data.reported_pass.id})" style="background: ${this.getGradient(data.reported_pass.gradient_color)}; cursor: pointer">`
+                : '';
+              const passTile = this.domSanitizer.bypassSecurityTrustHtml(_passTile);
+              const result = {
+              'Student Name': this.domSanitizer.bypassSecurityTrustHtml(`<div>${report.student.display_name}</div>`),
+              'Message': this.domSanitizer.bypassSecurityTrustHtml(`<div><div class="message">${report.message || 'No report message'}</div></div>`),
+              'Status': report.status,
+              'Pass': passTile,
+              'Submitted by': this.domSanitizer.bypassSecurityTrustHtml(`<div>${report.issuer.display_name}</div>`),
+              'Date submitted': this.domSanitizer.bypassSecurityTrustHtml(`<div>${moment(report.created).format('MM/DD hh:mm A')}</div>`),
             };
 
-            Object.defineProperty(result, 'id', { enumerable: false, value: contact.contact_passes[0].contact_pass.id });
-            Object.defineProperty(result, 'date', { enumerable: false, value: moment(contact.initial_contact_date) });
+            Object.defineProperty(result, 'id', { enumerable: false, value: report.id});
 
             return result;
           });
-          this.allData = response;
-          return response;
         })
       );
 
-    this.reportsSearchData$ = this.adminService.reports.reports$.pipe(
-      filter(res => this.currentView$.getValue() === 'report_search'),
-      map((reports: Report[]) => {
-        if (!reports.length) {
-          this.reportSearchState.isEmpty = true;
-          return [{
-            'Student Name': null,
-            'Message': null,
-            'Status': null,
-            'Pass': null,
-            'Submitted by': null,
-            'Date submitted': null,
-          }];
-        }
-        this.reportSearchState.isEmpty = false;
-        return reports.map(report => {
-          const data = report as any;
-          const _passTile = (
-            data?.reported_pass?.gradient_color &&
-            data?.reported_pass?.id
-          ) ?
-            `<div class="pass-icon" onClick="reportedPassClick(${data.reported_pass.id})" style="background: ${this.getGradient(data.reported_pass.gradient_color)}; cursor: pointer">`
-            : '';
-          const passTile = this.domSanitizer.bypassSecurityTrustHtml(_passTile);
-          const result = {
-            'Student Name': this.domSanitizer.bypassSecurityTrustHtml(`<div>${report.student.display_name}</div>`),
-            'Message': this.domSanitizer.bypassSecurityTrustHtml(`<div><div class="message">${report.message || 'No report message'}</div></div>`),
-            'Status': report.status,
-            'Pass': passTile,
-            'Submitted by': this.domSanitizer.bypassSecurityTrustHtml(`<div>${report.issuer.display_name}</div>`),
-            'Date submitted': this.domSanitizer.bypassSecurityTrustHtml(`<div>${moment(report.created).format('MM/DD hh:mm A')}</div>`),
-          };
-
-          Object.defineProperty(result, 'id', { enumerable: false, value: report.id });
-
-          return result;
-        });
-      })
-    );
 
     this.tableService.selectRow.asObservable()
       .pipe(takeUntil(this.destroy$))
@@ -645,7 +668,7 @@ export class ExploreComponent implements OnInit, OnDestroy {
   }
 
   openFilter(event, action) {
-    UNANIMATED_CONTAINER.next(true);
+    UNANIMATED_CONTAINER.next(true);;
     if (action === 'students' || action === 'destination' || action === 'origin') {
       const studentFilter = this.dialog.open(StudentFilterComponent, {
         id: `${action}_filter`,

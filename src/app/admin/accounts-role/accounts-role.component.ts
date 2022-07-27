@@ -370,10 +370,10 @@ export class AccountsRoleComponent implements OnInit, OnDestroy {
             this.sortLoading$.next(false);
             return;
         }
-        // in accounts.effects handling sort is bellow 
+        // in accounts.effects handling sort is bellow
         //const sortValue = action.queryParams.sort ? action.queryParams.sort.includes('-') ? 'desc' : 'asc' : '';
         // the following code ignore intention 'desc' as accounts.effects will consider missing sort as 'no sort'
-        // it is not corect to replace sort desc with no sort 
+        // it is not corect to replace sort desc with no sort
         //if (sort === 'desc') {
           //delete queryParams.sort;
         //}
