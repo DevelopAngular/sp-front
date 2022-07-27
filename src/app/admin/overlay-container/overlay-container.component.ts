@@ -789,7 +789,7 @@ export class OverlayContainerComponent implements OnInit, OnDestroy {
       switchMap((res) => {
         if (this.pinnableToDeleteIds.length) {
           const deleteRequests = this.pinnableToDeleteIds.map(id => {
-            return this.hallPassService.deletePinnableRequest(id);
+            return this.hallPassService.deletePinnableRequest(id, true);
           });
           return zip(...deleteRequests);
         } else {
