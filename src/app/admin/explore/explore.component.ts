@@ -586,8 +586,8 @@ export class ExploreComponent implements OnInit, OnDestroy {
             if (!('dids' in r)) throw new Error('missing in data shape');
 
             this.passtable.dataSource.allData = originalRows.filter(s => !r.dids.includes(+s.id));
-            //TODO calculate new count and show it
-            //this.passSearchState.countPasses = this.passtable.dataSource.allData.length;  
+            // just update the totalCOunt and lastAddedPasses
+            this.hallPassService.removePasses(r.dids);
             this.clearTableSelection();
           }),
           takeUntil(this.destroy$),
@@ -608,7 +608,7 @@ export class ExploreComponent implements OnInit, OnDestroy {
               of(e).pipe(
                 take(1),
                 tap(e => {
-                  const message: string = !!e?.error ? e.error.message : e.message;
+                  const message: string = !!e?.error ? (e.error.detail ?? e.error.message ?? e.message) : e.message;
                   // progress-interceptor have hall_pass as excepted url 
                   // so it will not catch any error thrown under hall_pass urls
                   // notify the admin is how we deal with this kind of error
@@ -631,6 +631,8 @@ export class ExploreComponent implements OnInit, OnDestroy {
            )),
 
           catchError(e => {
+            // discard fake rows
+            this.passtable.dataSource.allData = originalRows;
             // an OverflownTries error has been dealt with it above
             if ('overflown' in e) return of(null);
             // other errors are thrown  

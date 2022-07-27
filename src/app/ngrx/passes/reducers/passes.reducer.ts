@@ -39,6 +39,14 @@ const reducer = createReducer(
   on(passesActions.getMorePassesFailure, (state, {errorMessage}) => ({...state, loaded: true, loading: false})),
   on(passesActions.endPassAction, (state) => ({ ...state, startPassLoading: true })),
   on(passesActions.endPassActionSuccess, passesActions.endPassActionFailure, (state) => ({ ...state, startPassLoading: false})),
+  on(passesActions.removePassesAction, (state, {passIds}) => {
+    const nextState = adapter.removeMany(passIds, state);
+    nextState.lastAddedPasses = [...Object.values(nextState.entities)];
+    nextState.totalCount -= passIds.length;
+    // should not happens
+    if (nextState.totalCount < 0) nextState.totalCount = 0; 
+    return nextState;
+  })
 );
 
 

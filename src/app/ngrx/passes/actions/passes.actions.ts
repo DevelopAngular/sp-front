@@ -19,4 +19,4 @@ export const endPassAction = createAction(`[${PASSES}] End Pass`, props<{passId:
 export const endPassActionSuccess = createAction(`[${PASSES}] End Pass Success`);
 export const endPassActionFailure = createAction(`[${PASSES}] End Pass Failure`, props<{errorMessage: string}>());
 
-
+export const removePassesAction = createAction(`[${PASSES}] Remove Passes`, props<{passIds: number[]}>());

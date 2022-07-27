@@ -125,7 +125,6 @@
   <div class="content">
     <div class="pass-search" *ngIf="views[currentView].id === 1">
       <app-sp-data-table
-        #pass_search
         [isCheckbox]="isCheckbox$"
         [data$]="searchedPassData$"
         [loading$]="passSearchState.loading$"
