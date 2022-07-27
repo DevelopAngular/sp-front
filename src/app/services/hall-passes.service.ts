@@ -186,13 +186,13 @@ export class HallPassesService {
         return this.http.patch(`v1/pinnables/${id}`, data);
     }
 
-    deletePinnableRequest(id) {
-      this.store.dispatch(removePinnable({id}));
+    deletePinnableRequest(id, add_to_folder: boolean = false) {
+      this.store.dispatch(removePinnable({id, add_to_folder} as any));
       return of(true);
     }
 
-    deletePinnable(id) {
-        return this.http.delete(`v1/pinnables/${id}`);
+    deletePinnable(id, add_to_folder: boolean = false) {
+        return this.http.delete(`v1/pinnables/${id}?add_to_folder=${add_to_folder}`);
     }
 
     checkPinnableName(value) {

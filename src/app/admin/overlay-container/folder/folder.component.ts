@@ -159,7 +159,7 @@ export class FolderComponent implements OnInit, OnDestroy {
         } else {
             this.pinnable = data.pinnable;
             this.folderName = this.pinnable.title;
-            this.locationService.getLocationsWithCategory(this.pinnable.category, true)
+            this.locationService.getLocationsWithCategory(this.pinnable.category)
                 .subscribe((res: Location[]) => {
                     this.roomsImFolder = res;
                     this.initialFolderData = {
