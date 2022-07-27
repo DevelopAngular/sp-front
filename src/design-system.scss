@@ -3,13 +3,9 @@
 
 /* === SmartPass Primary Font === */
 
-$primaryFont: "Inter",
-"Arimo",
-"Arial",
-sans-serif;
+$primaryFont: "Inter", "Arimo", "Arial", sans-serif;
 
 /* === end ===*/
-
 
 /* === SmartPass Color Palette === */
 
@@ -28,66 +24,56 @@ sans-serif;
 /* === end ===*/
 
 @mixin textColor($color) {
-    color: $color;
+  color: $color;
 }
 
 .ds-navy {
-    @include textColor($navy);
+  @include textColor($navy);
 }
 
 .ds-blue-gray {
-    @include textColor($blue-gray);
+  @include textColor($blue-gray);
 }
 
 .ds-green {
-    @include textColor($green);
+  @include textColor($green);
 }
 
 .ds-jade {
-    @include textColor($jade);
-    color: $jade;
+  @include textColor($jade);
+  color: $jade;
 }
 
 .ds-background-white {
-    @include textColor($background-white);
+  @include textColor($background-white);
 }
 
 .ds-card-white {
-    @include textColor($card-white);
+  @include textColor($card-white);
 }
 
 .ds-off-white {
-    @include textColor($off-white);
+  @include textColor($off-white);
 }
 
 .ds-light-gray {
-    @include textColor($light-gray);
+  @include textColor($light-gray);
 }
 
 .ds-ultra-light-gray {
-    @include textColor($ultra-light-gray);
+  @include textColor($ultra-light-gray);
 }
 
 .ds-dark-gray {
-    @include textColor($dark-gray);
+  @include textColor($dark-gray);
 }
 
 .ds-search-gray {
-    @include textColor($search-gray);
+  @include textColor($search-gray);
 }
-
 
 /* === Common Text Options === */
 
-@mixin textSize ($px,
-$fw: normal,
-$color: $navy,
-$applyColor: true) {
-    font-size: $px !important;
-    font-weight: $fw !important;
-    @if $applyColor {
-        color: $color;
-    }
 @mixin textSize($px, $fw: normal, $color: $navy, $applyColor: true) {
   font-size: $px !important;
   font-weight: $fw !important;
@@ -97,65 +83,49 @@ $applyColor: true) {
 }
 
 .ds-big-title {
-    @include textSize(29px,
-    bold);
+  @include textSize(29px, bold);
 }
 
 .ds-big-heading {
-    @include textSize(24px,
-    bold);
+  @include textSize(24px, bold);
 }
 
 .ds-section-header {
-    @include textSize(18px,
-    bold);
+  @include textSize(18px, bold);
 }
 
 .ds-tab-text {
-    @include textSize(17px,
-    bold,
-    $color: $blue-gray);
+  @include textSize(17px, bold, $color: $blue-gray);
 }
 
 .ds-dialog-title {
-    @include textSize(17px,
-    bold);
+  @include textSize(17px, bold);
 }
 
 .ds-dialog-title-white {
-    @include textSize(17px,
-    bold,
-    $card-white);
+  @include textSize(17px, bold, $card-white);
 }
 
 .ds-dialog-subtitle {
-    @include textSize(16px,
-    bold);
+  @include textSize(16px, bold);
 }
 
 .ds-dialog-heading {
-    @include textSize(15px,
-    bold);
-    padding-bottom: 5px;
+  @include textSize(15px, bold);
+  padding-bottom: 5px;
 }
 
 .ds-dialog-heading-gray {
-    @include textSize(15px,
-    bold,
-    $blue-gray);
-    padding-bottom: 5px;
+  @include textSize(15px, bold, $blue-gray);
+  padding-bottom: 5px;
 }
 
 .ds-dialog-bold-text {
-    @include textSize(14px,
-    bold,
-    $blue-gray);
+  @include textSize(14px, bold, $blue-gray);
 }
 
 .ds-dialog-normal-text {
-    @include textSize(14px,
-    normal,
-    $blue-gray);
+  @include textSize(14px, normal, $blue-gray);
 }
 
 .ds-small-link-text {
@@ -185,84 +155,65 @@ $applyColor: true) {
 }
 
 .ds-segment-control {
-    @include textSize(13px);
+  @include textSize(13px);
 }
 
 .ds-cell-text {
-    @include textSize(14px,
-    $color: $dark-gray);
+  @include textSize(14px, $color: $dark-gray);
 }
 
 .ds-cell-text-2 {
-    @include textSize(14px,
-    $color: $blue-gray);
+  @include textSize(14px, $color: $blue-gray);
 }
 
 .ds-cell-description-text {
-    @include textSize(13px,
-    $color: $ultra-light-gray);
+  @include textSize(13px, $color: $ultra-light-gray);
 }
 
 .ds-pass-tile-title {
-    @include textSize(14px,
-    bold,
-    $card-white);
+  @include textSize(14px, bold, $card-white);
 }
 
 .ds-pass-tile-subtitle {
-    @include textSize(12px,
-    $color: $card-white);
+  @include textSize(12px, $color: $card-white);
 }
 
 .ds-pass-tile-title {
-    @include textSize(14px,
-    $color: $card-white);
+  @include textSize(14px, $color: $card-white);
 }
 
 .ds-small-button-text {
-    @include textSize(14px,
-    bold,
-    $applyColor: false);
+  @include textSize(14px, bold, $applyColor: false);
 }
 
 .ds-medium-button-text {
-    @include textSize(15px,
-    bold,
-    $applyColor: false);
+  @include textSize(15px, bold, $applyColor: false);
 }
 
 .ds-details-text {
-    @include textSize(15px);
+  @include textSize(15px);
 }
 
 .ds-details-text-bold {
-    @include textSize(15px,
-    bold);
+  @include textSize(15px, bold);
 }
 
 .ds-empty-text-title {
-    @include textSize(17px,
-    800,
-    $gray400)
+  @include textSize(17px, 800, $gray400)
 }
 
 .ds-empty-text-info {
-    @include textSize(17px,
-    normal,
-    $blue-gray)
+  @include textSize(17px, normal, $blue-gray)
 }
-
 
 /* === end === */
 
-
 /* === Common Flex Layout === */
 
-@mixin flexLayout($align,
-$justify) {
-    display: flex;
-    align-items: $align;
-    justify-content: $justify;
+@mixin flexLayout($align, $justify) {
+  display: flex;
+  align-items: $align;
+  justify-content: $justify;
 }
 
 .ds-flex-start-between {
@@ -285,10 +236,6 @@ $justify) {
   @include flexLayout(flex-start, flex-end);
 }
 
-.ds-flex-center-between {
-    @include flexLayout(center,
-    space-between);
-}
 
 .ds-flex-center-between {
   @include flexLayout(center, space-between);
@@ -310,10 +257,6 @@ $justify) {
   @include flexLayout(center, flex-end);
 }
 
-.ds-flex-end-around {
-    @include flexLayout(flex-end,
-    space-around);
-}
 
 .ds-flex-end-between {
   @include flexLayout(flex-end, space-between);
@@ -335,9 +278,6 @@ $justify) {
   @include flexLayout(flex-end, flex-end);
 }
 
-.ds-flex-column {
-    flex-direction: column;
-}
 
 .ds-flex-wrap {
   flex-wrap: wrap;
@@ -355,7 +295,6 @@ $justify) {
   flex-direction: row;
 }
 
-
 /* === Common Parent > Child Sizing === */
 
 .ds-w-100 {
@@ -366,112 +305,103 @@ $justify) {
   height: 100%;
 }
 
-
 /* === end === */
-
 
 /* === Common Box Sizing === */
 
 .ds-border-box {
-    -webkit-box-sizing: border-box;
-    -moz-box-sizing: border-box;
-    box-sizing: border-box;
+  -webkit-box-sizing: border-box;
+  -moz-box-sizing: border-box;
+  box-sizing: border-box;
 }
 
 .ds-content-box {
-    -webkit-box-sizing: content-box;
-    -moz-box-sizing: content-box;
-    box-sizing: content-box;
+  -webkit-box-sizing: content-box;
+  -moz-box-sizing: content-box;
+  box-sizing: content-box;
 }
 
 .ds-tooltip {
-    padding: 10px;
-    border-radius: 8px;
-    background-color: #050411;
-    color: #FFFFFF;
-    font-size: 14px;
-    font-weight: 500;
-    max-width: 250px;
-    word-break: break-word;
-    text-align: center;
-    .only-admin {
-        width: 93px;
-        height: 20px;
-        border-radius: 4px;
-        background-color: #EAEAFD;
-        color: #5352E4;
-        font-size: 13px;
-        display: flex;
-        align-items: center;
-        justify-content: center;
-        margin-bottom: 3px;
-    }
-}
+  padding: 10px;
+  border-radius: 8px;
+  background-color: #050411;
+  color: #FFFFFF;
+  font-size: 14px;
+  font-weight: 500;
+  max-width: 250px;
+  word-break: break-word;
+  text-align: center;
 
+  .only-admin {
+    width: 93px;
+    height: 20px;
+    border-radius: 4px;
+    background-color: #EAEAFD;
+    color: #5352E4;
+    font-size: 13px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    margin-bottom: 3px;
+  }
+}
 
 /* === end === */
 
-
 /* === Common Box Spaces ===*/
 
-@mixin margin($space,
-$side) {
-    @if $side==all {
-        margin: $space;
-    }
-    @if $side==x {
-        margin-left: $space;
-        margin-right: $space;
-    }
-    @if $side==y {
-        margin-top: $space;
-        margin-bottom: $space;
-    }
-    @if $side==top {
-        margin-top: $space;
-    }
-    @if $side==left {
-        margin-left: $space;
-    }
-    @if $side==bottom {
-        margin-bottom: $space;
-    }
-    @if $side==right {
-        margin-right: $space;
-    }
+@mixin margin($space, $side) {
+  @if $side == all {
+    margin: $space;
+  }
+  @if $side == x {
+    margin-left: $space;
+    margin-right: $space;
+  }
+  @if $side == y {
+    margin-top: $space;
+    margin-bottom: $space;
+  }
+  @if $side == top {
+    margin-top: $space;
+  }
+  @if $side == left {
+    margin-left: $space;
+  }
+  @if $side == bottom {
+    margin-bottom: $space;
+  }
+  @if $side == right {
+    margin-right: $space;
+  }
 }
 
-@mixin padding($space,
-$side) {
-    @if $side==all {
-        padding: $space;
-    }
-    @if $side==x {
-        padding-left: $space;
-        padding-right: $space;
-    }
-    @if $side==y {
-        padding-top: $space;
-        padding-bottom: $space;
-    }
-    @if $side==top {
-        padding-top: $space;
-    }
-    @if $side==left {
-        padding-left: $space;
-    }
-    @if $side==bottom {
-        padding-bottom: $space;
-    }
-    @if $side==right {
-        padding-right: $space;
-    }
+@mixin padding($space, $side) {
+  @if $side == all {
+    padding: $space;
+  }
+  @if $side == x {
+    padding-left: $space;
+    padding-right: $space;
+  }
+  @if $side == y {
+    padding-top: $space;
+    padding-bottom: $space;
+  }
+  @if $side == top {
+    padding-top: $space;
+  }
+  @if $side == left {
+    padding-left: $space;
+  }
+  @if $side == bottom {
+    padding-bottom: $space;
+  }
+  @if $side == right {
+    padding-right: $space;
+  }
 }
 
-.ds-m-5 {
-    @include margin(5px,
-    all)
-}
 
 .ds-m-5 {
   @include margin(5px, all)
@@ -791,51 +721,13 @@ $side) {
 }
 
 .ds-dark-theme {
-    @mixin veryDark {
-        background-color: #0F171E !important;
-        -webkit-background-clip: padding-box !important;
-        -moz-background-clip: padding !important;
-        background-clip: border-box !important;
-        color: #FFFFFF !important;
-    }
-    @mixin bitDark {
-        background-color: #134482 !important;
-        -webkit-background-clip: padding-box !important;
-        -moz-background-clip: padding !important;
-        background-clip: border-box !important;
-        color: #FFFFFF !important;
-    }
-    @mixin bitDarkShadow {
-        box-shadow: -12px -15px 20px 3px #134482 !important;
-    }
-    .router-outlet,
-    .passes-wrapper,
-    .my-room-wrapper,
-    .hall-monitor-wrapper,
-    .global-container,
-    .settings-wrapper,
-    .host {
-        @include veryDark;
-    }
-    .display-card-wrapper,
-    .host .card,
-    .nav-wrapper,
-    .nav-footer,
-    .reported-students,
-    .report-group-header,
-    .bottom-shadow {
-        @include bitDark;
-    }
-    .nav-footer,
-    .report-group-header,
-    .bottom-shadow {
-        @include bitDarkShadow;
-    }
-    .school-toggle-bar-wrapper {
-        background-color: #C5D5FF !important;
-    }
-}
 
+  @mixin veryDark {
+    background-color: #0F171E !important;
+    -webkit-background-clip: padding-box !important;
+    -moz-background-clip: padding !important;
+    background-clip: border-box !important;
+    color: #FFFFFF !important;
 
   }
 
