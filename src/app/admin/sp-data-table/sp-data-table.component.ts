@@ -264,6 +264,9 @@ export class SpDataTableComponent implements OnInit, OnDestroy {
         [object.id]: object
       };
     }
+    if (!this.isAllSelected()) {
+      this.tableService.isAllSelected$.next(false);
+    }
   }
 
   isSelected(row) {
