@@ -15,6 +15,8 @@ import {DeviceDetection} from '../../device-detection.helper';
 import {HallPassesService} from '../../services/hall-passes.service';
 import {CreateHallpassFormsComponent, CreatePassDialogData} from '../create-hallpass-forms.component';
 import {UserService} from '../../services/user.service';
+import {PassLimitService} from '../../services/pass-limit.service';
+import {LocationVisibilityService} from './location-visibility.service';
 
 export enum Role { Teacher = 1, Student = 2 }
 
@@ -47,7 +49,12 @@ export interface Navigation {
     gradient?: string;
     message?: string,
     requestTarget?: User,
-    hasClose?: boolean
+    hasClose?: boolean,
+    // filtered students after skiping some of selected ones to comply with the room visibility rules
+    roomStudents?: User[] | null;
+    // needed when back from pass card
+    roomStudentsAfterFromStep?: User[];
+    roomOverride?: boolean;
   };
   quickNavigator?: boolean;
   forInput?: boolean;
@@ -61,7 +68,8 @@ export interface Navigation {
   selector: 'app-main-hallpass-form',
   templateUrl: './main-hall-pass-form.component.html',
   styleUrls: ['./main-hall-pass-form.component.scss'],
-  animations: [NextStep]
+  animations: [NextStep],
+  providers: [LocationVisibilityService]
 })
 export class MainHallPassFormComponent implements OnInit, OnDestroy {
 
@@ -131,6 +139,7 @@ export class MainHallPassFormComponent implements OnInit, OnDestroy {
         direction: {
           from: this.dialogData.kioskModeRoom || null
         },
+        roomStudents: null,
       },
       forInput: this.dialogData.forInput || false,
       forLater: this.dialogData.forLater,

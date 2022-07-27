@@ -1,0 +1,68 @@
+<div class="background" tabindex="0">
+    
+  <img 
+    class="head-icon"
+    [src]="'./assets/Eye (Green-White).svg' | resolveAsset"
+    alt="Room Visibility"
+  />
+
+  <div class="label">Visibility</div>
+  <img 
+    class="support-icon"
+    [src]="'./assets/Support (Gray).svg' | resolveAsset"
+    alt="Support"
+    [customToolTip]="this.tooltipText"
+  />
+
+  <span 
+    #opener
+    class="chip with-triangle"
+    [ngClass]="modeView.classname"
+    (click)="handleOpenClose()"
+  >
+    {{ modeView.text }}
+  </span>
+
+    <div class="students-search">
+      <app-sp-search
+        *ngIf="isShowSearch"
+        [overrideChipsInputField]="true"
+        [chipsMode]="true"
+        [focused]="true"
+        [cancelButton]="false"
+        [textAddButton]="'Add student'"
+        [selectedOptions]="selectedStudents"
+        (onUpdate)="addFoundStudents($event)"
+        (focusEvent)="onSearchComponentFocus()"
+      >
+      </app-sp-search>
+      <ul class="error" 
+        *ngIf="showErrors && showErrorsVisibility && visibilityForm.invalid"
+          [@slideOpacityAnimate]="{value: ':enter', params: {delta: -5}}"
+      >
+        <li 
+          *ngFor="let error of visibilityForm.get('visibility').errors | keyvalue"
+        >
+          {{error.value}}
+        </li>
+      </ul>
+    </div>
+
+    <ng-template
+      #panel
+      let-data
+    >
+      <ul
+        class="panel"
+        *ngIf="didOpen"
+      >
+        <li
+            *ngFor="let entry of modes | keyvalue: asIs"
+            (click)="handleModeSelected(entry.key)"
+        >
+          {{entry.value.textmenu}}
+        </li>
+      </ul>
+    </ng-template>
+
+</div>

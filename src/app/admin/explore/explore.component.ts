@@ -234,11 +234,18 @@ export class ExploreComponent implements OnInit, OnDestroy {
         this.allData = [];
         if (view === 'pass_search') {
           this.isCheckbox$.next(true);
+          this.adminCalendarOptions = {
+            rangeId: 'range_6',
+            toggleResult: 'Range'
+          };
           this.passSearchData = {
             selectedStudents: null,
             selectedDestinationRooms: null,
             selectedOriginRooms: null,
-            selectedDate: null,
+            selectedDate: {
+              start: moment('1/8/2022', 'DD/MM/YYYY'),
+              end: moment(moment(), 'DD/MM/YYYY')
+            },
           };
           this.search(300);
           return this.hallPassService.passesLoaded$;
@@ -246,17 +253,32 @@ export class ExploreComponent implements OnInit, OnDestroy {
           this.isCheckbox$.next(true);
           this.showContactTraceTable = false;
           this.clearContactTraceData();
-          this.adminCalendarOptions = null;
+          this.adminCalendarOptions = {
+            rangeId: 'range_6',
+            toggleResult: 'Range'
+          };
+          // this.adminCalendarOptions = null;
           this.contactTraceData = {
             selectedStudents: null,
-            selectedDate: null
+            selectedDate: {
+              start: moment('1/8/' + moment().year(), 'DD/MM/YYYY'),
+              end: moment(moment(), 'DD/MM/YYYY')
+            }
           };
+          this.cdr.detectChanges();
           return this.contactTraceService.contactTraceLoaded$;
         } else if (view === 'report_search') {
+          this.adminCalendarOptions = {
+            rangeId: 'range_6',
+            toggleResult: 'Range'
+          };
           this.isCheckbox$.next(false);
           this.reportSearchData = {
             selectedStudents: null,
-            selectedDate: null,
+            selectedDate: {
+              start: moment('1/8/' + moment().year(), 'DD/MM/YYYY'),
+              end: moment(moment(), 'DD/MM/YYYY')
+            },
             selectedStatus: null,
             selectedTeachers: null
           };
@@ -424,8 +446,8 @@ export class ExploreComponent implements OnInit, OnDestroy {
               const _passTile = (
                 data?.reported_pass?.gradient_color &&
                 data?.reported_pass?.id
-              ) ? 
-                `<div class="pass-icon" onClick="reportedPassClick(${data.reported_pass.id})" style="background: ${this.getGradient(data.reported_pass.gradient_color)}; cursor: pointer">` 
+              ) ?
+                `<div class="pass-icon" onClick="reportedPassClick(${data.reported_pass.id})" style="background: ${this.getGradient(data.reported_pass.gradient_color)}; cursor: pointer">`
                 : '';
               const passTile = this.domSanitizer.bypassSecurityTrustHtml(_passTile);
               const result = {
@@ -520,7 +542,7 @@ export class ExploreComponent implements OnInit, OnDestroy {
   }
 
   openFilter(event, action) {
-    UNANIMATED_CONTAINER.next(true);
+    UNANIMATED_CONTAINER.next(true);;
     if (action === 'students' || action === 'destination' || action === 'origin') {
       const studentFilter = this.dialog.open(StudentFilterComponent, {
         id: `${action}_filter`,
@@ -730,11 +752,11 @@ export class ExploreComponent implements OnInit, OnDestroy {
   openPassDialog(pid: number|null, invisBackdrop: boolean|null=false) {
     if (pid === null) return;
 
-    this.reportSearchState.entities$ 
+    this.reportSearchState.entities$
       .pipe(
         take(1),
         map((rr: Dictionary<Report>): HallPass|null => {
-          
+
           const filtered = Object.entries(rr)
             .filter(([_,v]) => +v?.reported_pass_id === +pid);// force number equality
 

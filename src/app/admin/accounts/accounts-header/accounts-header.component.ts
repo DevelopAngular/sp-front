@@ -153,10 +153,10 @@ export class AccountsHeaderComponent implements OnInit, AfterViewInit, OnDestroy
         debounceTime(1000),
         takeUntil(this.destroy$)
       ).subscribe(([intros, nuxDates, user]) => {
-      this.introsData = intros;
-      const showNux = moment(user.first_login).isBefore(moment(nuxDates[0].created), 'day');
-      this.showNuxTooltip.next(!this.introsData.encounter_reminder.universal.seen_version && showNux);
-      this.showPassLimitNux.next(!intros?.student_pass_limit?.universal?.seen_version);
+        this.introsData = intros;
+        const showNux = moment(user.first_login).isBefore(moment(nuxDates[0].created), 'day');
+        this.showNuxTooltip.next(!this.introsData.encounter_reminder.universal.seen_version && showNux);
+        this.showPassLimitNux.next(!intros?.student_pass_limit?.universal?.seen_version);
     });
 
   }
@@ -169,8 +169,8 @@ export class AccountsHeaderComponent implements OnInit, AfterViewInit, OnDestroy
       originY: 'top',
       overlayX: 'start',
       overlayY: 'top',
-      offsetY: 40,
-      offsetX: -10
+      offsetY: 60,
+      offsetX: 0
     };
   }
 

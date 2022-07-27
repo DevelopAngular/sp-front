@@ -90,7 +90,7 @@ export class StudentInfoCardComponent implements OnInit, AfterViewInit, OnDestro
     toggleResult: 'Range'
   };
   selectedDate: { start: moment.Moment, end: moment.Moment } = {
-    start: moment('1/8/' + moment().subtract(1, 'year').year(), 'DD/MM/YYYY'),
+    start: moment('1/8/2022', 'DD/MM/YYYY'),
     end: moment().endOf('day')
   };
   isFullScreenPasses: boolean;
