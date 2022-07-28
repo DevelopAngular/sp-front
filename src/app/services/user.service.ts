@@ -496,7 +496,7 @@ export class UserService implements OnDestroy {
   // TODO: Make all update functions into a single function
   // TODO: Have all update intro endpoints be part of an enum
   // TODO: Share that enum with `intro.effects.ts`
-  
+
   updateIntros(device, version) {
     return this.http.patch('v1/intros/main_intro', {device, version});
   }
@@ -538,16 +538,8 @@ export class UserService implements OnDestroy {
     return this.http.get<RepresentedUser[]>('v1/users/@me/represented_users');
   }
 
-  getUserNotification(id) {
-    return this.http.get(`v1/users/${id}/notification_settings`);
-  }
-
-  enableNotification(id) {
-    return this.http.put(`v1/users/@me/notification_settings/${id}`);
-  }
-
-  disableNotification(id) {
-    return this.http.delete(`v1/users/@me/notification_settings/${id}`);
+  sendTestNotification(id) {
+    return this.http.post(`v1/users/${id}/test_notification`, new Date());
   }
 
   searchProfile(role?, limit = 5, search?) {
@@ -793,10 +785,6 @@ export class UserService implements OnDestroy {
 
   sortTableHeader(queryParams) {
     return this.http.get(constructUrl('v1/users', queryParams));
-  }
-
-  sendTestNotification(userId) {
-    return this.http.post(`v1/users/${userId}/test_notification`, new Date());
   }
 
   updateEffectiveUser(effectiveUser) {

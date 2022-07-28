@@ -529,6 +529,8 @@ export class StudentInfoCardComponent implements OnInit, AfterViewInit, OnDestro
     this.dialog.open(NotificationFormComponent, {
       panelClass: 'form-dialog-container',
       backdropClass: 'custom-backdrop',
+      width: '462px',
+      height: '600px',
       data: {profile: this.profile}
     });
   }

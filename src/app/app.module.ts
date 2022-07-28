@@ -128,6 +128,11 @@ const appRoutes: Routes = [
     loadChildren: () => import('app/forms/forms.module').then(m => m.FormsModule),
     data: {hideSchoolToggleBar: true, hubspot: false, authFree: true, hideScroll: false},
   },
+  {
+    path: 'links',
+    loadChildren: () => import('app/weblinks/weblinks.module').then(m => m.WeblinksModule),
+    data: {hideSchoolToggleBar: true, hubspot: false, authFree: true, hideScroll: false},
+  },
 
   {path: '**', redirectTo: 'main/passes', pathMatch: 'full'},
 ];

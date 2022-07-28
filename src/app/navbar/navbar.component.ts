@@ -566,12 +566,16 @@ export class NavbarComponent implements AfterViewInit, OnInit, OnDestroy {
           notifRef = this.dialog.open(NotificationFormComponent, {
             panelClass: 'form-dialog-container',
             backdropClass: 'custom-backdrop',
+            width: '462px',
+            height: '600px',
           });
         });
       } else {
         notifRef = this.dialog.open(NotificationFormComponent, {
           panelClass: 'form-dialog-container',
           backdropClass: 'custom-backdrop',
+          width: '462px',
+          height: '600px',
         });
       }
     } else if (action === 'intro') {

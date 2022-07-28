@@ -7,7 +7,10 @@ import {
   Input,
   OnDestroy,
   OnInit,
-  Output
+  AfterViewInit,
+  Output,
+  QueryList,
+  ViewChildren
 } from '@angular/core';
 import {MatDialog} from '@angular/material/dialog';
 import {BehaviorSubject, Observable, Subject} from 'rxjs';
@@ -33,6 +36,8 @@ import {SpAppearanceComponent} from '../sp-appearance/sp-appearance.component';
 import {User} from '../models/User';
 import {UserService} from '../services/user.service';
 import * as moment from 'moment';
+import {Router} from '@angular/router';
+import {PassTileComponent} from '../pass-tile/pass-tile.component';
 
 export class SortOption {
   constructor(private name: string, public value: string) {
@@ -89,6 +94,8 @@ export class PassCollectionComponent implements OnInit, OnDestroy {
   @Output() searchValue = new EventEmitter<string>();
   @Output() randomString = new EventEmitter<string>();
 
+  @ViewChildren(PassTileComponent) passTileComponents: QueryList<PassTileComponent>;
+
   currentPasses$: Observable<any>;
   activePassTime$;
   search: string;
@@ -138,6 +145,7 @@ export class PassCollectionComponent implements OnInit, OnDestroy {
       private cdr: ChangeDetectorRef,
       private passesService: HallPassesService,
       private userService: UserService,
+      private router: Router,
   ) {}
 
   get gridTemplate() {
@@ -181,6 +189,19 @@ export class PassCollectionComponent implements OnInit, OnDestroy {
           // const studentName = pass.student.display_name;
           const random = [destinationName];
           this.randomString.emit(random[Math.floor(Math.random() * random.length)]);
+
+          const dialog = window.history.state.open_on_load?.dialog;
+          const id = window.history.state.id;
+          passes.forEach(p => {
+              if ((p instanceof HallPass || pass instanceof Invitation) &&
+                  dialog === 'main/passes/open_pass' && p.id === id) {
+                  this.initializeDialog(p);
+              }
+
+              if (pass instanceof Request && dialog === 'main/passes/open_request' && p.id === id) {
+                  this.initializeDialog(p);
+              }
+          });
       });
     }
 
@@ -198,6 +219,37 @@ export class PassCollectionComponent implements OnInit, OnDestroy {
     });
 
     this.isEnabledProfilePictures$ = this.userService.isEnableProfilePictures$;
+  }
+
+  ngAfterViewInit() {
+    const id = window.history.state.id;
+    let opened = false;
+    this.passTileComponents.changes.subscribe(passTiles => {
+      if (opened) {
+        return;
+      }
+
+      passTiles.forEach(passTile => {
+        if (passTile.pass.id !== id) {
+          return;
+        }
+
+        const dialog = window.history.state.open_on_load?.dialog;
+        opened = true;
+
+        const event = {
+          time$: passTile.activePassTime$,
+          pass: passTile.pass,
+        };
+
+        if ((passTile.pass instanceof HallPass || passTile.pass instanceof Invitation) &&
+          dialog === 'main/passes/open_pass' && passTile.pass.id === id) {
+          this.showPass(event);
+        } else if (passTile.pass instanceof Request && dialog === 'main/passes/open_request' && passTile.pass.id === id) {
+          this.showPass(event);
+        }
+      });
+    });
   }
 
   ngOnDestroy() {
