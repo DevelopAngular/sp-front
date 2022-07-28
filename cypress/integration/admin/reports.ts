@@ -12,7 +12,7 @@ describe('Admin - Reports',  () => {
   });
 
   after(()=> {
-    logoutAdmin(); 
+    logoutAdmin();
   });
 
   afterEach(function() {
@@ -27,8 +27,8 @@ describe('Admin - Reports',  () => {
   };
 
   const getReports = (): Cypress.Chainable<JQuery<HTMLElement>> => {
-    return cy.get('mat-dialog-container > app-pages-dialog div.title').contains('Reports');
-  } 
+    return cy.get('mat-dialog-container > app-pages-dialog div.title').contains('Report Submissions');
+  }
 
     it('should change to school', () => {
       cy.get('app-school-toggle-bar span.school-name').contains('Cypress Testing School 2').then(() => {
@@ -45,7 +45,7 @@ describe('Admin - Reports',  () => {
         method: 'GET',
         url: 'https://smartpass.app/api/prod-us-central/v1/event_reports?limit=**'
       }).as('eventreports');
-      
+
       getExplorePanel().click().then(
         () => {
           getReports().click();
@@ -109,7 +109,7 @@ describe('Admin - Reports',  () => {
             cy.get('app-report-info-dialog app-status-chip span:eq(0)').should('have.text', status);
             cy.get('div[class~="cdk-overlay-backdrop"]').should('exist').click({force: true, multiple: true});
           });
-        });         
+        });
       });
     });
 
@@ -120,26 +120,26 @@ describe('Admin - Reports',  () => {
         url: 'https://smartpass.app/api/prod-us-central/v1/event_reports?limit=**'
       }).as('eventreports');
 
-      cy.get('app-filter-button').contains('status', {matchCase: false}).click(); 
+      cy.get('app-filter-button').contains('status', {matchCase: false}).click();
       cy.get('mat-dialog-container app-status-filter').should('be.visible');
       cy.get('mat-dialog-container app-status-filter app-status-chip:eq(0)').click();
       cy.wait('@eventreports').its('response').then(res => {
         expect(res.headers).to.include({'content-type': 'application/json'});
         expect(res.statusCode).to.equal(200);
-        expect(res.body.results.every(r => r.status === 'active')).to.be.true; 
+        expect(res.body.results.every(r => r.status === 'active')).to.be.true;
         cy.get('app-filter-button').contains('status', {matchCase: false}).then($el => {
           const $close = $el.parent().find('img[class~="close-button"]');
           cy.wrap($close).should('be.visible');
         });
       });
 
-      cy.get('app-filter-button').contains('status', {matchCase: false}).click(); 
+      cy.get('app-filter-button').contains('status', {matchCase: false}).click();
       cy.get('mat-dialog-container app-status-filter').should('be.visible');
       cy.get('mat-dialog-container app-status-filter app-status-chip:eq(1)').click();
       cy.wait('@eventreports').its('response').then(res => {
         expect(res.headers).to.include({'content-type': 'application/json'});
         expect(res.statusCode).to.equal(200);
-        expect(res.body.results.every(r => r.status === 'closed')).to.be.true; 
+        expect(res.body.results.every(r => r.status === 'closed')).to.be.true;
         cy.get('app-filter-button').contains('status', {matchCase: false}).then($el => {
           const $close = $el.parent().find('img[class~="close-button"]');
           cy.wrap($close).should('be.visible');
