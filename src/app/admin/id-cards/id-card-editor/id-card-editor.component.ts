@@ -42,7 +42,8 @@ export interface IDCard {
   backgroundColor?: string;
   logoURL?: string;
   backsideText?: string;
-  showCustomID?: boolean
+  showCustomID?: boolean;
+  barcodeType?: string;
 }
 
 export interface BarcodeTypes {
@@ -319,9 +320,13 @@ export class IdCardEditorComponent implements OnInit, OnDestroy {
   }
 
   setUpIDNumber(type: string = "qr-code", byUser: boolean = false) {
-    this.IDNumberData["idNumber"] = 123456;
+    let generateQR: boolean = false;
+    if (!this.IDNumberData?.idNumber) {
+      generateQR = true;
+    }
+    this.IDNumberData["idNumber"] = '123456';
     this.showCustomID = true;
-    if (!this.IDCARDDETAILS.show_custom_ids) {
+    if (generateQR) {
       this.selectBarcodeType(type, byUser);
     }
     if (byUser) {

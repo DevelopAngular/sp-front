@@ -25,8 +25,6 @@ import {AddRolePopupComponent} from './select-role/add-role-popup/add-role-popup
 import {PermissionsDialogComponent} from '../accounts-role/permissions-dialog/permissions-dialog.component';
 import {GSuiteConnectComponent} from './g-suite-settings/g-suite-connect/g-suite-connect.component';
 import { AdminPassLimitDialogComponent } from './admin-pass-limits-dialog/admin-pass-limits-dialog.component';
-import { IdNumbersComponent } from './id-numbers/id-numbers.component';
-import { GradeLevelsComponent } from './grade-levels/grade-levels.component';
 
 @NgModule({
   declarations: [
@@ -53,8 +51,6 @@ import { GradeLevelsComponent } from './grade-levels/grade-levels.component';
     PermissionsDialogComponent,
     GSuiteConnectComponent,
     AdminPassLimitDialogComponent,
-    IdNumbersComponent,
-    GradeLevelsComponent,
   ],
   imports: [
     CommonModule,
