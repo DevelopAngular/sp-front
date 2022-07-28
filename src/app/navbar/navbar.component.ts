@@ -672,6 +672,7 @@ export class NavbarComponent implements AfterViewInit, OnInit, OnDestroy {
           '123456'
         ),
       },
+      barcodeType: this.IDCARDDETAILS.barcode_type,
       backsideText: this.IDCARDDETAILS.backside_text,
       logoURL: this.IDCARDDETAILS.signed_url,
       profilePicture: '',

@@ -2,6 +2,6 @@
     <img class="cancelSVG" width="35" height="35" [src]="'./assets/Cancel (Gray-White).svg' | resolveAsset" (click)="dialogRef.close()">
     <div style="width: 100%;">
         <app-id-card [isLoggedIn]="dialogData?.isLoggedIn" [profile_picture]="IDCARDDETAILS?.profilePicture" [userName]="IDCARDDETAILS.userName" [userRole]="IDCARDDETAILS.userRole" [buttonBackColor]="'#F0F2F5'" [backgroundColor]="IDCARDDETAILS?.backgroundColor"
-            [logoURL]="IDCARDDETAILS?.logoURL" [backsideText]="IDCARDDETAILS?.backsideText" [showCustomID]="IDCARDDETAILS?.showCustomID" [IDNumberData]="IDCARDDETAILS?.idNumberData" [greadLevel]="IDCARDDETAILS?.greadLevel"></app-id-card>
+            [logoURL]="IDCARDDETAILS?.logoURL" [backsideText]="IDCARDDETAILS?.backsideText" [showCustomID]="IDCARDDETAILS?.showCustomID" [barcodeType]="IDCARDDETAILS?.barcodeType" [IDNumberData]="IDCARDDETAILS?.idNumberData" [greadLevel]="IDCARDDETAILS?.greadLevel"></app-id-card>
     </div>
 </div>
