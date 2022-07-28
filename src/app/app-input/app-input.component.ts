@@ -39,6 +39,7 @@ export class AppInputComponent implements OnInit, OnChanges, OnDestroy {
   @Input() forceError: boolean = false;
   @Input() showUnits: boolean;
   @Input() units: string;
+  @Input() color = 'black';
 
   @Input() formGroup: FormGroup;
   @Input() controlName: FormControl;

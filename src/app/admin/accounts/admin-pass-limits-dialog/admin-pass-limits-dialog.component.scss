@@ -1,3 +1,5 @@
+@import 'src/sp-colors';
+
 #closePassLimitsIntro {
   position: absolute;
   top: 12px;
@@ -35,12 +37,86 @@
   display: none
 }
 
+.pass-limit-input-template {
+  display: flex;
+  column-gap: 2px;
+  flex-wrap: wrap;
+  position: relative;
+  //background: #F0F2F5;
+  //border: 1px solid $gray200;
+
+  div.per-day-wrapper {
+    height: 45px;
+    display: flex;
+    align-items: flex-end;
+    left: 110px;
+    top: 0;
+
+    span {
+      display: inline-flex;
+      align-items: center;
+      height: 45px;
+      padding: 0 15px;
+      //color: $gray500;
+      font-size: 15px;
+      font-weight: 500;
+    }
+  }
+}
+
+.individual-name {
+  display: flex;
+  flex-direction: column;
+
+  .selected-name {
+    background-color: #F7F7F7;
+    border-radius: 8px;
+    height: 31px;
+    padding: 0px 10px;
+    display: flex;
+    align-items: center;
+    color: #1F194E;
+    white-space: nowrap;
+    position: relative;
+    align-self: flex-start;
+
+    .name {
+      color: $navy;
+      font-size: 15px;
+      margin-left: 10px;
+    }
+
+    .delete {
+      width: 16px;
+      height: 16px;
+      cursor: pointer;
+      position: absolute;
+      right: 5px;
+      background-color: #F8F8F8;
+      box-shadow: -6px 1px 6px #F8F8F8;
+    }
+
+    .student-picture {
+      border-radius: 50%;
+      width: 23px;
+      height: 23px;
+      overflow: hidden;
+      margin-right: 4px;
+    }
+  }
+}
+
 .individual-list-item {
   padding: 10px;
   background: white;
   border-radius: 8px;
-  margin: 10px 0;
+  margin: 15px 0;
   cursor: pointer;
+  box-shadow: rgba(0, 0, 0, 0.05) 0px 5px 2px 0;
+
+  span:last-of-type {
+    color: $orange500;
+  }
 }
 
 .user-chip {

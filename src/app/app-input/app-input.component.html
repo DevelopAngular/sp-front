@@ -29,6 +29,7 @@
     </div>
     <div class="input-container">
       <input
+             [style.color]="color"
              [autocomplete]="autocomplete"
              [attr.disabled]="disabled ? '' : null"
              [style.background-color]="isFocus && inp.focused ? 'white' : (hovered ? '#EDEDED' : '#F7F7F7')"
@@ -55,7 +56,8 @@
       <div class="min"
            (click)="isFocus = true;updateFocus(inp)"
            *ngIf="!disabled && controlName.valid && !isFocus && showUnits"
-           [style.left]="minLeftMargin + 'px'">
+           [style.left]="minLeftMargin + 'px'"
+           [style.color]="color">
         {{ units }}
       </div>
       <div class="tooltip-container tooltip-container__inline"

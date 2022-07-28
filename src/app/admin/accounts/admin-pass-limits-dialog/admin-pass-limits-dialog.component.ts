@@ -26,8 +26,6 @@ import {IntroData} from '../../../ngrx/intros';
   styleUrls: ['./admin-pass-limits-dialog.component.scss']
 })
 export class AdminPassLimitDialogComponent implements OnInit, OnDestroy {
-  individualLimitsTooltip = `These override the school-wide pass limit on a per-student basis`; // TODO: Get text for this
-  individualStudentLimits: IndividualPassLimit[] = [];
   hasPassLimit: boolean;
   passLimit: HallPassLimit;
   passLimitForm = new FormGroup({
@@ -44,6 +42,7 @@ export class AdminPassLimitDialogComponent implements OnInit, OnDestroy {
   showPassLimitNux: boolean;
   introsData: IntroData;
   introSubs: Subscription;
+  individualStudentLimits: IndividualPassLimit[] = [];
   individualOverrideForm: FormGroup;
   individualFormPreviousValue: { student: string[], passLimit: string, description: string };
   individualFormChanged: Observable<boolean>;
@@ -287,8 +286,7 @@ export class AdminPassLimitDialogComponent implements OnInit, OnDestroy {
     this.individualLoading = true;
     const request = this.selectedExistingIndividualLimit
       ? this.passLimitService.updateIndividualLimit({
-        student: this.selectedExistingIndividualLimit.student,
-        passLimit: parsedForm.passLimit,
+        ...parsedForm,
         description: parsedForm.description || this.selectedExistingIndividualLimit.description
       })
       : this.passLimitService.createIndividualLimits(parsedForm);

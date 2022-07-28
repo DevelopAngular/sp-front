@@ -45,8 +45,8 @@
                <ng-template #passLimitLearnMore>
                  <div class="ds-tooltip">
                     <span>
-                      Limit the number of passes students can have per day.
-                      <a href="https://www.smartpass.app/passlimits" style="color: white"> Learn more</a>
+                      Limit the number of passes all students can have per day.
+                      <a href="https://www.smartpass.app/passlimits" style="color: white" target="_blank"> Learn more</a>
                     </span>
                  </div>
                </ng-template>
@@ -70,13 +70,21 @@
           <span class="ds-dialog-heading" style="align-self: flex-start; padding-bottom: 0 !important;">
             Limits for Individual Students
             <div class="tooltip-container" style="display: inline">
-              <div style="display: inline" [customToolTip]="individualLimitsTooltip">
+              <div style="display: inline" customToolTip [contentTemplate]="individualLimitLearnMore">
                 <img
                   class="support-icon"
                   style="width: 17px"
                   [src]="'./assets/Support (Gray-200).svg' | resolveAsset">
               </div>
             </div>
+            <ng-template #individualLimitLearnMore>
+              <div class="ds-tooltip">
+                <span>
+                  Limit the number of passes certain individual students can have per day. This overrides the school limit if set.
+                  <a href="https://www.smartpass.app/passlimits" style="color: white" target="_blank"> Learn more</a>
+                </span>
+              </div>
+            </ng-template>
           </span>
 
           <div class="individual-limits-list">
@@ -97,18 +105,40 @@
 
         <div *ngIf="individualStudentLimits.length > 0" class="accent-background-section" style="margin-bottom: 40px">
           <div class="ds-flex-row ds-flex-center-between ds-mb-20">
-            <span class="ds-dialog-subtitle">Limits for Individual Students</span>
-            <app-gradient-button
-              size="editable" width="70px" minHeight="30px" (buttonClick)="goToIndividualLimitPage()"
-              fontSize="16px" fontWeight="400" cornerRadius="4px"
-              leftIcon="assets/Plus (White).svg" leftImageWidth="15px" leftImageHeight="15px">
-              <span>Add</span>
-            </app-gradient-button>
+            <span class="ds-dialog-heading" style="align-self: flex-start; padding-bottom: 0 !important;">
+              Limits for Individual Students
+              <div class="tooltip-container" style="display: inline">
+                <div style="display: inline" customToolTip [contentTemplate]="individualLimitLearnMore">
+                  <img
+                    class="support-icon"
+                    style="width: 17px"
+                    [src]="'./assets/Support (Gray-200).svg' | resolveAsset">
+                </div>
+              </div>
+              <ng-template #individualLimitLearnMore>
+                <div class="ds-tooltip">
+                  <span>
+                    Limit the number of passes certain individual students can have per day. This overrides the school limit if set.
+                    <a href="https://www.smartpass.app/passlimits" style="color: white" target="_blank"> Learn more</a>
+                  </span>
+                </div>
+              </ng-template>
+            </span>
+          <app-gradient-button
+            size="editable" width="70px" minHeight="30px" (buttonClick)="goToIndividualLimitPage()"
+            fontSize="16px" fontWeight="400" cornerRadius="4px"
+            leftIcon="assets/Plus (White).svg" leftImageWidth="15px" leftImageHeight="15px">
+            <span>Add</span>
+          </app-gradient-button>
           </div>
 
-          <div class="individual-list-item ds-flex-row ds-flex-center-between" *ngFor="let i of individualStudentLimits" style="font-size: 14px" (click)="goToIndividualLimitPage(i)">
-            <span class="ds-dialog-heading" style="padding-bottom: 0 !important;">{{i.student.display_name}}</span>
-            <span style="color: #6651F1">{{i.passLimit}} passes/day</span>
+          <div class="individual-list-item ds-flex-column" *ngFor="let i of individualStudentLimits" style="font-size: 14px; display: flex; row-gap: 5px" (click)="goToIndividualLimitPage(i)">
+            <div class="ds-flex-row ds-flex-center-between">
+              <span class="ds-dialog-heading" style="padding-bottom: 0 !important;">{{i.student.display_name}}</span>
+              <span>{{i.passLimit}} passes/day</span>
+            </div>
+
+            <span class="ds-dialog-normal-text" *ngIf="i.description">{{i.description}}</span>
           </div>
         </div>
       </div>
@@ -145,9 +175,15 @@
         <section class="individual-name ds-my-20">
           <p class="ds-dialog-heading ds-blue-gray" style="padding: 0 !important">Student</p>
           <app-sp-search *ngIf="!selectedExistingIndividualLimit" #studentSearch (onUpdate)="updateStudentList($event)"></app-sp-search>
-          <div *ngIf="selectedExistingIndividualLimit" class="user-chip ds-flex-center-start ds-py-5 ds-px-10">
-            <img style="width: 25px;" class="ds-mr-10" [src]="'./assets/Student (Jade).svg' | resolveAsset" alt="">
-            <p style="margin: 4px 0;">{{selectedExistingIndividualLimit.student.display_name}}</p>
+          <div class="selected-name" *ngIf="selectedExistingIndividualLimit as iLimit">
+            <div class="student-picture">
+              <div *ngIf="iLimit.student.profile_picture; else d"
+                   [ngStyle]="{'background': 'url(' + iLimit.student.profile_picture + ') no-repeat left center/cover', width: '23px', height: '23px'}"></div>
+              <ng-template #d>
+                <img width="23" height="23" [src]="'./assets/Avatar Default.svg' | resolveAsset" alt="">
+              </ng-template>
+            </div>
+            <div class="name">{{ iLimit.student.display_name }}</div>
           </div>
         </section>
 
@@ -170,22 +206,20 @@
 <app-pass-limit-feedback *ngIf="!contentLoading" style="position: absolute; width: 385px; margin-top: -15px;"></app-pass-limit-feedback>
 
 <ng-template #passLimitInput let-formGroup="formGroup" let-control="control">
-  <div style="display: flex; column-gap: 2px; flex-wrap: wrap;" class="ds-flex-row">
+  <div class="pass-limit-input-template ds-flex-row">
     <app-input
+      color="#6651F1"
       [showUnits]="true"
       [units]="control.value === '1' ? 'pass' : 'passes'"
       [isFocus]="false"
-      width="125px"
+      width="100px"
       placeholder="# of passes"
       [formGroup]="formGroup"
       [controlName]="control"></app-input>
 
-    <app-gradient-button
-      style="margin-top: 4px"
-      textColor="#000000"
-      gradient="#F4F4F4">
-      per day
-    </app-gradient-button>
+    <div class="per-day-wrapper">
+      <span>per day</span>
+    </div>
     <p style="width: 100%; opacity: 0.8; font-size: 12px" *ngIf="control.errors">Passes must be greater than 0 and must be a whole number</p>
   </div>
 </ng-template>

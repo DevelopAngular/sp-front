@@ -127,7 +127,6 @@ export class AccountsRoleComponent implements OnInit, OnDestroy {
           this.userEmptyState = false;
           return accounts.map(account => {
             const rowObj = this.buildDataForRole(account);
-            console.log(rowObj);
 
             Object.defineProperty(rowObj, 'id', { enumerable: false, value: account.id});
             Object.defineProperty(rowObj, 'me', { enumerable: false, value: +account.id === +this.user.id });
