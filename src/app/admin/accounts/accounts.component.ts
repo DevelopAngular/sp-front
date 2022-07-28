@@ -92,6 +92,8 @@ export class AccountsComponent implements OnInit, OnDestroy {
       }
       if (res['encounter-prevention'] === '') {
         this.openEncounterPrevention({currentPage: 'groups'});
+      } else if (res['encounter-prevention'] === 'empty') {
+        this.openEncounterPrevention({});
       }
       if (res.target === 'gsuite') {
         this.openSettingsDialog('g_suite', '');

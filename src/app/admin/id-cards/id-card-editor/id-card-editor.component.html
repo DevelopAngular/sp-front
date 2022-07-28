@@ -1,0 +1,216 @@
+<div class="host" appSafariScroll>
+    <div class="start-page-wrapper ds-flex-center-center">
+        <div class="left">
+            <div>
+                <div class="card card__role ds-mr-10">
+                    <div class="ds-flex-center-between">
+                        <div>
+                            <p class="ds-big-title" [style.color]="darkTheme.getColor({white: '#1F195E', dark: '#FFFFFF'})">ID Cards</p>
+                        </div>
+                        <div *ngIf="!IDCardEnabled">
+                            <div class="button">
+                                <app-gradient-button [style.margin-left]="'15px'" [leftIcon]="'./assets/Play (White).svg'" [hoverColor]="'#00B476'" [cursor]="'pointer'" (buttonClick)="enableIDCard()">
+                                    Set live
+                                </app-gradient-button>
+                            </div>
+                        </div>
+                        <div *ngIf="isInEditingMode">
+                            <div class="buttons">
+                                <app-gradient-button [style.margin-left]="'15px'" [gradient]="'#F0F2F5, #F0F2F5'" [textColor]="'#7083A0'" [hoverColor]="'#00B476'" [cursor]="'pointer'" (buttonClick)="cancelEditing()">
+                                    Cancel
+                                </app-gradient-button>
+                                <app-gradient-button [style.margin-left]="'15px'" [hoverColor]="'#00B476'" [cursor]="'pointer'" (buttonClick)="saveIDCardFields()">
+                                    Save
+                                </app-gradient-button>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="scrollable">
+                        <div>
+                            <p [style.color]="darkTheme.getColor({white: '#1F195E', dark: '#FFFFFF'})" class="ds-dialog-title">Design</p>
+                            <div class="form" style="flex-direction: column;">
+                                <div class="card">
+                                    <div class="label">
+                                        <div class="icon">
+                                            <img style="z-index: 10;" [src]="'./assets/Color Picker.svg' | resolveAsset" alt="">
+                                        </div>
+                                        <div class="title" style="font-weight: 500">Color</div>
+                                    </div>
+                                    <div>
+                                        <div class="input-color-container">
+                                            <input id="input-color" [(value)]="backgroundColor" [(ngModel)]="backgroundColor" class="input-color" type="color" (change)="setBackgroundColor()">
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="form" style="flex-direction: column;">
+                                <div class="card">
+                                    <div class="label">
+                                        <div class="icon">
+                                            <img style="z-index: 10;" [src]="'./assets/Logo Upload.svg' | resolveAsset" alt="">
+                                        </div>
+                                        <div class="title" style="font-weight: 500">Logo</div>
+                                    </div>
+                                    <div class="button">
+                                        <app-gradient-button [style.margin-left]="'15px'" [fontWeight]="'400'" [textColor]="'#7083A0'" [gradient]="logoURL ? '#FFFFFF, #FFFFFF' : '#F5F6F8, #F5F6F8'" [hoverColor]="'#00B476'" [cursor]="'pointer'" (buttonClick)="logoURL ? editLogoOptions($event) : uploadLogo()"
+                                            [border]="logoURL ? '1px solid #D4D9E2' : ''" [withShadow]="true" [minWidth]="logoURL ? '53px' : '100px'">
+                                            {{logoURL ? 'Edit' : 'Upload'}}
+                                        </app-gradient-button>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="form" style="flex-direction: column;">
+                                <div class="card">
+                                    <div class="label">
+                                        <div class="icon">
+                                            <img style="z-index: 10;" [src]="'./assets/Backside Text.svg' | resolveAsset" alt="">
+                                        </div>
+                                        <div class="title" style="font-weight: 500">Backside Text
+                                            <span class="support-icon" customToolTip [contentTemplate]="backsideTextHelp"><img width="13px" [src]="'./assets/Support (Gray-200).svg' | resolveAsset"></span>
+                                        </div>
+                                        <ng-template #backsideTextHelp>
+                                            <div class="ds-tooltip" style="width: 200px">This text will appear for students on the back of the ID Card.</div>
+                                        </ng-template>
+                                    </div>
+                                    <div class="button">
+                                        <app-gradient-button [style.margin-left]="'15px'" [fontWeight]="'400'" [textColor]="'#7083A0'" [gradient]="backsideText ? '#FFFFFF, #FFFFFF' : '#F5F6F8, #F5F6F8'" [hoverColor]="'#00B476'" [cursor]="'pointer'" (buttonClick)="addBackgroundText()" [border]="backsideText ? '1px solid #D4D9E2' : ''"
+                                            [withShadow]="true" [minWidth]="backsideText ? '53px' : '100px'">
+                                            {{backsideText ? 'Edit' : 'Add text'}}
+                                        </app-gradient-button>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <div>
+                            <p class="ds-dialog-title" [style.color]="darkTheme.getColor({white: '#1F195E', dark: '#FFFFFF'})">Integrations</p>
+                            <div class="form" style="flex-direction: column;">
+                                <div class="card">
+                                    <div class="label">
+                                        <div class="icon">
+                                            <img style="z-index: 10;" [src]="'./assets/Profile Picture Icon.svg' | resolveAsset" alt="">
+                                        </div>
+                                        <div class="title" style="font-weight: 500">Profile Pictures
+                                            <span class="support-icon" customToolTip [contentTemplate]="profilePictureText"><img width="13px" [src]="'./assets/Support (Gray-200).svg' | resolveAsset"></span>
+                                        </div>
+                                        <ng-template #profilePictureText>
+                                            <div class="ds-tooltip" style="width: 200px">Bulk upload profile pictures for your accounts.</div>
+                                        </ng-template>
+                                    </div>
+                                    <div class="button">
+                                        <app-gradient-button [style.margin-left]="'15px'" [textColor]="(status === 'disconnect' ? '#7083A0' : '#FFFFFF')" [gradient]="(status === 'disconnect' ? '#F5F6F8, #F5F6F8' : '#07ABC3, #07ABC3')" (buttonClick)="setUpProfilePicture()">{{ status === 'disconnect' ? 'Set up' : (status === 'approved' ? 'Finish set-up' : 'Settings') }}
+                                        </app-gradient-button>
+                                        <!-- <app-gradient-button [style.margin-left]="'15px'" [textColor]="profile_picture == '' ? '#7083A0' : '#FFFFFF'" [gradient]="profile_picture == '' ? '#F5F6F8, #F5F6F8' : '#07ABC3, #07ABC3'" (buttonClick)="setUpProfilePicture()">{{ profile_picture == '' ? 'Set up' : 'Settings' }}
+                                        </app-gradient-button> -->
+                                        <!-- <app-gradient-button [style.margin-left]="'15px'" [fontWeight]="'400'" [textColor]="'#7083A0'" [gradient]="'#F5F6F8, #F5F6F8'" [hoverColor]="'#00B476'" [cursor]="'pointer'" (buttonClick)="setUpProfilePicture()">
+                                            Set up
+                                        </app-gradient-button> -->
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="form" style="flex-direction: column;">
+                                <div class="card">
+                                    <div class="label">
+                                        <div class="icon">
+                                            <img style="z-index: 10;" [src]="'./assets/ID Number Icon.svg' | resolveAsset" alt="">
+                                        </div>
+                                        <div class="title" style="font-weight: 500">ID Numbers
+                                            <span class="support-icon" customToolTip [contentTemplate]="IDNumberText"><img width="13px" [src]="'./assets/Support (Gray-200).svg' | resolveAsset"></span>
+                                        </div>
+                                        <ng-template #IDNumberText>
+                                            <div class="ds-tooltip" style="width: 200px">Add ID numbers to your accounts</div>
+                                        </ng-template>
+                                    </div>
+                                    <div class="button">
+                                        <app-gradient-button [style.margin-left]="'15px'" [fontWeight]="'400'" [textColor]="IDNumberData.idNumber ? '#FFFFFF' : '#7083A0'" [gradient]="IDNumberData.idNumber ? '#1F195E, #1F195E' : '#F5F6F8, #F5F6F8'" [hoverColor]="'#00B476'" [cursor]="'pointer'"
+                                            (buttonClick)="setUpIDNumber('qr-code',true)">
+                                            {{IDNumberData.idNumber ? 'Settings' : 'Set up'}}
+                                        </app-gradient-button>
+                                    </div>
+                                </div>
+                                <div class="card barcode-type" *ngIf="IDNumberData.idNumber">
+                                    <div class="label ds-flex-center-between">
+                                        <div class="icon">
+                                            <img style="z-index: 10;" [src]="'./assets/Barcode Type Icon.svg' | resolveAsset" alt="">
+                                        </div>
+                                        <div class="title" style="font-weight: 500">Type of barcode</div>
+                                    </div>
+                                    <div class="ds-flex-center-between">
+                                        <app-gradient-button [leftIcon]="selectedBarcode.icon" [rightIcon]="'./assets/Rect (Blue-Gray).svg'" [rightIconWidth]="'9px'" (buttonClick)="openBarcodeTypePopup($event)" [textColor]="'#7083A0'" [gradient]="'#F5F6F8, #F5F6F8'">{{selectedBarcode.label}}</app-gradient-button>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="form" style="flex-direction: column;">
+                                <div class="card">
+                                    <div class="label">
+                                        <div class="icon">
+                                            <img style="z-index: 10;" [src]="'./assets/Gread Level Icon.svg' | resolveAsset" alt="">
+                                        </div>
+                                        <div class="title" style="font-weight: 500">Grade Levels
+                                            <span class="support-icon" customToolTip [contentTemplate]="gradeLevelText"><img width="13px" [src]="'./assets/Support (Gray-200).svg' | resolveAsset"></span>
+                                        </div>
+                                        <ng-template #gradeLevelText>
+                                            <div class="ds-tooltip" style="width: 200px">Add grade levels to your accounts.</div>
+                                        </ng-template>
+                                    </div>
+                                    <div class="button">
+                                        <app-gradient-button [style.margin-left]="'15px'" [fontWeight]="'400'" [textColor]="greadLevel ? '#FFFFFF' : '#7083A0'" [gradient]="greadLevel ? '#1F195E, #1F195E' : '#F5F6F8, #F5F6F8'" [hoverColor]="'#00B476'" [cursor]="'pointer'" (buttonClick)="setUpGreadLevel()">
+                                            {{greadLevel ? 'Settings' : 'Set up'}}
+                                        </app-gradient-button>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <div>
+                            <p [style.color]="darkTheme.getColor({white: '#1F195E', dark: '#FFFFFF'})" class="ds-dialog-title">Settings</p>
+                            <div class="form" style="flex-direction: column;">
+                                <div class="card">
+                                    <div class="label">
+                                        <div class="icon">
+                                            <img style="z-index: 10;" [src]="'./assets/Visible To (White).svg' | resolveAsset" alt="">
+                                        </div>
+                                        <div class="title" style="font-weight: 500">Visible to
+                                            <span class="support-icon" customToolTip [contentTemplate]="visibleToHelp"><img width="13px" [src]="'./assets/Support (Gray-200).svg' | resolveAsset"></span>
+                                        </div>
+                                        <ng-template #visibleToHelp>
+                                            <div class="ds-tooltip" style="width: 200px">Choose who will see the ID cards in their SmartPass app.</div>
+                                        </ng-template>
+                                    </div>
+                                    <div>
+                                        <div class="ds-flex-center-between">
+                                            <app-gradient-button [rightIcon]="'./assets/Rect (Blue-Gray).svg'" [rightIconWidth]="'9px'" (buttonClick)="openVisibleToPopup($event)" [textColor]="'#7083A0'" [gradient]="'#F5F6F8, #F5F6F8'">{{IDCardVisibleTo}}</app-gradient-button>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="form" style="flex-direction: column;" *ngIf="IDCardEnabled">
+                                <div class="card">
+                                    <div class="label">
+                                        <!-- <div class="icon">
+                                            <img style="z-index: 10;" [src]="'./assets/Logo Upload.svg' | resolveAsset" alt="">
+                                        </div> -->
+                                        <div class="title" style="font-weight: 500">Disable ID Cards</div>
+                                    </div>
+                                    <div class="button">
+                                        <app-gradient-button [style.margin-left]="'15px'" [fontWeight]="'400'" [textColor]="'#7083A0'" [gradient]="'#F5F6F8, #F5F6F8'" [hoverColor]="'#00B476'" [cursor]="'pointer'" (buttonClick)="enableIDCard()">
+                                            <!-- {{IDCardEnabled ? 'Disable' : 'Enable'}} -->
+                                            Disable
+                                        </app-gradient-button>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="right">
+            <div style="width: 100%;">
+                <div class="main-wrapper">
+                    <p class="ds-dialog-title" [style.color]="darkTheme.getColor({white: '#1F195E', dark: '#FFFFFF'})">Preview</p>
+                    <app-id-card [isDummyCard]="true" [isLoggedIn]="false" [backgroundColor]="backgroundColor" [logoURL]="logoURL" [backsideText]="backsideText" [showCustomID]="showCustomID" [IDNumberData]="IDNumberData" [profile_picture]="profile_picture" [greadLevel]="greadLevel"></app-id-card>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>

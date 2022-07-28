@@ -36,8 +36,9 @@ import {
   RecommendedDialogConfig
 } from '../../shared/shared-components/confirmation-dialog/confirmation-dialog.component';
 import {SpDataTableComponent} from '../sp-data-table/sp-data-table.component';
-declare const window: Window & typeof globalThis & {passClick: any, reportedPassClick: any};
+import {ActivatedRoute, Router} from '@angular/router';
 
+declare const window: Window & typeof globalThis & {passClick: any, reportedPassClick: any};
 type OverflownTries = HttpErrorResponse & {overflown: boolean};
 
 export interface View {
@@ -149,7 +150,7 @@ export class ExploreComponent implements OnInit, OnDestroy {
 
   currentView$: BehaviorSubject<string> = new BehaviorSubject<string>(this.storage.getItem('explore_page') || 'pass_search');
 
-  sortColumn: string = 'Pass start time';
+  sortColumn = 'Pass start time';
   currentColumns: any;
   selectedRows: any[] = [];
   allData: any[] = [];
@@ -175,7 +176,9 @@ export class ExploreComponent implements OnInit, OnDestroy {
     private adminService: AdminService,
     public xlsx: XlsxService,
     private userService: UserService,
-    private componentService: ComponentsService
+    private componentService: ComponentsService,
+    private route: ActivatedRoute,
+    private router: Router
     ) {
     window.passClick = (id) => {
       this.passClick(id);
@@ -183,6 +186,9 @@ export class ExploreComponent implements OnInit, OnDestroy {
     window.reportedPassClick = (id, invisBackdrop) => {
       this.openPassDialog(id, !!invisBackdrop);
     };
+    if (window.history.state.open_on_load?.dialog === 'admin/explore/report_search') {
+      this.currentView$.next('report_search');
+    }
   }
 
   dateText({start, end}): string {

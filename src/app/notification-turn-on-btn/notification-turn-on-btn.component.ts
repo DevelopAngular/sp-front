@@ -66,6 +66,8 @@ export class NotificationTurnOnBtnComponent implements OnInit {
        this.notificationDialog.open(NotificationFormComponent, {
          panelClass: 'form-dialog-container',
          backdropClass: 'custom-backdrop',
+         width: '462px',
+         height: '600px',
        });
      }
 
