@@ -39,12 +39,17 @@ const reducer = createReducer(
   on(passesActions.getMorePassesFailure, (state, {errorMessage}) => ({...state, loaded: true, loading: false})),
   on(passesActions.endPassAction, (state) => ({ ...state, startPassLoading: true })),
   on(passesActions.endPassActionSuccess, passesActions.endPassActionFailure, (state) => ({ ...state, startPassLoading: false})),
-  on(passesActions.removePassesAction, (state, {passIds}) => {
+  // TODO shoud actual count number to come from server?
+  on(passesActions.changePassesCollectionAction, (state, {passIds}) => {
     const nextState = adapter.removeMany(passIds, state);
-    nextState.lastAddedPasses = [...Object.values(nextState.entities)];
-    nextState.totalCount -= passIds.length;
+    const rows = Object.values(nextState.entities);
+    nextState.lastAddedPasses = [...rows];
+    nextState.totalCount = rows.length;
     // should not happens
-    if (nextState.totalCount < 0) nextState.totalCount = 0; 
+    if (nextState.totalCount < 0) {
+      console.log(` got an unexpected totalCount: ${nextState.totalCount}`);
+      nextState.totalCount = 0;
+    }
     return nextState;
   })
 );

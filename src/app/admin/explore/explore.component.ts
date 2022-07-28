@@ -593,7 +593,7 @@ export class ExploreComponent implements OnInit, OnDestroy {
 
             this.passtable.dataSource.allData = originalRows.filter(s => !r.dids.includes(+s.id));
             // just update the totalCOunt and lastAddedPasses
-            this.hallPassService.removePasses(r.dids);
+            this.hallPassService.changePassesCollection(r.dids);
             this.clearTableSelection();
           }),
           takeUntil(this.destroy$),

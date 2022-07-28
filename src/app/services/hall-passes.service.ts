@@ -18,7 +18,7 @@ import {getPassStats} from '../ngrx/pass-stats/actions';
 import {getPassStatsResult} from '../ngrx/pass-stats/state/pass-stats-getters.state';
 import {bufferCount, filter, mergeMap, reduce} from 'rxjs/operators';
 import {constructUrl} from '../live-data/helpers';
-import {endPassAction, getMorePasses, searchPasses, sortPasses, removePassesAction} from '../ngrx/passes/actions';
+import {endPassAction, getMorePasses, searchPasses, sortPasses, changePassesCollectionAction} from '../ngrx/passes/actions';
 import {
   getMorePassesLoading,
   getPassesCollection,
@@ -276,8 +276,8 @@ export class HallPassesService {
     return this.http.get(`v1/users/${userId}/hall_pass_stats?recent_past_passes=${pastPasses}&limit=50`);
   }
 
-  removePasses(passIds: number[]) {
-    this.store.dispatch(removePassesAction({passIds}));
+  changePassesCollection(passIds: number[]) {
+    this.store.dispatch(changePassesCollectionAction({passIds}));
   }
 
 }
