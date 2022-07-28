@@ -9,10 +9,12 @@ import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { BackgroundTextComponent } from './background-text/background-text.component';
 import { UploadLogoComponent } from './upload-logo/upload-logo.component';
 import { IdCardProfilePictureComponent } from './id-card-profile-picture/id-card-profile-picture.component';
+import { IdCardIdNumbersComponent } from './id-card-id-numbers/id-card-id-numbers.component';
+import { IdCardGradeLevelsComponent } from './id-card-grade-levels/id-card-grade-levels.component';
 
 
 @NgModule({
-  declarations: [IdCardsComponent, IdCardEditorComponent, BackgroundTextComponent, UploadLogoComponent, IdCardProfilePictureComponent],
+  declarations: [IdCardsComponent, IdCardEditorComponent, BackgroundTextComponent, UploadLogoComponent, IdCardProfilePictureComponent, IdCardIdNumbersComponent, IdCardGradeLevelsComponent],
   imports: [
     CommonModule,
     IdCardsRoutingModule,

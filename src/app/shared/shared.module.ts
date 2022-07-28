@@ -92,6 +92,8 @@ import {ConfirmationDialogComponent} from './shared-components/confirmation-dial
 import {NuxUniversalComponent} from '../nux-components/nux-universal/nux-universal.component';
 import { ConfirmationComponent } from './shared-components/confirmation/confirmation.component';
 import {PassLimitInfoComponent} from '../pass-limit-info/pass-limit-info.component';
+import { IdNumbersComponent } from '../admin/accounts/id-numbers/id-numbers.component';
+import { GradeLevelsComponent } from '../admin/accounts/grade-levels/grade-levels.component';
 
 const DEFAULT_SWIPER_CONFIG: SwiperConfigInterface = {
   direction: 'horizontal',
@@ -191,7 +193,9 @@ const DEFAULT_SWIPER_CONFIG: SwiperConfigInterface = {
     ConfirmationDialogComponent,
     NuxUniversalComponent,
     PassLimitInfoComponent,
-    ConfirmationComponent
+    ConfirmationComponent,
+    IdNumbersComponent,
+    GradeLevelsComponent,
   ],
   exports: [
     ReactiveFormsModule,
@@ -271,7 +275,9 @@ const DEFAULT_SWIPER_CONFIG: SwiperConfigInterface = {
     LinkGeneratedDialogComponent,
     StatusChipComponent,
     NuxUniversalComponent,
-    PassLimitInfoComponent
+    PassLimitInfoComponent,
+    IdNumbersComponent,
+    GradeLevelsComponent,
   ],
   providers: [
     {

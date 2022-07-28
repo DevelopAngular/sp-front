@@ -39,22 +39,21 @@ export class IdCardComponent implements OnInit {
     console.log("isLoggedIn : ", this.isLoggedIn)
     if (this.isLoggedIn) {
       this.userService.user$.subscribe({
-        next: user => {
+        next: async user => {
           this.userDetails = User.fromJSON(user);
           this.userName = this.userDetails.display_name;
            this.userRole = this.userDetails.isStudent() ? 'Student' : 'Staff'
            this.profile_picture = this.userDetails?.profile_picture;
            this.greadLevel = this.userDetails?.grade_level;
-          if (this.showCustomID && this.userDetails?.custom_id) {
-            this.IDNumberData.idNumber = this.userDetails?.custom_id || '123456'
-            this.IDNumberData.barcodeURL =  this.qrBarcodeGenerator.selectBarcodeType(
+          if (this.showCustomID && this.userDetails?.custom_id && this.userDetails?.custom_id != undefined) {
+            this.IDNumberData.idNumber = this.userDetails?.custom_id
+            this.IDNumberData.barcodeURL =  await this.qrBarcodeGenerator.selectBarcodeType(
               'qr-code',
               this.IDNumberData.idNumber
             )
           }else {
             this.showCustomID = false;
           }
-          console.log("User : ",this.userDetails, this.userDetails.isStudent(), this.userDetails.isAdmin(), this.userDetails.isAssistant())
         }
       })
     }

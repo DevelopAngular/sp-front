@@ -97,10 +97,10 @@
                                         </ng-template>
                                     </div>
                                     <div class="button">
-                                        <!-- <app-gradient-button [style.margin-left]="'15px'" [textColor]="(status === 'disconnect' ? '#7083A0' : '#FFFFFF')" [gradient]="(status === 'disconnect' ? '#F5F6F8, #F5F6F8' : '#07ABC3, #07ABC3')" (buttonClick)="setUpProfilePicture()">{{ status === 'disconnect' ? 'Set up' : (status === 'approved' ? 'Finish set-up' : 'Settings') }}
-                                        </app-gradient-button> -->
-                                        <app-gradient-button [style.margin-left]="'15px'" [textColor]="profile_picture == '' ? '#7083A0' : '#FFFFFF'" [gradient]="profile_picture == '' ? '#F5F6F8, #F5F6F8' : '#07ABC3, #07ABC3'" (buttonClick)="setUpProfilePicture()">{{ profile_picture == '' ? 'Set up' : 'Settings' }}
+                                        <app-gradient-button [style.margin-left]="'15px'" [textColor]="(status === 'disconnect' ? '#7083A0' : '#FFFFFF')" [gradient]="(status === 'disconnect' ? '#F5F6F8, #F5F6F8' : '#07ABC3, #07ABC3')" (buttonClick)="setUpProfilePicture()">{{ status === 'disconnect' ? 'Set up' : (status === 'approved' ? 'Finish set-up' : 'Settings') }}
                                         </app-gradient-button>
+                                        <!-- <app-gradient-button [style.margin-left]="'15px'" [textColor]="profile_picture == '' ? '#7083A0' : '#FFFFFF'" [gradient]="profile_picture == '' ? '#F5F6F8, #F5F6F8' : '#07ABC3, #07ABC3'" (buttonClick)="setUpProfilePicture()">{{ profile_picture == '' ? 'Set up' : 'Settings' }}
+                                        </app-gradient-button> -->
                                         <!-- <app-gradient-button [style.margin-left]="'15px'" [fontWeight]="'400'" [textColor]="'#7083A0'" [gradient]="'#F5F6F8, #F5F6F8'" [hoverColor]="'#00B476'" [cursor]="'pointer'" (buttonClick)="setUpProfilePicture()">
                                             Set up
                                         </app-gradient-button> -->
