@@ -282,11 +282,6 @@ $justify) {
     flex-end);
 }
 
-.ds-flex-start-start {
-    @include flexLayout(flex-start,
-    flex-start);
-}
-
 .ds-flex-center-between {
     @include flexLayout(center,
     space-between);
@@ -312,11 +307,6 @@ $justify) {
     flex-end);
 }
 
-.ds-flex-center-center {
-    @include flexLayout(center,
-    center);
-}
-
 .ds-flex-end-between {
     @include flexLayout(flex-end,
     space-between);
@@ -335,11 +325,6 @@ $justify) {
 .ds-flex-end-center {
     @include flexLayout(flex-end,
     center);
-}
-
-.ds-flex-end-end {
-    @include flexLayout(flex-end,
-    flex-end);
 }
 
 .ds-flex-end-end {

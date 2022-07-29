@@ -34,6 +34,7 @@ import { ComponentsService } from '../../services/components.service';
 import { EncounterDetectionService } from '../../services/EncounterDetectionService';
 import { EncounterDetection } from '../../models/EncounterDetection';
 import { EncounterDetectionDialogComponent } from './encounter-detection-dialog/encounter-detection-dialog.component';
+import {ActivatedRoute, Router} from '@angular/router';
 
 declare const window;
 
@@ -155,7 +156,7 @@ export class ExploreComponent implements OnInit, OnDestroy {
 
   currentView$: BehaviorSubject<string> = new BehaviorSubject<string>(this.storage.getItem('explore_page') || 'pass_search');
 
-  sortColumn: string = 'Pass start time';
+  sortColumn = 'Pass start time';
   currentColumns: any;
   selectedRows: any[] = [];
   allData: any[] = [];
@@ -182,14 +183,19 @@ export class ExploreComponent implements OnInit, OnDestroy {
     public xlsx: XlsxService,
     private userService: UserService,
     private componentService: ComponentsService,
-    private encounterDetectionService: EncounterDetectionService
-  ) {
+    private encounterDetectionService: EncounterDetectionService,
+    private route: ActivatedRoute,
+    private router: Router
+    ) {
     window.passClick = (id) => {
       this.passClick(id);
     };
     window.reportedPassClick = (id, invisBackdrop) => {
       this.openPassDialog(id, !!invisBackdrop);
     };
+    if (window.history.state.open_on_load?.dialog === 'admin/explore/report_search') {
+      this.currentView$.next('report_search');
+    }
   }
 
   dateText({ start, end }): string {
