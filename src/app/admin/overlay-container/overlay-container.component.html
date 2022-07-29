@@ -67,6 +67,7 @@
 
         <app-new-room-in-folder
           [form]="form" *ngIf="currentPage === 5"
+          [visibilityForm]="visibilityForm"
           [passLimitForm]="passLimitForm"
           [isEnableRoomTrigger$]="enableRoomTrigger"
           [showErrors]="showErrors"

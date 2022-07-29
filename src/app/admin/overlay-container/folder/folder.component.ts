@@ -163,7 +163,7 @@ export class FolderComponent implements OnInit, OnDestroy {
                 .subscribe((res: Location[]) => {
                     this.roomsImFolder = res;
                     this.initialFolderData = {
-                      folderName: cloneDeep(this.folderName),
+                      folderName: this.folderName,
                       roomsInFolder: cloneDeep(this.roomsImFolder)
                     };
                     this.folderRoomsLoaded = true;

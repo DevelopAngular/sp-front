@@ -3,6 +3,7 @@ import {FormGroup} from '@angular/forms';
 import {RoomData} from '../overlay-data.service';
 import {BehaviorSubject, Subject} from 'rxjs';
 import {ValidButtons} from '../advanced-options/advanced-options.component';
+import {DEFAULT_VISIBILITY_STUDENTS} from '../visibility-room/visibility-room.type';
 
 @Component({
   selector: 'app-new-room-in-folder',
@@ -12,6 +13,8 @@ import {ValidButtons} from '../advanced-options/advanced-options.component';
 export class NewRoomInFolderComponent implements OnInit {
 
   @Input() form: FormGroup;
+
+  @Input() visibilityForm: FormGroup;
 
   @Input() passLimitForm: FormGroup;
 
@@ -46,6 +49,7 @@ export class NewRoomInFolderComponent implements OnInit {
           now: { state: '', data: { all_teach_assign: null, any_teach_assign: null, selectedTeachers: [] } },
           future: { state: '', data: { all_teach_assign: null, any_teach_assign: null, selectedTeachers: [] } }
       },
+      visibility: DEFAULT_VISIBILITY_STUDENTS,
       enable: true
   };
 

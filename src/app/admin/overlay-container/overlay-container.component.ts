@@ -787,9 +787,14 @@ export class OverlayContainerComponent implements OnInit, OnDestroy {
           let id;
           let data;
           if (isString(location.id)) {
-            location.category = this.folderData.folderName + salt;
-            location.teachers = location.teachers.map(t => t.id);
-            return this.locationService.createLocation(location);
+            data = location;
+            data.category = this.folderData.folderName + salt;
+            data.teachers = location.teachers.map(t => t.id);
+            if (data?.visibility_students) {
+              data.visibility_students = data.visibility_students.map((s: User) => s.id);
+            }
+            //location.visibility_type = 
+            return this.locationService.createLocation(data);
           } else {
             id = location.id;
             data = location;
@@ -801,7 +806,7 @@ export class OverlayContainerComponent implements OnInit, OnDestroy {
               data.teachers = data.teachers.map(teacher => +teacher.id);
             }
             if (data?.visibility_students) {
-              data.visibility_students = data.visibility_students.map(s => s.id);
+              data.visibility_students = data.visibility_students.map((s: User) => s.id);
             }
 
             return this.locationService.updateLocation(id, data);
@@ -930,6 +935,8 @@ export class OverlayContainerComponent implements OnInit, OnDestroy {
     this.overlayService.dragEvent$.next(dropAreaColor);
   }
 
+  // TODO bellow typed signature breaks things
+  //roomResult({data, buttonState}: {data: RoomData, buttonState: ValidButtons}) {
   roomResult({data, buttonState}) {
     this.roomData = data;
     this.isOpenRoom = this.roomData.enable;
@@ -1040,6 +1047,11 @@ export class OverlayContainerComponent implements OnInit, OnDestroy {
   }
 
   normalizeRoomData(room) {
+    const visibilityData = {
+      visibility_students: room.visibility.over,
+      visibility_type: room.visibility.mode,
+    }
+
     return {
       id: room.id,
       title: room.roomName,
@@ -1053,7 +1065,8 @@ export class OverlayContainerComponent implements OnInit, OnDestroy {
       max_passes_from_active: false,
       max_passes_to: +this.passLimitForm.get('to').value,
       max_passes_to_active: !!this.passLimitForm.get('toEnabled').value,
-      enable: room.enable
+      enable: room.enable,
+      ...visibilityData,
     };
   }
 
