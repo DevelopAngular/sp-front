@@ -377,7 +377,6 @@ export class StudentInfoCardComponent implements OnInit, AfterViewInit, OnDestro
         } else if (action === 'delete') {
           this.userService.deleteUserRequest(this.profile, '_profile_student');
         }else if (action === 'idcard') {
-          console.log("this.profile : ", this.profile);
           let idCardData: IDCard = {
             backgroundColor: this.IDCARDDETAILS.color,
             greadLevel: this.IDCARDDETAILS.show_grade_levels ? this.profile.grade_level : null,
@@ -385,6 +384,7 @@ export class StudentInfoCardComponent implements OnInit, AfterViewInit, OnDestro
               idNumber: this.profile?.custom_id,
               barcodeURL: await this.qrBarcodeGenerator.selectBarcodeType(this.IDCARDDETAILS.barcode_type, this.profile?.custom_id)
             } : {idNumber: '', barcodeURL: ''},
+            barcodeType: this.IDCARDDETAILS.barcode_type,
             backsideText: this.IDCARDDETAILS.backside_text,
             logoURL: this.IDCARDDETAILS.signed_url,
             profilePicture: this.profile.profile_picture,

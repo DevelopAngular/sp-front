@@ -49,7 +49,7 @@
             <div class="buttons">
                 <app-gradient-button [gradient]="!uploadingProgress.csv.inProcess && !uploadingProgress.csv.complete ? '#7F879D, #7F879D' : '#07ABC3, #07ABC3'" [hoverColor]="'#7F879D'" [leftIcon]="'./assets/Simple CSV (White).svg'" (buttonClick)="csvFile.click()" [size]="'small'">{{ !uploadingProgress.csv.inProcess && !uploadingProgress.csv.complete ? 'Choose CSV' : 'File selected' }}
                 </app-gradient-button>
-                <app-gradient-button [style.margin-left]="'7px'" [size]="'small'" [gradient]="'#F4F4F4, #F4F4F4'" [buttonLink]="'./assets/xlsx/SmartPass Grade Levels.csv'" [linkType]="'_self'" [download]="true" [hoverColor]="'#F4F4F4'" [textColor]="'#1E194F'" [leftIcon]="'./assets/Download (Navy).svg'"
+                <app-gradient-button [style.margin-left]="'7px'" [size]="'small'" [gradient]="'#F4F4F4, #F4F4F4'" [buttonLink]="'./assets/xlsx/SmartPass Grade Level Template.csv'" [linkType]="'_self'" [download]="true" [hoverColor]="'#F4F4F4'" [textColor]="'#1E194F'" [leftIcon]="'./assets/Download (Navy).svg'"
                     [text]="'Download Template'" [cursor]="'pointer'">
                 </app-gradient-button>
 

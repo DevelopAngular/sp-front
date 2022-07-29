@@ -15,6 +15,7 @@ export class IdCardComponent implements OnInit {
   @Input() schoolName: string = 'Walt Whitman High School';
   @Input() userRole: string = 'Staff';
   @Input() backgroundColor: string = "#00B476";
+  @Input() barcodeType: string = "qr-code";
   @Input() profile_picture: string;
   @Input() backsideText: string;
   @Input() logoURL: string;
@@ -35,8 +36,7 @@ export class IdCardComponent implements OnInit {
   }
 
   ngOnInit(): void {
-    // this.showCustomID == false ? this.IDNumberData = {} : null
-    console.log("isLoggedIn : ", this.isLoggedIn)
+    this.schoolName = this.userService.getUserSchool().name;
     if (this.isLoggedIn) {
       this.userService.user$.subscribe({
         next: async user => {
@@ -48,7 +48,7 @@ export class IdCardComponent implements OnInit {
           if (this.showCustomID && this.userDetails?.custom_id && this.userDetails?.custom_id != undefined) {
             this.IDNumberData.idNumber = this.userDetails?.custom_id
             this.IDNumberData.barcodeURL =  await this.qrBarcodeGenerator.selectBarcodeType(
-              'qr-code',
+              this.barcodeType,
               this.IDNumberData.idNumber
             )
           }else {
