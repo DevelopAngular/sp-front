@@ -91,6 +91,7 @@ import {StatusChipComponent} from '../admin/explore/status-chip/status-chip.comp
 import {ConfirmationDialogComponent} from './shared-components/confirmation-dialog/confirmation-dialog.component';
 import {NuxUniversalComponent} from '../nux-components/nux-universal/nux-universal.component';
 import {PassLimitFeedbackComponent} from '../pass-limit-feedback/pass-limit-feedback.component';
+import {PassLimitInputComponent} from '../pass-limit-input/pass-limit-input.component';
 import { ConfirmationComponent } from './shared-components/confirmation/confirmation.component';
 import { IdNumbersComponent } from '../admin/accounts/id-numbers/id-numbers.component';
 import { GradeLevelsComponent } from '../admin/accounts/grade-levels/grade-levels.component';
@@ -192,6 +193,7 @@ const DEFAULT_SWIPER_CONFIG: SwiperConfigInterface = {
     StatusChipComponent,
     ConfirmationDialogComponent,
     NuxUniversalComponent,
+    PassLimitInputComponent
     PassLimitFeedbackComponent,
     ConfirmationComponent,
     IdNumbersComponent,
@@ -276,6 +278,7 @@ const DEFAULT_SWIPER_CONFIG: SwiperConfigInterface = {
     LinkGeneratedDialogComponent,
     StatusChipComponent,
     NuxUniversalComponent,
+    PassLimitInputComponent
     PassLimitFeedbackComponent,
     IdNumbersComponent,
     GradeLevelsComponent,

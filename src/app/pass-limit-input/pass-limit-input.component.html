@@ -1,0 +1,35 @@
+<div class="pass-limit-input-template ds-flex-row" #passLimitInputWrapper>
+  <app-input
+    (click)="openPassLimitDropdown()"
+    color="#6651F1"
+    [showUnits]="true"
+    [units]="control.value === '1' ? 'pass' : 'passes'"
+    [isFocus]="false"
+    width="100px"
+    placeholder="# of passes"
+    [formGroup]="formGroup"
+    [controlName]="control"
+    (blurEvent)="passLimitDropdownRef?.close()"></app-input>
+
+  <div class="per-day-wrapper">
+    <span>per day</span>
+  </div>
+  <p style="width: 100%; opacity: 0.8; font-size: 12px" *ngIf="control.errors">Passes must be a whole number between 0 and 50</p>
+</div>
+
+<ng-template #passLimitDropdown let-isIndividual="isIndividual">
+  <div class="wrapper pass-limit-dropdown">
+    <div class="options">
+      <div class="option" *ngIf="isIndividual">
+        <div class="title">
+          No Limits
+        </div>
+      </div>
+      <div class="option" *ngFor="let limit of filteredArray$ | async" (click)="passLimitDropdownRef.close(limit.value)">
+        <div class="title">
+          {{ limit.text }}
+        </div>
+      </div>
+    </div>
+  </div>
+</ng-template>

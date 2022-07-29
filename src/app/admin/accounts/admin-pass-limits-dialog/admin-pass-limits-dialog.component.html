@@ -62,7 +62,11 @@
           </div>
 
           <ng-container *ngIf="passLimitForm.value['limitEnabled']">
-            <ng-template [ngTemplateOutlet]="passLimitInput" [ngTemplateOutletContext]="{formGroup: passLimitForm, control: passLimitForm.get('passLimit')}"></ng-template>
+            <app-pass-limit-input
+              [formGroup]="passLimitForm"
+              [control]="passLimitForm.get('passLimit')"
+              [isIndividual]="false"
+            ></app-pass-limit-input>
           </ng-container>
         </div>
 
@@ -190,7 +194,11 @@
         <section class="individual-limit-override ds-mb-20">
           <span class="ds-dialog-heading ds-blue-gray" style="padding: 0 !important">Limit</span>
           <p class="ds-dialog-normal-text" style="margin-top: 4px">This limit overrides the School Pass Limit of {{passLimit?.passLimit}} passes/day</p>
-          <ng-template [ngTemplateOutlet]="passLimitInput" [ngTemplateOutletContext]="{formGroup: individualOverrideForm, control: individualOverrideForm.get('passLimit')}"></ng-template>
+          <app-pass-limit-input
+            [formGroup]="individualOverrideForm"
+            [control]="individualOverrideForm.get('passLimit')"
+            [isIndividual]="true"
+          ></app-pass-limit-input>
         </section>
 
         <section class="individual-limit-description" style="margin-bottom: 60px">
@@ -204,25 +212,6 @@
 </mat-tab-group>
 
 <app-pass-limit-feedback *ngIf="!contentLoading" style="position: absolute; width: 385px; margin-top: -15px;"></app-pass-limit-feedback>
-
-<ng-template #passLimitInput let-formGroup="formGroup" let-control="control">
-  <div class="pass-limit-input-template ds-flex-row">
-    <app-input
-      color="#6651F1"
-      [showUnits]="true"
-      [units]="control.value === '1' ? 'pass' : 'passes'"
-      [isFocus]="false"
-      width="100px"
-      placeholder="# of passes"
-      [formGroup]="formGroup"
-      [controlName]="control"></app-input>
-
-    <div class="per-day-wrapper">
-      <span>per day</span>
-    </div>
-    <p style="width: 100%; opacity: 0.8; font-size: 12px" *ngIf="control.errors">Passes must be greater than 0 and must be a whole number</p>
-  </div>
-</ng-template>
 
 <ng-template #buttonLoading let-loading="loading" let-text="text">
   <span *ngIf="!loading">{{text}}</span>

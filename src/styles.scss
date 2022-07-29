@@ -313,6 +313,10 @@ div {
   padding: 0;
 }
 
+.overlay-dialog.show-overlay .mat-dialog-container {
+  overflow: auto !important;
+}
+
 .overlay-dialog-no-background {
   @extend .overlay-dialog;
 
