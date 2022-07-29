@@ -5,6 +5,7 @@ import {BehaviorSubject, Subject} from 'rxjs';
 
 import {RoomData} from '../overlay-data.service';
 import {ValidButtons} from '../advanced-options/advanced-options.component';
+import {DEFAULT_VISIBILITY_STUDENTS} from '../visibility-room/visibility-room.type';
 
 @Component({
   selector: 'app-edit-room-in-folder',
@@ -16,6 +17,8 @@ export class EditRoomInFolderComponent implements OnInit {
     @Input() form: FormGroup;
 
     @Input() passLimitForm: FormGroup;
+
+    @Input() visibilityForm: FormGroup;
 
     @Input() isEnableRoomTrigger$: Subject<boolean>;
 
@@ -48,6 +51,7 @@ export class EditRoomInFolderComponent implements OnInit {
             now: { state: '', data: { all_teach_assign: null, any_teach_assign: null, selectedTeachers: [] } },
             future: { state: '', data: { all_teach_assign: null, any_teach_assign: null, selectedTeachers: [] } }
         },
+        visibility: DEFAULT_VISIBILITY_STUDENTS,
         enable: true
     };
 
