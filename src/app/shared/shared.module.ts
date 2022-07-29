@@ -193,7 +193,7 @@ const DEFAULT_SWIPER_CONFIG: SwiperConfigInterface = {
     StatusChipComponent,
     ConfirmationDialogComponent,
     NuxUniversalComponent,
-    PassLimitInputComponent
+    PassLimitInputComponent,
     PassLimitFeedbackComponent,
     ConfirmationComponent,
     IdNumbersComponent,
@@ -278,7 +278,7 @@ const DEFAULT_SWIPER_CONFIG: SwiperConfigInterface = {
     LinkGeneratedDialogComponent,
     StatusChipComponent,
     NuxUniversalComponent,
-    PassLimitInputComponent
+    PassLimitInputComponent,
     PassLimitFeedbackComponent,
     IdNumbersComponent,
     GradeLevelsComponent,
