@@ -13,6 +13,7 @@ import {SharedModule} from '../../shared/shared.module';
 import {SearchCalendarComponent} from './search-calendar/search-calendar.component';
 import {AdminModule} from '../admin.module';
 import {AdminSharedModule} from '../shared/admin-shared.module';
+import { EncounterDetectionDialogComponent } from './encounter-detection-dialog/encounter-detection-dialog.component';
 
 @NgModule({
   declarations: [
@@ -23,6 +24,7 @@ import {AdminSharedModule} from '../shared/admin-shared.module';
     StatusFilterComponent,
     StatusEditorComponent,
     SearchCalendarComponent,
+    EncounterDetectionDialogComponent,
   ],
   imports: [
     CommonModule,

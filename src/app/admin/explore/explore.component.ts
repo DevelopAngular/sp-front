@@ -33,6 +33,7 @@ import { XlsxService } from '../../services/xlsx.service';
 import { ComponentsService } from '../../services/components.service';
 import { EncounterDetectionService } from '../../services/EncounterDetectionService';
 import { EncounterDetection } from '../../models/EncounterDetection';
+import { EncounterDetectionDialogComponent } from './encounter-detection-dialog/encounter-detection-dialog.component';
 
 declare const window;
 
@@ -192,7 +193,6 @@ export class ExploreComponent implements OnInit, OnDestroy {
   }
 
   dateText({ start, end }): string {
-    console.log("HERE")
     if (start.isSame(moment().subtract(3, 'days'), 'day')) {
       return 'Last 3 days';
     } else if (start.isSame(moment().subtract(7, 'days'), 'day')) {
@@ -324,7 +324,7 @@ export class ExploreComponent implements OnInit, OnDestroy {
 
           this.searchEncounterDetection();
           // this.search(300);
-          // return this.encounterDetectionService.encounteDetection$;
+          // return this.encounterDetectionService.passesLoaded$;
         }
       });
 
@@ -417,7 +417,6 @@ export class ExploreComponent implements OnInit, OnDestroy {
             let encounterDetection: EncounterDetection[] = result.results;
             console.log("HERE IN encounterDetection : ", encounterDetection);
             const getColumns = this.storage.getItem(`order${this.currentView$.getValue()}`);
-            console.log("getColumns : ", getColumns)
             const columns = {};
             if (getColumns) {
               const columnsOrder = ('Pass,' + getColumns).split(',');
@@ -429,34 +428,25 @@ export class ExploreComponent implements OnInit, OnDestroy {
             if (!encounterDetection.length) {
               return getColumns ? [this.currentColumns] : [{
                 'Students': null,
-                'encounters': null,
+                '# of encounters': null,
                 'Passes': null,
               }];
             }
 
             // this.passSearchState.isEmpty = false;
             const response = encounterDetection.map(encounter => {
-              let passImgs = []
-              var e = document.createElement('div');
-              let passess;
-              for (let i = 0; i < encounter.encounters.length; i++) {
-                const element = encounter.encounters[i];
-                const passImg = this.domSanitizer.bypassSecurityTrustHtml(`<div class="pass-icon" style="background: ${this.getGradient(element.firstStudentPass.gradient_color)}; cursor: pointer">
-                                        </div>`);
-                                        console.log("passImg  :", passImg);
-                                        passess = passess + passImg
-
-              } 
+              const passImg = this.createPasses(encounter.encounters);
+              // const passImg = this.domSanitizer.bypassSecurityTrustHtml(`<div class="pass-icon" style="background: ${this.getGradient(encounter.encounters[0].firstStudentPass.gradient_color)}; cursor: pointer"></div>`)
               const DEFAULTAVATAR = "'./assets/Avatar Default.svg' | resolveAsset"
               const students =
                 `<div class="ds-flex-center-start">
                   <div class="ds-flex-center-start name-wrapper"><img src=${encounter.firstStudent.profile_picture ?? DEFAULTAVATAR}><p class="student-name">${encounter.firstStudent.display_name}</p></div>
                   <div class="ds-flex-center-start name-wrapper"><img src=${encounter.secondStudent.profile_picture ?? DEFAULTAVATAR}><p class="student-name">${encounter.secondStudent.display_name}</p></div>
-            </div>`
+              </div>`
               let rawObj: any = {
                 'Students': students,
-                'encounters': encounter.numberOfEncounters,
-                'Passes': passess,
+                '# of encounters': encounter.numberOfEncounters,
+                'Passes': passImg,
               };
 
               const currentObj = {};
@@ -468,9 +458,9 @@ export class ExploreComponent implements OnInit, OnDestroy {
 
               rawObj = this.storage.getItem(`order${this.currentView$.getValue()}`) ? currentObj : rawObj;
 
-              // Object.defineProperty(rawObj, 'id', { enumerable: false, value: pass.id });
-              // Object.defineProperty(rawObj, 'date', { enumerable: false, value: moment(pass.created) });
-              // Object.defineProperty(rawObj, 'travelType', { enumerable: false, value: pass.travel_type });
+              Object.defineProperty(rawObj, 'encounters', { enumerable: false, value: encounter.encounters });
+              Object.defineProperty(rawObj, 'firstStudent', { enumerable: false, value: encounter.firstStudent });
+              Object.defineProperty(rawObj, 'secondStudent', { enumerable: false, value: encounter.secondStudent });
               // Object.defineProperty(rawObj, 'email', { enumerable: false, value: pass.student.primary_email });
 
               return rawObj;
@@ -486,109 +476,109 @@ export class ExploreComponent implements OnInit, OnDestroy {
     console.log("this.encounterDetectionData$ : ", this.encounterDetectionData$);
 
     this.contactTraceData$ = this.contactTraceService.contactTraceData$
-        .pipe(
-          filter(() => this.currentView$.getValue() === 'contact_trace'),
-          map((contacts: ContactTrace[]) => {
-            if (!contacts.length) {
-              this.contactTraceState.isEmpty = true;
-              return [{
-                'Student Name': null,
-                'Degree': null,
-                'Contact connection': null,
-                'Contact date': null,
-                'Duration': null,
-                'Passes': null
-              }];
-            }
-            this.contactTraceState.isEmpty = false;
-            this.contact_trace_passes = {};
-            const response = contacts.map(contact => {
-              const duration = moment.duration(contact.total_contact_duration, 'seconds');
-              const connection: any[] =
-                contact.contact_paths.length === 2 && isEqual(contact.contact_paths[0], contact.contact_paths[1]) ?
-                  [contact.contact_paths[0]] :
-                  contact.contact_paths.length === 4 && isEqual(contact.contact_paths[0], contact.contact_paths[1]) && isEqual(contact.contact_paths[2], contact.contact_paths[3]) ?
-                    [contact.contact_paths[0], contact.contact_paths[2]] : contact.contact_paths;
+      .pipe(
+        filter(() => this.currentView$.getValue() === 'contact_trace'),
+        map((contacts: ContactTrace[]) => {
+          if (!contacts.length) {
+            this.contactTraceState.isEmpty = true;
+            return [{
+              'Student Name': null,
+              'Degree': null,
+              'Contact connection': null,
+              'Contact date': null,
+              'Duration': null,
+              'Passes': null
+            }];
+          }
+          this.contactTraceState.isEmpty = false;
+          this.contact_trace_passes = {};
+          const response = contacts.map(contact => {
+            const duration = moment.duration(contact.total_contact_duration, 'seconds');
+            const connection: any[] =
+              contact.contact_paths.length === 2 && isEqual(contact.contact_paths[0], contact.contact_paths[1]) ?
+                [contact.contact_paths[0]] :
+                contact.contact_paths.length === 4 && isEqual(contact.contact_paths[0], contact.contact_paths[1]) && isEqual(contact.contact_paths[2], contact.contact_paths[3]) ?
+                  [contact.contact_paths[0], contact.contact_paths[2]] : contact.contact_paths;
 
-              const result = {
-                'Student Name': contact.student.display_name,
-                'Degree': contact.degree,
-                'Contact connection': this.domSanitizer.bypassSecurityTrustHtml(
-                  `<div class="no-wrap" style="display: flex; width: 300px !important;">` +
-                  connection.map(path => {
+            const result = {
+              'Student Name': contact.student.display_name,
+              'Degree': contact.degree,
+              'Contact connection': this.domSanitizer.bypassSecurityTrustHtml(
+                `<div class="no-wrap" style="display: flex; width: 300px !important;">` +
+                connection.map(path => {
                   if (path.length === 1) {
                     return `<span style="margin-left: 5px">${path[0].display_name}</span>`;
                   } else {
                     return `<span style="margin-left: 5px">${path[0].display_name + ' to ' + path[1].display_name}</span>`;
                   }
                 }).join() + `</div>`),
-                'Contact date': moment(contact.initial_contact_date).format('M/DD h:mm A'),
-                'Duration': moment((Number.isInteger(duration.asMilliseconds()) ? duration.asMilliseconds() : duration.asMilliseconds())).format('mm:ss') + ' min',
-                'Passes': this.domSanitizer.bypassSecurityTrustHtml(`<div style="display: flex">` +
-                  contact.contact_passes
-                    .map(({contact_pass, student_pass}, index) => {
-                      this.contact_trace_passes = {
-                        ...this.contact_trace_passes,
-                        [contact_pass.id]: contact_pass,
-                        [student_pass.id]: student_pass
-                      };
+              'Contact date': moment(contact.initial_contact_date).format('M/DD h:mm A'),
+              'Duration': moment((Number.isInteger(duration.asMilliseconds()) ? duration.asMilliseconds() : duration.asMilliseconds())).format('mm:ss') + ' min',
+              'Passes': this.domSanitizer.bypassSecurityTrustHtml(`<div style="display: flex">` +
+                contact.contact_passes
+                  .map(({ contact_pass, student_pass }, index) => {
+                    this.contact_trace_passes = {
+                      ...this.contact_trace_passes,
+                      [contact_pass.id]: contact_pass,
+                      [student_pass.id]: student_pass
+                    };
                     return `<div style="display: flex; ${(index > 0 ? 'margin-left: 5px' : '')}">
                             <div class="pass-icon" onClick="passClick(${contact_pass.id})" style="background: ${this.getGradient(contact_pass.gradient_color)}; cursor: pointer"></div>
                             <div class="pass-icon" onClick="passClick(${student_pass.id})" style="background: ${this.getGradient(student_pass.gradient_color)}; margin-left: 5px; cursor: pointer"></div>
                         </div>`;
                   }).join('') + `</div>`
-                )
-              };
-
-              Object.defineProperty(result, 'id', { enumerable: false, value: contact.contact_passes[0].contact_pass.id});
-              Object.defineProperty(result, 'date', {enumerable: false, value: moment(contact.initial_contact_date) });
-
-              return result;
-            });
-            this.allData = response;
-            return response;
-          })
-        );
-
-      this.reportsSearchData$ = this.adminService.reports.reports$.pipe(
-        filter(res => this.currentView$.getValue() === 'report_search'),
-        map((reports: Report[]) => {
-          if (!reports.length) {
-            this.reportSearchState.isEmpty = true;
-            return [{
-              'Student Name': null,
-              'Message': null,
-              'Status': null,
-              'Pass': null,
-              'Submitted by': null,
-              'Date submitted': null,
-            }];
-          }
-          this.reportSearchState.isEmpty = false;
-          return reports.map(report => {
-              const data = report as any;
-              const _passTile = (
-                data?.reported_pass?.gradient_color &&
-                data?.reported_pass?.id
-              ) ?
-                `<div class="pass-icon" onClick="reportedPassClick(${data.reported_pass.id})" style="background: ${this.getGradient(data.reported_pass.gradient_color)}; cursor: pointer">`
-                : '';
-              const passTile = this.domSanitizer.bypassSecurityTrustHtml(_passTile);
-              const result = {
-              'Student Name': this.domSanitizer.bypassSecurityTrustHtml(`<div>${report.student.display_name}</div>`),
-              'Message': this.domSanitizer.bypassSecurityTrustHtml(`<div><div class="message">${report.message || 'No report message'}</div></div>`),
-              'Status': report.status,
-              'Pass': passTile,
-              'Submitted by': this.domSanitizer.bypassSecurityTrustHtml(`<div>${report.issuer.display_name}</div>`),
-              'Date submitted': this.domSanitizer.bypassSecurityTrustHtml(`<div>${moment(report.created).format('MM/DD hh:mm A')}</div>`),
+              )
             };
 
-            Object.defineProperty(result, 'id', { enumerable: false, value: report.id});
+            Object.defineProperty(result, 'id', { enumerable: false, value: contact.contact_passes[0].contact_pass.id });
+            Object.defineProperty(result, 'date', { enumerable: false, value: moment(contact.initial_contact_date) });
 
             return result;
           });
+          this.allData = response;
+          return response;
         })
       );
+
+    this.reportsSearchData$ = this.adminService.reports.reports$.pipe(
+      filter(res => this.currentView$.getValue() === 'report_search'),
+      map((reports: Report[]) => {
+        if (!reports.length) {
+          this.reportSearchState.isEmpty = true;
+          return [{
+            'Student Name': null,
+            'Message': null,
+            'Status': null,
+            'Pass': null,
+            'Submitted by': null,
+            'Date submitted': null,
+          }];
+        }
+        this.reportSearchState.isEmpty = false;
+        return reports.map(report => {
+          const data = report as any;
+          const _passTile = (
+            data?.reported_pass?.gradient_color &&
+            data?.reported_pass?.id
+          ) ?
+            `<div class="pass-icon" onClick="reportedPassClick(${data.reported_pass.id})" style="background: ${this.getGradient(data.reported_pass.gradient_color)}; cursor: pointer">`
+            : '';
+          const passTile = this.domSanitizer.bypassSecurityTrustHtml(_passTile);
+          const result = {
+            'Student Name': this.domSanitizer.bypassSecurityTrustHtml(`<div>${report.student.display_name}</div>`),
+            'Message': this.domSanitizer.bypassSecurityTrustHtml(`<div><div class="message">${report.message || 'No report message'}</div></div>`),
+            'Status': report.status,
+            'Pass': passTile,
+            'Submitted by': this.domSanitizer.bypassSecurityTrustHtml(`<div>${report.issuer.display_name}</div>`),
+            'Date submitted': this.domSanitizer.bypassSecurityTrustHtml(`<div>${moment(report.created).format('MM/DD hh:mm A')}</div>`),
+          };
+
+          Object.defineProperty(result, 'id', { enumerable: false, value: report.id });
+
+          return result;
+        });
+      })
+    );
 
 
     this.tableService.selectRow.asObservable()
@@ -598,6 +588,18 @@ export class ExploreComponent implements OnInit, OnDestroy {
       });
 
 
+  }
+
+  createPasses(encounters) {
+    let passess = '<div class="ds-flex-center-start">'
+    for (let i = 0; i < encounters.length; i++) {
+      const element = encounters[i];
+
+      const passImg = `<div class="pass-icon" style="background: ${this.getGradient(element.firstStudentPass.gradient_color)}; cursor: pointer">
+                                        </div>`;
+      passess += passImg
+    }
+    return this.domSanitizer.bypassSecurityTrustHtml(passess + `</div>`);
   }
 
   ngOnDestroy() {
@@ -665,6 +667,15 @@ export class ExploreComponent implements OnInit, OnDestroy {
           data: data,
         });
       });
+  }
+
+  encounterClick(id){
+    console.log("ID : ", id)
+    const dialogRef = this.dialog.open(EncounterDetectionDialogComponent, {
+      panelClass: 'search-pass-card-dialog-container',
+      backdropClass: 'custom-bd',
+      // data: data,
+    });
   }
 
   openFilter(event, action) {

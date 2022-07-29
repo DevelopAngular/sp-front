@@ -22,9 +22,9 @@
                 <!-- <app-filter-button *ngSwitchCase="4" (buttonClick)="openFilter($event, 'students')" [title]="encounterDetectedData.selectedStudents ? encounterDetectedData.selectedStudents[0].display_name : 'Student'" [filter]="encounterDetectedData.selectedStudents && !!encounterDetectedData.selectedStudents.length"
                     [forceButtonClick$]="buttonForceTrigger$" (forceButtonClickEvent)="$event.action === 'students' ? openFilter($event.event, $event.action) : null" [showClearIcon]="false" [openedFilter]="!!dialog.getDialogById('students_filter')">
                 </app-filter-button> -->
-                <app-filter-button *ngSwitchCase="4" (buttonClick)="openFilter($event, 'students')" [title]="(!encounterDetectedData.selectedStudents || encounterDetectedData.selectedStudents.length > 1 ? 'Students' + (encounterDetectedData.selectedStudents && encounterDetectedData.selectedStudents.length ? ' (' + encounterDetectedData.selectedStudents.length + ')' : '') : encounterDetectedData.selectedStudents[0].display_name)"
+                <!-- <app-filter-button *ngSwitchCase="4" (buttonClick)="openFilter($event, 'students')" [title]="(!encounterDetectedData.selectedStudents || encounterDetectedData.selectedStudents.length > 1 ? 'Students' + (encounterDetectedData.selectedStudents && encounterDetectedData.selectedStudents.length ? ' (' + encounterDetectedData.selectedStudents.length + ')' : '') : encounterDetectedData.selectedStudents[0].display_name)"
                     [filter]="encounterDetectedData.selectedStudents && !!encounterDetectedData.selectedStudents.length" (clearData)="encounterDetectedData.selectedStudents = null; checkQueryParams(); autoSearch()" [openedFilter]="!!dialog.getDialogById('students_filter')">
-                </app-filter-button>
+                </app-filter-button> -->
             </div>
 
             <div class="filter">
@@ -107,7 +107,7 @@
         <div class="pass-search" *ngIf="views[currentView].id === 4">
             <app-sp-data-table [isCheckbox]="isCheckbox$" [data$]="encounterDetectionData$" [loading$]="encounterDetectedState.loading$" [showEmptyState]="encounterDetectedState.isEmpty && encounterDetectedState.loaded$ | async" [emptyIcon]="'./assets/Pass Search (Blue-Gray).svg' | resolveAsset"
                 [emptyText]="'No passes found with the selected filters.'" [currentPage]="currentView$.value" (loadMoreData)="loadMorePasses()" (sortClickEvent)="sortHeaders($event)" [height]="(schools$ | async).length > 1 ? 'calc(100vh - 200px)' : 'calc(100vh - 150px)'"
-                [isRowClick]="true" (rowClickEvent)="passClick($event.id)" [sort]="encounterDetectedState.sortPasses$ | async" [sortColumn]="sortColumn" [sortLoading$]="encounterDetectedState.sortPassesLoading$" [showPrintButtons]="false" (exportPasses)="exportPasses()"
+                [isRowClick]="true" (rowClickEvent)="encounterClick($event)" [sort]="encounterDetectedState.sortPasses$ | async" [sortColumn]="sortColumn" [sortLoading$]="encounterDetectedState.sortPassesLoading$" [showPrintButtons]="false" (exportPasses)="exportPasses()"
                 [disabledInfinityScroll]="!(encounterDetectedState.nextUrl$ | async)"></app-sp-data-table>
         </div>
 

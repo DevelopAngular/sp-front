@@ -15,6 +15,7 @@ import { HttpHeaders } from '@angular/common/http';
 export class EncounterDetectionService {
 
   encounteDetection$: Observable<EncounterDetection> = this.store.select(getEncounterDetectionState);
+  // passesLoaded$: Observable<EncounterDetection> = this.store.select(getEncounterDetectionState);
 
   constructor(private http: HttpService, private store: Store<AppState>) { }
 

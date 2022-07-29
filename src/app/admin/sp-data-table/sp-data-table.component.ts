@@ -178,7 +178,6 @@ export class SpDataTableComponent implements OnInit, OnDestroy, OnChanges {
   }
 
   ngOnInit() {
-    console.log("showEmptyState : ", this.showEmptyState)
     this.dataSource = new GridTableDataSource(this.data$, this.viewport, this.itemSize);
     this.fakedata = this.generateFakeData();
     this.fakeTemplate = this.domSanitizer.bypassSecurityTrustHtml(
@@ -247,7 +246,6 @@ export class SpDataTableComponent implements OnInit, OnDestroy, OnChanges {
   }
 
   ngOnChanges(){
-    console.log("showEmptyState : ", this.showEmptyState)
   }
 
   ngOnDestroy() {
