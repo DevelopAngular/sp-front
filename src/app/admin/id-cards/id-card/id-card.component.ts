@@ -36,7 +36,7 @@ export class IdCardComponent implements OnInit {
   }
 
   ngOnInit(): void {
-    this.schoolName = this.userService.getUserSchool().name
+    this.schoolName = this.userService.getUserSchool().name;
     if (this.isLoggedIn) {
       this.userService.user$.subscribe({
         next: async user => {
