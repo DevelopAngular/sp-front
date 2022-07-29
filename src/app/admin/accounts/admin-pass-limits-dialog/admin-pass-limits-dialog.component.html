@@ -139,7 +139,7 @@
           <div class="individual-list-item ds-flex-column" *ngFor="let i of individualStudentLimits" style="font-size: 14px; display: flex; row-gap: 5px" (click)="goToIndividualLimitPage(i)">
             <div class="ds-flex-row ds-flex-center-between">
               <span class="ds-dialog-heading" style="padding-bottom: 0 !important;">{{i.student.display_name}}</span>
-              <span>{{i.passLimit}} passes/day</span>
+              <span>{{i.passLimit === -2 ? 'Unlimited' : i.passLimit}} passes/day</span>
             </div>
 
             <span class="ds-dialog-normal-text" *ngIf="i.description">{{i.description}}</span>

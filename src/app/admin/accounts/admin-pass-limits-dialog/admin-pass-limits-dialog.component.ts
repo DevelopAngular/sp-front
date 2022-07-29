@@ -1,4 +1,4 @@
-import {Component, ElementRef, OnDestroy, OnInit, QueryList, ViewChild, ViewChildren} from '@angular/core';
+import {Component, OnDestroy, OnInit, ViewChild} from '@angular/core';
 import {FormArray, FormControl, FormGroup, ValidationErrors, ValidatorFn, Validators} from '@angular/forms';
 
 import {MatDialog, MatDialogRef} from '@angular/material/dialog';
@@ -27,6 +27,9 @@ const schoolPassLimitRangeValidator = (): ValidatorFn => (form: FormGroup): Vali
 };
 
 const individualPassLimitRangeValidator = (): ValidatorFn => (form: FormGroup): ValidationErrors => {
+  if (form.value['passLimit'] === 'Unlimited') {
+    return null;
+  }
   const num = parseInt(form.value['passLimit'], 10);
   if (num === NaN) {
     return {format: true};
@@ -52,7 +55,7 @@ export class AdminPassLimitDialogComponent implements OnInit, OnDestroy {
   passLimit: HallPassLimit;
   passLimitForm = new FormGroup({
     limitEnabled: new FormControl(false),
-    passLimit: new FormControl(null, Validators.pattern(/^([1-9]\d*)$|^(0){1}$/)),
+    passLimit: new FormControl(null, Validators.pattern(/^([1-9]\d*)$|^(0){1}$|^(-2)$/)),
     frequency: new FormControl(null, Validators.required)
   }, schoolPassLimitRangeValidator());
   passLimitFormSubs: Subscription;
@@ -73,8 +76,6 @@ export class AdminPassLimitDialogComponent implements OnInit, OnDestroy {
 
   @ViewChild('tabGroup') dialogPages: MatTabGroup;
   @ViewChild('studentSearch') studentSearcher: SPSearchComponent;
-  @ViewChild('passLimitInputWrapper') passLimitInputWrapper: ElementRef<HTMLDivElement>;
-  @ViewChildren('passLimitInputWrapper') passLimitInputWrappers: QueryList<ElementRef<HTMLDivElement>>;
 
   constructor(
     private dialog: MatDialog,
@@ -142,30 +143,6 @@ export class AdminPassLimitDialogComponent implements OnInit, OnDestroy {
     });
   }
 
-  // TODO: This is for when multiple pass frequencies are implemented
-  // triggerFrequencyDialog() {
-  //   const freqButton = document.querySelector('#passLimitFrequencyButton');
-  //   const coords = freqButton.getBoundingClientRect();
-  //   this.frequencyDialogRef = this.dialog.open(this.frequencyPopup, {
-  //     hasBackdrop: true,
-  //     backdropClass: 'cdk-overlay-transparent-backdrop',
-  //     closeOnNavigation: true,
-  //     restoreFocus: true,
-  //     panelClass: 'pass-limits-frequency-dialog',
-  //     position: {
-  //       top: `${coords.bottom}px`,
-  //       left: `${coords.left}px`
-  //     }
-  //   });
-  //   this.frequencyDialogRef.afterClosed().pipe(filter(Boolean)).subscribe(frequency => {
-  //     this.passLimitForm.patchValue({frequency});
-  //   });
-  // }
-
-  // TODO: This is for when multiple pass frequencies are implemented
-  // selectFrequency(frequency: string) {
-  //   this.frequencyDialogRef.close(frequency);
-  // }
   resetPassLimitsForm() {
     this.passLimitForm.patchValue(this.passLimitFormLastValue);
   }
@@ -256,9 +233,14 @@ export class AdminPassLimitDialogComponent implements OnInit, OnDestroy {
       controls.push(new FormControl(limit.student.id));
     }
 
+    let passLimitValue = limit?.passLimit?.toString() || '10';
+    if (passLimitValue === '-2') {
+      passLimitValue = 'Unlimited';
+    }
+
     this.individualOverrideForm = new FormGroup({
       students: new FormArray(controls, Validators.required),
-      passLimit: new FormControl(limit?.passLimit?.toString() || '10', Validators.pattern(/^[1-9]\d*$/)),
+      passLimit: new FormControl(passLimitValue, Validators.pattern(/^([1-9]\d*)$|^(0){1}$|^(Unlimited)$/)),
       description: new FormControl(limit?.description || '')
     }, individualPassLimitRangeValidator());
     this.individualFormPreviousValue = this.individualOverrideForm.value;
@@ -266,7 +248,7 @@ export class AdminPassLimitDialogComponent implements OnInit, OnDestroy {
       return JSON.stringify(v) !== JSON.stringify(this.individualFormPreviousValue);
     }));
     setTimeout(() => {
-      this.individualOverrideForm.patchValue({ passLimit: limit?.passLimit?.toString() || '10' }, { emitEvent: true });
+      this.individualOverrideForm.patchValue({ passLimit: passLimitValue }, { emitEvent: true });
     }, 100);
   }
 
@@ -300,7 +282,9 @@ export class AdminPassLimitDialogComponent implements OnInit, OnDestroy {
   submitIndividualLimits() {
     const parsedForm: IndividualPassLimitCollection = {
       students: this.individualOverrideForm.value.students,
-      passLimit: parseInt(this.individualOverrideForm.value.passLimit, 10),
+      passLimit: this.individualOverrideForm.value.passLimit === 'Unlimited'
+        ? -2
+        : parseInt(this.individualOverrideForm.value.passLimit, 10),
       description: (this.individualOverrideForm?.value?.description || '').trim()
     };
 

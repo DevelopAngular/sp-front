@@ -803,6 +803,22 @@ export class LiveDataService {
     });
   }
 
+  watchIndividualPassLimits(studentId: string | number): Observable<HallPassLimit[]> {
+    // TODO: Figure out how to apply filters here
+    return this.watch<HallPassLimit, string>({
+      externalEvents: EMPTY,
+      eventNamespace: 'pass_limit',
+      initialUrl: `v1/pass_limits/individual_override?student_id=${studentId}`,
+      rawDecoder: data => [data],
+      decoder: s => s,
+      handleExternalEvent: s => s,
+      handlePollingEvent: makePollingEventHandler([
+        new UpdateItem([PassLimitEvent.Update], s => s)
+      ]),
+      handlePost: identityFilter
+    });
+  }
+
   watchActivePassLike(student: User): Observable<PassLike> {
     const passes$ = this.activePasses$;
     const requests$ = this.watchActiveRequests(student).pipe(map(requests => {

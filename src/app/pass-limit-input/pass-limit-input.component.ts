@@ -1,12 +1,12 @@
 import {Component, ElementRef, Input, OnDestroy, OnInit, TemplateRef, ViewChild} from '@angular/core';
 import {FormControl, FormGroup} from '@angular/forms';
 import {MatDialog, MatDialogRef, MatDialogState} from '@angular/material/dialog';
-import {filter, map, startWith} from 'rxjs/operators';
+import {map, startWith} from 'rxjs/operators';
 import {Observable, Subscription} from 'rxjs';
 
 interface PassLimitOption {
   text: string;
-  value: number;
+  value: number | 'Unlimited';
 }
 
 @Component({
@@ -37,7 +37,7 @@ export class PassLimitInputComponent implements OnInit, OnDestroy {
       value: i
     }));
     if (this.isIndividual) {
-      this.limitArray.unshift({ text: 'Unlimited passes', value: -2 });
+      this.limitArray.unshift({ text: 'Unlimited passes', value: 'Unlimited' });
     }
 
     this.filteredArray$ = this.control.valueChanges.pipe(
@@ -67,22 +67,22 @@ export class PassLimitInputComponent implements OnInit, OnDestroy {
       position: {
         top: `${coords.bottom + 5}px`,
         left: `${coords.left}px`
-      },
-      data: {
-        isIndividual: this.isIndividual
       }
     });
+  }
 
-    if (this.passLimitDropdownRef) {
-      this.passLimitDropdownRef.afterClosed().pipe(filter(v => Number.isInteger(v))).subscribe(value => {
-        this.control.patchValue(value, { emitEvent: true });
-      });
-    }
+  selectValue(value: number | string) {
+    this.control.patchValue(value.toString(), { emitEvent: true });
+    this.passLimitDropdownRef.close();
   }
 
   ngOnDestroy() {
     if (this.controlSubs) {
       this.controlSubs.unsubscribe();
+    }
+
+    if (this.passLimitDropdownRef) {
+      this.passLimitDropdownRef.close();
     }
   }
 

@@ -189,6 +189,13 @@ export class StudentInfoCardComponent implements OnInit, AfterViewInit, OnDestro
           this.studentStats$ = this.userService.studentsStats$.pipe(map(stats => stats[this.profile.id]));
           this.encounterPreventionService.getExclusionGroupsRequest({student: this.profile.id});
 
+          this.passLimitsService.watchIndividualPassLimits(user.id).subscribe({
+            next: p => {
+              console.log('inside individual watcher');
+              console.log(p);
+            }
+          });
+
           return this.passLimitsService.getStudentPassLimit(this.profile.id);
         }),
         takeUntil(this.destroy$)

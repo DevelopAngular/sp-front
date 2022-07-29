@@ -274,9 +274,8 @@ export class AccountsRoleComponent implements OnInit, OnDestroy {
       };
     }
 
-    // TODO: Check if pass limit is unlimited, then display 'No Limit'
     return {
-      passLimit: `${limit.passLimit} passes/day`,
+      passLimit: `${limit.passLimit === -2 ? 'Unlimited' : limit.passLimit} passes/day`,
       description: (limit as IndividualPassLimit)?.description || ''
     };
   }
