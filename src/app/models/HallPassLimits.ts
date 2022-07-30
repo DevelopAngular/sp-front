@@ -41,3 +41,13 @@ export interface IndividualPassLimitCollection {
   passLimit: number;
   description: string;
 }
+
+export interface StudentPassLimit extends BaseModel {
+  passLimit: number;
+  description: string;
+  isUnlimited: boolean;
+  schoolPassLimitEnabled: boolean;
+  isIndividual: boolean;
+  noLimitsSet: boolean;
+  student: ReducedUser;
+}

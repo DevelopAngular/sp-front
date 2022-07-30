@@ -45,7 +45,7 @@ import {ProfilePictureComponent} from '../admin/accounts/profile-picture/profile
 import {DarkThemeSwitch} from '../dark-theme-switch';
 import {PassLimitsDialogComponent} from '../teacher/pass-limits-dialog/pass-limits-dialog.component';
 import {PassLimitService} from '../services/pass-limit.service';
-import {HallPassLimit, IndividualPassLimit} from '../models/HallPassLimits';
+import {HallPassLimit, IndividualPassLimit, StudentPassLimit} from '../models/HallPassLimits';
 import {ConnectedPosition} from '@angular/cdk/overlay';
 import {IntroData} from '../ngrx/intros';
 import { IDCard } from '../admin/id-cards/id-card-editor/id-card-editor.component';
@@ -83,9 +83,7 @@ export class StudentInfoCardComponent implements OnInit, AfterViewInit, OnDestro
   user: User;
 
   school: School;
-  passLimit: HallPassLimit;
-  individualLimit: IndividualPassLimit;
-  activePassLimit: number;
+  studentPassLimit: StudentPassLimit;
 
   adminCalendarOptions = {
     rangeId: 'range_6',
@@ -158,7 +156,21 @@ export class StudentInfoCardComponent implements OnInit, AfterViewInit, OnDestro
   }
 
   get accountType() {
-    return this.profile.demo_account ? 'Demo' : this.profile.sync_types[0] === 'google' ? 'G Suite' : (this.profile.sync_types[0] === 'gg4l' ? 'GG4L' : this.profile.sync_types[0] === 'clever' ? 'Clever' : 'Standard');
+    if (this.profile.demo_account) {
+      return 'Demo';
+    }
+
+    const sync_type = this.profile.sync_types[0];
+    if (sync_type === 'google') {
+      return 'G Suite';
+    }
+    if (sync_type === 'gg4l') {
+      return 'GG4L';
+    }
+    if (sync_type === 'clever') {
+      return 'Clever';
+    }
+    return 'Standard';
   }
 
   get isLongName() {
@@ -189,22 +201,19 @@ export class StudentInfoCardComponent implements OnInit, AfterViewInit, OnDestro
           this.studentStats$ = this.userService.studentsStats$.pipe(map(stats => stats[this.profile.id]));
           this.encounterPreventionService.getExclusionGroupsRequest({student: this.profile.id});
 
-          this.passLimitsService.watchIndividualPassLimits(user.id).subscribe({
-            next: p => {
-              console.log('inside individual watcher');
-              console.log(p);
-            }
-          });
+          // this.passLimitsService.watchStudentPassLimit(this.profile.id).subscribe({
+          //   next: pl => {
+          //     this.studentPassLimit = pl;
+          //   }
+          // })
 
           return this.passLimitsService.getStudentPassLimit(this.profile.id);
         }),
         takeUntil(this.destroy$)
-      ).subscribe(res => {
-      this.passLimit = res.schoolLimit;
-      this.individualLimit = res.individualLimit;
-      this.activePassLimit = res.activeLimit;
-      this.cdr.detectChanges();
-    });
+      ).subscribe((res: StudentPassLimit) => {
+        this.studentPassLimit = res;
+        this.cdr.detectChanges();
+      });
     this.exclusionGroups$ = this.encounterPreventionService.exclusionGroups$;
     this.exclusionGroupsLoading$ = this.encounterPreventionService.exclusionGroupsLoading$;
     this.lastStudentPasses$ = this.passesService.quickPreviewPasses$.pipe(map(passes => passes.map(pass => HallPass.fromJSON(pass))));
@@ -223,28 +232,18 @@ export class StudentInfoCardComponent implements OnInit, AfterViewInit, OnDestro
         this.userService.clearCurrentUpdatedAccounts();
       });
 
-    this.passLimitsService.watchPassLimits().subscribe({
-      next: pl => {
-        this.passLimit = pl;
-        if (this.passLimitDialogRef && this.passLimitDialogRef.getState() === MatDialogState.OPEN) {
-          this.passLimitDialogRef.componentInstance.data.schoolPassLimit = this.passLimit;
-        }
-      }
-    });
-
     if (this.userService.getFeatureFlagDigitalID()) {
       this.idCardService.getIDCardDetails().subscribe({
-        next: (result:any) => {
+        next: (result: any) => {
           if (result?.results?.digital_id_card) {
             this.IDCARDDETAILS = result.results.digital_id_card;
-            if (this.IDCARDDETAILS.enabled && this.IDCARDDETAILS.visible_to_who != 'Staff only') {
+            if (this.IDCARDDETAILS.enabled && this.IDCARDDETAILS.visible_to_who !== 'Staff only') {
               this.IDCardEnabled = true;
             }
           }
         }
-      })
+      });
     }
-    
   }
 
   ngAfterViewInit() {
@@ -334,7 +333,7 @@ export class StudentInfoCardComponent implements OnInit, AfterViewInit, OnDestro
           action: 'idcard',
           // tooltip: 'Copy a private link to this student and send it to another staff member at your school.'
         }
-      )
+      );
     }
     if (this.user.isAdmin()) {
       settings.push(
@@ -391,8 +390,8 @@ export class StudentInfoCardComponent implements OnInit, AfterViewInit, OnDestro
           });
         } else if (action === 'delete') {
           this.userService.deleteUserRequest(this.profile, '_profile_student');
-        }else if (action === 'idcard') {
-          let idCardData: IDCard = {
+        } else if (action === 'idcard') {
+          const idCardData: IDCard = {
             backgroundColor: this.IDCARDDETAILS.color,
             greadLevel: this.IDCARDDETAILS.show_grade_levels ? this.profile.grade_level : null,
             idNumberData: this.profile?.custom_id ? {
@@ -409,12 +408,12 @@ export class StudentInfoCardComponent implements OnInit, AfterViewInit, OnDestro
             showCustomID: this.IDCARDDETAILS.show_custom_ids
             // userRole: this.profile.isStudent() ?  'Student' : 'Staff'
           };
-      
+
           // idCardData.idNumberData.barcodeURL = await this.qrBarcodeGenerator.selectBarcodeType('code39', 123456);
-      
+
           const dialogRef = this.dialog.open(IdcardOverlayContainerComponent, {
-            panelClass: "id-card-overlay-container",
-            backdropClass: "custom-bd",
+            panelClass: 'id-card-overlay-container',
+            backdropClass: 'custom-bd',
             data: {idCardData: idCardData, isLoggedIn: false}
           });
         }
@@ -582,20 +581,21 @@ export class StudentInfoCardComponent implements OnInit, AfterViewInit, OnDestro
   }
 
   openPassLimitsDialog() {
-    if (this?.passLimit?.limitEnabled) {
-      this.passLimitDialogRef = this.dialog.open(PassLimitsDialogComponent, {
-        closeOnNavigation: true,
-        panelClass: 'overlay-dialog',
-        backdropClass: 'custom-bd',
-        width: '425px',
-        height: '500px',
-        data: {
-          profile: this.profile,
-          schoolPassLimit: this.passLimit,
-          individualLimit: this.individualLimit
-        }
-      });
-    }
+    console.log('dialog');
+    // if (this?.passLimit?.limitEnabled) {
+    //   this.passLimitDialogRef = this.dialog.open(PassLimitsDialogComponent, {
+    //     closeOnNavigation: true,
+    //     panelClass: 'overlay-dialog',
+    //     backdropClass: 'custom-bd',
+    //     width: '425px',
+    //     height: '500px',
+    //     data: {
+    //       profile: this.profile,
+    //       schoolPassLimit: this.passLimit,
+    //       individualLimit: this.individualLimit
+    //     }
+    //   });
+    // }
   }
 
   editWindow(event) {

@@ -5,7 +5,7 @@ import {distinctUntilChanged, map, take} from 'rxjs/operators';
 
 import {LiveDataService} from '../live-data/live-data.service';
 import {HttpService} from './http-service';
-import {HallPassLimit, IndividualPassLimit, IndividualPassLimitCollection} from '../models/HallPassLimits';
+import {HallPassLimit, IndividualPassLimit, IndividualPassLimitCollection, StudentPassLimit} from '../models/HallPassLimits';
 
 const PASS_LIMIT_ENDPOINT = 'v1/pass_limits';
 
@@ -53,14 +53,14 @@ export class PassLimitService {
     );
   }
 
-  watchIndividualPassLimits(studentId: number | string) {
-    return this.liveDataService.watchIndividualPassLimits(studentId).pipe(
-      map(d => d[0]),
-      distinctUntilChanged((a, b) =>
-        JSON.stringify(a) === JSON.stringify(b)
-      ),
-    );
-  }
+  // watchStudentPassLimit(studentId: number | string) {
+  //   return this.liveDataService.watchStudentPassLimit(studentId).pipe(
+  //     map(d => d[0]),
+  //     distinctUntilChanged((a, b) =>
+  //       JSON.stringify(a) === JSON.stringify(b)
+  //     ),
+  //   );
+  // }
 
   getIndividualLimits(): Observable<IndividualPassLimit[]> {
     return this.http.get(`${PASS_LIMIT_ENDPOINT}/individual_overrides`);
@@ -70,17 +70,8 @@ export class PassLimitService {
     return this.http.post(`${PASS_LIMIT_ENDPOINT}/create_override`, limit, undefined, false);
   }
 
-  getStudentPassLimit(studentId: string | number): Observable<{ schoolLimit: HallPassLimit, individualLimit: IndividualPassLimit, activeLimit: number }> {
-    return forkJoin({
-      schoolLimit: this.getPassLimit().pipe(take(1)),
-      individualLimit: this.getIndividualLimit(studentId).pipe(take(1))
-    }).pipe(map(({schoolLimit, individualLimit}): any => {
-      return {
-        schoolLimit: schoolLimit.pass_limit,
-        individualLimit,
-        activeLimit: individualLimit.passLimit !== -1 ? individualLimit.passLimit : schoolLimit.pass_limit.passLimit
-      };
-    }));
+  getStudentPassLimit(studentId: string | number): Observable<StudentPassLimit> {
+    return this.http.get(`${PASS_LIMIT_ENDPOINT}/student_limit?student_id=${studentId}`);
   }
 
   updateIndividualLimit(override: IndividualPassLimitCollection): Observable<null> {
