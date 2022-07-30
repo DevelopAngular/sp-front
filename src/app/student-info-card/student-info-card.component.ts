@@ -12,7 +12,7 @@ import {
 import {User} from '../models/User';
 import {MatDialog, MatDialogRef, MatDialogState} from '@angular/material/dialog';
 import {HallPassesService} from '../services/hall-passes.service';
-import {Observable, Subject, Subscription} from 'rxjs';
+import {merge, Observable, Subject, Subscription} from 'rxjs';
 import {QuickPreviewPasses} from '../models/QuickPreviewPasses';
 import {UserService} from '../services/user.service';
 import {School} from '../models/School';
@@ -45,7 +45,7 @@ import {ProfilePictureComponent} from '../admin/accounts/profile-picture/profile
 import {DarkThemeSwitch} from '../dark-theme-switch';
 import {PassLimitsDialogComponent} from '../teacher/pass-limits-dialog/pass-limits-dialog.component';
 import {PassLimitService} from '../services/pass-limit.service';
-import {HallPassLimit, IndividualPassLimit, StudentPassLimit} from '../models/HallPassLimits';
+import {StudentPassLimit} from '../models/HallPassLimits';
 import {ConnectedPosition} from '@angular/cdk/overlay';
 import {IntroData} from '../ngrx/intros';
 import { IDCard } from '../admin/id-cards/id-card-editor/id-card-editor.component';
@@ -118,7 +118,7 @@ export class StudentInfoCardComponent implements OnInit, AfterViewInit, OnDestro
   showPassLimitNux = new Subject<boolean>();
   passLimitDialogRef: MatDialogRef<PassLimitsDialogComponent>;
 
-  IDCardEnabled: boolean = false;
+  IDCardEnabled = false;
 
   IDCARDDETAILS: any;
 
@@ -201,13 +201,10 @@ export class StudentInfoCardComponent implements OnInit, AfterViewInit, OnDestro
           this.studentStats$ = this.userService.studentsStats$.pipe(map(stats => stats[this.profile.id]));
           this.encounterPreventionService.getExclusionGroupsRequest({student: this.profile.id});
 
-          // this.passLimitsService.watchStudentPassLimit(this.profile.id).subscribe({
-          //   next: pl => {
-          //     this.studentPassLimit = pl;
-          //   }
-          // })
-
-          return this.passLimitsService.getStudentPassLimit(this.profile.id);
+          return merge(
+            this.passLimitsService.watchPassLimits(),
+            this.passLimitsService.watchIndividualPassLimit(this.profile.id)
+          ).pipe(concatMap(() => this.passLimitsService.getStudentPassLimit(this.profile.id)));
         }),
         takeUntil(this.destroy$)
       ).subscribe((res: StudentPassLimit) => {

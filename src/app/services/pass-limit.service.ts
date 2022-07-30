@@ -53,14 +53,14 @@ export class PassLimitService {
     );
   }
 
-  // watchStudentPassLimit(studentId: number | string) {
-  //   return this.liveDataService.watchStudentPassLimit(studentId).pipe(
-  //     map(d => d[0]),
-  //     distinctUntilChanged((a, b) =>
-  //       JSON.stringify(a) === JSON.stringify(b)
-  //     ),
-  //   );
-  // }
+  watchIndividualPassLimit(studentId: number | string) {
+      return this.liveDataService.watchIndividualPassLimit(studentId).pipe(
+        map(d => d[0]),
+        distinctUntilChanged((a, b) =>
+          JSON.stringify(a) === JSON.stringify(b)
+        ),
+      );
+  }
 
   getIndividualLimits(): Observable<IndividualPassLimit[]> {
     return this.http.get(`${PASS_LIMIT_ENDPOINT}/individual_overrides`);
