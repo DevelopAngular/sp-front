@@ -58,11 +58,11 @@ export class EditRoomInFolderComponent implements OnInit {
     constructor() { }
 
     get showSave() {
-        return this.roomValidButtons.getValue().publish;
+        return this.roomValidButtons.getValue().publish && this.visibilityForm.valid;
     }
 
     get showIncomplete() {
-        return this.roomValidButtons.getValue().incomplete;
+        return this.roomValidButtons.getValue().incomplete && this.visibilityForm.invalid;
     }
 
     get showCancel() {

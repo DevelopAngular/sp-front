@@ -269,6 +269,7 @@ export class OverlayContainerComponent implements OnInit, OnDestroy {
         }
         if (this.passLimitForm.get('to').invalid && this.passLimitForm.get('toEnabled').value)
           missing.push('active pass limit');
+        if (this.visibilityForm.invalid) missing.push('room visibility');
       }
 
       if (this.currentPage === Pages.BulkEditRooms) {
