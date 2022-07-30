@@ -4,7 +4,7 @@ import {MAT_DIALOG_DATA, MatDialog, MatDialogRef} from '@angular/material/dialog
 import {DomSanitizer} from '@angular/platform-browser';
 
 import {BehaviorSubject, combineLatest, forkJoin, fromEvent, merge, Observable, of, Subject, zip} from 'rxjs';
-import {debounceTime, distinctUntilChanged, filter, first, map, switchMap, take, takeUntil, tap} from 'rxjs/operators';
+import {debounceTime, distinctUntilChanged, filter, map, switchMap, take, takeUntil, tap} from 'rxjs/operators';
 
 import {bumpIn, NextStep} from '../../animations';
 import {Pinnable} from '../../models/Pinnable';
@@ -488,7 +488,8 @@ export class OverlayContainerComponent implements OnInit, OnDestroy {
       {visibility: new FormControl(
         this.visibility,
         // TODO: move validator to its own file
-        [(c: AbstractControl): ValidationErrors | null => {
+        [ Validators.required,
+          (c: AbstractControl): ValidationErrors | null => {
           // abort, skip, abanton do not engage validation
           if (c.value === null) return null;
           // only visible_all_students do not need a group of students

@@ -278,6 +278,10 @@ export class RoomComponent implements OnInit, OnDestroy {
           }
       }
 
+      if (this.visibilityForm.invalid) {
+        buttonsResult.incomplete = true;
+      }
+
       this.roomDataResult.emit({data: this.data, buttonState: buttonsResult, advOptButtons: this.advOptionsValidButtons});
   }
 

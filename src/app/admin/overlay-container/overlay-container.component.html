@@ -20,7 +20,7 @@
       <img draggable="false" class="title-icon" *ngIf="titleIcon" [src]="titleIcon | resolveAsset">
       {{ roomTitle }}
     </div>
-    <div class="right-button">
+    <div class="right-button" rel="show-error-visibility-trigger">
       <app-gradient-button *ngIf="isAllowedSave && (showCancelButton || currentPage === 1 || currentPage === 3)"
        [disabled]="isFormIncomplete"
        [minHeight]="'40px'"

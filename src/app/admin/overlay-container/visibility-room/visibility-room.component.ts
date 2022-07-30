@@ -102,8 +102,8 @@ export class VisibilityRoomComponent implements OnInit, AfterViewInit, OnDestroy
     }
     // TODO: it assumes that div.right-button exists in the upper componet's hierachy
     this.unlisten = this.renderer.listen('document', 'click', event => {
-      const $el = event.target.closest('div.right-button');
-      // click on that button allows errors to be shown
+      // click on a dom element with a specific rel attr will allows errors to be shown
+      const $el = event.target.closest('[rel=show-error-visibility-trigger]');
       if (!!$el) {
         this.showErrorsVisibility = true;
         return;
