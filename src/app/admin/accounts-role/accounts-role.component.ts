@@ -1,6 +1,6 @@
 import {Component, NgZone, OnDestroy, OnInit} from '@angular/core';
 import {MatDialog} from '@angular/material/dialog';
-import {BehaviorSubject, forkJoin, Observable, of, Subject} from 'rxjs';
+import {BehaviorSubject, combineLatest, forkJoin, Observable, of, Subject} from 'rxjs';
 import {UserService} from '../../services/user.service';
 import {ActivatedRoute, Router} from '@angular/router';
 import {concatMap, filter, map, switchMap, take, takeUntil, tap} from 'rxjs/operators';
@@ -80,7 +80,7 @@ export class AccountsRoleComponent implements OnInit, OnDestroy {
   ngOnInit() {
     this.schools$ = this.http.schoolsCollection$;
 
-    this.accountRoleData$ = this.http.globalReload$
+    this.accountRoleData$ = combineLatest(this.tableService.activeFilters$.asObservable(), this.http.globalReload$)
       .pipe(
         switchMap(() => this.route.params),
         tap(params => {
@@ -110,6 +110,12 @@ export class AccountsRoleComponent implements OnInit, OnDestroy {
             : of(accounts.map(a => ({...a, limit: null})))
         ),
         map((accounts: (User & { limit: HallPassLimit | IndividualPassLimit })[]) => {
+          const filterFunctions = Object.values(this.tableService.activeFilters$.getValue()).map(v => v.filterCallback);
+          let filteredAccounts = [].concat(accounts);
+          for (const f of filterFunctions) {
+            filteredAccounts = filteredAccounts.filter(f);
+          }
+
           this.sortLoading$.next(false);
           const getColumns = this.storage.getItem(`order${this.role}`);
           const columns = {};
@@ -120,12 +126,12 @@ export class AccountsRoleComponent implements OnInit, OnDestroy {
             }
             this.currentColumns = cloneDeep(columns);
           }
-          if (!accounts.length) {
+          if (!filteredAccounts.length) {
             this.userEmptyState = true;
            return this.emptyRoleObject(getColumns, this.currentColumns);
           }
           this.userEmptyState = false;
-          return accounts.map(account => {
+          return filteredAccounts.map(account => {
             const rowObj = this.buildDataForRole(account);
 
             Object.defineProperty(rowObj, 'id', { enumerable: false, value: account.id});
