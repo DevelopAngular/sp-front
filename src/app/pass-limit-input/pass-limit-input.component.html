@@ -6,7 +6,7 @@
     [showUnits]="true"
     [units]="control.value === '1' ? 'pass' : 'passes'"
     [isFocus]="false"
-    width="150px"
+    width="175px"
     placeholder="# of passes"
     [formGroup]="formGroup"
     [controlName]="control"
@@ -15,7 +15,7 @@
   <div class="per-day-wrapper">
     <span>per day</span>
   </div>
-  <p style="width: 100%; opacity: 0.8; font-size: 12px" *ngIf="control.errors">Passes must be a whole number between 0 and 50</p>
+  <p style="width: 100%; opacity: 0.8; font-size: 12px" *ngIf="control.errors || formGroup.errors">Passes must be a whole number between 0 and 50</p>
 </div>
 
 <ng-template #passLimitDropdown>

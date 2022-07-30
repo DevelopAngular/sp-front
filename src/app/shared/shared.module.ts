@@ -95,7 +95,9 @@ import {PassLimitInputComponent} from '../pass-limit-input/pass-limit-input.comp
 import { ConfirmationComponent } from './shared-components/confirmation/confirmation.component';
 import { IdNumbersComponent } from '../admin/accounts/id-numbers/id-numbers.component';
 import { GradeLevelsComponent } from '../admin/accounts/grade-levels/grade-levels.component';
+import {PassLimitBulkEditComponent} from '../pass-limit-bulk-edit/pass-limit-bulk-edit.component';
 import {ConfirmDeleteKioskModeComponent} from '../request-card/confirm-delete-kiosk-mode/confirm-delete-kiosk-mode.component';
+
 const DEFAULT_SWIPER_CONFIG: SwiperConfigInterface = {
   direction: 'horizontal',
   slidesPerView: 'auto'
@@ -195,6 +197,7 @@ const DEFAULT_SWIPER_CONFIG: SwiperConfigInterface = {
     NuxUniversalComponent,
     PassLimitInputComponent,
     PassLimitFeedbackComponent,
+    PassLimitBulkEditComponent,
     ConfirmationComponent,
     IdNumbersComponent,
     GradeLevelsComponent,
@@ -280,6 +283,7 @@ const DEFAULT_SWIPER_CONFIG: SwiperConfigInterface = {
     NuxUniversalComponent,
     PassLimitInputComponent,
     PassLimitFeedbackComponent,
+    PassLimitBulkEditComponent,
     IdNumbersComponent,
     GradeLevelsComponent,
     ConfirmDeleteKioskModeComponent

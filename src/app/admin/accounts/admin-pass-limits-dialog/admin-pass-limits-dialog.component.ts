@@ -1,7 +1,7 @@
 import {Component, OnDestroy, OnInit, ViewChild} from '@angular/core';
 import {FormArray, FormControl, FormGroup, ValidationErrors, ValidatorFn, Validators} from '@angular/forms';
 
-import {MatDialog, MatDialogRef} from '@angular/material/dialog';
+import {MatDialog, MatDialogRef, MatDialogState} from '@angular/material/dialog';
 import {MatTabGroup} from '@angular/material/tabs';
 import {cloneDeep} from 'lodash';
 import {forkJoin, Observable, of, Subscription} from 'rxjs';
@@ -14,6 +14,7 @@ import {User} from '../../../models/User';
 import {SPSearchComponent} from '../../../sp-search/sp-search.component';
 import {UserService} from '../../../services/user.service';
 import {IntroData} from '../../../ngrx/intros';
+import {PassLimitInputComponent} from '../../../pass-limit-input/pass-limit-input.component';
 
 const schoolPassLimitRangeValidator = (): ValidatorFn => (form: FormGroup): ValidationErrors => {
   const num = parseInt(form.value['passLimit'], 10);
@@ -55,7 +56,7 @@ export class AdminPassLimitDialogComponent implements OnInit, OnDestroy {
   passLimit: HallPassLimit;
   passLimitForm = new FormGroup({
     limitEnabled: new FormControl(false),
-    passLimit: new FormControl(null, Validators.pattern(/^([1-9]\d*)$|^(0){1}$|^(-2)$/)),
+    passLimit: new FormControl(null, Validators.pattern(/^([1-9]\d*)$|^(0){1}$/)),
     frequency: new FormControl(null, Validators.required)
   }, schoolPassLimitRangeValidator());
   passLimitFormSubs: Subscription;
@@ -76,6 +77,8 @@ export class AdminPassLimitDialogComponent implements OnInit, OnDestroy {
 
   @ViewChild('tabGroup') dialogPages: MatTabGroup;
   @ViewChild('studentSearch') studentSearcher: SPSearchComponent;
+  @ViewChild('schoolPassLimitInput') schoolPassLimitInput: PassLimitInputComponent;
+  @ViewChild('individualPassLimitInput') individualPassLimitInput: PassLimitInputComponent;
 
   constructor(
     private dialog: MatDialog,
@@ -145,6 +148,9 @@ export class AdminPassLimitDialogComponent implements OnInit, OnDestroy {
 
   resetPassLimitsForm() {
     this.passLimitForm.patchValue(this.passLimitFormLastValue);
+    if (this.schoolPassLimitInput?.passLimitDropdownRef?.getState() === MatDialogState.OPEN) {
+      this.schoolPassLimitInput.passLimitDropdownRef.close();
+    }
   }
 
   updatePassLimits() {
@@ -266,6 +272,9 @@ export class AdminPassLimitDialogComponent implements OnInit, OnDestroy {
       this.individualOverrideForm.addControl('students', new FormArray([]));
     }
     this.individualOverrideForm.reset(this.individualFormPreviousValue, {emitEvent: true});
+    if (this.individualPassLimitInput?.passLimitDropdownRef?.getState() === MatDialogState.OPEN) {
+      this.individualPassLimitInput.passLimitDropdownRef.close();
+    }
   }
 
   updateStudentList(selectedUsers: User[]) {

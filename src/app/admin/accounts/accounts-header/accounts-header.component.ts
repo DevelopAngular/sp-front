@@ -19,7 +19,7 @@ import {combineLatest, Observable, of, Subject, zip} from 'rxjs';
 import {TotalAccounts} from '../../../models/TotalAccounts';
 import {AdminService} from '../../../services/admin.service';
 import {DarkThemeSwitch} from '../../../dark-theme-switch';
-import {MatDialog} from '@angular/material/dialog';
+import {MatDialog, MatDialogRef} from '@angular/material/dialog';
 import {AddUserDialogComponent} from '../../add-user-dialog/add-user-dialog.component';
 import {User} from '../../../models/User';
 import {debounceTime, filter, map, mapTo, switchMap, take, takeUntil} from 'rxjs/operators';
@@ -40,6 +40,8 @@ import {ProfilePictureComponent} from '../profile-picture/profile-picture.compon
 import * as moment from 'moment';
 import {AdminPassLimitDialogComponent} from '../admin-pass-limits-dialog/admin-pass-limits-dialog.component';
 import {ConnectedPosition} from '@angular/cdk/overlay';
+import {PassLimitBulkEditComponent} from '../../../pass-limit-bulk-edit/pass-limit-bulk-edit.component';
+import {RecommendedDialogConfig} from '../../../shared/shared-components/confirmation-dialog/confirmation-dialog.component';
 
 @Component({
   selector: 'app-accounts-header',
@@ -78,6 +80,7 @@ export class AccountsHeaderComponent implements OnInit, AfterViewInit, OnDestroy
     overlayY: 'top',
     offsetY: 25
   };
+  bulkEditDialogRef: MatDialogRef<PassLimitBulkEditComponent>;
 
   selectedUsers: User[] = [];
 
@@ -271,6 +274,26 @@ export class AccountsHeaderComponent implements OnInit, AfterViewInit, OnDestroy
       }
       this.cdr.detectChanges();
     }, timeout);
+  }
+
+  // TODO: Make Pass Limit into its own component
+  openBulkEditPassLimits() {
+    this.bulkEditDialogRef = this.matDialog.open(PassLimitBulkEditComponent, {
+      ...RecommendedDialogConfig,
+      width: '425px',
+      height: '500px',
+      data: {
+        students: this.selectedUsers.filter(u => u.roles.includes('_profile_student'))
+      }
+    });
+
+    this.bulkEditDialogRef.afterClosed().subscribe({
+      next: () => {
+        this.selectedUsers = [];
+        this.tableService.clearSelectedUsers.next();
+        this.cdr.detectChanges();
+      }
+    });
   }
 
   openStatusPopup(event) {

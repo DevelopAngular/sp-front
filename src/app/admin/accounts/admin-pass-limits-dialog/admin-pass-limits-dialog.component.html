@@ -63,6 +63,7 @@
 
           <ng-container *ngIf="passLimitForm.value['limitEnabled']">
             <app-pass-limit-input
+              #schoolPassLimitInput
               [formGroup]="passLimitForm"
               [control]="passLimitForm.get('passLimit')"
               [isIndividual]="false"
@@ -195,6 +196,7 @@
           <span class="ds-dialog-heading ds-blue-gray" style="padding: 0 !important">Limit</span>
           <p class="ds-dialog-normal-text" style="margin-top: 4px">This limit overrides the School Pass Limit of {{passLimit?.passLimit}} passes/day</p>
           <app-pass-limit-input
+            #individualPassLimitInput
             [formGroup]="individualOverrideForm"
             [control]="individualOverrideForm.get('passLimit')"
             [isIndividual]="true"

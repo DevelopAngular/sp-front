@@ -5,10 +5,17 @@
         <div class="count">
           {{ selectedUsers.length }} Selected account{{selectedUsers.length === 0 || selectedUsers.length > 1 ? 's' : ''}}
         </div>
-        <div class="buttons">
-          <app-gradient-button [size]="'medium'" [style.margin-right]="'13px'" [gradient]="'#7F879D, #7F879D'" (buttonClick)="openStatusPopup($event)">Edit Status</app-gradient-button>
-          <app-gradient-button *ngIf="currentTab !== '_profile_student'" [size]="'medium'" [style.margin-right]="'13px'" [gradient]="'#7F879D, #7F879D'" (buttonClick)="openPermissions($event)">Edit Permissions</app-gradient-button>
-          <app-gradient-button [size]="'medium'" [gradient]="'#1F195E, #1F195E'" (buttonClick)="clearData()">Done</app-gradient-button>
+        <div class="buttons ds-flex-row ds-flex-center-between">
+          <app-gradient-button
+            *ngIf="currentTab === '_profile_student'"
+            gradient="#6651F1"
+            [style.margin-right]="'15px'"
+            cursor="pointer"
+            (buttonClick)="openBulkEditPassLimits()"
+          >Edit Pass Limit</app-gradient-button>
+          <app-gradient-button [style.margin-right]="'13px'" [gradient]="'#7F879D, #7F879D'" (buttonClick)="openStatusPopup($event)">Edit Status</app-gradient-button>
+          <app-gradient-button *ngIf="currentTab !== '_profile_student'" [style.margin-right]="'13px'" [gradient]="'#7F879D, #7F879D'" (buttonClick)="openPermissions($event)">Edit Permissions</app-gradient-button>
+          <app-gradient-button [gradient]="'#1F195E, #1F195E'" (buttonClick)="clearData()">Done</app-gradient-button>
         </div>
       </div>
 
@@ -55,7 +62,7 @@
             [contentTemplate]="passLimitNuxTemplate"
             [showToolTip$]="showPassLimitNux"
             [position]="nuxWrapperPosition"
-            gradient="#6651F1, #6651F1"
+            gradient="#6651F1"
             [style.margin-left]="'15px'"
             leftIcon="./assets/Pass Limit (White).svg"
             cursor="pointer"
