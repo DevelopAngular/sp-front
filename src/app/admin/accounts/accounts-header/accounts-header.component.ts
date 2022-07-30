@@ -333,10 +333,14 @@ export class AccountsHeaderComponent implements OnInit, AfterViewInit, OnDestroy
     });
 
     this.bulkEditDialogRef.afterClosed().subscribe({
-      next: () => {
+      next: (triggeredUpdate) => {
         this.selectedUsers = [];
         this.tableService.clearSelectedUsers.next();
         this.cdr.detectChanges();
+
+        if (triggeredUpdate) {
+          this.tableService.activeFilters$.next(this.tableService.activeFilters$.value);
+        }
       }
     });
   }

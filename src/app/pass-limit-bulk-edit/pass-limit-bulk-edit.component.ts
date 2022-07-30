@@ -79,10 +79,9 @@ export class PassLimitBulkEditComponent implements OnInit {
       students: this.data.students.map(u => parseInt(u.id, 10))
     }).subscribe({
       next: () => {
-        this.dialogRef.close();
+        this.dialogRef.close(true); // triggerUpdated
       },
       error: err => {
-        console.log(err);
         this.requestLoading = false;
       }
     });

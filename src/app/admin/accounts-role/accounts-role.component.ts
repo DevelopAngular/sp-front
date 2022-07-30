@@ -1,9 +1,9 @@
 import {Component, NgZone, OnDestroy, OnInit} from '@angular/core';
 import {MatDialog} from '@angular/material/dialog';
-import {BehaviorSubject, combineLatest, forkJoin, Observable, of, Subject} from 'rxjs';
+import {BehaviorSubject, combineLatest, forkJoin, Observable, Subject} from 'rxjs';
 import {UserService} from '../../services/user.service';
 import {ActivatedRoute, Router} from '@angular/router';
-import {concatMap, filter, map, switchMap, take, takeUntil, tap} from 'rxjs/operators';
+import {filter, map, switchMap, take, takeUntil, tap} from 'rxjs/operators';
 import {Util} from '../../../Util';
 import {HttpService} from '../../services/http-service';
 import {AdminService} from '../../services/admin.service';
@@ -20,7 +20,7 @@ import {TotalAccounts} from '../../models/TotalAccounts';
 import {StorageService} from '../../services/storage.service';
 import {ToastService} from '../../services/toast.service';
 import {PassLimitService} from '../../services/pass-limit.service';
-import {HallPassLimit, IndividualPassLimit} from '../../models/HallPassLimits';
+import {StudentPassLimit} from '../../models/HallPassLimits';
 
 export const TABLE_RELOADING_TRIGGER =  new Subject<any>();
 
@@ -35,7 +35,7 @@ export class AccountsRoleComponent implements OnInit, OnDestroy {
 
   public role: string;
   public placeholder: boolean;
-  public loaded: boolean = false;
+  public loaded = false;
   public profilePermissions: any;
   public user: User;
   public pending$: Subject<boolean> = new Subject<boolean>();
@@ -46,20 +46,18 @@ export class AccountsRoleComponent implements OnInit, OnDestroy {
 
   public sortingColumn: string;
   public currentColumns: any = {};
-  schoolPassLimit: HallPassLimit;
 
   accountRoleData$: Observable<any[]>;
   accountRoleNextUrl$: Observable<string>;
 
-  isLoading$: Observable<boolean> = of(false);
-  isLoaded$: Observable<boolean>;
+  isLoading$: BehaviorSubject<boolean> = new BehaviorSubject<boolean>(false);
+  isLoaded$: BehaviorSubject<boolean> = new BehaviorSubject<boolean>(false);
   sort$: Observable<string>;
   sortLoading$: BehaviorSubject<boolean> = new BehaviorSubject<boolean>(false);
 
   public accounts$: Observable<TotalAccounts> = this.adminService.countAccounts$;
 
   schools$: Observable<School[]>;
-
 
   constructor(
     public router: Router,
@@ -79,37 +77,32 @@ export class AccountsRoleComponent implements OnInit, OnDestroy {
 
   ngOnInit() {
     this.schools$ = this.http.schoolsCollection$;
+    this.isLoaded$.next(false);
+    this.isLoading$.next(true);
 
-    this.accountRoleData$ = combineLatest(this.tableService.activeFilters$.asObservable(), this.http.globalReload$)
+    this.accountRoleData$ = combineLatest(
+      this.tableService.activeFilters$.asObservable().pipe(tap(() => {
+        this.isLoaded$.next(false);
+        this.isLoading$.next(true);
+      })),
+      this.http.globalReload$
+    )
       .pipe(
         switchMap(() => this.route.params),
         tap(params => {
           this.role = params.role;
           this.userService.getAccountsRoles(this.role, '', 50);
           this.buildPermissions();
-          this.isLoaded$ = this.userService.getLoadingAccounts(this.role).loaded;
-          this.isLoading$ = this.userService.getLoadingAccounts(this.role).loading;
           this.sort$ = this.userService.accountSort$[this.role];
           this.accountRoleNextUrl$ = this.userService.nextRequests$[this.role];
         }),
-        concatMap(() => this.passLimitsService.getPassLimit().pipe(tap(pl => this.schoolPassLimit = pl.pass_limit))),
         switchMap(() => {
           return this.userService.getAccountsRole(this.role);
         }),
-        switchMap((accounts: User[]) =>
-          this.schoolPassLimit.limitEnabled
-            ? forkJoin(
-              accounts.map(a =>
-                this.passLimitsService.getIndividualLimit(a.id).pipe(
-                  map(limit => ({
-                    ...a,
-                    limit: limit || this.schoolPassLimit
-                  }))
-                )
-              ))
-            : of(accounts.map(a => ({...a, limit: null})))
-        ),
-        map((accounts: (User & { limit: HallPassLimit | IndividualPassLimit })[]) => {
+        switchMap((accounts: User[]) => forkJoin(
+          accounts.map(a => this.passLimitsService.getStudentPassLimit(a.id).pipe(map(limit => ({...a, limit}))))
+        )),
+        map((accounts: (User & { limit: StudentPassLimit })[]) => {
           const filterFunctions = Object.values(this.tableService.activeFilters$.getValue()).map(v => v.filterCallback);
           let filteredAccounts = [].concat(accounts);
           for (const f of filterFunctions) {
@@ -131,6 +124,8 @@ export class AccountsRoleComponent implements OnInit, OnDestroy {
            return this.emptyRoleObject(getColumns, this.currentColumns);
           }
           this.userEmptyState = false;
+          this.isLoading$.next(false);
+          this.isLoaded$.next(true);
           return filteredAccounts.map(account => {
             const rowObj = this.buildDataForRole(account);
 
@@ -272,17 +267,17 @@ export class AccountsRoleComponent implements OnInit, OnDestroy {
    * "5 passes/day": A school-wide pass limit exists, is enabled and no individual limit exists for this user
    * "10 passes/day": A school-wide pass limit exists, is enabled and an individual limit exists for this user
    */
-  private passLimitCells(limit: HallPassLimit | IndividualPassLimit): { passLimit: 'No Limit' | string, description: string } {
-    if (limit === null) {
+  private passLimitCells(limit: StudentPassLimit): { passLimit: 'No Limit' | string, description: string } {
+    const description = limit?.description || '';
+    if (limit.isUnlimited || limit.noLimitsSet || limit.passLimit === null) {
       return {
         passLimit: 'No Limit',
-        description: ''
+        description
       };
     }
-
     return {
-      passLimit: `${limit.passLimit === -2 ? 'Unlimited' : limit.passLimit} passes/day`,
-      description: (limit as IndividualPassLimit)?.description || ''
+      passLimit: `${limit.passLimit} ${limit.passLimit === 1 ? 'pass' : 'passes'}/day`,
+      description
     };
   }
 
@@ -310,11 +305,12 @@ export class AccountsRoleComponent implements OnInit, OnDestroy {
     };
     let objectToTable;
     if (this.role === '_profile_admin' || this.role === '_profile_student') {
+      const limit: StudentPassLimit = account.limit;
       const passLimitCells = this.passLimitCells(account.limit);
       let classList = 'no-wrap pass-limit-counter';
-      if (passLimitCells.passLimit === 'No Limit') {
+      if (limit.passLimit === null) {
         classList += 'no-limit';
-      } else if (!!passLimitCells.description) {
+      } else if (limit.isIndividual) {
         classList += 'individual-limit';
       } else {
         classList += 'school-limit';
