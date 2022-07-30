@@ -167,7 +167,7 @@
           <div class="background-header"></div>
           <app-gradient-button (buttonClick)="resetIndividualForm()" customBackground="#7083A0">Cancel</app-gradient-button>
           <div class="title-header" style="z-index: 10; display: flex">
-            <div class="ds-dialog-title" [style.margin-left]="'12px'">New Individual Limit</div>
+            <div class="ds-dialog-title">New Individual Limit</div>
           </div>
           <app-gradient-button (buttonClick)="submitIndividualLimits()" customBackground="#00B476" textColor="white" [disabled]="!!(individualOverrideForm?.invalid)">
             <ng-template [ngTemplateOutlet]="buttonLoading" [ngTemplateOutletContext]="{ loading: individualLoading, text: 'Save' }"></ng-template>
@@ -179,7 +179,7 @@
         <ng-container *ngIf="showPassLimitNux" [ngTemplateOutlet]="passLimitNux"></ng-container>
         <section class="individual-name ds-my-20">
           <p class="ds-dialog-heading ds-blue-gray" style="padding: 0 !important">Student</p>
-          <app-sp-search *ngIf="!selectedExistingIndividualLimit" #studentSearch (onUpdate)="updateStudentList($event)"></app-sp-search>
+          <app-sp-search *ngIf="!selectedExistingIndividualLimit" #studentSearch (onUpdate)="updateStudentList($event)" [chipsMode]="true"></app-sp-search>
           <div class="selected-name" *ngIf="selectedExistingIndividualLimit as iLimit">
             <div class="student-picture">
               <div *ngIf="iLimit.student.profile_picture; else d"

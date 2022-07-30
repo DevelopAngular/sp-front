@@ -70,7 +70,7 @@ export class AdminPassLimitDialogComponent implements OnInit, OnDestroy {
   introSubs: Subscription;
   individualStudentLimits: IndividualPassLimit[] = [];
   individualOverrideForm: FormGroup;
-  individualFormPreviousValue: { student: string[], passLimit: string, description: string };
+  individualFormPreviousValue: { students: string[], passLimit: string, description: string };
   individualFormChanged: Observable<boolean>;
   individualLoading: boolean;
   selectedExistingIndividualLimit: IndividualPassLimit;
@@ -251,7 +251,13 @@ export class AdminPassLimitDialogComponent implements OnInit, OnDestroy {
     }, individualPassLimitRangeValidator());
     this.individualFormPreviousValue = this.individualOverrideForm.value;
     this.individualFormChanged = this.individualOverrideForm.valueChanges.pipe(map(v => {
-      return JSON.stringify(v) !== JSON.stringify(this.individualFormPreviousValue);
+      const { students, passLimit, description } = v;
+      const str1 = JSON.stringify(students) + JSON.stringify(passLimit) + JSON.stringify(description);
+      const str2 = JSON.stringify(this.individualFormPreviousValue.students) + JSON.stringify(this.individualFormPreviousValue.passLimit) + JSON.stringify(this.individualFormPreviousValue.description);
+      return str1 !== str2;
+      // console.log(v);
+      // console.log(this.individualFormPreviousValue);
+      // return JSON.stringify(v) !== JSON.stringify(this.individualFormPreviousValue);
     }));
     setTimeout(() => {
       this.individualOverrideForm.patchValue({ passLimit: passLimitValue }, { emitEvent: true });
