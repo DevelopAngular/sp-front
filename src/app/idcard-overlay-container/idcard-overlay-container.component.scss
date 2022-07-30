@@ -1,0 +1,13 @@
+.overlay-main-wrapper {
+    width: 97vw;
+    height: 94vh;
+    position: relative;
+    display: flex;
+    align-items: center;
+    .cancelSVG {
+        position: absolute;
+        top: 0px;
+        right: 0px;
+        cursor: pointer;
+    }
+}

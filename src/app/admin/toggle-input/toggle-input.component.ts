@@ -17,6 +17,7 @@ export class ToggleInputComponent implements OnInit {
   @Input() controlSize: ToggleInputSize = 'regular';
   @Input() disabled: boolean = false;
   @Input() delimiter: boolean = true;
+  @Input() defaultLayout: boolean = true;
   @Input() mock: boolean = false;
   @Input() color: string = '#00B476';
   @Input() icon: string = './assets/Hand (Jade).svg';

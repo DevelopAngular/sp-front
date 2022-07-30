@@ -108,6 +108,8 @@ function makeUrl(server: LoginServer, endpoint: string) {
       url = environment.preferEnvironment.api_root + endpoint;
     } else {
       // url = 'https://smartpass.app/api/prod-us-central' + endpoint;
+      // url = 'https://smartpass.app/api/staging/' + endpoint;
+
       url = server.api_root + endpoint;
     }
   }
@@ -201,7 +203,7 @@ export class HttpService implements OnDestroy {
 
   public currentLangSubject = new BehaviorSubject<string>('en');
   public currentLang$: Observable<string> = this.currentLangSubject.asObservable();
-  // should come from server 
+  // should come from server
   public langs$: Observable<string[]> = of(['en', 'es']);
 
   public kioskTokenSubject$ = new BehaviorSubject<any>(null);

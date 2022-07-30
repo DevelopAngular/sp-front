@@ -1,0 +1,10 @@
+<div class="notif-select-students-dialog">
+  <div class="title">
+    <span>Add Student</span>
+    <div class="notif-exit-wrapper"><img (click)="close()" alt="" [src]="'./assets/Close.svg' | resolveAsset"></div>
+  </div>
+
+  <app-sp-search inputField="true" showStudentInfo="false" width="254px" height="40px"
+                 focused="true" list="false" (onUpdate)="choose($event)">
+  </app-sp-search>
+</div>

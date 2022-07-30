@@ -30,8 +30,7 @@ export class NavButtonComponent implements OnInit, OnChanges {
   }
 
   constructor(
-    private darkTheme: DarkThemeSwitch,
-    private componentService: ComponentsService
+    public darkTheme: DarkThemeSwitch
   ) { }
 
   ngOnInit() {

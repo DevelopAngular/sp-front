@@ -3,7 +3,7 @@ export const closeModal = () => {
   cy.wait(1000);
 };
 
-export const waitForElement = (selector: string, timeout: number = 10000) => cy.waitUntil(() => cy.get(selector), {timeout});
+export const waitForElement = (selector: string, timeout: number = 20000) => cy.waitUntil(() => cy.get(selector), {timeout});
 
 export const searchForStudent = (spSearchSelector: string, studentName: string) => {
   cy.intercept({

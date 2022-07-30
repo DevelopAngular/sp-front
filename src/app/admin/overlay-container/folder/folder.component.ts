@@ -1,9 +1,9 @@
 import {Component, ElementRef, EventEmitter, Inject, Input, OnDestroy, OnInit, Output, ViewChild} from '@angular/core';
-import {FormGroup} from '@angular/forms';
+import {FormGroup, Validators} from '@angular/forms';
 import {DomSanitizer} from '@angular/platform-browser';
 import {MAT_DIALOG_DATA, MatDialog, MatDialogRef} from '@angular/material/dialog';
 
-import {BehaviorSubject, interval, merge, Subject, zip} from 'rxjs';
+import {BehaviorSubject, combineLatest, interval, merge, Subject, zip} from 'rxjs';
 
 import {Location} from '../../../models/Location';
 import {Pinnable} from '../../../models/Pinnable';
@@ -143,6 +143,7 @@ export class FolderComponent implements OnInit, OnDestroy {
   }
 
   ngOnInit() {
+    this.form.get('folderName').setValidators([Validators.required, Validators.maxLength(17)]);
     this.scrollableAreaName = `Folder ${this.folderNameTitle}`;
     this.frameMotion$ = this.formService.getFrameMotionDirection();
     this.currentPage = this.overlayService.pageState.getValue().currentPage;
@@ -189,7 +190,7 @@ export class FolderComponent implements OnInit, OnDestroy {
         this.folderRoomsLoaded = true;
     }
 
-    merge(this.form.get('folderName').valueChanges, this.change$)
+    merge(combineLatest(this.form.get('folderName').valueChanges, this.form.statusChanges), this.change$)
         .subscribe(() => {
           this.changeFolderData();
             this.folderDataResult.emit({
@@ -207,6 +208,7 @@ export class FolderComponent implements OnInit, OnDestroy {
   }
 
   ngOnDestroy(): void {
+    this.form.get('folderName').setValidators([Validators.maxLength(17)]);
     this.scrollPosition.saveComponentScroll(this.folderNameTitle, this.scrollableArea.scrollTop);
   }
 
