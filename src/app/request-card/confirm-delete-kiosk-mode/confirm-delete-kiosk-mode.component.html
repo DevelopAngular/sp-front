@@ -1,0 +1,14 @@
+<div class="wrapper">
+  <div class="content">
+    <div class="title">Delete pass request?</div>
+    <div class="subtitle">Are you sure you want to delete pass request?</div>
+    <div class="buttons">
+      <div class="button">
+        <app-gradient-button [gradient]="'#F0F2F5, #F0F2F5'" (buttonClick)="buttonAction('cancel')">Cancel</app-gradient-button>
+      </div>
+      <div class="button" style="margin-left: 15px">
+        <app-gradient-button [gradient]="'#E32C66, #E32C66'" (buttonClick)="buttonAction('delete')">Delete</app-gradient-button>
+      </div>
+    </div>
+  </div>
+</div>

@@ -262,7 +262,6 @@ export class ToWhereComponent implements OnInit {
      // staff only
      const selectedStudents = this.formState.data.roomStudents ?? this.formState.data.selectedStudents;
      const students = selectedStudents.map(s => ''+s.id);
-     debugger;
      const ruleStudents = location.visibility_students.map(s => ''+s.id);
      const rule = location.visibility_type;
 

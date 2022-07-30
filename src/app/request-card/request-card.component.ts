@@ -38,6 +38,7 @@ import {
   ConfirmationTemplates,
   RecommendedDialogConfig
 } from '../shared/shared-components/confirmation-dialog/confirmation-dialog.component';
+import {ConfirmDeleteKioskModeComponent} from './confirm-delete-kiosk-mode/confirm-delete-kiosk-mode.component';
 
 const sleep = (ms: number) => new Promise(resolve => {
   setTimeout(() => resolve(null), ms);
@@ -312,8 +313,7 @@ export class RequestCardComponent implements OnInit, OnDestroy {
       }
     } else {
       if (this.formState.kioskMode) {
-        this.forStaff = false;
-        body.teachers = uniq(this.formState.data.direction.from.teachers.map(t => t.id));
+        body.teacher = uniq(this.formState.data.direction.from.teachers.map(t => t.id));
         body.student_id = this.formState.data.kioskModeStudent.id;
       } else {
         body.teacher = this.request.teacher.id;
@@ -432,47 +432,59 @@ export class RequestCardComponent implements OnInit, OnDestroy {
   }
 
   cancelRequest(evt: MouseEvent) {
-
-    if (!this.cancelOpen) {
-      const target = new ElementRef(evt.currentTarget);
-      this.options = [];
-      this.header = '';
-      if (!this.forInput) {
-        if (this.forStaff) {
-          this.options.push(this.genOption('Attach Message & Deny', '#7f879d', 'deny_with_message', './assets/Message (Blue-Gray).svg'));
-          this.options.push(this.genOption('Deny Pass Request', '#E32C66', 'deny', './assets/Cancel (Red).svg', 'rgba(227, 44, 102, .1)', 'rgba(227, 44, 102, .15)'));
-        } else {
-          if (this.invalidDate) {
-            this.options.push(this.genOption('Change Date & Time to Resend', '#7f879d', 'change_date'));
-          }
-          this.options.push(this.genOption('Delete Pass Request', '#E32C66', 'delete', './assets/Delete (Red).svg', 'rgba(227, 44, 102, .1)', 'rgba(227, 44, 102, .15)'));
-        }
-        this.header = 'Are you sure you want to ' + (this.forStaff ? 'deny' : 'delete') + ' this pass request' + (this.forStaff ? '' : ' you sent') + '?';
-      } else {
-        if (!this.pinnableOpen) {
-          this.formState.step = this.formState.previousStep === 1 ? 1 : 3;
-          this.formState.previousStep = 4;
-          this.createFormService.setFrameMotionDirection('disable');
-          this.cardEvent.emit(this.formState);
-        }
-        return false;
-      }
-
-      UNANIMATED_CONTAINER.next(true);
-      this.cancelOpen = true;
-      const cancelDialog = this.dialog.open(ConsentMenuComponent, {
-        panelClass: 'consent-dialog-container',
-        backdropClass: 'invis-backdrop',
-        data: {'header': this.header, 'options': this.options, 'trigger': target}
+    if (this.formState && this.formState.kioskMode) {
+      const CD = this.dialog.open(ConfirmDeleteKioskModeComponent, {
+        panelClass: 'overlay-dialog'
       });
 
-      cancelDialog.afterClosed()
-        .pipe(
-          tap(() => UNANIMATED_CONTAINER.next(false))
-        )
-        .subscribe(action => {
-          this.chooseAction(action);
+      CD.afterClosed().subscribe(action => {
+        if (action === 'delete') {
+
+        }
+      })
+    } else {
+      if (!this.cancelOpen) {
+        const target = new ElementRef(evt.currentTarget);
+        this.options = [];
+        this.header = '';
+        if (!this.forInput) {
+          if (this.forStaff) {
+            this.options.push(this.genOption('Attach Message & Deny', '#7f879d', 'deny_with_message', './assets/Message (Blue-Gray).svg'));
+            this.options.push(this.genOption('Deny Pass Request', '#E32C66', 'deny', './assets/Cancel (Red).svg', 'rgba(227, 44, 102, .1)', 'rgba(227, 44, 102, .15)'));
+          } else {
+            if (this.invalidDate) {
+              this.options.push(this.genOption('Change Date & Time to Resend', '#7f879d', 'change_date'));
+            }
+            this.options.push(this.genOption('Delete Pass Request', '#E32C66', 'delete', './assets/Delete (Red).svg', 'rgba(227, 44, 102, .1)', 'rgba(227, 44, 102, .15)'));
+          }
+          this.header = 'Are you sure you want to ' + (this.forStaff ? 'deny' : 'delete') + ' this pass request' + (this.forStaff ? '' : ' you sent') + '?';
+        } else {
+          if (!this.pinnableOpen) {
+            this.formState.step = this.formState.previousStep === 1 ? 1 : 3;
+            this.formState.previousStep = 4;
+            this.createFormService.setFrameMotionDirection('disable');
+            this.cardEvent.emit(this.formState);
+          }
+          return false;
+        }
+
+        UNANIMATED_CONTAINER.next(true);
+        this.cancelOpen = true;
+        const cancelDialog = this.dialog.open(ConsentMenuComponent, {
+          panelClass: 'consent-dialog-container',
+          backdropClass: 'invis-backdrop',
+          data: {'header': this.header, 'options': this.options, 'trigger': target}
         });
+
+        cancelDialog.afterClosed()
+          .pipe(
+            tap(() => UNANIMATED_CONTAINER.next(false))
+          )
+          .subscribe(action => {
+            this.chooseAction(action);
+          });
+      }
+
     }
   }
 
