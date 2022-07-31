@@ -10,59 +10,119 @@
       </div>
 
       <div class="content">
-        <div class="limit-section ds-flex-row ds-flex-center-between">
-          <span class="ds-dialog-heading" style="padding-bottom: 0 !important;">
-            School Pass Limit
-            <div style="display: inline" customToolTip [contentTemplate]="passLimitLearnMore">
-              <img
-                class="support-icon"
-                [src]="'./assets/Support (Gray-200).svg' | resolveAsset">
-            </div>
-            <ng-template #passLimitLearnMore>
-             <div class="ds-tooltip">
-                <span>
-                  Limit the number of passes all students can have per day.
-                  <a href="https://www.smartpass.app/passlimits" style="color: white" target="_blank"> Learn more</a>
-                </span>
-             </div>
-           </ng-template>
-          </span>
-
-          <div
-            style="padding: 5px 10px; background-color: #6651F1; box-shadow: rgba(112, 131, 160, 0.1) 0 2px 10px 0; border-radius: 4px; cursor: pointer">
-            <span style="font-size: 14px; font-weight: 400; color: white">Turn on</span>
-            <img class="ds-ml-5" style="width: 12px; height: 12px;" [src]="'./assets/External%20Link%20(White).svg' | resolveAsset" alt="">
-          </div>
-        </div>
-
-        <div class="limit-section ds-flex-row ds-flex-center-between">
-          <span class="ds-dialog-heading" style="align-self: flex-start; padding-bottom: 0 !important;">
-            Individual Limit
-            <div class="tooltip-container" style="display: inline">
-              <div style="display: inline" customToolTip [contentTemplate]="individualLimitLearnMore">
+        <div class="limit-section school-pass-limit ds-flex-row ds-flex-center-between" [ngClass]="{ 'disabled': data.studentPassLimit.isIndividual }">
+          <div class="ds-flex-column" style="display: flex">
+            <span class="ds-dialog-heading" style="padding-bottom: 0 !important;">
+              School Pass Limit
+              <div style="display: inline" customToolTip [contentTemplate]="passLimitLearnMore">
                 <img
                   class="support-icon"
-                  style="width: 17px"
                   [src]="'./assets/Support (Gray-200).svg' | resolveAsset">
               </div>
-            </div>
-            <ng-template #individualLimitLearnMore>
-              <div class="ds-tooltip">
-                <span>
-                  Limit the number of passes certain individual students can have per day. This overrides the school limit if set.
-                  <a href="https://www.smartpass.app/passlimits" style="color: white" target="_blank"> Learn more</a>
-                </span>
-              </div>
-            </ng-template>
-          </span>
+              <ng-template #passLimitLearnMore>
+               <div class="ds-tooltip">
+                  <span>
+                    Limit the number of passes all students can have per day.
+                    <a href="https://www.smartpass.app/passlimits" style="color: white" target="_blank"> Learn more</a>
+                  </span>
+               </div>
+             </ng-template>
+            </span>
 
-          <div
-            style="padding: 5px 10px; background-color: #E48C15; box-shadow: rgba(112, 131, 160, 0.1) 0 2px 10px 0; border-radius: 4px; cursor: pointer;">
-            <img class="ds-mr-5" style="width: 12px; height: 12px;" [src]="'./assets/Plus (White).svg' | resolveAsset" alt="">
-            <span style="font-size: 14px; font-weight: 400; color: white">Add</span>
+            <span style="font-size: 14px; font-weight: 400; color: #6651F1" *ngIf="!data.studentPassLimit.isIndividual">{{data.studentPassLimit.passLimit}} passes/day</span>
           </div>
+
+          <app-gradient-button
+            *ngIf="!schoolEditButton; else schoolEditButtonTemplate;"
+            size="tiny"
+            customToolTip
+            [contentTemplate]="editButtonAdminRedirect"
+            [disabled]="!isAdmin"
+            gradient="#6651F1"
+            textColor="#FFFFFF"
+            [rightIcon]="'assets/External%20Link%20(White).svg'"
+            rightIconWidth="15px"
+            rightIconHeight="15px"
+            cornerRadius="4px">
+            Turn on
+          </app-gradient-button>
+
+          <ng-template #schoolEditButtonTemplate>
+            <ng-template [ngTemplateOutlet]="editButton" [ngTemplateOutletContext]="{ clickFunc: clicker, isIndividual: false }"></ng-template>
+          </ng-template>
+        </div>
+
+        <div class="limit-section individual-limit ds-flex-row ds-flex-center-between" [ngClass]="{ 'disabled-individual': (data.studentPassLimit.schoolPassLimitEnabled &&
+        !data.studentPassLimit.isIndividual) || !data.studentPassLimit.passLimit || data.studentPassLimit.noLimitsSet }">
+          <div class="ds-flex-column" style="display: flex">
+            <span class="ds-dialog-heading" style="align-self: flex-start; padding-bottom: 0 !important;">
+              Individual Limit
+              <div class="tooltip-container" style="display: inline">
+                <div style="display: inline" customToolTip [contentTemplate]="individualLimitLearnMore">
+                  <img
+                    class="support-icon"
+                    style="width: 17px"
+                    [src]="'./assets/Support (Gray-200).svg' | resolveAsset">
+                </div>
+              </div>
+              <ng-template #individualLimitLearnMore>
+                <div class="ds-tooltip">
+                  <span>
+                    Limit the number of passes certain individual students can have per day. This overrides the school limit if set.
+                    <a href="https://www.smartpass.app/passlimits" style="color: white" target="_blank"> Learn more</a>
+                  </span>
+                </div>
+              </ng-template>
+            </span>
+
+            <div *ngIf="data.studentPassLimit.passLimit" class="ds-flex-column ds-mt-5" style="display: flex;">
+              <span style="color: #E48C15; font-size: 14px;">{{data.studentPassLimit.passLimit}} passes/day</span>
+              <span style="color: grey; font-size: 14px;" *ngIf="data.studentPassLimit.description">{{data.studentPassLimit.description}}</span>
+            </div>
+          </div>
+
+          <app-gradient-button
+            *ngIf="!individualEditButton; else individualEditButtonTemplate"
+            size="tiny"
+            customToolTip
+            [contentTemplate]="editButtonAdminRedirect"
+            [disabled]="!isAdmin"
+            gradient="#E48C15"
+            textColor="#FFFFFF"
+            [leftIcon]="'assets/Plus (White).svg'"
+            leftImageWidth="15px"
+            leftImageHeight="15px"
+            cornerRadius="4px">
+            Add
+          </app-gradient-button>
+
+          <ng-template #individualEditButtonTemplate>
+            <ng-template [ngTemplateOutlet]="editButton" [ngTemplateOutletContext]="{ clickFunc: clicker, isIndividual: true }"></ng-template>
+          </ng-template>
         </div>
       </div>
     </div>
   </mat-tab>
 </mat-tab-group>
+
+<ng-template #editButton let-clickFunc="clickFunc" let-isIndividual="isIndividual">
+  <app-gradient-button
+    size="tiny"
+    customToolTip
+    [contentTemplate]="editButtonAdminRedirect"
+    [disabled]="!isAdmin"
+    (buttonClick)="clickFunc()"
+    gradient="#FFFFFF, #FFFFFF"
+    textColor="#7f879d"
+    [leftIcon]="'assets/Edit%20(Blue-Gray).svg'"
+    [rightIcon]="isIndividual ? '' : 'assets/External%20Link%20(Blue-Gray).svg'">
+    Edit
+  </app-gradient-button>
+</ng-template>
+
+<ng-template #editButtonAdminRedirect>
+  <div *ngIf="!isAdmin" class="ds-tooltip" style="text-align: left">
+    <div class="only-admin">ADMIN ONLY</div>
+    Only admins are able to manage pass limits.
+  </div>
+</ng-template>

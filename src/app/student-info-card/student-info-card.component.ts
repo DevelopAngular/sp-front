@@ -584,7 +584,8 @@ export class StudentInfoCardComponent implements OnInit, AfterViewInit, OnDestro
       width: '425px',
       height: '500px',
       data: {
-        studentPassLimit: this.studentPassLimit
+        studentPassLimit: this.studentPassLimit,
+        user: this.user
       }
     });
   }

@@ -10,3 +10,21 @@
   border-radius: 10px;
   margin-bottom: 20px;
 }
+
+.school-pass-limit {
+  border: 1px solid #6651F1;
+}
+
+.individual-limit {
+  border: 1px solid #E48C15;
+}
+
+.disabled {
+  pointer-events: none;
+  opacity: 0.5;
+  border-width: 0 !important;
+}
+
+.disabled-individual {
+  border-width: 0 !important;
+}
