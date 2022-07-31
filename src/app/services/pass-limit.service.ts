@@ -1,7 +1,7 @@
 import {Injectable} from '@angular/core';
 
-import {forkJoin, Observable} from 'rxjs';
-import {distinctUntilChanged, map, take} from 'rxjs/operators';
+import {Observable} from 'rxjs';
+import {distinctUntilChanged, map} from 'rxjs/operators';
 
 import {LiveDataService} from '../live-data/live-data.service';
 import {HttpService} from './http-service';
@@ -76,5 +76,9 @@ export class PassLimitService {
 
   updateIndividualLimit(override: IndividualPassLimitCollection): Observable<null> {
     return this.http.put<null>(`${PASS_LIMIT_ENDPOINT}/update_override`, override, undefined);
+  }
+
+  deleteIndividualLimit(studentId: string | number) {
+    return this.http.delete(`${PASS_LIMIT_ENDPOINT}/delete_override?student_id=${studentId}`);
   }
 }

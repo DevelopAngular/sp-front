@@ -43,7 +43,6 @@ import {HttpService} from '../services/http-service';
 import {ConsentMenuComponent} from '../consent-menu/consent-menu.component';
 import {ProfilePictureComponent} from '../admin/accounts/profile-picture/profile-picture.component';
 import {DarkThemeSwitch} from '../dark-theme-switch';
-import {PassLimitsDialogComponent} from '../teacher/pass-limits-dialog/pass-limits-dialog.component';
 import {PassLimitService} from '../services/pass-limit.service';
 import {StudentPassLimit} from '../models/HallPassLimits';
 import {ConnectedPosition} from '@angular/cdk/overlay';
@@ -209,6 +208,7 @@ export class StudentInfoCardComponent implements OnInit, AfterViewInit, OnDestro
         takeUntil(this.destroy$)
       ).subscribe((res: StudentPassLimit) => {
         this.studentPassLimit = res;
+        console.log(this.studentPassLimit);
         this.cdr.detectChanges();
       });
     this.exclusionGroups$ = this.encounterPreventionService.exclusionGroups$;
@@ -578,7 +578,6 @@ export class StudentInfoCardComponent implements OnInit, AfterViewInit, OnDestro
   }
 
   openPassLimitsDialog() {
-    console.log('dialog');
     this.passLimitStudentInfoRef = this.dialog.open(PassLimitStudentInfoComponent, {
       ...RecommendedDialogConfig,
       width: '425px',

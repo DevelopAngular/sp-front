@@ -97,6 +97,7 @@ import { IdNumbersComponent } from '../admin/accounts/id-numbers/id-numbers.comp
 import { GradeLevelsComponent } from '../admin/accounts/grade-levels/grade-levels.component';
 import {PassLimitBulkEditComponent} from '../pass-limit-bulk-edit/pass-limit-bulk-edit.component';
 import {PassLimitStudentInfoComponent} from '../pass-limit-student-info/pass-limit-student-info.component';
+import {AdminPassLimitDialogComponent} from '../admin-pass-limits-dialog/admin-pass-limits-dialog.component';
 import {ConfirmDeleteKioskModeComponent} from '../request-card/confirm-delete-kiosk-mode/confirm-delete-kiosk-mode.component';
 
 const DEFAULT_SWIPER_CONFIG: SwiperConfigInterface = {
@@ -196,6 +197,7 @@ const DEFAULT_SWIPER_CONFIG: SwiperConfigInterface = {
     StatusChipComponent,
     ConfirmationDialogComponent,
     NuxUniversalComponent,
+    AdminPassLimitDialogComponent,
     PassLimitInputComponent,
     PassLimitFeedbackComponent,
     PassLimitBulkEditComponent,
@@ -283,6 +285,7 @@ const DEFAULT_SWIPER_CONFIG: SwiperConfigInterface = {
     LinkGeneratedDialogComponent,
     StatusChipComponent,
     NuxUniversalComponent,
+    AdminPassLimitDialogComponent,
     PassLimitInputComponent,
     PassLimitFeedbackComponent,
     PassLimitBulkEditComponent,

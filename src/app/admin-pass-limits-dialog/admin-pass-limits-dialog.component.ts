@@ -7,14 +7,14 @@ import {cloneDeep} from 'lodash';
 import {forkJoin, Observable, of, Subscription} from 'rxjs';
 import {concatMap, delay, map, tap} from 'rxjs/operators';
 
-import {ScreenService} from '../../../services/screen.service';
-import {PassLimitService} from '../../../services/pass-limit.service';
-import {HallPassLimit, IndividualPassLimit, IndividualPassLimitCollection} from '../../../models/HallPassLimits';
-import {User} from '../../../models/User';
-import {SPSearchComponent} from '../../../sp-search/sp-search.component';
-import {UserService} from '../../../services/user.service';
-import {IntroData} from '../../../ngrx/intros';
-import {PassLimitInputComponent} from '../../../pass-limit-input/pass-limit-input.component';
+import {ScreenService} from '../services/screen.service';
+import {PassLimitService} from '../services/pass-limit.service';
+import {HallPassLimit, IndividualPassLimit, IndividualPassLimitCollection} from '../models/HallPassLimits';
+import {User} from '../models/User';
+import {SPSearchComponent} from '../sp-search/sp-search.component';
+import {UserService} from '../services/user.service';
+import {IntroData} from '../ngrx/intros';
+import {PassLimitInputComponent} from '../pass-limit-input/pass-limit-input.component';
 
 const schoolPassLimitRangeValidator = (): ValidatorFn => (form: FormGroup): ValidationErrors => {
   const num = parseInt(form.value['passLimit'], 10);

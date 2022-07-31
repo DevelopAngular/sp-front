@@ -38,7 +38,7 @@ import {ToastService} from '../../../services/toast.service';
 import {EncounterPreventionDialogComponent} from '../encounter-prevention-dialog/encounter-prevention-dialog.component';
 import {ProfilePictureComponent} from '../profile-picture/profile-picture.component';
 import * as moment from 'moment';
-import {AdminPassLimitDialogComponent} from '../admin-pass-limits-dialog/admin-pass-limits-dialog.component';
+import {AdminPassLimitDialogComponent} from '../../../admin-pass-limits-dialog/admin-pass-limits-dialog.component';
 import {ConnectedPosition} from '@angular/cdk/overlay';
 import {PassLimitBulkEditComponent} from '../../../pass-limit-bulk-edit/pass-limit-bulk-edit.component';
 import {RecommendedDialogConfig} from '../../../shared/shared-components/confirmation-dialog/confirmation-dialog.component';
