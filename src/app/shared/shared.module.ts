@@ -96,6 +96,7 @@ import { ConfirmationComponent } from './shared-components/confirmation/confirma
 import { IdNumbersComponent } from '../admin/accounts/id-numbers/id-numbers.component';
 import { GradeLevelsComponent } from '../admin/accounts/grade-levels/grade-levels.component';
 import {PassLimitBulkEditComponent} from '../pass-limit-bulk-edit/pass-limit-bulk-edit.component';
+import {PassLimitStudentInfoComponent} from '../pass-limit-student-info/pass-limit-student-info.component';
 import {ConfirmDeleteKioskModeComponent} from '../request-card/confirm-delete-kiosk-mode/confirm-delete-kiosk-mode.component';
 
 const DEFAULT_SWIPER_CONFIG: SwiperConfigInterface = {
@@ -198,6 +199,7 @@ const DEFAULT_SWIPER_CONFIG: SwiperConfigInterface = {
     PassLimitInputComponent,
     PassLimitFeedbackComponent,
     PassLimitBulkEditComponent,
+    PassLimitStudentInfoComponent,
     ConfirmationComponent,
     IdNumbersComponent,
     GradeLevelsComponent,
@@ -284,6 +286,7 @@ const DEFAULT_SWIPER_CONFIG: SwiperConfigInterface = {
     PassLimitInputComponent,
     PassLimitFeedbackComponent,
     PassLimitBulkEditComponent,
+    PassLimitStudentInfoComponent,
     IdNumbersComponent,
     GradeLevelsComponent,
     ConfirmDeleteKioskModeComponent

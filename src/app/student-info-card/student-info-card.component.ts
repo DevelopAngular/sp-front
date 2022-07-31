@@ -52,6 +52,8 @@ import { IDCard } from '../admin/id-cards/id-card-editor/id-card-editor.componen
 import { IdcardOverlayContainerComponent } from '../idcard-overlay-container/idcard-overlay-container.component';
 import { QRBarcodeGeneratorService } from '../services/qrbarcode-generator.service';
 import { IDCardService } from '../services/IDCardService';
+import {PassLimitStudentInfoComponent} from '../pass-limit-student-info/pass-limit-student-info.component';
+import {RecommendedDialogConfig} from '../shared/shared-components/confirmation-dialog/confirmation-dialog.component';
 
 declare const window;
 
@@ -116,10 +118,8 @@ export class StudentInfoCardComponent implements OnInit, AfterViewInit, OnDestro
     offsetX: 50
   };
   showPassLimitNux = new Subject<boolean>();
-  passLimitDialogRef: MatDialogRef<PassLimitsDialogComponent>;
-
+  passLimitStudentInfoRef: MatDialogRef<PassLimitStudentInfoComponent>;
   IDCardEnabled = false;
-
   IDCARDDETAILS: any;
 
   constructor(
@@ -579,20 +579,14 @@ export class StudentInfoCardComponent implements OnInit, AfterViewInit, OnDestro
 
   openPassLimitsDialog() {
     console.log('dialog');
-    // if (this?.passLimit?.limitEnabled) {
-    //   this.passLimitDialogRef = this.dialog.open(PassLimitsDialogComponent, {
-    //     closeOnNavigation: true,
-    //     panelClass: 'overlay-dialog',
-    //     backdropClass: 'custom-bd',
-    //     width: '425px',
-    //     height: '500px',
-    //     data: {
-    //       profile: this.profile,
-    //       schoolPassLimit: this.passLimit,
-    //       individualLimit: this.individualLimit
-    //     }
-    //   });
-    // }
+    this.passLimitStudentInfoRef = this.dialog.open(PassLimitStudentInfoComponent, {
+      ...RecommendedDialogConfig,
+      width: '425px',
+      height: '500px',
+      data: {
+        studentPassLimit: this.studentPassLimit
+      }
+    });
   }
 
   editWindow(event) {

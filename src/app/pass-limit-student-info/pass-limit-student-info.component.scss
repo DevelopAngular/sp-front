@@ -1,0 +1,12 @@
+@import 'src/sp-colors';
+
+::ng-deep mat-tab-header.mat-tab-header {
+  display: none
+}
+
+.limit-section {
+  padding: 20px;
+  background: $gray050;
+  border-radius: 10px;
+  margin-bottom: 20px;
+}
