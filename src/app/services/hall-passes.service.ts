@@ -123,12 +123,18 @@ export class HallPassesService {
       return this.http.get(`v1/hall_passes?active=true&location=${locId}`);
     }
 
-    createPass(data) {
-        return this.http.post(`v1/hall_passes`, data);
+    createPass(data, future: boolean = false) {
+        return this.http.post(`v1/hall_passes`, {
+          ...data,
+          future
+        });
     }
 
-    bulkCreatePass(data) {
-        return this.http.post('v1/hall_passes/bulk_create', data);
+    bulkCreatePass(data, future: boolean = false) {
+        return this.http.post('v1/hall_passes/bulk_create', {
+          ...data,
+          future
+        });
     }
 
     cancelPass(id, data) {
