@@ -14,7 +14,7 @@ export class ConfirmDeleteKioskModeComponent implements OnInit {
   }
 
   buttonAction(action) {
-    this.dialogRef.close(action)
+    this.dialogRef.close(action);
   }
 
 }

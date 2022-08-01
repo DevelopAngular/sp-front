@@ -5,7 +5,7 @@ import {User} from '../models/User';
 import {Util} from '../../Util';
 import {MAT_DIALOG_DATA, MatDialog, MatDialogRef} from '@angular/material/dialog';
 import {ConsentMenuComponent} from '../consent-menu/consent-menu.component';
-import {Navigation} from '../create-hallpass-forms/main-hallpass--form/main-hall-pass-form.component';
+import {MainHallPassFormComponent, Navigation} from '../create-hallpass-forms/main-hallpass--form/main-hall-pass-form.component';
 import {getInnerPassName} from '../pass-tile/pass-display-util';
 import {DataService} from '../services/data-service';
 import {LoadingService} from '../services/loading.service';
@@ -123,7 +123,8 @@ export class RequestCardComponent implements OnInit, OnDestroy {
     private domCheckerService: DomCheckerService,
     private userService: UserService,
     private locationsService: LocationsService,
-    private passLimitsService: PassLimitService
+    private passLimitsService: PassLimitService,
+    private createPassFormRef: MatDialogRef<CreateHallpassFormsComponent>
   ) {
   }
 
@@ -345,6 +346,9 @@ export class RequestCardComponent implements OnInit, OnDestroy {
           this.request = res;
           this.forInput = false;
           this.kioskModeRestricted = true;
+          if (this.formState.kioskMode) {
+            this.createPassFormRef.disableClose = true;
+          }
           return this.formState.previousStep === 1 ? this.requestService.cancelRequest(this.request.id) :
             (this.formState.missedRequest ? this.requestService.cancelInvitation(this.formState.data.request.id, '') : of(null));
         }))
@@ -432,16 +436,16 @@ export class RequestCardComponent implements OnInit, OnDestroy {
   }
 
   cancelRequest(evt: MouseEvent) {
-    if (this.formState && this.formState.kioskMode) {
+    if (this.formState && this.formState.kioskMode && !this.forInput) {
       const CD = this.dialog.open(ConfirmDeleteKioskModeComponent, {
         panelClass: 'overlay-dialog'
       });
 
       CD.afterClosed().subscribe(action => {
         if (action === 'delete') {
-
+          this.chooseAction(action);
         }
-      })
+      });
     } else {
       if (!this.cancelOpen) {
         const target = new ElementRef(evt.currentTarget);

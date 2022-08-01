@@ -269,7 +269,7 @@ export class MainHallPassFormComponent implements OnInit, OnDestroy {
         this.formService.setFrameMotionDirection('disable');
         this.formService.compressableBoxController.next(false);
         this.formService.scalableBoxController.next(false);
-        this.dialogRef.close();
+        // this.dialogRef.close();
       });
   }
 
