@@ -488,7 +488,7 @@ export class OverlayContainerComponent implements OnInit, OnDestroy {
       {visibility: new FormControl(
         this.visibility,
         // TODO: move validator to its own file
-        [ Validators.required,
+        [ 
           (c: AbstractControl): ValidationErrors | null => {
           // abort, skip, abanton do not engage validation
           if (c.value === null) return null;

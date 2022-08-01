@@ -62,7 +62,7 @@ export class EditRoomInFolderComponent implements OnInit {
     }
 
     get showIncomplete() {
-        return this.roomValidButtons.getValue().incomplete && this.visibilityForm.invalid;
+        return this.roomValidButtons.getValue().incomplete || this.visibilityForm.invalid;
     }
 
     get showCancel() {

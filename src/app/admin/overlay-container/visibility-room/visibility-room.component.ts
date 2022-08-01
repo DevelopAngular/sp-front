@@ -113,20 +113,24 @@ export class VisibilityRoomComponent implements OnInit, AfterViewInit, OnDestroy
     }
 
     this.unlisten = this.renderer.listen('document', 'click', event => {
-      // click on a dom element with a specific rel attr will allows errors to be shown
-      // TODO type warning for input?.input
-      const $input = this.searchComponent?.input?.input?.nativeElement;
-      const $el = event.target;//.closest('[rel=show-error-visibility-trigger]');
-      const $opener = this.openerRef.nativeElement; 
-      // TODO make it correct
-      const isInput = $el === $input;
-      const isOpener = $el === $opener; 
-      const fromdialog = !!$el.closest('#opener-visibility-options')
-      if (isInput || isOpener || fromdialog) {
-        this.showErrorsVisibility = false;
-        return;
+      try {
+        let $input = null;
+        if (this.searchComponent?.input && ('input' in this.searchComponent.input))  {
+          $input = this.searchComponent.input['input']['nativeElement'];
+        }
+        const $el = event.target;
+        const $opener = this.openerRef.nativeElement; 
+        const isInput = $el === $input;
+        const isOpener = $el === $opener; 
+        const fromdialog = !!$el.closest('#opener-visibility-options')
+
+        this.showErrorsVisibility = true;
+        if (isInput || isOpener || fromdialog) {
+          this.showErrorsVisibility = false;
+        }
+      } catch (e) {
+        console.log('RV.listen', e);
       }
-      this.showErrorsVisibility = true;
     });
   }
   // the focus of internal input native of app-search
