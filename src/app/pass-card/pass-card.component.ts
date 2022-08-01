@@ -376,7 +376,7 @@ export class PassCardComponent implements OnInit, OnDestroy {
     }
 
     of(body).pipe(
-      concatMap(b => this.forStaff ? this.hallPassService.bulkCreatePass(b, this.forFuture) : this.hallPassService.createPass(b, this.forFuture)),
+      concatMap(b => this.forStaff ? this.hallPassService.bulkCreatePass(b) : this.hallPassService.createPass(b)),
       takeUntil(this.destroy$),
       switchMap(({conflict_student_ids, passes}) => {
         if (conflict_student_ids) {

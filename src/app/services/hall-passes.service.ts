@@ -124,17 +124,11 @@ export class HallPassesService {
     }
 
     createPass(data, future: boolean = false) {
-        return this.http.post(`v1/hall_passes`, {
-          ...data,
-          future
-        });
+        return this.http.post(`v1/hall_passes`, data);
     }
 
     bulkCreatePass(data, future: boolean = false) {
-        return this.http.post('v1/hall_passes/bulk_create', {
-          ...data,
-          future
-        });
+        return this.http.post(`v1/hall_passes`, data);
     }
 
     cancelPass(id, data) {
