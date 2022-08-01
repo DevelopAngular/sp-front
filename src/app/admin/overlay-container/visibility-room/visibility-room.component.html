@@ -35,6 +35,8 @@
         (onUpdate)="addFoundStudents($event)"
         (focusEvent)="onSearchComponentFocus()"
         (blurEvent)="showErrorsVisibility=true;"
+        [form]="visibilityForm"
+        [controlName]="'visibility'"
       >
       </app-sp-search>
       <ul class="error" 

@@ -1,8 +1,8 @@
 import { Component, OnInit, AfterViewInit, OnDestroy, Input, Output, EventEmitter, ViewChild, ElementRef, TemplateRef, Renderer2} from '@angular/core';
 import {FormGroup} from '@angular/forms';
 import {MatDialog, MatDialogRef} from '@angular/material/dialog';
-import {Subject} from 'rxjs';
-import {tap, take, takeUntil, filter, finalize} from 'rxjs/operators';
+import {Observable, Subject} from 'rxjs';
+import {tap, take, takeUntil, filter, finalize, startWith} from 'rxjs/operators';
 import {cloneDeep} from 'lodash';
 
 import {User} from '../../../models/User';
@@ -52,7 +52,6 @@ export class VisibilityRoomComponent implements OnInit, AfterViewInit, OnDestroy
     'visible_certain_students': {text: 'Show for certain students', textmenu: 'Show room for certain students',  classname: 'visibility-allow'},
     'hidden_certain_students': {text: 'Hide for certain students', textmenu: 'Hide room for certain students', classname: 'visibility-denny'},
   };
-  private asIs = () => 0;
 
   // keeps previous changes
   private prevdata: Partial<{[key in Exclude<VisibilityMode, 'visible_all_students'>]: VisibilityOverStudents}> = {};
@@ -88,6 +87,18 @@ export class VisibilityRoomComponent implements OnInit, AfterViewInit, OnDestroy
     // keep last non-all data
     this.updatePrevData();
 
+    this.dirty.pipe(
+      takeUntil(this.destroy$),
+      startWith(false),
+    ).subscribe((v: boolean) => {
+      const c = this.visibilityForm.get('visibility');
+      if (v) {
+        c.markAsDirty();
+      } else {
+        c.markAsPristine();
+      }
+    });
+
     this.change$.pipe(
       takeUntil(this.destroy$),
       tap(() => this.visibilityChange())
@@ -100,15 +111,22 @@ export class VisibilityRoomComponent implements OnInit, AfterViewInit, OnDestroy
     if (this.selectedStudents.length > 0) {
       this.searchComponent.inputField = false;
     }
-    // TODO: it assumes that div.right-button exists in the upper componet's hierachy
+
     this.unlisten = this.renderer.listen('document', 'click', event => {
       // click on a dom element with a specific rel attr will allows errors to be shown
-      const $el = event.target.closest('[rel=show-error-visibility-trigger]');
-      if (!!$el) {
-        this.showErrorsVisibility = true;
+      // TODO type warning for input?.input
+      const $input = this.searchComponent?.input?.input?.nativeElement;
+      const $el = event.target;//.closest('[rel=show-error-visibility-trigger]');
+      const $opener = this.openerRef.nativeElement; 
+      // TODO make it correct
+      const isInput = $el === $input;
+      const isOpener = $el === $opener; 
+      const fromdialog = !!$el.closest('#opener-visibility-options')
+      if (isInput || isOpener || fromdialog) {
+        this.showErrorsVisibility = false;
         return;
       }
-      this.showErrorsVisibility = false;
+      this.showErrorsVisibility = true;
     });
   }
   // the focus of internal input native of app-search
@@ -125,7 +143,7 @@ export class VisibilityRoomComponent implements OnInit, AfterViewInit, OnDestroy
 
   private panelDialog: MatDialogRef<TemplateRef<any>> | undefined;
 
-  private dirty: boolean;
+  private dirty: Subject<boolean> = new Subject<boolean>();
 
   handleOpenClose() {
     const PANEL_ID = 'opener-visibility-options';
@@ -161,7 +179,7 @@ export class VisibilityRoomComponent implements OnInit, AfterViewInit, OnDestroy
         this.didOpen = false;
         this.panelDialog = undefined;
         // component is untouched
-        this.dirty = false;
+        this.dirty.next(false);
       }),
     ).subscribe();
   }
@@ -172,7 +190,7 @@ export class VisibilityRoomComponent implements OnInit, AfterViewInit, OnDestroy
   }
 
   public addFoundStudents(found: User[]) {
-    this.dirty = true;
+    this.dirty.next(true);
     this.selectedStudents = found; 
     this.change$.next();
   }
