@@ -147,6 +147,8 @@ export class RoomComponent implements OnInit, OnDestroy {
     if (this.overlayService.pageState.getValue().data) {
           if (this.currentPage === Pages.EditRoom) {
               const pinnable = this.overlayService.pageState.getValue().data.pinnable;
+              const visibility: VisibilityOverStudents = {mode: pinnable.location.visibility_type, over: pinnable.location.visibility_students};
+              this.overlayService.patchData({visibility});
               this.data = {
                   roomName: pinnable.location.title,
                   roomNumber: pinnable.location.room,
@@ -161,6 +163,8 @@ export class RoomComponent implements OnInit, OnDestroy {
               };
           } else if (this.currentPage === Pages.EditRoomInFolder) {
               const data: Location = this.overlayService.pageState.getValue().data.selectedRoomsInFolder[0];
+              const visibility: VisibilityOverStudents = {mode: data.visibility_type, over: data.visibility_students};
+              this.overlayService.patchData({visibility});
               this.passLimitForm.patchValue({
                 to: data.max_passes_to,
                 toEnabled: data.max_passes_to_active,
