@@ -1,12 +1,8 @@
-import { createSelector } from "@ngrx/store";
-import { AppState } from "../../app-state/app-state";
-import { adapter } from "../reducers";
-import { EncounterDetectionState } from "./encounter-detection.state";
+import { createSelector } from '@ngrx/store';
+import { AppState } from '../../app-state/app-state';
+import { EncounterDetectionState } from './encounter-detection.state';
 
 export const getEncounterdetectionState = (state: AppState) => state.encounterDetection;
-
-export const getEncounterDetectionCollection = adapter.getSelectors(getEncounterdetectionState).selectAll;
-// export const getEncounterDetectionEntities = adapter.getSelectors(getEncounterdetectionState).selectEntities;
 
 export const getEncounterDetectionLoading = createSelector(
     getEncounterdetectionState,
@@ -18,7 +14,7 @@ export const getEncounterDetectionLoaded = createSelector(
     (state: EncounterDetectionState) => state.loaded
 );
 
-export const getEncounterDetectionState = createSelector(
+export const getEncounterDetectionCollection = createSelector(
     getEncounterdetectionState,
     (state: EncounterDetectionState) => state.encounterDetection
 );

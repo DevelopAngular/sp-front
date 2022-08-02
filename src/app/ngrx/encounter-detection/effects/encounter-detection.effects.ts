@@ -13,15 +13,15 @@ export class EncounterDetectionEffects {
         private actions$: Actions,
         private EDService: EncounterDetectionService
     ) { }
-    
+
     EncounterDetection$ = createEffect(() => {
         return this.actions$.pipe(
             ofType(encounterDetectionActions.getEncounterDetection),
             concatMap(action => {
                 return this.EDService.getEncounterDetectionFunction(action.url)
                     .pipe(
-                        map((encounterDetection: EncounterDetection[]) => {
-                            return encounterDetectionActions.getEncounterDetectionSuccess({ encounterDetection });
+                        map(({results}) => {
+                            return encounterDetectionActions.getEncounterDetectionSuccess({ encounterDetection: results });
                         }),
                         catchError(error => {
                             return of(encounterDetectionActions.getEncounterDetectionFailure({ errorMessage: error.message }));
@@ -31,5 +31,5 @@ export class EncounterDetectionEffects {
         );
     });
 
-    
+
 }

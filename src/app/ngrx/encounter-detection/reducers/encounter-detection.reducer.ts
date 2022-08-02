@@ -6,19 +6,19 @@ import * as encounterDetectionActions from '../actions';
 
 export const adapter: EntityAdapter<EncounterDetection> = createEntityAdapter<EncounterDetection>();
 
-const encounterDetectionInitialState: EncounterDetectionState = adapter.getInitialState({
+const encounterDetectionInitialState: EncounterDetectionState = {
     loading: false,
     loaded: false,
     encounterDetection: []
-});
+};
 
 const reducer = createReducer(
     encounterDetectionInitialState,
     on(encounterDetectionActions.getEncounterDetection,
-        state => ({ ...state, encoulterLoading: true, encounterLoaded: false })),
+        state => ({ ...state, loading: true, loaded: false })),
 
     on(encounterDetectionActions.getEncounterDetectionSuccess, (state, { encounterDetection }) => {
-        return adapter.addAll(encounterDetection,{ ...state, encoulterLoading: false, encounterLoaded: true, encounterDetection });
+        return { ...state, loading: false, loaded: true, encounterDetection };
     }),
 );
 

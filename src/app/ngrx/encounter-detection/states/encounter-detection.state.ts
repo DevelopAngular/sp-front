@@ -1,8 +1,7 @@
-import { EntityState } from "@ngrx/entity";
-import { EncounterDetection } from "../../../models/EncounterDetection";
+import { EncounterDetection } from '../../../models/EncounterDetection';
 
-export interface EncounterDetectionState extends EntityState<EncounterDetection> {
+export interface EncounterDetectionState {
     loading: boolean;
     loaded: boolean;
-    encounterDetection: EncounterDetection[]
+    encounterDetection: EncounterDetection[];
   }
