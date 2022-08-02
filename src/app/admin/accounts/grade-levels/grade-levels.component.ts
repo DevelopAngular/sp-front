@@ -12,6 +12,7 @@ import { AdminService } from '../../../services/admin.service';
 import { ToastService } from '../../../services/toast.service';
 import { UserService } from '../../../services/user.service';
 import { XlsxService } from '../../../services/xlsx.service';
+import {DomSanitizer, SafeUrl} from '@angular/platform-browser';
 
 @Component({
   selector: 'app-grade-levels',
@@ -74,7 +75,7 @@ export class GradeLevelsComponent implements OnInit {
             this.selectedMapFiles = items;
             this.uploadingProgress.csv.inProcess = false;
             this.uploadingProgress.csv.complete = true;
-            
+
           }
         });
     }
@@ -125,6 +126,7 @@ export class GradeLevelsComponent implements OnInit {
     private toastService: ToastService,
     private renderer: Renderer2,
     private adminService: AdminService,
+    private sanitizer: DomSanitizer,
   ) { }
 
   ngOnInit(): void {
@@ -200,8 +202,8 @@ export class GradeLevelsComponent implements OnInit {
     this.form.reset();
   }
 
-  generateErrorsCsv() {
-    this.xlsxService.generate(this.errors, 'Errors');
+  downloadData(): SafeUrl {
+    return this.sanitizer.bypassSecurityTrustUrl('data:text/plain;charset=utf-16,' + this.errors.join('\n'));
   }
 
   generateStudentsCsv(accounts: User[]) {
