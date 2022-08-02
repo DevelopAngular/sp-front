@@ -1,5 +1,5 @@
 <div class="notif-select-students">
-  <div *ngFor="let student of students; let i = index"
+  <div *ngFor="let student of displayedStudents(); let i = index"
        (click)="removeStudent(i)"
        class="student real">
     <div class="student-overlay">
