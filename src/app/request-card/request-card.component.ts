@@ -139,6 +139,9 @@ export class RequestCardComponent implements OnInit, OnDestroy {
   get teacherNames() {
     const destination = this.request.destination;
     const origin = this.request.origin;
+    if (this.formState && this.formState.kioskMode) {
+      return origin.teachers;
+    }
     if (destination.scheduling_request_mode === 'all_teachers_in_room') {
       if (destination.scheduling_request_send_origin_teachers && destination.scheduling_request_send_destination_teachers) {
         return [...destination.teachers, ...origin.teachers];
@@ -314,7 +317,7 @@ export class RequestCardComponent implements OnInit, OnDestroy {
       }
     } else {
       if (this.formState.kioskMode) {
-        body.teacher = uniq(this.formState.data.direction.from.teachers.map(t => t.id));
+        body.teachers = uniq(this.formState.data.direction.from.teachers.map(t => t.id));
         body.student_id = this.formState.data.kioskModeStudent.id;
       } else {
         body.teacher = this.request.teacher.id;
@@ -344,6 +347,7 @@ export class RequestCardComponent implements OnInit, OnDestroy {
         takeUntil(this.destroy$),
         switchMap((res: Request) => {
           this.request = res;
+          debugger;
           this.forInput = false;
           this.kioskModeRestricted = true;
           if (this.formState.kioskMode) {
