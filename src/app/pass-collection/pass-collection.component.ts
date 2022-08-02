@@ -58,7 +58,6 @@ export class SortOption {
 export class PassCollectionComponent implements OnInit, OnDestroy {
 
   @Input() mock = false;
-  @Input() displayState = 'grid';
   @Input() title: string;
   @Input() icon: string;
   @Input() emptyMessage;
