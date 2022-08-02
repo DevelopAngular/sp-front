@@ -223,6 +223,7 @@ export class ExploreComponent implements OnInit, OnDestroy {
   }
 
   ngOnInit() {
+    this.schools$ = this.http.schoolsCollection$;
     this.clickEventSubscription = this.componentService.getClickEvent().subscribe((action) => {
       this.currentView$.next(action);
       this.storage.setItem('explore_page', action);
@@ -240,8 +241,8 @@ export class ExploreComponent implements OnInit, OnDestroy {
       isAllSelected$: this.tableService.isAllSelected$
     };
     this.encounterDetectedState = {
-      loading$: this.hallPassService.passesLoading$,
-      loaded$: this.hallPassService.passesLoaded$,
+      loading$: this.encounterDetectionService.encounterLoading$,
+      loaded$: this.encounterDetectionService.encounterLoaded$,
       sortEncounters$: this.hallPassService.sortPassesValue$,
       sortEncountersLoading$: this.hallPassService.sortPassesLoading$,
       countEncounters$: this.hallPassService.currentPassesCount$,
@@ -329,12 +330,11 @@ export class ExploreComponent implements OnInit, OnDestroy {
           };
 
           this.searchEncounterDetection();
-          // this.search(300);
-          // return this.encounterDetectionService.passesLoaded$;
+          // return this.encounterDetectionService.encounterLoaded$;
         }
       });
 
-    this.schools$ = this.http.schoolsCollection$;
+    
 
     this.searchedPassData$ = this.hallPassService.passesCollection$
       .pipe(
@@ -410,11 +410,6 @@ export class ExploreComponent implements OnInit, OnDestroy {
         })
       );
 
-    // this.encounterDetectionData$.subscribe((res) => console.log(res))
-    // this.encounterDetectionService.encounteDetection$.subscribe(() => {
-    //   console.log("HERE IN encounterDetection NEW : ");
-    // })
-
     this.encounterDetectionData$ = this.encounterDetectionService.encounteDetection$
       .pipe(
         filter((res: any) => this.currentView$.getValue() === 'encounter_detection'),
@@ -432,6 +427,7 @@ export class ExploreComponent implements OnInit, OnDestroy {
               this.currentColumns = cloneDeep(columns);
             }
             if (!encounterDetection.length) {
+              this.encounterDetectedState.isEmpty = true;
               return getColumns ? [this.currentColumns] : [{
                 'Students': null,
                 '# of encounters': null,
@@ -439,7 +435,7 @@ export class ExploreComponent implements OnInit, OnDestroy {
               }];
             }
 
-            // this.passSearchState.isEmpty = false;
+            this.encounterDetectedState.isEmpty = false;
             const response = encounterDetection.map(encounter => {
               const passImg = this.createPasses(encounter.encounters);
               // const passImg = this.domSanitizer.bypassSecurityTrustHtml(`<div class="pass-icon" style="background: ${this.getGradient(encounter.encounters[0].firstStudentPass.gradient_color)}; cursor: pointer"></div>`)
@@ -675,12 +671,14 @@ export class ExploreComponent implements OnInit, OnDestroy {
       });
   }
 
-  encounterClick(id){
-    console.log("ID : ", id)
+  encounterClick(encounte_data){
+    console.log("ID : ", encounte_data)
     const dialogRef = this.dialog.open(EncounterDetectionDialogComponent, {
-      panelClass: 'search-pass-card-dialog-container',
+      panelClass: 'accounts-profiles-dialog',
       backdropClass: 'custom-bd',
-      // data: data,
+      width: '425px',
+      height: '500px',
+      data: {encounte_data: encounte_data}
     });
   }
 

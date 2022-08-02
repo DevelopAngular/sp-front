@@ -6,8 +6,60 @@
             <!-- <div class="cancel" (click)="dialog.closeAll()" *ngIf="page === 3 && (showProcessingSpinner$ | async)">Close</div> -->
         </div>
         <div class="ds-dialog-title-white ds-flex-center-center">
-            <img [src]="'./assets/Grade level (White).svg' | resolveAsset" width="20" height="20" alt="(White).svg" class="ds-mr-10">
-            <span>Grade Levels</span>
+            <!-- <img [src]="'./assets/Grade level (White).svg' | resolveAsset" width="20" height="20" alt="(White).svg" class="ds-mr-10"> -->
+            <span>Encounter</span>
+        </div>
+    </div>
+    <div class="content">
+        <div class="page">
+            <div class="block" style="margin-top: 15px;">
+                <div class="students-info">
+                    <div class="students-name">
+                        <div class="title">Students</div>
+                        <div class="subtitle" [innerHTML]="dialogData.encounte_data.Students"></div>
+                    </div>
+                    <mat-divider></mat-divider>
+                    <div class="block-button">
+                        <div class="ds-flex-center-between">
+                            <div class="ds-flex-center-start">
+                                <app-octagon [size]="21">
+                                    <img style="position: absolute; z-index: 10; height: 14px" [src]="'./assets/Walking One (White).svg' | resolveAsset">
+                                </app-octagon>
+                                <div class="info" style="margin-left: 8px">Create Encounter Prevention Group</div>
+                            </div>
+                            <img style="height: 14px" [src]="'./assets/Plus (Gray-500).svg' | resolveAsset">
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="block" style="margin: 15px 0;">
+                <div class="title">{{CLONNED_ENCOUNTER_DATA?.length}} Encounters</div>
+                <div>
+                    <div class="encounter" *ngFor="let encounter of CLONNED_ENCOUNTER_DATA; let i = index">
+                        <p class="date-duration">{{encounter.encounterDate}}, {{encounter.durationOfContact}} min overlap</p>
+                        <div class="collection-grid-wrapper">
+                            <div class="tile">
+                                <!-- <app-pass-tile
+                                 [timerEvent]="timerEvent"
+                                 [fromPast]="fromPast"
+                                 [forFuture]="forFuture"
+                                 [isActive]="isActive"
+                                 [forStaff]="forStaff"
+                                 [pass]="pass"
+                                 [allowPopup]="true"
+                                 [profileImage]="showProfilePictures"
+                                 [isEnableProfilePictures]="(isEnabledProfilePictures$ | async) && (!!user && !!user.show_profile_pictures)"
+                                ></app-pass-tile> -->
+                                <app-pass-tile [forFuture]="false" [fromPast]="true" [forStaff]="true" [pass]="encounter.firstStudentPass" [profileImage]="false" [isMiniCard]="false"></app-pass-tile>
+                            </div>
+                            <div class="tile">
+                                <app-pass-tile [forFuture]="false" [fromPast]="true" [forStaff]="true" [pass]="encounter.secondStudentPass" [profileImage]="false" [isMiniCard]="false"></app-pass-tile>
+                            </div>
+                        </div>
+                        <mat-divider *ngIf="i + 1 < CLONNED_ENCOUNTER_DATA.length"></mat-divider>
+                    </div>
+                </div>
+            </div>
         </div>
     </div>
 </div>

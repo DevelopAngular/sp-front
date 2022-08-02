@@ -1,4 +1,6 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, Inject, OnInit } from '@angular/core';
+import { MatDialogRef, MAT_DIALOG_DATA } from '@angular/material/dialog';
+import * as moment from 'moment';
 
 @Component({
   selector: 'app-encounter-detection-dialog',
@@ -7,9 +9,27 @@ import { Component, OnInit } from '@angular/core';
 })
 export class EncounterDetectionDialogComponent implements OnInit {
 
-  constructor() { }
+  ORIGINAL_ENCOUNTER_DATA: any = {};
+  CLONNED_ENCOUNTER_DATA: any = {};
+
+  constructor(
+    public dialogRef: MatDialogRef<EncounterDetectionDialogComponent>,
+    @Inject(MAT_DIALOG_DATA) public dialogData: any,
+  ) { }
 
   ngOnInit(): void {
+    this.ORIGINAL_ENCOUNTER_DATA = this.dialogData.encounte_data;
+    this.CLONNED_ENCOUNTER_DATA = JSON.parse(JSON.stringify(this.ORIGINAL_ENCOUNTER_DATA.encounters))
+    console.log("Dialog Data : ", this.CLONNED_ENCOUNTER_DATA)
+    this.CLONNED_ENCOUNTER_DATA = this.CLONNED_ENCOUNTER_DATA.map((encounter) => {
+      encounter.durationOfContact = moment.utc(encounter.durationOfContact*1000).format('mm:ss');
+      encounter.encounterDate = moment(encounter.encounterDate).format('MMM DD');
+      return encounter
+    })
+  }
+
+  back() {
+      this.dialogRef.close();
   }
 
 }

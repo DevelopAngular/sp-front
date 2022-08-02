@@ -17,7 +17,9 @@ export const schoolsInitialState: SchoolsState = {
   cleverInfo: null,
   syncLoading: false,
   syncLoaded: false,
-  encounterDetection: null
+  // encounterLoading: false,
+  // encounterLoaded: false,
+  // encounterDetection: null
 };
 
 const reducer = createReducer(
@@ -28,11 +30,11 @@ const reducer = createReducer(
   on(schoolsActions.getSchoolsSuccess, (state, {schools}) => {
     return schoolAdapter.addAll(schools, {...state, loading: false, loaded: true});
   }),
-  on(schoolsActions.getEncounterDetection,
-    state => ({...state, loading: true, loaded: false})),
-    on(schoolsActions.getEncounterDetectionSuccess, (state, {encounterDetection}) => {
-      return {...state, loading: false, loaded: true, encounterDetection};
-    }),
+  // on(schoolsActions.getEncounterDetection,
+  //   state => ({...state, encoulterLoading: true, encounterLoaded: false})),
+  //   on(schoolsActions.getEncounterDetectionSuccess, (state, {encounterDetection}) => {
+  //     return {...state, encoulterLoading: false, encounterLoaded: true, encounterDetection};
+  //   }),
   on(schoolsActions.getSchoolsGG4LInfoSuccess, (state, {gg4lInfo}) => {
     return {
       ...state,

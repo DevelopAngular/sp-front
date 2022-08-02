@@ -1,1 +1,1 @@
-// import * from './encounter-detection.effects';
+export * from './encounter-detection.effects';

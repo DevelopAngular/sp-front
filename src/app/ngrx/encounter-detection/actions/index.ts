@@ -1,1 +1,1 @@
-export * from './encounter-detection.actions'
+export * from './encounter-detection.actions';

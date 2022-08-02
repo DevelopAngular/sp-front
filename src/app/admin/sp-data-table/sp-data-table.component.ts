@@ -182,7 +182,7 @@ export class SpDataTableComponent implements OnInit, OnDestroy, OnChanges {
     this.fakedata = this.generateFakeData();
     this.fakeTemplate = this.domSanitizer.bypassSecurityTrustHtml(
       `<div class="fake-container-block"
-                style="margin-left: ${this.currentPage === 'pass_search' ? '10%' : 'auto'}; width: ${this.currentPage === 'pass_search' ? '90%' : '100%'}"
+                style="margin-left: ${this.currentPage === 'pass_search' || 'encounter_detection' ? '10%' : 'auto'}; width: ${this.currentPage === 'pass_search' || 'encounter_detection' ? '90%' : '100%'}"
             ><div class="fake-block animate"></div></div>`
     );
 

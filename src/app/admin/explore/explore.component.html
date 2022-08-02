@@ -106,9 +106,12 @@
 
         <div class="pass-search" *ngIf="views[currentView].id === 4">
             <app-sp-data-table [isCheckbox]="isCheckbox$" [data$]="encounterDetectionData$" [loading$]="encounterDetectedState.loading$" [showEmptyState]="encounterDetectedState.isEmpty && encounterDetectedState.loaded$ | async" [emptyIcon]="'./assets/Pass Search (Blue-Gray).svg' | resolveAsset"
-                [emptyText]="'No passes found with the selected filters.'" [currentPage]="currentView$.value" (loadMoreData)="loadMorePasses()" (sortClickEvent)="sortHeaders($event)" [height]="(schools$ | async).length > 1 ? 'calc(100vh - 200px)' : 'calc(100vh - 150px)'"
+                [emptyText]="'No encounter detection found with the selected filters.'" [currentPage]="currentView$.value" [height]="(schools$ | async).length > 1 ? 'calc(100vh - 200px)' : 'calc(100vh - 150px)'" [isRowClick]="true" (rowClickEvent)="encounterClick($event)"
+                [showPrintButtons]="false"></app-sp-data-table>
+            <!-- <app-sp-data-table [isCheckbox]="isCheckbox$" [data$]="encounterDetectionData$" [loading$]="encounterDetectedState.loading$" [showEmptyState]="encounterDetectedState.isEmpty && encounterDetectedState.loaded$ | async" [emptyIcon]="'./assets/Pass Search (Blue-Gray).svg' | resolveAsset"
+                [emptyText]="'No encounter detection found with the selected filters.'" [currentPage]="currentView$.value" (loadMoreData)="loadMorePasses()" (sortClickEvent)="sortHeaders($event)" [height]="(schools$ | async).length > 1 ? 'calc(100vh - 200px)' : 'calc(100vh - 150px)'"
                 [isRowClick]="true" (rowClickEvent)="encounterClick($event)" [sort]="encounterDetectedState.sortPasses$ | async" [sortColumn]="sortColumn" [sortLoading$]="encounterDetectedState.sortPassesLoading$" [showPrintButtons]="false" (exportPasses)="exportPasses()"
-                [disabledInfinityScroll]="!(encounterDetectedState.nextUrl$ | async)"></app-sp-data-table>
+                [disabledInfinityScroll]="!(encounterDetectedState.nextUrl$ | async)"></app-sp-data-table> -->
         </div>
 
         <div class="contact-trace" *ngIf="views[currentView].id === 3" [style.height]="(schools$ | async).length > 1 ? 'calc(100vh - 200px)' : 'calc(100vh - 150px)'">

@@ -16,5 +16,7 @@ export interface SchoolsState extends EntityState<School> {
   cleverInfo: CleverInfo;
   syncLoading: boolean;
   syncLoaded: boolean;
-  encounterDetection: EncounterDetection
+  // encounterLoading:boolean;
+  // encounterLoaded:boolean;
+  // encounterDetection: EncounterDetection
 }
