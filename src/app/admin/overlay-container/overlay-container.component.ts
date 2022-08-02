@@ -782,7 +782,8 @@ export class OverlayContainerComponent implements OnInit, OnDestroy {
         const newFolder = {
           title: this.folderData.folderName,
           color_profile: this.color_profile.id,
-          icon: this.selectedIcon?.inactive_icon,
+          // selectedIcon is an object when is to be updated but is kept as a string
+          icon: this.selectedIcon?.inactive_icon ?? (typeof this.selectedIcon === 'string') ? this.selectedIcon : '', // last choice to be a generic icon not just a empty string? 
           category: this.folderData.folderName + salt
         };
         if (this.pinnable) {
