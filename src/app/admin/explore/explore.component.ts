@@ -491,6 +491,9 @@ export class ExploreComponent implements OnInit, OnDestroy {
           this.selectedRows = res;
         });
 
+        // count passes emits on a new search thata assumes any previous selection is cleared
+        this.passSearchState.countPasses$.subscribe(_ => this.clearTableSelection());
+
 
   }
 
