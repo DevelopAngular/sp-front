@@ -479,10 +479,8 @@ export class IdCardEditorComponent implements OnInit, OnDestroy {
           this.toast.openToast({ title: "ID Cards are live", type: "success" });
           this.idCardService.enableIDCard().subscribe({
             next: (result) => {
-              console.log("Result : ", result);
               this.isAdded = true;
               this.IDCardEnabled = true;
-              // this.toast.openToast({ title: "ID Cards are live", type: "success" });
             },
             error: (error) => {
               console.log("Result : ", error);
@@ -493,7 +491,6 @@ export class IdCardEditorComponent implements OnInit, OnDestroy {
     } else if (!this.IDCardEnabled) {
       this.idCardService.enableIDCard().subscribe({
         next: (result) => {
-          console.log("Result : ", result);
           this.isAdded = true;
           this.IDCardEnabled = true;
           this.toast.openToast({ title: "ID Cards are live", type: "success" });

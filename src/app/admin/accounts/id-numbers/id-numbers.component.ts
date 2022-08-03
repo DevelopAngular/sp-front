@@ -147,8 +147,7 @@ export class IdNumbersComponent implements OnInit {
       body.append('csv_file', this.selectedMapFile)
       this.userService.uploadIDNumbers(body).subscribe({
         next: (result: any) => {
-          this.page = 4
-          console.log("result : ", result);
+          this.page = 4;
           this.errors = result.response.errors
         }
       })
@@ -178,7 +177,6 @@ export class IdNumbersComponent implements OnInit {
   getMissingIDNumbers(){
     this.userService.getMissingIDNumbers().subscribe({
       next: (result: any) => {
-        console.log("result : ", result);
         this.accountMissingIDNumbers$ = result
       }
     });

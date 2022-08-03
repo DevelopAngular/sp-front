@@ -426,7 +426,6 @@ export class ExploreComponent implements OnInit, OnDestroy {
       .pipe(
         filter((res: any) => this.currentView$.getValue() === 'encounter_detection'),
         map((encounterDetection: EncounterDetection[]) => {
-            console.log("HERE IN encounterDetection : ", encounterDetection);
             // const getColumns = this.storage.getItem(`order${this.currentView$.getValue()}`);
             // const getColumns = this.storage.getItem(`order${this.currentView$.getValue()}`);
             // const columns = {};
@@ -448,7 +447,7 @@ export class ExploreComponent implements OnInit, OnDestroy {
             }
 
             this.encounterDetectedState.isEmpty = false;
-            const response = encounterDetection.map(encounter => {
+            const response = encounterDetection.map((encounter, index) => {
               const passImg = this.createPasses(encounter.encounters);
               const DEFAULTAVATAR = "'./assets/Avatar Default.svg' | resolveAsset"
               const students =
@@ -462,15 +461,15 @@ export class ExploreComponent implements OnInit, OnDestroy {
                 'Passes': passImg,
               };
 
-              const currentObj = {};
-              if (this.storage.getItem(`order${this.currentView$.getValue()}`)) {
-                Object.keys(this.currentColumns).forEach(key => {
-                  currentObj[key] = rawObj[key];
-                });
-              }
+              // const currentObj = {};
+              // if (this.storage.getItem(`order${this.currentView$.getValue()}`)) {
+              //   Object.keys(this.currentColumns).forEach(key => {
+              //     currentObj[key] = rawObj[key];
+              //   });
+              // }
 
-              rawObj = this.storage.getItem(`order${this.currentView$.getValue()}`) ? currentObj : rawObj;
-
+              // rawObj = this.storage.getItem(`order${this.currentView$.getValue()}`) ? currentObj : rawObj;
+              Object.defineProperty(rawObj, 'id', { enumerable: false, value: index });
               Object.defineProperty(rawObj, 'encounters', { enumerable: false, value: encounter.encounters });
               Object.defineProperty(rawObj, 'firstStudent', { enumerable: false, value: encounter.firstStudent });
               Object.defineProperty(rawObj, 'secondStudent', { enumerable: false, value: encounter.secondStudent });

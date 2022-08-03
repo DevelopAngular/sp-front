@@ -149,8 +149,7 @@ export class GradeLevelsComponent implements OnInit {
       body.append('csv_file', this.selectedMapFile)
       this.userService.uploadGradeLevels(body).subscribe({
         next: (result: any) => {
-          this.page = 4
-          console.log("result : ", result);
+          this.page = 4;
           this.errors = result.response.errors
         }
       })
@@ -181,7 +180,6 @@ export class GradeLevelsComponent implements OnInit {
   getMissingGradeLevels(){
     this.userService.getMissingGradeLevels().subscribe({
       next: (result: any) => {
-        console.log("result : ", result);
         this.accountMissingGradeLevels$ = result
       }
     });

@@ -23,7 +23,6 @@ export class EncounterDetectionDialogComponent implements OnInit {
   ngOnInit(): void {
     this.ORIGINAL_ENCOUNTER_DATA = this.dialogData.encounte_data;
     this.CLONNED_ENCOUNTER_DATA = JSON.parse(JSON.stringify(this.ORIGINAL_ENCOUNTER_DATA.encounters))
-    console.log("Dialog Data : ", this.CLONNED_ENCOUNTER_DATA);
     this.firstUser = this.CLONNED_ENCOUNTER_DATA[0].firstStudentPass.student;
     this.secondUser = this.CLONNED_ENCOUNTER_DATA[0].secondStudentPass.student
     this.CLONNED_ENCOUNTER_DATA = this.CLONNED_ENCOUNTER_DATA.map((encounter) => {
