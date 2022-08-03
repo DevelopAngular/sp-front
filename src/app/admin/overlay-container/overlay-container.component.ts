@@ -3,8 +3,8 @@ import {AbstractControl, FormControl, FormGroup, Validators, ValidationErrors} f
 import {MAT_DIALOG_DATA, MatDialog, MatDialogRef} from '@angular/material/dialog';
 import {DomSanitizer} from '@angular/platform-browser';
 
-import {BehaviorSubject, combineLatest, forkJoin, fromEvent, merge, Observable, of, Subject, zip} from 'rxjs';
-import {debounceTime, distinctUntilChanged, filter, first, map, switchMap, take, takeUntil, tap} from 'rxjs/operators';
+import {BehaviorSubject, combineLatest, forkJoin, fromEvent, merge, Observable, of, Subject, zip, throwError} from 'rxjs';
+import {debounceTime, distinctUntilChanged, filter, map, switchMap, take, takeUntil, tap, catchError} from 'rxjs/operators';
 
 import {bumpIn, NextStep} from '../../animations';
 import {Pinnable} from '../../models/Pinnable';
@@ -189,6 +189,9 @@ export class OverlayContainerComponent implements OnInit, OnDestroy {
           this.currentPage === Pages.AddExistingRooms;
   }
 
+  // how to use: change it and revert it back to FALSE after you finish
+  private isSaveButtonDisabled: boolean = false;
+
   get isFormIncomplete() {
     if (this.currentPage === Pages.NewRoom || this.currentPage === Pages.EditRoom || this.currentPage === Pages.NewFolder || this.currentPage === Pages.EditFolder) {
       if (this.isDirtyColor || this.isDirtyIcon) {
@@ -269,6 +272,7 @@ export class OverlayContainerComponent implements OnInit, OnDestroy {
         }
         if (this.passLimitForm.get('to').invalid && this.passLimitForm.get('toEnabled').value)
           missing.push('active pass limit');
+        if (this.visibilityForm.invalid) missing.push('room visibility');
       }
 
       if (this.currentPage === Pages.BulkEditRooms) {
@@ -487,7 +491,8 @@ export class OverlayContainerComponent implements OnInit, OnDestroy {
       {visibility: new FormControl(
         this.visibility,
         // TODO: move validator to its own file
-        [(c: AbstractControl): ValidationErrors | null => {
+        [ 
+          (c: AbstractControl): ValidationErrors | null => {
           // abort, skip, abanton do not engage validation
           if (c.value === null) return null;
           // only visible_all_students do not need a group of students
@@ -604,6 +609,7 @@ export class OverlayContainerComponent implements OnInit, OnDestroy {
     this.gradientColor = 'radial-gradient(circle at 98% 97%,' + color.gradient_color + ')';
   }
 
+  // TODO types here
   changeIcon(icon) {
     if (this.currentPage === Pages.EditRoom || this.currentPage === Pages.EditFolder) {
       this.isDirtyIcon = this.initialSettings.icon !== icon.inactive_icon;
@@ -715,6 +721,18 @@ export class OverlayContainerComponent implements OnInit, OnDestroy {
     this.showErrors = true;
   }
 
+ catchError() {
+   return catchError(err => {
+    this.showPublishSpinner = false;
+    this.isSaveButtonDisabled = true;
+    setTimeout(() => {
+      this.dialogRef.close(true);
+      this.isSaveButtonDisabled = false;
+    }, 2000);
+    throw err;
+   });
+ }
+
   onPublish() {
     this.showPublishSpinner = true;
 
@@ -744,12 +762,13 @@ export class OverlayContainerComponent implements OnInit, OnDestroy {
                const pinnable = {
                    title: this.roomData.roomName,
                    color_profile: this.color_profile.id,
-                   icon: this.selectedIcon.inactive_icon,
+                   icon: this.selectedIcon?.inactive_icon,
                    location: loc.id,
                };
                return this.hallPassService.postPinnableRequest(pinnable);
               }),
-             takeUntil(this.destroy$)
+             takeUntil(this.destroy$),
+             this.catchError(),
            )
          .subscribe(response => {
            this.toast.openToast({title: 'New room added', type: 'success'});
@@ -763,11 +782,15 @@ export class OverlayContainerComponent implements OnInit, OnDestroy {
         const newFolder = {
           title: this.folderData.folderName,
           color_profile: this.color_profile.id,
-          icon: this.selectedIcon.inactive_icon,
+          // selectedIcon is an object when is to be updated but is kept as a string
+          icon: this.selectedIcon?.inactive_icon ?? (typeof this.selectedIcon === 'string') ? this.selectedIcon : '', // last choice to be a generic icon not just a empty string? 
           category: this.folderData.folderName + salt
         };
         if (this.pinnable) {
-          this.hallPassService.updatePinnableRequest(this.pinnable.id, newFolder).pipe(takeUntil(this.destroy$))
+          this.hallPassService.updatePinnableRequest(this.pinnable.id, newFolder).pipe(
+            takeUntil(this.destroy$),
+            this.catchError(),
+          )
             .subscribe(res => this.dialogRef.close(true));
         }
       }
@@ -821,7 +844,8 @@ export class OverlayContainerComponent implements OnInit, OnDestroy {
           const newFolder = {
             title: this.folderData.folderName,
             color_profile: this.color_profile.id,
-            icon: this.selectedIcon.inactive_icon,
+            // TODO why is this.selectedIcon is a string?
+            icon: this.selectedIcon?.inactive_icon,
             category: this.folderData.folderName + salt
           };
           if (this.currentPage === Pages.EditFolder) {
@@ -850,7 +874,8 @@ export class OverlayContainerComponent implements OnInit, OnDestroy {
           return of(null);
         }
       }),
-      takeUntil(this.destroy$)
+      takeUntil(this.destroy$),
+      this.catchError(),
       )
       .subscribe(() => {
         this.toast.openToast({title: this.currentPage === Pages.NewFolder ? 'New folder added' : 'Folder updated', type: 'success'});
@@ -887,7 +912,7 @@ export class OverlayContainerComponent implements OnInit, OnDestroy {
                 const pinnable = {
                     title: this.roomData.roomName,
                     color_profile: this.color_profile.id,
-                    icon: this.selectedIcon.inactive_icon,
+                    icon: this.selectedIcon?.inactive_icon,
                     location: loc.id,
                 };
                 return this.hallPassService.updatePinnableRequest(this.pinnable.id, pinnable);

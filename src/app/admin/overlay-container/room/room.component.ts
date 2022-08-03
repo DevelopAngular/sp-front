@@ -3,7 +3,7 @@ import {FormGroup, Validators} from '@angular/forms';
 import {MatDialog, MatDialogRef} from '@angular/material/dialog';
 
 import {combineLatest, merge, Subject} from 'rxjs';
-import {concatMap, filter, pluck, switchMap, takeUntil, tap} from 'rxjs/operators';
+import {filter, pluck, takeUntil, tap} from 'rxjs/operators';
 
 import {OverlayDataService, Pages, RoomData} from '../overlay-data.service';
 import {ValidButtons} from '../advanced-options/advanced-options.component';
@@ -276,6 +276,10 @@ export class RoomComponent implements OnInit, OnDestroy {
           if (this.roomValidButtons.incomplete || this.advOptionsValidButtons.incomplete) {
               buttonsResult.incomplete = true;
           }
+      }
+
+      if (this.visibilityForm.invalid) {
+        buttonsResult.incomplete = true;
       }
 
       this.roomDataResult.emit({data: this.data, buttonState: buttonsResult, advOptButtons: this.advOptionsValidButtons});

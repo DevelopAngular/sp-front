@@ -22,7 +22,7 @@
     </div>
     <div class="right-button">
       <app-gradient-button *ngIf="isAllowedSave && (showCancelButton || currentPage === 1 || currentPage === 3)"
-       [disabled]="isFormIncomplete"
+       [disabled]="isFormIncomplete || isSaveButtonDisabled"
        [minHeight]="'40px'"
        [style.width]="'120px'"
        [gradient]="!color_profile || currentPage === 9 ? '#00B476, #00B476' : '#FFFFFF, #FFFFFF'"
