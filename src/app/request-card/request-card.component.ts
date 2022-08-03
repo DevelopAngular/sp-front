@@ -347,7 +347,6 @@ export class RequestCardComponent implements OnInit, OnDestroy {
         takeUntil(this.destroy$),
         switchMap((res: Request) => {
           this.request = res;
-          debugger;
           this.forInput = false;
           this.kioskModeRestricted = true;
           if (this.formState.kioskMode) {
