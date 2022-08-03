@@ -83,7 +83,7 @@
             </span>
 
               <div *ngIf="data.studentPassLimit?.passLimit && data.studentPassLimit?.isIndividual" class="ds-flex-column ds-mt-5" style="display: flex;">
-                <span style="color: #E48C15; font-size: 14px;">{{data.studentPassLimit.passLimit}} passes/day</span>
+                <span style="color: #E48C15; font-size: 14px;">{{data.studentPassLimit.passLimit === -2 ? "Unlimited" : data.studentPassLimit.passLimit}} passes/day</span>
                 <span style="color: grey; font-size: 14px;" *ngIf="data.studentPassLimit.description">{{data.studentPassLimit.description}}</span>
               </div>
             </div>

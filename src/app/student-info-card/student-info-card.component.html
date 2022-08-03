@@ -187,7 +187,7 @@
                         <span
                           style="font-size: 15px !important; font-weight: 500 !important;"
                           [ngClass]="{ 'pass-limit-counter': true, 'individual-limit': studentPassLimit.isIndividual, 'school-limit': !studentPassLimit.isIndividual }">
-                          {{studentPassLimit.passLimit}} passes/day
+                          {{studentPassLimit.passLimit === -2 ? "Unlimited" : studentPassLimit.passLimit}} passes/day
                         </span>
                         <span class="ds-dialog-normal-text" style="font-weight: 400 !important;" *ngIf="studentPassLimit.description && studentPassLimit.isIndividual">{{studentPassLimit.description}}</span>
                       </div>

@@ -42,6 +42,11 @@ export class PassLimitStudentInfoComponent implements OnInit {
       return;
     }
     this.data = data;
+    if (this.data.studentPassLimit.passLimit === -2) {
+      this.passLimitForm.patchValue({
+        passLimit: 'Unlimited'
+      });
+    }
     this.setBordersAndButtons();
   }
   // TODO: come up with a better way of sharing this component
@@ -130,10 +135,16 @@ export class PassLimitStudentInfoComponent implements OnInit {
 
   loadForm() {
     if (this.data.studentPassLimit.isIndividual) {
+      let passLimit: number | string = this.data?.studentPassLimit?.passLimit || null;
+      if (passLimit === -2) {
+        passLimit = 'Unlimited';
+      }
       const value = {
-        passLimit: this.data?.studentPassLimit?.passLimit || null,
+        passLimit,
         description: this.data?.studentPassLimit?.description || null
       };
+
+
       this.passLimitFormLastValue = value;
       this.passLimitForm.patchValue(value);
     }
