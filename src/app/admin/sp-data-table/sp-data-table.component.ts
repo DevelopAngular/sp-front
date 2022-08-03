@@ -350,4 +350,11 @@ export class SpDataTableComponent implements OnInit, OnDestroy {
     }
     return dataIndex;
   }
+
+  generateOneFakeData() {
+    return {
+      'Pass': this.domSanitizer.bypassSecurityTrustHtml(`<div class="pass-icon animate" style="background: #F4F4F4; cursor: pointer"></div>`),
+      'isFake': true
+    };
+  }
 }
