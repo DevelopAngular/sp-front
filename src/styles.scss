@@ -312,6 +312,19 @@ div {
   padding: 0;
 }
 
+.overlay-dialog-no-background {
+  @extend .overlay-dialog;
+
+  .mat-dialog-container{
+    border-radius: 16px;
+    box-shadow: 0 2px 26px 0px rgba(0, 0, 0, 0.15);
+    overflow: hidden;
+    z-index: 10;
+    padding: 0;
+    background: none !important;
+  }
+}
+
 .student-pass-info-dialog .mat-dialog-container {
   border-radius: 10px;
   box-shadow: 0 2px 26px 0 rgba(0, 0, 0, 0.15);

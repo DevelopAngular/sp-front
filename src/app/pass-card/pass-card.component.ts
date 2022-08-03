@@ -354,7 +354,9 @@ export class PassCardComponent implements OnInit, OnDestroy {
     };
     if (this.forStaff) {
       let ss: User[] = this.selectedStudents;
-      if (this.formState.data.roomStudents.length > 0) ss = this.formState.data.roomStudents;
+      if (this.formState.data?.roomStudents?.length > 0) {
+        ss = this.formState.data.roomStudents;
+      }
       body['students'] = ss.map(user => user.id);
     } else {
       body['student'] = this.pass.student.id;
@@ -371,7 +373,7 @@ export class PassCardComponent implements OnInit, OnDestroy {
     if (!this.forStaff) {
       delete body['override_visibility'];
       body['isNotBulk'] = true;
-    } 
+    }
 
     of(body).pipe(
       concatMap(b => this.forStaff ? this.hallPassService.bulkCreatePass(b) : this.hallPassService.createPass(b)),
@@ -436,7 +438,7 @@ export class PassCardComponent implements OnInit, OnDestroy {
               }
             } as ConfirmationTemplates
           }).afterClosed();
-          
+
           return afterDialogClosed$.pipe(
             map(override => ({override, students: error.students.map(s => s.User.id)})),
           );
@@ -446,10 +448,10 @@ export class PassCardComponent implements OnInit, OnDestroy {
           tap(errorResponse => {
             const isVisibilityError = ('visibility_alerts' in errorResponse.error);
             console.log('me', errorResponse, isVisibilityError)
-            // a student has been checked server side and had no room visibility 
+            // a student has been checked server side and had no room visibility
             if (!this.forStaff) {
                 const roomNames = errorResponse.error.visibility_alerts.map(r => r.location_title);
-                const title = ((roomNames.length > 1) ? 'Rooms ' : 'Room ') + roomNames.join(', ') + ' not available'; 
+                const title = ((roomNames.length > 1) ? 'Rooms ' : 'Room ') + roomNames.join(', ') + ' not available';
                 this.toastService.openToast({
                   title,
                   subtitle: 'Please ask your teacher to create a pass for you.',
@@ -459,7 +461,7 @@ export class PassCardComponent implements OnInit, OnDestroy {
                 this.performingAction = false;
                 //this.dialogRef.close();
                 throw 'this student has been subject of room visibility rules';
-              
+
               return
             }
             // not our error case? dispatch it to the next retryWhen
@@ -479,7 +481,7 @@ export class PassCardComponent implements OnInit, OnDestroy {
             if (override === false) {
               remove(body['students'] as number[], elem => students.includes(elem));
               // removal left us with no students
-              // this is as canceling the process 
+              // this is as canceling the process
               if (body['students'].length === 0) {
                 this.toastService.openToast({
                   title: 'Skiping left no students to operate on',

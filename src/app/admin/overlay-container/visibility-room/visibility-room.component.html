@@ -34,10 +34,13 @@
         [selectedOptions]="selectedStudents"
         (onUpdate)="addFoundStudents($event)"
         (focusEvent)="onSearchComponentFocus()"
+        (blurEvent)="showErrorsVisibility=true;"
+        [form]="visibilityForm"
+        [controlName]="'visibility'"
       >
       </app-sp-search>
       <ul class="error" 
-        *ngIf="showErrors && showErrorsVisibility && visibilityForm.invalid"
+        *ngIf="showErrorsVisibility && visibilityForm.invalid"
           [@slideOpacityAnimate]="{value: ':enter', params: {delta: -5}}"
       >
         <li 

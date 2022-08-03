@@ -3,7 +3,7 @@ import {FormGroup, Validators} from '@angular/forms';
 import {MatDialog, MatDialogRef} from '@angular/material/dialog';
 
 import {combineLatest, merge, Subject} from 'rxjs';
-import {concatMap, filter, pluck, switchMap, takeUntil, tap} from 'rxjs/operators';
+import {filter, pluck, takeUntil, tap} from 'rxjs/operators';
 
 import {OverlayDataService, Pages, RoomData} from '../overlay-data.service';
 import {ValidButtons} from '../advanced-options/advanced-options.component';
@@ -147,6 +147,8 @@ export class RoomComponent implements OnInit, OnDestroy {
     if (this.overlayService.pageState.getValue().data) {
           if (this.currentPage === Pages.EditRoom) {
               const pinnable = this.overlayService.pageState.getValue().data.pinnable;
+              const visibility: VisibilityOverStudents = {mode: pinnable.location.visibility_type, over: pinnable.location.visibility_students};
+              this.overlayService.patchData({visibility});
               this.data = {
                   roomName: pinnable.location.title,
                   roomNumber: pinnable.location.room,
@@ -161,6 +163,8 @@ export class RoomComponent implements OnInit, OnDestroy {
               };
           } else if (this.currentPage === Pages.EditRoomInFolder) {
               const data: Location = this.overlayService.pageState.getValue().data.selectedRoomsInFolder[0];
+              const visibility: VisibilityOverStudents = {mode: data.visibility_type, over: data.visibility_students};
+              this.overlayService.patchData({visibility});
               this.passLimitForm.patchValue({
                 to: data.max_passes_to,
                 toEnabled: data.max_passes_to_active,
@@ -272,6 +276,10 @@ export class RoomComponent implements OnInit, OnDestroy {
           if (this.roomValidButtons.incomplete || this.advOptionsValidButtons.incomplete) {
               buttonsResult.incomplete = true;
           }
+      }
+
+      if (this.visibilityForm.invalid) {
+        buttonsResult.incomplete = true;
       }
 
       this.roomDataResult.emit({data: this.data, buttonState: buttonsResult, advOptButtons: this.advOptionsValidButtons});

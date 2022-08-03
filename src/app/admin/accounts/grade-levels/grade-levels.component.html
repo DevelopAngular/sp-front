@@ -109,7 +109,7 @@
                 <div class="upload-title">Upload complete</div>
                 <div class="info"><span style="font-weight: bold">New Grade Levels: </span><span>{{ allProfiles.length }} accounts</span></div>
                 <div class="info"><span style="font-weight: bold">Uploaded Grade Levels: </span><span>{{ allProfiles.length }} accounts</span></div>
-                <div class="info"><span style="font-weight: bold">Errors: </span><span>{{ errors.length }} errors <span *ngIf="errors.length" (click)="generateErrorsCsv()" style="color: #E32C66; cursor: pointer;">[Download]</span></span>
+                <div class="info"><span style="font-weight: bold">Errors: </span><span>{{ errors.length }} errors <a *ngIf="errors.length" download="error.txt" [href]="downloadData()" style="color: #E32C66; cursor: pointer;">[Download]</a></span>
                 </div>
             </div>
 

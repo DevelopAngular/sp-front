@@ -137,8 +137,8 @@ export class LocationsGroupContainerComponent implements OnInit {
 
         if (this.passLimitInfo.current === 0) {
           pins.forEach(p => {
-            if (p.location === null) {
-              p.location = {};
+            if (p.location === null) { // ignore folders
+              return p;
             }
             if (!p?.location?.restricted) {
               p.location.restricted = true;
@@ -281,6 +281,7 @@ export class LocationsGroupContainerComponent implements OnInit {
   }
 
   fromCategory(location) {
+    location.restricted = this.passLimitInfo?.showPasses && this.passLimitInfo?.current === 0;
     this.data.toLocation = location;
     this.FORM_STATE.data.direction.to = location;
     if (((location.restricted && !this.FORM_STATE.forLater) || (location.scheduling_restricted && this.FORM_STATE.forLater)) && !this.isStaff) {
@@ -313,6 +314,9 @@ export class LocationsGroupContainerComponent implements OnInit {
   private postComposetData(close: boolean = false, isMessage?: boolean) {
     const restricted = ((this.FORM_STATE.data.direction.to.restricted && !this.FORM_STATE.forLater) ||
       (this.FORM_STATE.data.direction.to.scheduling_restricted && !!this.FORM_STATE.forLater));
+    if (this.FORM_STATE.kioskMode && this.FORM_STATE.data.kioskModeStudent && restricted) {
+      this.isStaff =  false;
+    }
     if (!this.isStaff && !restricted) {
       this.FORM_STATE.formMode.formFactor = FormFactor.HallPass;
     }

@@ -62,18 +62,10 @@
             </div>
         </div>
 
-        <div class="search-button" *ngIf="views[currentView].id === 1 && passSearchState.countPasses$ | async as countPasses">
-            <app-filter-button *ngIf="!selectedRows.length; else selected" [openedFilter]="true" [title]="(numberWithCommas(countPasses) + ' pass' + (countPasses > 1 ? 'es' : ''))" [isDownloadButton]="true" [customToolTip]="'Click to export passes'" (buttonClick)="downloadPasses(countPasses)">
-            </app-filter-button>
-            <ng-template #selected>
-                <app-filter-button [filter]="true" [title]="((passSearchState.isAllSelected$ | async) ? numberWithCommas(countPasses) : numberWithCommas(selectedRows.length)) + '/' + numberWithCommas(countPasses) + ' selected'" [isDownloadButton]="true" [customToolTip]="'Click to export passes'"
-                    (buttonClick)="downloadPasses(countPasses)">
-                </app-filter-button>
-            </ng-template>
-        </div>
-
-        <div class="search-button" *ngIf="views[currentView].id === 1 && passSearchState.countPasses$ | async as countPasses">
-            <app-filter-button *ngIf="!selectedRows.length; else selected" [openedFilter]="true" [title]="(numberWithCommas(countPasses) + ' pass' + (countPasses > 1 ? 'es' : ''))" [isDownloadButton]="true" [customToolTip]="'Click to export passes'" (buttonClick)="downloadPasses(countPasses)">
+        <div class="search-button not-alone" *ngIf="views[currentView].id === 1 && passSearchState.countPasses$ | async as countPasses">
+            <app-round-button *ngIf="!!selectedRows.length" [size]="'small'" [icon]="'Dots'" [borderRadius]="'15%'" (buttonClick)="openConsentDeletePasses($event)">
+            </app-round-button>
+            <app-filter-button *ngIf="!selectedRows.length; else selected" [title]="(numberWithCommas(countPasses) + ' pass' + (countPasses > 1 ? 'es' : ''))" [isDownloadButton]="true" [customToolTip]="'Click to export passes'" (buttonClick)="downloadPasses(countPasses)">
             </app-filter-button>
             <ng-template #selected>
                 <app-filter-button [filter]="true" [title]="((passSearchState.isAllSelected$ | async) ? numberWithCommas(countPasses) : numberWithCommas(selectedRows.length)) + '/' + numberWithCommas(countPasses) + ' selected'" [isDownloadButton]="true" [customToolTip]="'Click to export passes'"

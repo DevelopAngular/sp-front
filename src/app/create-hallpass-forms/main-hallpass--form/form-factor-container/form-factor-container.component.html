@@ -38,7 +38,7 @@
     <app-request-card
       *ngIf="!isOpenBigCard || forStaff"
       [request]="template"
-      [forStaff]="forStaff"
+      [forStaff]="forStaff && !FORM_STATE.kioskMode"
       [forInput]="true"
       [formState]="FORM_STATE"
       [forFuture]="!!FORM_STATE.data.date"

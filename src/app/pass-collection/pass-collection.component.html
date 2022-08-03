@@ -39,7 +39,7 @@
   </div>
   <div *ngIf="(currentPasses$ | async) as currentPasses">
     <div *ngIf="currentPasses.length > 0; else emptyMessage">
-      <div class="collection-grid-wrapper" [style.gridTemplateColumns]="gridTemplate" [style.gridGap]="gridGap" *ngIf="displayState==='grid'; else list">
+      <div class="collection-grid-wrapper" [style.gridTemplateColumns]="gridTemplate" [style.gridGap]="gridGap">
         <div class="tile" *ngFor="let pass of currentPasses">
           <app-pass-tile
            (tileSelected)="showPass($event)"
@@ -55,11 +55,6 @@
           ></app-pass-tile>
         </div>
       </div>
-      <ng-template #list>
-        <div class="collection-list-wrapper" [style.max-height]="maxHeight?maxHeight:''">
-          <app-pass-cell *ngFor="let pass of currentPasses" (click)="showPass(pass)" [timerEvent]="timerEvent" [fromPast]="fromPast" [forFuture]="forFuture" [isActive]="isActive" [forStaff]="forStaff" [pass]="pass"></app-pass-cell>
-        </div>
-      </ng-template>
 </div>
 
 <ng-template #emptyMessage>
@@ -81,19 +76,14 @@
     <div class="collection-title">
       {{title}}
     </div>
-    <img draggable="false" class="collection-display-toggle global-opacity-icons" [src]="'./assets/' +(displayState==='grid'?'List':'Grid') +' (Navy).svg'| resolveAsset" [style.margin-left]="hasSort?'10px':'auto'">
+    <img draggable="false" class="collection-display-toggle global-opacity-icons" [src]="'./assets/List (Navy).svg'| resolveAsset" [style.margin-left]="hasSort?'10px':'auto'">
   </div>
   <div class="collection-divider"></div>
-    <div class="collection-grid-wrapper" *ngIf="displayState==='grid'; else list">
+    <div class="collection-grid-wrapper">
       <div class="tile" *ngFor="let mockTile of mock">
         <app-pass-tile [mock]="mockTile" [forStaff]="forStaff"></app-pass-tile>
       </div>
     </div>
-    <ng-template #list>
-      <div class="collection-list-wrapper" [style.max-height]="maxHeight?maxHeight:''">
-        <app-pass-cell *ngFor="let mockCell of mock" [forStaff]="forStaff" [mock]="mockCell"></app-pass-cell>
-      </div>
-    </ng-template>
 </div>
   </div>
 <!--  <div *ngIf="showBottomShadow" class="bottom-shadow"></div>-->
