@@ -54,6 +54,7 @@
              [ngClass]="{ clserrorInput: (controlName.invalid && controlName.errors && controlName.dirty) && !isFocus || forceError }"
              spellcheck="false" #inp />
       <div class="min"
+           style="font-size: 1rem"
            (click)="isFocus = true;updateFocus(inp)"
            *ngIf="!disabled && controlName.valid && !isFocus && showUnits"
            [style.left]="minLeftMargin + 'px'"

@@ -1,9 +1,9 @@
 import {Component, NgZone, OnDestroy, OnInit} from '@angular/core';
 import {MatDialog} from '@angular/material/dialog';
-import {BehaviorSubject, combineLatest, forkJoin, Observable, Subject} from 'rxjs';
+import {BehaviorSubject, combineLatest, forkJoin, Observable, of, Subject} from 'rxjs';
 import {UserService} from '../../services/user.service';
 import {ActivatedRoute, Router} from '@angular/router';
-import {filter, map, switchMap, take, takeUntil, tap} from 'rxjs/operators';
+import {concatMap, filter, map, skipUntil, switchMap, take, takeUntil, tap} from 'rxjs/operators';
 import {Util} from '../../../Util';
 import {HttpService} from '../../services/http-service';
 import {AdminService} from '../../services/admin.service';
@@ -99,9 +99,14 @@ export class AccountsRoleComponent implements OnInit, OnDestroy {
         switchMap(() => {
           return this.userService.getAccountsRole(this.role);
         }),
-        switchMap((accounts: User[]) => forkJoin(
-          accounts.map(a => this.passLimitsService.getStudentPassLimit(a.id).pipe(map(limit => ({...a, limit}))))
-        )),
+        switchMap((accounts: User[]) => {
+          if (accounts.length === 0) {
+            return of([]);
+          }
+          return forkJoin(
+            accounts.map(a => this.passLimitsService.getStudentPassLimit(a.id).pipe(map(limit => ({...a, limit}))))
+          );
+        }),
         map((accounts: (User & { limit: StudentPassLimit })[]) => {
           const filterFunctions = Object.values(this.tableService.activeFilters$.getValue()).map(v => v.filterCallback);
           let filteredAccounts = [].concat(accounts);
@@ -388,6 +393,15 @@ export class AccountsRoleComponent implements OnInit, OnDestroy {
       width: '425px',
       height: '500px',
       data: data
+    });
+
+    // Only reload the table after the dialog has closed and an individual limit has been updated
+    dialogRef.afterClosed().pipe(
+      skipUntil(this.passLimitsService.individualLimitUpdate$)
+    ).subscribe({
+      next: () => {
+        this.tableService.activeFilters$.next(this.tableService.activeFilters$.getValue());
+      }
     });
   }
 

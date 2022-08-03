@@ -1,4 +1,4 @@
-import {Component, Inject, OnInit, ViewChild} from '@angular/core';
+import {Component, ElementRef, Inject, OnInit, ViewChild} from '@angular/core';
 import {MAT_DIALOG_DATA, MatDialog, MatDialogRef} from '@angular/material/dialog';
 import {Router} from '@angular/router';
 import {DataService} from '../../services/data-service';
@@ -14,6 +14,7 @@ import {ExclusionGroup} from '../../models/ExclusionGroup';
 import {PassLimitStudentInfoComponent} from '../../pass-limit-student-info/pass-limit-student-info.component';
 import {StudentPassLimit} from '../../models/HallPassLimits';
 import {ViewProfileComponent} from './view-profile/view-profile.component';
+import {PassLimitFeedbackComponent} from '../../pass-limit-feedback/pass-limit-feedback.component';
 
 @Component({
   selector: 'app-profile-card-dialog',

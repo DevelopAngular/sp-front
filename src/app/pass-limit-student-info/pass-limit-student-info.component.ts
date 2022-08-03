@@ -1,4 +1,4 @@
-import {ChangeDetectorRef, Component, EventEmitter, Inject, Input, OnInit, Output, TemplateRef, ViewChild} from '@angular/core';
+import {ChangeDetectorRef, Component, ElementRef, EventEmitter, Inject, Input, OnInit, Output, TemplateRef, ViewChild} from '@angular/core';
 import {MAT_DIALOG_DATA, MatDialog, MatDialogRef, MatDialogState} from '@angular/material/dialog';
 import {HallPassLimit, StudentPassLimit} from '../models/HallPassLimits';
 import {User} from '../models/User';
@@ -15,6 +15,7 @@ import {
   RecommendedDialogConfig
 } from '../shared/shared-components/confirmation-dialog/confirmation-dialog.component';
 import {CreateFormService} from '../create-hallpass-forms/create-form.service';
+import {PassLimitFeedbackComponent} from '../pass-limit-feedback/pass-limit-feedback.component';
 
 const individualPassLimitRangeValidator = (): ValidatorFn => (form: FormGroup): ValidationErrors => {
   if (form.value['passLimit'] === 'Unlimited') {
@@ -66,6 +67,14 @@ export class PassLimitStudentInfoComponent implements OnInit {
   @ViewChild('tabGroup') tabGroup: MatTabGroup;
   @ViewChild('passLimitInput') passLimitInput: PassLimitInputComponent;
   @ViewChild('deleteDialogBody') deleteDialogBody: TemplateRef<HTMLElement>;
+  @ViewChild(PassLimitFeedbackComponent) set feedbackPosition(comp: PassLimitFeedbackComponent) {
+    const dialog = document.querySelector<HTMLElement>('mat-dialog-container');
+    const feedback = document.querySelector<HTMLElement>('app-pass-limit-feedback');
+    if (dialog && feedback) {
+      const coords = dialog.getBoundingClientRect();
+      feedback.style.top = `${(this.isDialog ? coords.bottom : coords.height) + 30}px`;
+    }
+  }
 
   @Output() backEmit = new EventEmitter();
 

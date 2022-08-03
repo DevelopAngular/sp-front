@@ -125,11 +125,11 @@
         <ng-template #changedFormHeader>
           <div class="header" style="justify-content: space-around">
             <div class="background-header"></div>
-            <app-gradient-button (buttonClick)="resetPassLimitsForm()" customBackground="#7083A0">Cancel</app-gradient-button>
+            <app-gradient-button [disabled]="requestLoading || deleteLoading" (buttonClick)="resetPassLimitsForm()" customBackground="#7083A0">Cancel</app-gradient-button>
             <div class="title-header" style="z-index: 10; display: flex">
               <div class="ds-dialog-title" [style.margin-left]="'12px'">Edit Limits</div>
             </div>
-            <app-gradient-button (buttonClick)="updatePassLimits()" customBackground="#00B476" textColor="white" [disabled]="passLimitForm.invalid">
+            <app-gradient-button (buttonClick)="updatePassLimits()" customBackground="#00B476" textColor="white" [disabled]="passLimitForm.invalid || deleteLoading">
               <ng-template [ngTemplateOutlet]="buttonLoading" [ngTemplateOutletContext]="{loading: requestLoading, text: 'Save'}"></ng-template>
             </app-gradient-button>
           </div>
@@ -173,6 +173,7 @@
 
           <div class="delete-button ds-flex-center-center" *ngIf="!data.studentPassLimit.noLimitsSet && data.studentPassLimit.isIndividual">
             <app-gradient-button
+              [disabled]="requestLoading"
               size="editable"
               minHeight="40px"
               minWidth="190px"
@@ -189,6 +190,7 @@
       </div>
     </mat-tab>
   </mat-tab-group>
+  <app-pass-limit-feedback style="position:absolute; width: 385px"></app-pass-limit-feedback>
 </ng-container>
 
 <ng-template #buttonLoading let-loading="loading" let-text="text">

@@ -4,6 +4,10 @@
   display: none
 }
 
+::ng-deep .mat-dialog-container .sp-dialog .content {
+  height: auto !important;
+}
+
 .sp-dialog.wrapper {
   border-radius: 14px;
 }
