@@ -1,10 +1,10 @@
-import {ChangeDetectorRef, Component, Inject, OnInit, TemplateRef, ViewChild} from '@angular/core';
+import {ChangeDetectorRef, Component, EventEmitter, Inject, Input, OnInit, Output, TemplateRef, ViewChild} from '@angular/core';
 import {MAT_DIALOG_DATA, MatDialog, MatDialogRef, MatDialogState} from '@angular/material/dialog';
 import {HallPassLimit, StudentPassLimit} from '../models/HallPassLimits';
 import {User} from '../models/User';
 import {Router} from '@angular/router';
 import {PassLimitService} from '../services/pass-limit.service';
-import {Observable} from 'rxjs';
+import {BehaviorSubject, Observable} from 'rxjs';
 import {FormControl, FormGroup, ValidationErrors, ValidatorFn, Validators} from '@angular/forms';
 import {PassLimitInputComponent} from '../pass-limit-input/pass-limit-input.component';
 import {concatMap, filter, map, switchMap, tap} from 'rxjs/operators';
@@ -14,6 +14,7 @@ import {
   ConfirmationDialogComponent, ConfirmationTemplates,
   RecommendedDialogConfig
 } from '../shared/shared-components/confirmation-dialog/confirmation-dialog.component';
+import {CreateFormService} from '../create-hallpass-forms/create-form.service';
 
 const individualPassLimitRangeValidator = (): ValidatorFn => (form: FormGroup): ValidationErrors => {
   if (form.value['passLimit'] === 'Unlimited') {
@@ -35,6 +36,16 @@ const individualPassLimitRangeValidator = (): ValidatorFn => (form: FormGroup): 
   styleUrls: ['./pass-limit-student-info.component.scss']
 })
 export class PassLimitStudentInfoComponent implements OnInit {
+  @Input() set inputData(data: { studentPassLimit: StudentPassLimit, user: User }) {
+    if (!data) {
+      return;
+    }
+    this.data = data;
+    this.setBordersAndButtons();
+  }
+  // TODO: come up with a better way of sharing this component
+  @Input() isDialog = true; // this is not usually a good approach, literally anything is better than this
+
   isAdmin: boolean;
   individualEditButton: boolean;
   schoolEditButton: boolean;
@@ -50,10 +61,13 @@ export class PassLimitStudentInfoComponent implements OnInit {
   passLimitFormLastValue = { passLimit: null, description: '' };
   passLimitFormChanged: Observable<boolean>;
   schoolPassLimit: HallPassLimit;
+  frameMotion$: BehaviorSubject<any>;
 
   @ViewChild('tabGroup') tabGroup: MatTabGroup;
   @ViewChild('passLimitInput') passLimitInput: PassLimitInputComponent;
   @ViewChild('deleteDialogBody') deleteDialogBody: TemplateRef<HTMLElement>;
+
+  @Output() backEmit = new EventEmitter();
 
   constructor(
     private router: Router,
@@ -61,10 +75,12 @@ export class PassLimitStudentInfoComponent implements OnInit {
     @Inject(MAT_DIALOG_DATA) public data: { studentPassLimit: StudentPassLimit, user: User },
     private dialogRef: MatDialogRef<PassLimitStudentInfoComponent>,
     private passLimitsService: PassLimitService,
-    private cdr: ChangeDetectorRef
+    private cdr: ChangeDetectorRef,
+    private framerMotion: CreateFormService
   ) { }
 
   ngOnInit(): void {
+    this.frameMotion$ = this.framerMotion.getFrameMotionDirection();
     this.isAdmin = this.data.user.roles.includes('manage_school');
     this.setBordersAndButtons();
     this.passLimitsService.getPassLimit().subscribe({
@@ -84,10 +100,12 @@ export class PassLimitStudentInfoComponent implements OnInit {
   }
 
   private setBordersAndButtons() {
-    this.schoolEditButton = this.data.studentPassLimit.schoolPassLimitEnabled;
-    this.individualEditButton = this.data.studentPassLimit.isIndividual;
-    this.schoolLimitBorder = this.data.studentPassLimit.schoolPassLimitEnabled && !this.data.studentPassLimit.isIndividual && !this.data.studentPassLimit.noLimitsSet;
-    this.individualBorder = this.data.studentPassLimit.isIndividual && !this.data.studentPassLimit.noLimitsSet;
+    if (this.data.studentPassLimit) {
+      this.schoolEditButton = this.data.studentPassLimit.schoolPassLimitEnabled;
+      this.individualEditButton = this.data.studentPassLimit.isIndividual;
+      this.schoolLimitBorder = this.data.studentPassLimit.schoolPassLimitEnabled && !this.data.studentPassLimit.isIndividual && !this.data.studentPassLimit.noLimitsSet;
+      this.individualBorder = this.data.studentPassLimit.isIndividual && !this.data.studentPassLimit.noLimitsSet;
+    }
   }
 
   navigateToAdminPage() {
@@ -186,5 +204,13 @@ export class PassLimitStudentInfoComponent implements OnInit {
       },
       error: console.error
     });
+  }
+
+  close() {
+    if (this.isDialog) {
+      this.dialogRef.close();
+    } else {
+      this.backEmit.emit();
+    }
   }
 }
