@@ -11,6 +11,9 @@ export class EncounterDetectionDialogComponent implements OnInit {
 
   ORIGINAL_ENCOUNTER_DATA: any = {};
   CLONNED_ENCOUNTER_DATA: any = {};
+  page: number = 1;
+  firstUser: any;
+  secondUser: any;
 
   constructor(
     public dialogRef: MatDialogRef<EncounterDetectionDialogComponent>,
@@ -20,7 +23,9 @@ export class EncounterDetectionDialogComponent implements OnInit {
   ngOnInit(): void {
     this.ORIGINAL_ENCOUNTER_DATA = this.dialogData.encounte_data;
     this.CLONNED_ENCOUNTER_DATA = JSON.parse(JSON.stringify(this.ORIGINAL_ENCOUNTER_DATA.encounters))
-    console.log("Dialog Data : ", this.CLONNED_ENCOUNTER_DATA)
+    console.log("Dialog Data : ", this.CLONNED_ENCOUNTER_DATA);
+    this.firstUser = this.CLONNED_ENCOUNTER_DATA[0].firstStudentPass.student;
+    this.secondUser = this.CLONNED_ENCOUNTER_DATA[0].secondStudentPass.student
     this.CLONNED_ENCOUNTER_DATA = this.CLONNED_ENCOUNTER_DATA.map((encounter) => {
       encounter.durationOfContact = moment.utc(encounter.durationOfContact*1000).format('mm:ss');
       encounter.encounterDate = moment(encounter.encounterDate).format('MMM DD');
@@ -28,8 +33,12 @@ export class EncounterDetectionDialogComponent implements OnInit {
     })
   }
 
-  back() {
-      this.dialogRef.close();
+  goToEPGroup(){
+    this.page = 2
+  }
+
+  goBack(){
+    this.page == 1 ? this.dialogRef.close() : this.page = 1;
   }
 
 }

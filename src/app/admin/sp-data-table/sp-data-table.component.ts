@@ -43,7 +43,6 @@ export class GridTableDataSource extends DataSource<any> {
   }
 
   set allData(data: any[]) {
-    console.log("data : ", data);
     
     this._data = data;
     // this.viewport.scrollToOffset(this.offset);
@@ -196,7 +195,6 @@ export class SpDataTableComponent implements OnInit, OnDestroy, OnChanges {
         if (res && !loading && res >= (this.dataSource.allData.length - this.viewportDataItems)) {
           this.loadMoreData.emit();
           this.dataSource.setFakeData([...this.dataSource.allData, ...this.fakedata]);
-          console.log('loading data ==>>>>');
         }
       });
 

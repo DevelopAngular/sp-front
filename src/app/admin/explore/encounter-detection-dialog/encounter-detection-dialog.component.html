@@ -1,7 +1,7 @@
-<div class="wrapper">
+<div class="wrapper" *ngIf="page == 1">
     <div class="heading" #header>
         <div class="back-button">
-            <img (click)="back()" [src]="'./assets/Back Button (Light-Gray).svg'" alt="Back Button (Blue-White).svg">
+            <img (click)="goBack()" [src]="'./assets/Back Button (Light-Gray).svg'" alt="Back Button (Blue-White).svg">
             <!-- <div class="cancel" (click)="openConfirm($event)" *ngIf="page === 3 && !(showProcessingSpinner$ | async)">Cancel</div> -->
             <!-- <div class="cancel" (click)="dialog.closeAll()" *ngIf="page === 3 && (showProcessingSpinner$ | async)">Close</div> -->
         </div>
@@ -19,7 +19,7 @@
                         <div class="subtitle" [innerHTML]="dialogData.encounte_data.Students"></div>
                     </div>
                     <mat-divider></mat-divider>
-                    <div class="block-button">
+                    <div class="block-button" (click)="goToEPGroup()">
                         <div class="ds-flex-center-between">
                             <div class="ds-flex-center-start">
                                 <app-octagon [size]="21">
@@ -62,4 +62,7 @@
             </div>
         </div>
     </div>
+</div>
+<div class="wrapper" *ngIf="page == 2">
+    <app-encounter-prevention-dialog [forceNextPage]="'newGroup'" [currentUser]="firstUser" [secondUser]="secondUser" (backEmit)="goBack()"></app-encounter-prevention-dialog>
 </div>

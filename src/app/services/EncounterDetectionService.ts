@@ -22,17 +22,10 @@ export class EncounterDetectionService {
   
   
   getEncounterDetectionFunction(url) {
-    console.log("Here")
-    const httpOptions = {
-      headers: new HttpHeaders({
-        'Content-Type': 'application/octet-stream',
-      })
-    };
     return this.http.get(url);
   }
 
   getEncounterDetectionRequest(url: string) {
-    console.log("HEREEEEE")
     this.store.dispatch(getEncounterDetection({url}));
   }
   

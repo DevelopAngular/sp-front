@@ -111,11 +111,11 @@ export class ExploreComponent implements OnInit, OnDestroy {
     loading$: Observable<boolean>,
     loaded$: Observable<boolean>
     isEmpty?: boolean,
-    sortEncounters$?: Observable<string>,
-    sortEncountersLoading$?: Observable<boolean>,
-    countEncounters$?: Observable<number>,
+    // sortEncounters$?: Observable<string>,
+    // sortEncountersLoading$?: Observable<boolean>,
+    // countEncounters$?: Observable<number>,
     isAllSelected$: Observable<boolean>,
-    nextUrl$: Observable<string>
+    // nextUrl$: Observable<string>
   };
   isSearched: boolean;
   showContactTraceTable: boolean;
@@ -243,10 +243,10 @@ export class ExploreComponent implements OnInit, OnDestroy {
     this.encounterDetectedState = {
       loading$: this.encounterDetectionService.encounterLoading$,
       loaded$: this.encounterDetectionService.encounterLoaded$,
-      sortEncounters$: this.hallPassService.sortPassesValue$,
-      sortEncountersLoading$: this.hallPassService.sortPassesLoading$,
-      countEncounters$: this.hallPassService.currentPassesCount$,
-      nextUrl$: this.hallPassService.passesNextUrl$,
+      // sortEncounters$: this.hallPassService.sortPassesValue$,
+      // sortEncountersLoading$: this.hallPassService.sortPassesLoading$,
+      // countEncounters$: this.hallPassService.currentPassesCount$,
+      // nextUrl$: this.hallPassService.passesNextUrl$,
       isAllSelected$: this.tableService.isAllSelected$
     };
     this.contactTraceState = {
@@ -330,7 +330,7 @@ export class ExploreComponent implements OnInit, OnDestroy {
           };
 
           this.searchEncounterDetection();
-          // return this.encounterDetectionService.encounterLoaded$;
+          return this.encounterDetectionService.encounterLoaded$;
         }
       });
 
@@ -340,7 +340,6 @@ export class ExploreComponent implements OnInit, OnDestroy {
       .pipe(
         filter((res: any[]) => this.currentView$.getValue() === 'pass_search'),
         map((passes: HallPass[]) => {
-          console.log("NOW HEREEE")
           const getColumns = this.storage.getItem(`order${this.currentView$.getValue()}`);
           const columns = {};
           if (getColumns) {
@@ -413,22 +412,22 @@ export class ExploreComponent implements OnInit, OnDestroy {
     this.encounterDetectionData$ = this.encounterDetectionService.encounteDetection$
       .pipe(
         filter((res: any) => this.currentView$.getValue() === 'encounter_detection'),
-        map((result: any) => {
-          if (result?.results?.length > 0) {
-            let encounterDetection: EncounterDetection[] = result.results;
+        map((encounterDetection: EncounterDetection[]) => {
             console.log("HERE IN encounterDetection : ", encounterDetection);
-            const getColumns = this.storage.getItem(`order${this.currentView$.getValue()}`);
-            const columns = {};
-            if (getColumns) {
-              const columnsOrder = ('Pass,' + getColumns).split(',');
-              for (let i = 0; i < columnsOrder.length; i++) {
-                Object.assign(columns, { [columnsOrder[i]]: null });
-              }
-              this.currentColumns = cloneDeep(columns);
-            }
+            // const getColumns = this.storage.getItem(`order${this.currentView$.getValue()}`);
+            // const getColumns = this.storage.getItem(`order${this.currentView$.getValue()}`);
+            // const columns = {};
+            // if (getColumns) {
+            //   console.log("In if")
+            //   const columnsOrder = ('Pass,' + getColumns).split(',');
+            //   for (let i = 0; i < columnsOrder.length; i++) {
+            //     Object.assign(columns, { [columnsOrder[i]]: null });
+            //   }
+            //   this.currentColumns = cloneDeep(columns);
+            // }
             if (!encounterDetection.length) {
               this.encounterDetectedState.isEmpty = true;
-              return getColumns ? [this.currentColumns] : [{
+              return [{
                 'Students': null,
                 '# of encounters': null,
                 'Passes': null,
@@ -438,7 +437,6 @@ export class ExploreComponent implements OnInit, OnDestroy {
             this.encounterDetectedState.isEmpty = false;
             const response = encounterDetection.map(encounter => {
               const passImg = this.createPasses(encounter.encounters);
-              // const passImg = this.domSanitizer.bypassSecurityTrustHtml(`<div class="pass-icon" style="background: ${this.getGradient(encounter.encounters[0].firstStudentPass.gradient_color)}; cursor: pointer"></div>`)
               const DEFAULTAVATAR = "'./assets/Avatar Default.svg' | resolveAsset"
               const students =
                 `<div class="ds-flex-center-start">
@@ -463,19 +461,14 @@ export class ExploreComponent implements OnInit, OnDestroy {
               Object.defineProperty(rawObj, 'encounters', { enumerable: false, value: encounter.encounters });
               Object.defineProperty(rawObj, 'firstStudent', { enumerable: false, value: encounter.firstStudent });
               Object.defineProperty(rawObj, 'secondStudent', { enumerable: false, value: encounter.secondStudent });
-              // Object.defineProperty(rawObj, 'email', { enumerable: false, value: pass.student.primary_email });
 
               return rawObj;
             });
             this.allData = response;
             return response;
-          } else {
-            this.encounterDetectedState.isEmpty = true;
-          }
         })
       );
 
-    console.log("this.encounterDetectionData$ : ", this.encounterDetectionData$);
 
     this.contactTraceData$ = this.contactTraceService.contactTraceData$
       .pipe(
@@ -652,7 +645,6 @@ export class ExploreComponent implements OnInit, OnDestroy {
       map(passes => {
         return passes[id];
       })).subscribe(pass => {
-        console.log("HEREEEEE")
         pass.start_time = new Date(pass.start_time);
         pass.end_time = new Date(pass.end_time);
         const data = {
@@ -672,7 +664,6 @@ export class ExploreComponent implements OnInit, OnDestroy {
   }
 
   encounterClick(encounte_data){
-    console.log("ID : ", encounte_data)
     const dialogRef = this.dialog.open(EncounterDetectionDialogComponent, {
       panelClass: 'accounts-profiles-dialog',
       backdropClass: 'custom-bd',
@@ -770,7 +761,6 @@ export class ExploreComponent implements OnInit, OnDestroy {
           this.cdr.detectChanges();
         });
     } else if (action === 'calendar') {
-      console.log("this.encounterDetectedData.selectedDate : ", this.encounterDetectedData.selectedDate)
       const calendar = this.dialog.open(DateTimeFilterComponent, {
         id: 'calendar_filter',
         panelClass: 'consent-dialog-container',
@@ -814,7 +804,6 @@ export class ExploreComponent implements OnInit, OnDestroy {
               this.encounterDetectedData.selectedDate = { start: date.start.startOf('day'), end: date.end.endOf('day') };
             }
           }
-          console.log("Auto search : ", this.isSearched, this.currentView$.getValue(), this.currentView$.getValue())
           if (this.isSearched || this.currentView$.getValue() === 'contact_trace' || this.currentView$.getValue() === 'report_search' || this.currentView$.getValue() === 'encounter_detection') {
 
             this.autoSearch();
@@ -978,7 +967,6 @@ export class ExploreComponent implements OnInit, OnDestroy {
 
   searchEncounterDetection() {
     const queryParams: any = {};
-    console.log("encounterDetectedData.selectedDate : ", this.encounterDetectedData.selectedDate)
     if (this.encounterDetectedData.selectedStudents) {
       queryParams['student'] = this.encounterDetectedData.selectedStudents.map(s => s.id);
     }
@@ -1003,7 +991,6 @@ export class ExploreComponent implements OnInit, OnDestroy {
       end = moment().toISOString();
       queryParams['end_time'] = end;
       this.encounterDetectedData.selectedDate['end'] = moment();
-      console.log("encounterDetectedData.selectedDate NEW : ", this.encounterDetectedData.selectedDate)
       this.adminCalendarOptions = {
         rangeId: "range_1",
         toggleResult: "Range"
