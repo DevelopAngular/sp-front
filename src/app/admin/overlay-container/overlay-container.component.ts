@@ -90,7 +90,7 @@ export class OverlayContainerComponent implements OnInit, OnDestroy {
 
   showPublishSpinner: boolean;
   iconTextResult$: Subject<string> = new Subject<string>();
-  showBottomShadow: boolean = true;
+  showBottomShadow = true;
 
   advOptState: OptionState = {
       now: { state: '', data: { all_teach_assign: null, any_teach_assign: null, selectedTeachers: [] } },
@@ -371,7 +371,7 @@ export class OverlayContainerComponent implements OnInit, OnDestroy {
       }),
       map(({visibility: v}: {visibility: VisibilityOverStudents}): VisibilityOverStudents => v),
     ).subscribe((v: VisibilityOverStudents) => {
-      this.visibility = v;  
+      this.visibility = v;
     });
 
       if (this.currentPage === Pages.EditFolder || this.currentPage === Pages.EditRoom || this.currentPage === Pages.EditRoomInFolder) {
@@ -491,25 +491,25 @@ export class OverlayContainerComponent implements OnInit, OnDestroy {
       {visibility: new FormControl(
         this.visibility,
         // TODO: move validator to its own file
-        [ 
+        [
           (c: AbstractControl): ValidationErrors | null => {
           // abort, skip, abanton do not engage validation
           if (c.value === null) return null;
           // only visible_all_students do not need a group of students
-          // ensures non-all modes have a non-empty over array (students) 
+          // ensures non-all modes have a non-empty over array (students)
           if (c.value.mode !== 'visible_all_students' && c.value.over.length === 0) {
             return {needover: 'you must select at least 1 student.'};
           }
           return null;
         }]
-      )}, 
+      )},
     );
 
   }
 
   getVisibilityStudents(loc: Location): VisibilityOverStudents {
     if (!loc) return DEFAULT_VISIBILITY_STUDENTS;
-    return {mode: loc.visibility_type, over: loc.visibility_students};  
+    return {mode: loc.visibility_type, over: loc.visibility_students};
   }
 
   generateAdvOptionsModel(loc: Location) {
@@ -783,7 +783,7 @@ export class OverlayContainerComponent implements OnInit, OnDestroy {
           title: this.folderData.folderName,
           color_profile: this.color_profile.id,
           // selectedIcon is an object when is to be updated but is kept as a string
-          icon: this.selectedIcon?.inactive_icon ?? (typeof this.selectedIcon === 'string') ? this.selectedIcon : '', // last choice to be a generic icon not just a empty string? 
+          icon: this.selectedIcon?.inactive_icon ?? (typeof this.selectedIcon === 'string') ? this.selectedIcon : '', // last choice to be a generic icon not just a empty string?
           category: this.folderData.folderName + salt
         };
         if (this.pinnable) {
@@ -816,7 +816,7 @@ export class OverlayContainerComponent implements OnInit, OnDestroy {
             if (data?.visibility_students) {
               data.visibility_students = data.visibility_students.map((s: User) => s.id);
             }
-            //location.visibility_type = 
+            //location.visibility_type =
             return this.locationService.createLocation(data);
           } else {
             id = location.id;
@@ -1072,11 +1072,6 @@ export class OverlayContainerComponent implements OnInit, OnDestroy {
   }
 
   normalizeRoomData(room) {
-    const visibilityData = {
-      visibility_students: room.visibility.over,
-      visibility_type: room.visibility.mode,
-    }
-
     return {
       id: room.id,
       title: room.roomName,
@@ -1091,7 +1086,8 @@ export class OverlayContainerComponent implements OnInit, OnDestroy {
       max_passes_to: +this.passLimitForm.get('to').value,
       max_passes_to_active: !!this.passLimitForm.get('toEnabled').value,
       enable: room.enable,
-      ...visibilityData,
+      visibility_students: room.visibility?.over || DEFAULT_VISIBILITY_STUDENTS.over,
+      visibility_type: room.visibility?.mode || DEFAULT_VISIBILITY_STUDENTS.mode,
     };
   }
 
