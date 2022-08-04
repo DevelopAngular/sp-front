@@ -125,4 +125,8 @@ export class DataService {
     this.updateInvitations.next(null);
   }
 
+  getGradesList() {
+    return this.http.get<string[]>('v1/locations/grade_levels');
+  }
+
 }

@@ -10,6 +10,7 @@ import {SPSearchComponent} from '../../../sp-search/sp-search.component';
 import {VisibilityMode, ModeView, ModeViewMap, VisibilityOverStudents, DEFAULT_VISIBILITY_STUDENTS} from './visibility-room.type';
 import {OverlayDataService} from '../overlay-data.service';
 import {slideOpacity } from '../../../animations';
+import {DataService} from '../../../services/data-service';
 
 @Component({
   selector: 'app-visibility-room',
@@ -73,11 +74,17 @@ export class VisibilityRoomComponent implements OnInit, AfterViewInit, OnDestroy
     public dialog: MatDialog,
     public overlayService: OverlayDataService,
     private renderer: Renderer2,
+    private dataService: DataService,
   ) {
     this.modeView = this.modes[this.mode];
   }
 
   ngOnInit(): void {
+    this.dataService.getGradesList().pipe(
+      takeUntil(this.destroy$),
+      tap(v => console.log(v)),
+    ).subscribe();
+
     if (!this.data) {
       this.data = this.overlayService.pageState.getValue().data?.visibility ?? DEFAULT_VISIBILITY_STUDENTS;
     }
