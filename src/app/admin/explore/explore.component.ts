@@ -336,7 +336,7 @@ export class ExploreComponent implements OnInit, OnDestroy {
           };
           this.searchReports();
         } else if (view === 'encounter_detection') {
-          this.isCheckbox$.next(true);
+          this.isCheckbox$.next(false);
           this.encounterDetectedData = {
             selectedStudents: null,
             selectedDate: null,

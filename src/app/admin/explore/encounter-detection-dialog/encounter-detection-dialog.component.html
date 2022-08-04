@@ -16,7 +16,14 @@
                 <div class="students-info">
                     <div class="students-name">
                         <div class="title">Students</div>
-                        <div class="subtitle" [innerHTML]="dialogData.encounte_data.Students"></div>
+                        <div class="subtitle">
+                            <div class="ds-flex-center-start name-wrapper"><img [src]="firstUser.profile_picture ? firstUser.profile_picture : './assets/Avatar Default.svg' | resolveAsset">
+                                <p class="student-name">{{firstUser.display_name}}</p>
+                            </div>
+                            <div class="ds-flex-center-start name-wrapper"><img [src]="secondUser.profile_picture ? secondUser.profile_picture : './assets/Avatar Default.svg' | resolveAsset">
+                                <p class="student-name">{{secondUser.display_name}}</p>
+                            </div>
+                        </div>
                     </div>
                     <mat-divider></mat-divider>
                     <div class="block-button" (click)="goToEPGroup()">
