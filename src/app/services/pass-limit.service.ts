@@ -38,10 +38,6 @@ export class PassLimitService {
     return this.http.put(`${PASS_LIMIT_ENDPOINT}/update`, pl);
   }
 
-  getIndividualLimit(studentId: string | number): Observable<IndividualPassLimit> {
-    return this.http.get(`${PASS_LIMIT_ENDPOINT}/individual_override?student_id=${studentId}`);
-  }
-
   /**
    * Watches for create and update pass limit messages from the backend
    * and fetches the latest pass limit from the server
