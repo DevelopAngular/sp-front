@@ -212,7 +212,7 @@ export class PassLimitStudentInfoComponent implements OnInit {
     }).afterClosed().pipe(
       filter(Boolean),
       tap(() => this.deleteLoading = true),
-      concatMap(() => this.passLimitsService.deleteIndividualLimit(this.data.studentPassLimit.student.id)),
+      concatMap(() => this.passLimitsService.removeIndividualLimit(this.data.studentPassLimit.student.id)),
       concatMap(() => this.passLimitsService.getStudentPassLimit(this.data.studentPassLimit.student.id)),
     ).subscribe({
       next: (limit) => {

@@ -78,7 +78,7 @@ export class PassLimitService {
     );
   }
 
-  deleteIndividualLimit(studentId: string | number) {
-    return this.http.delete(`${PASS_LIMIT_ENDPOINT}/delete_override?student_id=${studentId}`);
+  removeIndividualLimit(studentId: string | number) {
+    return this.http.put(`${PASS_LIMIT_ENDPOINT}/remove_override?student_id=${studentId}`, {});
   }
 }
