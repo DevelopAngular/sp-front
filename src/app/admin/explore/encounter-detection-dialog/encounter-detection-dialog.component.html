@@ -57,10 +57,24 @@
                                  [profileImage]="showProfilePictures"
                                  [isEnableProfilePictures]="(isEnabledProfilePictures$ | async) && (!!user && !!user.show_profile_pictures)"
                                 ></app-pass-tile> -->
-                                <app-pass-tile [forFuture]="false" [fromPast]="true" [forStaff]="true" [pass]="encounter.firstStudentPass" [profileImage]="false" [isMiniCard]="false"></app-pass-tile>
+                                <app-pass-tile
+                                  [forFuture]="false"
+                                  [fromPast]="true"
+                                  [forStaff]="true"
+                                  [pass]="encounter.firstStudentPass"
+                                  [profileImage]="false"
+                                  [isMiniCard]="false"
+                                ></app-pass-tile>
                             </div>
                             <div class="tile">
-                                <app-pass-tile [forFuture]="false" [fromPast]="true" [forStaff]="true" [pass]="encounter.secondStudentPass" [profileImage]="false" [isMiniCard]="false"></app-pass-tile>
+                                <app-pass-tile
+                                  [forFuture]="false"
+                                  [fromPast]="true"
+                                  [forStaff]="true"
+                                  [pass]="encounter.secondStudentPass"
+                                  [profileImage]="false"
+                                  [isMiniCard]="false"
+                                ></app-pass-tile>
                             </div>
                         </div>
                         <mat-divider *ngIf="i + 1 < CLONNED_ENCOUNTER_DATA.length"></mat-divider>

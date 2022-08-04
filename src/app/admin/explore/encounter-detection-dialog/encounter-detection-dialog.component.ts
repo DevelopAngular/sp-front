@@ -1,6 +1,7 @@
 import { Component, Inject, OnInit } from '@angular/core';
 import { MatDialogRef, MAT_DIALOG_DATA } from '@angular/material/dialog';
 import * as moment from 'moment';
+import {HallPass} from '../../../models/HallPass';
 
 @Component({
   selector: 'app-encounter-detection-dialog',
@@ -22,7 +23,13 @@ export class EncounterDetectionDialogComponent implements OnInit {
 
   ngOnInit(): void {
     this.ORIGINAL_ENCOUNTER_DATA = this.dialogData.encounte_data;
-    this.CLONNED_ENCOUNTER_DATA = JSON.parse(JSON.stringify(this.ORIGINAL_ENCOUNTER_DATA.encounters))
+    this.CLONNED_ENCOUNTER_DATA = this.ORIGINAL_ENCOUNTER_DATA.encounters.map(pass => {
+      return {
+        ...pass,
+        firstStudentPass: HallPass.fromJSON(pass.firstStudentPass),
+        secondStudentPass: HallPass.fromJSON(pass.secondStudentPass)
+      };
+    });
     this.firstUser = this.CLONNED_ENCOUNTER_DATA[0].firstStudentPass.student;
     this.secondUser = this.CLONNED_ENCOUNTER_DATA[0].secondStudentPass.student;
     this.CLONNED_ENCOUNTER_DATA = this.CLONNED_ENCOUNTER_DATA.map((encounter) => {
