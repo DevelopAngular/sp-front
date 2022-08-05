@@ -90,17 +90,11 @@ import {LinkGeneratedDialogComponent} from '../admin/link-generated-dialog/link-
 import {StatusChipComponent} from '../admin/explore/status-chip/status-chip.component';
 import {ConfirmationDialogComponent} from './shared-components/confirmation-dialog/confirmation-dialog.component';
 import {NuxUniversalComponent} from '../nux-components/nux-universal/nux-universal.component';
-import {PassLimitFeedbackComponent} from '../pass-limit-feedback/pass-limit-feedback.component';
-import {PassLimitInputComponent} from '../pass-limit-input/pass-limit-input.component';
 import { ConfirmationComponent } from './shared-components/confirmation/confirmation.component';
+import {PassLimitInfoComponent} from '../pass-limit-info/pass-limit-info.component';
 import { IdNumbersComponent } from '../admin/accounts/id-numbers/id-numbers.component';
 import { GradeLevelsComponent } from '../admin/accounts/grade-levels/grade-levels.component';
-import {PassLimitBulkEditComponent} from '../pass-limit-bulk-edit/pass-limit-bulk-edit.component';
-import {PassLimitStudentInfoComponent} from '../pass-limit-student-info/pass-limit-student-info.component';
-import {AdminPassLimitDialogComponent} from '../admin-pass-limits-dialog/admin-pass-limits-dialog.component';
 import {ConfirmDeleteKioskModeComponent} from '../request-card/confirm-delete-kiosk-mode/confirm-delete-kiosk-mode.component';
-import {PassLimitInfoComponent} from '../pass-limit-info/pass-limit-info.component';
-
 const DEFAULT_SWIPER_CONFIG: SwiperConfigInterface = {
   direction: 'horizontal',
   slidesPerView: 'auto'
@@ -198,12 +192,7 @@ const DEFAULT_SWIPER_CONFIG: SwiperConfigInterface = {
     StatusChipComponent,
     ConfirmationDialogComponent,
     NuxUniversalComponent,
-    AdminPassLimitDialogComponent,
     PassLimitInfoComponent,
-    PassLimitInputComponent,
-    PassLimitFeedbackComponent,
-    PassLimitBulkEditComponent,
-    PassLimitStudentInfoComponent,
     ConfirmationComponent,
     IdNumbersComponent,
     GradeLevelsComponent,
@@ -287,12 +276,7 @@ const DEFAULT_SWIPER_CONFIG: SwiperConfigInterface = {
     LinkGeneratedDialogComponent,
     StatusChipComponent,
     NuxUniversalComponent,
-    AdminPassLimitDialogComponent,
     PassLimitInfoComponent,
-    PassLimitInputComponent,
-    PassLimitFeedbackComponent,
-    PassLimitBulkEditComponent,
-    PassLimitStudentInfoComponent,
     IdNumbersComponent,
     GradeLevelsComponent,
     ConfirmDeleteKioskModeComponent
