@@ -11,7 +11,7 @@ import {
 } from '@angular/core';
 import {MatDialog, MatDialogRef, MatDialogState} from '@angular/material/dialog';
 // TODO: Replace combineLatest with non-deprecated implementation
-import {BehaviorSubject, combineLatest, interval, merge, Observable, of, Subject} from 'rxjs';
+import {BehaviorSubject, combineLatest, forkJoin, interval, merge, Observable, of, Subject} from 'rxjs';
 import {
   concatMap,
   distinctUntilChanged,
@@ -55,7 +55,7 @@ import {StartPassNotificationComponent} from './start-pass-notification/start-pa
 import {LocationsService} from '../services/locations.service';
 import * as moment from 'moment';
 import {PassLimitService} from '../services/pass-limit.service';
-import {PassLimitInfo} from '../models/HallPassLimits';
+import {PassLimitInfo, StudentPassLimit} from '../models/HallPassLimits';
 import {MainHallPassFormComponent} from '../create-hallpass-forms/main-hallpass--form/main-hall-pass-form.component';
 import {CheckForUpdateService} from '../services/check-for-update.service';
 
@@ -148,6 +148,7 @@ export class PassesComponent implements OnInit, AfterViewInit, OnDestroy {
   filterExpiredPass$: BehaviorSubject<string> = new BehaviorSubject<string>(null);
   expiredPassesSelectedSort$: Observable<string>;
   isEmptyPassFilter: boolean;
+  studentPassLimit: StudentPassLimit;
 
   showEmptyState: Observable<boolean>;
 
@@ -297,22 +298,23 @@ export class PassesComponent implements OnInit, AfterViewInit, OnDestroy {
           this.receivedRequests = this.liveDataService.invitations$;
           this.sentRequests = this.liveDataService.requests$.pipe(
             map(req => req.filter((r) => !!r.request_time)));
-          return this.passLimitsService.watchPassLimits().pipe(
-            concatMap((newPassLimit): Observable<PassLimitInfo> => {
-              if (newPassLimit === null) {
-                return of(null);
-              }
 
-              if (!newPassLimit?.limitEnabled) {
-                return of({ showPasses: false });
-              }
-
-              return this.passLimitsService.getRemainingLimits({studentId: this.user.id}).pipe(map(r => ({
-                max: newPassLimit.passLimit,
-                showPasses: newPassLimit.limitEnabled,
-                current: r.remainingPasses
-              })));
-            }),
+          return merge(
+            this.liveDataService.watchActiveHallPasses(new Subject<HallPassFilter>()).pipe(
+              distinctUntilChanged((a, b) => a.length === b.length)
+            ),
+            this.passLimitsService.watchPassLimits(),
+            this.passLimitsService.watchIndividualPassLimit(this.user.id)
+          ).pipe(
+            concatMap(() => forkJoin({
+              studentPassLimit: this.passLimitsService.getStudentPassLimit(this.user.id),
+              remainingLimit: this.passLimitsService.getRemainingLimits({ studentId: this.user.id })
+            })),
+            map(({ studentPassLimit, remainingLimit }): PassLimitInfo => ({
+              max: studentPassLimit.passLimit,
+              showPasses: !studentPassLimit.noLimitsSet && !studentPassLimit.isUnlimited && studentPassLimit.passLimit !== null,
+              current: remainingLimit.remainingPasses
+            })),
             tap(data => {
               this.passLimitInfo = data;
               if (this.createHallPassDialogRef && this.createHallPassDialogRef.getState() === MatDialogState.OPEN) {
