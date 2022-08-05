@@ -99,6 +99,7 @@ import {PassLimitBulkEditComponent} from '../pass-limit-bulk-edit/pass-limit-bul
 import {PassLimitStudentInfoComponent} from '../pass-limit-student-info/pass-limit-student-info.component';
 import {AdminPassLimitDialogComponent} from '../admin-pass-limits-dialog/admin-pass-limits-dialog.component';
 import {ConfirmDeleteKioskModeComponent} from '../request-card/confirm-delete-kiosk-mode/confirm-delete-kiosk-mode.component';
+import {PassLimitInfoComponent} from '../pass-limit-info/pass-limit-info.component';
 
 const DEFAULT_SWIPER_CONFIG: SwiperConfigInterface = {
   direction: 'horizontal',
@@ -198,6 +199,7 @@ const DEFAULT_SWIPER_CONFIG: SwiperConfigInterface = {
     ConfirmationDialogComponent,
     NuxUniversalComponent,
     AdminPassLimitDialogComponent,
+    PassLimitInfoComponent,
     PassLimitInputComponent,
     PassLimitFeedbackComponent,
     PassLimitBulkEditComponent,
@@ -286,6 +288,7 @@ const DEFAULT_SWIPER_CONFIG: SwiperConfigInterface = {
     StatusChipComponent,
     NuxUniversalComponent,
     AdminPassLimitDialogComponent,
+    PassLimitInfoComponent,
     PassLimitInputComponent,
     PassLimitFeedbackComponent,
     PassLimitBulkEditComponent,
