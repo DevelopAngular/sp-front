@@ -1,4 +1,6 @@
+import {KeyValue} from '@angular/common';
 import { Component, OnInit, AfterViewInit, OnDestroy, Input, Output, EventEmitter, ViewChild, ElementRef, TemplateRef, Renderer2} from '@angular/core';
+import {DomSanitizer} from '@angular/platform-browser';
 import {FormGroup} from '@angular/forms';
 import {MatDialog, MatDialogRef} from '@angular/material/dialog';
 import {Observable, Subject} from 'rxjs';
@@ -58,8 +60,6 @@ export class VisibilityRoomComponent implements OnInit, AfterViewInit, OnDestroy
 
   private change$ = new Subject();
   destroy$ = new Subject();
-
-  tooltipText: string = 'Change room visibility';
 
   // did open the panel with options 
   didOpen: boolean = false;
@@ -148,6 +148,11 @@ export class VisibilityRoomComponent implements OnInit, AfterViewInit, OnDestroy
   private panelDialog: MatDialogRef<TemplateRef<any>> | undefined;
 
   private dirty: Subject<boolean> = new Subject<boolean>();
+
+  // needed for template in order to stop keyvalue ordering
+  private asIs = (a: KeyValue<number,string>, b: KeyValue<number,string>): number => {
+    return 0;
+  };
 
   handleOpenClose() {
     const PANEL_ID = 'opener-visibility-options';

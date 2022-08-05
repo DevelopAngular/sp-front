@@ -320,7 +320,7 @@ export class ToWhereComponent implements OnInit {
         // SKIPPING case
         // avoid a certain no students case
         if (selectedStudents.length === 1) {
-          this.dialogRef.close();
+          //this.dialogRef.close();
           return;
         }
 
