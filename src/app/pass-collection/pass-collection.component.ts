@@ -143,8 +143,7 @@ export class PassCollectionComponent implements OnInit, OnDestroy {
       public screenService: ScreenService,
       private cdr: ChangeDetectorRef,
       private passesService: HallPassesService,
-      private userService: UserService,
-      private router: Router,
+      private userService: UserService
   ) {}
 
   get gridTemplate() {
@@ -171,8 +170,8 @@ export class PassCollectionComponent implements OnInit, OnDestroy {
       return 'Past 3 days';
     } else if (this.selectedSort === 'past-seven-days') {
       return 'Past 7 days';
-    } else if (this.selectedSort === 'school-year') {
-      return 'This school year';
+    } else if (this.selectedSort === 'all_time' || !this.selectedSort) {
+      return 'All Time';
     }
   }
 
@@ -307,15 +306,18 @@ export class PassCollectionComponent implements OnInit, OnDestroy {
       .pipe(filter(res => !!res))
       .subscribe(action => {
         if (action !== 'hide_expired_pass') {
-          if (this.selectedSort === action || action === 'all_time') {
-            this.selectedSort = null;
+
+          if (this.selectedSort === action) {
+            this.selectedSort = 'all_time';
           } else {
             this.selectedSort = action;
           }
+
+          const value = this.selectedSort === 'all_time' ? null : this.selectedSort;
           this.cdr.detectChanges();
-          this.passesService.updateFilterRequest(this.filterModel, this.selectedSort);
-          this.passesService.filterExpiredPassesRequest(this.user, this.selectedSort);
-          this.filterPasses.emit(this.selectedSort);
+          this.passesService.updateFilterRequest(this.filterModel, value);
+          this.passesService.filterExpiredPassesRequest(this.user, value);
+          this.filterPasses.emit(value);
         } else {
           this.openAppearance();
         }
@@ -341,6 +343,9 @@ export class PassCollectionComponent implements OnInit, OnDestroy {
     let data: any;
 
     if (pass instanceof HallPass) {
+      if (!!this.kioskMode.getCurrentRoom().value) {
+        pass['cancellable_by_student'] = false;
+      }
       data = {
         pass: pass,
         fromPast: pass['end_time'] < now,
