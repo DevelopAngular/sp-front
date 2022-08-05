@@ -5,6 +5,8 @@
 @import url("https://fonts.googleapis.com/icon?family=Material+Icons&style=outline");
 @import "~font-awesome/css/font-awesome.min.css";
 @import "design-system";
+@import "pass-limits.scss";
+
 html {
     background-color: #FCFDFF;
     padding: 0 0;
@@ -305,6 +307,10 @@ div {
     overflow: hidden;
     z-index: 10;
     padding: 0;
+}
+
+.overlay-dialog.show-overlay .mat-dialog-container {
+  overflow: auto !important;
 }
 
 .overlay-dialog-no-background {
