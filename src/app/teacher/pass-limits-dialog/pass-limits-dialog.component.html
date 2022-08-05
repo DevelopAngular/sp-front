@@ -1,12 +1,13 @@
-<ng-container [ngSwitch]="pageNumber">
-  <div class="sp-dialog wrapper" *ngSwitchCase="1" [@NextStep]="{ value: '', params: frameMotion$ | async}">
-    <div class="header">
-      <div class="background-header"></div>
-      <img class="back-button" (click)="dialogRef.close()" [src]="'./assets/Back Button (Blue-White).svg' | resolveAsset">
-      <div class="title-header" style="z-index: 10; display: flex" [attr.data-motion-translate]="(frameMotion$ | async).direction">
-        <div class="ds-dialog-title" [style.margin-left]="'12px'">Pass Limit for {{data.profile.display_name}}</div>
+<mat-tab-group #tabGroup>
+  <mat-tab>
+    <div class="sp-dialog wrapper">
+      <div class="header">
+        <div class="background-header"></div>
+        <img class="back-button" (click)="dialogRef.close()" [src]="'./assets/Back Button (Blue-White).svg' | resolveAsset">
+        <div class="title-header" style="z-index: 10; display: flex">
+          <div class="ds-dialog-title" [style.margin-left]="'12px'">Pass Limit for {{data.profile.display_name}}</div>
+        </div>
       </div>
-    </div>
 
     <div class="content">
       <div class="accent-background-section ds-flex-row ds-flex-center-between" style="display: flex; gap: 10px">
@@ -21,8 +22,8 @@
               </span>
             </div>
           </ng-template>
-          <p *ngIf="data.passLimit" class="ds-dialog-normal-text" style="margin-top: 4px">{{data.passLimit.passLimit}} {{data.passLimit.passLimit === 1 ? 'pass' : 'passes'}}/{{data.passLimit.frequency}}</p>
-          <p *ngIf="!data.passLimit" class="ds-dialog-normal-text" style="margin-top: 4px">No pass limits set. Contact your school admin to get started.</p>
+          <p *ngIf="data?.schoolPassLimit?.limitEnabled" class="ds-dialog-normal-text" style="margin-top: 4px">{{data.passLimit.passLimit}} {{data.passLimit.passLimit === 1 ? 'pass' : 'passes'}}/{{data.passLimit.frequency}}</p>
+          <p *ngIf="!data?.schoolPassLimit?.limitEnabled" class="ds-dialog-normal-text" style="margin-top: 4px">No pass limits set. Contact your school admin to get started.</p>
         </div>
         <div class="pass-limits-actions">
           <app-gradient-button
@@ -43,59 +44,52 @@
             </div>
           </ng-template>
         </div>
-<!--        <div style="display: flex" class="ds-flex-row ds-flex-center-between">-->
-<!--           <span class="ds-section-header">-->
-<!--          School Pass Limit-->
-<!--           <div class="tooltip-container" style="display: inline">-->
-<!--              <img-->
-<!--                [customToolTip]="passLimitToggleTooltip"-->
-<!--                class="custom-tooltip-icon support-icon"-->
-<!--                [src]="'./assets/Support (Gray).svg' | resolveAsset">-->
-<!--              <div class="arrow-down-container">-->
-<!--                <div class="arrow-down"></div>-->
-<!--              </div>-->
-<!--            </div>-->
-<!--        </span>-->
-<!--          <app-toggle-input-->
-<!--            style="width: auto"-->
-<!--            controlSize="small"-->
-<!--            [form]="passLimitForm"-->
-<!--            controlName="enabled"-->
-<!--            [delimiter]="false"-->
-<!--            (pushOutValue)="toggleMainPassLimits($event)"-->
-<!--          ></app-toggle-input>-->
-<!--        </div>-->
 
-<!--        <div *ngIf="passLimitForm.value['enabled']" style="display: flex; column-gap: 2px; flex-wrap: wrap;" class="ds-flex-row">-->
-<!--          <app-input-->
-<!--            (blurEvent)="showLimitFormatError = passLimitForm.controls['limits'].invalid"-->
-<!--            [isFocus]="true"-->
-<!--            width="125px"-->
-<!--            placeholder="# of passes"-->
-<!--            [formGroup]="passLimitForm"-->
-<!--            [controlName]="passLimitForm.get('limits')"></app-input>-->
-
-<!--          <app-gradient-button-->
-<!--            id="passLimitFrequencyButton"-->
-<!--            style="margin-top: 4px"-->
-<!--            textColor="#000000"-->
-<!--            gradient="#F4F4F4">-->
-<!--            per {{passLimitForm.value['frequency']}}-->
-<!--          </app-gradient-button>-->
-
-<!--          <p style="width: 100%; color: #E32C66" *ngIf="showLimitFormatError">Proper format: 1 pass, 4 passes, 10 passes</p>-->
-<!--        </div>-->
+        <div
+          *ngIf="data.individualLimit && data?.individualLimit?.passLimit !== -1; else noIndividual"
+          class="accent-background-section ds-flex-row ds-flex-center-between purple-border"
+          style="display: flex; gap: 10px">
+          <div class="pass-limits-info">
+            <p class="ds-dialog-heading" style="margin-top: 4px; margin-bottom: 0; display: inline-block">Individual Limit</p>
+            <span class="support-icon" customToolTip [contentTemplate]="individualText" style="margin-left: 10px"><img width="13px" [src]="'./assets/Support (Gray-200).svg' | resolveAsset"></span>
+            <ng-template #individualText>
+              <div class="ds-tooltip" style="width: 200px">This overrides the School-wide limit of {{data.schoolPassLimit.passLimit}} passes/day</div>
+            </ng-template>
+            <p class="ds-orange" style="margin: 4px 0; font-size: 14px">{{data.individualLimit.passLimit}} passes/day</p>
+            <p *ngIf="data.individualLimit.description" class="ds-blue-gray" style="font-size: 14px; margin: 0">{{data.individualLimit.description}}</p>
+          </div>
+          <div class="pass-limits-actions">
+            <app-gradient-button
+              (buttonClick)="goToIndividualLimitPage()"
+              gradient="#FFFFFF, #FFFFFF"
+              textColor="#7f879d"
+              [leftIcon]="'assets/Edit%20(Blue-Gray).svg'"
+              [rightIcon]="'assets/External%20Link%20(Blue-Gray).svg'">
+              Edit
+            </app-gradient-button>
+          </div>
+        </div>
       </div>
 
+      <ng-template #noIndividual>
+        <div class="accent-background-section ds-flex-row ds-flex-center-between" style="display: flex; gap: 10px">
+          <div class="pass-limits-info">
+            <p class="ds-dialog-heading" style="margin-top: 4px; margin-bottom: 0; display: inline-block">Individual Pass Limits</p>
+            <span class="support-icon" customToolTip [contentTemplate]="individualText" style="margin-left: 10px"><img width="13px" [src]="'./assets/Support (Gray-200).svg' | resolveAsset"></span>
+            <ng-template #individualText>
+              <div class="ds-tooltip" style="width: 200px">This overrides the School-wide limit of {{data.schoolPassLimit.passLimit}} passes/day</div>
+            </ng-template>
+          </div>
+          <app-gradient-button
+            size="editable" width="70px" minHeight="30px" (buttonClick)="goToIndividualLimitPage()"
+            fontSize="16px" fontWeight="400" cornerRadius="4px"
+            leftIcon="assets/Plus (White).svg" leftImageWidth="15px" leftImageHeight="15px">
+            <span>Add</span>
+          </app-gradient-button>
+        </div>
+      </ng-template>
     </div>
   </div>
+  </mat-tab>
+</mat-tab-group>
 
-</ng-container>
-
-<!--TODO: Implement when multiple pass frequencies are implemented -->
-<!--<ng-template #passLimitsFrequencyDialog>-->
-<!--  <p (click)="selectFrequency('day')">per day</p>-->
-<!--  <p (click)="selectFrequency('week')">per week</p>-->
-<!--  <p (click)="selectFrequency('month')">per month</p>-->
-<!--  <p (click)="selectFrequency('semester')">per semester</p>-->
-<!--</ng-template>-->

@@ -108,53 +108,58 @@
                                 <app-nux-universal description="Limit the number of passes students can have per day" (gotItEvent)="dismissPassLimitNux()"></app-nux-universal>
                             </ng-template>
 
-                            <div class="form pass-limit-card" style="flex-direction: column; cursor: pointer" [ngClass]="{ 'pass-limit-enabled': passLimit }" (click)="openPassLimitsDialog()">
-                                <div class="card ds-flex-center-between">
-                                    <div class="label">
-                                        <div class="icon" style="background-color: #5E4FED">
-                                            <img style="position: absolute; z-index: 10;" height="14px" [src]="'./assets/Pass Limit (White).svg' | resolveAsset" alt="">
+                            <div class="form pass-limit-card" style="flex-direction: column; cursor: pointer" [ngClass]="{ 'pass-limit-enabled': !studentPassLimit?.isUnlimited }" (click)="openPassLimitsDialog()">
+                              <div class="card ds-flex-center-between">
+                                <div class="label" [style.align-items]="!!studentPassLimit?.description ? 'flex-start !important' : 'center'">
+                                  <div class="icon" style="background-color: #5E4FED">
+                                    <img style="position: absolute; z-index: 10;" height="14px" [src]="'./assets/Pass Limit (White).svg' | resolveAsset" alt="">
+                                  </div>
+                                  <div class="ds-ml-10" style="display: flex; flex-direction: column">
+                                    <span class="ds-dialog-heading" style="display: flex; padding-bottom: 0; font-weight: 600 !important;">
+                                      Pass Limit
+                                      <div style="display: inline" customToolTip [contentTemplate]="passLimitLearnMore">
+                                        <img
+                                          class="support-icon"
+                                          style="width: 13px"
+                                          [src]="'./assets/Support (Gray-200).svg' | resolveAsset">
+                                      </div>
+                                      <ng-template #passLimitLearnMore>
+                                        <div class="ds-tooltip">
+                                          <span>
+                                            Limit the number of passes students can have per day.
+                                            <a href="https://www.smartpass.app/passlimits" target="_blank" style="color: white"> Learn more</a>
+                                          </span>
                                         </div>
-                                        <div class="ds-ml-10" style="display: flex; flex-direction: column">
-                                            <span class="ds-dialog-heading" style="display: flex; padding-bottom: 0; font-weight: 600 !important;">
-                        Pass Limit
-                        <div style="display: inline" customToolTip [contentTemplate]="passLimitLearnMore">
-                          <img
-                            class="support-icon"
-                            style="width: 13px"
-                            [src]="'./assets/Support (Gray-200).svg' | resolveAsset">
-                        </div>
-                        <ng-template #passLimitLearnMore>
-                          <div class="ds-tooltip">
-                            <span>
-                              Limit the number of passes students can have per day.
-                              <a href="https://www.smartpass.app/passlimits" target="_blank" style="color: white"> Learn more</a>
-                            </span>
-                                        </div>
-                                        </ng-template>
-                                        </span>
-                                        <div class="ds-dialog-normal-text" *ngIf="passLimit">
-                                            <span>{{passLimit.passLimit}} {{passLimit.passLimit === 1 ? 'pass' : 'passes'}}/{{passLimit.frequency}}</span>
-                                        </div>
+                                      </ng-template>
+                                    </span>
+                                    <div *ngIf="studentPassLimit?.passLimit" class="ds-flex-column" style="display: flex; gap: 3px; margin-top: 3px;">
+                                      <span
+                                        style="font-size: 15px !important; font-weight: 500 !important;"
+                                        [ngClass]="{ 'pass-limit-counter': true, 'individual-limit': studentPassLimit.isIndividual, 'school-limit': !studentPassLimit.isIndividual }">
+                                        {{studentPassLimit.passLimit === -2 ? "Unlimited" : studentPassLimit.passLimit}} passes/day
+                                      </span>
+                                      <span class="ds-dialog-normal-text" style="font-weight: 400 !important;" *ngIf="studentPassLimit.description && studentPassLimit.isIndividual">{{studentPassLimit.description}}</span>
                                     </div>
+                                  </div>
                                 </div>
-                                <img style="width: 16px; height: 16px" [src]="'./assets/Chevron Right (Gray).svg' | resolveAsset" alt="" nuxTooltip [contentTemplate]="passLimitNuxTemplate" [showToolTip$]="showPassLimitNux" [position]="passLimitNuxWrapperPosition">
-                            </div>
+                                <app-gradient-button
+                                  *ngIf="!studentPassLimit?.passLimit"
+                                  size="tiny"
+                                  gradient="#6651F1"
+                                  textColor="#FFFFFF"
+                                >
+                                  Set up
+                                </app-gradient-button>
+                                <img *ngIf="studentPassLimit?.passLimit"
+                                     style="width: 16px; height: 16px"
+                                     [src]="'./assets/Chevron Right (Gray).svg' | resolveAsset" alt=""
+                                     nuxTooltip [contentTemplate]="passLimitNuxTemplate" [showToolTip$]="showPassLimitNux"
+                                     [position]="passLimitNuxWrapperPosition">
+                          </div>
                         </div>
                         <ng-template #fakeForm>
-                            <div class="form fake-animate"></div>
+                          <div class="form fake-animate"></div>
                         </ng-template>
-                        <!--        <div class="form">-->
-                        <!--          <div class="icon" style="background-color: #E48C15">-->
-                        <!--            <img width="13px" [src]="'./assets/Lock (White).svg' | resolveAsset" alt="">-->
-                        <!--          </div>-->
-                        <!--          <div class="title">Restrict all rooms</div>-->
-                        <!--        </div>-->
-                        <!--        <div class="form">-->
-                        <!--          <div class="icon" style="background-color: #6651F1">-->
-                        <!--            <img width="16px" [src]="'./assets/Pass Quota (White).svg' | resolveAsset" alt="">-->
-                        <!--          </div>-->
-                        <!--          <div class="title">Pass quota</div>-->
-                        <!--        </div>-->
 
                         <div class="form">
                             <div class="form-content-container">
