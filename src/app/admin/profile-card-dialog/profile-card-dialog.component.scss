@@ -1,6 +1,5 @@
 @import '../../../sp-colors';
 
-
 .card-container {
   color: $blue-gray;
   font-size: 14px;
@@ -12,3 +11,7 @@
     width: 425px;
   }
 }
+
+::ng-deep .mat-dialog-container .sp-dialog .content {
+  height: auto !important;
+} 

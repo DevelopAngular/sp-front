@@ -18,6 +18,7 @@ export class StudentsEffects {
       .pipe(
         ofType(studentsActions.getStudents),
         exhaustMap((action: any) => {
+          console.log(action);
           return this.userService.getUsersList(action.role, action.search, action.limit)
             .pipe(
               map((users: any) => {

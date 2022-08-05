@@ -16,7 +16,7 @@ const cssGradientRegexp = new RegExp(`^(${CSS_COLOR_REGEXP}), *(${CSS_COLOR_REGE
 const cssColorRegexp = new RegExp(`^(${CSS_COLOR_REGEXP})$`, 'i');
 
 
-type buttonSize = 'small' | 'medium' | 'large' | 'xl' | 'editable';
+type buttonSize = 'tiny' | 'small' | 'medium' | 'large' | 'xl' | 'editable';
 
 type docType = 'pdf' | 'xslx' | 'csv';
 
@@ -88,6 +88,17 @@ export class GradientButtonComponent implements OnInit {
       this.minWidth = this.width;
 
       switch (this.size) {
+        case 'tiny':
+          this.leftImageHeight = '12px';
+          this.leftImageWidth = '12px';
+          this.rightIconWidth = '12px';
+          this.rightIconHeight = '12px';
+          this.minHeight = '30px';
+          this.minWidth = '75px';
+          this.fontSize = '14px';
+          this.cornerRadius = '4px';
+          this.padding = '0px 12px';
+          break;
         case 'small':
           this.leftImageHeight = '16px';
           this.leftImageWidth = '16px';
