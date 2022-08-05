@@ -1,6 +1,8 @@
+@import "src/sp-colors";
+
 .pass-limits-info {
   padding: 5px;
-  background: #E2E6EC;
+  background: $gray050;
   color: #7083A0;
   border-radius: 8px;
   margin-top: 20px;
@@ -15,14 +17,15 @@
   top: 5px;
   right: 5px;
   border-radius: 50%;
+  background: $gray200;
 }
 
 .pass-limit-one-remaining {
   color: white;
-  background: #EBBB00
+  background: $yellow500;
 }
 
 .pass-limit-locked {
   color: white;
-  background: #E32C66
+  background: $red500;
 }

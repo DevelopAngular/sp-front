@@ -1,0 +1,55 @@
+.pass-limit-input-template {
+  display: flex;
+  column-gap: 2px;
+  flex-wrap: wrap;
+  position: relative;
+  //background: #F0F2F5;
+  //border: 1px solid $gray200;
+
+  div.per-day-wrapper {
+    height: 45px;
+    display: flex;
+    align-items: flex-end;
+    left: 110px;
+    top: 0;
+
+    span {
+      display: inline-flex;
+      align-items: center;
+      height: 45px;
+      padding: 0 15px;
+      //color: $gray500;
+      font-size: 15px;
+      font-weight: 500;
+    }
+  }
+}
+
+.wrapper.pass-limit-dropdown {
+  background-color: #FFFFFF;
+  border-radius: 12px;
+
+  .options {
+    padding: 15px 0;
+
+    .option {
+      height: 40px;
+      padding: 0 27px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      cursor: pointer;
+      width: 180px;
+
+      &:hover {
+        background-color: rgba(210, 210, 210, 0.3);
+      }
+
+      .title {
+        font-size: 14px;
+        display: flex;
+        align-items: center;
+      }
+    }
+  }
+}

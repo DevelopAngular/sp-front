@@ -27,6 +27,10 @@ $primaryFont: "Inter", "Arimo", "Arial", sans-serif;
   color: $color;
 }
 
+@mixin border($size, $color) {
+  border: $size solid $color;
+}
+
 .ds-navy {
   @include textColor($navy);
 }
@@ -70,6 +74,14 @@ $primaryFont: "Inter", "Arimo", "Arial", sans-serif;
 
 .ds-search-gray {
   @include textColor($search-gray);
+}
+
+.ds-orange {
+  @include textColor($orange)
+}
+
+.purple-border {
+  @include border(1px, $soft-blue)
 }
 
 /* === Common Text Options === */
@@ -562,10 +574,6 @@ $primaryFont: "Inter", "Arimo", "Arial", sans-serif;
 
 .ds-p-25 {
   @include padding(25px, all)
-}
-
-.ds-px-0 {
-  @include padding(0px, x)
 }
 
 .ds-px-5 {

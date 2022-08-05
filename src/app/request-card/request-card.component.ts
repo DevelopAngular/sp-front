@@ -5,7 +5,7 @@ import {User} from '../models/User';
 import {Util} from '../../Util';
 import {MAT_DIALOG_DATA, MatDialog, MatDialogRef} from '@angular/material/dialog';
 import {ConsentMenuComponent} from '../consent-menu/consent-menu.component';
-import {MainHallPassFormComponent, Navigation} from '../create-hallpass-forms/main-hallpass--form/main-hall-pass-form.component';
+import {Navigation} from '../create-hallpass-forms/main-hallpass--form/main-hall-pass-form.component';
 import {getInnerPassName} from '../pass-tile/pass-display-util';
 import {DataService} from '../services/data-service';
 import {LoadingService} from '../services/loading.service';
@@ -53,13 +53,13 @@ const sleep = (ms: number) => new Promise(resolve => {
 export class RequestCardComponent implements OnInit, OnDestroy {
 
   @Input() request: Request;
-  @Input() forFuture: boolean = false;
-  @Input() fromPast: boolean = false;
-  @Input() forInput: boolean = false;
-  @Input() forStaff: boolean = false;
+  @Input() forFuture = false;
+  @Input() fromPast = false;
+  @Input() forInput = false;
+  @Input() forStaff = false;
   @Input() formState: Navigation;
   @Input() isOpenBigPass: boolean;
-  @Input() fullScreenButton: boolean = false;
+  @Input() fullScreenButton = false;
 
   @Output() cardEvent: EventEmitter<any> = new EventEmitter<any>();
   @Output() scaleCard: EventEmitter<boolean> = new EventEmitter<boolean>();
@@ -72,10 +72,10 @@ export class RequestCardComponent implements OnInit, OnDestroy {
   selectedStudents;
   fromHistory;
   fromHistoryIndex;
-  messageEditOpen: boolean = false;
-  dateEditOpen: boolean = false;
-  cancelOpen: boolean = false;
-  pinnableOpen: boolean = false;
+  messageEditOpen = false;
+  dateEditOpen = false;
+  cancelOpen = false;
+  pinnableOpen = false;
   user: User;
 
   isModal: boolean;
@@ -91,7 +91,7 @@ export class RequestCardComponent implements OnInit, OnDestroy {
 
   hoverDestroyer$: Subject<any>;
 
-  activeTeacherPin: boolean = false;
+  activeTeacherPin = false;
   solidColorRgba: string;
   solidColorRgba2: string;
   removeShadow: boolean;
@@ -584,9 +584,11 @@ export class RequestCardComponent implements OnInit, OnDestroy {
     const passLimitReached = passLimit.max_passes_to_active && passLimit.max_passes_to < (passLimit.to_count + 1);
 
     let studentPassLimitReached = false;
-    const studentPassLimit = (await this.passLimitsService.getPassLimit().toPromise()).pass_limit;
-    if (studentPassLimit?.limitEnabled) {
-      const remainingPasses = (await this.passLimitsService.getRemainingLimits({studentId: this.request.student.id}).toPromise()).remainingPasses;
+    const studentPassLimit = (await this.passLimitsService.getStudentPassLimit(this.request.student.id).toPromise());
+    if (!studentPassLimit.noLimitsSet) {
+      const remainingPasses = (
+        await this.passLimitsService.getRemainingLimits({studentId: this.request.student.id}).toPromise()
+      ).remainingPasses;
       studentPassLimitReached = remainingPasses === 0;
     }
 
@@ -733,7 +735,6 @@ export class RequestCardComponent implements OnInit, OnDestroy {
 
   goToPin() {
     this.passLimitPromise().then(approved => {
-      console.log(`Approved: ${approved}`);
       this.activeTeacherPin = true;
     });
   }
