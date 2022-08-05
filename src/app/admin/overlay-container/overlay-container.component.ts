@@ -428,15 +428,15 @@ export class OverlayContainerComponent implements OnInit, OnDestroy {
       this.userService.introsData$.pipe(filter(res => !!res)),
       this.userService.nuxDates$.pipe(filter(r => !!r)),
       this.userService.user$.pipe(filter(r => !!r))
-    )
-      .pipe(
-        debounceTime(1000),
-        takeUntil(this.destroy$)
-      ).subscribe(([intros, nuxDates, user]) => {
-          this.introsData = intros;
-          // const showNux = moment(user.first_login).isBefore(moment(nuxDates[2].created), 'day');
-          this.showNuxTooltip.next(!this.introsData.disable_room_reminder.universal.seen_version);
-    });
+    ).pipe(
+      debounceTime(1000),
+      takeUntil(this.destroy$)
+    ).subscribe({
+      next: ([intros, nuxDates, user]) => {
+        this.introsData = intros;
+        // const showNux = moment(user.first_login).isBefore(moment(nuxDates[2].created), 'day');
+        this.showNuxTooltip.next(!this.introsData.disable_room_reminder.universal.seen_version);
+      }});
   }
 
   ngOnDestroy() {
