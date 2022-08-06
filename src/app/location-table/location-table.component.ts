@@ -247,14 +247,6 @@ export class LocationTableComponent implements OnInit, OnDestroy {
 
   }
 
-  filterByVisibility(location: Location) {
-    const students = [''+this.user.id];
-    const ruleStudents = location.visibility_students.map(s => ''+s.id);
-    const rule = location.visibility_type;
-    let skipped = this.visibilityService.calculateSkipped(students, ruleStudents, rule);
-    return skipped === undefined;
-  }
-
   normalizeLocations(loc) {
     if (this.pinnables && (this.currentPage !== 'from' && !this.isFavoriteForm)) {
       if (loc.category) {

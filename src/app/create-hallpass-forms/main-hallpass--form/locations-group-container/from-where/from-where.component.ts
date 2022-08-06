@@ -122,36 +122,7 @@ export class FromWhereComponent implements OnInit, OnDestroy {
     this.destroy$.complete();
   }
 
-  /*
-  private forwardAndEmit() {
-    this.formService.setFrameMotionDirection('forward');
-    this.formService.compressableBoxController.next(false);
-
-    setTimeout(() => {
-      this.formState.previousState = 1;
-      this.selectedLocation.emit(location);
-    }, 100);
-  }
- */
-
   locationChosen(location) {
-    // students go forward
-    /*
-    if (!this.isStaff) {
-      this.forwardAndEmit();
-      return;
-    }
-    */
-
-    /*
-    this.visibilityService.howToActOnChooseLocation(
-      this.formState,
-      location,
-      this.confirmDialogVisibility, 
-      this.forwardAndEmit.bind(this),
-      this.destroy$,
-    );
-   */
 
     // advance form to next componet
     // emit chosen location
@@ -198,10 +169,16 @@ export class FromWhereComponent implements OnInit, OnDestroy {
         if (selectedStudents.length > 1) denyText = 'Skip this student';
       }
 
+      const roomStudents = selectedStudents.filter(s => (!skipped.includes(''+s.id)));
+      const noStudentsCase = roomStudents.length === 0;
+      
+      if (noStudentsCase) denyText = 'Cancel';
+
       this.dialog.open(ConfirmationDialogComponent, {
         panelClass: 'overlay-dialog',
         backdropClass: 'custom-backdrop',
         closeOnNavigation: true,
+        width: '450px',
         data: {
           headerText: '',
           body: this.confirmDialogVisibility,
@@ -240,15 +217,7 @@ export class FromWhereComponent implements OnInit, OnDestroy {
           return;
         }
 
-        // filter out the skipped students
-        const roomStudents = selectedStudents.filter(s => (!skipped.includes(''+s.id)));
-        // avoid no students case
-        if (roomStudents.length === 0) {
-          this.toastService.openToast({
-            title: 'Skiping will left no students to operate on',
-            subtitle: 'Last operation did not proceeed',
-            type: 'error',
-          });
+        if (noStudentsCase) {
           return;
         }
 

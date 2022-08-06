@@ -243,22 +243,6 @@ export class ToWhereComponent implements OnInit {
         return;
       }
 
-      // students go forward
-      /*if (!this.isStaff) {
-        this.formState.data.roomStudents = [this.student];
-        this.forwardAndEmit();
-        return;
-      }*/
-
-     /*
-      this.visibilityService.howToActOnChooseLocation(
-        this.formState,
-        location,
-        this.confirmDialogVisibility,
-        this.forwardAndEmit.bind(this),
-        this.destroy$,
-      );
-     */
      // staff only
      const selectedStudents = this.formState.data.roomStudents ?? this.formState.data.selectedStudents;
      const students = selectedStudents.map(s => ''+s.id);
@@ -285,10 +269,16 @@ export class ToWhereComponent implements OnInit {
         title = (names?.join(', ') ?? 'Student') + ' does not have permission to go to this room';
       }
 
+      const roomStudents = selectedStudents.filter(s => (!skipped.includes(''+s.id)));
+      const noStudentsCase = roomStudents.length === 0;
+      
+      if (noStudentsCase) denyText = 'Cancel';
+
       this.dialog.open(ConfirmationDialogComponent, {
         panelClass: 'overlay-dialog',
         backdropClass: 'custom-backdrop',
         closeOnNavigation: true,
+        width: '450px',
         data: {
           headerText: '',
           body: this.confirmDialogVisibility,
@@ -324,15 +314,7 @@ export class ToWhereComponent implements OnInit {
           return;
         }
 
-        // filter out the skipped students
-        const roomStudents = selectedStudents.filter(s => (!skipped.includes(''+s.id)));
-        // avoid no students case
-        if (roomStudents.length === 0) {
-          this.toastService.openToast({
-            title: 'Skiping will left no students to operate on',
-            subtitle: 'Last operation did not proceeed',
-            type: 'error',
-          });
+        if (noStudentsCase) {
           return;
         }
 
