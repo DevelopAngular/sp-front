@@ -27,6 +27,7 @@ const reducer = createReducer(
     introsActions.updateIntrosSearchSuccess,
     introsActions.updateIntrosStudentPassLimitsSuccess,
     introsActions.updateIntrosAdminPassLimitsMessageSuccess,
+    introsActions.updateIntrosDisableRoomSuccess,
     (state, {data}) => {
       return {...state, loading: false, loaded: true, data};
     }),

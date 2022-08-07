@@ -53,7 +53,7 @@ export class DateButtonComponent implements OnInit {
       return 'Last 30 days';
     } else if (start.isSame(moment().subtract(90, 'days'), 'day')) {
       return 'Last 90 days';
-    } else if (start.isSame(moment('1/8/' + moment().subtract(1, 'year').year(), 'DD/MM/YYYY'))) {
+    } else if (start.isSame(moment('1/8/2022', 'DD/MM/YYYY'))) {
       return 'This school year';
     } else if (start.isSame(moment(), 'day')) {
       return 'Today';

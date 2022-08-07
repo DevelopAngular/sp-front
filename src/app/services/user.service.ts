@@ -762,7 +762,12 @@ export class UserService implements OnDestroy {
   }
 
   checkUserEmail(email) {
-    return this.http.post('v1/check-email', {email});
+    const httpOptions = {
+      headers: new HttpHeaders({
+        'Content-Type': 'application/x-www-form-urlencoded',
+      })
+    };
+    return this.http.post('v1/check-email', {email}, httpOptions);
   }
 
   addBulkAccountsRequest(accounts) {
