@@ -142,7 +142,13 @@ export class ViewProfileComponent implements OnInit {
       !isEqual(this.initialSelectedRoles, this.userRoles);
   }
 
+  get windowOrigin(): string{
+    return window.location.origin + '/main/student/9524';
+  }
+
   ngOnInit() {
+
+    console.log("window.location : ", this.windowOrigin)
     this.frameMotion$ = this.formService.getFrameMotionDirection();
     if (this.data.orgUnit) {
       this.layout = 'gSuiteSettings';

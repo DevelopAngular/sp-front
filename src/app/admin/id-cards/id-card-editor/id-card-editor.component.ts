@@ -2,6 +2,7 @@ import {
   Component,
   ElementRef,
   ErrorHandler,
+  HostListener,
   OnDestroy,
   OnInit,
   ViewChild,
@@ -107,6 +108,7 @@ export class IdCardEditorComponent implements OnInit, OnDestroy {
   destroy$ = new Subject();
   isAdded: boolean = false;
   showCustomID: boolean = false;
+  isScrollable: boolean;
 
 
   constructor(
@@ -131,7 +133,7 @@ export class IdCardEditorComponent implements OnInit, OnDestroy {
       IDCARDDETAILS.show_custom_ids
         ? this.setUpIDNumber(IDCARDDETAILS.barcode_type || 'qr-code')
         : null;
-      IDCARDDETAILS.show_grade_levels ? this.greadLevel = '10' : null
+      IDCARDDETAILS.show_grade_levels ? this.greadLevel = '11' : null
       IDCARDDETAILS.signed_url ? this.logoURL = IDCARDDETAILS.signed_url : null
 
       store.removeItem('idcard')
@@ -150,7 +152,7 @@ export class IdCardEditorComponent implements OnInit, OnDestroy {
             IDCARDDETAILS.show_custom_ids
               ? this.setUpIDNumber(IDCARDDETAILS.barcode_type || 'qr-code')
               : null;
-            IDCARDDETAILS.show_grade_levels ? this.greadLevel = '10' : null
+            IDCARDDETAILS.show_grade_levels ? this.greadLevel = '11' : null
             IDCARDDETAILS.signed_url ? this.logoURL = IDCARDDETAILS.signed_url : null
           }
         },
@@ -162,6 +164,15 @@ export class IdCardEditorComponent implements OnInit, OnDestroy {
     }
   }
 
+  @HostListener('document.scroll', ['$event'])
+  scroll(event) {
+    if (event.currentTarget.scrollTop > 20) {
+      this.isScrollable = true;
+    } else {
+      this.isScrollable = false;
+    }
+  }
+
   ngOnInit(): void {
     merge(
       of(this.userService.getUserSchool()),
@@ -170,6 +181,9 @@ export class IdCardEditorComponent implements OnInit, OnDestroy {
       .pipe(takeUntil(this.destroy$))
       .subscribe((school) => {
         this.isUploadedProfilePictures = school.profile_pictures_completed;
+        if (this.isUploadedProfilePictures) {
+          this.profile_picture = "assets/Dummy_Profile.png";
+        }
       });
     this.isUploadedProfilePictures ? (this.status = "done") : "disconnect";
   }
@@ -218,7 +232,7 @@ export class IdCardEditorComponent implements OnInit, OnDestroy {
       panelClass: 'accounts-profiles-dialog',
       backdropClass: 'custom-bd',
       width: '425px',
-      height: '500px',
+      height: '510px',
     });
     this.profile_picture = "assets/Dummy_Profile.png";
     // this.isInEditingMode = true;
@@ -336,7 +350,7 @@ export class IdCardEditorComponent implements OnInit, OnDestroy {
         panelClass: 'accounts-profiles-dialog',
         backdropClass: 'custom-bd',
         width: '425px',
-        height: '500px',
+        height: '510px',
       });
     }
     this.selectedBarcode = this.typeOfBarcodes.find(
@@ -386,9 +400,9 @@ export class IdCardEditorComponent implements OnInit, OnDestroy {
       panelClass: 'accounts-profiles-dialog',
       backdropClass: 'custom-bd',
       width: '425px',
-      height: '500px',
+      height: '510px',
     });
-    this.greadLevel = '10';
+    this.greadLevel = '11';
     if (!this.IDCARDDETAILS.show_grade_levels) {
       this.idCardFormData.delete("show_grade_levels");
       this.idCardFormData.append("show_grade_levels", 'true');

@@ -210,6 +210,8 @@ export class AccountsRoleComponent implements OnInit, OnDestroy {
       return getColumns ? [columns] : [{
         'Name': null,
         'Email/username': null,
+        'Grade': null,
+        'ID Number': null,
         'Status': null,
         'Last sign-in': null,
         'Type': null,
@@ -219,6 +221,7 @@ export class AccountsRoleComponent implements OnInit, OnDestroy {
       return getColumns ? [columns] : [{
         'Name': null,
         'Email/username': null,
+        'ID Number': null,
         'Rooms': null,
         'Status': null,
         'Last sign-in': null,
@@ -229,6 +232,7 @@ export class AccountsRoleComponent implements OnInit, OnDestroy {
       return getColumns ? [columns] : [{
         'Name': null,
         'Email/username': null,
+        'ID Number': null,
         'Acting on Behalf Of': null,
         'Status': null,
         'Last sign-in': null,
@@ -259,10 +263,12 @@ export class AccountsRoleComponent implements OnInit, OnDestroy {
     const roleObject = {
       'Name': this.sanitizer.bypassSecurityTrustHtml(`<div class="no-wrap" style="width: 150px !important;">` + account.display_name + '</div>'),
       'Email/username': `<div class="no-wrap">` + account.primary_email.split('@spnx.local')[0] + '</div>',
+      'ID Number': account.custom_id ?? "-"
     };
     let objectToTable;
     if (this.role === '_profile_admin' || this.role === '_profile_student') {
       objectToTable = {...roleObject, ...{
+        'Grade': account.grade_level ?? "-",
           'Status': this.sanitizer.bypassSecurityTrustHtml(`<span class="status">${account.status}</span>`),
           'Last sign-in': account.last_login && account.last_login !== new Date() ? Util.formatDateTime(new Date(account.last_login)) : 'Never signed in',
           'Type': account.demo_account ? 'Demo' : account.sync_types[0] === 'google' ? 'G Suite' : (account.sync_types[0] === 'gg4l' ? 'GG4L' : account.sync_types[0] === 'clever' ? 'Clever' : 'Standard'),

@@ -1,243 +1,180 @@
 <div class="profile-card-dialog-container" *ngIf="data['setupLink'] else profileCard">
-  <div class="card-header" [style.background-color]="'#00B476'">
-    <div class="back-button ds-flex-center-center" (click)="back()">
-      <img [src]="'./assets/Back Button (Blue-White).svg'" alt="Back Button (Blue-White).svg">
+    <div class="card-header" [style.background-color]="'#00B476'">
+        <div class="back-button ds-flex-center-center" (click)="back()">
+            <img [src]="'./assets/Back Button (Blue-White).svg'" alt="Back Button (Blue-White).svg">
+        </div>
+        <div class="ds-flex-center-center ds-dialog-title-white">
+            <img class="role-icon" [ngClass]="{'gsuite': this.layout === 'gSuiteSettings'}" [src]="'./assets/Chain (White).svg'" alt="header-icon">
+            <span>Accounts Set-up Link</span>
+        </div>
     </div>
-    <div class="ds-flex-center-center ds-dialog-title-white">
-      <img class="role-icon"  [ngClass]="{'gsuite': this.layout === 'gSuiteSettings'}"  [src]="'./assets/Chain (White).svg'" alt="header-icon">
-      <span>Accounts Set-up Link</span>
-    </div>
-  </div>
 
 </div>
 
 <ng-template #profileCard>
-  <div class="profile-card-dialog-container">
-    <!-- Disables card when some async stuffs occur-->
-    <div class="disabled-state loading-theme_light-gray spinner" *ngIf="disabledState">
-      <mat-spinner [diameter]="100" [color]="'accent'"></mat-spinner>
+    <div class="profile-card-dialog-container">
+        <!-- Disables card when some async stuffs occur-->
+        <div class="disabled-state loading-theme_light-gray spinner" *ngIf="disabledState">
+            <mat-spinner [diameter]="100" [color]="'accent'"></mat-spinner>
+        </div>
+        <!-- end -->
+        <div class="card-header" #header>
+            <div class="background-header" [attr.data-motion-opacity]="(frameMotion$ | async).direction"></div>
+            <div class="back-button ds-flex-center-center" (click)="back()">
+                <img *ngIf="!isEdit" [src]="'./assets/Back Button (Blue-White).svg'" alt="Back Button (Blue-White).svg">
+                <div class="cancel" *ngIf="isEdit">Cancel</div>
+            </div>
+            <div class="ds-flex-center-center ds-dialog-title" style="z-index: 10" [attr.data-motion-translate]="(frameMotion$ | async).direction">
+                <!--        <img class="role-icon" [ngClass]="{'gsuite': this.layout === 'gSuiteSettings'}"  [src]="headerIcon" alt="header-icon">-->
+                <span>{{user.display_name}}</span>
+
+            </div>
+            <div class="status-button" #status>
+                <app-gradient-button *ngIf="user.isStudent()" [size]="'editable'" [rightIconWidth]="'20px'" [rightIconHeight]="'20px'" [minWidth]="'50px'" [text]="''" [gradient]="'#FFFFFF'" [rightIcon]="'./assets/External Link (Navy).svg'" [linkType]="'_blank'" [buttonLink]="windowOrigin">
+                </app-gradient-button>
+                <!-- <img width="20" height="20" *ngIf="user.isStudent()" [src]="'./assets/External Link (Navy).svg' | resolveAsset" alt=""> -->
+                <!-- <app-icon-button *ngIf="!isEdit" [srcString]="'Dots'" [size]="17" (clickEvent)="openStatusPopup()"></app-icon-button> -->
+                <app-gradient-button *ngIf="isEdit" (buttonClick)="save()">Save</app-gradient-button>
+            </div>
+        </div>
+
+        <div class="content-scrollable-box" [attr.data-motion-translate]="(frameMotion$ | async).direction">
+
+            <div class="block">
+                <div class="email-info">
+                    <div class="title">Email/username</div>
+                    <div class="subtitle" style="white-space: normal; word-break: break-word; width: 280px">{{ user.primary_email.replace('@spnx.local', '') }}</div>
+                </div>
+                <div class="avatar-info">
+                    <div class="avatar" #avatarContainer (mouseenter)="avatarContainer.hover = true" (mouseleave)="avatarContainer.hover = false">
+                        <div class="loading-theme_blue-gray spinner" *ngIf="loadingProfilePicture | async">
+                            <mat-spinner style="color: #7f879d" [diameter]="30"></mat-spinner>
+                        </div>
+                        <div *ngIf="user.profile_picture; else d" [ngStyle]="{'background': 'url(' + user.profile_picture + ') no-repeat left center/cover', width: '88px', height: '88px'}"></div>
+                        <ng-template #d>
+                            <img width="88" height="88" [src]="'./assets/Avatar Default.svg' | resolveAsset" alt="Avatar">
+                        </ng-template>
+                        <div *ngIf="avatarContainer.hover" class="hover-backdrop" (click)="!user.profile_picture ? editWindow($event) : null" [style.cursor]="!user.profile_picture ? 'pointer' : 'normal'"></div>
+                        <div class="buttons" *ngIf="!(loadingProfilePicture | async)">
+                            <img #editIcon (click)="editWindow($event)" *ngIf="avatarContainer.hover || isOpenAvatarDialog" class="add-avatar" [style.top]="!user.profile_picture ? '30px' : '15px'" [src]="'./assets/' + (user.profile_picture ? 'Edit' : 'Add') + ' Avatar (White).svg' | resolveAsset"
+                                alt="add">
+                            <img (click)="deleteAvatar()" *ngIf="avatarContainer.hover && user.profile_picture" [src]="'./assets/Delete (White).svg'" [style.bottom]="'15px'" class="add-avatar" alt="Delete">
+                        </div>
+
+                    </div>
+                    <div class="status" [customToolTip]="statusDescriptions[profileStatusActive] || null" (click)="openStatusPopup()" [style.color]="profileStatusActive === 'active' ? '#00B476' : profileStatusActive === 'suspended' ? '#6651F1' : '#7f879d'">
+                        {{ profileStatusActive == 'active' ? 'Last Active' : profileStatusActive }}
+                        <span><img width="9px" [src]="'./assets/Chevron Down (' + (profileStatusActive === 'active' ? 'Jade' : (profileStatusActive === 'disabled' ? 'Blue-Gray' : 'Soft-Blue')) + ').svg' | resolveAsset" alt=""></span>
+
+                        <!-- <ng-template #tooltip>
+                            <div class="ds-tooltip" style="text-align: left">
+                                <div class="only-admin">ADMIN ONLY</div>
+                                Only admins are able to change the account status.
+                            </div>
+                        </ng-template> -->
+                    </div>
+                </div>
+                <div class="role-info">
+                    <app-select-role [selectedRoles]="userRoles" [isAccessAdd]="isAccessAdd" (onSelect)="userRoles = $event"></app-select-role>
+                </div>
+
+                <div class="role-info" *ngIf="user.isAssistant()">
+                    <div class="title">Act on behalf of</div>
+                    <app-sp-search [selectedOptions]="assistantFor" [chipsMode]="true" [focused]="true" [role]="'_profile_teacher'" [dummyRoleText]="'teachers'" [rollUpAfterSelection]="true" [cancelButton]="true" [placeholder]="'Search teachers'" (onUpdate)="assistantForUpdate$.next($event)"></app-sp-search>
+                </div>
+
+                <div class="role-info" style="width: 100%" *ngIf="user.isTeacher()">
+                    <div class="title">Rooms</div>
+                    <app-sp-search [width]="'254px'" [listMaxHeight]="'unset'" [focused]="true" [placeholder]="'Search rooms'" [searchTarget]="'rooms'" [cancelButton]="true" [displaySelectedTitle]="false" [chipsMode]="true" [selectedOptions]="teacherRooms" (onUpdate)="teacherRooms = $event"></app-sp-search>
+                </div>
+
+            </div>
+            <mat-divider *ngIf="profilePermissions.student.length"></mat-divider>
+            <div class="block" *ngIf="profilePermissions.student.length">
+                <div class="title">Student Permissions</div>
+                <div class="permissions">
+                    <div class="permission" *ngFor="let permission of profilePermissions.student">
+                        <div class="subtitle" style="display: flex; align-items: center">
+                            <!--              <img width="17" style="margin-right: 7px" [src]="'./assets/' + permission.icon + ' (Blue-Gray).svg'" alt="11">-->
+                            {{ permission.label }}
+                        </div>
+                        <app-toggle-input style="width: auto" [form]="permissionsForm" [controlName]="permission.permission" [controlSize]="'small'" [delimiter]="false"></app-toggle-input>
+                    </div>
+                </div>
+            </div>
+            <div class="block" *ngIf="!user.isStudent()">
+                <mat-divider></mat-divider>
+                <div class="title" style="display: flex">
+                    <app-octagon [size]="21">
+                        <img style="position: absolute; z-index: 10; height: 14px" [src]="'./assets/Walking One (White).svg' | resolveAsset">
+                    </app-octagon>
+                    <div style="margin-left: 8px">Encounter Prevention</div>
+                </div>
+                <div class="subtitle" style="width: 360px; white-space: normal;" *ngIf="exclusionGroups && !exclusionGroups.length; else groups">
+                    Prevent students from having passes at the same time with Encounter Prevention.
+                </div>
+                <ng-template #groups>
+                    <div class="groups">
+                        <div class="group" *ngFor="let group of exclusionGroups" [showToolTip]="!!group.notes" [customToolTip]="group.notes" [editable]="true" [positionStrategy]="{originX: 'center',originY: 'top',overlayX: 'center',overlayY: 'top',offsetX: 330}">
+                            <app-encounter-group [group]="group" (clickEvent)="openExclusionGroups('groupDescription', group)"></app-encounter-group>
+                        </div>
+                    </div>
+                </ng-template>
+                <app-gradient-button style="margin-top: 9px" [leftIcon]="'./assets/Plus (White).svg'" (buttonClick)="openExclusionGroups('newGroup')">New Group</app-gradient-button>
+            </div>
+            <mat-divider></mat-divider>
+            <div class="block">
+                <div class="descriptions">
+                    <div class="info">
+                        <div class="title">Last sign-in</div>
+                        <div class="subtitle">{{ profile['Last sign-in'] }}</div>
+                    </div>
+                    <div class="info">
+                        <div class="title">Type</div>
+                        <div class="subtitle">{{ profile['Type'] }}</div>
+                    </div>
+                    <div class="info" *ngIf="profile['Type'] === 'Standard'">
+                        <div class="title">Password</div>
+                        <div class="subtitle"><span style="text-decoration: underline; cursor: pointer" (click)="nextStep.emit('password')">Change</span></div>
+                    </div>
+                </div>
+
+            </div>
+            <mat-divider *ngIf="user.isTeacher()"></mat-divider>
+            <div class="block" *ngIf="user.isTeacher()">
+                <div class="permissions">
+                    <div class="title">Teacher Permissions</div>
+                    <div class="permission" *ngFor="let permission of profilePermissions.teacher">
+                        <div class="subtitle" style="display: flex; align-items: center">
+                            <img width="17" style="margin-right: 7px" [src]="'./assets/' + permission.icon + ' (' + (getIsPermissionOn(permission.permission) ? 'Jade' : 'Blue-Gray') + ').svg'" alt="11"> {{ permission.label }}
+                        </div>
+                        <app-toggle-input style="width: auto" [form]="permissionsForm" [controlName]="permission.permission" [controlSize]="'small'" [delimiter]="false"></app-toggle-input>
+                    </div>
+                </div>
+            </div>
+            <mat-divider></mat-divider>
+            <div class="block" *ngIf="user.isAdmin()">
+                <div class="permissions">
+                    <div class="title">Admin Permissions</div>
+                    <div class="permission" *ngFor="let permission of profilePermissions.admin">
+                        <div class="subtitle" style="display: flex; align-items: center">
+                            <img width="17" style="margin-right: 7px" [src]="'./assets/' + permission.icon + ' (' + (getIsPermissionOn(permission.permission) ? 'Jade' : 'Blue-Gray') + ').svg'" alt="11"> {{ permission.label }}
+                        </div>
+                        <app-toggle-input style="width: auto" [form]="permissionsForm" [controlName]="permission.permission" [controlSize]="'small'" [delimiter]="false"></app-toggle-input>
+                    </div>
+                </div>
+            </div>
+            <div class="block" *ngIf="user.isAssistant()">
+                <div class="permissions">
+                    <div class="title">Assistant Permissions</div>
+                    <div class="permission" *ngFor="let permission of profilePermissions.assistant">
+                        <div class="subtitle" style="display: flex; align-items: center">
+                            <img width="17" style="margin-right: 7px" [src]="'./assets/' + permission.icon + ' (' + (getIsPermissionOn(permission.permission) ? 'Jade' : 'Blue-Gray') + ').svg'" alt="11"> {{ permission.label }}
+                        </div>
+                        <app-toggle-input style="width: auto" [form]="permissionsForm" [controlName]="permission.permission" [controlSize]="'small'" [delimiter]="false"></app-toggle-input>
+                    </div>
+                </div>
+            </div>
+        </div>
     </div>
-    <!-- end -->
-    <div class="card-header" #header>
-      <div class="background-header" [attr.data-motion-opacity]="(frameMotion$ | async).direction"></div>
-      <div class="back-button ds-flex-center-center" (click)="back()">
-        <img *ngIf="!isEdit" [src]="'./assets/Back Button (Blue-White).svg'" alt="Back Button (Blue-White).svg">
-        <div class="cancel" *ngIf="isEdit">Cancel</div>
-      </div>
-      <div class="ds-flex-center-center ds-dialog-title" style="z-index: 10" [attr.data-motion-translate]="(frameMotion$ | async).direction">
-<!--        <img class="role-icon" [ngClass]="{'gsuite': this.layout === 'gSuiteSettings'}"  [src]="headerIcon" alt="header-icon">-->
-        <span>{{user.display_name}}</span>
-
-      </div>
-      <div class="status-button" #status>
-        <app-icon-button *ngIf="!isEdit" [srcString]="'Dots'" [size]="17" (clickEvent)="openStatusPopup()"></app-icon-button>
-        <app-gradient-button *ngIf="isEdit" (buttonClick)="save()">Save</app-gradient-button>
-      </div>
-    </div>
-
-    <div class="content-scrollable-box" [attr.data-motion-translate]="(frameMotion$ | async).direction">
-
-      <div class="block">
-        <div class="email-info">
-          <div class="title">Email/username</div>
-          <div class="subtitle" style="white-space: normal; word-break: break-word; width: 280px">{{ user.primary_email.replace('@spnx.local', '') }}</div>
-        </div>
-        <div class="avatar-info">
-          <div class="avatar"
-             #avatarContainer
-             (mouseenter)="avatarContainer.hover = true"
-             (mouseleave)="avatarContainer.hover = false"
-          >
-            <div class="loading-theme_blue-gray spinner" *ngIf="loadingProfilePicture | async">
-              <mat-spinner style="color: #7f879d" [diameter]="30"></mat-spinner>
-            </div>
-            <div *ngIf="user.profile_picture; else d" [ngStyle]="{'background': 'url(' + user.profile_picture + ') no-repeat left center/cover', width: '88px', height: '88px'}"></div>
-            <ng-template #d>
-              <img width="88" height="88" [src]="'./assets/Avatar Default.svg' | resolveAsset" alt="Avatar">
-            </ng-template>
-            <div
-              *ngIf="avatarContainer.hover"
-              class="hover-backdrop"
-              (click)="!user.profile_picture ? editWindow($event) : null"
-              [style.cursor]="!user.profile_picture ? 'pointer' : 'normal'"
-            ></div>
-            <div class="buttons" *ngIf="!(loadingProfilePicture | async)">
-              <img #editIcon (click)="editWindow($event)" *ngIf="avatarContainer.hover || isOpenAvatarDialog" class="add-avatar" [style.top]="!user.profile_picture ? '30px' : '15px'" [src]="'./assets/' + (user.profile_picture ? 'Edit' : 'Add') + ' Avatar (White).svg' | resolveAsset" alt="add">
-              <img (click)="deleteAvatar()" *ngIf="avatarContainer.hover && user.profile_picture" [src]="'./assets/Delete (White).svg'" [style.bottom]="'15px'" class="add-avatar" alt="Delete">
-            </div>
-
-          </div>
-          <div class="status"
-               [customToolTip]="statusDescriptions[profileStatusActive] || null"
-               (click)="openStatusPopup()"
-               [style.color]="profileStatusActive === 'active' ? '#00B476' : profileStatusActive === 'suspended' ? '#6651F1' : '#7f879d'"
-          >
-            {{ profileStatusActive }}
-          </div>
-        </div>
-        <div class="role-info">
-          <app-select-role
-            [selectedRoles]="userRoles"
-            [isAccessAdd]="isAccessAdd"
-            (onSelect)="userRoles = $event"
-          ></app-select-role>
-        </div>
-
-        <div class="role-info" *ngIf="user.isAssistant()">
-          <div class="title">Act on behalf of</div>
-          <app-sp-search
-            [selectedOptions]="assistantFor"
-            [chipsMode]="true"
-            [focused]="true"
-            [role]="'_profile_teacher'"
-            [dummyRoleText]="'teachers'"
-            [rollUpAfterSelection]="true"
-            [cancelButton]="true"
-            [placeholder]="'Search teachers'"
-            (onUpdate)="assistantForUpdate$.next($event)"
-          ></app-sp-search>
-        </div>
-
-        <div class="role-info" style="width: 100%" *ngIf="user.isTeacher()">
-          <div class="title">Rooms</div>
-          <app-sp-search
-            [width]="'254px'"
-            [listMaxHeight]="'unset'"
-            [focused]="true"
-            [placeholder]="'Search rooms'"
-            [searchTarget]="'rooms'"
-            [cancelButton]="true"
-            [displaySelectedTitle]="false"
-            [chipsMode]="true"
-            [selectedOptions]="teacherRooms"
-            (onUpdate)="teacherRooms = $event"
-          ></app-sp-search>
-        </div>
-
-      </div>
-      <mat-divider *ngIf="profilePermissions.student.length"></mat-divider>
-      <div class="block" *ngIf="profilePermissions.student.length">
-        <div class="title">Student Permissions</div>
-        <div class="permissions">
-          <div class="permission" *ngFor="let permission of profilePermissions.student">
-            <div class="subtitle" style="display: flex; align-items: center">
-<!--              <img width="17" style="margin-right: 7px" [src]="'./assets/' + permission.icon + ' (Blue-Gray).svg'" alt="11">-->
-              {{ permission.label }}
-            </div>
-            <app-toggle-input
-              style="width: auto"
-              [form]="permissionsForm"
-              [controlName]="permission.permission"
-              [controlSize]="'small'"
-              [delimiter]="false"
-            ></app-toggle-input>
-          </div>
-        </div>
-      </div>
-      <mat-divider></mat-divider>
-      <div class="block" *ngIf="user.isStudent()">
-        <div class="title" style="display: flex">
-          <app-octagon [size]="21">
-            <img style="position: absolute; z-index: 10; height: 14px" [src]="'./assets/Walking One (White).svg' | resolveAsset">
-          </app-octagon>
-          <div style="margin-left: 8px">Encounter Prevention</div>
-        </div>
-        <div class="subtitle" style="width: 360px; white-space: normal;" *ngIf="exclusionGroups && !exclusionGroups.length; else groups">
-          Prevent students from having passes at the same time with Encounter Prevention.
-        </div>
-        <ng-template #groups>
-          <div class="groups">
-            <div class="group"
-                 *ngFor="let group of exclusionGroups"
-                 [showToolTip]="!!group.notes"
-                 [customToolTip]="group.notes"
-                 [editable]="true"
-                 [positionStrategy]="{originX: 'center',originY: 'top',overlayX: 'center',overlayY: 'top',offsetX: 330}"
-            >
-              <app-encounter-group [group]="group" (clickEvent)="openExclusionGroups('groupDescription', group)"></app-encounter-group>
-            </div>
-          </div>
-        </ng-template>
-        <app-gradient-button
-          style="margin-top: 9px"
-          [leftIcon]="'./assets/Plus (White).svg'"
-          (buttonClick)="openExclusionGroups('newGroup')"
-        >New Group</app-gradient-button>
-      </div>
-      <mat-divider></mat-divider>
-      <div class="block">
-        <div class="descriptions">
-          <div class="info">
-            <div class="title">Last sign-in</div>
-            <div class="subtitle">{{ profile['Last sign-in'] }}</div>
-          </div>
-          <div class="info">
-            <div class="title">Type</div>
-            <div class="subtitle">{{ profile['Type'] }}</div>
-          </div>
-          <div class="info" *ngIf="profile['Type'] === 'Standard'">
-            <div class="title">Password</div>
-            <div class="subtitle"><span style="text-decoration: underline; cursor: pointer" (click)="nextStep.emit('password')">Change</span></div>
-          </div>
-        </div>
-
-      </div>
-      <mat-divider *ngIf="user.isTeacher()"></mat-divider>
-      <div class="block" *ngIf="user.isTeacher()">
-        <div class="permissions">
-          <div class="title">Teacher Permissions</div>
-          <div class="permission" *ngFor="let permission of profilePermissions.teacher">
-            <div class="subtitle" style="display: flex; align-items: center">
-              <img width="17" style="margin-right: 7px" [src]="'./assets/' + permission.icon + ' (' + (getIsPermissionOn(permission.permission) ? 'Jade' : 'Blue-Gray') + ').svg'" alt="11">
-              {{ permission.label }}
-            </div>
-            <app-toggle-input
-              style="width: auto"
-              [form]="permissionsForm"
-              [controlName]="permission.permission"
-              [controlSize]="'small'"
-              [delimiter]="false"
-            ></app-toggle-input>
-          </div>
-        </div>
-      </div>
-      <mat-divider></mat-divider>
-      <div class="block" *ngIf="user.isAdmin()">
-        <div class="permissions">
-          <div class="title">Admin Permissions</div>
-          <div class="permission" *ngFor="let permission of profilePermissions.admin">
-            <div class="subtitle" style="display: flex; align-items: center">
-              <img width="17" style="margin-right: 7px" [src]="'./assets/' + permission.icon + ' (' + (getIsPermissionOn(permission.permission) ? 'Jade' : 'Blue-Gray') + ').svg'" alt="11">
-              {{ permission.label }}
-            </div>
-            <app-toggle-input
-              style="width: auto"
-              [form]="permissionsForm"
-              [controlName]="permission.permission"
-              [controlSize]="'small'"
-              [delimiter]="false"
-            ></app-toggle-input>
-          </div>
-        </div>
-      </div>
-      <div class="block" *ngIf="user.isAssistant()">
-        <div class="permissions">
-          <div class="title">Assistant Permissions</div>
-          <div class="permission" *ngFor="let permission of profilePermissions.assistant">
-            <div class="subtitle" style="display: flex; align-items: center">
-              <img width="17" style="margin-right: 7px" [src]="'./assets/' + permission.icon + ' (' + (getIsPermissionOn(permission.permission) ? 'Jade' : 'Blue-Gray') + ').svg'" alt="11">
-              {{ permission.label }}
-            </div>
-            <app-toggle-input
-              style="width: auto"
-              [form]="permissionsForm"
-              [controlName]="permission.permission"
-              [controlSize]="'small'"
-              [delimiter]="false"
-            ></app-toggle-input>
-          </div>
-        </div>
-      </div>
-    </div>
-  </div>
 </ng-template>

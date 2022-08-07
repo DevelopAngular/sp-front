@@ -367,6 +367,7 @@ export class ExploreComponent implements OnInit, OnDestroy {
             return getColumns ? [this.currentColumns] : [{
               'Pass': null,
               'Student Name': null,
+              'Grade': null,
               'Origin': null,
               'Destination': null,
               'Pass start time': null,
@@ -395,6 +396,7 @@ export class ExploreComponent implements OnInit, OnDestroy {
             let rawObj: any = {
               'Pass': passImg,
               'Student Name': pass.student.display_name,
+              'Grade': pass.student.grade_level ?? "-",
               'Origin': pass.origin.title,
               'Destination': pass.destination.title,
               'Pass start time': moment(pass.start_time).format('M/DD h:mm A'),
@@ -554,6 +556,7 @@ export class ExploreComponent implements OnInit, OnDestroy {
           this.reportSearchState.isEmpty = true;
           return [{
             'Student Name': null,
+            'Grade': null,
             'Message': null,
             'Status': null,
             'Pass': null,
@@ -573,6 +576,7 @@ export class ExploreComponent implements OnInit, OnDestroy {
           const passTile = this.domSanitizer.bypassSecurityTrustHtml(_passTile);
           const result = {
             'Student Name': this.domSanitizer.bypassSecurityTrustHtml(`<div>${report.student.display_name}</div>`),
+            'Grade': report.student.grade_level ?? "-",
             'Message': this.domSanitizer.bypassSecurityTrustHtml(`<div><div class="message">${report.message || 'No report message'}</div></div>`),
             'Status': report.status,
             'Pass': passTile,

@@ -144,7 +144,10 @@ export class IdNumbersComponent implements OnInit {
     this.page += 1;
     if (this.page === 3) {
       let body: FormData = new FormData();
-      body.append('csv_file', this.selectedMapFile)
+      var contentType = 'text/csv';
+
+var csvFile = new Blob([this.selectedMapFile]);
+      body.append('csv_file', csvFile)
       this.userService.uploadIDNumbers(body).subscribe({
         next: (result: any) => {
           this.page = 4;
