@@ -69,7 +69,7 @@
   }
 }
 
-.with-triangle:after {
+.with-triangle:after, .with-triangle::after {
   display: inline-flex;
   content: '';
   background-image: url('/assets/Rect (Blue-Gray).svg');
