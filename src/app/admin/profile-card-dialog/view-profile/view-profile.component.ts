@@ -549,7 +549,7 @@ export class ViewProfileComponent implements OnInit {
   }
 
   openIDNumber(){
-    this.page = 3;
+    this.page = 3; 
   }
 
 }
