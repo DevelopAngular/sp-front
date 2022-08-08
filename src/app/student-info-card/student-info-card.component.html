@@ -338,7 +338,7 @@
                         </div>
                       </ng-template>
                     </div>
-                    <div class="value">{{ (studentStats$ | async)?.expired_passes.length + ( (studentStats$ | async)?.expired_passes.length === 1 ? ' pass' : ' passes') }}</div>
+                    <div class="value">{{ (studentStats$ | async)?.total_created_passes + ( (studentStats$ | async)?.total_created_passes === 1 ? ' pass' : ' passes') }}</div>
                   </div>
                   <div class="info-card" #outOfClass (mouseenter)="outOfClass.hovered = true" (mouseleave)="outOfClass.hovered = false">
                     <div class="title">TIME SPENT OUT OF CLASS
