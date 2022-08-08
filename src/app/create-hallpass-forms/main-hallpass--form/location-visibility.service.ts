@@ -12,7 +12,9 @@ import {ToastService} from '../../services/toast.service';
 import {VisibilityMode} from '../../admin/overlay-container/visibility-room/visibility-room.type';
 import {CreateFormService} from '../create-form.service';
 
-@Injectable()
+@Injectable({
+  providedIn: 'root'
+})
 export class LocationVisibilityService {
 
   constructor(
@@ -23,26 +25,26 @@ export class LocationVisibilityService {
 
   // mimic server visibility skipped  calculation
   calculateSkipped(students: string[], ruleStudents: string[], rule: VisibilityMode): string[] | undefined {
-                     
+
      let skipped;
 
      if (rule ===  "visible_certain_students") {
-       if (ruleStudents.length === 0) {                    
+       if (ruleStudents.length === 0) {
          skipped = students;
        } else {
           const delta: string[] = students.filter(s => (!ruleStudents.includes(s)));
          if (delta.length > 0) {
            skipped = delta;
-         }                             
-       }                                        
-     } else if (rule === "hidden_certain_students") {    
-      if (ruleStudents.length > 0) {                
+         }
+       }
+     } else if (rule === "hidden_certain_students") {
+      if (ruleStudents.length > 0) {
         const delta: string[] = students.filter(s => ruleStudents.includes(s));
         if (delta.length > 0) {
           skipped = delta;
-        } 
-      } 
-    } 
+        }
+      }
+    }
 
     return skipped;
   }
@@ -50,8 +52,8 @@ export class LocationVisibilityService {
   /*
   // TODO: replaced with copy paste as this method seems to exhaust pinnable observable
   howToActOnChooseLocation(
-    formState: Navigation, 
-    location: Location, 
+    formState: Navigation,
+    location: Location,
     confirmDialogVisibility: TemplateRef<HTMLElement>,
     forwardAndEmit: () => void,
     destroy$: Subject<any>,
@@ -59,18 +61,18 @@ export class LocationVisibilityService {
   ): void {
       // staff only
      let selectedStudents = formState.data.selectedStudents;
-     if (checkForRoomStudents) 
+     if (checkForRoomStudents)
        selectedStudents = formState.data.roomStudents ?? formState.data.selectedStudents;
      const students = selectedStudents.map(s => ''+s.id);
      const ruleStudents = location.visibility_students.map(s => ''+s.id);
      const rule = location.visibility_type;
-          
-    // skipped are students that do not qualify to go forward     
+
+    // skipped are students that do not qualify to go forward
      let skipped = this.calculateSkipped(students, ruleStudents, rule);
 
       if (!skipped || skipped.length === 0) {
         forwardAndEmit();
-        return; 
+        return;
       }
 
       let text =  'This room is only available to certain students';
@@ -98,16 +100,16 @@ export class LocationVisibilityService {
       }).afterClosed().pipe(
         takeUntil(destroy$),
       ).subscribe(override => {
-        formState.data.roomOverride = !!override; 
+        formState.data.roomOverride = !!override;
 
         if (override === undefined) {
           return;
         }
-       
+
         // override case
         if (override) {
           forwardAndEmit();
-          return; 
+          return;
         }
 
         // SKIPPING case
@@ -126,9 +128,9 @@ export class LocationVisibilityService {
           return;
         }
 
-        formState.data.roomStudents = roomStudents; 
+        formState.data.roomStudents = roomStudents;
         forwardAndEmit();
-      }); 
+      });
   }
   */
 
