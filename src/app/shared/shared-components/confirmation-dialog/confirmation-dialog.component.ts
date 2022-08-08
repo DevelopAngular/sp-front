@@ -1,4 +1,4 @@
-import {AfterViewInit, Component, Inject, TemplateRef, ViewChild} from '@angular/core';
+import {AfterViewInit, Component, EventEmitter, Inject, Input, Output, TemplateRef, ViewChild} from '@angular/core';
 
 import {MAT_DIALOG_DATA, MatDialogConfig} from '@angular/material/dialog';
 
