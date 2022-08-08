@@ -44,7 +44,7 @@
             </ng-container>
 
             <ng-container [matColumnDef]="column" *ngFor="let column of displayedColumns; last as isLast; first as isFirst" [sticky]="isFirst">
-                <ng-container *ngIf="column !== 'Pass' && column !== 'Passes'; else passNoSort">
+                <ng-container *ngIf="column !== 'Pass' && column !== 'Passes' && column !== 'ID' && column !== 'Grade' && currentPage !== 'encounter_detection'; else passNoSort">
                     <th [style.border-right]="'0.5pt solid #B0B4C0'" style="cursor: pointer" [style.background-color]="sort && sort === 'asc' && sortColumn === column || sort && sort === 'desc' && sortColumn === column ? '#e5e6eb' : '#D3D6DE'" [ngClass]="{'noCheckbox': !(isCheckbox | async)}"
                         mat-header-cell *matHeaderCellDef (click)="sortHeader(column)">
                         {{ column }}
