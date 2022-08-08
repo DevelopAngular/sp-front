@@ -43,7 +43,7 @@ export class CreateFormService {
         map((pins: Pinnable[]) => {
           if (filter) {
             return pins.filter((p: Pinnable) => {
-             return (p.type === 'location' && !p.location.restricted) || p.type === 'category';
+             return p.type === 'location' || p.type === 'category';
             });
           } else {
             return pins;

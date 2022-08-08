@@ -8,7 +8,8 @@
    [ngStyle]="{
     width: width + 'px',
     height: width + 'px',
-    'background-color': getBackground()
+    'background-color': getBackground(),
+    'border-radius': borderRadius
    }"
 >
 <img [style.margin-right]="iconOffset + 'px'" [width]="iconWidth" [src]="'./assets/' + icon + ' (' + (selected ? 'Jade' : 'Blue-Gray') + ').svg' | resolveAsset" [alt]="icon"/>

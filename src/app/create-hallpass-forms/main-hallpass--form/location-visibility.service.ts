@@ -49,6 +49,13 @@ export class LocationVisibilityService {
     return skipped;
   }
 
+  filterByVisibility(location: Location, students: string[]) {
+    const ruleStudents = location.visibility_students.map(s => ''+s.id);
+    const rule = location.visibility_type;
+    let skipped = this.calculateSkipped(students, ruleStudents, rule);
+    return skipped === undefined;
+  }
+
   /*
   // TODO: replaced with copy paste as this method seems to exhaust pinnable observable
   howToActOnChooseLocation(

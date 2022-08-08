@@ -245,16 +245,16 @@ export class ToWhereComponent implements OnInit {
 
       // students go forward
       /*if (!this.isStaff) {
-        this.formState.data.roomStudents = [this.student]; 
+        this.formState.data.roomStudents = [this.student];
         this.forwardAndEmit();
         return;
       }*/
-     
-     /* 
+
+     /*
       this.visibilityService.howToActOnChooseLocation(
         this.formState,
         location,
-        this.confirmDialogVisibility, 
+        this.confirmDialogVisibility,
         this.forwardAndEmit.bind(this),
         this.destroy$,
       );
@@ -264,13 +264,13 @@ export class ToWhereComponent implements OnInit {
      const students = selectedStudents.map(s => ''+s.id);
      const ruleStudents = location.visibility_students.map(s => ''+s.id);
      const rule = location.visibility_type;
-          
-     // skipped are students that do not qualify to go forward     
+
+     // skipped are students that do not qualify to go forward
      let skipped = this.visibilityService.calculateSkipped(students, ruleStudents, rule);
 
       if (!skipped || skipped.length === 0) {
         forwardAndEmit();
-        return; 
+        return;
       }
 
       let text =  'This room is only available to certain students';
@@ -282,7 +282,7 @@ export class ToWhereComponent implements OnInit {
         title = 'These students do not have permission to go to this room:';
         denyText = 'Skip these students';
       } else {
-        title = (names?.join(', ') ?? 'Student') + ' does not have permission to go to this room'; 
+        title = (names?.join(', ') ?? 'Student') + ' does not have permission to go to this room';
       }
 
       this.dialog.open(ConfirmationDialogComponent, {
@@ -305,22 +305,22 @@ export class ToWhereComponent implements OnInit {
       }).afterClosed().pipe(
         takeUntil(this.destroy$),
       ).subscribe(override => {
-        this.formState.data.roomOverride = !!override; 
-       
+        this.formState.data.roomOverride = !!override;
+
         if (override === undefined) {
-          return;     
+          return;
         }
-       
+
         // override case
         if (override) {
           forwardAndEmit();
-          return; 
+          return;
         }
 
         // SKIPPING case
         // avoid a certain no students case
         if (selectedStudents.length === 1) {
-          this.dialogRef.close();
+          //this.dialogRef.close();
           return;
         }
 
@@ -336,9 +336,9 @@ export class ToWhereComponent implements OnInit {
           return;
         }
 
-        this.formState.data.roomStudents = roomStudents; 
+        this.formState.data.roomStudents = roomStudents;
         forwardAndEmit();
-      }); 
+      });
     };
 
     if (pinnable.type !== 'location')
@@ -370,7 +370,7 @@ export class ToWhereComponent implements OnInit {
 
       // students go forward
       /*if (!this.isStaff) {
-        this.formState.data.roomStudents = [this.student]; 
+        this.formState.data.roomStudents = [this.student];
         forwardAndEmit();
         return;
       }
@@ -378,7 +378,7 @@ export class ToWhereComponent implements OnInit {
       this.visibilityService.howToActOnChooseLocation(
         this.formState,
         location,
-        this.confirmDialogVisibility, 
+        this.confirmDialogVisibility,
         this.forwardAndEmit.bind(this),
         this.destroy$,
       );*/
@@ -388,13 +388,13 @@ export class ToWhereComponent implements OnInit {
      const students = selectedStudents.map(s => ''+s.id);
      const ruleStudents = location.visibility_students.map(s => ''+s.id);
      const rule = location.visibility_type;
-          
-     // skipped are students that do not qualify to go forward     
+
+     // skipped are students that do not qualify to go forward
      let skipped = this.visibilityService.calculateSkipped(students, ruleStudents, rule);
 
       if (!skipped || skipped.length === 0) {
         forwardAndEmit();
-        return; 
+        return;
       }
 
       let text =  'This room is only available to certain students';
@@ -406,7 +406,7 @@ export class ToWhereComponent implements OnInit {
         title = 'These students do not have permission to go to this room:';
         denyText = 'Skip these students';
       } else {
-        title = (names?.join(', ') ?? 'Student') + ' does not have permission to go to this room'; 
+        title = (names?.join(', ') ?? 'Student') + ' does not have permission to go to this room';
       }
 
       this.dialog.open(ConfirmationDialogComponent, {
@@ -429,23 +429,23 @@ export class ToWhereComponent implements OnInit {
       }).afterClosed().pipe(
         takeUntil(this.destroy$),
       ).subscribe(override => {
-        this.formState.data.roomOverride = !!override; 
-       
+        this.formState.data.roomOverride = !!override;
+
         if (override === undefined) {
-          return;     
+          return;
         }
-       
+
         // override case
         if (override) {
           forwardAndEmit();
-          return; 
+          return;
         }
 
         // SKIPPING case
         // avoid a certain no students case
         if (selectedStudents.length === 1) return;
 
-        this.formState.data.roomOverride = !!override; 
+        this.formState.data.roomOverride = !!override;
         // filter out the skipped students
         const roomStudents = selectedStudents.filter(s => (!skipped.includes(''+s.id)));
         // avoid no students case
@@ -458,9 +458,9 @@ export class ToWhereComponent implements OnInit {
           return;
         }
 
-        this.formState.data.roomStudents = roomStudents; 
+        this.formState.data.roomStudents = roomStudents;
         forwardAndEmit();
-      }); 
+      });
     });
   }
 

@@ -29,7 +29,7 @@
       <mat-divider></mat-divider>
     </div>
 
-    <div class="request-card-content" *ngIf="!isModal">
+    <div class="request-card-content" *ngIf="!isModal && !kioskModeRestricted">
       <div class="duration-picker">
         <app-traveltype-picker
           [width]="(request.destination.travel_types.length < 2 ? '106px' : '185px')"
@@ -51,7 +51,7 @@
       </div>
     </div>
 
-    <div class="request-card-content-modal" *ngIf="isModal">
+    <div class="request-card-content-modal" *ngIf="isModal || kioskModeRestricted">
       <div class="student-view" [@.disabled]="activeTeacherPin" *ngIf="!forStaff">
 
         <div class="content-container" *ngIf="!activeTeacherPin; else teacherPin">

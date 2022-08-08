@@ -236,7 +236,7 @@ export class FromWhereComponent implements OnInit, OnDestroy {
         // SKIPPING case
         // only one student means cancel
         if (selectedStudents.length === 1) {
-          this.dialogRef.close(); 
+          //:wthis.dialogRef.close(); 
           return;
         }
 

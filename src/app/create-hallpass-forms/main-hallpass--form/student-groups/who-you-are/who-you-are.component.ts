@@ -41,6 +41,7 @@ export class WhoYouAreComponent implements OnInit {
       } else {
         this.formState.step = 3;
         this.formState.state = 2;
+        this.formState.data.kioskModeStudent = evt[0];
         this.formState.fromState = 4;
       }
 

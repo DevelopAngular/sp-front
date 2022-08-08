@@ -54,7 +54,8 @@ export interface Navigation {
     roomStudents?: User[] | null;
     // needed when back from pass card
     roomStudentsAfterFromStep?: User[];
-    roomOverride?: boolean;
+    roomOverride?: boolean,
+    kioskModeStudent?: User,
   };
   quickNavigator?: boolean;
   forInput?: boolean;
@@ -268,7 +269,7 @@ export class MainHallPassFormComponent implements OnInit, OnDestroy {
         this.formService.setFrameMotionDirection('disable');
         this.formService.compressableBoxController.next(false);
         this.formService.scalableBoxController.next(false);
-        this.dialogRef.close();
+        // this.dialogRef.close();
       });
   }
 

@@ -94,7 +94,7 @@ import { ConfirmationComponent } from './shared-components/confirmation/confirma
 import {PassLimitInfoComponent} from '../pass-limit-info/pass-limit-info.component';
 import { IdNumbersComponent } from '../admin/accounts/id-numbers/id-numbers.component';
 import { GradeLevelsComponent } from '../admin/accounts/grade-levels/grade-levels.component';
-
+import {ConfirmDeleteKioskModeComponent} from '../request-card/confirm-delete-kiosk-mode/confirm-delete-kiosk-mode.component';
 const DEFAULT_SWIPER_CONFIG: SwiperConfigInterface = {
   direction: 'horizontal',
   slidesPerView: 'auto'
@@ -196,6 +196,7 @@ const DEFAULT_SWIPER_CONFIG: SwiperConfigInterface = {
     ConfirmationComponent,
     IdNumbersComponent,
     GradeLevelsComponent,
+    ConfirmDeleteKioskModeComponent
   ],
   exports: [
     ReactiveFormsModule,
@@ -278,6 +279,7 @@ const DEFAULT_SWIPER_CONFIG: SwiperConfigInterface = {
     PassLimitInfoComponent,
     IdNumbersComponent,
     GradeLevelsComponent,
+    ConfirmDeleteKioskModeComponent
   ],
   providers: [
     {
