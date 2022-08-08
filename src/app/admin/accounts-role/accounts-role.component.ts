@@ -230,12 +230,22 @@ export class AccountsRoleComponent implements OnInit, OnDestroy {
   }
 
   emptyRoleObject(getColumns, columns) {
-    if (this.role === '_profile_admin' || this.role === '_profile_student') {
+    if (this.role === '_profile_student') {
       return getColumns ? [columns] : [{
         'Name': null,
         'Email/username': null,
         'Grade': null,
-        'ID Number': null,
+        'ID': null,
+        'Status': null,
+        'Last sign-in': null,
+        'Type': null,
+        'Permissions': null
+      }];
+    }else if (this.role === '_profile_admin') {
+      return getColumns ? [columns] : [{
+        'Name': null,
+        'Email/username': null,
+        'ID': null,
         'Status': null,
         'Last sign-in': null,
         'Type': null,
@@ -245,7 +255,7 @@ export class AccountsRoleComponent implements OnInit, OnDestroy {
       return getColumns ? [columns] : [{
         'Name': null,
         'Email/username': null,
-        'ID Number': null,
+        'ID': null,
         'Rooms': null,
         'Status': null,
         'Last sign-in': null,
@@ -256,7 +266,7 @@ export class AccountsRoleComponent implements OnInit, OnDestroy {
       return getColumns ? [columns] : [{
         'Name': null,
         'Email/username': null,
-        'ID Number': null,
+        'ID': null,
         'Acting on Behalf Of': null,
         'Status': null,
         'Last sign-in': null,
@@ -311,7 +321,7 @@ export class AccountsRoleComponent implements OnInit, OnDestroy {
     const roleObject = {
       'Name': this.sanitizer.bypassSecurityTrustHtml(`<div class="no-wrap" style="width: 150px !important;">` + account.display_name + '</div>'),
       'Email/username': `<div class="no-wrap">` + account.primary_email.split('@spnx.local')[0] + '</div>',
-      'ID Number': account.custom_id ?? "-"
+      'ID': account.custom_id ?? "-"
     };
     let objectToTable;
     if (this.role === '_profile_admin' || this.role === '_profile_student') {
@@ -325,15 +335,26 @@ export class AccountsRoleComponent implements OnInit, OnDestroy {
       } else {
         classList += 'school-limit';
       }
-      objectToTable = {...roleObject, ...{
-        'Grade': account.grade_level ?? "-",
-          'Status': this.sanitizer.bypassSecurityTrustHtml(`<span class="status">${account.status}</span>`),
-          'Last sign-in': account.last_login && account.last_login !== new Date() ? Util.formatDateTime(new Date(account.last_login)) : 'Never signed in',
-          'Type': account.demo_account ? 'Demo' : account.sync_types[0] === 'google' ? 'G Suite' : (account.sync_types[0] === 'gg4l' ? 'GG4L' : account.sync_types[0] === 'clever' ? 'Clever' : 'Standard'),
-          'Permissions': `<div class="no-wrap">` + permissions + `</div>`,
-          'Pass Limits': this.sanitizer.bypassSecurityTrustHtml(`<div style="width: 150px !important;" class="${classList}">${passLimitCells.passLimit}</div>`),
-          'Pass Limits Description': this.sanitizer.bypassSecurityTrustHtml(`<div class="${classList}">${passLimitCells.description}</div>`)
-        }};
+      if (this.role === '_profile_student') { 
+        objectToTable = {...roleObject, ...{
+          'Grade': account.grade_level ?? "-",
+            'Status': this.sanitizer.bypassSecurityTrustHtml(`<span class="status">${account.status}</span>`),
+            'Last sign-in': account.last_login && account.last_login !== new Date() ? Util.formatDateTime(new Date(account.last_login)) : 'Never signed in',
+            'Type': account.demo_account ? 'Demo' : account.sync_types[0] === 'google' ? 'G Suite' : (account.sync_types[0] === 'gg4l' ? 'GG4L' : account.sync_types[0] === 'clever' ? 'Clever' : 'Standard'),
+            'Permissions': `<div class="no-wrap">` + permissions + `</div>`,
+            'Pass Limits': this.sanitizer.bypassSecurityTrustHtml(`<div style="width: 150px !important;" class="${classList}">${passLimitCells.passLimit}</div>`),
+            'Pass Limits Description': this.sanitizer.bypassSecurityTrustHtml(`<div class="${classList}">${passLimitCells.description}</div>`)
+          }};
+      }else {
+        objectToTable = {...roleObject, ...{
+            'Status': this.sanitizer.bypassSecurityTrustHtml(`<span class="status">${account.status}</span>`),
+            'Last sign-in': account.last_login && account.last_login !== new Date() ? Util.formatDateTime(new Date(account.last_login)) : 'Never signed in',
+            'Type': account.demo_account ? 'Demo' : account.sync_types[0] === 'google' ? 'G Suite' : (account.sync_types[0] === 'gg4l' ? 'GG4L' : account.sync_types[0] === 'clever' ? 'Clever' : 'Standard'),
+            'Permissions': `<div class="no-wrap">` + permissions + `</div>`,
+            'Pass Limits': this.sanitizer.bypassSecurityTrustHtml(`<div style="width: 150px !important;" class="${classList}">${passLimitCells.passLimit}</div>`),
+            'Pass Limits Description': this.sanitizer.bypassSecurityTrustHtml(`<div class="${classList}">${passLimitCells.description}</div>`)
+          }};
+      }
     } else if (this.role === '_profile_teacher') {
       objectToTable = {...roleObject, ...{
           'rooms': this.sanitizer.bypassSecurityTrustHtml(`<div class="no-wrap">` + (account.assignedTo && account.assignedTo.length ? uniqBy(account.assignedTo, 'id').map((room: any) => room.title).join(', ') : 'No rooms assigned') + `</div>`),

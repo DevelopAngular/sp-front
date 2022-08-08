@@ -21,6 +21,7 @@ import {ConsentMenuComponent} from '../../../consent-menu/consent-menu.component
 import {DarkThemeSwitch} from '../../../dark-theme-switch';
 import {ProfilePictureComponent} from '../../accounts/profile-picture/profile-picture.component';
 import {StudentPassLimit} from '../../../models/HallPassLimits';
+import { IdCardGradeLevelsComponent } from '../../id-cards/id-card-grade-levels/id-card-grade-levels.component';
 
 @Component({
   selector: 'app-view-profile',
@@ -117,6 +118,10 @@ export class ViewProfileComponent implements OnInit {
   loadingProfilePicture: Subject<boolean> = new Subject<boolean>();
   studentPassLimit: StudentPassLimit;
 
+  studentSnapshotPage: string;
+
+  page: number = 1;
+
   constructor(
     public dialogRef: MatDialogRef<ProfileCardDialogComponent>,
     private matDialog: MatDialog,
@@ -145,13 +150,7 @@ export class ViewProfileComponent implements OnInit {
       !isEqual(this.initialSelectedRoles, this.userRoles);
   }
 
-  get windowOrigin(): string{
-    return window.location.origin + '/main/student/9524';
-  }
-
   ngOnInit() {
-
-    console.log("window.location : ", this.windowOrigin)
     this.frameMotion$ = this.formService.getFrameMotionDirection();
     if (this.data.orgUnit) {
       this.layout = 'gSuiteSettings';
@@ -171,6 +170,7 @@ export class ViewProfileComponent implements OnInit {
     if (this.data.profile) {
       this.profile = this.data.profile;
       this.user = User.fromJSON(this.profile._originalUserProfile);
+      this.studentSnapshotPage = window.location.origin + `/main/student/${this.user.id}`
       this.profileStatusActive = this.user.status;
       this.profileStatusInitial = cloneDeep(this.profileStatusActive);
       if (this.user.isTeacher() && !(this.user.isAdmin() || this.user.isAssistant())) {
@@ -542,6 +542,14 @@ export class ViewProfileComponent implements OnInit {
           this.dialogRef.close();
         }
       });
+  }
+
+  openGradeLevel(){
+    this.page = 2;
+  }
+
+  openIDNumber(){
+    this.page = 3;
   }
 
 }

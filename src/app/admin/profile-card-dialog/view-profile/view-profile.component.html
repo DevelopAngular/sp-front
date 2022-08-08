@@ -12,7 +12,7 @@
 </div>
 
 <ng-template #profileCard>
-    <div class="profile-card-dialog-container">
+    <div class="profile-card-dialog-container" *ngIf="page == 1">
         <!-- Disables card when some async stuffs occur-->
         <div class="disabled-state loading-theme_light-gray spinner" *ngIf="disabledState">
             <mat-spinner [diameter]="100" [color]="'accent'"></mat-spinner>
@@ -30,9 +30,8 @@
 
             </div>
             <div class="status-button" #status>
-                <app-gradient-button *ngIf="user.isStudent()" [size]="'editable'" [rightIconWidth]="'20px'" [rightIconHeight]="'20px'" [minWidth]="'50px'" [text]="''" [gradient]="'#FFFFFF'" [rightIcon]="'./assets/External Link (Navy).svg'" [linkType]="'_blank'" [buttonLink]="windowOrigin">
+                <app-gradient-button *ngIf="user.isStudent()" [size]="'editable'" [rightIconWidth]="'20px'" [rightIconHeight]="'20px'" [minWidth]="'50px'" [text]="''" [gradient]="'#FFFFFF'" [rightIcon]="'./assets/External Link (Navy).svg'" [linkType]="'_blank'" [buttonLink]="studentSnapshotPage">
                 </app-gradient-button>
-                <!-- <img width="20" height="20" *ngIf="user.isStudent()" [src]="'./assets/External Link (Navy).svg' | resolveAsset" alt=""> -->
                 <!-- <app-icon-button *ngIf="!isEdit" [srcString]="'Dots'" [size]="17" (clickEvent)="openStatusPopup()"></app-icon-button> -->
                 <app-gradient-button *ngIf="isEdit" (buttonClick)="save()">Save</app-gradient-button>
             </div>
@@ -65,13 +64,6 @@
                     <div class="status" [customToolTip]="statusDescriptions[profileStatusActive] || null" (click)="openStatusPopup()" [style.color]="profileStatusActive === 'active' ? '#00B476' : profileStatusActive === 'suspended' ? '#6651F1' : '#7f879d'">
                         {{ profileStatusActive == 'active' ? 'Last Active' : profileStatusActive }}
                         <span><img width="9px" [src]="'./assets/Chevron Down (' + (profileStatusActive === 'active' ? 'Jade' : (profileStatusActive === 'disabled' ? 'Blue-Gray' : 'Soft-Blue')) + ').svg' | resolveAsset" alt=""></span>
-
-                        <!-- <ng-template #tooltip>
-                            <div class="ds-tooltip" style="text-align: left">
-                                <div class="only-admin">ADMIN ONLY</div>
-                                Only admins are able to change the account status.
-                            </div>
-                        </ng-template> -->
                     </div>
                 </div>
                 <div class="role-info">
@@ -87,6 +79,24 @@
                     <div class="title">Rooms</div>
                     <app-sp-search [width]="'254px'" [listMaxHeight]="'unset'" [focused]="true" [placeholder]="'Search rooms'" [searchTarget]="'rooms'" [cancelButton]="true" [displaySelectedTitle]="false" [chipsMode]="true" [selectedOptions]="teacherRooms" (onUpdate)="teacherRooms = $event"></app-sp-search>
                 </div>
+                <div class="grade-info" *ngIf="user.isStudent() || user.isAdmin()">
+                    <div class="title">Grade</div>
+                    <div class="subtitle" *ngIf="user.isStudent()" style="white-space: normal; word-break: break-word; width: 280px">{{ user.grade_level || '-' }}</div>
+                    <div class="subtitle" *ngIf="user.isAdmin()">
+                        <app-gradient-button (buttonClick)="openGradeLevel()" [size]="'tiny'" [gradient]="'#00B476, #00B476'" [rightIcon]="'./assets/External Link (White).svg'">
+                            Add Grade Level
+                        </app-gradient-button>
+                    </div>
+                </div>
+                <div class="id-number-info">
+                    <div class="title">ID</div>
+                    <div class="subtitle" *ngIf="!user.isAdmin()" style="white-space: normal; word-break: break-word; width: 280px">{{ user.custom_id || '-' }}</div>
+                    <div class="subtitle" *ngIf="user.isAdmin()">
+                        <app-gradient-button (buttonClick)="openIDNumber()" [size]="'tiny'" [gradient]="'#00B476, #00B476'" [rightIcon]="'./assets/External Link (White).svg'">
+                            Add ID Number
+                        </app-gradient-button>
+                    </div>
+                </div>
 
             </div>
             <mat-divider *ngIf="profilePermissions.student.length"></mat-divider>
@@ -101,48 +111,45 @@
                         <app-toggle-input style="width: auto" [form]="permissionsForm" [controlName]="permission.permission" [controlSize]="'small'" [delimiter]="false"></app-toggle-input>
                     </div>
                 </div>
-                <app-toggle-input style="width: auto" [form]="permissionsForm" [controlName]="permission.permission" [controlSize]="'small'" [delimiter]="false"></app-toggle-input>
             </div>
-        </div>
-    </div>
 
-    <div class="block pass-limit-card" style="flex-direction: column; cursor: pointer; margin: 0px 20px;
-    background: #F5F6F8;
-    padding: 20px 10px;
-    border-radius: 10px;" [ngClass]="{ 'pass-limit-enabled': !studentPassLimit?.isUnlimited }" (click)="passLimitsEmit.emit()">
-        <div class="card ds-flex-center-between">
-            <div class="ds-flex-center-center label" [style.align-items]="!!studentPassLimit?.description ? 'flex-start !important' : 'center'">
-                <div class="icon" style="background-color: #5E4FED;
-    width: 26px;
-    height: 26px;
-    border-radius: 5px;
-    display: flex;
-    align-items: center;
-    justify-content: center;">
-                    <img style="position: absolute; z-index: 10;" height="14px" [src]="'./assets/Pass Limit (White).svg' | resolveAsset" alt="">
-                </div>
-                <div class="ds-ml-10" style="display: flex; flex-direction: column">
-                    <span class="ds-dialog-heading" style="display: flex; padding-bottom: 0; font-weight: 600 !important;">
-                Pass Limit
-                <div style="display: inline" customToolTip [contentTemplate]="passLimitLearnMore">
-                  <img
-                    class="support-icon"
-                    style="width: 13px"
-                    [src]="'./assets/Support (Gray-200).svg' | resolveAsset">
-                </div>
-                <ng-template #passLimitLearnMore>
-                  <div class="ds-tooltip">
-                    <span>
-                      Limit the number of passes students can have per day.
-                      <a href="https://www.smartpass.app/passlimits" target="_blank" style="color: white"> Learn more</a>
-                    </span>
-                </div>
+            <div class="block pass-limit-card" style="flex-direction: column; cursor: pointer; margin: 0px 20px;
+      background: #F5F6F8;
+      padding: 20px 10px;
+      border-radius: 10px;" [ngClass]="{ 'pass-limit-enabled': !studentPassLimit?.isUnlimited }" (click)="passLimitsEmit.emit()">
+                <div class="card ds-flex-center-between">
+                    <div class="ds-flex-center-center label" [style.align-items]="!!studentPassLimit?.description ? 'flex-start !important' : 'center'">
+                        <div class="icon" style="background-color: #5E4FED;
+      width: 26px;
+      height: 26px;
+      border-radius: 5px;
+      display: flex;
+      align-items: center;
+      justify-content: center;">
+                            <img style="position: absolute; z-index: 10;" height="14px" [src]="'./assets/Pass Limit (White).svg' | resolveAsset" alt="">
+                        </div>
+                        <div class="ds-ml-10" style="display: flex; flex-direction: column">
+                            <span class="ds-dialog-heading" style="display: flex; padding-bottom: 0; font-weight: 600 !important;">
+                  Pass Limit
+                  <div style="display: inline" customToolTip [contentTemplate]="passLimitLearnMore">
+                    <img
+                      class="support-icon"
+                      style="width: 13px"
+                      [src]="'./assets/Support (Gray-200).svg' | resolveAsset">
+                  </div>
+                  <ng-template #passLimitLearnMore>
+                    <div class="ds-tooltip">
+                      <span>
+                        Limit the number of passes students can have per day.
+                        <a href="https://www.smartpass.app/passlimits" target="_blank" style="color: white"> Learn more</a>
+                      </span>
+                        </div>
 </ng-template>
 </span>
 <div *ngIf="studentPassLimit?.passLimit" class="ds-flex-column" style="display: flex; gap: 3px; margin-top: 3px;">
     <span style="font-size: 15px !important; font-weight: 500 !important;" [ngClass]="{ 'pass-limit-counter': true, 'individual-limit': studentPassLimit.isIndividual, 'school-limit': !studentPassLimit.isIndividual }">
-                          {{studentPassLimit.passLimit === -2 ? "Unlimited" : studentPassLimit.passLimit}} passes/day
-                        </span>
+                            {{studentPassLimit.passLimit === -2 ? "Unlimited" : studentPassLimit.passLimit}} passes/day
+                          </span>
     <span class="ds-dialog-normal-text" style="font-weight: 400 !important;" *ngIf="studentPassLimit.description && studentPassLimit.isIndividual">{{studentPassLimit.description}}</span>
 </div>
 </div>
@@ -154,7 +161,7 @@
 </div>
 </div>
 
-<div class="block" *ngIf="user.isStudent()">
+<div class="block" *ngIf="!user.isStudent()">
     <div class="title" style="display: flex">
         <app-octagon [size]="21">
             <img style="position: absolute; z-index: 10; height: 14px" [src]="'./assets/Walking One (White).svg' | resolveAsset">
@@ -169,79 +176,69 @@
             <div class="group" *ngFor="let group of exclusionGroups" [showToolTip]="!!group.notes" [customToolTip]="group.notes" [editable]="true" [positionStrategy]="{originX: 'center',originY: 'top',overlayX: 'center',overlayY: 'top',offsetX: 330}">
                 <app-encounter-group [group]="group" (clickEvent)="openExclusionGroups('groupDescription', group)"></app-encounter-group>
             </div>
-            <div class="block" *ngIf="!user.isStudent()">
-                <mat-divider></mat-divider>
-                <div class="title" style="display: flex">
-                    <app-octagon [size]="21">
-                        <img style="position: absolute; z-index: 10; height: 14px" [src]="'./assets/Walking One (White).svg' | resolveAsset">
-                    </app-octagon>
-                    <div style="margin-left: 8px">Encounter Prevention</div>
-                </div>
-                <div class="subtitle" style="width: 360px; white-space: normal;" *ngIf="exclusionGroups && !exclusionGroups.length; else groups">
-                    Prevent students from having passes at the same time with Encounter Prevention.
-                </div>
-                <ng-template #groups>
-                    <div class="groups">
-                        <div class="group" *ngFor="let group of exclusionGroups" [showToolTip]="!!group.notes" [customToolTip]="group.notes" [editable]="true" [positionStrategy]="{originX: 'center',originY: 'top',overlayX: 'center',overlayY: 'top',offsetX: 330}">
-                            <app-encounter-group [group]="group" (clickEvent)="openExclusionGroups('groupDescription', group)"></app-encounter-group>
-                        </div>
-                    </div>
-                </ng-template>
-                <app-gradient-button style="margin-top: 9px" [leftIcon]="'./assets/Plus (White).svg'" (buttonClick)="openExclusionGroups('newGroup')">New Group</app-gradient-button>
-            </div>
-            <mat-divider></mat-divider>
-            <div class="block">
-                <div class="descriptions">
-                    <div class="info">
-                        <div class="title">Last sign-in</div>
-                        <div class="subtitle">{{ profile['Last sign-in'] }}</div>
-                    </div>
-                    <div class="info">
-                        <div class="title">Type</div>
-                        <div class="subtitle">{{ profile['Type'] }}</div>
-                    </div>
-                    <div class="info" *ngIf="profile['Type'] === 'Standard'">
-                        <div class="title">Password</div>
-                        <div class="subtitle"><span style="text-decoration: underline; cursor: pointer" (click)="nextStep.emit('password')">Change</span></div>
-                    </div>
-                </div>
-
-            </div>
-            <mat-divider *ngIf="user.isTeacher()"></mat-divider>
-            <div class="block" *ngIf="user.isTeacher()">
-                <div class="permissions">
-                    <div class="title">Teacher Permissions</div>
-                    <div class="permission" *ngFor="let permission of profilePermissions.teacher">
-                        <div class="subtitle" style="display: flex; align-items: center">
-                            <img width="17" style="margin-right: 7px" [src]="'./assets/' + permission.icon + ' (' + (getIsPermissionOn(permission.permission) ? 'Jade' : 'Blue-Gray') + ').svg'" alt="11"> {{ permission.label }}
-                        </div>
-                        <app-toggle-input style="width: auto" [form]="permissionsForm" [controlName]="permission.permission" [controlSize]="'small'" [delimiter]="false"></app-toggle-input>
-                    </div>
-                </div>
-            </div>
-            <mat-divider></mat-divider>
-            <div class="block" *ngIf="user.isAdmin()">
-                <div class="permissions">
-                    <div class="title">Admin Permissions</div>
-                    <div class="permission" *ngFor="let permission of profilePermissions.admin">
-                        <div class="subtitle" style="display: flex; align-items: center">
-                            <img width="17" style="margin-right: 7px" [src]="'./assets/' + permission.icon + ' (' + (getIsPermissionOn(permission.permission) ? 'Jade' : 'Blue-Gray') + ').svg'" alt="11"> {{ permission.label }}
-                        </div>
-                        <app-toggle-input style="width: auto" [form]="permissionsForm" [controlName]="permission.permission" [controlSize]="'small'" [delimiter]="false"></app-toggle-input>
-                    </div>
-                </div>
-            </div>
-            <div class="block" *ngIf="user.isAssistant()">
-                <div class="permissions">
-                    <div class="title">Assistant Permissions</div>
-                    <div class="permission" *ngFor="let permission of profilePermissions.assistant">
-                        <div class="subtitle" style="display: flex; align-items: center">
-                            <img width="17" style="margin-right: 7px" [src]="'./assets/' + permission.icon + ' (' + (getIsPermissionOn(permission.permission) ? 'Jade' : 'Blue-Gray') + ').svg'" alt="11"> {{ permission.label }}
-                        </div>
-                        <app-toggle-input style="width: auto" [form]="permissionsForm" [controlName]="permission.permission" [controlSize]="'small'" [delimiter]="false"></app-toggle-input>
-                    </div>
-                </div>
-            </div>
         </div>
+    </ng-template>
+    <app-gradient-button style="margin-top: 9px" [leftIcon]="'./assets/Plus (White).svg'" (buttonClick)="openExclusionGroups('newGroup')">New Group</app-gradient-button>
+</div>
+<mat-divider></mat-divider>
+<div class="block">
+    <div class="descriptions">
+        <div class="info">
+            <div class="title">Last sign-in</div>
+            <div class="subtitle">{{ profile['Last sign-in'] }}</div>
+        </div>
+        <div class="info">
+            <div class="title">Type</div>
+            <div class="subtitle">{{ profile['Type'] }}</div>
+        </div>
+        <div class="info" *ngIf="profile['Type'] === 'Standard'">
+            <div class="title">Password</div>
+            <div class="subtitle"><span style="text-decoration: underline; cursor: pointer" (click)="nextStep.emit('password')">Change</span></div>
+        </div>
+    </div>
+
+</div>
+<mat-divider *ngIf="user.isTeacher()"></mat-divider>
+<div class="block" *ngIf="user.isTeacher()">
+    <div class="permissions">
+        <div class="title">Teacher Permissions</div>
+        <div class="permission" *ngFor="let permission of profilePermissions.teacher">
+            <div class="subtitle" style="display: flex; align-items: center">
+                <img width="17" style="margin-right: 7px" [src]="'./assets/' + permission.icon + ' (' + (getIsPermissionOn(permission.permission) ? 'Jade' : 'Blue-Gray') + ').svg'" alt="11"> {{ permission.label }}
+            </div>
+            <app-toggle-input style="width: auto" [form]="permissionsForm" [controlName]="permission.permission" [controlSize]="'small'" [delimiter]="false"></app-toggle-input>
+        </div>
+    </div>
+</div>
+<mat-divider></mat-divider>
+<div class="block" *ngIf="user.isAdmin()">
+    <div class="permissions">
+        <div class="title">Admin Permissions</div>
+        <div class="permission" *ngFor="let permission of profilePermissions.admin">
+            <div class="subtitle" style="display: flex; align-items: center">
+                <img width="17" style="margin-right: 7px" [src]="'./assets/' + permission.icon + ' (' + (getIsPermissionOn(permission.permission) ? 'Jade' : 'Blue-Gray') + ').svg'" alt="11"> {{ permission.label }}
+            </div>
+            <app-toggle-input style="width: auto" [form]="permissionsForm" [controlName]="permission.permission" [controlSize]="'small'" [delimiter]="false"></app-toggle-input>
+        </div>
+    </div>
+</div>
+<div class="block" *ngIf="user.isAssistant()">
+    <div class="permissions">
+        <div class="title">Assistant Permissions</div>
+        <div class="permission" *ngFor="let permission of profilePermissions.assistant">
+            <div class="subtitle" style="display: flex; align-items: center">
+                <img width="17" style="margin-right: 7px" [src]="'./assets/' + permission.icon + ' (' + (getIsPermissionOn(permission.permission) ? 'Jade' : 'Blue-Gray') + ').svg'" alt="11"> {{ permission.label }}
+            </div>
+            <app-toggle-input style="width: auto" [form]="permissionsForm" [controlName]="permission.permission" [controlSize]="'small'" [delimiter]="false"></app-toggle-input>
+        </div>
+    </div>
+</div>
+</div>
 </div>
 </ng-template>
+<div *ngIf="page == 2">
+    <app-grade-levels [page]="2" (backEmit)="page = 1"></app-grade-levels>
+</div>
+<div *ngIf="page == 3">
+    <app-id-numbers [page]="2" (backEmit)="page = 1"></app-id-numbers>
+</div>

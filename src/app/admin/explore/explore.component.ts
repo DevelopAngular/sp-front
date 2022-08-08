@@ -368,6 +368,7 @@ export class ExploreComponent implements OnInit, OnDestroy {
               'Pass': null,
               'Student Name': null,
               'Grade': null,
+              'ID': null,
               'Origin': null,
               'Destination': null,
               'Pass start time': null,
@@ -397,6 +398,7 @@ export class ExploreComponent implements OnInit, OnDestroy {
               'Pass': passImg,
               'Student Name': pass.student.display_name,
               'Grade': pass.student.grade_level ?? "-",
+              'ID': pass.student.custom_id ?? "-",
               'Origin': pass.origin.title,
               'Destination': pass.destination.title,
               'Pass start time': moment(pass.start_time).format('M/DD h:mm A'),
@@ -492,6 +494,8 @@ export class ExploreComponent implements OnInit, OnDestroy {
             this.contactTraceState.isEmpty = true;
             return [{
               'Student Name': null,
+              'Grade': null,
+              'ID': null,
               'Degree': null,
               'Contact connection': null,
               'Contact date': null,
@@ -511,6 +515,8 @@ export class ExploreComponent implements OnInit, OnDestroy {
 
             const result = {
               'Student Name': contact.student.display_name,
+              'Grade': contact.student.grade_level ?? "-",
+              'ID': contact.student.custom_id ?? "-",
               'Degree': contact.degree,
               'Contact connection': this.domSanitizer.bypassSecurityTrustHtml(
                 `<div class="no-wrap" style="display: flex; width: 300px !important;">` +
@@ -557,6 +563,7 @@ export class ExploreComponent implements OnInit, OnDestroy {
           return [{
             'Student Name': null,
             'Grade': null,
+            'ID': null,
             'Message': null,
             'Status': null,
             'Pass': null,
@@ -577,6 +584,7 @@ export class ExploreComponent implements OnInit, OnDestroy {
           const result = {
             'Student Name': this.domSanitizer.bypassSecurityTrustHtml(`<div>${report.student.display_name}</div>`),
             'Grade': report.student.grade_level ?? "-",
+            'ID': report.student.custom_id ?? "-",
             'Message': this.domSanitizer.bypassSecurityTrustHtml(`<div><div class="message">${report.message || 'No report message'}</div></div>`),
             'Status': report.status,
             'Pass': passTile,
