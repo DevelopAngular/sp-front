@@ -274,4 +274,15 @@ export class VisibilityRoomComponent implements OnInit, AfterViewInit, OnDestroy
     };
     this.panelDialog.updatePosition(position)
   }
+
+
+  hoveredNonSelected: boolean | null
+  
+  onEnter(mode: string) {
+    if (mode !== this.mode) this.hoveredNonSelected = true;
+  }
+  
+  onLeave(mode: string) {
+    this.hoveredNonSelected = false;
+  }
 }

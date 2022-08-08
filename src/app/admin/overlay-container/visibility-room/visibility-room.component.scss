@@ -128,5 +128,13 @@ ul.error {
       margin: 0 0 0 auto;
      }
     }
+    &.selected.grayed {
+      color: $gray500;  
+      background-color: $gray100;
+      &:after {
+        background-image: none;
+        background-size: none;
+      }
+    }
   }
 }

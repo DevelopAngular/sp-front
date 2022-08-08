@@ -63,7 +63,9 @@
         *ngIf="didOpen"
       >
         <li
-            [ngClass]="entry.key === mode ? 'selected': null"
+            (mouseenter)="onEnter(entry.key)"
+            (mouseleave)="onLeave(entry.key)"
+            [ngClass]="{ 'selected': entry.key === mode ? true : null, 'grayed': hoveredNonSelected }"
             *ngFor="let entry of modes | keyvalue: asIs"
             (click)="handleModeSelected(entry.key)"
         >
