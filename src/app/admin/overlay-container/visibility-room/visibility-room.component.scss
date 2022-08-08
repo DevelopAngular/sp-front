@@ -114,7 +114,7 @@ ul.error {
     cursor: pointer;
     padding: 10px;
     display: flex;
-    &:hover {
+    &.selected, &:hover {
      color: $navy500;
      background-color: $navy100;
      border-radius: 7px;

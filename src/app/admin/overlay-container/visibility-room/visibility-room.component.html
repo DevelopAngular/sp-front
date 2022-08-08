@@ -63,6 +63,7 @@
         *ngIf="didOpen"
       >
         <li
+            [ngClass]="entry.key === mode ? 'selected': null"
             *ngFor="let entry of modes | keyvalue: asIs"
             (click)="handleModeSelected(entry.key)"
         >
