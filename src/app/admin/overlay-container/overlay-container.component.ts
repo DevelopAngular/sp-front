@@ -930,17 +930,15 @@ export class OverlayContainerComponent implements OnInit, OnDestroy {
           visibility_type: mode,
           visibility_students: over.map(s => ''+s.id),
         };
-
-        let data: any = {};
-        let _data = {
+        
+        let data = {
           ...room,
           teachers: room.teachers.map(t => t.id),
+          ...visibilityBulkData,
         };
-        data = {..._data};
         // apply bulk visibility only if user wanted it explicitly
-        if (this.visibilityForm.dirty) {
-          data = { ..._data, ...visibilityBulkData};
-        } else {
+        // otherwise avoid updating existing visibility by deleting concerned request data
+        if (!this.visibilityForm.dirty) {
           delete data.visibility_students;
           delete data.visibility_type; 
         }
