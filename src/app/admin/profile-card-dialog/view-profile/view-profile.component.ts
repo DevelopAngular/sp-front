@@ -167,7 +167,7 @@ export class ViewProfileComponent implements OnInit {
     if (this.data.profile) {
       this.profile = this.data.profile;
       this.user = User.fromJSON(this.profile._originalUserProfile);
-      this.studentSnapshotPage = window.location.origin + `/main/student/${this.user.id}`
+      this.studentSnapshotPage = window.location.origin + `/app/main/student/${this.user.id}`
       this.profileStatusActive = this.user.status;
       this.profileStatusInitial = cloneDeep(this.profileStatusActive);
       if (this.user.isTeacher() && !(this.user.isAdmin() || this.user.isAssistant())) {
