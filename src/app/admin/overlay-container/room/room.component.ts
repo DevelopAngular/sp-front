@@ -164,6 +164,7 @@ export class RoomComponent implements OnInit, OnDestroy {
           } else if (this.currentPage === Pages.EditRoomInFolder) {
               const data: Location = this.overlayService.pageState.getValue().data.selectedRoomsInFolder[0];
               const visibility: VisibilityOverStudents = {mode: data.visibility_type, over: data.visibility_students};
+              this.visibilityForm.patchValue({visibility});
               this.overlayService.patchData({visibility});
               this.passLimitForm.patchValue({
                 to: data.max_passes_to,

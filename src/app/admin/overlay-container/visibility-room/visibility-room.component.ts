@@ -1,11 +1,10 @@
 import {KeyValue} from '@angular/common';
 import { Component, OnInit, AfterViewInit, OnDestroy, Input, Output, EventEmitter, ViewChild, ElementRef, TemplateRef, Renderer2} from '@angular/core';
-import {DomSanitizer} from '@angular/platform-browser';
 import {FormGroup} from '@angular/forms';
 import {MatDialog, MatDialogRef} from '@angular/material/dialog';
-import {Observable, Subject} from 'rxjs';
+import {Subject} from 'rxjs';
 import {tap, take, takeUntil, filter, finalize, startWith} from 'rxjs/operators';
-import {cloneDeep} from 'lodash';
+import {cloneDeep, isEqual} from 'lodash';
 
 import {User} from '../../../models/User';
 import {SPSearchComponent} from '../../../sp-search/sp-search.component'; 
@@ -69,12 +68,15 @@ export class VisibilityRoomComponent implements OnInit, AfterViewInit, OnDestroy
    return this.mode !== 'visible_all_students';
   }
 
+  private myid = 0;
+
   constructor(
     public dialog: MatDialog,
     public overlayService: OverlayDataService,
     private renderer: Renderer2,
   ) {
     this.modeView = this.modes[this.mode];
+    this.myid += 1;
   }
 
   ngOnInit(): void {
@@ -84,14 +86,17 @@ export class VisibilityRoomComponent implements OnInit, AfterViewInit, OnDestroy
     this.mode = this.data.mode;
     this.modeView = this.modes[this.data.mode];
     this.selectedStudents = this.data.over; 
+
+    const hasChanged = !this.isEqualPrevData(this.data);
     // keep last non-all data
     this.updatePrevData();
 
     this.dirty.pipe(
       takeUntil(this.destroy$),
-      startWith(false),
+      startWith(hasChanged),
     ).subscribe((v: boolean) => {
       const c = this.visibilityForm.get('visibility');
+      console.log('MYID, DIRTY PRISTINE:', this.myid, v, this.visibilityForm.pristine)
       if (v) {
         c.markAsDirty();
       } else {
@@ -103,6 +108,8 @@ export class VisibilityRoomComponent implements OnInit, AfterViewInit, OnDestroy
       takeUntil(this.destroy$),
       tap(() => this.visibilityChange())
     ).subscribe();
+
+    setInterval(() => console.log('MYID, PRISTINE:', this.myid, this.visibilityForm.pristine), 2000);
   }
 
   unlisten: () => void;
@@ -188,7 +195,7 @@ export class VisibilityRoomComponent implements OnInit, AfterViewInit, OnDestroy
         this.didOpen = false;
         this.panelDialog = undefined;
         // component is untouched
-        this.dirty.next(false);
+        //this.dirty.next(false);
       }),
     ).subscribe();
   }
@@ -236,6 +243,11 @@ export class VisibilityRoomComponent implements OnInit, AfterViewInit, OnDestroy
         over: cloneDeep(data.over),
       }
     };
+  }
+
+  private isEqualPrevData(data: VisibilityOverStudents): boolean {
+    const prev = this.prevdata[data.mode];
+    return isEqual(prev, data);
   }
 
   // call public method cancel of the search component

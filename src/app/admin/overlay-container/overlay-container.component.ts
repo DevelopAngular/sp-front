@@ -813,8 +813,11 @@ export class OverlayContainerComponent implements OnInit, OnDestroy {
             data = location;
             data.category = this.folderData.folderName + salt;
             data.teachers = location.teachers.map(t => t.id);
-            if (data?.visibility_students) {
+            if (this.visibilityForm.dirty && data?.visibility_students) {
               data.visibility_students = data.visibility_students.map((s: User) => s.id);
+            } else if (this.visibilityForm.pristine) {
+              delete data?.visibility_students;
+              delete data?.visibility_type;
             }
             //location.visibility_type =
             return this.locationService.createLocation(data);
@@ -828,8 +831,11 @@ export class OverlayContainerComponent implements OnInit, OnDestroy {
             if (data.teachers) {
               data.teachers = data.teachers.map(teacher => +teacher.id);
             }
-            if (data?.visibility_students) {
+            if (this.visibilityForm.dirty && data?.visibility_students) {
               data.visibility_students = data.visibility_students.map((s: User) => s.id);
+            } else if (this.visibilityForm.pristine) {
+              delete data?.visibility_students;
+              delete data?.visibility_type;
             }
 
             return this.locationService.updateLocation(id, data);
@@ -985,6 +991,8 @@ export class OverlayContainerComponent implements OnInit, OnDestroy {
   folderResult({data, buttonState}) {
       this.folderData = data;
       this.roomValidButtons.next(buttonState);
+      this.visibilityForm.setValue({visibility: this.visibility});
+      this.visibilityForm.markAsDirty();
   }
 
   newRoomInFolder(room: RoomData) {
