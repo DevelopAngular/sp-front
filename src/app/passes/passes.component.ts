@@ -288,7 +288,7 @@ export class PassesComponent implements OnInit, AfterViewInit, OnDestroy {
             concatMap(() => this.passLimitsService.getRemainingLimits({studentId: this.user.id}))
           ).subscribe({
             next: remaining => {
-              if (this.passLimitInfo) {
+              if (this.passLimitInfo?.showPasses) {
                 this.passLimitInfo.current = remaining.remainingPasses;
               }
             }
@@ -298,12 +298,20 @@ export class PassesComponent implements OnInit, AfterViewInit, OnDestroy {
           this.sentRequests = this.liveDataService.requests$.pipe(
             map(req => req.filter((r) => !!r.request_time)));
           return this.passLimitsService.watchPassLimits().pipe(
-            concatMap(newPassLimit => {
+            concatMap((newPassLimit): Observable<PassLimitInfo> => {
+              if (newPassLimit === null) {
+                return of(null);
+              }
+
+              if (!newPassLimit?.limitEnabled) {
+                return of({ showPasses: false });
+              }
+
               return this.passLimitsService.getRemainingLimits({studentId: this.user.id}).pipe(map(r => ({
                 max: newPassLimit.passLimit,
                 showPasses: newPassLimit.limitEnabled,
                 current: r.remainingPasses
-              } as PassLimitInfo)));
+              })));
             }),
             tap(data => {
               this.passLimitInfo = data;
