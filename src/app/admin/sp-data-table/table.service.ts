@@ -1,12 +1,6 @@
 import {Injectable} from '@angular/core';
 import {BehaviorSubject, Subject} from 'rxjs';
 
-export interface TableFilterOption {
-  text: string;
-  label: string;
-  filterCallback(account: any): boolean;
-}
-
 @Injectable({
   providedIn: 'root'
 })
@@ -17,7 +11,6 @@ export class TableService {
   clearSelectedUsers: Subject<any> = new Subject<any>();
   loadingCSV$: BehaviorSubject<boolean> = new BehaviorSubject<boolean>(false);
   isAllSelected$: BehaviorSubject<boolean> = new BehaviorSubject<boolean>(false);
-  activeFilters$: BehaviorSubject<Record<string, TableFilterOption>> = new BehaviorSubject({});
 
   constructor() { }
 }

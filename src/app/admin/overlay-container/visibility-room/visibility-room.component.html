@@ -11,8 +11,11 @@
     class="support-icon"
     [src]="'./assets/Support (Gray).svg' | resolveAsset"
     alt="Support"
-    [customToolTip]="this.tooltipText"
+    customToolTip [contentTemplate]="learnmore"
   />
+  <ng-template #learnmore>
+    <div class="ds-tooltip" style="width: 200px">Hide or show room for certain students. <a href="http://smartpass.app/roomvisibility"  target="_blank" class="link">Learn more</a></div>
+  </ng-template>
 
   <span 
     #opener

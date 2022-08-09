@@ -20,7 +20,6 @@ import {UNANIMATED_CONTAINER} from '../../../consent-menu-overlay';
 import {ConsentMenuComponent} from '../../../consent-menu/consent-menu.component';
 import {DarkThemeSwitch} from '../../../dark-theme-switch';
 import {ProfilePictureComponent} from '../../accounts/profile-picture/profile-picture.component';
-import {StudentPassLimit} from '../../../models/HallPassLimits';
 import { IdCardGradeLevelsComponent } from '../../id-cards/id-card-grade-levels/id-card-grade-levels.component';
 
 @Component({
@@ -35,7 +34,6 @@ export class ViewProfileComponent implements OnInit {
   @Output() nextStep: EventEmitter<any> = new EventEmitter<any>();
   @Output() close: EventEmitter<any> = new EventEmitter<any>();
   @Output() encounterGroupsEmit: EventEmitter<any> = new EventEmitter<any>();
-  @Output() passLimitsEmit: EventEmitter<any> = new EventEmitter<any>();
 
   @ViewChild('header') header: ElementRef<HTMLDivElement>;
   @ViewChild('rc') set rc(rc: ElementRef<HTMLDivElement> ) {
@@ -116,7 +114,6 @@ export class ViewProfileComponent implements OnInit {
   isOpenAvatarDialog: boolean;
 
   loadingProfilePicture: Subject<boolean> = new Subject<boolean>();
-  studentPassLimit: StudentPassLimit;
 
   studentSnapshotPage: string;
 

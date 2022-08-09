@@ -1,4 +1,4 @@
-﻿import {Component, ElementRef, EventEmitter, Input, OnChanges, OnDestroy, OnInit, Output, SimpleChanges, ViewChild} from '@angular/core';
+﻿import {Component, EventEmitter, Input, OnChanges, OnDestroy, OnInit, Output, SimpleChanges, ViewChild} from '@angular/core';
 import {MatDialog} from '@angular/material/dialog';
 import {merge, of, Subject} from 'rxjs';
 import {filter, takeUntil} from 'rxjs/operators';
@@ -39,7 +39,6 @@ export class AppInputComponent implements OnInit, OnChanges, OnDestroy {
   @Input() forceError: boolean = false;
   @Input() showUnits: boolean;
   @Input() units: string;
-  @Input() color = 'black';
 
   @Input() formGroup: FormGroup;
   @Input() controlName: FormControl;
@@ -50,7 +49,7 @@ export class AppInputComponent implements OnInit, OnChanges, OnDestroy {
   @Output() blurEvent = new EventEmitter();
   @Output() focusEvent = new EventEmitter();
 
-  @ViewChild('inp', {static: true}) input: ElementRef<HTMLInputElement>;
+  @ViewChild('inp', {static: true}) input;
 
   private initialValue: string | number;
 
@@ -68,31 +67,16 @@ export class AppInputComponent implements OnInit, OnChanges, OnDestroy {
   }
 
   get minLeftMargin() {
-    if (this.controlName.value === 'Unlimited') { // TODO: Remove in future, since this is specific to pass limits
-      return 97;
-    }
-    const value = parseFloat(this.controlName.value);
-    if (Number.isNaN(value)) {
+    const value = this.controlName.value;
+    if (value < 10) {
       return 32;
+    } else if (value >= 10 && value < 100) {
+      return 41;
+    } else if (value >= 100 && value < 1000) {
+      return 50;
+    } else if (value >= 1000) {
+      return 59;
     }
-    const absoluteValue = Math.abs(value);
-    let margin: number;
-
-    if (absoluteValue < 10) {
-      margin = 32;
-    } else if (absoluteValue >= 10 && absoluteValue < 100) {
-      margin = 41;
-    } else if (absoluteValue >= 100 && absoluteValue < 1000) {
-      margin = 50;
-    } else if (absoluteValue >= 1000) {
-      margin = 59;
-    }
-
-    if (value < 0) {
-      margin += 7;
-    }
-
-    return margin;
   }
 
   ngOnInit() {
@@ -108,9 +92,7 @@ export class AppInputComponent implements OnInit, OnChanges, OnDestroy {
       });
 
     setTimeout(() => {
-      if (this.controlName.value !== undefined) {
-        this.controlName.setValue(this.input_value);
-      }
+      this.controlName.setValue(this.input_value);
     }, 50);
 
     this.controlName.valueChanges
@@ -145,12 +127,6 @@ export class AppInputComponent implements OnInit, OnChanges, OnDestroy {
     } else if (!this.forcedFocus) {
       el.blur();
     }
-  }
-
-  forceFocus() {
-    this.isFocus = true;
-    this.input.nativeElement.focus();
-    this.focusEvent.emit();
   }
 
   onBlur(value) {

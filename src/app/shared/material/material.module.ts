@@ -22,7 +22,6 @@ import {MatTooltipModule} from '@angular/material/tooltip';
 import {TextFieldModule} from '@angular/cdk/text-field';
 import {OverlayModule} from '@angular/cdk/overlay';
 import {DragDropModule} from '@angular/cdk/drag-drop';
-import {MatTabsModule} from '@angular/material/tabs';
 
 @NgModule({
   declarations: [],
@@ -49,8 +48,7 @@ import {MatTabsModule} from '@angular/material/tabs';
     MatSortModule,
     DragDropModule,
     TextFieldModule,
-    OverlayModule,
-    MatTabsModule
+    OverlayModule
   ],
   exports: [
     MatProgressBarModule,
@@ -74,9 +72,7 @@ import {MatTabsModule} from '@angular/material/tabs';
     MatSortModule,
     DragDropModule,
     TextFieldModule,
-    OverlayModule,
-    MatTabsModule
+    OverlayModule
   ]
 })
-export class MaterialModule {
-}
+export class MaterialModule { }

@@ -11,4 +11,3 @@ import {NextStep} from '../animations';
 export class PassLimitInfoComponent {
   @Input() passLimitInfo: PassLimitInfo;
 }
-

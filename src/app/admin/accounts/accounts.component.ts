@@ -27,7 +27,7 @@ import {PollingService} from '../../services/polling-service';
 import {ProfilePictureComponent} from './profile-picture/profile-picture.component';
 import {XlsxService} from '../../services/xlsx.service';
 import {EncounterPreventionDialogComponent} from './encounter-prevention-dialog/encounter-prevention-dialog.component';
-import {AdminPassLimitDialogComponent} from '../../admin-pass-limits-dialog/admin-pass-limits-dialog.component';
+import {AdminPassLimitDialogComponent} from './admin-pass-limits-dialog/admin-pass-limits-dialog.component';
 
 declare const window;
 

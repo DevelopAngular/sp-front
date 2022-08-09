@@ -31,11 +31,6 @@ sans-serif;
     color: $color;
 }
 
-@mixin border($size,
-$color) {
-    border: $size solid $color;
-}
-
 .ds-navy {
     @include textColor($navy);
 }
@@ -79,15 +74,6 @@ $color) {
 
 .ds-search-gray {
     @include textColor($search-gray);
-}
-
-.ds-orange {
-    @include textColor($orange)
-}
-
-.purple-border {
-    @include border(1px,
-    $soft-blue)
 }
 
 
@@ -401,6 +387,9 @@ $justify) {
     max-width: 250px;
     word-break: break-word;
     text-align: center;
+    .link {
+        color: invert(#050411);
+    }
     .only-admin {
         width: 93px;
         height: 20px;
@@ -673,6 +662,11 @@ $side) {
 .ds-p-25 {
     @include padding(25px,
     all)
+}
+
+.ds-px-0 {
+    @include padding(0px,
+    x)
 }
 
 .ds-px-5 {
