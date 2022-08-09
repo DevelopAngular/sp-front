@@ -30,7 +30,7 @@
 
             </div>
             <div class="status-button" #status>
-                <app-gradient-button *ngIf="user.isStudent()" [size]="'editable'" [rightIconWidth]="'20px'" [rightIconHeight]="'20px'" [minWidth]="'50px'" [text]="''" [gradient]="'#FFFFFF'" [rightIcon]="'./assets/External Link (Navy).svg'" [linkType]="'_blank'" [buttonLink]="studentSnapshotPage">
+                <app-gradient-button *ngIf="user.isStudent()" [size]="'editable'" [leftImageWidth]="'17px'" [text]="''" [gradient]="'#FFFFFF'" [leftIcon]="'./assets/External Link (Navy).svg'" [linkType]="'_blank'" [buttonLink]="studentSnapshotPage">
                 </app-gradient-button>
                 <!-- <app-icon-button *ngIf="!isEdit" [srcString]="'Dots'" [size]="17" (clickEvent)="openStatusPopup()"></app-icon-button> -->
                 <app-gradient-button *ngIf="isEdit" (buttonClick)="save()">Save</app-gradient-button>
