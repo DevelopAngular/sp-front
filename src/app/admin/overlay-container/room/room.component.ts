@@ -211,10 +211,10 @@ export class RoomComponent implements OnInit, OnDestroy {
           this.checkValidRoomOptions();
       });
 
-      this.isEnableRoomTrigger$.subscribe(res => {
+      this.isEnableRoomTrigger$?.subscribe(res => {
         this.data.enable = res;
         this.change$.next();
-      });
+      }) ? null : console.log('isEnableRoomTrigger$ undefined');
   }
 
   ngOnDestroy(): void {

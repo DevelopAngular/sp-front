@@ -3,7 +3,7 @@ import {AbstractControl, FormControl, FormGroup, Validators, ValidationErrors} f
 import {MAT_DIALOG_DATA, MatDialog, MatDialogRef} from '@angular/material/dialog';
 import {DomSanitizer} from '@angular/platform-browser';
 
-import {BehaviorSubject, combineLatest, forkJoin, fromEvent, merge, Observable, of, Subject, zip, throwError} from 'rxjs';
+import {BehaviorSubject, combineLatest, forkJoin, fromEvent, merge, Observable, of, Subject, zip} from 'rxjs';
 import {debounceTime, distinctUntilChanged, filter, map, switchMap, take, takeUntil, tap, catchError} from 'rxjs/operators';
 
 import {bumpIn, NextStep} from '../../animations';
@@ -924,10 +924,26 @@ export class OverlayContainerComponent implements OnInit, OnDestroy {
 
     if (this.currentPage === Pages.BulkEditRooms) {
       const patchRequests$ = (this.bulkEditData.rooms as Location[]).map(room => {
-        const data = {
-          ...room,
-          teachers: room.teachers.map(t => t.id)
+        // ensure we have visibility data
+        const {mode, over} = this.bulkEditData.roomData?.visibility ?? DEFAULT_VISIBILITY_STUDENTS ;
+        const visibilityBulkData = {
+          visibility_type: mode,
+          visibility_students: over.map(s => ''+s.id),
         };
+
+        let data: any = {};
+        let _data = {
+          ...room,
+          teachers: room.teachers.map(t => t.id),
+        };
+        data = {..._data};
+        // apply bulk visibility only if user wanted it explicitly
+        if (this.visibilityForm.dirty) {
+          data = { ..._data, ...visibilityBulkData};
+        } else {
+          delete data.visibility_students;
+          delete data.visibility_type; 
+        }
         return this.locationService.updateLocationRequest(room.id, data).pipe(
           filter(res => !!res));
       });
