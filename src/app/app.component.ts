@@ -110,6 +110,10 @@ export class AppComponent implements OnInit, AfterViewInit, OnDestroy {
     private updateService: CheckForUpdateService,
   ) {}
 
+  get isMobile() {
+    return DeviceDetection.isMobile();
+  }
+
   ngOnInit() {
     this.updateService.check();
     this.customToastOpen$ = this.toastService.isOpen$;
@@ -164,7 +168,7 @@ export class AppComponent implements OnInit, AfterViewInit, OnDestroy {
           if ((!user.isStudent()) && isAllowed) {
             this.registerRefiner(user);
           }
-          if ((!user.isStudent()) && isAllowed) {
+          if ((!user.isStudent()) && isAllowed && !this.isMobile) {
             window.Intercom('update', {'hide_default_launcher': false});
             this.registerIntercom(user);
           } else {
