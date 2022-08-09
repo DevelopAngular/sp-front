@@ -75,7 +75,8 @@ export class LocationTableComponent implements OnInit, OnDestroy {
       let v = values[0];
       try {
         v = Location.fromJSON(v);
-        values = values.filter((loc: Location) => this.filterByVisibility(loc));
+        const student = [''+ this.user.id];
+        values = values.filter((loc: Location) => this.visibilityService.filterByVisibility(loc, student));
       }catch (e) {}
     }
     // add posible filtered values
