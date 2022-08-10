@@ -165,7 +165,7 @@ export class OverlayContainerComponent implements OnInit, OnDestroy {
           break;
     }
     this.currentPage = this.overlayService.pageState.getValue().currentPage;
-      this.gradientColor = 'radial-gradient(circle at 98% 97%,' + colors + ')';
+      this.gradientColor = 'radial-gradient(circle at 98% 97%,' + (colors || ' #FFFFFF, #FFFFFF') + ')';
   }
 
   get roomTitle() {
