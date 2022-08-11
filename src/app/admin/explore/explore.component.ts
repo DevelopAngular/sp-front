@@ -445,7 +445,7 @@ export class ExploreComponent implements OnInit, OnDestroy {
               this.encounterDetectedState.isEmpty = true;
               return [{
                 'Students': null,
-                '# of encounters': null,
+                '# of Encounters': null,
                 'Passes': null,
               }];
             }
@@ -461,7 +461,7 @@ export class ExploreComponent implements OnInit, OnDestroy {
               </div>`
               let rawObj: any = {
                 'Students': students,
-                '# of encounters': encounter.numberOfEncounters,
+                '# of Encounters': encounter.numberOfEncounters,
                 'Passes': passImg,
               };
 
@@ -613,11 +613,13 @@ export class ExploreComponent implements OnInit, OnDestroy {
   }
 
   createPasses(encounters) {
+    encounters.sort((a,b)=> new Date(b.encounterDate).getTime() - new Date(a.encounterDate).getTime());
     let passess = '<div class="ds-flex-center-start">'
     for (let i = 0; i < encounters.length; i++) {
       const element = encounters[i];
 
       const passImg = `<div class="pass-icon" style="background: ${this.getGradient(element.firstStudentPass.gradient_color)}; cursor: pointer">
+                                        </div><div class="pass-icon" style="background: ${this.getGradient(element.secondStudentPass.gradient_color)}; cursor: pointer">
                                         </div>`;
       passess += passImg
     }
@@ -1137,14 +1139,14 @@ export class ExploreComponent implements OnInit, OnDestroy {
       this.encounterDetectedData.selectedDate = {}
       let start;
       let end;
-      start = moment().subtract(7, 'days').toISOString();
+      start = moment().subtract(30, 'days').toISOString();
       queryParams['start_time'] = start;
-      this.encounterDetectedData.selectedDate['start'] = moment().subtract(7, 'days');
+      this.encounterDetectedData.selectedDate['start'] = moment().subtract(30, 'days');
       end = moment().toISOString();
       queryParams['end_time'] = end;
       this.encounterDetectedData.selectedDate['end'] = moment();
       this.adminCalendarOptions = {
-        rangeId: "range_1",
+        rangeId: "range_2",
         toggleResult: "Range"
       }
     }

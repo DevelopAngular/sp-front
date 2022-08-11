@@ -98,7 +98,7 @@
 
         <div class="pass-search" *ngIf="views[currentView].id === 4">
             <app-sp-data-table [isCheckbox]="isCheckbox$" [data$]="encounterDetectionData$" [loading$]="encounterDetectedState.loading$" [showEmptyState]="encounterDetectedState.isEmpty && encounterDetectedState.loaded$ | async" [emptyIcon]="'./assets/Encounter Detection (Blue-Gray).svg' | resolveAsset"
-                [emptyText]="'No encounter detection found with the selected filters.'" [currentPage]="currentView$.value" [height]="(schools$ | async).length > 1 ? 'calc(100vh - 200px)' : 'calc(100vh - 150px)'" [isRowClick]="true" (rowClickEvent)="encounterClick($event)"
+                [emptyText]="'No detected encounters found with the selected filters.'" [currentPage]="currentView$.value" [height]="(schools$ | async).length > 1 ? 'calc(100vh - 200px)' : 'calc(100vh - 150px)'" [isRowClick]="true" (rowClickEvent)="encounterClick($event)"
                 [disabledInfinityScroll]="true" [showPrintButtons]="false"></app-sp-data-table>
             <!-- <app-sp-data-table [isCheckbox]="isCheckbox$" [data$]="encounterDetectionData$" [loading$]="encounterDetectedState.loading$" [showEmptyState]="encounterDetectedState.isEmpty && encounterDetectedState.loaded$ | async" [emptyIcon]="'./assets/Pass Search (Blue-Gray).svg' | resolveAsset"
                 [emptyText]="'No encounter detection found with the selected filters.'" [currentPage]="currentView$.value" (loadMoreData)="loadMorePasses()" (sortClickEvent)="sortHeaders($event)" [height]="(schools$ | async).length > 1 ? 'calc(100vh - 200px)' : 'calc(100vh - 150px)'"
