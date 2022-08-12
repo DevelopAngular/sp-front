@@ -102,6 +102,11 @@ const appRoutes: Routes = [
     data: { hideSchoolToggleBar: true}
   },
   {
+    path: 'classlink_oauth',
+    loadChildren: () => import('app/login/login.module').then(m => m.LoginModule),
+    data: { hideSchoolToggleBar: true}
+  },
+  {
     path: 'main',
     canActivate: [NotSeenIntroGuard, AuthenticatedGuard, IsStudentOrTeacherGuard],
     loadChildren: () => import('app/main/main.module').then(m => m.MainModule),
