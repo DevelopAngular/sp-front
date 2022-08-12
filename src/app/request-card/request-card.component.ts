@@ -5,7 +5,7 @@ import {User} from '../models/User';
 import {Util} from '../../Util';
 import {MAT_DIALOG_DATA, MatDialog, MatDialogRef} from '@angular/material/dialog';
 import {ConsentMenuComponent} from '../consent-menu/consent-menu.component';
-import {MainHallPassFormComponent, Navigation} from '../create-hallpass-forms/main-hallpass--form/main-hall-pass-form.component';
+import {Navigation} from '../create-hallpass-forms/main-hallpass--form/main-hall-pass-form.component';
 import {getInnerPassName} from '../pass-tile/pass-display-util';
 import {DataService} from '../services/data-service';
 import {LoadingService} from '../services/loading.service';
@@ -53,13 +53,13 @@ const sleep = (ms: number) => new Promise(resolve => {
 export class RequestCardComponent implements OnInit, OnDestroy {
 
   @Input() request: Request;
-  @Input() forFuture: boolean = false;
-  @Input() fromPast: boolean = false;
-  @Input() forInput: boolean = false;
-  @Input() forStaff: boolean = false;
+  @Input() forFuture = false;
+  @Input() fromPast = false;
+  @Input() forInput = false;
+  @Input() forStaff = false;
   @Input() formState: Navigation;
   @Input() isOpenBigPass: boolean;
-  @Input() fullScreenButton: boolean = false;
+  @Input() fullScreenButton = false;
 
   @Output() cardEvent: EventEmitter<any> = new EventEmitter<any>();
   @Output() scaleCard: EventEmitter<boolean> = new EventEmitter<boolean>();
@@ -72,10 +72,10 @@ export class RequestCardComponent implements OnInit, OnDestroy {
   selectedStudents;
   fromHistory;
   fromHistoryIndex;
-  messageEditOpen: boolean = false;
-  dateEditOpen: boolean = false;
-  cancelOpen: boolean = false;
-  pinnableOpen: boolean = false;
+  messageEditOpen = false;
+  dateEditOpen = false;
+  cancelOpen = false;
+  pinnableOpen = false;
   user: User;
 
   isModal: boolean;
@@ -91,7 +91,7 @@ export class RequestCardComponent implements OnInit, OnDestroy {
 
   hoverDestroyer$: Subject<any>;
 
-  activeTeacherPin: boolean = false;
+  activeTeacherPin = false;
   solidColorRgba: string;
   solidColorRgba2: string;
   removeShadow: boolean;
@@ -151,7 +151,7 @@ export class RequestCardComponent implements OnInit, OnDestroy {
         return destination.teachers;
       }
     }
-    return [this.request.teacher];
+    return this.request.teachers;
   }
 
   get filteredTeachers() {
@@ -229,7 +229,11 @@ export class RequestCardComponent implements OnInit, OnDestroy {
   }
 
   get teacherName() {
-    return this.request.teacher.isSameObject(this.user) ? 'Me' : this.request.teacher.first_name.substr(0, 1) + '. ' + this.request.teacher.last_name;
+    return this.request.teachers.map(t => {
+      return t.isSameObject(this.user)
+        ? 'Me'
+        : t.first_name.substr(0, 1) + '. ' + t.last_name;
+    }).join(', ');
   }
 
   get gradient() {
@@ -264,25 +268,27 @@ export class RequestCardComponent implements OnInit, OnDestroy {
       } else if (to.request_mode === 'specific_teachers' && this.request.destination.request_teachers.length === 1) {
         this.nowTeachers = to.request_teachers;
       } else if (to.request_mode === 'specific_teachers') {
-        this.nowTeachers = [this.request.teacher];
+        this.nowTeachers = this.request.teachers;
       } else if (to.request_mode === 'teacher_in_room' && to.teachers.length === 1) {
-        this.nowTeachers = [this.request.teacher];
+        this.nowTeachers = this.request.teachers;
       }
     } else {
       if (to.scheduling_request_mode === 'all_teachers_in_room') {
         if (to.scheduling_request_send_origin_teachers && to.scheduling_request_send_destination_teachers) {
           this.futureTeachers = [...this.formState.data.direction.to.teachers, ...this.formState.data.direction.from.teachers];
         } else if (to.scheduling_request_send_origin_teachers) {
-          this.futureTeachers = this.formState.data.direction.from.teachers.length ? this.formState.data.direction.from.teachers : this.formState.data.direction.to.teachers;
+          this.futureTeachers = this.formState.data.direction.from.teachers.length
+            ? this.formState.data.direction.from.teachers
+            : this.formState.data.direction.to.teachers;
         } else if (to.scheduling_request_send_destination_teachers) {
           this.futureTeachers = this.formState.data.direction.to.teachers;
         }
       } else if (to.scheduling_request_mode === 'specific_teachers' && this.request.destination.scheduling_request_teachers.length === 1) {
         this.futureTeachers = this.request.destination.scheduling_request_teachers;
       } else if (to.scheduling_request_mode === 'specific_teachers' && this.request.destination.scheduling_request_teachers.length > 1) {
-        this.futureTeachers = [this.request.teacher];
+        this.futureTeachers = this.request.teachers;
       } else if (to.scheduling_request_mode === 'teacher_in_room' && to.teachers.length === 1) {
-        this.futureTeachers = [this.request.teacher];
+        this.futureTeachers = this.request.teachers;
       }
     }
   }
@@ -316,11 +322,14 @@ export class RequestCardComponent implements OnInit, OnDestroy {
         body.teachers = uniq(this.nowTeachers.map(t => t.id));
       }
     } else {
+      body.teachers = uniq(
+        [...this.request.teachers, ...this.formState.data.direction.from.teachers]
+          .filter(Boolean)
+          .map(t => t.id)
+      );
+
       if (this.formState.kioskMode) {
-        body.teachers = uniq(this.formState.data.direction.from.teachers.map(t => t.id));
         body.student_id = this.formState.data.kioskModeStudent.id;
-      } else {
-        body.teacher = this.request.teacher.id;
       }
     }
 
@@ -354,8 +363,9 @@ export class RequestCardComponent implements OnInit, OnDestroy {
           }
           return this.formState.previousStep === 1 ? this.requestService.cancelRequest(this.request.id) :
             (this.formState.missedRequest ? this.requestService.cancelInvitation(this.formState.data.request.id, '') : of(null));
-        }))
-        .subscribe((res) => {
+        })
+      ).subscribe({
+        next: () => {
           this.performingAction = true;
           if (!this.formState.kioskMode) {
             if ((DeviceDetection.isAndroid() || DeviceDetection.isIOSMobile()) && this.forFuture) {
@@ -364,7 +374,11 @@ export class RequestCardComponent implements OnInit, OnDestroy {
             }
             this.dialogRef.close();
           }
-        });
+        },
+        error: () => {
+          this.performingAction = false;
+        }
+      });
     }
   }
 
@@ -402,7 +416,7 @@ export class RequestCardComponent implements OnInit, OnDestroy {
             'destination': this.request.destination.id,
             'attachment_message': this.request.attachment_message,
             'travel_type': this.request.travel_type,
-            'teacher': this.request.teacher.id,
+            'teachers': this.request.teachers.map(u => u.id),
             'duration': this.request.duration,
             'request_time': moment(state.data.date.date).toISOString()
           };
@@ -502,7 +516,7 @@ export class RequestCardComponent implements OnInit, OnDestroy {
     } else if (action === 'editMessage') {
       this.editMessage();
     } else if (action === 'deny_with_message') {
-      let denyMessage: string = '';
+      let denyMessage = '';
       if (action.indexOf('Message') > -1) {
 
       } else {
@@ -514,7 +528,7 @@ export class RequestCardComponent implements OnInit, OnDestroy {
           data: {
             'forInput': false,
             'entryState': {step: 3, state: 5},
-            'teacher': this.request.teacher,
+            'teachers': this.request.teachers.map(u => u.id),
             'originalMessage': '',
             'originalToLocation': this.request.destination,
             'colorProfile': this.request.color_profile,
@@ -586,7 +600,9 @@ export class RequestCardComponent implements OnInit, OnDestroy {
     let studentPassLimitReached = false;
     const studentPassLimit = (await this.passLimitsService.getPassLimit().toPromise()).pass_limit;
     if (studentPassLimit?.limitEnabled) {
-      const remainingPasses = (await this.passLimitsService.getRemainingLimits({studentId: this.request.student.id}).toPromise()).remainingPasses;
+      const remainingPasses = (
+        await this.passLimitsService.getRemainingLimits({studentId: this.request.student.id}).toPromise()
+      ).remainingPasses;
       studentPassLimitReached = remainingPasses === 0;
     }
 
