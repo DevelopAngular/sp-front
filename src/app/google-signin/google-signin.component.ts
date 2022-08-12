@@ -308,7 +308,7 @@ export class GoogleSigninComponent implements OnInit, OnDestroy {
     } else if (this.isClasslink) {
       this.showSpinner = true;
       this.storage.setItem('authType', this.loginData.authType);
-      const redirect = this.httpService.getEncodedRedirectUrl() + '/classlink_oauth';
+      const redirect = this.httpService.getEncodedRedirectUrl() + 'classlink_oauth';
       window.location.href = `https://launchpad.classlink.com/oauth2/v2/auth?scope=oneroster,profile,full&client_id=c1655133410502391e3e32b3fb24cefb8535bd9994d4&response_type=code&redirect_uri=${redirect}`;
     } else if (this.isStandardLogin) {
       this.storage.setItem('authType', this.loginData.authType);
