@@ -388,7 +388,7 @@ export class MyRoomComponent implements OnInit, OnDestroy, AfterViewInit {
       // this.storage.setItem('refresh_token', res.refresh_token);
       this.loginService.updateAuth({username: this.user.primary_email, type: 'demo-login', kioskMode: true});
       this.http.kioskTokenSubject$.next(res);
-      this.router.navigate(['main/kioskMode']);
+      this.router.navigate(['main/kioskMode'], {state: {openDialog: true}});
     });
 
   }

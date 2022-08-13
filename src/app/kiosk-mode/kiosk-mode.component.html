@@ -1,23 +1,36 @@
 <div class="kiosk-mode-container">
   <div class="current-pass ds-mb-25">
-      <app-display-card [title]="'Create Pass'" [hasDivider]="true" [fontSize]="'20px'">
-        <div class="pass-buttons">
+    <app-display-card [title]="'Create Pass'" [hasDivider]="true" [fontSize]="'20px'">
+      <div class="app-display-card-container">
+        <div class="pass-buttons" *ngIf="(showButtons | async)">
           <app-create-pass-button
-                  [title]="'Now'"
-                  (onClick)="showMainForm(false)"
+            [title]="'Now'"
+            (onClick)="showMainForm(false)"
           ></app-create-pass-button>
 
           <app-create-pass-button
-                  [title]="'Future'"
-                  [disabled]="true"
-                  (onClick)="showMainForm(true)"
-                  customToolTip="Future passes cannot be created with Kiosk. Please use your own device or ask a teacher."
-                  [editable]="true"
-                  [nonDisappearing]="false"
+            [title]="'Future'"
+            [disabled]="true"
+            (onClick)="showMainForm(true)"
+            customToolTip="Future passes cannot be created with Kiosk. Please use your own device or ask a teacher."
+            [editable]="true"
+            [nonDisappearing]="false"
           ></app-create-pass-button>
-
         </div>
-      </app-display-card>
+        <div class="display-card-divider" *ngIf="(showButtons | async) && (showScanner | async)">
+          <div></div>
+          <span>or</span>
+          <div></div>
+        </div>
+        <div class="scanner-display" *ngIf="(showScanner | async)">
+          <div></div>
+          <div>
+            <img [src]="'./assets/Barcode (Blue-Gray).svg' | resolveAsset" alt="">
+          </div>
+          <span>Scan your ID to create a pass</span>
+        </div>
+      </div>
+    </app-display-card>
   </div>
   <div class="active-passes">
     <div class="active-passes" *ngIf="activePassesKiosk">
@@ -45,4 +58,3 @@
     >
   </div>
 </div>
-

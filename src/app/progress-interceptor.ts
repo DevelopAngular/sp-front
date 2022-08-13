@@ -1,6 +1,6 @@
 import {Injectable, Injector} from '@angular/core';
 import {HttpEvent, HttpHandler, HttpInterceptor, HttpRequest} from '@angular/common/http';
-import {Observable, throwError} from 'rxjs';
+import {Observable, throwError, of} from 'rxjs';
 import {catchError} from 'rxjs/operators';
 import {Router} from '@angular/router';
 import {HttpService} from './services/http-service';
@@ -20,6 +20,10 @@ export class ProgressInterceptor implements HttpInterceptor {
         return next.handle(req)
                     .pipe(
                       catchError((error: any) => {
+                        if (req.headers.has('x-ignore-errors')) {
+                          return of(null);
+                        }
+
                         const exeptedUrls = [
                           'onboard/schools/check_school',
                           'discovery/find',

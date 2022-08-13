@@ -89,6 +89,11 @@ function makeConfig(config: Config, school: School, effectiveUserId): Config & {
   //   responseType: 'json',
   // }) as any);
 
+  if (config !== undefined && 'headers' in config) {
+    Object.assign(headers, config.headers);
+    delete config.headers;
+  }
+
   return Object.assign({}, config || {}, {
     headers: headers,
     responseType: 'json',

@@ -42,6 +42,7 @@ import {NotificationRoomFormComponent } from '../notification-form/notification-
 import {NotificationSelectStudentsComponent } from '../notification-form/notification-select-students/notification-select-students.component';
 import {NotificationSelectStudentsDialogComponent } from '../notification-form/notification-select-students-dialog/notification-select-students-dialog.component';
 import {NotificationOptionComponent} from '../notification-form/notification-option/notification-option.component';
+import {KioskSettingsDialogComponent} from '../kiosk-settings-dialog/kiosk-settings-dialog.component';
 
 
 @NgModule({
@@ -93,6 +94,7 @@ import {NotificationOptionComponent} from '../notification-form/notification-opt
       NotificationSelectStudentsDialogComponent,
       NotificationOptionComponent,
       OfflineBarComponent,
+      KioskSettingsDialogComponent,
     ],
     providers: []
 })
