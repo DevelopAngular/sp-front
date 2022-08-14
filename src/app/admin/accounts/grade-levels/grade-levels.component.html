@@ -110,8 +110,8 @@
         <div class="page" *ngIf="page === 4">
             <div class="upload-info" style="padding: 20px">
                 <div class="upload-title">Upload complete</div>
-                <div class="info"><span style="font-weight: bold">New Grade Levels: </span><span>{{ allProfiles.length }} accounts</span></div>
-                <div class="info"><span style="font-weight: bold">Uploaded Grade Levels: </span><span>{{ allProfiles.length }} accounts</span></div>
+                <div class="info"><span style="font-weight: bold">New Grade Levels: </span><span>{{ newUploadedIDS }} accounts</span></div>
+                <div class="info"><span style="font-weight: bold">Uploaded Grade Levels: </span><span>{{ totalUploadedIDS }} accounts</span></div>
                 <div class="info"><span style="font-weight: bold">Errors: </span><span>{{ errors.length }} errors <a *ngIf="errors.length" download="error.txt" [href]="downloadData()" style="color: #E32C66; cursor: pointer;">[Download]</a></span>
                 </div>
             </div>

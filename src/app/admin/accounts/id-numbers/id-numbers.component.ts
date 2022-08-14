@@ -115,6 +115,8 @@ export class IdNumbersComponent implements OnInit {
 
   uploadedProfiles: any = [];
   allProfiles: any = [];
+  newUploadedIDS: number = 0;
+  totalUploadedIDS: number = 0;
 
   constructor(
     public dialogRef: MatDialogRef<IdNumbersComponent>,
@@ -151,6 +153,8 @@ var csvFile = new Blob([this.selectedMapFile]);
         next: (result: any) => {
           this.page = 4;
           this.errors = result.response.errors;
+          this.newUploadedIDS = result.response.new_uploads;
+          this.totalUploadedIDS = result.response.num_of_uploaded;
           let idCardFormData: FormData = new FormData();
           idCardFormData.append("show_custom_ids", 'true');
           this.idCardService.updateIDCardField(idCardFormData).subscribe();
