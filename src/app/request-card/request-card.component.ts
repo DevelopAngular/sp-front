@@ -322,12 +322,7 @@ export class RequestCardComponent implements OnInit, OnDestroy {
         body.teachers = uniq(this.nowTeachers.map(t => t.id));
       }
     } else {
-      body.teachers = uniq(
-        [...this.request.teachers, ...this.formState.data.direction.from.teachers]
-          .filter(Boolean)
-          .map(t => t.id)
-      );
-
+      body.teachers = uniq(this.request.teachers.map(t => t.id));
       if (this.formState.kioskMode) {
         body.student_id = this.formState.data.kioskModeStudent.id;
       }
