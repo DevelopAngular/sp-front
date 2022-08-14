@@ -460,7 +460,7 @@ export class OverlayContainerComponent implements OnInit, OnDestroy {
             this.uniqueFolderNameValidator.bind(this)
         ),
         roomNumber: new FormControl('',
-            [Validators.required, Validators.maxLength(5)]),
+            [Validators.required, Validators.maxLength(7)]),
         timeLimit: new FormControl('', [
             Validators.required,
             Validators.pattern('^[0-9]*?[0-9]+$'),
