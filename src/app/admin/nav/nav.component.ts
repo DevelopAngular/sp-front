@@ -63,9 +63,10 @@ export class NavComponent implements OnInit, AfterViewInit, OnDestroy {
   ];
 
   views: View = {
-    'pass_search': { id: 1, title: 'Passes', color: '#00B476', icon: 'Pass Search', action: 'pass_search' },
-    'report_search': { id: 2, title: 'Report Submissions', color: '#E32C66', icon: 'Report Search', action: 'report_search' },
-    'contact_trace': { id: 3, title: 'Contact trace', color: '#139BE6', icon: 'Contact Trace', action: 'contact_trace' },
+    'pass_search': {id: 1, title: 'Passes', color: '#00B476', icon: 'Pass Search', action: 'pass_search'},
+    'report_search': {id: 2, title: 'Report Submissions', color: '#E32C66', icon: 'Report Search', action: 'report_search'},
+    'contact_trace': {id: 3, title: 'Contact trace', color: '#139BE6', icon: 'Contact Trace', action: 'contact_trace'},
+    'encounter_detection': {id: 4, title: 'Detected Encounters', color: '#1F195E', icon: 'Encounter Detection', action: 'encounter_detection'},
     // 'rooms_usage': {id: 4, title: 'Rooms Usage', color: 'orange', icon: 'Rooms Usage', action: 'rooms_usage'}
   };
 

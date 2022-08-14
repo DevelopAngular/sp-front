@@ -88,6 +88,7 @@ function makeConfig(config: Config, school: School, effectiveUserId): Config & {
   //   headers: headers,
   //   responseType: 'json',
   // }) as any);
+  // console.log("headers : ", headers)
 
   return Object.assign({}, config || {}, {
     headers: headers,

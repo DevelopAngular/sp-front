@@ -2,15 +2,15 @@
     <div class="heading" #header>
         <div class="back-button">
             <img (click)="back()" *ngIf="page !== 3 && page !== 4" [src]="'./assets/Back Button (Light-Gray).svg'" alt="Back Button (Blue-White).svg">
-            <div class="cancel" (click)="openConfirm($event)" *ngIf="page === 3 && !(showProcessingSpinner$ | async)">Cancel</div>
+            <!-- <div class="cancel" (click)="openConfirm($event)" *ngIf="page === 3 && !(showProcessingSpinner$ | async)">Cancel</div> -->
             <!-- <div class="cancel" (click)="dialog.closeAll()" *ngIf="page === 3 && (showProcessingSpinner$ | async)">Close</div> -->
         </div>
         <div class="ds-dialog-title-white ds-flex-center-center">
             <img [src]="'./assets/Grade level (White).svg' | resolveAsset" width="20" height="20" alt="(White).svg" class="ds-mr-10">
             <span>Grade Levels</span>
         </div>
-        <div class="save-button" [customToolTip]="(!uploadingProgress.images.complete || !uploadingProgress.csv.complete) && page === 2 ? 'Make sure to add the profile picture files and the map file before uploading!' : null">
-            <app-gradient-button *ngIf="page !== 3 && page !== 5" [disabled]="!uploadingProgress.csv.complete && page === 2" [size]="'small'" [gradient]="'#FFFFFF, #FFFFFF'" [hoverColor]="'#FCFDFF'" [textColor]="'#07ABC3'" [cursor]="'pointer'" (buttonClick)="nextPage()">
+        <div class="save-button">
+            <app-gradient-button *ngIf="page !== 3 && page !== 5" [disabled]="!uploadingProgress.csv.complete && page === 2" [size]="'small'" [gradient]="'#FFFFFF, #FFFFFF'" [hoverColor]="'#FCFDFF'" [textColor]="'#1F195E'" [cursor]="'pointer'" (buttonClick)="nextPage()">
                 <div class="ds-flex-center-start">
                     <span>
              {{ page === 4 ? 'Done' : 'Next' }}
@@ -42,16 +42,19 @@
                     <div class="step"> -->
             <div class="ds-dialog-heading">Add map file</div>
             <div class="description">
-                Upload a CSV containing the email and the corresponding ID number.
+                Upload a CSV containing the email and the corresponding Grade level.
             </div>
             <!-- </div>
                 </div> -->
             <div class="buttons">
-                <app-gradient-button [gradient]="!uploadingProgress.csv.inProcess && !uploadingProgress.csv.complete ? '#7F879D, #7F879D' : '#07ABC3, #07ABC3'" [hoverColor]="'#7F879D'" [leftIcon]="'./assets/Simple CSV (White).svg'" (buttonClick)="csvFile.click()" [size]="'small'">{{ !uploadingProgress.csv.inProcess && !uploadingProgress.csv.complete ? 'Choose CSV' : 'File selected' }}
+                <app-gradient-button [gradient]="!uploadingProgress.csv.inProcess && !uploadingProgress.csv.complete ? '#7F879D, #7F879D' : '#1F195E, #1F195E'" [hoverColor]="'#7F879D'" [leftIcon]="'./assets/Simple CSV (White).svg'" (buttonClick)="csvFile.click()" [size]="'small'">{{ !uploadingProgress.csv.inProcess && !uploadingProgress.csv.complete ? 'Choose CSV' : 'File selected' }}
                 </app-gradient-button>
-                <app-gradient-button [style.margin-left]="'7px'" [size]="'small'" [gradient]="'#F4F4F4, #F4F4F4'" [buttonLink]="'./assets/xlsx/SmartPass Grade Level Template.csv'" [linkType]="'_self'" [download]="true" [hoverColor]="'#F4F4F4'" [textColor]="'#1E194F'" [leftIcon]="'./assets/Download (Navy).svg'"
+                <app-gradient-button [style.margin-left]="'7px'" [size]="'small'" [gradient]="'#F4F4F4, #F4F4F4'" [buttonLink]="'https://www.smartpass.app/gradeleveltemplate'" [linkType]="'_blank'" [download]="true" [hoverColor]="'#F4F4F4'" [textColor]="'#1E194F'" [leftIcon]="'./assets/Download (Navy).svg'"
                     [text]="'Download Template'" [cursor]="'pointer'">
                 </app-gradient-button>
+                <!-- <app-gradient-button [style.margin-left]="'7px'" [size]="'small'" [gradient]="'#F4F4F4, #F4F4F4'" [buttonLink]="'./assets/xlsx/SmartPass Grade Level Template.csv'" [linkType]="'_self'" [download]="true" [hoverColor]="'#F4F4F4'" [textColor]="'#1E194F'"
+                    [leftIcon]="'./assets/Download (Navy).svg'" [text]="'Download Template'" [cursor]="'pointer'">
+                </app-gradient-button> -->
 
                 <input type="file" accept=".csv" [formControl]="form.get('csvFile')" #csvFile style="display: none" />
             </div>
@@ -107,8 +110,8 @@
         <div class="page" *ngIf="page === 4">
             <div class="upload-info" style="padding: 20px">
                 <div class="upload-title">Upload complete</div>
-                <div class="info"><span style="font-weight: bold">New Grade Levels: </span><span>{{ allProfiles.length }} accounts</span></div>
-                <div class="info"><span style="font-weight: bold">Uploaded Grade Levels: </span><span>{{ allProfiles.length }} accounts</span></div>
+                <div class="info"><span style="font-weight: bold">New Grade Levels: </span><span>{{ newUploadedIDS }} accounts</span></div>
+                <div class="info"><span style="font-weight: bold">Uploaded Grade Levels: </span><span>{{ totalUploadedIDS }} accounts</span></div>
                 <div class="info"><span style="font-weight: bold">Errors: </span><span>{{ errors.length }} errors <a *ngIf="errors.length" download="error.txt" [href]="downloadData()" style="color: #E32C66; cursor: pointer;">[Download]</a></span>
                 </div>
             </div>
@@ -160,7 +163,7 @@
                 <div class="upload-info">
                     <div class="update-button">
                         <div>
-                            <div class="title">Add or Grade Levels</div>
+                            <div class="title">Add or Update Grade Levels</div>
                             <div class="subtitle">Bulk upload Grade Levels</div>
                         </div>
                         <app-gradient-button [rightIconWidth]="'15px'" [rightIcon]="'./assets/Chevron Right (White).svg'" [gradient]="'#1F195E, #1F195E'" (buttonClick)="clearData(); page = 2">New Upload</app-gradient-button>
