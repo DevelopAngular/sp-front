@@ -188,11 +188,21 @@
                             </div>
                             <div class="form-content" [style.margin]="'20px 0'">
                                 <div class="title">Grade</div>
-                                <div class="value">{{ profile.grade_level || '-' }}</div>
+                                <div class="value" *ngIf="!user.isAdmin()">{{ profile.grade_level || '-' }}</div>
+                                <div class="value" *ngIf="user.isAdmin()">
+                                    <app-gradient-button (buttonClick)="openGradeLevel()" [size]="'small'" [rightIconWidth]="'16px'" [gradient]="'#00B476, #00B476'" [rightIcon]="'./assets/External Link (White).svg'">
+                                        Add Grade Level
+                                    </app-gradient-button>
+                                </div>
                             </div>
                             <div class="form-content">
                                 <div class="title">ID</div>
-                                <div class="value">{{ profile.custom_id || '-' }}</div>
+                                <div class="value" *ngIf="!user.isAdmin()">{{ profile.custom_id || '-' }}</div>
+                                <div class="value" *ngIf="user.isAdmin()">
+                                    <app-gradient-button (buttonClick)="openIDNumber()" [size]="'small'" [rightIconWidth]="'16px'" [gradient]="'#00B476, #00B476'" [rightIcon]="'./assets/External Link (White).svg'">
+                                        Add ID Number
+                                    </app-gradient-button>
+                                </div>
                             </div>
                             <div class="form-content" [style.margin]="'20px 0'">
                                 <div class="title">Account Type <span class="support-icon" customToolTip [contentTemplate]="text"><img width="13px" [src]="'./assets/Support (Gray-200).svg' | resolveAsset"></span></div>

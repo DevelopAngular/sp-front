@@ -62,7 +62,7 @@
 
                     </div>
                     <div class="status" [customToolTip]="statusDescriptions[profileStatusActive] || null" (click)="openStatusPopup()" [style.color]="profileStatusActive === 'active' ? '#00B476' : profileStatusActive === 'suspended' ? '#6651F1' : '#7f879d'">
-                        {{ profileStatusActive == 'active' ? 'Last Active' : profileStatusActive }}
+                        {{ profileStatusActive }}
                         <span><img width="9px" [src]="'./assets/Chevron Down (' + (profileStatusActive === 'active' ? 'Jade' : (profileStatusActive === 'disabled' ? 'Blue-Gray' : 'Soft-Blue')) + ').svg' | resolveAsset" alt=""></span>
                     </div>
                 </div>
@@ -84,7 +84,7 @@
                     <div class="title">Grade</div>
                     <div class="subtitle" *ngIf="user.isStudent()" style="white-space: normal; word-break: break-word; width: 280px">{{ user.grade_level || '-' }}</div>
                     <div class="subtitle" *ngIf="user.isAdmin()">
-                        <app-gradient-button (buttonClick)="openGradeLevel()" [size]="'tiny'" [gradient]="'#00B476, #00B476'" [rightIcon]="'./assets/External Link (White).svg'">
+                        <app-gradient-button (buttonClick)="openGradeLevel()" [size]="'small'" [rightIconWidth]="'16px'" [gradient]="'#00B476, #00B476'" [rightIcon]="'./assets/External Link (White).svg'">
                             Add Grade Level
                         </app-gradient-button>
                     </div>
@@ -93,7 +93,7 @@
                     <div class="title">ID</div>
                     <div class="subtitle" *ngIf="!user.isAdmin()" style="white-space: normal; word-break: break-word; width: 280px">{{ user.custom_id || '-' }}</div>
                     <div class="subtitle" *ngIf="user.isAdmin()">
-                        <app-gradient-button (buttonClick)="openIDNumber()" [size]="'tiny'" [gradient]="'#00B476, #00B476'" [rightIcon]="'./assets/External Link (White).svg'">
+                        <app-gradient-button (buttonClick)="openIDNumber()" [size]="'small'" [rightIconWidth]="'16px'" [gradient]="'#00B476, #00B476'" [rightIcon]="'./assets/External Link (White).svg'">
                             Add ID Number
                         </app-gradient-button>
                     </div>
@@ -113,7 +113,7 @@
                     </div>
                 </div>
             </div>
-            <mat-divider></mat-divider>
+            <!-- <mat-divider></mat-divider>
             <div class="block" *ngIf="!user.isStudent()">
                 <div class="title" style="display: flex">
                     <app-octagon [size]="21">
@@ -132,12 +132,12 @@
                     </div>
                 </ng-template>
                 <app-gradient-button style="margin-top: 9px" [leftIcon]="'./assets/Plus (White).svg'" (buttonClick)="openExclusionGroups('newGroup')">New Group</app-gradient-button>
-            </div>
+            </div> -->
             <mat-divider></mat-divider>
             <div class="block">
                 <div class="descriptions">
                     <div class="info">
-                        <div class="title">Last sign-in</div>
+                        <div class="title">Last Active</div>
                         <div class="subtitle">{{ profile['Last sign-in'] }}</div>
                     </div>
                     <div class="info">

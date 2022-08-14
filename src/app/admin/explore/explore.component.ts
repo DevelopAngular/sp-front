@@ -91,7 +91,7 @@ export class ExploreComponent implements OnInit, OnDestroy {
     'pass_search': { id: 1, title: 'Passes', color: '#00B476', icon: 'Pass Search', action: 'pass_search' },
     'report_search': { id: 2, title: 'Report Submissions', color: '#E32C66', icon: 'Report Search', action: 'report_search' },
     'contact_trace': { id: 3, title: 'Contact trace', color: '#139BE6', icon: 'Contact Trace', action: 'contact_trace' },
-    'encounter_detection': { id: 4, title: 'Encounter Detection', color: '#1F195E', icon: 'Encounter Detection', action: 'encounter_detection' },
+    'encounter_detection': { id: 4, title: 'Detected Encounters', color: '#1F195E', icon: 'Encounter Detection', action: 'encounter_detection' },
     // 'rooms_usage': {id: 4, title: 'Rooms Usage', color: 'orange', icon: 'Rooms Usage', action: 'rooms_usage'}
   };
 
@@ -397,8 +397,8 @@ export class ExploreComponent implements OnInit, OnDestroy {
             let rawObj: any = {
               'Pass': passImg,
               'Student Name': pass.student.display_name,
-              'Grade': pass.student.grade_level ?? "-",
-              'ID': pass.student.custom_id ?? "-",
+              'Grade': pass.student.grade_level ? this.domSanitizer.bypassSecurityTrustHtml(`<span class="grade-level">${pass.student.grade_level}</span>`) : "-",
+              'ID': pass.student.custom_id ? this.domSanitizer.bypassSecurityTrustHtml(`<span class="id-number">${pass.student.custom_id}</span>`) : "-",
               'Origin': pass.origin.title,
               'Destination': pass.destination.title,
               'Pass start time': moment(pass.start_time).format('M/DD h:mm A'),
@@ -515,8 +515,8 @@ export class ExploreComponent implements OnInit, OnDestroy {
 
             const result = {
               'Student Name': contact.student.display_name,
-              'Grade': contact.student.grade_level ?? "-",
-              'ID': contact.student.custom_id ?? "-",
+              'Grade': contact.student.grade_level ? this.domSanitizer.bypassSecurityTrustHtml(`<span class="grade-level">${contact.student.grade_level}</span>`) : "-",
+              'ID': contact.student.custom_id ? this.domSanitizer.bypassSecurityTrustHtml(`<span class="id-number">${contact.student.custom_id}</span>`) : "-",
               'Degree': contact.degree,
               'Contact connection': this.domSanitizer.bypassSecurityTrustHtml(
                 `<div class="no-wrap" style="display: flex; width: 300px !important;">` +
@@ -583,8 +583,8 @@ export class ExploreComponent implements OnInit, OnDestroy {
           const passTile = this.domSanitizer.bypassSecurityTrustHtml(_passTile);
           const result = {
             'Student Name': this.domSanitizer.bypassSecurityTrustHtml(`<div>${report.student.display_name}</div>`),
-            'Grade': report.student.grade_level ?? "-",
-            'ID': report.student.custom_id ?? "-",
+            'Grade': report.student.grade_level ? this.domSanitizer.bypassSecurityTrustHtml(`<span class="grade-level">${report.student.grade_level}</span>`) : "-",
+            'ID': report.student.custom_id ? this.domSanitizer.bypassSecurityTrustHtml(`<span class="id-number">${report.student.custom_id}</span>`) : "-",
             'Message': this.domSanitizer.bypassSecurityTrustHtml(`<div><div class="message">${report.message || 'No report message'}</div></div>`),
             'Status': report.status,
             'Pass': passTile,
