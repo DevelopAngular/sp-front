@@ -172,6 +172,8 @@ export class PassCollectionComponent implements OnInit, OnDestroy {
       return 'Past 7 days';
     } else if (this.selectedSort === 'all_time' || !this.selectedSort) {
       return 'All Time';
+    } else if (this.selectedSort === 'school-year') {
+      return 'This school year';
     }
   }
 

@@ -95,6 +95,8 @@ import {PassLimitInfoComponent} from '../pass-limit-info/pass-limit-info.compone
 import { IdNumbersComponent } from '../admin/accounts/id-numbers/id-numbers.component';
 import { GradeLevelsComponent } from '../admin/accounts/grade-levels/grade-levels.component';
 import {ConfirmDeleteKioskModeComponent} from '../request-card/confirm-delete-kiosk-mode/confirm-delete-kiosk-mode.component';
+import { IdCardGradeLevelsComponent } from '../admin/id-cards/id-card-grade-levels/id-card-grade-levels.component';
+import { IdCardIdNumbersComponent } from '../admin/id-cards/id-card-id-numbers/id-card-id-numbers.component';
 const DEFAULT_SWIPER_CONFIG: SwiperConfigInterface = {
   direction: 'horizontal',
   slidesPerView: 'auto'
@@ -196,6 +198,8 @@ const DEFAULT_SWIPER_CONFIG: SwiperConfigInterface = {
     ConfirmationComponent,
     IdNumbersComponent,
     GradeLevelsComponent,
+    IdCardGradeLevelsComponent,
+    IdCardIdNumbersComponent,
     ConfirmDeleteKioskModeComponent
   ],
   exports: [
@@ -279,6 +283,8 @@ const DEFAULT_SWIPER_CONFIG: SwiperConfigInterface = {
     PassLimitInfoComponent,
     IdNumbersComponent,
     GradeLevelsComponent,
+    IdCardGradeLevelsComponent,
+    IdCardIdNumbersComponent,
     ConfirmDeleteKioskModeComponent
   ],
   providers: [

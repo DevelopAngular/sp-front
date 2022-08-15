@@ -76,6 +76,7 @@ import {ToastEffects} from './ngrx/toast/effects';
 import {SmartpassSearchEffects} from './ngrx/smartpass-search/effects';
 import { PassLimitsDialogComponent } from './teacher/pass-limits-dialog/pass-limits-dialog.component';
 import { IdcardOverlayContainerComponent } from './idcard-overlay-container/idcard-overlay-container.component';
+import { EncounterDetectionEffects } from './ngrx/encounter-detection/effects';
 
 const DEFAULT_SWIPER_CONFIG: SwiperConfigInterface = {
   direction: 'horizontal',
@@ -218,6 +219,7 @@ const appRoutes: Routes = [
             ExclusionGroupsEffects,
             ToastEffects,
             SmartpassSearchEffects,
+            EncounterDetectionEffects
         ]),
         StoreDevtoolsModule.instrument({}),
         HammerModule,
