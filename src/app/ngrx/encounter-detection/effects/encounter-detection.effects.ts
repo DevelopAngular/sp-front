@@ -24,6 +24,7 @@ export class EncounterDetectionEffects {
                             return encounterDetectionActions.getEncounterDetectionSuccess({ encounterDetection: results });
                         }),
                         catchError(error => {
+                          console.log(error);
                             return of(encounterDetectionActions.getEncounterDetectionFailure({ errorMessage: error.message }));
                         })
                     );

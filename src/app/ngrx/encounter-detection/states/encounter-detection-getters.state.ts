@@ -9,9 +9,9 @@ export const getEncounterDetectionLoading = createSelector(
     (state: EncounterDetectionState) => state.loading
 );
 
-export const getEncounterDetectionLoaded = createSelector(
-    getEncounterdetectionState,
-    (state: EncounterDetectionState) => state.loaded
+export const getEncounterDetectionErrored = createSelector(
+  getEncounterdetectionState,
+  (state: EncounterDetectionState) =>  state.error
 );
 
 export const getEncounterDetectionCollection = createSelector(
