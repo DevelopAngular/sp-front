@@ -54,6 +54,7 @@ export interface CurrentView {
   color: string;
   icon: string;
   action: string;
+  isPro?: boolean;
 }
 
 export enum SearchPages {
@@ -130,6 +131,7 @@ export class ExploreComponent implements OnInit, OnDestroy {
     isAllSelected$: Observable<boolean>,
     // nextUrl$: Observable<string>
   };
+  isProUser: boolean;
   isSearched: boolean;
   showContactTraceTable: boolean;
   schools$: Observable<School[]>;
@@ -238,10 +240,20 @@ export class ExploreComponent implements OnInit, OnDestroy {
   ngOnInit() {
     this.schools$ = this.http.schoolsCollection$;
     this.clickEventSubscription = this.componentService.getClickEvent().subscribe((action) => {
+      if (action == "encounter_detection" && !this.userService.getFeatureEncounterDetection()) {
+        this.isProUser = false;
+      }else {
+        this.isProUser = true;
+      }
       this.currentView$.next(action);
       this.storage.setItem('explore_page', action);
       this.cdr.detectChanges();
     })
+    if (this.currentView$.getValue() == "encounter_detection" && !this.userService.getFeatureEncounterDetection()) {
+      this.isProUser = false;
+    }else {
+      this.isProUser = true;
+    }
     this.user$ = this.userService.user$;
 
     this.passSearchState = {
@@ -623,7 +635,7 @@ export class ExploreComponent implements OnInit, OnDestroy {
                                         </div>`;
       passess += passImg
     }
-    return this.domSanitizer.bypassSecurityTrustHtml(passess + `</div>`);
+    return this.domSanitizer.bypassSecurityTrustHtml(`${passess}</div>`);
   }
 
   ngOnDestroy() {

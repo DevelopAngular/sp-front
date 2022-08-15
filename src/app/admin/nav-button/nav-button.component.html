@@ -1,10 +1,11 @@
 <div [id]="button.id" class="nav-button-wrapper" [style.color]="textColor" appCrossPointerEventTarget (pointerClickEvent)="doClick()">
-<!--    <svg width="25px" height="25px" viewBox="0 0 150 150">-->
-<!--    <use [attr.xlink:href]="iconId"></use>-->
-<!--  </svg>-->
-  <img width="25px" height="25px" [src]="'./assets/' + icon + ' (' + (selected ? 'Jade' : ((darkTheme.isEnabled$ | async) ? 'White' : 'Blue-Gray')) + ').svg'" alt="">
+    <!--    <svg width="25px" height="25px" viewBox="0 0 150 150">-->
+    <!--    <use [attr.xlink:href]="iconId"></use>-->
+    <!--  </svg>-->
+    <img width="25px" height="25px" [src]="'./assets/' + icon + ' (' + (selected ? 'Jade' : ((darkTheme.isEnabled$ | async) ? 'White' : 'Blue-Gray')) + ').svg'" alt="">
 
-  <div class="nav-button-text">{{ content }}
+    <div class="nav-button-text">{{ content }}
     </div>
     <img *ngIf="isExpand" width="9" height="7" [src]="'./assets/Rect ' + iconColor + '.svg' | resolveAsset" alt="Rect">
+    <img *ngIf="button.isPro" width="18" [src]="'./assets/Plus Plan (' + (selected ? 'Green' : 'Gray') + ').svg' | resolveAsset" alt="">
 </div>
