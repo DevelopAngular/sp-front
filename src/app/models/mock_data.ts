@@ -51,15 +51,15 @@ function constructTestRequests(student: User, issuer: User, origin: Location, de
   const attachmentMessage = 'Could we meet to go over my math test 6th period? And a whole bunch of stuff to test overflow. I wonder if it will work.';
   const testRequest1 = new Request('testRequest1', student, origin, destination, attachmentMessage,
     'round_trip', 'declined', null, '#00C0C7,#0B9FC1', 'https://storage.googleapis.com/courier-static/icons/library.png',
-    issuer, testDate, declinedMessage,
+    [issuer], testDate, declinedMessage,
     true, null, colorProfile, new Date(), new Date(), 600, new Date());
   const testRequest2 = new Request('testRequest2', student, origin, destination, attachmentMessage,
     'one_way', 'accepted', null, '#00C0C7,#0B9FC1', 'https://storage.googleapis.com/courier-static/icons/library.png',
-    issuer, testDate, declinedMessage,
+    [issuer], testDate, declinedMessage,
     true, null, colorProfile, new Date(), new Date(), 600, new Date());
   const testRequest3 = new Request('testRequest3', student, origin, destination, attachmentMessage,
     'round_trip', 'pending', null, '#00C0C7,#0B9FC1', 'https://storage.googleapis.com/courier-static/icons/library.png',
-    issuer, testDate, declinedMessage,
+    [issuer], testDate, declinedMessage,
     true, null, colorProfile, new Date(), new Date(), 600, new Date());
 
   return [testRequest1, testRequest2, testRequest3];

@@ -15,7 +15,7 @@ export class Request extends BaseModel implements ReadableModel {
               public hallpass: HallPass,
               public gradient_color: string,
               public icon: string,
-              public teacher: User,
+              public teachers: User[],
               public request_time: Date,
               public declined_message: string,
               public student_has_dismissed: boolean,
@@ -48,7 +48,7 @@ export class Request extends BaseModel implements ReadableModel {
       hallpass: HallPass = (!!JSON['hallpass']) ? HallPass.fromJSON(JSON['hallpass']) : null,
       gradient_color: string = JSON['gradient_color'],
       icon: string = JSON['icon'],
-      teacher: User = User.fromJSON(JSON['teacher']),
+      teachers: User[] = (JSON['teachers'] as User[]).map(u => User.fromJSON(u)),
       request_time: Date = (!!JSON['request_time']) ? new Date(JSON['request_time']) : null,
       declined_message: string = JSON['declined_message'],
       student_has_dismissed: boolean = JSON['student_has_dismissed'],
@@ -61,7 +61,7 @@ export class Request extends BaseModel implements ReadableModel {
       );
 
     const request = new Request(id, student, origin, destination, attachment_message, travel_type, status, hallpass, gradient_color,
-      icon, teacher, request_time, declined_message, student_has_dismissed, cancelled, color_profile, last_read, last_updated, duration, created);
+      icon, teachers, request_time, declined_message, student_has_dismissed, cancelled, color_profile, last_read, last_updated, duration, created);
 
     if (JSON['school_id']) {
       (request as any).school_id = JSON['school_id'];
