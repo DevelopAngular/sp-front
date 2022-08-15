@@ -605,7 +605,7 @@ describe('Student - Passes Dashboard', () => {
     });
   });
 
-  describe.skip('Request Pass', () => {
+  describe('Request Pass', () => {
     const requestPassMessage = 'Some Message';
     const deniedPassMessage = 'Denied due to reasons';
 
