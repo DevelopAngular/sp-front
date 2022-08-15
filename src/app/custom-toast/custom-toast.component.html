@@ -24,7 +24,7 @@
             <br/>
             <span
               style="text-decoration: underline"
-              *ngIf="!user.isStudent()"
+              *ngIf="!user.isStudent() && !isKioskMode"
               customToolTip
               [contentTemplate]="tooltip"
               [position]="'left'"
