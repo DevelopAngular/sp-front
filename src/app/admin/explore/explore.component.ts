@@ -37,6 +37,9 @@ import {
 } from '../../shared/shared-components/confirmation-dialog/confirmation-dialog.component';
 import {SpDataTableComponent} from '../sp-data-table/sp-data-table.component';
 import {ActivatedRoute, Router} from '@angular/router';
+import { EncounterDetectionService } from '../../services/EncounterDetectionService';
+import { EncounterDetection } from '../../models/EncounterDetection';
+import { EncounterDetectionDialogComponent } from './encounter-detection-dialog/encounter-detection-dialog.component';
 
 declare const window: Window & typeof globalThis & {passClick: any, reportedPassClick: any};
 type OverflownTries = HttpErrorResponse & {overflown: boolean};
@@ -62,14 +65,14 @@ export enum SearchPages {
 
 export interface SearchData {
   selectedStudents: User[];
-  selectedDate: {start: moment.Moment, end: moment.Moment};
+  selectedDate: { start: moment.Moment, end: moment.Moment };
   selectedDestinationRooms?: any[];
   selectedOriginRooms?: any[];
   selectedTeachers?: User[];
   selectedStatus?: Status;
 }
 
-export type PassRemovedResponse = {
+export interface PassRemovedResponse {
   dids: number[];
   error: Error | null;
 }
@@ -85,9 +88,10 @@ export class ExploreComponent implements OnInit, OnDestroy {
   @ViewChild(SpDataTableComponent) passtable!: SpDataTableComponent;
 
   views: View = {
-    'pass_search': {id: 1, title: 'Passes', color: '#00B476', icon: 'Pass Search', action: 'pass_search'},
-    'report_search': {id: 2, title: 'Report Submissions', color: '#E32C66', icon: 'Report Search', action: 'report_search'},
-    'contact_trace': {id: 3, title: 'Contact trace', color: '#139BE6', icon: 'Contact Trace', action: 'contact_trace'},
+    'pass_search': { id: 1, title: 'Passes', color: '#00B476', icon: 'Pass Search', action: 'pass_search' },
+    'report_search': { id: 2, title: 'Report Submissions', color: '#E32C66', icon: 'Report Search', action: 'report_search' },
+    'contact_trace': { id: 3, title: 'Contact trace', color: '#139BE6', icon: 'Contact Trace', action: 'contact_trace' },
+    'encounter_detection': { id: 4, title: 'Detected Encounters', color: '#1F195E', icon: 'Encounter Detection', action: 'encounter_detection' },
     // 'rooms_usage': {id: 4, title: 'Rooms Usage', color: 'orange', icon: 'Rooms Usage', action: 'rooms_usage'}
   };
 
@@ -116,6 +120,16 @@ export class ExploreComponent implements OnInit, OnDestroy {
     entities$: Observable<Dictionary<Report>>
     isEmpty?: boolean
   };
+  encounterDetectedState: {
+    loading$: Observable<boolean>,
+    errored$: Observable<boolean>,
+    isEmpty?: boolean,
+    // sortEncounters$?: Observable<string>,
+    // sortEncountersLoading$?: Observable<boolean>,
+    // countEncounters$?: Observable<number>,
+    isAllSelected$: Observable<boolean>,
+    // nextUrl$: Observable<string>
+  };
   isSearched: boolean;
   showContactTraceTable: boolean;
   schools$: Observable<School[]>;
@@ -127,6 +141,10 @@ export class ExploreComponent implements OnInit, OnDestroy {
     selectedDate: null,
   };
   contactTraceData: SearchData = {
+    selectedStudents: null,
+    selectedDate: null
+  };
+  encounterDetectedData: any = {
     selectedStudents: null,
     selectedDate: null
   };
@@ -144,6 +162,7 @@ export class ExploreComponent implements OnInit, OnDestroy {
   searchedPassData$: Observable<any[]>;
   contactTraceData$: Observable<any[]>;
   reportsSearchData$: Observable<any[]>;
+  encounterDetectionData$: Observable<any[]>;
   queryParams: any;
 
   adminCalendarOptions;
@@ -161,7 +180,7 @@ export class ExploreComponent implements OnInit, OnDestroy {
 
   destroyPassClick = new Subject();
   destroy$ = new Subject();
-  clickEventSubscription:Subscription;
+  clickEventSubscription: Subscription;
 
   constructor(
     public dialog: MatDialog,
@@ -177,6 +196,7 @@ export class ExploreComponent implements OnInit, OnDestroy {
     public xlsx: XlsxService,
     private userService: UserService,
     private componentService: ComponentsService,
+    private encounterDetectionService: EncounterDetectionService,
     private route: ActivatedRoute,
     private router: Router
     ) {
@@ -191,11 +211,11 @@ export class ExploreComponent implements OnInit, OnDestroy {
     }
   }
 
-  dateText({start, end}): string {
+  dateText({ start, end }): string {
     if (start.isSame(moment().subtract(3, 'days'), 'day')) {
       return 'Last 3 days';
     } else if (start.isSame(moment().subtract(7, 'days'), 'day')) {
-      return  'Last 7 days';
+      return 'Last 7 days';
     } else if (start.isSame(moment().subtract(30, 'days'), 'day')) {
       return 'Last 30 days';
     } else if (start.isSame(moment().subtract(90, 'days'), 'day')) {
@@ -204,20 +224,24 @@ export class ExploreComponent implements OnInit, OnDestroy {
     if (start && end) {
       if (this.currentView$.getValue() === 'pass_search') {
         return this.passSearchData.selectedDate &&
-        start.isSame(end, 'day') ? start.format('MMM D') : start.format('MMM D') + ' to ' + end.format('MMM D');
+          start.isSame(end, 'day') ? start.format('MMM D') : start.format('MMM D') + ' to ' + end.format('MMM D');
+      } else if (this.currentView$.getValue() === 'encounter_detection') {
+        return this.encounterDetectedData.selectedDate &&
+          start.isSame(end, 'day') ? start.format('MMM D') : start.format('MMM D') + ' to ' + end.format('MMM D');
       } else {
         return this.contactTraceData.selectedDate &&
-        start.isSame(end, 'day') ? start.format('MMM D') : start.format('MMM D') + ' to ' + end.format('MMM D');
+          start.isSame(end, 'day') ? start.format('MMM D') : start.format('MMM D') + ' to ' + end.format('MMM D');
       }
     }
   }
 
   ngOnInit() {
-    this.clickEventSubscription = this.componentService.getClickEvent().subscribe((action)=>{
+    this.schools$ = this.http.schoolsCollection$;
+    this.clickEventSubscription = this.componentService.getClickEvent().subscribe((action) => {
       this.currentView$.next(action);
-              this.storage.setItem('explore_page', action);
-              this.cdr.detectChanges();
-    })
+      this.storage.setItem('explore_page', action);
+      this.cdr.detectChanges();
+    });
     this.user$ = this.userService.user$;
 
     this.passSearchState = {
@@ -227,6 +251,15 @@ export class ExploreComponent implements OnInit, OnDestroy {
       sortPassesLoading$: this.hallPassService.sortPassesLoading$,
       countPasses$: this.hallPassService.currentPassesCount$,
       nextUrl$: this.hallPassService.passesNextUrl$,
+      isAllSelected$: this.tableService.isAllSelected$
+    };
+    this.encounterDetectedState = {
+      loading$: this.encounterDetectionService.encounterLoading$,
+      errored$: this.encounterDetectionService.encounterErrored$,
+      // sortEncounters$: this.hallPassService.sortPassesValue$,
+      // sortEncountersLoading$: this.hallPassService.sortPassesLoading$,
+      // countEncounters$: this.hallPassService.currentPassesCount$,
+      // nextUrl$: this.hallPassService.passesNextUrl$,
       isAllSelected$: this.tableService.isAllSelected$
     };
     this.contactTraceState = {
@@ -302,199 +335,295 @@ export class ExploreComponent implements OnInit, OnDestroy {
             selectedTeachers: null
           };
           this.searchReports();
+        } else if (view === 'encounter_detection') {
+          this.isCheckbox$.next(false);
+          this.encounterDetectedData = {
+            selectedStudents: null,
+            selectedDate: null,
+          };
+
+          this.searchEncounterDetection();
+          return this.encounterDetectionService.encounterLoading$.pipe(map(loading => !loading));
         }
       });
 
-    this.schools$ = this.http.schoolsCollection$;
+
 
     this.searchedPassData$ = this.hallPassService.passesCollection$
-        .pipe(
-          filter((res: any[]) => this.currentView$.getValue() === 'pass_search'),
-          map((passes: HallPass[]) => {
-            const getColumns = this.storage.getItem(`order${this.currentView$.getValue()}`);
-            const columns = {};
-            if (getColumns) {
-              const columnsOrder = ('Pass,' + getColumns).split(',');
-              for (let i = 0; i < columnsOrder.length; i++) {
-                Object.assign(columns, {[columnsOrder[i]]: null});
-              }
-              this.currentColumns = cloneDeep(columns);
+      .pipe(
+        filter((res: any[]) => this.currentView$.getValue() === 'pass_search'),
+        map((passes: HallPass[]) => {
+          const getColumns = this.storage.getItem(`order${this.currentView$.getValue()}`);
+          const columns = {};
+          if (getColumns) {
+            const columnsOrder = ('Pass,' + getColumns).split(',');
+            for (let i = 0; i < columnsOrder.length; i++) {
+              Object.assign(columns, { [columnsOrder[i]]: null });
             }
-            if (!passes.length) {
-              this.passSearchState.isEmpty = true;
-              return getColumns ? [this.currentColumns] : [{
-                'Pass': null,
-                'Student Name': null,
-                'Origin': null,
-                'Destination': null,
-                'Pass start time': null,
-                'Duration': null
-              }];
+            this.currentColumns = cloneDeep(columns);
+          }
+          if (!passes.length) {
+            this.passSearchState.isEmpty = true;
+            return getColumns ? [this.currentColumns] : [{
+              'Pass': null,
+              'Student Name': null,
+              'Grade': null,
+              'ID': null,
+              'Origin': null,
+              'Destination': null,
+              'Pass start time': null,
+              'Duration': null
+            }];
+          }
+          this.passSearchState.isEmpty = false;
+          const response = passes.map(pass => {
+            const diff = moment(pass.end_time).diff(moment(pass.start_time));
+            let minutes = moment.duration(diff).minutes();
+            if (minutes < 0) {
+              minutes = 0;
             }
-            this.passSearchState.isEmpty = false;
-            const response = passes.map(pass => {
-              const diff = moment(pass.end_time).diff(moment(pass.start_time));
-              let minutes = moment.duration(diff).minutes();
-              if (minutes < 0) {
-                minutes = 0;
-              }
-              const hours = moment.duration(diff).hours();
-              if (hours > 0) {
-                minutes = minutes * 60;
-              }
-              let seconds = moment.duration(diff).seconds();
-              if (seconds < 0) {
-                seconds = 0;
-              }
-              const duration = `${minutes}` + (seconds === 0 ? ' min' : `:${seconds < 10 ? '0' + seconds : seconds} min`);
-              const passImg = this.domSanitizer.bypassSecurityTrustHtml(`<div class="pass-icon" style="background: ${this.getGradient(pass.gradient_color)}; cursor: pointer">
+            const hours = moment.duration(diff).hours();
+            if (hours > 0) {
+              minutes = minutes * 60;
+            }
+            let seconds = moment.duration(diff).seconds();
+            if (seconds < 0) {
+              seconds = 0;
+            }
+            const duration = `${minutes}` + (seconds === 0 ? ' min' : `:${seconds < 10 ? '0' + seconds : seconds} min`);
+            const passImg = this.domSanitizer.bypassSecurityTrustHtml(`<div class="pass-icon" style="background: ${this.getGradient(pass.gradient_color)}; cursor: pointer">
 <!--                                 <img *ngIf="${pass.icon}" width="15" src="${pass.icon}" alt="Icon">-->
                               </div>`);
-              let rawObj: any = {
-                'Pass': passImg,
-                'Student Name': pass.student.display_name,
-                'Origin': pass.origin.title,
-                'Destination': pass.destination.title,
-                'Pass start time': moment(pass.start_time).format('M/DD h:mm A'),
-                'Duration': duration
+            let rawObj: any = {
+              'Pass': passImg,
+              'Student Name': pass.student.display_name,
+              'Grade': pass.student.grade_level ? this.domSanitizer.bypassSecurityTrustHtml(`<span class="grade-level">${pass.student.grade_level}</span>`) : '-',
+              'ID': pass.student.custom_id ? this.domSanitizer.bypassSecurityTrustHtml(`<span class="id-number">${pass.student.custom_id}</span>`) : '-',
+              'Origin': pass.origin.title,
+              'Destination': pass.destination.title,
+              'Pass start time': moment(pass.start_time).format('M/DD h:mm A'),
+              'Duration': duration
+            };
+
+            const currentObj = {};
+            if (this.storage.getItem(`order${this.currentView$.getValue()}`)) {
+              Object.keys(this.currentColumns).forEach(key => {
+                currentObj[key] = rawObj[key];
+              });
+            }
+
+            rawObj = this.storage.getItem(`order${this.currentView$.getValue()}`) ? currentObj : rawObj;
+
+            Object.defineProperty(rawObj, 'id', { enumerable: false, value: pass.id });
+            Object.defineProperty(rawObj, 'date', { enumerable: false, value: moment(pass.created) });
+            Object.defineProperty(rawObj, 'travelType', { enumerable: false, value: pass.travel_type });
+            Object.defineProperty(rawObj, 'email', { enumerable: false, value: pass.student.primary_email });
+
+            return rawObj;
+          });
+          this.allData = response;
+          return response;
+        })
+      );
+
+    this.encounterDetectionData$ = this.encounterDetectionService.encounteDetection$
+      .pipe(
+        filter((res: any) => this.currentView$.getValue() === 'encounter_detection'),
+        map((encounterDetection: EncounterDetection[]) => {
+            // const getColumns = this.storage.getItem(`order${this.currentView$.getValue()}`);
+            // const getColumns = this.storage.getItem(`order${this.currentView$.getValue()}`);
+            // const columns = {};
+            // if (getColumns) {
+            //   console.log("In if")
+            //   const columnsOrder = ('Pass,' + getColumns).split(',');
+            //   for (let i = 0; i < columnsOrder.length; i++) {
+            //     Object.assign(columns, { [columnsOrder[i]]: null });
+            //   }
+            //   this.currentColumns = cloneDeep(columns);
+            // }
+            if (!encounterDetection.length) {
+              this.encounterDetectedState.isEmpty = true;
+              return [{
+                'Students': null,
+                '# of Encounters': null,
+                'Passes': null,
+              }];
+            }
+
+            this.encounterDetectedState.isEmpty = false;
+            const response = encounterDetection.map((encounter, index) => {
+              const passImg = this.createPasses(encounter.encounters);
+              const DEFAULTAVATAR = '\'./assets/Avatar Default.svg\' | resolveAsset';
+              const students =
+                `<div class="ds-flex-center-start">
+                  <div class="ds-flex-center-start name-wrapper"><img src=${encounter.firstStudent.profile_picture ?? DEFAULTAVATAR}><p class="student-name">${encounter.firstStudent.display_name}</p></div>
+                  <div class="ds-flex-center-start name-wrapper"><img src=${encounter.secondStudent.profile_picture ?? DEFAULTAVATAR}><p class="student-name">${encounter.secondStudent.display_name}</p></div>
+              </div>`;
+              const rawObj: any = {
+                'Students': students,
+                '# of Encounters': encounter.numberOfEncounters,
+                'Passes': passImg,
               };
 
-              const currentObj = {};
-              if (this.storage.getItem(`order${this.currentView$.getValue()}`)) {
-                Object.keys(this.currentColumns).forEach(key => {
-                  currentObj[key] = rawObj[key];
-                });
-              }
+              // const currentObj = {};
+              // if (this.storage.getItem(`order${this.currentView$.getValue()}`)) {
+              //   Object.keys(this.currentColumns).forEach(key => {
+              //     currentObj[key] = rawObj[key];
+              //   });
+              // }
 
-              rawObj = this.storage.getItem(`order${this.currentView$.getValue()}`) ? currentObj : rawObj;
-
-              Object.defineProperty(rawObj, 'id', { enumerable: false, value: pass.id});
-              Object.defineProperty(rawObj, 'date', {enumerable: false, value: moment(pass.created) });
-              Object.defineProperty(rawObj, 'travelType', { enumerable: false, value: pass.travel_type });
-              Object.defineProperty(rawObj, 'email', {enumerable: false, value: pass.student.primary_email});
+              // rawObj = this.storage.getItem(`order${this.currentView$.getValue()}`) ? currentObj : rawObj;
+              Object.defineProperty(rawObj, 'id', { enumerable: false, value: index });
+              Object.defineProperty(rawObj, 'encounters', { enumerable: false, value: encounter.encounters });
+              Object.defineProperty(rawObj, 'firstStudent', { enumerable: false, value: encounter.firstStudent });
+              Object.defineProperty(rawObj, 'secondStudent', { enumerable: false, value: encounter.secondStudent });
 
               return rawObj;
             });
             this.allData = response;
             return response;
-          })
-        );
+        })
+      );
 
-      this.contactTraceData$ = this.contactTraceService.contactTraceData$
-        .pipe(
-          filter(() => this.currentView$.getValue() === 'contact_trace'),
-          map((contacts: ContactTrace[]) => {
-            if (!contacts.length) {
-              this.contactTraceState.isEmpty = true;
-              return [{
-                'Student Name': null,
-                'Degree': null,
-                'Contact connection': null,
-                'Contact date': null,
-                'Duration': null,
-                'Passes': null
-              }];
-            }
-            this.contactTraceState.isEmpty = false;
-            this.contact_trace_passes = {};
-            const response = contacts.map(contact => {
-              const duration = moment.duration(contact.total_contact_duration, 'seconds');
-              const connection: any[] =
-                contact.contact_paths.length === 2 && isEqual(contact.contact_paths[0], contact.contact_paths[1]) ?
-                  [contact.contact_paths[0]] :
-                  contact.contact_paths.length === 4 && isEqual(contact.contact_paths[0], contact.contact_paths[1]) && isEqual(contact.contact_paths[2], contact.contact_paths[3]) ?
-                    [contact.contact_paths[0], contact.contact_paths[2]] : contact.contact_paths;
 
-              const result = {
-                'Student Name': contact.student.display_name,
-                'Degree': contact.degree,
-                'Contact connection': this.domSanitizer.bypassSecurityTrustHtml(
-                  `<div class="no-wrap" style="display: flex; width: 300px !important;">` +
-                  connection.map(path => {
+    this.contactTraceData$ = this.contactTraceService.contactTraceData$
+      .pipe(
+        filter(() => this.currentView$.getValue() === 'contact_trace'),
+        map((contacts: ContactTrace[]) => {
+          if (!contacts.length) {
+            this.contactTraceState.isEmpty = true;
+            return [{
+              'Student Name': null,
+              'Grade': null,
+              'ID': null,
+              'Degree': null,
+              'Contact connection': null,
+              'Contact date': null,
+              'Duration': null,
+              'Passes': null
+            }];
+          }
+          this.contactTraceState.isEmpty = false;
+          this.contact_trace_passes = {};
+          const response = contacts.map(contact => {
+            const duration = moment.duration(contact.total_contact_duration, 'seconds');
+            const connection: any[] =
+              contact.contact_paths.length === 2 && isEqual(contact.contact_paths[0], contact.contact_paths[1]) ?
+                [contact.contact_paths[0]] :
+                contact.contact_paths.length === 4 && isEqual(contact.contact_paths[0], contact.contact_paths[1]) && isEqual(contact.contact_paths[2], contact.contact_paths[3]) ?
+                  [contact.contact_paths[0], contact.contact_paths[2]] : contact.contact_paths;
+
+            const result = {
+              'Student Name': contact.student.display_name,
+              'Grade': contact.student.grade_level ? this.domSanitizer.bypassSecurityTrustHtml(`<span class="grade-level">${contact.student.grade_level}</span>`) : '-',
+              'ID': contact.student.custom_id ? this.domSanitizer.bypassSecurityTrustHtml(`<span class="id-number">${contact.student.custom_id}</span>`) : '-',
+              'Degree': contact.degree,
+              'Contact connection': this.domSanitizer.bypassSecurityTrustHtml(
+                `<div class="no-wrap" style="display: flex; width: 300px !important;">` +
+                connection.map(path => {
                   if (path.length === 1) {
                     return `<span style="margin-left: 5px">${path[0].display_name}</span>`;
                   } else {
                     return `<span style="margin-left: 5px">${path[0].display_name + ' to ' + path[1].display_name}</span>`;
                   }
                 }).join() + `</div>`),
-                'Contact date': moment(contact.initial_contact_date).format('M/DD h:mm A'),
-                'Duration': moment((Number.isInteger(duration.asMilliseconds()) ? duration.asMilliseconds() : duration.asMilliseconds())).format('mm:ss') + ' min',
-                'Passes': this.domSanitizer.bypassSecurityTrustHtml(`<div style="display: flex">` +
-                  contact.contact_passes
-                    .map(({contact_pass, student_pass}, index) => {
-                      this.contact_trace_passes = {
-                        ...this.contact_trace_passes,
-                        [contact_pass.id]: contact_pass,
-                        [student_pass.id]: student_pass
-                      };
+              'Contact date': moment(contact.initial_contact_date).format('M/DD h:mm A'),
+              'Duration': moment((Number.isInteger(duration.asMilliseconds()) ? duration.asMilliseconds() : duration.asMilliseconds())).format('mm:ss') + ' min',
+              'Passes': this.domSanitizer.bypassSecurityTrustHtml(`<div style="display: flex">` +
+                contact.contact_passes
+                  .map(({ contact_pass, student_pass }, index) => {
+                    this.contact_trace_passes = {
+                      ...this.contact_trace_passes,
+                      [contact_pass.id]: contact_pass,
+                      [student_pass.id]: student_pass
+                    };
                     return `<div style="display: flex; ${(index > 0 ? 'margin-left: 5px' : '')}">
                             <div class="pass-icon" onClick="passClick(${contact_pass.id})" style="background: ${this.getGradient(contact_pass.gradient_color)}; cursor: pointer"></div>
                             <div class="pass-icon" onClick="passClick(${student_pass.id})" style="background: ${this.getGradient(student_pass.gradient_color)}; margin-left: 5px; cursor: pointer"></div>
                         </div>`;
                   }).join('') + `</div>`
-                )
-              };
-
-              Object.defineProperty(result, 'id', { enumerable: false, value: contact.contact_passes[0].contact_pass.id});
-              Object.defineProperty(result, 'date', {enumerable: false, value: moment(contact.initial_contact_date) });
-
-              return result;
-            });
-            this.allData = response;
-            return response;
-          })
-        );
-
-      this.reportsSearchData$ = this.adminService.reports.reports$.pipe(
-        filter(res => this.currentView$.getValue() === 'report_search'),
-        map((reports: Report[]) => {
-          if (!reports.length) {
-            this.reportSearchState.isEmpty = true;
-            return [{
-              'Student Name': null,
-              'Message': null,
-              'Status': null,
-              'Pass': null,
-              'Submitted by': null,
-              'Date submitted': null,
-            }];
-          }
-          this.reportSearchState.isEmpty = false;
-          return reports.map(report => {
-              const data = report as any;
-              const _passTile = (
-                data?.reported_pass?.gradient_color &&
-                data?.reported_pass?.id
-              ) ?
-                `<div class="pass-icon" onClick="reportedPassClick(${data.reported_pass.id})" style="background: ${this.getGradient(data.reported_pass.gradient_color)}; cursor: pointer">`
-                : '';
-              const passTile = this.domSanitizer.bypassSecurityTrustHtml(_passTile);
-              const result = {
-              'Student Name': this.domSanitizer.bypassSecurityTrustHtml(`<div>${report.student.display_name}</div>`),
-              'Message': this.domSanitizer.bypassSecurityTrustHtml(`<div><div class="message">${report.message || 'No report message'}</div></div>`),
-              'Status': report.status,
-              'Pass': passTile,
-              'Submitted by': this.domSanitizer.bypassSecurityTrustHtml(`<div>${report.issuer.display_name}</div>`),
-              'Date submitted': this.domSanitizer.bypassSecurityTrustHtml(`<div>${moment(report.created).format('MM/DD hh:mm A')}</div>`),
+              )
             };
 
-            Object.defineProperty(result, 'id', { enumerable: false, value: report.id});
+            Object.defineProperty(result, 'id', { enumerable: false, value: contact.contact_passes[0].contact_pass.id });
+            Object.defineProperty(result, 'date', { enumerable: false, value: moment(contact.initial_contact_date) });
 
             return result;
           });
+          this.allData = response;
+          return response;
         })
       );
 
-      this.tableService.selectRow.asObservable()
-        .pipe(takeUntil(this.destroy$))
-        .subscribe(res => {
-          this.selectedRows = res;
+    this.reportsSearchData$ = this.adminService.reports.reports$.pipe(
+      filter(res => this.currentView$.getValue() === 'report_search'),
+      map((reports: Report[]) => {
+        if (!reports.length) {
+          this.reportSearchState.isEmpty = true;
+          return [{
+            'Student Name': null,
+            'Grade': null,
+            'ID': null,
+            'Message': null,
+            'Status': null,
+            'Pass': null,
+            'Submitted by': null,
+            'Date submitted': null,
+          }];
+        }
+        this.reportSearchState.isEmpty = false;
+        return reports.map(report => {
+          const data = report as any;
+          const _passTile = (
+            data?.reported_pass?.gradient_color &&
+            data?.reported_pass?.id
+          ) ?
+            `<div class="pass-icon" onClick="reportedPassClick(${data.reported_pass.id})" style="background: ${this.getGradient(data.reported_pass.gradient_color)}; cursor: pointer">`
+            : '';
+          const passTile = this.domSanitizer.bypassSecurityTrustHtml(_passTile);
+          const result = {
+            'Student Name': this.domSanitizer.bypassSecurityTrustHtml(`<div>${report.student.display_name}</div>`),
+            'Grade': report.student.grade_level ? this.domSanitizer.bypassSecurityTrustHtml(`<span class="grade-level">${report.student.grade_level}</span>`) : '-',
+            'ID': report.student.custom_id ? this.domSanitizer.bypassSecurityTrustHtml(`<span class="id-number">${report.student.custom_id}</span>`) : '-',
+            'Message': this.domSanitizer.bypassSecurityTrustHtml(`<div><div class="message">${report.message || 'No report message'}</div></div>`),
+            'Status': report.status,
+            'Pass': passTile,
+            'Submitted by': this.domSanitizer.bypassSecurityTrustHtml(`<div>${report.issuer.display_name}</div>`),
+            'Date submitted': this.domSanitizer.bypassSecurityTrustHtml(`<div>${moment(report.created).format('MM/DD hh:mm A')}</div>`),
+          };
+
+          Object.defineProperty(result, 'id', { enumerable: false, value: report.id });
+
+          return result;
         });
+      })
+    );
+
+
+    this.tableService.selectRow.asObservable()
+      .pipe(takeUntil(this.destroy$))
+      .subscribe(res => {
+        this.selectedRows = res;
+      });
 
         // count passes emits on a new search thata assumes any previous selection is cleared
         this.passSearchState.countPasses$.subscribe(_ => this.clearTableSelection());
 
 
+  }
+
+  createPasses(encounters) {
+    encounters.sort((a, b) => new Date(b.encounterDate).getTime() - new Date(a.encounterDate).getTime());
+    let passess = '<div class="ds-flex-center-start">';
+    for (let i = 0; i < encounters.length; i++) {
+      const element = encounters[i];
+
+      const passImg = `<div class="pass-icon" style="background: ${this.getGradient(element.firstStudentPass.gradient_color)}; cursor: pointer">
+                                        </div><div class="pass-icon" style="background: ${this.getGradient(element.secondStudentPass.gradient_color)}; cursor: pointer">
+                                        </div>`;
+      passess += passImg;
+    }
+    return this.domSanitizer.bypassSecurityTrustHtml(passess + `</div>`);
   }
 
   ngOnDestroy() {
@@ -540,7 +669,7 @@ export class ExploreComponent implements OnInit, OnDestroy {
 
     const deletePasses = {
       display: this.selectedRows.length > 1 ? 'Delete passes' : 'Delete the pass',
-      color: '#E32C66',// $red500
+      color: '#E32C66', // $red500
       action: ActionPassDeletion,
       icon: './assets/Delete (Red).svg',
     };
@@ -558,7 +687,7 @@ export class ExploreComponent implements OnInit, OnDestroy {
         this.clearTableSelection();
         return;
       }
-      
+
       const num = this.selectedRows.length;
       const headerText = num === 1 ? 'Delete the pass ?' : `Delete ${num} passes ?`;
       const detailText = `You are about to delete ${num} ${num === 1 ? 'pass' : 'passes'}. Deleted records can\'t be restored after 90 days.`;
@@ -576,13 +705,13 @@ export class ExploreComponent implements OnInit, OnDestroy {
           templateData: {detailText},
         } as ConfirmationTemplates
       }).afterClosed().subscribe((choice: boolean | undefined) => {
-        if (! choice) return this.clearTableSelection();
+        if (! choice) { return this.clearTableSelection(); }
         const data: any = {};
         data['removed'] = true;
         data['ids'] = this.selectedRows.map(s => +s.id);
         const replacedRows = this.passtable.dataSource.allData.map(s => {
           // a soon to be deleted case?
-          if (data['ids'].includes(+s.id)) return this.passtable.generateOneFakeData();
+          if (data['ids'].includes(+s.id)) { return this.passtable.generateOneFakeData(); }
           // just keep the old row
           return {...s};
         });
@@ -591,8 +720,8 @@ export class ExploreComponent implements OnInit, OnDestroy {
         // replace soon to be deleted rows with fake rows
         this.passtable.dataSource.setFakeData([...replacedRows]);
         this.hallPassService.hidePasses(data).pipe(
-          tap((r:PassRemovedResponse) => {
-            if (!('dids' in r)) throw new Error('missing in data shape');
+          tap((r: PassRemovedResponse) => {
+            if (!('dids' in r)) { throw new Error('missing in data shape'); }
 
             this.passtable.dataSource.allData = originalRows.filter(s => !r.dids.includes(+s.id));
             // just update the totalCOunt and lastAddedPasses
@@ -609,21 +738,21 @@ export class ExploreComponent implements OnInit, OnDestroy {
                 // so do not retry, jump directly to the toast
                 if (s >= 400 && s < 500) {
                   return true;
-                };
+                }
                 // only server errors have to be retried for more times
                 // as they can dissapear meanwhile
                 return i > 1;
-              },// after 1 original try + 2 retries shows a toast
+              }, // after 1 original try + 2 retries shows a toast
               of(e).pipe(
                 take(1),
                 tap(e => {
                   const message: string = !!e?.error ? (e.error.detail ?? e.error.message ?? e.message) : e.message;
-                  // progress-interceptor have hall_pass as excepted url 
+                  // progress-interceptor have hall_pass as excepted url
                   // so it will not catch any error thrown under hall_pass urls
                   // notify the admin is how we deal with this kind of error
                   this.toastService.openToast(
                     { title: `${message}`,
-                      subtitle: `Trying ${i+1} times but did not succeed to remove the passes`,
+                      subtitle: `Trying ${i + 1} times but did not succeed to remove the passes`,
                       type: 'error',
                       showButton: false }
                   );
@@ -633,7 +762,7 @@ export class ExploreComponent implements OnInit, OnDestroy {
                   throw eo;
               })),
               of(e).pipe(
-                delay(300), 
+                delay(300),
                 tap(e => console.log(`retrying ${e.message}`)),
               ),
             )),
@@ -643,8 +772,8 @@ export class ExploreComponent implements OnInit, OnDestroy {
             // discard fake rows
             this.passtable.dataSource.allData = originalRows;
             // an OverflownTries error has been dealt with it above
-            if ('overflown' in e) return of(null);
-            // other errors are thrown  
+            if ('overflown' in e) { return of(null); }
+            // other errors are thrown
             throw e;
           }),
 
@@ -652,11 +781,11 @@ export class ExploreComponent implements OnInit, OnDestroy {
       });
 
     });
-  
+
   }
 
   clearTableSelection() {
-    this.tableService.clearSelectedUsers.next(true)
+    this.tableService.clearSelectedUsers.next(true);
     this.selectedRows = [];
   }
 
@@ -666,30 +795,40 @@ export class ExploreComponent implements OnInit, OnDestroy {
       this.hallPassService.passesEntities$.pipe(take(1)),
       of(this.contact_trace_passes)
     ).pipe(
-        takeUntil(this.destroyPassClick),
-        map(passes => {
-          return passes[id];
-        })).subscribe(pass => {
-      pass.start_time = new Date(pass.start_time);
-      pass.end_time = new Date(pass.end_time);
-      const data = {
-        pass: pass,
-        fromPast: true,
-        forFuture: false,
-        forMonitor: false,
-        isActive: false,
-        forStaff: true,
-      };
-      const dialogRef = this.dialog.open(PassCardComponent, {
-        panelClass: 'search-pass-card-dialog-container',
-        backdropClass: 'custom-bd',
-        data: data,
+      takeUntil(this.destroyPassClick),
+      map(passes => {
+        return passes[id];
+      })).subscribe(pass => {
+        pass.start_time = new Date(pass.start_time);
+        pass.end_time = new Date(pass.end_time);
+        const data = {
+          pass: pass,
+          fromPast: true,
+          forFuture: false,
+          forMonitor: false,
+          isActive: false,
+          forStaff: true,
+        };
+        const dialogRef = this.dialog.open(PassCardComponent, {
+          panelClass: 'search-pass-card-dialog-container',
+          backdropClass: 'custom-bd',
+          data: data,
+        });
       });
+  }
+
+  encounterClick(encounte_data) {
+    const dialogRef = this.dialog.open(EncounterDetectionDialogComponent, {
+      panelClass: 'accounts-profiles-dialog',
+      backdropClass: 'custom-bd',
+      width: '425px',
+      height: '500px',
+      data: {encounte_data: encounte_data}
     });
   }
 
   openFilter(event, action) {
-    UNANIMATED_CONTAINER.next(true);;
+    UNANIMATED_CONTAINER.next(true);
     if (action === 'students' || action === 'destination' || action === 'origin') {
       const studentFilter = this.dialog.open(StudentFilterComponent, {
         id: `${action}_filter`,
@@ -697,10 +836,10 @@ export class ExploreComponent implements OnInit, OnDestroy {
         backdropClass: 'invis-backdrop',
         data: {
           'trigger': new ElementRef(event).nativeElement,
-          'selectedStudents': this.currentView$.getValue() === 'pass_search' ? this.passSearchData.selectedStudents : (this.currentView$.getValue() === 'report_search' ? this.reportSearchData.selectedStudents : this.contactTraceData.selectedStudents),
+          'selectedStudents': this.currentView$.getValue() === 'pass_search' ? this.passSearchData.selectedStudents : (this.currentView$.getValue() === 'report_search' ? this.reportSearchData.selectedStudents : this.currentView$.getValue() === 'encounter_detection' ? this.encounterDetectedData.selectedStudents : this.contactTraceData.selectedStudents),
           'type': action === 'students' ? 'selectedStudents' : 'rooms',
           'rooms': this.currentView$.getValue() === 'pass_search' ? (action === 'origin' ? this.passSearchData.selectedOriginRooms : this.passSearchData.selectedDestinationRooms) : this.contactTraceData.selectedDestinationRooms,
-          'multiSelect': this.currentView$.getValue() === 'pass_search' || this.currentView$.getValue() === 'report_search'
+          'multiSelect': this.currentView$.getValue() === 'pass_search' || this.currentView$.getValue() === 'report_search' || this.currentView$.getValue() === 'encounter_detection'
         }
       });
 
@@ -709,7 +848,7 @@ export class ExploreComponent implements OnInit, OnDestroy {
           tap(() => UNANIMATED_CONTAINER.next(false)),
           filter(res => res)
         )
-        .subscribe(({students, type}) => {
+        .subscribe(({ students, type }) => {
           if (type === 'rooms') {
             if (action === 'origin') {
               this.passSearchData.selectedOriginRooms = students;
@@ -721,11 +860,13 @@ export class ExploreComponent implements OnInit, OnDestroy {
               this.passSearchData.selectedStudents = students;
             } else if (this.currentView$.getValue() === 'report_search') {
               this.reportSearchData.selectedStudents = students;
+            } else if (this.currentView$.getValue() === 'encounter_detection') {
+              this.encounterDetectedData.selectedStudents = students;
             } else {
               this.contactTraceData.selectedStudents = students;
             }
           }
-          if (this.isSearched || this.currentView$.getValue() === 'contact_trace' || this.currentView$.getValue() === 'report_search') {
+          if (this.isSearched || this.currentView$.getValue() === 'contact_trace' || this.currentView$.getValue() === 'report_search' || this.currentView$.getValue() === 'encounter_detection') {
             this.autoSearch();
           }
           this.cdr.detectChanges();
@@ -747,7 +888,7 @@ export class ExploreComponent implements OnInit, OnDestroy {
         .pipe(
           tap(() => UNANIMATED_CONTAINER.next(false)),
           filter(res => res)
-        ).subscribe(({students, type}) => {
+        ).subscribe(({ students, type }) => {
           this.reportSearchData.selectedTeachers = students;
           this.autoSearch();
           this.cdr.detectChanges();
@@ -768,7 +909,7 @@ export class ExploreComponent implements OnInit, OnDestroy {
         .pipe(
           tap(() => UNANIMATED_CONTAINER.next(false)),
           filter(res => res)
-        ).subscribe(({status, type}) => {
+        ).subscribe(({ status, type }) => {
           this.reportSearchData.selectedStatus = status;
           this.autoSearch();
           this.cdr.detectChanges();
@@ -780,7 +921,7 @@ export class ExploreComponent implements OnInit, OnDestroy {
         backdropClass: 'invis-backdrop',
         data: {
           target: new ElementRef(event),
-          date: (this.currentView$.getValue() === 'pass_search' ? this.passSearchData.selectedDate : (this.currentView$.getValue() === 'report_search' ? this.reportSearchData.selectedDate : this.contactTraceData.selectedDate)),
+          date: (this.currentView$.getValue() === 'pass_search' ? this.passSearchData.selectedDate : (this.currentView$.getValue() === 'report_search' ? this.reportSearchData.selectedDate : (this.currentView$.getValue() === 'encounter_detection' ? this.encounterDetectedData.selectedDate : this.contactTraceData.selectedDate))),
           options: this.adminCalendarOptions
         }
       });
@@ -790,32 +931,39 @@ export class ExploreComponent implements OnInit, OnDestroy {
           tap(() => UNANIMATED_CONTAINER.next(false)),
           filter(res => res)
         )
-        .subscribe(({date, options}) => {
+        .subscribe(({ date, options }) => {
           this.adminCalendarOptions = options;
           if (this.currentView$.getValue() === 'pass_search') {
             if (!date.start) {
-              this.passSearchData.selectedDate = {start: moment(date).add(6, 'minutes'), end: moment(date).add(6, 'minutes')};
+              this.passSearchData.selectedDate = { start: moment(date).add(6, 'minutes'), end: moment(date).add(6, 'minutes') };
             } else {
-              this.passSearchData.selectedDate = {start: date.start.startOf('day'), end: date.end.endOf('day')};
+              this.passSearchData.selectedDate = { start: date.start.startOf('day'), end: date.end.endOf('day') };
             }
           } else if (this.currentView$.getValue() === 'contact_trace') {
             if (!date.start) {
-              this.contactTraceData.selectedDate = {start: moment(date).add(6, 'minutes'), end: moment(date).add(6, 'minutes')};
+              this.contactTraceData.selectedDate = { start: moment(date).add(6, 'minutes'), end: moment(date).add(6, 'minutes') };
             } else {
-              this.contactTraceData.selectedDate = {start: date.start.startOf('day'), end: date.end.endOf('day')};
+              this.contactTraceData.selectedDate = { start: date.start.startOf('day'), end: date.end.endOf('day') };
             }
           } else if (this.currentView$.getValue() === 'report_search') {
             if (!date.start) {
-              this.reportSearchData.selectedDate = {start: moment(date).add(6, 'minutes'), end: moment(date).add(6, 'minutes')};
+              this.reportSearchData.selectedDate = { start: moment(date).add(6, 'minutes'), end: moment(date).add(6, 'minutes') };
             } else {
-              this.reportSearchData.selectedDate = {start: date.start.startOf('day'), end: date.end.endOf('day')};
+              this.reportSearchData.selectedDate = { start: date.start.startOf('day'), end: date.end.endOf('day') };
+            }
+          } else if (this.currentView$.getValue() === 'encounter_detection') {
+            if (!date.start) {
+              this.encounterDetectedData.selectedDate = { start: moment(date).add(6, 'minutes'), end: moment(date).add(6, 'minutes') };
+            } else {
+              this.encounterDetectedData.selectedDate = { start: date.start.startOf('day'), end: date.end.endOf('day') };
             }
           }
-        if (this.isSearched || this.currentView$.getValue() === 'contact_trace' || this.currentView$.getValue() === 'report_search') {
-          this.autoSearch();
-        }
-        this.cdr.detectChanges();
-      });
+          if (this.isSearched || this.currentView$.getValue() === 'contact_trace' || this.currentView$.getValue() === 'report_search' || this.currentView$.getValue() === 'encounter_detection') {
+
+            this.autoSearch();
+          }
+          this.cdr.detectChanges();
+        });
     }
   }
 
@@ -829,7 +977,7 @@ export class ExploreComponent implements OnInit, OnDestroy {
 
   checkQueryParams() {
     if (!this.passSearchData.selectedStudents) {
-     delete this.queryParams['student'];
+      delete this.queryParams['student'];
     }
     if (!this.passSearchData.selectedDestinationRooms) {
       delete this.queryParams['destination'];
@@ -859,6 +1007,8 @@ export class ExploreComponent implements OnInit, OnDestroy {
       this.contactTraceState.isEmpty = false;
     } else if (this.currentView$.getValue() === 'report_search') {
       this.searchReports();
+    } else if (this.currentView$.getValue() === 'encounter_detection') {
+      this.searchEncounterDetection();
     }
   }
 
@@ -889,23 +1039,23 @@ export class ExploreComponent implements OnInit, OnDestroy {
     }
     queryParams['limit'] = limit;
     queryParams['total_count'] = 'true';
-    this.queryParams = {...this.queryParams, ...queryParams};
+    this.queryParams = { ...this.queryParams, ...queryParams };
 
     const url = constructUrl('v1/hall_passes', this.queryParams);
     this.hallPassService.searchPassesRequest(url);
     this.isSearched = true;
   }
 
-  openPassDialog(pid: number|null, invisBackdrop: boolean|null=false) {
-    if (pid === null) return;
+  openPassDialog(pid: number | null, invisBackdrop: boolean | null = false) {
+    if (pid === null) { return; }
 
     this.reportSearchState.entities$
       .pipe(
         take(1),
-        map((rr: Dictionary<Report>): HallPass|null => {
+        map((rr: Dictionary<Report>): HallPass | null => {
 
           const filtered = Object.entries(rr)
-            .filter(([_,v]) => +v?.reported_pass_id === +pid);// force number equality
+            .filter(([_, v]) => +v?.reported_pass_id === +pid); // force number equality
 
           const found = filtered.map(([_, v]) => v?.reported_pass);
           // there can be many more reports for the same pass
@@ -914,16 +1064,16 @@ export class ExploreComponent implements OnInit, OnDestroy {
               // is is expected a HallPass like object
               // as only this kind of pass can be reported
               return (found[0] instanceof HallPass) ? found[0] : HallPass.fromJSON(found[0]);
-            } catch(e) {
+            } catch (e) {
               // TODO: how to deal with this error??
-              console.log(e)
+              console.log(e);
             }
           }
           return null;
         }),
         takeUntil(this.destroy$),
-      ).subscribe((pass: HallPass|null) => {
-        if (pass === null) return;
+      ).subscribe((pass: HallPass | null) => {
+        if (pass === null) { return; }
 
         pass.start_time = new Date(pass.start_time);
         pass.end_time = new Date(pass.end_time);
@@ -937,14 +1087,14 @@ export class ExploreComponent implements OnInit, OnDestroy {
         };
         const dialogRef = this.dialog.open(PassCardComponent, {
           panelClass: 'search-pass-card-dialog-container',
-          backdropClass: invisBackdrop ?  'invis-backdrop' : 'custom-bd',
+          backdropClass: invisBackdrop ? 'invis-backdrop' : 'custom-bd',
           data: data,
         });
       });
   }
 
   searchReports(limit = 100) {
-    const queryParams: any = {limit};
+    const queryParams: any = { limit };
     if (this.reportSearchData.selectedStudents) {
       queryParams['student'] = this.reportSearchData.selectedStudents.map(s => s.id);
     }
@@ -967,6 +1117,42 @@ export class ExploreComponent implements OnInit, OnDestroy {
       }
     }
     this.adminService.getReportsData(queryParams);
+  }
+
+  searchEncounterDetection() {
+    const queryParams: any = {};
+    if (this.encounterDetectedData.selectedStudents) {
+      queryParams['student'] = this.encounterDetectedData.selectedStudents.map(s => s.id);
+    }
+    if (this.encounterDetectedData.selectedDate) {
+      let start;
+      let end;
+      if (this.encounterDetectedData.selectedDate['start']) {
+        start = this.encounterDetectedData.selectedDate['start'].toISOString();
+        queryParams['start_time'] = start;
+      }
+      if (this.encounterDetectedData.selectedDate['end']) {
+        end = this.encounterDetectedData.selectedDate['end'].toISOString();
+        queryParams['end_time'] = end;
+      }
+    } else {
+      this.encounterDetectedData.selectedDate = {};
+      let start;
+      let end;
+      start = moment().subtract(30, 'days').toISOString();
+      queryParams['start_time'] = start;
+      this.encounterDetectedData.selectedDate['start'] = moment().subtract(30, 'days');
+      end = moment().toISOString();
+      queryParams['end_time'] = end;
+      this.encounterDetectedData.selectedDate['end'] = moment();
+      this.adminCalendarOptions = {
+        rangeId: 'range_2',
+        toggleResult: 'Range',
+      };
+    }
+    const school = this.http.getSchool();
+    const url = constructUrl(`v1/schools/${school.id}/stats/encounter_detection`, queryParams);
+    this.encounterDetectionService.getEncounterDetectionRequest(url);
   }
 
   contactTrace() {
@@ -1036,7 +1222,7 @@ export class ExploreComponent implements OnInit, OnDestroy {
             queryParams.sort = sort && sort === 'asc' ? '-start_time' : 'start_time';
         }
         queryParams.limit = 300;
-        this.queryParams = {...this.queryParams, ...queryParams};
+        this.queryParams = { ...this.queryParams, ...queryParams };
         this.hallPassService.sortHallPassesRequest(this.queryParams);
       });
   }
@@ -1055,15 +1241,15 @@ export class ExploreComponent implements OnInit, OnDestroy {
     this.adminService.exportCsvPasses(this.queryParams)
       .pipe(switchMap(res => combineLatest(this.user$, this.passSearchState.countPasses$)))
       .subscribe(([user, count]) => {
-      this.toastService.openToast(
-        {
-          title: `${this.numberWithCommas(count)} passes exporting...`,
-          subtitle: `In a few minutes, check your email (${user.primary_email}) for a link to download the CSV file.`,
-          type: 'success',
-          showButton: false
-        }
-      );
-    });
+        this.toastService.openToast(
+          {
+            title: `${this.numberWithCommas(count)} passes exporting...`,
+            subtitle: `In a few minutes, check your email (${user.primary_email}) for a link to download the CSV file.`,
+            type: 'success',
+            showButton: false
+          }
+        );
+      });
   }
 
   numberWithCommas(x) {
@@ -1091,9 +1277,9 @@ export class ExploreComponent implements OnInit, OnDestroy {
         this.dialog.open(ReportInfoDialogComponent, {
           panelClass: 'overlay-dialog',
           backdropClass: 'custom-bd',
-          data: {report: selectedReport, forStaff: true, isAdmin: (userData as User)?.isAdmin()}
+          data: { report: selectedReport, forStaff: true, isAdmin: (userData as User)?.isAdmin() }
         });
-    });
+      });
   }
 
   generateCSV() {

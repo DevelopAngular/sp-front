@@ -1,4 +1,4 @@
-//TODO move it to a more generat level
+// TODO move it to a more generat level
 const logoutAdmin = () => {
   // the concret div.icon-button-container seems to properly trigger click event
   cy.get('app-nav app-icon-button div.icon-button-container').click({force: true});
@@ -11,7 +11,7 @@ describe('Admin - Reports',  () => {
     cy.login(Cypress.env('adminUsername'), Cypress.env('adminPassword'));
   });
 
-  after(()=> {
+  after(() => {
     logoutAdmin();
   });
 
@@ -28,15 +28,10 @@ describe('Admin - Reports',  () => {
 
   const getReports = (): Cypress.Chainable<JQuery<HTMLElement>> => {
     return cy.get('mat-dialog-container > app-pages-dialog div.title').contains('Report Submissions');
-  }
+  };
 
     it('should change to school', () => {
-      cy.get('app-school-toggle-bar span.school-name').contains('Cypress Testing School 2').then(() => {
-        cy.get('app-school-toggle-bar div.selected-school').click();
-        cy.get('div.options-wrapper div.option').should('have.length.at.least', 2);
-        cy.get('div.option-data:not(.current-school)').click();
-        cy.get('app-school-toggle-bar span.school-name').should('have.text', 'Cypress Testing School 1');
-      });
+      cy.switchSchool('Cypress Testing School 1');
     });
 
     it('should navigate to reports', () => {
@@ -57,7 +52,7 @@ describe('Admin - Reports',  () => {
 
       // try to find an a row with a pass tile
       cy.get('app-sp-data-table table tbody tr').then($rows => {
-        //cy.wrap($rows[0]).waitUntil(jel => jel.get(0).isConnected);
+        // cy.wrap($rows[0]).waitUntil(jel => jel.get(0).isConnected);
 
         const maybePassTiles = $rows.find('td div.pass-icon:eq(0)');
         const hasPassTile = maybePassTiles.length > 0;

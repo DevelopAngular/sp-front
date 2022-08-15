@@ -14,7 +14,6 @@ export class QRBarcodeGeneratorService {
   ) { }
 
   async selectBarcodeType(value, data) {
-    console.log("data : ", data)
     if (value == 'qr-code') {
       var opts = {
         margin: 3,

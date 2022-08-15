@@ -206,10 +206,22 @@ export class AccountsRoleComponent implements OnInit, OnDestroy {
   }
 
   emptyRoleObject(getColumns, columns) {
-    if (this.role === '_profile_admin' || this.role === '_profile_student') {
+    if (this.role === '_profile_student') {
       return getColumns ? [columns] : [{
         'Name': null,
         'Email/username': null,
+        'Grade': null,
+        'ID': null,
+        'Status': null,
+        'Last sign-in': null,
+        'Type': null,
+        'Permissions': null
+      }];
+    }else if (this.role === '_profile_admin') {
+      return getColumns ? [columns] : [{
+        'Name': null,
+        'Email/username': null,
+        'ID': null,
         'Status': null,
         'Last sign-in': null,
         'Type': null,
@@ -219,6 +231,7 @@ export class AccountsRoleComponent implements OnInit, OnDestroy {
       return getColumns ? [columns] : [{
         'Name': null,
         'Email/username': null,
+        'ID': null,
         'Rooms': null,
         'Status': null,
         'Last sign-in': null,
@@ -229,6 +242,7 @@ export class AccountsRoleComponent implements OnInit, OnDestroy {
       return getColumns ? [columns] : [{
         'Name': null,
         'Email/username': null,
+        'ID': null,
         'Acting on Behalf Of': null,
         'Status': null,
         'Last sign-in': null,
@@ -259,9 +273,18 @@ export class AccountsRoleComponent implements OnInit, OnDestroy {
     const roleObject = {
       'Name': this.sanitizer.bypassSecurityTrustHtml(`<div class="no-wrap" style="width: 150px !important;">` + account.display_name + '</div>'),
       'Email/username': `<div class="no-wrap">` + account.primary_email.split('@spnx.local')[0] + '</div>',
+      'ID': account.custom_id ? this.sanitizer.bypassSecurityTrustHtml(`<span class="id-number">${account.custom_id}</span>`) : "-"
     };
     let objectToTable;
-    if (this.role === '_profile_admin' || this.role === '_profile_student') {
+    if (this.role === '_profile_student') {
+      objectToTable = {...roleObject, ...{
+        'Grade': account.grade_level ? this.sanitizer.bypassSecurityTrustHtml(`<span class="grade-level">${account.grade_level}</span>`) : "-",
+          'Status': this.sanitizer.bypassSecurityTrustHtml(`<span class="status">${account.status}</span>`),
+          'Last sign-in': account.last_login && account.last_login !== new Date() ? Util.formatDateTime(new Date(account.last_login)) : 'Never signed in',
+          'Type': account.demo_account ? 'Demo' : account.sync_types[0] === 'google' ? 'G Suite' : (account.sync_types[0] === 'gg4l' ? 'GG4L' : account.sync_types[0] === 'clever' ? 'Clever' : 'Standard'),
+          'Permissions': `<div class="no-wrap">` + permissions + `</div>`
+      }};
+    }else if (this.role === '_profile_admin') {
       objectToTable = {...roleObject, ...{
           'Status': this.sanitizer.bypassSecurityTrustHtml(`<span class="status">${account.status}</span>`),
           'Last sign-in': account.last_login && account.last_login !== new Date() ? Util.formatDateTime(new Date(account.last_login)) : 'Never signed in',
@@ -294,6 +317,7 @@ export class AccountsRoleComponent implements OnInit, OnDestroy {
       });
     }
     return this.storage.getItem(`order${this.role}`) ? currentObj : objectToTable;
+
   }
 
   ngOnDestroy() {
