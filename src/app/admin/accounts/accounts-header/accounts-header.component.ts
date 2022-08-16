@@ -10,7 +10,7 @@ import {
   OnDestroy,
   OnInit,
   Output,
-  QueryList, TemplateRef,
+  QueryList,
   ViewChild,
   ViewChildren
 } from '@angular/core';
@@ -19,7 +19,7 @@ import {combineLatest, Observable, of, Subject, zip} from 'rxjs';
 import {TotalAccounts} from '../../../models/TotalAccounts';
 import {AdminService} from '../../../services/admin.service';
 import {DarkThemeSwitch} from '../../../dark-theme-switch';
-import {MatDialog, MatDialogRef} from '@angular/material/dialog';
+import {MatDialog} from '@angular/material/dialog';
 import {AddUserDialogComponent} from '../../add-user-dialog/add-user-dialog.component';
 import {User} from '../../../models/User';
 import {debounceTime, filter, map, mapTo, switchMap, take, takeUntil} from 'rxjs/operators';
@@ -31,17 +31,15 @@ import {IntegrationsDialogComponent} from '../integrations-dialog/integrations-d
 import {Ggl4SettingsComponent} from '../integrations-dialog/ggl4-settings/ggl4-settings.component';
 import {GSuiteSettingsComponent} from '../g-suite-settings/g-suite-settings.component';
 import {GSuiteOrgs} from '../../../models/GSuiteOrgs';
-import {TableFilterOption, TableService} from '../../sp-data-table/table.service';
+import {TableService} from '../../sp-data-table/table.service';
 import {PermissionsDialogComponent} from '../../accounts-role/permissions-dialog/permissions-dialog.component';
 import {StatusPopupComponent} from '../../profile-card-dialog/status-popup/status-popup.component';
 import {ToastService} from '../../../services/toast.service';
 import {EncounterPreventionDialogComponent} from '../encounter-prevention-dialog/encounter-prevention-dialog.component';
 import {ProfilePictureComponent} from '../profile-picture/profile-picture.component';
 import * as moment from 'moment';
-import {AdminPassLimitDialogComponent} from '../../../admin-pass-limits-dialog/admin-pass-limits-dialog.component';
+import {AdminPassLimitDialogComponent} from '../admin-pass-limits-dialog/admin-pass-limits-dialog.component';
 import {ConnectedPosition} from '@angular/cdk/overlay';
-import {PassLimitBulkEditComponent} from '../../../pass-limit-bulk-edit/pass-limit-bulk-edit.component';
-import {RecommendedDialogConfig} from '../../../shared/shared-components/confirmation-dialog/confirmation-dialog.component';
 
 @Component({
   selector: 'app-accounts-header',
@@ -53,7 +51,7 @@ export class AccountsHeaderComponent implements OnInit, AfterViewInit, OnDestroy
   @Input() pending$: Subject<boolean>;
   @Input() schoolSyncInfoData: SchoolSyncInfo;
   @Input() gSuiteOrgs: GSuiteOrgs;
-  @Input() showTabs = true;
+  @Input() showTabs: boolean = true;
 
   @Output() tableStateEmit: EventEmitter<boolean> = new EventEmitter<boolean>();
   @Output() searchValueEmit: EventEmitter<any> = new EventEmitter<any>();
@@ -62,8 +60,7 @@ export class AccountsHeaderComponent implements OnInit, AfterViewInit, OnDestroy
   @ViewChild('tabPointer') tabPointer: ElementRef;
   @ViewChild('navButtonsContainer') navButtonsContainerRef: ElementRef;
   @ViewChild('wrapper') wrapper: ElementRef;
-  @ViewChild('filterDialogTemplate') filterDialogTemplate: TemplateRef<HTMLElement>;
-  @ViewChildren('tabRef') tabRefs: QueryList<ElementRef<HTMLDivElement>>;
+  @ViewChildren('tabRef') tabRefs: QueryList<ElementRef>;
 
   pts: string;
   currentTab: string;
@@ -81,7 +78,6 @@ export class AccountsHeaderComponent implements OnInit, AfterViewInit, OnDestroy
     overlayY: 'top',
     offsetY: 25
   };
-  bulkEditDialogRef: MatDialogRef<PassLimitBulkEditComponent>;
 
   selectedUsers: User[] = [];
 
@@ -96,21 +92,6 @@ export class AccountsHeaderComponent implements OnInit, AfterViewInit, OnDestroy
     {title: 'Admins', param: '_profile_admin', icon_id: '#Admin', role: 'admin_count'},
     {title: 'Assistants', param: '_profile_assistant', icon_id: '#Assistant', role: 'assistant_count'}
   ];
-
-  filterOptions: TableFilterOption[] = [
-    {
-      text: 'Has Individual Pass Limit',
-      label: 'hasIndividualPassLimit',
-      filterCallback: (account): boolean => {
-        return !!account?.limit?.description;
-      }
-    }
-  ];
-
-  isFilterActive$ = this.tableService.activeFilters$.pipe(map(f => {
-    return Object.values(f).filter(Boolean).length > 0;
-  }));
-  activeFilters$;
 
   @HostListener('window:resize', ['$event.target'])
   onResize(event) {
@@ -134,7 +115,6 @@ export class AccountsHeaderComponent implements OnInit, AfterViewInit, OnDestroy
   }
 
   ngOnInit() {
-    this.activeFilters$ = this.tableService.activeFilters$;
     this.getCurrentTab();
     this.user$ = this.userService.user$;
     if (this.showTabs && this.currentTab === '') {
@@ -241,14 +221,14 @@ export class AccountsHeaderComponent implements OnInit, AfterViewInit, OnDestroy
           }
         });
       } else if (action === 'bulk') {
-        const BAAD = this.matDialog.open(BulkAddComponent, {
-          width: '425px', height: '500px',
-          panelClass: 'accounts-profiles-dialog',
-          backdropClass: 'custom-bd',
-          data: {
-            role: !this.currentTab ? '_all' : this.currentTab,
-          }
-        });
+        // const BAAD = this.matDialog.open(BulkAddComponent, {
+        //   width: '425px', height: '500px',
+        //   panelClass: 'accounts-profiles-dialog',
+        //   backdropClass: 'custom-bd',
+        //   data: {
+        //     role: !this.currentTab ? '_all' : this.currentTab,
+        //   }
+        // });
       }
     });
 
@@ -291,58 +271,6 @@ export class AccountsHeaderComponent implements OnInit, AfterViewInit, OnDestroy
       }
       this.cdr.detectChanges();
     }, timeout);
-  }
-
-  openFilterDialog() {
-    const coords = this.tabRefs.first.nativeElement.getBoundingClientRect();
-    const filterDialogRef = this.matDialog.open(this.filterDialogTemplate, {
-      ...RecommendedDialogConfig,
-      backdropClass: ['custom-backdrop', 'cdk-overlay-transparent-backdrop'],
-      width: '225px',
-      position: {
-        top: `${coords.bottom + 10}px`,
-        left: `${coords.left}px`
-      }
-    });
-
-    filterDialogRef.afterClosed().pipe(filter(Boolean)).subscribe({
-      next: (selectedFilter: TableFilterOption) => {
-        this.tableService.activeFilters$.next({
-          ...this.tableService.activeFilters$.value,
-          [selectedFilter.label]: selectedFilter
-        });
-      }
-    });
-  }
-
-  removeFilter(filterLabel: string) {
-    const filters = this.tableService.activeFilters$.getValue();
-    delete filters[filterLabel];
-    this.tableService.activeFilters$.next(filters);
-  }
-
-  // TODO: Make Pass Limit into its own component
-  openBulkEditPassLimits() {
-    this.bulkEditDialogRef = this.matDialog.open(PassLimitBulkEditComponent, {
-      ...RecommendedDialogConfig,
-      width: '425px',
-      height: '500px',
-      data: {
-        students: this.selectedUsers.filter(u => u.roles.includes('_profile_student'))
-      }
-    });
-
-    this.bulkEditDialogRef.afterClosed().subscribe({
-      next: (triggeredUpdate) => {
-        this.selectedUsers = [];
-        this.tableService.clearSelectedUsers.next();
-        this.cdr.detectChanges();
-
-        if (triggeredUpdate) {
-          this.tableService.activeFilters$.next(this.tableService.activeFilters$.value);
-        }
-      }
-    });
   }
 
   openStatusPopup(event) {

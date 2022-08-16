@@ -10,14 +10,14 @@ import {
   ViewChild
 } from '@angular/core';
 import {User} from '../models/User';
-import {MatDialog, MatDialogRef, MatDialogState} from '@angular/material/dialog';
+import {MatDialog, MatDialogRef} from '@angular/material/dialog';
 import {HallPassesService} from '../services/hall-passes.service';
-import {merge, Observable, Subject, Subscription} from 'rxjs';
+import {Observable, Subject, Subscription} from 'rxjs';
 import {QuickPreviewPasses} from '../models/QuickPreviewPasses';
 import {UserService} from '../services/user.service';
 import {School} from '../models/School';
 import {HallPass} from '../models/HallPass';
-import {concatMap, filter, map, switchMap, take, takeUntil, tap} from 'rxjs/operators';
+import {filter, map, switchMap, take, takeUntil, tap} from 'rxjs/operators';
 import {UNANIMATED_CONTAINER} from '../consent-menu-overlay';
 import {SettingsDescriptionPopupComponent} from '../settings-description-popup/settings-description-popup.component';
 import {UserStats} from '../models/UserStats';
@@ -43,16 +43,17 @@ import {HttpService} from '../services/http-service';
 import {ConsentMenuComponent} from '../consent-menu/consent-menu.component';
 import {ProfilePictureComponent} from '../admin/accounts/profile-picture/profile-picture.component';
 import {DarkThemeSwitch} from '../dark-theme-switch';
+import {PassLimitsDialogComponent} from '../teacher/pass-limits-dialog/pass-limits-dialog.component';
 import {PassLimitService} from '../services/pass-limit.service';
-import {StudentPassLimit} from '../models/HallPassLimits';
+import {HallPassLimit} from '../models/HallPassLimits';
 import {ConnectedPosition} from '@angular/cdk/overlay';
 import {IntroData} from '../ngrx/intros';
 import { IDCard } from '../admin/id-cards/id-card-editor/id-card-editor.component';
 import { IdcardOverlayContainerComponent } from '../idcard-overlay-container/idcard-overlay-container.component';
 import { QRBarcodeGeneratorService } from '../services/qrbarcode-generator.service';
 import { IDCardService } from '../services/IDCardService';
-import {PassLimitStudentInfoComponent} from '../pass-limit-student-info/pass-limit-student-info.component';
-import {RecommendedDialogConfig} from '../shared/shared-components/confirmation-dialog/confirmation-dialog.component';
+import { IdCardGradeLevelsComponent } from '../admin/id-cards/id-card-grade-levels/id-card-grade-levels.component';
+import { IdCardIdNumbersComponent } from '../admin/id-cards/id-card-id-numbers/id-card-id-numbers.component';
 
 declare const window;
 
@@ -84,7 +85,7 @@ export class StudentInfoCardComponent implements OnInit, AfterViewInit, OnDestro
   user: User;
 
   school: School;
-  studentPassLimit: StudentPassLimit;
+  passLimit: HallPassLimit;
 
   adminCalendarOptions = {
     rangeId: 'range_6',
@@ -117,8 +118,10 @@ export class StudentInfoCardComponent implements OnInit, AfterViewInit, OnDestro
     offsetX: 50
   };
   showPassLimitNux = new Subject<boolean>();
-  passLimitStudentInfoRef: MatDialogRef<PassLimitStudentInfoComponent>;
-  IDCardEnabled = false;
+  passLimitDialogRef: MatDialogRef<PassLimitsDialogComponent>;
+
+  IDCardEnabled: boolean = false;
+
   IDCARDDETAILS: any;
 
   constructor(
@@ -155,21 +158,7 @@ export class StudentInfoCardComponent implements OnInit, AfterViewInit, OnDestro
   }
 
   get accountType() {
-    if (this.profile.demo_account) {
-      return 'Demo';
-    }
-
-    const sync_type = this.profile.sync_types[0];
-    if (sync_type === 'google') {
-      return 'G Suite';
-    }
-    if (sync_type === 'gg4l') {
-      return 'GG4L';
-    }
-    if (sync_type === 'clever') {
-      return 'Clever';
-    }
-    return 'Standard';
+    return this.profile.demo_account ? 'Demo' : this.profile.sync_types[0] === 'google' ? 'G Suite' : (this.profile.sync_types[0] === 'gg4l' ? 'GG4L' : this.profile.sync_types[0] === 'clever' ? 'Clever' : 'Standard');
   }
 
   get isLongName() {
@@ -192,25 +181,17 @@ export class StudentInfoCardComponent implements OnInit, AfterViewInit, OnDestro
         switchMap((params) => {
           return this.userService.searchProfileById(params['id']);
         }),
-        concatMap(user => {
-          this.profile = user;
-          this.school = this.userService.getUserSchool();
-          this.passesService.getQuickPreviewPassesRequest(this.profile.id, true);
-          this.getUserStats();
-          this.studentStats$ = this.userService.studentsStats$.pipe(map(stats => stats[this.profile.id]));
-          this.encounterPreventionService.getExclusionGroupsRequest({student: this.profile.id});
-
-          return merge(
-            this.passLimitsService.watchPassLimits(),
-            this.passLimitsService.watchIndividualPassLimit(this.profile.id)
-          ).pipe(concatMap(() => this.passLimitsService.getStudentPassLimit(this.profile.id)));
-        }),
         takeUntil(this.destroy$)
-      ).subscribe((res: StudentPassLimit) => {
-        this.studentPassLimit = res;
-        console.log(this.studentPassLimit);
-        this.cdr.detectChanges();
-      });
+      ).subscribe(res => {
+      this.profile = res;
+      this.school = this.userService.getUserSchool();
+      this.cdr.detectChanges();
+      this.getUserStats();
+      this.passesService.getQuickPreviewPassesRequest(this.profile.id, true);
+      this.studentStats$ = this.userService.studentsStats$.pipe(map(stats => stats[this.profile.id]));
+
+      this.encounterPreventionService.getExclusionGroupsRequest({student: this.profile.id});
+    });
     this.exclusionGroups$ = this.encounterPreventionService.exclusionGroups$;
     this.exclusionGroupsLoading$ = this.encounterPreventionService.exclusionGroupsLoading$;
     this.lastStudentPasses$ = this.passesService.quickPreviewPasses$.pipe(map(passes => passes.map(pass => HallPass.fromJSON(pass))));
@@ -229,18 +210,28 @@ export class StudentInfoCardComponent implements OnInit, AfterViewInit, OnDestro
         this.userService.clearCurrentUpdatedAccounts();
       });
 
+    this.passLimitsService.watchPassLimits().subscribe({
+      next: pl => {
+        this.passLimit = pl;
+        if (this.passLimitDialogRef) {
+          this.passLimitDialogRef.componentInstance.data.passLimit = this.passLimit;
+        }
+      }
+    });
+
     if (this.userService.getFeatureFlagDigitalID()) {
       this.idCardService.getIDCardDetails().subscribe({
-        next: (result: any) => {
+        next: (result:any) => {
           if (result?.results?.digital_id_card) {
             this.IDCARDDETAILS = result.results.digital_id_card;
-            if (this.IDCARDDETAILS.enabled && this.IDCARDDETAILS.visible_to_who !== 'Staff only') {
+            if (this.IDCARDDETAILS.enabled && this.IDCARDDETAILS.visible_to_who != 'Staff only') {
               this.IDCardEnabled = true;
             }
           }
         }
       });
     }
+
   }
 
   ngAfterViewInit() {
@@ -330,7 +321,7 @@ export class StudentInfoCardComponent implements OnInit, AfterViewInit, OnDestro
           action: 'idcard',
           // tooltip: 'Copy a private link to this student and send it to another staff member at your school.'
         }
-      );
+      )
     }
     if (this.user.isAdmin()) {
       settings.push(
@@ -387,8 +378,8 @@ export class StudentInfoCardComponent implements OnInit, AfterViewInit, OnDestro
           });
         } else if (action === 'delete') {
           this.userService.deleteUserRequest(this.profile, '_profile_student');
-        } else if (action === 'idcard') {
-          const idCardData: IDCard = {
+        }else if (action === 'idcard') {
+          let idCardData: IDCard = {
             backgroundColor: this.IDCARDDETAILS.color,
             greadLevel: this.IDCARDDETAILS.show_grade_levels ? this.profile.grade_level : null,
             idNumberData: this.profile?.custom_id ? {
@@ -409,8 +400,8 @@ export class StudentInfoCardComponent implements OnInit, AfterViewInit, OnDestro
           // idCardData.idNumberData.barcodeURL = await this.qrBarcodeGenerator.selectBarcodeType('code39', 123456);
 
           const dialogRef = this.dialog.open(IdcardOverlayContainerComponent, {
-            panelClass: 'id-card-overlay-container',
-            backdropClass: 'custom-bd',
+            panelClass: "id-card-overlay-container",
+            backdropClass: "custom-bd",
             data: {idCardData: idCardData, isLoggedIn: false}
           });
         }
@@ -578,19 +569,24 @@ export class StudentInfoCardComponent implements OnInit, AfterViewInit, OnDestro
   }
 
   openPassLimitsDialog() {
-    this.passLimitStudentInfoRef = this.dialog.open(PassLimitStudentInfoComponent, {
-      ...RecommendedDialogConfig,
-      width: '425px',
-      height: '500px',
-      data: {
-        studentPassLimit: this.studentPassLimit,
-        user: this.user
-      }
-    });
+    if (this.passLimit) {
+      this.passLimitDialogRef = this.dialog.open(PassLimitsDialogComponent, {
+        closeOnNavigation: true,
+        panelClass: 'overlay-dialog',
+        backdropClass: 'custom-bd',
+        width: '425px',
+        height: '500px',
+        data: {
+          profile: this.profile,
+          passLimit: this.passLimit
+        }
+      });
+    }
   }
 
   editWindow(event) {
     this.isOpenAvatarDialog = true;
+
     if (!this.userService.getUserSchool().profile_pictures_completed) {
       this.consentDialogOpen(this.editIcon.nativeElement);
     } else {
@@ -718,22 +714,36 @@ export class StudentInfoCardComponent implements OnInit, AfterViewInit, OnDestro
   dateText({start, end}): string {
     if (start.isSame(moment().subtract(3, 'days'), 'day')) {
       return 'Last 3 days';
-    }
-    if (start.isSame(moment().subtract(7, 'days'), 'day')) {
+    } else if (start.isSame(moment().subtract(7, 'days'), 'day')) {
       return 'Last 7 days';
-    }
-    if (start.isSame(moment().subtract(30, 'days'), 'day')) {
+    } else if (start.isSame(moment().subtract(30, 'days'), 'day')) {
       return 'Last 30 days';
-    }
-    if (start.isSame(moment().subtract(90, 'days'), 'day')) {
+    } else if (start.isSame(moment().subtract(90, 'days'), 'day')) {
       return 'Last 90 days';
-    }
-    if (start.isSame(moment('1/8/' + moment().subtract(1, 'year').year(), 'DD/MM/YYYY'))) {
+    } else if (start.isSame(moment('1/8/' + moment().subtract(1, 'year').year(), 'DD/MM/YYYY'))) {
       return 'This school year';
     }
     if (start && end) {
       return start.isSame(end, 'day') ? start.format('MMM D') : start.format('MMM D') + ' to ' + end.format('MMM D');
     }
+  }
+
+  openGradeLevel(){
+    const PPD = this.dialog.open(IdCardGradeLevelsComponent, {
+      panelClass: 'accounts-profiles-dialog',
+      backdropClass: 'custom-bd',
+      width: '425px',
+      height: '510px',
+    });
+  }
+
+  openIDNumber(){
+    const PPD = this.dialog.open(IdCardIdNumbersComponent, {
+      panelClass: 'accounts-profiles-dialog',
+      backdropClass: 'custom-bd',
+      width: '425px',
+      height: '510px',
+    });
   }
 
   dismissPassLimitNux() {

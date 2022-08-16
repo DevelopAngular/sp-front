@@ -1,9 +1,9 @@
 import {Component, NgZone, OnDestroy, OnInit} from '@angular/core';
 import {MatDialog} from '@angular/material/dialog';
-import {BehaviorSubject, combineLatest, forkJoin, Observable, of, Subject} from 'rxjs';
+import {BehaviorSubject, Observable, of, Subject} from 'rxjs';
 import {UserService} from '../../services/user.service';
 import {ActivatedRoute, Router} from '@angular/router';
-import {concatMap, filter, map, skipUntil, switchMap, take, takeUntil, tap} from 'rxjs/operators';
+import {filter, map, switchMap, take, takeUntil, tap} from 'rxjs/operators';
 import {Util} from '../../../Util';
 import {HttpService} from '../../services/http-service';
 import {AdminService} from '../../services/admin.service';
@@ -19,8 +19,6 @@ import {TableService} from '../sp-data-table/table.service';
 import {TotalAccounts} from '../../models/TotalAccounts';
 import {StorageService} from '../../services/storage.service';
 import {ToastService} from '../../services/toast.service';
-import {PassLimitService} from '../../services/pass-limit.service';
-import {StudentPassLimit} from '../../models/HallPassLimits';
 
 export const TABLE_RELOADING_TRIGGER =  new Subject<any>();
 
@@ -35,7 +33,7 @@ export class AccountsRoleComponent implements OnInit, OnDestroy {
 
   public role: string;
   public placeholder: boolean;
-  public loaded = false;
+  public loaded: boolean = false;
   public profilePermissions: any;
   public user: User;
   public pending$: Subject<boolean> = new Subject<boolean>();
@@ -50,14 +48,15 @@ export class AccountsRoleComponent implements OnInit, OnDestroy {
   accountRoleData$: Observable<any[]>;
   accountRoleNextUrl$: Observable<string>;
 
-  isLoading$: BehaviorSubject<boolean> = new BehaviorSubject<boolean>(false);
-  isLoaded$: BehaviorSubject<boolean> = new BehaviorSubject<boolean>(false);
+  isLoading$: Observable<boolean> = of(false);
+  isLoaded$: Observable<boolean>;
   sort$: Observable<string>;
   sortLoading$: BehaviorSubject<boolean> = new BehaviorSubject<boolean>(false);
 
   public accounts$: Observable<TotalAccounts> = this.adminService.countAccounts$;
 
   schools$: Observable<School[]>;
+
 
   constructor(
     public router: Router,
@@ -71,49 +70,28 @@ export class AccountsRoleComponent implements OnInit, OnDestroy {
     private tableService: TableService,
     private sanitizer: DomSanitizer,
     private storage: StorageService,
-    private toast: ToastService,
-    private passLimitsService: PassLimitService
+    private toast: ToastService
   ) {}
 
   ngOnInit() {
     this.schools$ = this.http.schoolsCollection$;
-    this.isLoaded$.next(false);
-    this.isLoading$.next(true);
 
-    this.accountRoleData$ = combineLatest(
-      this.tableService.activeFilters$.asObservable().pipe(tap(() => {
-        this.isLoaded$.next(false);
-        this.isLoading$.next(true);
-      })),
-      this.http.globalReload$
-    )
+    this.accountRoleData$ = this.http.globalReload$
       .pipe(
         switchMap(() => this.route.params),
         tap(params => {
           this.role = params.role;
           this.userService.getAccountsRoles(this.role, '', 50);
           this.buildPermissions();
+          this.isLoaded$ = this.userService.getLoadingAccounts(this.role).loaded;
+          this.isLoading$ = this.userService.getLoadingAccounts(this.role).loading;
           this.sort$ = this.userService.accountSort$[this.role];
           this.accountRoleNextUrl$ = this.userService.nextRequests$[this.role];
         }),
         switchMap(() => {
           return this.userService.getAccountsRole(this.role);
         }),
-        switchMap((accounts: User[]) => {
-          if (accounts.length === 0) {
-            return of([]);
-          }
-          return forkJoin(
-            accounts.map(a => this.passLimitsService.getStudentPassLimit(a.id).pipe(map(limit => ({...a, limit}))))
-          );
-        }),
-        map((accounts: (User & { limit: StudentPassLimit })[]) => {
-          const filterFunctions = Object.values(this.tableService.activeFilters$.getValue()).map(v => v.filterCallback);
-          let filteredAccounts = [].concat(accounts);
-          for (const f of filterFunctions) {
-            filteredAccounts = filteredAccounts.filter(f);
-          }
-
+        map((accounts: User[]) => {
           this.sortLoading$.next(false);
           const getColumns = this.storage.getItem(`order${this.role}`);
           const columns = {};
@@ -124,14 +102,12 @@ export class AccountsRoleComponent implements OnInit, OnDestroy {
             }
             this.currentColumns = cloneDeep(columns);
           }
-          if (!filteredAccounts.length) {
+          if (!accounts.length) {
             this.userEmptyState = true;
            return this.emptyRoleObject(getColumns, this.currentColumns);
           }
           this.userEmptyState = false;
-          this.isLoading$.next(false);
-          this.isLoaded$.next(true);
-          return filteredAccounts.map(account => {
+          return accounts.map(account => {
             const rowObj = this.buildDataForRole(account);
 
             Object.defineProperty(rowObj, 'id', { enumerable: false, value: account.id});
@@ -230,10 +206,22 @@ export class AccountsRoleComponent implements OnInit, OnDestroy {
   }
 
   emptyRoleObject(getColumns, columns) {
-    if (this.role === '_profile_admin' || this.role === '_profile_student') {
+    if (this.role === '_profile_student') {
       return getColumns ? [columns] : [{
         'Name': null,
         'Email/username': null,
+        'Grade': null,
+        'ID': null,
+        'Status': null,
+        'Last sign-in': null,
+        'Type': null,
+        'Permissions': null
+      }];
+    }else if (this.role === '_profile_admin') {
+      return getColumns ? [columns] : [{
+        'Name': null,
+        'Email/username': null,
+        'ID': null,
         'Status': null,
         'Last sign-in': null,
         'Type': null,
@@ -243,6 +231,7 @@ export class AccountsRoleComponent implements OnInit, OnDestroy {
       return getColumns ? [columns] : [{
         'Name': null,
         'Email/username': null,
+        'ID': null,
         'Rooms': null,
         'Status': null,
         'Last sign-in': null,
@@ -253,6 +242,7 @@ export class AccountsRoleComponent implements OnInit, OnDestroy {
       return getColumns ? [columns] : [{
         'Name': null,
         'Email/username': null,
+        'ID': null,
         'Acting on Behalf Of': null,
         'Status': null,
         'Last sign-in': null,
@@ -260,30 +250,6 @@ export class AccountsRoleComponent implements OnInit, OnDestroy {
         'Permissions': null
       }];
     }
-  }
-
-  /**
-   * Assuming (for this example) a school-wide limit is 5 passes/day and an individual limit is 10 passes/day, here
-   * are the rules that govern what should be displayed in the pass limit column:
-   *
-   * "No Limit": Pass Limit does not exist in the database for this user
-   * "No Limit": A school-wide pass limit exists but is disabled
-   * "No Limit": A school-wide pass limit exists, is enabled and an unlimited individual limit exists for this student
-   * "5 passes/day": A school-wide pass limit exists, is enabled and no individual limit exists for this user
-   * "10 passes/day": A school-wide pass limit exists, is enabled and an individual limit exists for this user
-   */
-  private passLimitCells(limit: StudentPassLimit): { passLimit: 'No Limit' | string, description: string } {
-    const description = limit?.description || '';
-    if (limit.isUnlimited || limit.noLimitsSet || limit.passLimit === null) {
-      return {
-        passLimit: 'No Limit',
-        description
-      };
-    }
-    return {
-      passLimit: `${limit.passLimit} ${limit.passLimit === 1 ? 'pass' : 'passes'}/day`,
-      description
-    };
   }
 
   buildDataForRole(account) {
@@ -307,27 +273,24 @@ export class AccountsRoleComponent implements OnInit, OnDestroy {
     const roleObject = {
       'Name': this.sanitizer.bypassSecurityTrustHtml(`<div class="no-wrap" style="width: 150px !important;">` + account.display_name + '</div>'),
       'Email/username': `<div class="no-wrap">` + account.primary_email.split('@spnx.local')[0] + '</div>',
+      'ID': account.custom_id ? this.sanitizer.bypassSecurityTrustHtml(`<span class="id-number">${account.custom_id}</span>`) : "-"
     };
     let objectToTable;
-    if (this.role === '_profile_admin' || this.role === '_profile_student') {
-      const limit: StudentPassLimit = account.limit;
-      const passLimitCells = this.passLimitCells(account.limit);
-      let classList = 'no-wrap pass-limit-counter';
-      if (limit.passLimit === null) {
-        classList += 'no-limit';
-      } else if (limit.isIndividual) {
-        classList += 'individual-limit';
-      } else {
-        classList += 'school-limit';
-      }
+    if (this.role === '_profile_student') {
+      objectToTable = {...roleObject, ...{
+        'Grade': account.grade_level ? this.sanitizer.bypassSecurityTrustHtml(`<span class="grade-level">${account.grade_level}</span>`) : "-",
+          'Status': this.sanitizer.bypassSecurityTrustHtml(`<span class="status">${account.status}</span>`),
+          'Last sign-in': account.last_login && account.last_login !== new Date() ? Util.formatDateTime(new Date(account.last_login)) : 'Never signed in',
+          'Type': account.demo_account ? 'Demo' : account.sync_types[0] === 'google' ? 'G Suite' : (account.sync_types[0] === 'gg4l' ? 'GG4L' : account.sync_types[0] === 'clever' ? 'Clever' : 'Standard'),
+          'Permissions': `<div class="no-wrap">` + permissions + `</div>`
+      }};
+    }else if (this.role === '_profile_admin') {
       objectToTable = {...roleObject, ...{
           'Status': this.sanitizer.bypassSecurityTrustHtml(`<span class="status">${account.status}</span>`),
           'Last sign-in': account.last_login && account.last_login !== new Date() ? Util.formatDateTime(new Date(account.last_login)) : 'Never signed in',
           'Type': account.demo_account ? 'Demo' : account.sync_types[0] === 'google' ? 'G Suite' : (account.sync_types[0] === 'gg4l' ? 'GG4L' : account.sync_types[0] === 'clever' ? 'Clever' : 'Standard'),
-          'Permissions': `<div class="no-wrap">` + permissions + `</div>`,
-          'Pass Limits': this.sanitizer.bypassSecurityTrustHtml(`<div style="width: 150px !important;" class="${classList}">${passLimitCells.passLimit}</div>`),
-          'Pass Limits Description': this.sanitizer.bypassSecurityTrustHtml(`<div class="${classList}">${passLimitCells.description}</div>`)
-        }};
+          'Permissions': `<div class="no-wrap">` + permissions + `</div>`
+      }};
     } else if (this.role === '_profile_teacher') {
       objectToTable = {...roleObject, ...{
           'rooms': this.sanitizer.bypassSecurityTrustHtml(`<div class="no-wrap">` + (account.assignedTo && account.assignedTo.length ? uniqBy(account.assignedTo, 'id').map((room: any) => room.title).join(', ') : 'No rooms assigned') + `</div>`),
@@ -354,6 +317,7 @@ export class AccountsRoleComponent implements OnInit, OnDestroy {
       });
     }
     return this.storage.getItem(`order${this.role}`) ? currentObj : objectToTable;
+
   }
 
   ngOnDestroy() {
@@ -393,15 +357,6 @@ export class AccountsRoleComponent implements OnInit, OnDestroy {
       width: '425px',
       height: '500px',
       data: data
-    });
-
-    // Only reload the table after the dialog has closed and an individual limit has been updated
-    dialogRef.afterClosed().pipe(
-      skipUntil(this.passLimitsService.individualLimitUpdate$)
-    ).subscribe({
-      next: () => {
-        this.tableService.activeFilters$.next(this.tableService.activeFilters$.getValue());
-      }
     });
   }
 

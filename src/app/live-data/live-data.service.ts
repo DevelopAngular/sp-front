@@ -105,7 +105,7 @@ import {
   getMyRoomPassesLoading,
   getMyRoomPassesTotalNumber
 } from '../ngrx/pass-like-collection/nested-states/my-room-passes/states';
-import {HallPassLimit, StudentPassLimit} from '../models/HallPassLimits';
+import {HallPassLimit} from '../models/HallPassLimits';
 
 interface WatchData<ModelType extends BaseModel, ExternalEventType> {
   /**
@@ -801,21 +801,6 @@ export class LiveDataService {
       ]),
       handlePost: identityFilter
     });
-  }
-
-  watchIndividualPassLimit(studentId: string | number): Observable<StudentPassLimit[]> {
-      return this.watch<StudentPassLimit, string>({
-        externalEvents: EMPTY,
-        eventNamespace: 'student_pass_limit',
-        initialUrl: `v1/pass_limits/student_limit?student_id=${studentId}`,
-        rawDecoder: data => [data],
-        decoder: s => s,
-        handleExternalEvent: s => s,
-        handlePollingEvent: makePollingEventHandler([
-          new UpdateItem([PassLimitEvent.Update], s => s)
-        ]),
-        handlePost: identityFilter
-      });
   }
 
   watchActivePassLike(student: User): Observable<PassLike> {

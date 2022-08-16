@@ -127,10 +127,7 @@ describe('Admin - UI and Actions', () => {
   };*/
 
   const chooseDemoSchool = (name: 'Cypress Testing School 1' | 'Cypress Testing School 2' = 'Cypress Testing School 1') => {
-    cy.get('app-school-toggle-bar div.selected-school').click();
-    cy.get('app-dropdown').should('be.visible');
-    cy.get('app-dropdown div.option-data').should('have.length.at.least', 2);
-    cy.get('app-dropdown').contains(name).parent().parent().click();
+    cy.switchSchool(name);
   };
 
   before(() => {

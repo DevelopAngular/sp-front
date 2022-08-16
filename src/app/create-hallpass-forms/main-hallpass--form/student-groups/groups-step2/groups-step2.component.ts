@@ -46,9 +46,9 @@ export class GroupsStep2Component implements OnInit {
           const raw = XLSX.read(res.target.result, {type: 'binary'});
           const sn = raw.SheetNames[0];
           const stringCollection = raw.Sheets[sn];
-          const data = XLSX.utils.sheet_to_json(stringCollection, {header: 1, blankrows: false});
+          const data = XLSX.utils.sheet_to_json(stringCollection, {header: 'A', blankrows: false})
 
-          return data.slice(1).map(item => item[0]);
+          return data.map(obj => obj['A']);
         }),
         switchMap((_emails: string[]): Observable<any> => {
           return this.userService.getAccountsRoles('_profile_student', '', 10000)
@@ -62,7 +62,7 @@ export class GroupsStep2Component implements OnInit {
                 students.forEach((student) => {
                   const founded = _emails.findIndex(email => student.primary_email.toLowerCase() === email.toLowerCase());
 
-                  if (founded !== -1) {
+                  if (founded != -1) {
 
                     result.existingStudents.push(student);
                     _emails.splice(founded, 1);

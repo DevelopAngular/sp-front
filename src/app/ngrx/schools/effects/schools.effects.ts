@@ -13,6 +13,8 @@ import {Router} from '@angular/router';
 import {UserService} from '../../../services/user.service';
 import {GSuiteOrgs} from '../../../models/GSuiteOrgs';
 import {CleverInfo} from '../../../models/CleverInfo';
+// import { EncounterDetectionService } from '../../../services/EncounterDetectionService';
+// import { EncounterDetection } from '../../../models/EncounterDetection';
 
 declare const window;
 
@@ -59,6 +61,23 @@ export class SchoolsEffects {
         })
       );
   });
+
+  // EncounterDetection$ = createEffect(() => {
+  //   return this.actions$.pipe(
+  //     ofType(schoolsActions.getEncounterDetection),
+  //     concatMap(action => {
+  //       return this.EDService.getEncounterDetection(action.url)
+  //         .pipe(
+  //           map((encounterDetection: EncounterDetection) => {
+  //             return schoolsActions.getEncounterDetectionSuccess({encounterDetection});
+  //           }),
+  //           catchError(error => {
+  //             return of(schoolsActions.getEncounterDetectionFailure({errorMessage: error.message}));
+  //           })
+  //         );
+  //     })
+  //   );
+  // });
 
   showErrorToast$ = createEffect(() => {
     return this.actions$
@@ -220,6 +239,7 @@ export class SchoolsEffects {
     private adminService: AdminService,
     private router: Router,
     private userService: UserService,
-    private loginService: GoogleLoginService
+    private loginService: GoogleLoginService,
+    // private EDService: EncounterDetectionService
   ) {}
 }

@@ -109,7 +109,7 @@ export class RoundInputComponent implements OnInit, OnChanges, OnDestroy {
     if (this.focused) {
       setTimeout(() => {
         this.input.nativeElement.focus();
-        this.isFocus = true;
+        this.isFocus = true
       }, 500);
     }
 

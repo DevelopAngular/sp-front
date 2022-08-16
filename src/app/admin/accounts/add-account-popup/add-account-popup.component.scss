@@ -8,23 +8,29 @@
   .options {
     margin: 10px 2px;
     border-radius: 9px;
-    .option {
-      display: flex;
-      padding: 12.5px;
-      border-radius: 7px;
-      color: $blue-gray;
-      cursor: pointer;
-      height: 15px;
-      margin: 3px 0;
 
-      &:hover {
-        background-color: rgba(127, 135, 157, .1);
+    .option-container {
+      box-sizing: border-box;
+      padding: 0 10px;
+
+      .option {
+        display: flex;
+        padding: 12.5px;
+        border-radius: 7px;
         color: $blue-gray;
-      }
+        cursor: pointer;
+        height: 15px;
+        margin: 3px 0;
 
-      .title {
-        margin-left: 9px;
-        font-size: 14px;
+        &:hover {
+          background-color: rgba(127, 135, 157, .1);
+          color: $blue-gray;
+        }
+
+        .title {
+          margin-left: 9px;
+          font-size: 14px;
+        }
       }
     }
   }

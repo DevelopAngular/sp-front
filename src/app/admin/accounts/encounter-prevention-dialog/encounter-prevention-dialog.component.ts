@@ -53,6 +53,7 @@ export class EncounterPreventionDialogComponent implements OnInit, OnDestroy {
   @Input() forceNextPage: string;
   @Input() forceGroup: ExclusionGroup;
   @Input() currentUser: User;
+  @Input() secondUser: User;
   @Output() backEmit: EventEmitter<any> = new EventEmitter<any>();
 
   state: EncountersState = {
@@ -102,12 +103,16 @@ export class EncounterPreventionDialogComponent implements OnInit, OnDestroy {
       if (this.data['currentUser']) {
         this.currentUser = this.data['currentUser'];
       }
+      if (this.data['secondUser']) {
+        this.secondUser = this.data['secondUser'];
+      }
       if (this.data['forceGroup']) {
         this.forceGroup = this.data['forceGroup'];
       }
     }
     if (this.forceNextPage === 'newGroup') {
       this.state.createGroup.users.push({...this.currentUser, lockAccount: true});
+      this.state.createGroup.users.push({...this.secondUser, lockAccount: true});
       this.setState(true, Pages.NewGroup);
       return;
     } else if (this.forceNextPage === 'groupDescription') {

@@ -31,7 +31,7 @@ export class GSuiteSelector {
   private applicationIndicator: boolean = false;
   private readonly customSelector: boolean = false;
 
-  constructor(
+  constructor (
     path: string,
   ) {
 
@@ -58,7 +58,7 @@ export class GSuiteSelector {
 
   get as() {
     if (this.customSelector) {
-      return this.path;
+     return this.path;
     } else {
       return (this.applicationIndicator ? '+' : '-').concat(this.path);
     }
@@ -78,7 +78,7 @@ export class OrgUnit {
   selector: GSuiteSelector[];
   selected: boolean;
 
-  constructor(
+  constructor (
     unitId: UnitId,
     title: string,
     selector: GSuiteSelector[],
@@ -106,7 +106,7 @@ export class SPSearchComponent implements OnInit, OnDestroy {
   @Input() disabled: boolean = false;
   @Input() focused: boolean = true;
   @Input() showOptions: boolean = true;
-  @Input() selectedOptions: Array<User | School | GSuiteSelector | { id: number, role: string, icon: string }[] | Location> = [];
+  @Input() selectedOptions: Array<User | School | GSuiteSelector | {id: number, role: string, icon: string}[] | Location> = [];
   @Input() selectedOrgUnits: any[] = [];
   @Input() height: string = '40px';
   @Input() width: string = '280px';
@@ -198,8 +198,7 @@ export class SPSearchComponent implements OnInit, OnDestroy {
     private domCheckerService: DomCheckerService,
     public overlay: Overlay,
     private kioskMode: KioskModeService
-  ) {
-  }
+  ) {}
 
   get isMobile() {
     return DeviceDetection.isMobile();
@@ -210,7 +209,7 @@ export class SPSearchComponent implements OnInit, OnDestroy {
   }
 
   private getEmitedValue() {
-    if (this.emitSingleProfile) {
+    if (this.emitSingleProfile)  {
       return this.selectedOptions[0];
     } else {
       return this.selectedOptions;
@@ -248,8 +247,8 @@ export class SPSearchComponent implements OnInit, OnDestroy {
 
     if (this.searchTarget === 'schools') {
       this.mapsApi.load().then((resource) => {
-        selfRef.currentPosition = new window.google.maps.LatLng({
-          lat: 40.730610,
+        selfRef.currentPosition =  new window.google.maps.LatLng({
+          lat: 	40.730610,
           lng: -73.935242
         });
         this.placePredictionService = new window.google.maps.places.AutocompleteService();
@@ -273,14 +272,14 @@ export class SPSearchComponent implements OnInit, OnDestroy {
         }),
         map((gss: any[]) => {
           return gss
-            .map((gs: { path: string }) => new GSuiteSelector('+' + gs.path));
+            .map((gs: {path: string}) => new GSuiteSelector('+' + gs.path));
         })
       )
-        .subscribe((res: GSuiteSelector[]) => {
-          this.orgunitsCollection = <GSuiteSelector[]>this.removeDuplicateStudents(res);
-          this.showDummy = !this.removeDuplicateStudents(res).length;
-          this.orgunits.next(this.removeDuplicateStudents(res));
-        });
+      .subscribe((res: GSuiteSelector[]) => {
+        this.orgunitsCollection = <GSuiteSelector[]>this.removeDuplicateStudents(res);
+        this.showDummy = !this.removeDuplicateStudents(res).length;
+        this.orgunits.next(this.removeDuplicateStudents(res));
+      });
     }
 
     if (this.isProposed) {
@@ -323,40 +322,40 @@ export class SPSearchComponent implements OnInit, OnDestroy {
   onSearch(search: string) {
     switch (this.searchTarget) {
       case 'users':
-        if (search !== '') {
-          this.pending$.next(true);
-          if (this.type === 'alternative') {
-            this.students = this.userService.searchProfile(this.role, 50, search)
-              .toPromise()
-              .then((paged: any) => {
-                this.pending$.next(false);
-                this.showDummy = !paged.results.length;
-                this.isOpenedOptions.emit(true);
-                return this.removeDuplicateStudents(paged.results);
-              });
-          } else if (this.type === 'G Suite' || this.type === 'GG4L') {
-            let request$;
-            if (this.role !== '_all') {
-              if (this.type === 'G Suite') {
-                request$ = this.userService.searchProfileAll(search, this.type, this.role.split('_')[this.role.split('_').length - 1], this.gSuiteRoles);
+          if (search !== '') {
+            this.pending$.next(true);
+            if (this.type === 'alternative') {
+              this.students = this.userService.searchProfile(this.role, 50, search)
+                .toPromise()
+                .then((paged: any) => {
+                  this.pending$.next(false);
+                  this.showDummy = !paged.results.length;
+                  this.isOpenedOptions.emit(true);
+                  return this.removeDuplicateStudents(paged.results);
+                });
+            } else if (this.type === 'G Suite' || this.type === 'GG4L') {
+              let request$;
+              if (this.role !== '_all') {
+                if (this.type === 'G Suite') {
+                  request$ = this.userService.searchProfileAll(search, this.type, this.role.split('_')[this.role.split('_').length - 1], this.gSuiteRoles);
+                } else {
+                  request$ = this.userService.searchProfileAll(search, this.type, this.role.split('_')[this.role.split('_').length - 1]);
+                }
               } else {
-                request$ = this.userService.searchProfileAll(search, this.type, this.role.split('_')[this.role.split('_').length - 1]);
+                  request$ = this.userService.searchProfileAll(search, this.type);
               }
-            } else {
-              request$ = this.userService.searchProfileAll(search, this.type);
+              this.students = request$
+                .toPromise().then((users: User[]) => {
+                  this.pending$.next(false);
+                  this.showDummy = !users.length;
+                  return this.removeDuplicateStudents(users);
+                });
             }
-            this.students = request$
-              .toPromise().then((users: User[]) => {
-                this.pending$.next(false);
-                this.showDummy = !users.length;
-                return this.removeDuplicateStudents(users);
-              });
+          } else {
+            this.students = this.rollUpAfterSelection ? null : of([]).toPromise();
+            this.showDummy = false;
+            this.inputValue$.next('');
           }
-        } else {
-          this.students = this.rollUpAfterSelection ? null : of([]).toPromise();
-          this.showDummy = false;
-          this.inputValue$.next('');
-        }
         break;
       case 'schools':
         if (search !== '') {
@@ -377,12 +376,12 @@ export class SPSearchComponent implements OnInit, OnDestroy {
           this.inputValue$.next('');
           this.pending$.next(false);
         }
-        break;
+          break;
       case 'orgunits':
 
         if (search !== '') {
           const regexp = new RegExp(search, 'i');
-          const res = this.orgunitsCollection.filter((gs) => gs.path.search(regexp) !== -1);
+          const res = this.orgunitsCollection.filter((gs) => gs.path.search(regexp) !== -1 );
           this.orgunits.next(this.removeDuplicateStudents(res));
 
         } else {
@@ -397,7 +396,7 @@ export class SPSearchComponent implements OnInit, OnDestroy {
         if (search !== '') {
           const filterItems: User[] = _filter(this.searchingTeachers, (item => {
             return (item.display_name).toLowerCase().includes(search);
-          }));
+            }));
           this.teacherCollection$.next(this.removeDuplicateStudents(filterItems));
         } else {
           this.showDummy = false;
@@ -412,21 +411,20 @@ export class SPSearchComponent implements OnInit, OnDestroy {
           const url = `&search=${search}`;
           this.locationService.searchLocations(100, url)
             .subscribe((locs) => {
-              this.foundLocations = locs.results;
-              this.showDummy = !locs.results.length;
-              this.pending$.next(false);
-            });
+                this.foundLocations = locs.results;
+                this.showDummy = !locs.results.length;
+                this.pending$.next(false);
+          });
         } else {
-          this.showDummy = false;
-          this.inputValue$.next('');
-          this.foundLocations = [];
-          this.pending$.next(false);
+            this.showDummy = false;
+            this.inputValue$.next('');
+            this.foundLocations = [];
+            this.pending$.next(false);
         }
 
         break;
     }
   }
-
   selectSchool(school) {
     this.selectedSchool = school;
     this.onUpdate.emit(school);
@@ -530,7 +528,7 @@ export class SPSearchComponent implements OnInit, OnDestroy {
     }
     if (students[0] instanceof GSuiteSelector || this.searchTarget === 'orgunits') {
       return (<GSuiteSelector[]>students).filter((gs: GSuiteSelector) => {
-        if (this.selectedOptions.findIndex((_gs: GSuiteSelector) => _gs.path === gs.path) === -1) {
+        if ( this.selectedOptions.findIndex((_gs: GSuiteSelector) => _gs.path === gs.path) === -1) {
           return gs;
         }
       });
@@ -541,7 +539,6 @@ export class SPSearchComponent implements OnInit, OnDestroy {
   isDisabled(item: any) {
     return this.type === 'G Suite' && item && !item.role_compatible;
   }
-
   cancel(studentInput) {
     studentInput.input.nativeElement.value = '';
     studentInput.input.nativeElement.focus();
@@ -593,10 +590,5 @@ export class SPSearchComponent implements OnInit, OnDestroy {
 
   hasStudentRole(user) {
     return user.roles && User.fromJSON(user).isStudent();
-  }
-
-  reset() {
-    this.selectedOptions = [];
-    this.onUpdate.emit(undefined);
   }
 }

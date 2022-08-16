@@ -17,37 +17,3 @@ export interface PassLimitInfo {
   current?: number;
   max?: number;
 }
-
-interface ReducedUser {
-  display_name: string;
-  first_name: string;
-  id: number;
-  is_active: boolean;
-  is_deleted: boolean;
-  last_name: string;
-  primary_email: string;
-  profile_picture: string;
-  username: string;
-}
-
-export interface IndividualPassLimit {
-  student: ReducedUser;
-  passLimit: number;
-  description: string;
-}
-
-export interface IndividualPassLimitCollection {
-  students: number[];
-  passLimit: number;
-  description: string;
-}
-
-export interface StudentPassLimit extends BaseModel {
-  passLimit: number;
-  description: string;
-  isUnlimited: boolean;
-  schoolPassLimitEnabled: boolean;
-  isIndividual: boolean;
-  noLimitsSet: boolean;
-  student: ReducedUser;
-}

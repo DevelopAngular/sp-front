@@ -13,22 +13,22 @@ export class LocationVisibilityService {
      let skipped: string[] | undefined;
 
      if (rule ===  "visible_certain_students") {
-       if (ruleStudents.length === 0) {                    
+       if (ruleStudents.length === 0) {
          skipped = students;
        } else {
           const delta: string[] = students.filter(s => (!ruleStudents.includes(s)));
          if (delta.length > 0) {
            skipped = delta;
-         }                             
-       }                                        
-     } else if (rule === "hidden_certain_students") {    
-      if (ruleStudents.length > 0) {                
+         }
+       }
+     } else if (rule === "hidden_certain_students") {
+      if (ruleStudents.length > 0) {
         const delta: string[] = students.filter(s => ruleStudents.includes(s));
         if (delta.length > 0) {
           skipped = delta;
-        } 
-      } 
-    } 
+        }
+      }
+    }
 
     return skipped;
   }
@@ -39,5 +39,4 @@ export class LocationVisibilityService {
     let skipped = this.calculateSkipped(students, ruleStudents, rule);
     return skipped === undefined;
   }
-
 }
