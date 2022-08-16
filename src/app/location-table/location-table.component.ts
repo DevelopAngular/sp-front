@@ -93,7 +93,7 @@ export class LocationTableComponent implements OnInit, OnDestroy {
   pinnablesLoaded: boolean;
 
   passLimits: {[id: number]: PassLimit} = {};
-  
+
   private user: User;
 
   showSpinner$: Observable<boolean>;
@@ -216,7 +216,7 @@ export class LocationTableComponent implements OnInit, OnDestroy {
         .pipe(takeUntil(this.destroy$))
         .subscribe((stars: any[]) => {
           this.pinnablesLoaded = true;
-          this.starredChoices = this.kioskModeFilter(stars.map(val => Location.fromJSON(val)));
+          this.starredChoices = stars.map(val => Location.fromJSON(val));
           if (this.isFavoriteForm) {
               this.choices = [...this.starredChoices, ...this.choices].sort((a, b) => a.id - b.id);
           }
@@ -298,9 +298,6 @@ export class LocationTableComponent implements OnInit, OnDestroy {
 
         this.locationService.searchLocationsRequest(url)
           .pipe(
-            map((locs: any) => {
-              return this.kioskModeFilter(locs);
-            }),
             takeUntil(this.destroy$),
             switchMap(locs => {
               if (this.searchTeacherLocations) {
@@ -343,11 +340,7 @@ export class LocationTableComponent implements OnInit, OnDestroy {
           this.choices = this.staticChoices;
         } else {
           iif(() => !!this.category, this.locationService.locsFromCategory$, this.locationService.locations$)
-            .pipe(
-              takeUntil(this.destroy$),
-              map(locs => {
-                return this.kioskModeFilter(locs);
-            }))
+            .pipe(takeUntil(this.destroy$))
             .subscribe(res => {
               this.choices = res;
               this.hideFavorites = false;
@@ -358,15 +351,6 @@ export class LocationTableComponent implements OnInit, OnDestroy {
       }
 
   }
-
-  kioskModeFilter(locs: Location[]) {
-    if (this.forKioskMode) {
-      return locs.filter(loc => !loc.restricted);
-    } else {
-      return locs;
-    }
-  }
-
 
   isValidLocation(locationId: any) {
     if (this.isFavoriteForm)
@@ -397,7 +381,7 @@ export class LocationTableComponent implements OnInit, OnDestroy {
                 const locs = sortBy([...rooms, ...favorites], (item) => {
                   return item.title.toLowerCase();
                 });
-                return this.kioskModeFilter(locs);
+                return locs;
               } else {
                 return rooms;
               }
