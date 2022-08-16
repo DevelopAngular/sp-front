@@ -23,6 +23,33 @@ export interface Paged<T> {
   previous: string;
 }
 
+function Visibility(): any {
+  return function (target, property, descriptor) {
+    let values: any[];
+
+    return {
+      set: function (vv) {
+        // filtering apply only for a student
+        if (vv.length > 0 && !this.forStaff) {
+          // test if we have Location's
+          let v = vv[0];
+          try {
+            v = Location.fromJSON(v);
+            const student = [''+ this.user.id];
+            vv = vv.filter((loc: Location) => this.visibilityService.filterByVisibility(loc, student));
+          }catch (e) {}
+        }
+        values = vv;
+      },
+      get: function() {
+        return values;
+      },
+      enumerable: true,
+      configurable: true
+    };
+  };
+}
+
 @Component({
   selector: 'app-location-table',
   templateUrl: './location-table.component.html',
@@ -64,7 +91,10 @@ export class LocationTableComponent implements OnInit, OnDestroy {
 
   @ViewChild('item') currentItem: ElementRef;
 
-  private _choices: any[] = [];
+  @Visibility()
+  choices: any[] = [];
+
+  /*private _choices: any[] = [];
   get choices(): any[] {
     return this._choices;
   }
@@ -81,10 +111,11 @@ export class LocationTableComponent implements OnInit, OnDestroy {
     }
     // add posible filtered values
     this._choices = values;
-  };
+  };*/
 
   noChoices:boolean = false;
   mainContentVisibility: boolean = false;
+  @Visibility()
   starredChoices: any[] = [];
   search: string = '';
   favoritesLoaded: boolean;

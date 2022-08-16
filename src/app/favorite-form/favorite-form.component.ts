@@ -7,11 +7,13 @@ import {DragulaService} from 'ng2-dragula';
 import {merge, Observable, of} from 'rxjs';
 import {mapTo, publish, refCount} from 'rxjs/operators';
 import {ScreenService} from '../services/screen.service';
+import {LocationVisibilityService} from '../create-hallpass-forms/main-hallpass--form/location-visibility.service';
 
 @Component({
   selector: 'app-favorite-form',
   templateUrl: './favorite-form.component.html',
-  styleUrls: ['./favorite-form.component.scss']
+  styleUrls: ['./favorite-form.component.scss'],
+  providers: [LocationVisibilityService],
 })
 export class FavoriteFormComponent implements OnInit, OnDestroy {
 
