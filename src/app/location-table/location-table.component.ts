@@ -195,7 +195,7 @@ export class LocationTableComponent implements OnInit, OnDestroy {
             this.locationService.getLocationsWithConfigRequest(url);
 
           request$.pipe(takeUntil(this.destroy$)).subscribe(res => {
-              this.choices = res.filter(loc => !loc.restricted);
+              this.choices = res;
           });
         } else {
           const request$ = this.isFavoriteForm ? this.locationService.getLocationsWithConfigRequest(url).pipe(filter((res) => !!res.length)) :
@@ -219,9 +219,6 @@ export class LocationTableComponent implements OnInit, OnDestroy {
           this.starredChoices = stars.map(val => Location.fromJSON(val));
           if (this.isFavoriteForm) {
               this.choices = [...this.starredChoices, ...this.choices].sort((a, b) => a.id - b.id);
-          }
-          if (this.forKioskMode) {
-            this.choices = this.choices.filter(loc => !loc.restricted);
           }
           this.favoritesLoaded = true;
             this.mainContentVisibility = true;
@@ -330,9 +327,9 @@ export class LocationTableComponent implements OnInit, OnDestroy {
                   return item.title.toLowerCase().includes(this.search);
               }));
 
-            this.choices = (this.searchExceptFavourites && !this.forKioskMode) || !!this.category
+            this.choices = ((this.searchExceptFavourites && !this.forKioskMode) || !!this.category
                             ? [...this.filterResults(p)]
-                            : [...filtFevLoc, ...this.filterResults(p)];
+                            : [...filtFevLoc, ...this.filterResults(p)]).filter(r => r.category === this.category);
             this.noChoices = !this.choices.length;
           });
       } else {
@@ -342,7 +339,7 @@ export class LocationTableComponent implements OnInit, OnDestroy {
           iif(() => !!this.category, this.locationService.locsFromCategory$, this.locationService.locations$)
             .pipe(takeUntil(this.destroy$))
             .subscribe(res => {
-              this.choices = res;
+              this.choices = res.filter(r => r.category === this.category);
               this.hideFavorites = false;
               this.noChoices = !this.choices.length;
           });
