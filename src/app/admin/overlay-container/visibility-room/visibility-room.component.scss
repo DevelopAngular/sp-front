@@ -47,7 +47,7 @@
     color: $gray500;
     background-color: $gray100;
     border: 1px solid $gray200;
-    &.with-triangle:after {
+    &.with-triangle > .after {
       background-image: url('/assets/Rect (Blue-Gray).svg');
     }
   }
@@ -55,7 +55,7 @@
     color: $green500;
     background-color: $green100;
     border: 1px solid $green200;
-    &.with-triangle:after {
+    &.with-triangle > .after {
       background-image: url('/assets/Rect (Green500).svg');
     }
   }
@@ -63,15 +63,14 @@
     color: $red500;
     background-color: $red100;
     border: 1px solid $red200;
-    &.with-triangle:after {
+    &.with-triangle > .after {
       background-image: url('/assets/Rect (Red500).svg');
     }
   }
 }
 
-.with-triangle:after, .with-triangle::after {
+.with-triangle > .after {
   display: inline-flex;
-  content: '';
   background-image: url('/assets/Rect (Blue-Gray).svg');
   background-size: 8px 6px;
   margin-left: 8px;
