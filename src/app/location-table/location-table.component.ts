@@ -329,7 +329,12 @@ export class LocationTableComponent implements OnInit, OnDestroy {
 
             this.choices = ((this.searchExceptFavourites && !this.forKioskMode) || !!this.category
                             ? [...this.filterResults(p)]
-                            : [...filtFevLoc, ...this.filterResults(p)]).filter(r => r.category === this.category);
+                            : [...filtFevLoc, ...this.filterResults(p)]).filter(r => {
+                              if (this.category) {
+                                return this.category === r.category;
+                              }
+                              return r;
+            });
             this.noChoices = !this.choices.length;
           });
       } else {
@@ -339,14 +344,17 @@ export class LocationTableComponent implements OnInit, OnDestroy {
           iif(() => !!this.category, this.locationService.locsFromCategory$, this.locationService.locations$)
             .pipe(takeUntil(this.destroy$))
             .subscribe(res => {
-              this.choices = res.filter(r => r.category === this.category);
+              this.choices = res.filter(r => {
+                if (this.category) {
+                  return r.category === this.category;
+                }
+                return r;
+              });
               this.hideFavorites = false;
               this.noChoices = !this.choices.length;
           });
-
         }
       }
-
   }
 
   isValidLocation(locationId: any) {
