@@ -3,7 +3,7 @@ import {AbstractControl, FormControl, FormGroup, Validators, ValidationErrors} f
 import {MAT_DIALOG_DATA, MatDialog, MatDialogRef} from '@angular/material/dialog';
 import {DomSanitizer} from '@angular/platform-browser';
 
-import {BehaviorSubject, combineLatest, forkJoin, fromEvent, merge, Observable, of, Subject, zip, throwError} from 'rxjs';
+import {BehaviorSubject, combineLatest, forkJoin, fromEvent, merge, Observable, of, Subject, zip} from 'rxjs';
 import {debounceTime, distinctUntilChanged, filter, map, switchMap, take, takeUntil, tap, catchError} from 'rxjs/operators';
 
 import {bumpIn, NextStep} from '../../animations';
@@ -813,8 +813,11 @@ export class OverlayContainerComponent implements OnInit, OnDestroy {
             data = location;
             data.category = this.folderData.folderName + salt;
             data.teachers = location.teachers.map(t => t.id);
-            if (data?.visibility_students) {
+            if (this.visibilityForm.dirty && data?.visibility_students) {
               data.visibility_students = data.visibility_students.map((s: User) => s.id);
+            } else if (this.visibilityForm.pristine) {
+              delete data?.visibility_students;
+              delete data?.visibility_type;
             }
             //location.visibility_type =
             return this.locationService.createLocation(data);
@@ -828,8 +831,11 @@ export class OverlayContainerComponent implements OnInit, OnDestroy {
             if (data.teachers) {
               data.teachers = data.teachers.map(teacher => +teacher.id);
             }
-            if (data?.visibility_students) {
+            if (this.visibilityForm.dirty && data?.visibility_students) {
               data.visibility_students = data.visibility_students.map((s: User) => s.id);
+            } else if (this.visibilityForm.pristine) {
+              delete data?.visibility_students;
+              delete data?.visibility_type;
             }
 
             return this.locationService.updateLocation(id, data);
@@ -924,10 +930,24 @@ export class OverlayContainerComponent implements OnInit, OnDestroy {
 
     if (this.currentPage === Pages.BulkEditRooms) {
       const patchRequests$ = (this.bulkEditData.rooms as Location[]).map(room => {
-        const data = {
-          ...room,
-          teachers: room.teachers.map(t => t.id)
+        // ensure we have visibility data
+        const {mode, over} = this.bulkEditData.roomData?.visibility ?? DEFAULT_VISIBILITY_STUDENTS ;
+        const visibilityBulkData = {
+          visibility_type: mode,
+          visibility_students: over.map(s => ''+s.id),
         };
+        
+        let data = {
+          ...room,
+          teachers: room.teachers.map(t => t.id),
+          ...visibilityBulkData,
+        };
+        // apply bulk visibility only if user wanted it explicitly
+        // otherwise avoid updating existing visibility by deleting concerned request data
+        if (!this.visibilityForm.dirty) {
+          delete data.visibility_students;
+          delete data.visibility_type; 
+        }
         return this.locationService.updateLocationRequest(room.id, data).pipe(
           filter(res => !!res));
       });
@@ -971,6 +991,8 @@ export class OverlayContainerComponent implements OnInit, OnDestroy {
   folderResult({data, buttonState}) {
       this.folderData = data;
       this.roomValidButtons.next(buttonState);
+      this.visibilityForm.setValue({visibility: this.visibility});
+      this.visibilityForm.markAsDirty();
   }
 
   newRoomInFolder(room: RoomData) {
