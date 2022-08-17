@@ -289,7 +289,7 @@ export class PassesComponent implements OnInit, AfterViewInit, OnDestroy {
             concatMap(() => this.passLimitsService.getRemainingLimits({studentId: this.user.id}))
           ).subscribe({
             next: remaining => {
-              if (this.passLimitInfo) {
+              if (this.passLimitInfo?.showPasses) {
                 this.passLimitInfo.current = remaining.remainingPasses;
               }
             }
@@ -317,7 +317,6 @@ export class PassesComponent implements OnInit, AfterViewInit, OnDestroy {
             })),
             tap(data => {
               this.passLimitInfo = data;
-              console.log(this.passLimitInfo);
               if (this.createHallPassDialogRef && this.createHallPassDialogRef.getState() === MatDialogState.OPEN) {
                 this.createHallPassDialogRef.componentInstance.dialogData.passLimitInfo = this.passLimitInfo;
               }

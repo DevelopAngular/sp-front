@@ -97,7 +97,7 @@ export class FormFactorContainerComponent implements OnInit {
                 null,
                 '',
                 this.FORM_STATE.data.direction.pinnable.icon,
-                this.FORM_STATE.data.requestTarget,
+                this.FORM_STATE.data.requestTarget ? [this.FORM_STATE.data.requestTarget] : [],
                 this.FORM_STATE.data.date ? this.FORM_STATE.data.date.date : null,
                 '',
                 null,

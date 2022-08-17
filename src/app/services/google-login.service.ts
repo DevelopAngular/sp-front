@@ -18,9 +18,9 @@ export interface DemoLogin {
   type: 'demo-login';
 }
 
-export interface Gg4lLogin {
-  gg4l_code: string;
-  type: 'gg4l-login';
+export interface ClassLinkLogin {
+  classlink_code: string;
+  type: 'classlink-login';
 }
 
 export interface CleverLogin {
@@ -38,8 +38,8 @@ export function isDemoLogin(d: any): d is DemoLogin {
   return (<DemoLogin>d).type === 'demo-login';
 }
 
-export function isGg4lLogin(d: any): d is Gg4lLogin {
-  return (<Gg4lLogin>d).type === 'gg4l-login';
+export function isClassLinkLogin(d: any): d is ClassLinkLogin {
+  return (<ClassLinkLogin>d).type === 'classlink-login';
 }
 
 export function isCleverLogin(d: any): d is CleverLogin {
@@ -50,7 +50,7 @@ export function isGoogleLogin(d: any): d is GoogleLogin {
   return (<GoogleLogin>d).type === 'google-login';
 }
 
-type AuthObject = GoogleLogin | DemoLogin | Gg4lLogin | CleverLogin;
+type AuthObject = GoogleLogin | DemoLogin | ClassLinkLogin | CleverLogin;
 
 enum OAuthType {
   google = 'google',
@@ -95,7 +95,7 @@ export class GoogleLoginService implements OnDestroy{
     if (savedAuth) {
       // console.log('Loading saved auth:', savedAuth);
       const auth = JSON.parse(savedAuth);
-      if (isGoogleLogin(auth) || isDemoLogin(auth) || isGg4lLogin(auth) || isCleverLogin(auth)) {
+      if (isGoogleLogin(auth) || isDemoLogin(auth) || isClassLinkLogin(auth) || isCleverLogin(auth)) {
         this.updateAuth(auth);
       } else {
         this.isAuthenticated$.next(false);

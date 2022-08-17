@@ -151,7 +151,7 @@ export class RequestCardComponent implements OnInit, OnDestroy {
         return destination.teachers;
       }
     }
-    return [this.request.teacher];
+    return this.request.teachers;
   }
 
   get filteredTeachers() {
@@ -229,7 +229,11 @@ export class RequestCardComponent implements OnInit, OnDestroy {
   }
 
   get teacherName() {
-    return this.request.teacher.isSameObject(this.user) ? 'Me' : this.request.teacher.first_name.substr(0, 1) + '. ' + this.request.teacher.last_name;
+    return this.request.teachers.map(t => {
+      return t.isSameObject(this.user)
+        ? 'Me'
+        : t.first_name.substr(0, 1) + '. ' + t.last_name;
+    }).join(', ');
   }
 
   get gradient() {
@@ -264,25 +268,27 @@ export class RequestCardComponent implements OnInit, OnDestroy {
       } else if (to.request_mode === 'specific_teachers' && this.request.destination.request_teachers.length === 1) {
         this.nowTeachers = to.request_teachers;
       } else if (to.request_mode === 'specific_teachers') {
-        this.nowTeachers = [this.request.teacher];
+        this.nowTeachers = this.request.teachers;
       } else if (to.request_mode === 'teacher_in_room' && to.teachers.length === 1) {
-        this.nowTeachers = [this.request.teacher];
+        this.nowTeachers = this.request.teachers;
       }
     } else {
       if (to.scheduling_request_mode === 'all_teachers_in_room') {
         if (to.scheduling_request_send_origin_teachers && to.scheduling_request_send_destination_teachers) {
           this.futureTeachers = [...this.formState.data.direction.to.teachers, ...this.formState.data.direction.from.teachers];
         } else if (to.scheduling_request_send_origin_teachers) {
-          this.futureTeachers = this.formState.data.direction.from.teachers.length ? this.formState.data.direction.from.teachers : this.formState.data.direction.to.teachers;
+          this.futureTeachers = this.formState.data.direction.from.teachers.length
+            ? this.formState.data.direction.from.teachers
+            : this.formState.data.direction.to.teachers;
         } else if (to.scheduling_request_send_destination_teachers) {
           this.futureTeachers = this.formState.data.direction.to.teachers;
         }
       } else if (to.scheduling_request_mode === 'specific_teachers' && this.request.destination.scheduling_request_teachers.length === 1) {
         this.futureTeachers = this.request.destination.scheduling_request_teachers;
       } else if (to.scheduling_request_mode === 'specific_teachers' && this.request.destination.scheduling_request_teachers.length > 1) {
-        this.futureTeachers = [this.request.teacher];
+        this.futureTeachers = this.request.teachers;
       } else if (to.scheduling_request_mode === 'teacher_in_room' && to.teachers.length === 1) {
-        this.futureTeachers = [this.request.teacher];
+        this.futureTeachers = this.request.teachers;
       }
     }
   }
@@ -316,11 +322,9 @@ export class RequestCardComponent implements OnInit, OnDestroy {
         body.teachers = uniq(this.nowTeachers.map(t => t.id));
       }
     } else {
+      body.teachers = uniq(this.request.teachers.map(t => t.id));
       if (this.formState.kioskMode) {
-        body.teachers = uniq(this.formState.data.direction.from.teachers.map(t => t.id));
         body.student_id = this.formState.data.kioskModeStudent.id;
-      } else {
-        body.teacher = this.request.teacher.id;
       }
     }
 
@@ -354,8 +358,9 @@ export class RequestCardComponent implements OnInit, OnDestroy {
           }
           return this.formState.previousStep === 1 ? this.requestService.cancelRequest(this.request.id) :
             (this.formState.missedRequest ? this.requestService.cancelInvitation(this.formState.data.request.id, '') : of(null));
-        }))
-        .subscribe((res) => {
+        })
+      ).subscribe({
+        next: () => {
           this.performingAction = true;
           if (!this.formState.kioskMode) {
             if ((DeviceDetection.isAndroid() || DeviceDetection.isIOSMobile()) && this.forFuture) {
@@ -364,7 +369,11 @@ export class RequestCardComponent implements OnInit, OnDestroy {
             }
             this.dialogRef.close();
           }
-        });
+        },
+        error: () => {
+          this.performingAction = false;
+        }
+      });
     }
   }
 
@@ -402,7 +411,7 @@ export class RequestCardComponent implements OnInit, OnDestroy {
             'destination': this.request.destination.id,
             'attachment_message': this.request.attachment_message,
             'travel_type': this.request.travel_type,
-            'teacher': this.request.teacher.id,
+            'teachers': this.request.teachers.map(u => u.id),
             'duration': this.request.duration,
             'request_time': moment(state.data.date.date).toISOString()
           };
@@ -502,7 +511,7 @@ export class RequestCardComponent implements OnInit, OnDestroy {
     } else if (action === 'editMessage') {
       this.editMessage();
     } else if (action === 'deny_with_message') {
-      let denyMessage: string = '';
+      let denyMessage = '';
       if (action.indexOf('Message') > -1) {
 
       } else {
@@ -514,7 +523,7 @@ export class RequestCardComponent implements OnInit, OnDestroy {
           data: {
             'forInput': false,
             'entryState': {step: 3, state: 5},
-            'teacher': this.request.teacher,
+            'teachers': this.request.teachers.map(u => u.id),
             'originalMessage': '',
             'originalToLocation': this.request.destination,
             'colorProfile': this.request.color_profile,

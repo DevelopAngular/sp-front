@@ -165,7 +165,7 @@ export class OverlayContainerComponent implements OnInit, OnDestroy {
           break;
     }
     this.currentPage = this.overlayService.pageState.getValue().currentPage;
-      this.gradientColor = 'radial-gradient(circle at 98% 97%,' + colors + ')';
+      this.gradientColor = 'radial-gradient(circle at 98% 97%,' + (colors || ' #FFFFFF, #FFFFFF') + ')';
   }
 
   get roomTitle() {
@@ -460,7 +460,7 @@ export class OverlayContainerComponent implements OnInit, OnDestroy {
             this.uniqueFolderNameValidator.bind(this)
         ),
         roomNumber: new FormControl('',
-            [Validators.required, Validators.maxLength(5)]),
+            [Validators.required, Validators.maxLength(7)]),
         timeLimit: new FormControl('', [
             Validators.required,
             Validators.pattern('^[0-9]*?[0-9]+$'),

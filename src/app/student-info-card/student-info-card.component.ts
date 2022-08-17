@@ -10,7 +10,7 @@ import {
   ViewChild
 } from '@angular/core';
 import {User} from '../models/User';
-import {MatDialog, MatDialogRef, MatDialogState} from '@angular/material/dialog';
+import {MatDialog, MatDialogRef} from '@angular/material/dialog';
 import {HallPassesService} from '../services/hall-passes.service';
 import {merge, Observable, Subject, Subscription} from 'rxjs';
 import {QuickPreviewPasses} from '../models/QuickPreviewPasses';
@@ -51,6 +51,8 @@ import { IDCard } from '../admin/id-cards/id-card-editor/id-card-editor.componen
 import { IdcardOverlayContainerComponent } from '../idcard-overlay-container/idcard-overlay-container.component';
 import { QRBarcodeGeneratorService } from '../services/qrbarcode-generator.service';
 import { IDCardService } from '../services/IDCardService';
+import { IdCardGradeLevelsComponent } from '../admin/id-cards/id-card-grade-levels/id-card-grade-levels.component';
+import { IdCardIdNumbersComponent } from '../admin/id-cards/id-card-id-numbers/id-card-id-numbers.component';
 import {PassLimitStudentInfoComponent} from '../pass-limit-student-info/pass-limit-student-info.component';
 import {RecommendedDialogConfig} from '../shared/shared-components/confirmation-dialog/confirmation-dialog.component';
 
@@ -734,6 +736,24 @@ export class StudentInfoCardComponent implements OnInit, AfterViewInit, OnDestro
     if (start && end) {
       return start.isSame(end, 'day') ? start.format('MMM D') : start.format('MMM D') + ' to ' + end.format('MMM D');
     }
+  }
+
+  openGradeLevel(){
+    const PPD = this.dialog.open(IdCardGradeLevelsComponent, {
+      panelClass: 'accounts-profiles-dialog',
+      backdropClass: 'custom-bd',
+      width: '425px',
+      height: '510px',
+    });
+  }
+
+  openIDNumber(){
+    const PPD = this.dialog.open(IdCardIdNumbersComponent, {
+      panelClass: 'accounts-profiles-dialog',
+      backdropClass: 'custom-bd',
+      width: '425px',
+      height: '510px',
+    });
   }
 
   dismissPassLimitNux() {

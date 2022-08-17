@@ -93,14 +93,15 @@ import {NuxUniversalComponent} from '../nux-components/nux-universal/nux-univers
 import {PassLimitFeedbackComponent} from '../pass-limit-feedback/pass-limit-feedback.component';
 import {PassLimitInputComponent} from '../pass-limit-input/pass-limit-input.component';
 import { ConfirmationComponent } from './shared-components/confirmation/confirmation.component';
+import {PassLimitInfoComponent} from '../pass-limit-info/pass-limit-info.component';
 import { IdNumbersComponent } from '../admin/accounts/id-numbers/id-numbers.component';
 import { GradeLevelsComponent } from '../admin/accounts/grade-levels/grade-levels.component';
 import {PassLimitBulkEditComponent} from '../pass-limit-bulk-edit/pass-limit-bulk-edit.component';
 import {PassLimitStudentInfoComponent} from '../pass-limit-student-info/pass-limit-student-info.component';
 import {AdminPassLimitDialogComponent} from '../admin-pass-limits-dialog/admin-pass-limits-dialog.component';
 import {ConfirmDeleteKioskModeComponent} from '../request-card/confirm-delete-kiosk-mode/confirm-delete-kiosk-mode.component';
-import {PassLimitInfoComponent} from '../pass-limit-info/pass-limit-info.component';
-
+import { IdCardGradeLevelsComponent } from '../admin/id-cards/id-card-grade-levels/id-card-grade-levels.component';
+import { IdCardIdNumbersComponent } from '../admin/id-cards/id-card-id-numbers/id-card-id-numbers.component';
 const DEFAULT_SWIPER_CONFIG: SwiperConfigInterface = {
   direction: 'horizontal',
   slidesPerView: 'auto'
@@ -207,6 +208,8 @@ const DEFAULT_SWIPER_CONFIG: SwiperConfigInterface = {
     ConfirmationComponent,
     IdNumbersComponent,
     GradeLevelsComponent,
+    IdCardGradeLevelsComponent,
+    IdCardIdNumbersComponent,
     ConfirmDeleteKioskModeComponent
   ],
   exports: [
@@ -295,6 +298,8 @@ const DEFAULT_SWIPER_CONFIG: SwiperConfigInterface = {
     PassLimitStudentInfoComponent,
     IdNumbersComponent,
     GradeLevelsComponent,
+    IdCardGradeLevelsComponent,
+    IdCardIdNumbersComponent,
     ConfirmDeleteKioskModeComponent
   ],
   providers: [
