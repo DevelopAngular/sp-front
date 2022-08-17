@@ -8,11 +8,11 @@ import { ConsentMenuComponent } from '../../../consent-menu/consent-menu.compone
 import { IDNumbersUploadGroup } from '../../../models/IDNumbersUploadGroup';
 import { School } from '../../../models/School';
 import { User } from '../../../models/User';
-import { AdminService } from '../../../services/admin.service';
 import { ToastService } from '../../../services/toast.service';
 import { UserService } from '../../../services/user.service';
 import { XlsxService } from '../../../services/xlsx.service';
 import {DomSanitizer, SafeUrl} from '@angular/platform-browser';
+import { IDCardService } from '../../../services/IDCardService';
 
 @Component({
   selector: 'app-id-numbers',
@@ -115,6 +115,8 @@ export class IdNumbersComponent implements OnInit {
 
   uploadedProfiles: any = [];
   allProfiles: any = [];
+  newUploadedIDS: number = 0;
+  totalUploadedIDS: number = 0;
 
   constructor(
     public dialogRef: MatDialogRef<IdNumbersComponent>,
@@ -122,8 +124,7 @@ export class IdNumbersComponent implements OnInit {
     public dialog: MatDialog,
     private userService: UserService,
     private toastService: ToastService,
-    private renderer: Renderer2,
-    private adminService: AdminService,
+    private idCardService: IDCardService,
     private sanitizer: DomSanitizer,
   ) { }
 
@@ -151,7 +152,12 @@ var csvFile = new Blob([this.selectedMapFile]);
       this.userService.uploadIDNumbers(body).subscribe({
         next: (result: any) => {
           this.page = 4;
-          this.errors = result.response.errors
+          this.errors = result.response.errors;
+          this.newUploadedIDS = result.response.new_uploads;
+          this.totalUploadedIDS = result.response.num_of_uploaded;
+          let idCardFormData: FormData = new FormData();
+          idCardFormData.append("show_custom_ids", 'true');
+          this.idCardService.updateIDCardField(idCardFormData).subscribe();
         }
       })
       // this.errors = this.findIssues();

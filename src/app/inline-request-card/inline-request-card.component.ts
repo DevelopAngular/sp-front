@@ -6,7 +6,7 @@ import {MatDialog} from '@angular/material/dialog';
 import {DataService} from '../services/data-service';
 import {RequestsService} from '../services/requests.service';
 import {UNANIMATED_CONTAINER} from '../consent-menu-overlay';
-import {takeUntil, tap} from 'rxjs/operators';
+import {concatMap, takeUntil, tap} from 'rxjs/operators';
 import {uniqBy} from 'lodash';
 import {DeviceDetection} from '../device-detection.helper';
 import {BehaviorSubject, interval, Subject} from 'rxjs';
@@ -25,15 +25,15 @@ import {LocationsService} from '../services/locations.service';
 })
 export class InlineRequestCardComponent implements OnInit, OnDestroy {
   @Input() request: Request;
-  @Input() forFuture: boolean = false;
-  @Input() fromPast: boolean = false;
-  @Input() forInput: boolean = false;
-  @Input() isOpenBigPass: boolean = false;
-  @Input() fullScreen: boolean = false;
+  @Input() forFuture = false;
+  @Input() fromPast = false;
+  @Input() forInput = false;
+  @Input() isOpenBigPass = false;
+  @Input() fullScreen = false;
 
   selectedDuration: number;
   selectedTravelType: string;
-  cancelOpen: boolean = false;
+  cancelOpen = false;
   frameMotion$: BehaviorSubject<any>;
   cancelEditClick: boolean;
   header: any;
@@ -82,7 +82,7 @@ export class InlineRequestCardComponent implements OnInit, OnDestroy {
               return destination.teachers;
           }
       }
-      return [this.request.teacher];
+      return this.request['teachers'];
   }
 
   get filteredTeachers() {
@@ -160,18 +160,20 @@ export class InlineRequestCardComponent implements OnInit, OnDestroy {
       'destination' : this.request.destination.id,
       'attachment_message' : this.request.attachment_message,
       'travel_type' : this.request.travel_type,
-      'teacher' : this.request.teacher.id,
+      'teachers': this.request.teachers.map(u => parseInt(u.id, 10)),
       // !forFuture means that request_time is definitely null
       'duration' : this.request.duration,
     };
 
-    this.requestService.createRequest(body).subscribe(() => {
-        this.requestService.cancelRequest(this.request.id).subscribe(() => {
-          this.closeDialog();
+    this.requestService.createRequest(body).pipe(
+      concatMap(() => this.requestService.cancelRequest(this.request.id))
+    ).subscribe({
+      next: () => {
+        this.closeDialog();
         console.log('pass request resent');
-      });
+      },
+      error: console.log
     });
-
   }
 
   genOption(display, color, action, icon?, hoverBackground?, clickBackground?) {

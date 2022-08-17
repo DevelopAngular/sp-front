@@ -125,16 +125,17 @@ export class IdCardEditorComponent implements OnInit, OnDestroy {
       this.isAdded = true;
       const IDCARDDETAILS = JSON.parse(store.getItem('idcard'));
       this.IDCARDDETAILS = IDCARDDETAILS;
-      this.IDCardEnabled = IDCARDDETAILS.enabled;
-      this.backsideText = IDCARDDETAILS.backside_text;
-      this.backgroundColor = IDCARDDETAILS.color;
-      this.IDCardVisibleTo = IDCARDDETAILS.visible_to_who;
-      this.logoURL = IDCARDDETAILS.signed_url;
-      IDCARDDETAILS.show_custom_ids
-        ? this.setUpIDNumber(IDCARDDETAILS.barcode_type || 'qr-code')
-        : null;
-      IDCARDDETAILS.show_grade_levels ? this.greadLevel = '11' : null
-      IDCARDDETAILS.signed_url ? this.logoURL = IDCARDDETAILS.signed_url : null
+      this.setUpData(IDCARDDETAILS);
+      // this.IDCardEnabled = IDCARDDETAILS.enabled;
+      // this.backsideText = IDCARDDETAILS.backside_text;
+      // this.backgroundColor = IDCARDDETAILS.color;
+      // this.IDCardVisibleTo = IDCARDDETAILS.visible_to_who;
+      // this.logoURL = IDCARDDETAILS.signed_url;
+      // IDCARDDETAILS.show_custom_ids
+      //   ? this.setUpIDNumber(IDCARDDETAILS.barcode_type || 'qr-code')
+      //   : null;
+      // IDCARDDETAILS.show_grade_levels ? this.greadLevel = '11' : null
+      // IDCARDDETAILS.signed_url ? this.logoURL = IDCARDDETAILS.signed_url : null
 
       store.removeItem('idcard')
     } else {
@@ -144,16 +145,17 @@ export class IdCardEditorComponent implements OnInit, OnDestroy {
             this.isAdded = true;
             const IDCARDDETAILS = result.results.digital_id_card;
             this.IDCARDDETAILS = IDCARDDETAILS;
-            this.IDCardEnabled = IDCARDDETAILS.enabled;
-            this.backsideText = IDCARDDETAILS.backside_text;
-            this.backgroundColor = IDCARDDETAILS.color;
-            this.IDCardVisibleTo = IDCARDDETAILS.visible_to_who;
-            this.logoURL = IDCARDDETAILS.signed_url;
-            IDCARDDETAILS.show_custom_ids
-              ? this.setUpIDNumber(IDCARDDETAILS.barcode_type || 'qr-code')
-              : null;
-            IDCARDDETAILS.show_grade_levels ? this.greadLevel = '11' : null
-            IDCARDDETAILS.signed_url ? this.logoURL = IDCARDDETAILS.signed_url : null
+            this.setUpData(IDCARDDETAILS);
+            // this.IDCardEnabled = IDCARDDETAILS.enabled;
+            // this.backsideText = IDCARDDETAILS.backside_text;
+            // this.backgroundColor = IDCARDDETAILS.color;
+            // this.IDCardVisibleTo = IDCARDDETAILS.visible_to_who;
+            // this.logoURL = IDCARDDETAILS.signed_url;
+            // IDCARDDETAILS.show_custom_ids
+            //   ? this.setUpIDNumber(IDCARDDETAILS.barcode_type || 'qr-code')
+            //   : null;
+            // IDCARDDETAILS.show_grade_levels ? this.greadLevel = '11' : null
+            // IDCARDDETAILS.signed_url ? this.logoURL = IDCARDDETAILS.signed_url : null
           }
         },
         error: (error: any) => {
@@ -193,6 +195,19 @@ export class IdCardEditorComponent implements OnInit, OnDestroy {
     this.destroy$.complete();
   }
 
+  setUpData(IDCARDDETAILS) {
+    this.IDCardEnabled = IDCARDDETAILS.enabled;
+    this.backsideText = IDCARDDETAILS.backside_text;
+    this.backgroundColor = IDCARDDETAILS.color;
+    this.IDCardVisibleTo = IDCARDDETAILS.visible_to_who;
+    this.logoURL = IDCARDDETAILS.signed_url;
+    IDCARDDETAILS.show_custom_ids
+      ? this.selectBarcodeType(IDCARDDETAILS.barcode_type || 'qr-code', false)
+      : null;
+    IDCARDDETAILS.show_grade_levels ? this.greadLevel = '11' : null
+    IDCARDDETAILS.signed_url ? this.logoURL = IDCARDDETAILS.signed_url : null
+  }
+
   setBackgroundColor() {
     this.idCardFormData.delete("color");
     this.idCardFormData.append("color", this.backgroundColor);
@@ -225,6 +240,20 @@ export class IdCardEditorComponent implements OnInit, OnDestroy {
   cancelEditing() {
     this.idCardFormData = new FormData();
     this.isInEditingMode = false;
+    this.idCardService.getIDCardDetailsEdit().subscribe({
+      next: (result: any) => {
+        if (result?.results?.digital_id_card) {
+          this.isAdded = true;
+          const IDCARDDETAILS = result.results.digital_id_card;
+          this.IDCARDDETAILS = IDCARDDETAILS;
+          this.setUpData(IDCARDDETAILS);
+        }
+      },
+      error: (error: any) => {
+        console.log("Error : ", error)
+
+      }
+    });
   }
 
   async setUpProfilePicture() {
@@ -327,6 +356,8 @@ export class IdCardEditorComponent implements OnInit, OnDestroy {
             if (res) {
               this.isLogoAdded = false;
               this.logoURL = "";
+              this.idCardFormData.append("logo_file_name", "");
+              this.autoSave();
             }
           });
         }
@@ -334,15 +365,6 @@ export class IdCardEditorComponent implements OnInit, OnDestroy {
   }
 
   setUpIDNumber(type: string = "qr-code", byUser: boolean = false) {
-    let generateQR: boolean = false;
-    if (!this.IDNumberData?.idNumber) {
-      generateQR = true;
-    }
-    this.IDNumberData["idNumber"] = '123456';
-    this.showCustomID = true;
-    if (generateQR) {
-      this.selectBarcodeType(type, byUser);
-    }
     if (byUser) {
       this.idCardFormData.delete("show_custom_ids");
       this.idCardFormData.append("show_custom_ids", 'true');
@@ -352,13 +374,33 @@ export class IdCardEditorComponent implements OnInit, OnDestroy {
         width: '425px',
         height: '510px',
       });
+
+      PPD.afterClosed().subscribe((result) => {
+        this.userService.getStatusOfIDNumber().subscribe({
+          next: (result: any) => {
+            if (result?.results?.setup) {
+              let generateQR: boolean = false;
+              if (!this.IDNumberData?.idNumber) {
+                generateQR = true;
+              }
+              this.IDNumberData["idNumber"] = '123456';
+              this.showCustomID = true;
+              if (generateQR) {
+                this.selectBarcodeType(type, byUser);
+              }
+              this.selectedBarcode = this.typeOfBarcodes.find(
+                (o) => o.action === type
+              );
+            }
+          }
+        })
+      });
     }
-    this.selectedBarcode = this.typeOfBarcodes.find(
-      (o) => o.action === type
-    );
   }
 
   async selectBarcodeType(value, byUser: boolean = false) {
+    this.IDNumberData["idNumber"] = '123456';
+    this.showCustomID = true;
     this.IDNumberData["barcodeURL"] =
       await this.qrBarcodeGenerator.selectBarcodeType(value, 123456);
     if (value == "qr-code") {
@@ -402,12 +444,21 @@ export class IdCardEditorComponent implements OnInit, OnDestroy {
       width: '425px',
       height: '510px',
     });
-    this.greadLevel = '11';
-    if (!this.IDCARDDETAILS.show_grade_levels) {
-      this.idCardFormData.delete("show_grade_levels");
-      this.idCardFormData.append("show_grade_levels", 'true');
-      this.autoSave();
-    }
+
+    PPD.afterClosed().subscribe((result) => {
+      this.userService.getStatusOfGradeLevel().subscribe({
+        next: (result: any) => {
+          if (result?.results?.setup) {
+            this.greadLevel = '11';
+            if (!this.IDCARDDETAILS.show_grade_levels) {
+              this.idCardFormData.delete("show_grade_levels");
+              this.idCardFormData.append("show_grade_levels", 'true');
+              this.autoSave();
+            }
+          }
+        }
+      });
+    });
   }
 
   openConfirmationDialog(data) {

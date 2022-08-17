@@ -74,7 +74,7 @@ export interface SearchData {
   selectedStatus?: Status;
 }
 
-export type PassRemovedResponse = {
+export interface PassRemovedResponse {
   dids: number[];
   error: Error | null;
 }
@@ -93,7 +93,7 @@ export class ExploreComponent implements OnInit, OnDestroy {
     'pass_search': { id: 1, title: 'Passes', color: '#00B476', icon: 'Pass Search', action: 'pass_search' },
     'report_search': { id: 2, title: 'Report Submissions', color: '#E32C66', icon: 'Report Search', action: 'report_search' },
     'contact_trace': { id: 3, title: 'Contact Trace', color: '#139BE6', icon: 'Contact Trace', action: 'contact_trace' },
-    'encounter_detection': { id: 4, title: 'Encounter Detection', color: '#1F195E', icon: 'Encounter Detection', action: 'encounter_detection' },
+    'encounter_detection': { id: 4, title: 'Detected Encounters', color: '#1F195E', icon: 'Encounter Detection', action: 'encounter_detection' },
     // 'rooms_usage': {id: 4, title: 'Rooms Usage', color: 'orange', icon: 'Rooms Usage', action: 'rooms_usage'}
   };
 
@@ -124,7 +124,7 @@ export class ExploreComponent implements OnInit, OnDestroy {
   };
   encounterDetectedState: {
     loading$: Observable<boolean>,
-    loaded$: Observable<boolean>
+    errored$: Observable<boolean>,
     isEmpty?: boolean,
     // sortEncounters$?: Observable<string>,
     // sortEncountersLoading$?: Observable<boolean>,
@@ -150,7 +150,7 @@ export class ExploreComponent implements OnInit, OnDestroy {
   encounterDetectedData: any = {
     selectedStudents: null,
     selectedDate: null
-  }
+  };
   contact_trace_passes: {
     [id: number]: HallPass
   } = {};
@@ -270,7 +270,7 @@ export class ExploreComponent implements OnInit, OnDestroy {
     };
     this.encounterDetectedState = {
       loading$: this.encounterDetectionService.encounterLoading$,
-      loaded$: this.encounterDetectionService.encounterLoaded$,
+      errored$: this.encounterDetectionService.encounterErrored$,
       // sortEncounters$: this.hallPassService.sortPassesValue$,
       // sortEncountersLoading$: this.hallPassService.sortPassesLoading$,
       // countEncounters$: this.hallPassService.currentPassesCount$,
@@ -358,11 +358,11 @@ export class ExploreComponent implements OnInit, OnDestroy {
           };
 
           this.searchEncounterDetection();
-          return this.encounterDetectionService.encounterLoaded$;
+          return this.encounterDetectionService.encounterLoading$.pipe(map(loading => !loading));
         }
       });
 
-    
+
 
     this.searchedPassData$ = this.hallPassService.passesCollection$
       .pipe(
@@ -412,8 +412,8 @@ export class ExploreComponent implements OnInit, OnDestroy {
             let rawObj: any = {
               'Pass': passImg,
               'Student Name': pass.student.display_name,
-              'Grade': pass.student.grade_level ?? "-",
-              'ID': pass.student.custom_id ?? "-",
+              'Grade': pass.student.grade_level ? this.domSanitizer.bypassSecurityTrustHtml(`<span class="grade-level">${pass.student.grade_level}</span>`) : '-',
+              'ID': pass.student.custom_id ? this.domSanitizer.bypassSecurityTrustHtml(`<span class="id-number">${pass.student.custom_id}</span>`) : '-',
               'Origin': pass.origin.title,
               'Destination': pass.destination.title,
               'Pass start time': moment(pass.start_time).format('M/DD h:mm A'),
@@ -468,13 +468,13 @@ export class ExploreComponent implements OnInit, OnDestroy {
             this.encounterDetectedState.isEmpty = false;
             const response = encounterDetection.map((encounter, index) => {
               const passImg = this.createPasses(encounter.encounters);
-              const DEFAULTAVATAR = "'./assets/Avatar Default.svg' | resolveAsset"
+              const DEFAULTAVATAR = '\'./assets/Avatar Default.svg\' | resolveAsset';
               const students =
                 `<div class="ds-flex-center-start">
                   <div class="ds-flex-center-start name-wrapper"><img src=${encounter.firstStudent.profile_picture ?? DEFAULTAVATAR}><p class="student-name">${encounter.firstStudent.display_name}</p></div>
                   <div class="ds-flex-center-start name-wrapper"><img src=${encounter.secondStudent.profile_picture ?? DEFAULTAVATAR}><p class="student-name">${encounter.secondStudent.display_name}</p></div>
-              </div>`
-              let rawObj: any = {
+              </div>`;
+              const rawObj: any = {
                 'Students': students,
                 '# of Encounters': encounter.numberOfEncounters,
                 'Passes': passImg,
@@ -530,8 +530,8 @@ export class ExploreComponent implements OnInit, OnDestroy {
 
             const result = {
               'Student Name': contact.student.display_name,
-              'Grade': contact.student.grade_level ?? "-",
-              'ID': contact.student.custom_id ?? "-",
+              'Grade': contact.student.grade_level ? this.domSanitizer.bypassSecurityTrustHtml(`<span class="grade-level">${contact.student.grade_level}</span>`) : '-',
+              'ID': contact.student.custom_id ? this.domSanitizer.bypassSecurityTrustHtml(`<span class="id-number">${contact.student.custom_id}</span>`) : '-',
               'Degree': contact.degree,
               'Contact connection': this.domSanitizer.bypassSecurityTrustHtml(
                 `<div class="no-wrap" style="display: flex; width: 300px !important;">` +
@@ -598,8 +598,8 @@ export class ExploreComponent implements OnInit, OnDestroy {
           const passTile = this.domSanitizer.bypassSecurityTrustHtml(_passTile);
           const result = {
             'Student Name': this.domSanitizer.bypassSecurityTrustHtml(`<div>${report.student.display_name}</div>`),
-            'Grade': report.student.grade_level ?? "-",
-            'ID': report.student.custom_id ?? "-",
+            'Grade': report.student.grade_level ? this.domSanitizer.bypassSecurityTrustHtml(`<span class="grade-level">${report.student.grade_level}</span>`) : '-',
+            'ID': report.student.custom_id ? this.domSanitizer.bypassSecurityTrustHtml(`<span class="id-number">${report.student.custom_id}</span>`) : '-',
             'Message': this.domSanitizer.bypassSecurityTrustHtml(`<div><div class="message">${report.message || 'No report message'}</div></div>`),
             'Status': report.status,
             'Pass': passTile,
@@ -628,15 +628,15 @@ export class ExploreComponent implements OnInit, OnDestroy {
   }
 
   createPasses(encounters) {
-    encounters.sort((a,b)=> new Date(b.encounterDate).getTime() - new Date(a.encounterDate).getTime());
-    let passess = '<div class="ds-flex-center-start">'
+    encounters.sort((a, b) => new Date(b.encounterDate).getTime() - new Date(a.encounterDate).getTime());
+    let passess = '<div class="ds-flex-center-start">';
     for (let i = 0; i < encounters.length; i++) {
       const element = encounters[i];
 
       const passImg = `<div class="pass-icon" style="background: ${this.getGradient(element.firstStudentPass.gradient_color)}; cursor: pointer">
                                         </div><div class="pass-icon" style="background: ${this.getGradient(element.secondStudentPass.gradient_color)}; cursor: pointer">
                                         </div>`;
-      passess += passImg
+      passess += passImg;
     }
     return this.domSanitizer.bypassSecurityTrustHtml(`${passess}</div>`);
   }
@@ -688,7 +688,7 @@ export class ExploreComponent implements OnInit, OnDestroy {
 
     const deletePasses = {
       display: this.selectedRows.length > 1 ? 'Delete passes' : 'Delete the pass',
-      color: '#E32C66',// $red500
+      color: '#E32C66', // $red500
       action: ActionPassDeletion,
       icon: './assets/Delete (Red).svg',
     };
@@ -706,7 +706,7 @@ export class ExploreComponent implements OnInit, OnDestroy {
         this.clearTableSelection();
         return;
       }
-      
+
       const num = this.selectedRows.length;
       const headerText = num === 1 ? 'Delete the pass ?' : `Delete ${num} passes ?`;
       const detailText = `You are about to delete ${num} ${num === 1 ? 'pass' : 'passes'}. Deleted records can\'t be restored after 90 days.`;
@@ -724,13 +724,13 @@ export class ExploreComponent implements OnInit, OnDestroy {
           templateData: {detailText},
         } as ConfirmationTemplates
       }).afterClosed().subscribe((choice: boolean | undefined) => {
-        if (! choice) return this.clearTableSelection();
+        if (! choice) { return this.clearTableSelection(); }
         const data: any = {};
         data['removed'] = true;
         data['ids'] = this.selectedRows.map(s => +s.id);
         const replacedRows = this.passtable.dataSource.allData.map(s => {
           // a soon to be deleted case?
-          if (data['ids'].includes(+s.id)) return this.passtable.generateOneFakeData();
+          if (data['ids'].includes(+s.id)) { return this.passtable.generateOneFakeData(); }
           // just keep the old row
           return {...s};
         });
@@ -739,8 +739,8 @@ export class ExploreComponent implements OnInit, OnDestroy {
         // replace soon to be deleted rows with fake rows
         this.passtable.dataSource.setFakeData([...replacedRows]);
         this.hallPassService.hidePasses(data).pipe(
-          tap((r:PassRemovedResponse) => {
-            if (!('dids' in r)) throw new Error('missing in data shape');
+          tap((r: PassRemovedResponse) => {
+            if (!('dids' in r)) { throw new Error('missing in data shape'); }
 
             this.passtable.dataSource.allData = originalRows.filter(s => !r.dids.includes(+s.id));
             // just update the totalCOunt and lastAddedPasses
@@ -757,21 +757,21 @@ export class ExploreComponent implements OnInit, OnDestroy {
                 // so do not retry, jump directly to the toast
                 if (s >= 400 && s < 500) {
                   return true;
-                };
+                }
                 // only server errors have to be retried for more times
                 // as they can dissapear meanwhile
                 return i > 1;
-              },// after 1 original try + 2 retries shows a toast
+              }, // after 1 original try + 2 retries shows a toast
               of(e).pipe(
                 take(1),
                 tap(e => {
                   const message: string = !!e?.error ? (e.error.detail ?? e.error.message ?? e.message) : e.message;
-                  // progress-interceptor have hall_pass as excepted url 
+                  // progress-interceptor have hall_pass as excepted url
                   // so it will not catch any error thrown under hall_pass urls
                   // notify the admin is how we deal with this kind of error
                   this.toastService.openToast(
                     { title: `${message}`,
-                      subtitle: `Trying ${i+1} times but did not succeed to remove the passes`,
+                      subtitle: `Trying ${i + 1} times but did not succeed to remove the passes`,
                       type: 'error',
                       showButton: false }
                   );
@@ -781,7 +781,7 @@ export class ExploreComponent implements OnInit, OnDestroy {
                   throw eo;
               })),
               of(e).pipe(
-                delay(300), 
+                delay(300),
                 tap(e => console.log(`retrying ${e.message}`)),
               ),
             )),
@@ -791,8 +791,8 @@ export class ExploreComponent implements OnInit, OnDestroy {
             // discard fake rows
             this.passtable.dataSource.allData = originalRows;
             // an OverflownTries error has been dealt with it above
-            if ('overflown' in e) return of(null);
-            // other errors are thrown  
+            if ('overflown' in e) { return of(null); }
+            // other errors are thrown
             throw e;
           }),
 
@@ -800,11 +800,11 @@ export class ExploreComponent implements OnInit, OnDestroy {
       });
 
     });
-  
+
   }
 
   clearTableSelection() {
-    this.tableService.clearSelectedUsers.next(true)
+    this.tableService.clearSelectedUsers.next(true);
     this.selectedRows = [];
   }
 
@@ -836,7 +836,7 @@ export class ExploreComponent implements OnInit, OnDestroy {
       });
   }
 
-  encounterClick(encounte_data){
+  encounterClick(encounte_data) {
     const dialogRef = this.dialog.open(EncounterDetectionDialogComponent, {
       panelClass: 'accounts-profiles-dialog',
       backdropClass: 'custom-bd',
@@ -847,7 +847,7 @@ export class ExploreComponent implements OnInit, OnDestroy {
   }
 
   openFilter(event, action) {
-    UNANIMATED_CONTAINER.next(true);;
+    UNANIMATED_CONTAINER.next(true);
     if (action === 'students' || action === 'destination' || action === 'origin') {
       const studentFilter = this.dialog.open(StudentFilterComponent, {
         id: `${action}_filter`,
@@ -1066,7 +1066,7 @@ export class ExploreComponent implements OnInit, OnDestroy {
   }
 
   openPassDialog(pid: number | null, invisBackdrop: boolean | null = false) {
-    if (pid === null) return;
+    if (pid === null) { return; }
 
     this.reportSearchState.entities$
       .pipe(
@@ -1074,7 +1074,7 @@ export class ExploreComponent implements OnInit, OnDestroy {
         map((rr: Dictionary<Report>): HallPass | null => {
 
           const filtered = Object.entries(rr)
-            .filter(([_, v]) => +v?.reported_pass_id === +pid);// force number equality
+            .filter(([_, v]) => +v?.reported_pass_id === +pid); // force number equality
 
           const found = filtered.map(([_, v]) => v?.reported_pass);
           // there can be many more reports for the same pass
@@ -1085,14 +1085,14 @@ export class ExploreComponent implements OnInit, OnDestroy {
               return (found[0] instanceof HallPass) ? found[0] : HallPass.fromJSON(found[0]);
             } catch (e) {
               // TODO: how to deal with this error??
-              console.log(e)
+              console.log(e);
             }
           }
           return null;
         }),
         takeUntil(this.destroy$),
       ).subscribe((pass: HallPass | null) => {
-        if (pass === null) return;
+        if (pass === null) { return; }
 
         pass.start_time = new Date(pass.start_time);
         pass.end_time = new Date(pass.end_time);
@@ -1155,7 +1155,7 @@ export class ExploreComponent implements OnInit, OnDestroy {
         queryParams['end_time'] = end;
       }
     } else {
-      this.encounterDetectedData.selectedDate = {}
+      this.encounterDetectedData.selectedDate = {};
       let start;
       let end;
       start = moment().subtract(30, 'days').toISOString();
@@ -1165,13 +1165,13 @@ export class ExploreComponent implements OnInit, OnDestroy {
       queryParams['end_time'] = end;
       this.encounterDetectedData.selectedDate['end'] = moment();
       this.adminCalendarOptions = {
-        rangeId: "range_2",
-        toggleResult: "Range"
-      }
+        rangeId: 'range_2',
+        toggleResult: 'Range',
+      };
     }
     const school = this.http.getSchool();
     const url = constructUrl(`v1/schools/${school.id}/stats/encounter_detection`, queryParams);
-    this.encounterDetectionService.getEncounterDetectionRequest(url)
+    this.encounterDetectionService.getEncounterDetectionRequest(url);
   }
 
   contactTrace() {

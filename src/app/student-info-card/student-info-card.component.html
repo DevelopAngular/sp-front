@@ -188,11 +188,21 @@
                             </div>
                             <div class="form-content" [style.margin]="'20px 0'">
                                 <div class="title">Grade</div>
-                                <div class="value">{{ profile.grade_level || '-' }}</div>
+                                <div class="value" *ngIf="!user.isAdmin()">{{ profile.grade_level || '-' }}</div>
+                                <div class="value" *ngIf="user.isAdmin()">
+                                    <app-gradient-button (buttonClick)="openGradeLevel()" [size]="'small'" [rightIconWidth]="'16px'" [gradient]="'#00B476, #00B476'" [rightIcon]="'./assets/External Link (White).svg'">
+                                        Add Grade Level
+                                    </app-gradient-button>
+                                </div>
                             </div>
                             <div class="form-content">
                                 <div class="title">ID</div>
-                                <div class="value">{{ profile.custom_id || '-' }}</div>
+                                <div class="value" *ngIf="!user.isAdmin()">{{ profile.custom_id || '-' }}</div>
+                                <div class="value" *ngIf="user.isAdmin()">
+                                    <app-gradient-button (buttonClick)="openIDNumber()" [size]="'small'" [rightIconWidth]="'16px'" [gradient]="'#00B476, #00B476'" [rightIcon]="'./assets/External Link (White).svg'">
+                                        Add ID Number
+                                    </app-gradient-button>
+                                </div>
                             </div>
                             <div class="form-content" [style.margin]="'20px 0'">
                                 <div class="title">Account Type <span class="support-icon" customToolTip [contentTemplate]="text"><img width="13px" [src]="'./assets/Support (Gray-200).svg' | resolveAsset"></span></div>
@@ -249,17 +259,25 @@
                                         <span class="support-icon" (mouseenter)="created.destroyClose = true" *ngIf="created.hovered || created.destroyClose" (leave)="created.destroyClose = false" customToolTip [contentTemplate]="createdTemplate" [editable]="true" [nonDisappearing]="false">
                         <img width="13px" [src]="'./assets/Support (Gray-200).svg' | resolveAsset">
                       </span>
-                                        <ng-template #createdTemplate>
-                                            <div class="ds-tooltip" style="max-width: 270px">
-                                                Number of passes the student has had, including passes teachers have created.
-                                            </div>
-                                        </ng-template>
-                                    </div>
-                                    <div class="value">{{ (studentStats$ | async)?.expired_passes.length + ( (studentStats$ | async)?.expired_passes.length === 1 ? ' pass' : ' passes') }}</div>
-                                </div>
-                                <div class="info-card" #outOfClass (mouseenter)="outOfClass.hovered = true" (mouseleave)="outOfClass.hovered = false">
-                                    <div class="title">TIME SPENT OUT OF CLASS
-                                        <span class="support-icon" (mouseenter)="outOfClass.destroyClose = true" *ngIf="outOfClass.hovered || outOfClass.destroyClose" (leave)="outOfClass.destroyClose = false" customToolTip [contentTemplate]="outOfClassTemplate" [editable]="true" [nonDisappearing]="false">
+                      <ng-template #createdTemplate>
+                        <div class="ds-tooltip" style="max-width: 270px">
+                          Number of passes the student has had, including passes teachers have created.
+                        </div>
+                      </ng-template>
+                    </div>
+                    <div class="value">{{ (studentStats$ | async)?.total_created_passes + ( (studentStats$ | async)?.total_created_passes === 1 ? ' pass' : ' passes') }}</div>
+                  </div>
+                  <div class="info-card" #outOfClass (mouseenter)="outOfClass.hovered = true" (mouseleave)="outOfClass.hovered = false">
+                    <div class="title">TIME SPENT OUT OF CLASS
+                      <span class="support-icon"
+                            (mouseenter)="outOfClass.destroyClose = true"
+                            *ngIf="outOfClass.hovered || outOfClass.destroyClose"
+                            (leave)="outOfClass.destroyClose = false"
+                            customToolTip
+                            [contentTemplate]="outOfClassTemplate"
+                            [editable]="true"
+                            [nonDisappearing]="false"
+                      >
                         <img width="13px" [src]="'./assets/Support (Gray-200).svg' | resolveAsset">
                       </span>
                                         <ng-template #outOfClassTemplate>

@@ -52,6 +52,8 @@ import { IDCard } from '../admin/id-cards/id-card-editor/id-card-editor.componen
 import { IdcardOverlayContainerComponent } from '../idcard-overlay-container/idcard-overlay-container.component';
 import { QRBarcodeGeneratorService } from '../services/qrbarcode-generator.service';
 import { IDCardService } from '../services/IDCardService';
+import { IdCardGradeLevelsComponent } from '../admin/id-cards/id-card-grade-levels/id-card-grade-levels.component';
+import { IdCardIdNumbersComponent } from '../admin/id-cards/id-card-id-numbers/id-card-id-numbers.component';
 
 declare const window;
 
@@ -576,7 +578,7 @@ export class StudentInfoCardComponent implements OnInit, AfterViewInit, OnDestro
   }
 
   openPassLimitsDialog() {
-    if (this?.passLimit?.limitEnabled) {
+    if (this.passLimit) {
       this.passLimitDialogRef = this.dialog.open(PassLimitsDialogComponent, {
         closeOnNavigation: true,
         panelClass: 'overlay-dialog',
@@ -733,6 +735,24 @@ export class StudentInfoCardComponent implements OnInit, AfterViewInit, OnDestro
     if (start && end) {
       return start.isSame(end, 'day') ? start.format('MMM D') : start.format('MMM D') + ' to ' + end.format('MMM D');
     }
+  }
+
+  openGradeLevel(){
+    const PPD = this.dialog.open(IdCardGradeLevelsComponent, {
+      panelClass: 'accounts-profiles-dialog',
+      backdropClass: 'custom-bd',
+      width: '425px',
+      height: '510px',
+    });
+  }
+
+  openIDNumber(){
+    const PPD = this.dialog.open(IdCardIdNumbersComponent, {
+      panelClass: 'accounts-profiles-dialog',
+      backdropClass: 'custom-bd',
+      width: '425px',
+      height: '510px',
+    });
   }
 
   dismissPassLimitNux() {

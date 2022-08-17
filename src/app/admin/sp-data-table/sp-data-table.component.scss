@@ -498,6 +498,16 @@
     margin-top: 5px;
 }
 
+::ng-deep .grade-level {
+    width: 70px;
+    display: block;
+}
+
+::ng-deep .id-number {
+    width: 200px;
+    display: block;
+}
+
 @keyframes shimmer {
     0% {
         background-position: -1000px 0;

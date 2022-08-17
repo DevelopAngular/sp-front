@@ -5,6 +5,7 @@ import {ToastService} from '../services/toast.service';
 import {Toast} from '../models/Toast';
 import {toastSlideInOut} from '../animations';
 import {User} from '../models/User';
+import {KioskModeService} from '../services/kiosk-mode.service';
 
 const TOASTDELAY = (6 * 1000) - 200;
 
@@ -24,22 +25,23 @@ export class CustomToastComponent implements OnInit, OnDestroy {
   @Input() user: User;
 
   toggleToast: boolean;
-  cancelable: boolean = true;
   data: Toast;
   timerValue: number;
-  animationTrigger: string;
   stopPosition: boolean;
+  isKioskMode: boolean;
 
   destroy$: Subject<any> = new Subject<any>();
   destroyClose$: Subject<any> = new Subject<any>();
 
   constructor(
     private toastService: ToastService,
+    private kioskMode: KioskModeService,
     private cdr: ChangeDetectorRef,
   ) { }
 
   ngOnInit() {
     this.data = this.toast.data;
+    this.isKioskMode = !!this.kioskMode.getCurrentRoom().value;
     setTimeout(() => {
       this.toggleToast = true;
       this.cdr.detectChanges();

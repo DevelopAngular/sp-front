@@ -42,16 +42,16 @@ export class GoogleSigninComponent implements OnInit, OnDestroy {
   };
   public isGoogleLogin: boolean;
   public isStandardLogin: boolean;
-  public isGG4L: boolean;
   public isClever: boolean;
+  public isClasslink: boolean;
   public auth_providers: any;
 
-  public inputFocusNumber: number = 1;
+  public inputFocusNumber = 1;
   public forceFocus$ = new Subject();
 
   public loginForm: FormGroup;
   public error$: BehaviorSubject<string> = new BehaviorSubject<string>(null);
-  public disabledButton: boolean = true;
+  public disabledButton = true;
   public showError: boolean;
   public schoolAlreadyText$: Observable<string>;
   public passwordError: boolean;
@@ -121,10 +121,10 @@ export class GoogleSigninComponent implements OnInit, OnDestroy {
         this.storage.removeItem('context');
         if (this.router.url.includes('google_oauth')) {
           return this.loginGoogle(qp.code as string);
+        } else if (this.router.url.includes('classlink_oauth')) {
+          return this.loginSSO(qp.code as string);
         } else if (!!qp.scope) {
           return this.loginClever(qp.code as string);
-        } else if (!!qp.code) {
-          return this.loginSSO(qp.code as string);
         }
     });
 
@@ -194,8 +194,8 @@ export class GoogleSigninComponent implements OnInit, OnDestroy {
   }
 
   loginSSO(code: string) {
-    this.storage.setItem('authType', 'gg4l');
-    this.loginService.updateAuth({ gg4l_code: code, type: 'gg4l-login'});
+    this.storage.setItem('authType', 'classlink');
+    this.loginService.updateAuth({ classlink_code: code, type: 'classlink-login'});
     return of (null);
   }
 
@@ -257,26 +257,26 @@ export class GoogleSigninComponent implements OnInit, OnDestroy {
         if (auth.indexOf('google') !== -1) {
           this.loginData.demoLoginEnabled = false;
           this.isStandardLogin = false;
-          this.isGG4L = false;
+          this.isClasslink = false;
           this.isGoogleLogin = true;
           this.isClever = false;
         } else if (auth.indexOf('clever') !== -1) {
           this.loginData.demoLoginEnabled = false;
           this.isStandardLogin = false;
-          this.isGG4L = false;
+          this.isClasslink = false;
           this.isGoogleLogin = false;
           this.isClever = true;
-        } else if (auth.indexOf('gg4l') !== -1) {
+        } else if (auth.indexOf('classlink') !== -1) {
           this.loginData.demoLoginEnabled = false;
           this.isStandardLogin = false;
           this.isGoogleLogin = false;
           this.isClever = false;
-          this.isGG4L = true;
+          this.isClasslink = true;
         } else if (auth.indexOf('password') !== -1) {
           this.isGoogleLogin = false;
           this.isStandardLogin = true;
           this.isClever = false;
-          this.isGG4L = false;
+          this.isClasslink = false;
         } else {
           this.loginData.demoLoginEnabled = false;
         }
@@ -305,14 +305,11 @@ export class GoogleSigninComponent implements OnInit, OnDestroy {
       } else {
         window.location.href = `https://clever.com/oauth/authorize?response_type=code&redirect_uri=${redirect}&client_id=f4260ade643c042482a3`;
       }
-    } else if (this.isGG4L) {
+    } else if (this.isClasslink) {
       this.showSpinner = true;
       this.storage.setItem('authType', this.loginData.authType);
-      if (this.storage.getItem('gg4l_invalidate')) {
-        window.location.href = `https://sso.gg4l.com/oauth/auth?response_type=code&client_id=${environment.gg4l.clientId}&redirect_uri=${window.location.href}&invalidate=true`;
-      } else {
-        window.location.href = `https://sso.gg4l.com/oauth/auth?response_type=code&client_id=${environment.gg4l.clientId}&redirect_uri=${window.location.href}`;
-      }
+      const redirect = this.httpService.getEncodedRedirectUrl() + 'classlink_oauth';
+      window.location.href = `https://launchpad.classlink.com/oauth2/v2/auth?scope=oneroster,profile,full&client_id=c1655133410502391e3e32b3fb24cefb8535bd9994d4&response_type=code&redirect_uri=${redirect}`;
     } else if (this.isStandardLogin) {
       this.storage.setItem('authType', this.loginData.authType);
       this.inputFocusNumber = 2;
@@ -320,7 +317,7 @@ export class GoogleSigninComponent implements OnInit, OnDestroy {
       this.loginData.demoLoginEnabled = true;
     }
     this.isGoogleLogin = false;
-    this.isGG4L = false;
+    this.isClasslink = false;
     this.isStandardLogin = false;
     this.isClever = false;
   }

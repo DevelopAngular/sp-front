@@ -9,7 +9,7 @@
             <img [src]="'./assets/ID Numbers(White).svg' | resolveAsset" width="20" height="20" alt="(White).svg" class="ds-mr-10">
             <span>ID Numbers</span>
         </div>
-        <div class="save-button" [customToolTip]="(!uploadingProgress.images.complete || !uploadingProgress.csv.complete) && page === 2 ? 'Make sure to add the profile picture files and the map file before uploading!' : null">
+        <div class="save-button">
             <app-gradient-button *ngIf="page !== 3 && page !== 5" [disabled]="!uploadingProgress.csv.complete && page === 2" [size]="'small'" [gradient]="'#FFFFFF, #FFFFFF'" [hoverColor]="'#FCFDFF'" [textColor]="'#1F195E'" [cursor]="'pointer'" (buttonClick)="nextPage()">
                 <div class="ds-flex-center-start">
                     <span>
@@ -104,8 +104,8 @@
         <div class="page" *ngIf="page === 4">
             <div class="upload-info" style="padding: 20px">
                 <div class="upload-title">Upload complete</div>
-                <div class="info"><span style="font-weight: bold">New IDs: </span><span>{{ allProfiles.length }} accounts</span></div>
-                <div class="info"><span style="font-weight: bold">Uploaded IDs: </span><span>{{ allProfiles.length }} accounts</span></div>
+                <div class="info"><span style="font-weight: bold">New IDs: </span><span>{{ newUploadedIDS }} accounts</span></div>
+                <div class="info"><span style="font-weight: bold">Uploaded IDs: </span><span>{{ totalUploadedIDS }} accounts</span></div>
                 <div class="info"><span style="font-weight: bold">Errors: </span><span>{{ errors.length }} errors <a *ngIf="errors.length" download="error.txt" [href]="downloadData()" style="color: #E32C66; cursor: pointer;">[Download]</a></span>
                 </div>
             </div>
