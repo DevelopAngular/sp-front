@@ -71,7 +71,7 @@
           </ng-container>
         </div>
 
-        <div *ngIf="individualStudentLimits.length === 0" class="accent-background-section ds-flex-column ds-flex-center-between" style="margin-bottom: 40px">
+        <div *ngIf="individualStudentLimits.length === 0" class="accent-background-section ds-flex-column ds-flex-center-between">
           <span class="ds-dialog-heading" style="align-self: flex-start; padding-bottom: 0 !important;">
             Limits for Individual Students
             <div class="tooltip-container" style="display: inline">
@@ -108,7 +108,7 @@
           </div>
         </div>
 
-        <div *ngIf="individualStudentLimits.length > 0" class="accent-background-section" style="margin-bottom: 40px">
+        <div *ngIf="individualStudentLimits.length > 0" class="accent-background-section">
           <div class="ds-flex-row ds-flex-center-between ds-mb-20">
             <span class="ds-dialog-heading" style="align-self: flex-start; padding-bottom: 0 !important;">
               Limits for Individual Students
@@ -213,7 +213,7 @@
   </mat-tab>
 </mat-tab-group>
 
-<app-pass-limit-feedback *ngIf="!contentLoading" style="position: absolute; width: 385px; margin-top: -15px;"></app-pass-limit-feedback>
+<app-pass-limit-feedback *ngIf="!contentLoading" style="position: absolute; width: 385px; margin-top: 25px;"></app-pass-limit-feedback>
 
 <ng-template #buttonLoading let-loading="loading" let-text="text">
   <span *ngIf="!loading">{{text}}</span>
