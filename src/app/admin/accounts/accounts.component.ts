@@ -258,8 +258,7 @@ export class AccountsComponent implements OnInit, OnDestroy {
       hasBackdrop: true,
       panelClass: 'overlay-dialog',
       backdropClass: 'custom-bd',
-      width: '425px',
-      height: '500px',
+      width: '425px'
     });
   }
 }
