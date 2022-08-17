@@ -59,14 +59,14 @@ export class NavComponent implements OnInit, AfterViewInit, OnDestroy {
     { title: 'Rooms', id: 'rooms', route: 'passconfig', type: 'routerLink', imgUrl: 'Room', requiredRoles: ['_profile_admin', 'access_pass_config'] },
     { title: 'Accounts', id: 'accounts', route: 'accounts', type: 'routerLink', imgUrl: 'Users', requiredRoles: ['_profile_admin', 'access_user_config'] },
     { title: 'My School', id: 'mySchool', route: 'myschool', type: 'routerLink', imgUrl: 'School', requiredRoles: ['_profile_admin', 'manage_school'] },
-    { title: 'ID Cards', id: 'idCards', route: 'idcards', type: 'routerLink', imgUrl: 'Digital ID Cards', requiredRoles: ['_profile_admin', 'manage_school'] }
+    { title: 'ID Cards', id: 'idCards', route: 'idcards', type: 'routerLink', imgUrl: 'Digital ID Cards', requiredRoles: ['_profile_admin', 'manage_school'], isPro: !this.userService.getFeatureFlagDigitalID() }
   ];
 
   views: View = {
     'pass_search': {id: 1, title: 'Passes', color: '#00B476', icon: 'Pass Search', action: 'pass_search'},
     'report_search': {id: 2, title: 'Report Submissions', color: '#E32C66', icon: 'Report Search', action: 'report_search'},
-    'contact_trace': {id: 3, title: 'Contact trace', color: '#139BE6', icon: 'Contact Trace', action: 'contact_trace'},
-    'encounter_detection': {id: 4, title: 'Detected Encounters', color: '#1F195E', icon: 'Encounter Detection', action: 'encounter_detection'},
+    'contact_trace': {id: 3, title: 'Contact Trace', color: '#139BE6', icon: 'Contact Trace', action: 'contact_trace'},
+    'encounter_detection': {id: 4, title: 'Detected Encounters', color: '#1F195E', icon: 'Encounter Detection', action: 'encounter_detection', isPro: !this.userService.getFeatureEncounterDetection()},
     // 'rooms_usage': {id: 4, title: 'Rooms Usage', color: 'orange', icon: 'Rooms Usage', action: 'rooms_usage'}
   };
 
@@ -194,10 +194,10 @@ export class NavComponent implements OnInit, AfterViewInit, OnDestroy {
       .subscribe(data => {
         this.introsData = data;
       });
-    if (!this.userService.getFeatureFlagDigitalID()) {
-      const removeIndex = this.buttons.map(item => { return item.id; }).indexOf('idCards');
-      this.buttons.splice(removeIndex, 1);
-    }
+    // if (!this.userService.getFeatureFlagDigitalID()) {
+    //   const removeIndex = this.buttons.map(item => { return item.id; }).indexOf('idCards');
+    //   this.buttons.splice(removeIndex, 1);
+    // }
   }
 
   ngOnDestroy() {

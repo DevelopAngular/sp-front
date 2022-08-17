@@ -17,6 +17,7 @@ interface Option {
   action: string;
   disableClose?: boolean;
   withoutHoverDescription?: boolean;
+  isPro?: boolean;
 }
 
 @Component({
