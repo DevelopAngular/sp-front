@@ -7,7 +7,7 @@ import {StudentList} from '../../models/StudentList';
 import {NextStep} from '../../animations';
 import {BehaviorSubject, combineLatest, Subject} from 'rxjs';
 import {CreateFormService} from '../create-form.service';
-import {filter, map, takeUntil} from 'rxjs/operators';
+import {filter, map, takeUntil, withLatestFrom} from 'rxjs/operators';
 import {cloneDeep, find} from 'lodash';
 import {LocationsService} from '../../services/locations.service';
 import {ScreenService} from '../../services/screen.service';
@@ -258,9 +258,29 @@ export class MainHallPassFormComponent implements OnInit, OnDestroy {
       .subscribe(rooms => {
         this.FORM_STATE.data.teacherRooms = rooms;
       });
-    this.locationsService.listenPassLimitSocket().subscribe(res => {
-      this.locationsService.updatePassLimitRequest(res);
+    this.locationsService.listenPassLimitSocket().subscribe(loc => {
+      this.locationsService.updatePassLimitRequest(loc);
+      // is this location a pinnable?
     });
+
+    this.locationsService.listenLocationSocket().pipe(
+      withLatestFrom(this.passesService.pinnables$),
+      map(([res, pinns]) => {
+        console.log(res);
+        try {
+          const loc: Location = Location.fromJSON(res.data);
+          this.locationsService.updateLocationSuccessState(loc);
+          const found = pinns.find(p => p.location.id === res.data.id);
+          if (found) {
+            // update location of pinnable
+            found.location = loc;
+            this.locationsService.updatePinnableSuccessState(found);
+          }
+        } catch (e) {
+          console.log(e);
+        }
+      }),
+    ).subscribe();
 
     this.dialogRef
       .backdropClick()

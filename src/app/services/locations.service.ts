@@ -6,6 +6,7 @@ import {HttpService} from './http-service';
 import {User} from '../models/User';
 import {BehaviorSubject, from, Observable, of} from 'rxjs';
 import {Location} from '../models/Location';
+import {Pinnable} from '../models/Pinnable';
 import {Store} from '@ngrx/store';
 import {AppState} from '../ngrx/app-state/app-state';
 import {getTeacherLocationsCollection} from '../ngrx/teacherLocations/state/locations-getters.state';
@@ -25,8 +26,10 @@ import {
   postLocation,
   removeLocation,
   searchLocations,
-  updateLocation
+  updateLocation,
+  updateLocationSuccess,
 } from '../ngrx/locations/actions';
+import {updatePinnableSuccess} from '../ngrx/pinnables/actions';
 import {
   getFavoriteLocationsCollection,
   getLoadedFavoriteLocations,
@@ -185,6 +188,18 @@ export class LocationsService {
     listenPassLimitSocket() {
       this.pollingService.sendMessage('location.active_pass_counts.enable', null);
       return this.pollingService.listen('location.active_pass_counts');
+    }
+
+    updateLocationSuccessState(location: Location) {
+      this.store.dispatch(updateLocationSuccess({location}));
+    }
+
+    updatePinnableSuccessState(pinnable: Pinnable) {
+      this.store.dispatch(updatePinnableSuccess({pinnable}));
+    }
+
+    listenLocationSocket() {
+      return this.pollingService.listen('location.patched');
     }
 
     /////// Favorite Locations
