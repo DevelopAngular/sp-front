@@ -583,7 +583,6 @@ export class StudentInfoCardComponent implements OnInit, AfterViewInit, OnDestro
     this.passLimitStudentInfoRef = this.dialog.open(PassLimitStudentInfoComponent, {
       ...RecommendedDialogConfig,
       width: '425px',
-      height: '500px',
       data: {
         studentPassLimit: this.studentPassLimit,
         user: this.user

@@ -135,8 +135,9 @@
           </div>
         </ng-template>
 
-        <div class="content">
-          <div style="display: flex" class="ds-flex-column ds-mt-10">
+        <div class="content" style="justify-content: space-between">
+          <div>
+            <div style="display: flex" class="ds-flex-column ds-mt-10">
           <span class="ds-dialog-heading" style="padding-bottom: 0 !important;">
             Limit
             <div style="display: inline" customToolTip [contentTemplate]="passLimitLearnMore">
@@ -153,23 +154,24 @@
               </div>
              </ng-template>
           </span>
-            <p *ngIf="data.studentPassLimit?.passLimit" class="ds-dialog-normal-text">This limit overrides the School Pass Limit of {{data.studentPassLimit.passLimit}} passes/day, and any previous limit
-              set.</p>
+              <p *ngIf="data.studentPassLimit?.passLimit" class="ds-dialog-normal-text">This limit overrides the School Pass Limit of {{data.studentPassLimit.passLimit}} passes/day, and any previous limit
+                set.</p>
+            </div>
+
+            <app-pass-limit-input
+              #passLimitInput
+              class="ds-mt-10"
+              [formGroup]="passLimitForm"
+              [control]="passLimitForm.get('passLimit')"
+              [isIndividual]="true"
+            ></app-pass-limit-input>
+
+            <section class="individual-limit-description ds-mt-20" style="margin-bottom: 30px">
+              <span class="ds-dialog-heading ds-blue-gray" style="padding: 0 !important">Description</span>
+              <p class="ds-dialog-normal-text" style="margin-top: 4px">This description will only be visible to staff, not students.</p>
+              <app-textarea class="ds-mt-10" width="85%" [control]="passLimitForm.get('description')" placeholder="Ex. Parents requested"></app-textarea>
+            </section>
           </div>
-
-          <app-pass-limit-input
-            #passLimitInput
-            class="ds-mt-10"
-            [formGroup]="passLimitForm"
-            [control]="passLimitForm.get('passLimit')"
-            [isIndividual]="true"
-          ></app-pass-limit-input>
-
-          <section class="individual-limit-description ds-mt-20" style="margin-bottom: 30px">
-            <span class="ds-dialog-heading ds-blue-gray" style="padding: 0 !important">Description</span>
-            <p class="ds-dialog-normal-text" style="margin-top: 4px">This description will only be visible to staff, not students.</p>
-            <app-textarea class="ds-mt-10" width="85%" [control]="passLimitForm.get('description')" placeholder="Ex. Parents requested"></app-textarea>
-          </section>
 
           <div class="delete-button ds-flex-center-center" *ngIf="!data.studentPassLimit.noLimitsSet && data.studentPassLimit.isIndividual">
             <app-gradient-button
