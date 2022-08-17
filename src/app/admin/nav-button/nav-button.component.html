@@ -7,5 +7,6 @@
     <div class="nav-button-text">{{ content }}
     </div>
     <img *ngIf="isExpand" width="9" height="7" [src]="'./assets/Rect ' + iconColor + '.svg' | resolveAsset" alt="Rect">
-    <img *ngIf="button.isPro" width="18" [src]="'./assets/Plus Plan (' + (selected ? 'Green' : 'Gray') + ').svg' | resolveAsset" alt="">
+    <img *ngIf="button.isPro" width="18" [src]="'./assets/Plus Plan (Green).svg' | resolveAsset" alt="">
+    <!-- <img *ngIf="button.isPro" width="18" [src]="'./assets/Plus Plan (' + (selected ? 'Green' : 'Gray') + ').svg' | resolveAsset" alt=""> -->
 </div>

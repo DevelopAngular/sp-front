@@ -554,7 +554,7 @@
           </g>
           <path fill="rgb(31,25,94)" fill-rule="evenodd" d="M30 9h147.1875v77.8255814H30"/>
           <text font-size="0" style="white-space:pre">
-            <tspan x="83.792" y="45.088" fill="rgb(255,255,255)" font-family="Arial" font-size="14.133" font-weight="400" style="white-space:pre;text-transform:none">Detected </tspan> <tspan x="83.792" y="60.634" fill="rgb(255,255,255)" font-family="Arial" font-size="14.133" font-weight="400" style="white-space:pre;text-transform:none">Encounters</tspan>
+            <tspan x="83.792" y="45.088" fill="rgb(255,255,255)" font-family="Arial" font-size="14.133" font-weight="600" style="white-space:pre;text-transform:none">Detected </tspan> <tspan x="83.792" y="60.634" fill="rgb(255,255,255)" font-family="Arial" font-size="14.133" font-weight="600" style="white-space:pre;text-transform:none">Encounters</tspan>
           </text>
         </g>
       </g>

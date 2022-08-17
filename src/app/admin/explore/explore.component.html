@@ -130,19 +130,18 @@
 </div>
 <div class="wrapper plus-plan" *ngIf="!isProUser">
     <div class="content-wrapper">
-        <div class="ds-flex-start-start">
+        <div class="ds-flex-start-start" style="margin-bottom: 40px;">
             <div class="left">
                 <div class="ds-flex-center-start">
                     <img [src]="'./assets/Plus Plan (Yellow).svg' | resolveAsset" alt="">
-                    <p class="title">Unlock Detected Encounters on the Plus plan</p>
+                    <p class="title">Unlock Detected Encounters on the Plus Plan</p>
                 </div>
                 <h2 class="feature">
                     Automatically see which students are meeting up more often
                 </h2>
-                <p class="description">Actionable insights to start conversations about issues you never even knew about!</p>
+                <p class="description">Actionable insights to <span style="font-weight: bold;">start conversations about issues you never even knew about!</span></p>
                 <div class="button">
-                    <app-gradient-button [width]="'300px'" [minHeight]="'40px'" fontWeight="normal" fontSize="14px" [size]="'editable'" [style.margin-left]="'15px'" [hoverColor]="'#00B476'" [cursor]="'pointer'" [linkType]="'_blank'" [buttonLink]="'https://www.smartpass.app/upgradetoplus'"
-                        [text]="'Talk to Sales'"></app-gradient-button>
+                    <app-gradient-button [width]="'300px'" [minHeight]="'40px'" fontWeight="normal" fontSize="14px" [size]="'editable'" [hoverColor]="'#00B476'" [cursor]="'pointer'" [linkType]="'_blank'" [buttonLink]="'https://www.smartpass.app/upgradetoplus'" [text]="'Talk to Sales'"></app-gradient-button>
                 </div>
             </div>
             <div class="right">
@@ -158,12 +157,12 @@
         <div class="ds-flex-start-start">
             <div class="left">
                 <p class="feature-2">
-                    Keeping tabs on 1,456 students is nearly impossible. Let SmartPass do the work for you.
+                    Keeping tabs on {{getCountAccounts(accounts$ | async)}} students is nearly impossible. Let SmartPass do the work for you.
                 </p>
                 <p class="description-2">
                     On any given day, hundreds of students in your school are creating passes to go places. We’ve heard over and over again repeating that they're finding more students in the hallways when they're not supposed to be, and that it's taking away from their
-                    needed educational time. <br><br> Students are getting smarter and sneakier than ever, and you might not know that Betty and Bob have been meeting up every afternoon for the past 2 weeks — but SmartPass knows with
-                    Detected Encounters.
+                    needed educational time. <br><br> Students are getting smarter and sneakier than ever, and you might not know that Betty and Bob have been meeting up every afternoon for the past 2 weeks — <span style="font-weight: bold;">but SmartPass knows with
+                        Detected Encounters.</span>
                 </p>
             </div>
             <div class="right">

@@ -7,7 +7,7 @@
 }
 
 .wrapper {
-    padding: 25px 29px 25px 25px;
+    padding: 35px 30px;
     //height: 100vh;
     .header {
         background-color: $white;
@@ -104,16 +104,17 @@
                     margin-left: 10px;
                 }
                 .feature {
-                    @include textSize(39px);
+                    @include textSize(39px, bold);
                 }
                 .description {
-                    @include textSize(17px, normal, $gray500);
+                    @include textSize(17px, 300, $gray500);
                 }
                 .feature-2 {
-                    @include textSize(20px);
+                    @include textSize(20px, bold);
                 }
                 .description-2 {
-                    @include textSize(14px, normal, $gray500);
+                    line-height: 1.5;
+                    @include textSize(14px, 300, $gray500);
                 }
             }
             .right {

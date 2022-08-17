@@ -1,4 +1,4 @@
-<div class="host" appSafariScroll *ngIf="!isProUser">
+<!-- <div class="host" appSafariScroll *ngIf="!isProUser">
     <div class="start-page-wrapper ds-flex-center-center ds-flex-column">
         <img [src]="'./assets/ID Cards Get Started.png' | resolveAsset" alt="">
         <p class="ds-big-title description" [style.color]="darkTheme.getColor({white: '#1F195E', dark: '#FFFFFF'})">Create, Customize, and Distribute ID Cards in 5 minutes.</p>
@@ -8,22 +8,21 @@
             </app-gradient-button>
         </div>
     </div>
-</div>
+</div> -->
 <div class="wrapper plus-plan" *ngIf="isProUser">
     <div class="content-wrapper">
-        <div class="ds-flex-start-start">
+        <div class="ds-flex-center-start" style="margin-bottom: 40px;">
             <div class="left">
                 <div class="ds-flex-center-start">
                     <img [src]="'./assets/Plus Plan (Green).svg' | resolveAsset" alt="">
                     <p class="title">Unlock the Digital ID Cards Add-on</p>
                 </div>
                 <h2 class="feature">
-                    Create, Customize, and Distribute ID Cards in 5 minutes.
+                    Create, Customize, and Distribute ID Cards in 5 minutes
                 </h2>
                 <p class="description">A secure way for students and staff to always have access to ID cards, right in SmartPass.</p>
                 <div class="button">
-                    <app-gradient-button [width]="'300px'" [minHeight]="'40px'" fontWeight="normal" fontSize="14px" [size]="'editable'" [style.margin-left]="'15px'" [hoverColor]="'#00B476'" [cursor]="'pointer'" [linkType]="'_blank'" [buttonLink]="'https://www.smartpass.app/get-started-2/id-cards'"
-                        [text]="'Talk to Sales'"></app-gradient-button>
+                    <app-gradient-button [width]="'300px'" [minHeight]="'40px'" fontWeight="normal" fontSize="14px" [size]="'editable'" [hoverColor]="'#00B476'" [cursor]="'pointer'" [linkType]="'_blank'" [buttonLink]="'https://www.smartpass.app/get-started-2/id-cards'" [text]="'Talk to Sales'"></app-gradient-button>
                 </div>
             </div>
             <div class="right">
@@ -38,16 +37,18 @@
                     What are Digital IDs in SmartPass?
                 </p>
                 <p class="description-2">
-                    Digital ID cards seamlessly replace your old plastic ID cards. So when a student needs to scan in at the beginning of the school day, buy lunch at the cafeteria, or check out a library book, they'll use the same device they already have.
+                    <span style="font-weight: bold;">Digital ID cards seamlessly replace your old plastic ID cards.</span> So when a student needs to scan in at the beginning of the school day, buy lunch at the cafeteria, or check out a library book,
+                    they'll use the same device they already have.
                 </p>
                 <p class="description-2">
-                    Digital ID cards are secure. Unlike plastic or sticker ID cards, students can't lose these cards or have them stolen. No more incidents of someone using someone else's ID card, or having to reprint a physical ID card.
+                    <span style="font-weight: bold;">Digital ID cards are secure.</span> Unlike plastic or sticker ID cards, students can't lose these cards or have them stolen. No more incidents of someone using someone else's ID card, or having to reprint
+                    a physical ID card.
                 </p>
                 <p class="description-2">
-                    It’s easy from initial set-up to the way people will use it every day. All information updates automatically, so you never need to regenerate another ID.
+                    <span style="font-weight: bold;">It’s easy from initial set-up to the way people will use it every day.</span> All information updates automatically, so you never need to regenerate another ID.
                 </p>
                 <p class="description-2">
-                    Digital ID Cards are built right into the same SmartPass app your school uses today — no extra app or download is needed.
+                    <span style="font-weight: bold;">Digital ID Cards are built right into the same SmartPass app your school uses today</span> — no extra app or download is needed.
                 </p>
             </div>
             <div class="right">
