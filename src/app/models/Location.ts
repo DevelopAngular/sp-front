@@ -18,7 +18,7 @@ export class Location extends BaseModel {
               public scheduling_request_send_destination_teachers: boolean,
               public scheduling_request_send_origin_teachers: boolean,
               public scheduling_request_teachers: User[],
-              public required_attatchments: string[],
+              public required_attachments: string[],
               public travel_types: string[],
               public teachers: User[],
               public max_allowed_time: number,
