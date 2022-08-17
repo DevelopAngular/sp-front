@@ -55,7 +55,7 @@ import {StartPassNotificationComponent} from './start-pass-notification/start-pa
 import {LocationsService} from '../services/locations.service';
 import * as moment from 'moment';
 import {PassLimitService} from '../services/pass-limit.service';
-import {PassLimitInfo, StudentPassLimit} from '../models/HallPassLimits';
+import {PassLimitInfo} from '../models/HallPassLimits';
 import {MainHallPassFormComponent} from '../create-hallpass-forms/main-hallpass--form/main-hall-pass-form.component';
 import {CheckForUpdateService} from '../services/check-for-update.service';
 
@@ -148,7 +148,6 @@ export class PassesComponent implements OnInit, AfterViewInit, OnDestroy {
   filterExpiredPass$: BehaviorSubject<string> = new BehaviorSubject<string>(null);
   expiredPassesSelectedSort$: Observable<string>;
   isEmptyPassFilter: boolean;
-  studentPassLimit: StudentPassLimit;
 
   showEmptyState: Observable<boolean>;
 
