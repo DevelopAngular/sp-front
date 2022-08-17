@@ -219,19 +219,21 @@ export class StudentInfoCardComponent implements OnInit, AfterViewInit, OnDestro
       }
     });
 
-    // if (this.userService.getFeatureFlagDigitalID()) {
+    if (!this.userService.getFeatureFlagDigitalID()) {
+      this.IDCardEnabled = true;
+    }else {
       this.idCardService.getIDCardDetails().subscribe({
         next: (result:any) => {
           if (result?.results?.digital_id_card) {
             this.IDCARDDETAILS = result.results.digital_id_card;
-            // if (this.IDCARDDETAILS.enabled && this.IDCARDDETAILS.visible_to_who != 'Staff only') {
-              if (this.IDCARDDETAILS.enabled) {
+            if (this.IDCARDDETAILS.enabled && this.IDCARDDETAILS.visible_to_who != 'Staff only') {
+              // if (this.IDCARDDETAILS.enabled) {
               this.IDCardEnabled = true;
             }
           }
         }
       })
-    // }
+    }
     
   }
 
