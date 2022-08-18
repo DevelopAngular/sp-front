@@ -40,6 +40,7 @@ import {ActivatedRoute, Router} from '@angular/router';
 import { EncounterDetectionService } from '../../services/EncounterDetectionService';
 import { EncounterDetection } from '../../models/EncounterDetection';
 import { EncounterDetectionDialogComponent } from './encounter-detection-dialog/encounter-detection-dialog.component';
+import { TotalAccounts } from '../../models/TotalAccounts';
 
 declare const window: Window & typeof globalThis & {passClick: any, reportedPassClick: any};
 type OverflownTries = HttpErrorResponse & {overflown: boolean};
@@ -54,6 +55,7 @@ export interface CurrentView {
   color: string;
   icon: string;
   action: string;
+  isPro?: boolean;
 }
 
 export enum SearchPages {
@@ -90,7 +92,7 @@ export class ExploreComponent implements OnInit, OnDestroy {
   views: View = {
     'pass_search': { id: 1, title: 'Passes', color: '#00B476', icon: 'Pass Search', action: 'pass_search' },
     'report_search': { id: 2, title: 'Report Submissions', color: '#E32C66', icon: 'Report Search', action: 'report_search' },
-    'contact_trace': { id: 3, title: 'Contact trace', color: '#139BE6', icon: 'Contact Trace', action: 'contact_trace' },
+    'contact_trace': { id: 3, title: 'Contact Trace', color: '#139BE6', icon: 'Contact Trace', action: 'contact_trace' },
     'encounter_detection': { id: 4, title: 'Detected Encounters', color: '#1F195E', icon: 'Encounter Detection', action: 'encounter_detection' },
     // 'rooms_usage': {id: 4, title: 'Rooms Usage', color: 'orange', icon: 'Rooms Usage', action: 'rooms_usage'}
   };
@@ -130,6 +132,7 @@ export class ExploreComponent implements OnInit, OnDestroy {
     isAllSelected$: Observable<boolean>,
     // nextUrl$: Observable<string>
   };
+  isProUser: boolean;
   isSearched: boolean;
   showContactTraceTable: boolean;
   schools$: Observable<School[]>;
@@ -181,6 +184,8 @@ export class ExploreComponent implements OnInit, OnDestroy {
   destroyPassClick = new Subject();
   destroy$ = new Subject();
   clickEventSubscription: Subscription;
+
+  public accounts$: Observable<TotalAccounts> = this.adminService.countAccounts$;
 
   constructor(
     public dialog: MatDialog,
@@ -238,10 +243,20 @@ export class ExploreComponent implements OnInit, OnDestroy {
   ngOnInit() {
     this.schools$ = this.http.schoolsCollection$;
     this.clickEventSubscription = this.componentService.getClickEvent().subscribe((action) => {
+      if (action == "encounter_detection" && !this.userService.getFeatureEncounterDetection()) {
+        this.isProUser = false;
+      }else {
+        this.isProUser = true;
+      }
       this.currentView$.next(action);
       this.storage.setItem('explore_page', action);
       this.cdr.detectChanges();
-    });
+    })
+    if (this.currentView$.getValue() == "encounter_detection" && !this.userService.getFeatureEncounterDetection()) {
+      this.isProUser = false;
+    }else {
+      this.isProUser = true;
+    }
     this.user$ = this.userService.user$;
 
     this.passSearchState = {
@@ -623,7 +638,11 @@ export class ExploreComponent implements OnInit, OnDestroy {
                                         </div>`;
       passess += passImg;
     }
-    return this.domSanitizer.bypassSecurityTrustHtml(passess + `</div>`);
+    return this.domSanitizer.bypassSecurityTrustHtml(`${passess}</div>`);
+  }
+
+  getCountAccounts(count: TotalAccounts) {
+    return count.student_count;
   }
 
   ngOnDestroy() {
