@@ -9,6 +9,10 @@
   text-align: center;
 }
 
+:host.from-where > div.pass-limits-info {
+  margin-top: 45px !important;
+}
+
 .pass-limits-counter-icon {
   position: absolute;
   width: 20px;

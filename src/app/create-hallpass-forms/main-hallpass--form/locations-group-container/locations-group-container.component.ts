@@ -1,10 +1,10 @@
-import {Component, EventEmitter, forwardRef, Inject, Input, OnInit, Output, ViewChild} from '@angular/core';
+import {ChangeDetectorRef, Component, EventEmitter, forwardRef, Inject, Injector, Input, OnInit, Output, ViewChild} from '@angular/core';
 import {BehaviorSubject, Observable} from 'rxjs';
 import {User} from '../../../models/User';
 import {DataService} from '../../../services/data-service';
 import {Pinnable} from '../../../models/Pinnable';
 import {Util} from '../../../../Util';
-import {FormFactor, Navigation} from '../main-hall-pass-form.component';
+import {FormFactor, MainHallPassFormComponent, Navigation} from '../main-hall-pass-form.component';
 import {CreateFormService} from '../../create-form.service';
 import {NextStep} from '../../../animations';
 import {LocationsService} from '../../../services/locations.service';
@@ -48,6 +48,7 @@ export class LocationsGroupContainerComponent implements OnInit {
   pinnable: Pinnable;
   data: any = {};
   frameMotion$: BehaviorSubject<any>;
+  parentMainHallPassForm: MainHallPassFormComponent;
 
   constructor(
     @Inject(MAT_DIALOG_DATA) public dialogData: any,
@@ -56,6 +57,8 @@ export class LocationsGroupContainerComponent implements OnInit {
     private locationsService: LocationsService,
     private screenService: ScreenService,
     private visibilityService: LocationVisibilityService,
+    private _injector: Injector,
+    private cdr: ChangeDetectorRef
   ) {
   }
 
@@ -124,6 +127,7 @@ export class LocationsGroupContainerComponent implements OnInit {
   }
 
   ngOnInit() {
+    this.parentMainHallPassForm = this._injector.get<MainHallPassFormComponent>(MainHallPassFormComponent);
     this.frameMotion$ = this.formService.getFrameMotionDirection();
     this.FORM_STATE.quickNavigator = false;
 
@@ -172,11 +176,15 @@ export class LocationsGroupContainerComponent implements OnInit {
           }
         });
 
-        if (!this?.passLimitInfo?.showPasses) {
+        const pl = 'passLimitInfo' in this.FORM_STATE
+          ? this.FORM_STATE.passLimitInfo
+          : this.passLimitInfo;
+
+        if (!pl?.showPasses) {
           return pins;
         }
 
-        if (this.passLimitInfo.current === 0) {
+        if (pl.current === 0) {
           pins.forEach(p => {
             if (p.location === null) { // ignore folders
               return p;
@@ -319,7 +327,10 @@ export class LocationsGroupContainerComponent implements OnInit {
   }
 
   fromCategory(location) {
-    location.restricted = location.restricted || (this.passLimitInfo?.showPasses && this.passLimitInfo?.current === 0);
+    const pl = 'passLimitInfo' in this.FORM_STATE
+      ? this.FORM_STATE.passLimitInfo
+      : this.passLimitInfo;
+    location.restricted = location.restricted || (pl?.showPasses && pl?.current === 0);
     this.data.toLocation = location;
     this.FORM_STATE.data.direction.to = location;
     if (((location.restricted && !this.FORM_STATE.forLater) || (location.scheduling_restricted && this.FORM_STATE.forLater)) && !this.isStaff) {
@@ -376,6 +387,13 @@ export class LocationsGroupContainerComponent implements OnInit {
   }
 
   back(event) {
+    if (this.FORM_STATE.fromState === 4) {
+      this.parentMainHallPassForm.dialogData = {
+        ...this.parentMainHallPassForm.dialogData,
+        passLimitInfo: undefined
+      };
+      this.cdr.detectChanges();
+    }
     this.FORM_STATE = event;
     this.data.message = null;
     this.FORM_STATE.data.message = null;
