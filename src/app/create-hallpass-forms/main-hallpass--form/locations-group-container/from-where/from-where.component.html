@@ -33,6 +33,7 @@
         [placeholder]="'Search rooms'"
         [dummyString]="'No rooms found'"
         [currentPage]="'from'"
+        [updatedLocation$]="updatedLocation$"
         (onSelect)="locationChosen($event)"
         [mergedAllRooms]="true"
       >

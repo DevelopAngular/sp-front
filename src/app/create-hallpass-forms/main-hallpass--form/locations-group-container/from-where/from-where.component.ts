@@ -3,7 +3,7 @@ import {MAT_DIALOG_DATA, MatDialog, MatDialogRef} from '@angular/material/dialog
 import {ToastService} from '../../../../services/toast.service';
 import {Navigation} from '../../main-hall-pass-form.component';
 import {CreateFormService} from '../../../create-form.service';
-import {Subject, BehaviorSubject, fromEvent} from 'rxjs';
+import {Subject, BehaviorSubject, fromEvent, Observable} from 'rxjs';
 import {filter, take, takeUntil} from 'rxjs/operators';
 import {ScreenService} from '../../../../services/screen.service';
 import {
@@ -13,6 +13,7 @@ import {
 import {LocationVisibilityService} from '../../location-visibility.service';
 import {UserService} from '../../../../services/user.service';
 import {User} from '../../../../models/User';
+import {Location} from '../../../../models/Location';
 
 @Component({
   selector: 'app-from-where',
@@ -72,6 +73,8 @@ export class FromWhereComponent implements OnInit, OnDestroy {
     }
   }
 
+  updatedLocation$: Observable<Location>;
+
   destroy$: Subject<any> = new Subject<any>();
 
   // keep unfiltered students before entering (with posible filtering) to pass card view
@@ -113,6 +116,11 @@ export class FromWhereComponent implements OnInit, OnDestroy {
         take(1),
       )
       .subscribe((u: User) => this.student = u);
+
+      this.updatedLocation$ = this.formService.getUpdatedChoice();
+      this.updatedLocation$.pipe(
+        takeUntil(this.destroy$),
+      );
   }
 
   private student: User;

@@ -86,6 +86,7 @@ export class LocationTableComponent implements OnInit, OnDestroy {
   @Input() originLocation: any;
   @Input() searchTeacherLocations: boolean;
   @Input() currentPage: 'from' | 'to';
+  @Input() updatedLocation$?: Observable<Location> | undefined;
 
   @Output() onSelect: EventEmitter<any> = new EventEmitter();
   @Output() onStar: EventEmitter<string> = new EventEmitter();
@@ -95,26 +96,6 @@ export class LocationTableComponent implements OnInit, OnDestroy {
 
   @Visibility()
   choices: any[] = [];
-
-  /*private _choices: any[] = [];
-  get choices(): any[] {
-    return this._choices;
-  }
-  set choices(values: any[]) {
-    // filtering apply only for a student
-    if (values.length > 0 && !this.forStaff) {
-      // test if we have Location's
-      let v = values[0];
-      try {
-        v = Location.fromJSON(v);
-        const student = [''+ this.user.id];
-        values = values.filter((loc: Location) => this.visibilityService.filterByVisibility(loc, student));
-      }catch (e) {}
-    }
-    // add posible filtered values
-    this._choices = values;
-  };*/
-
   noChoices:boolean = false;
   mainContentVisibility: boolean = false;
   @Visibility()
@@ -278,6 +259,57 @@ export class LocationTableComponent implements OnInit, OnDestroy {
         }
       });
 
+    this.updatedLocation$?.subscribe(res => this.updateOrAddChoices(res));
+
+  }
+
+  private choiceFunc(loc) {
+    return function(choice) {
+      if (choice instanceof Location) { 
+        if (choice.id === loc.id) {
+          return loc;
+        } else {
+          return choice;
+        }
+      } else {
+        try {
+          const l = Location.fromJSON(choice);
+          if (l.id === loc.id) return JSON.parse(JSON.stringify(loc));
+        } catch(e) {}
+        return JSON.parse(JSON.stringify(choice));
+      }
+    }
+  }
+
+  // check if modified location exists on choices
+  private isFoundChoice(loc: Location, choices) {
+    for (let i = 0; i < choices.length; i++) {
+      if (choices[i] instanceof Location) { 
+        if (choices[i].id === loc.id) {
+          return true;
+        } 
+      } else {
+        try {
+          const l = Location.fromJSON(choices[i]);
+          if (l.id === loc.id) return true;
+        } catch(e) {}
+      }
+    }
+    return false;
+  }
+
+  private updateOrAddChoices(loc: Location) {
+    const mapping = this.choiceFunc(loc);
+    if (!this.isFoundChoice(loc, this.choices)) {
+      this.choices = [JSON.parse(JSON.stringify(loc)), ...this.choices];
+    } else {
+      this.choices = this.choices.map(mapping);
+    }
+    if (!this.isFoundChoice(loc, this.starredChoices)) {
+      this.starredChoices = [JSON.parse(JSON.stringify(loc)), ...this.starredChoices];
+    } else {
+      this.starredChoices = this.starredChoices.map(mapping);
+    }
   }
 
   normalizeLocations(loc) {

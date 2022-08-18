@@ -5,7 +5,7 @@ import {Pinnable} from '../../models/Pinnable';
 import {User} from '../../models/User';
 import {StudentList} from '../../models/StudentList';
 import {NextStep} from '../../animations';
-import {BehaviorSubject, combineLatest, Subject} from 'rxjs';
+import {BehaviorSubject, combineLatest, Subject, Observable, of} from 'rxjs';
 import {CreateFormService} from '../create-form.service';
 import {filter, map, takeUntil, withLatestFrom} from 'rxjs/operators';
 import {cloneDeep, find} from 'lodash';
@@ -263,21 +263,40 @@ export class MainHallPassFormComponent implements OnInit, OnDestroy {
       // is this location a pinnable?
     });
 
+    this.formService.getUpdatedChoice().pipe(
+      takeUntil(this.destroy$)
+    ).subscribe();
+
     this.locationsService.listenLocationSocket().pipe(
       withLatestFrom(this.passesService.pinnables$),
+      filter(combo => {
+        const [, pinns] = combo;
+        return pinns?.length > 0;
+      }),
       map(([res, pinns]) => {
-        console.log(res);
         try {
           const loc: Location = Location.fromJSON(res.data);
           this.locationsService.updateLocationSuccessState(loc);
-          const found = pinns.find(p => p.location.id === res.data.id);
+          const found = pinns.find(p => {
+            return !!p.location ? p.location.id == res.data.id : true;
+          });
           if (found) {
+            const hasLocation = 'location' in found;
             // update location of pinnable
-            found.location = loc;
+            if (hasLocation) {
+              found.location = loc;
+              found.title = loc.title;
+            }
+            // TODO: only update state if it is related to user
             this.locationsService.updatePinnableSuccessState(found);
+            this.formService.setUpdatedChoice(loc);
+
+            return found;
           }
+          return null;
         } catch (e) {
           console.log(e);
+          return null;
         }
       }),
     ).subscribe();
