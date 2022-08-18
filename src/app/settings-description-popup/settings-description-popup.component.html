@@ -5,6 +5,13 @@
                 (click)="selectedOption(option, $event)">
                 <img width="18" *ngIf="option.icon" [src]="option.icon | resolveAsset" alt="opt-icon">
                 <div class="label" [style.color]="option.textColor">{{ option.label }}</div>
+                <div *ngIf="option.isPro" class="ds-flex-center-start plus-plan-label" customToolTip [contentTemplate]="plusPlanText">
+                    <img width="15" [src]="'./assets/Plus Plan (Green).svg' | resolveAsset" alt="">
+                    <p>Unlock</p>
+                </div>
+                <ng-template #plusPlanText>
+                    <div class="ds-tooltip" style="width: 200px">This feature is included in the Digital ID Cards Add-on.</div>
+                </ng-template>
             </div>
         </div>
     </div>

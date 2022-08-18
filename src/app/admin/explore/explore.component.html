@@ -1,4 +1,4 @@
-<div class="wrapper" *ngIf="currentView$ | async as currentView">
+<div class="wrapper" *ngIf="isProUser && currentView$ | async as currentView">
     <div class="header">
         <!-- <div class="switch-button" [style.background-color]="views[currentView].color" appCrossPointerEventTarget (pointerClickEvent)="openSwitchPage($event)"> -->
         <div class="switch-button" [style.background-color]="views[currentView].color" appCrossPointerEventTarget>
@@ -102,43 +102,74 @@
                 (rowClickEvent)="openReportDialog($event)" [sort]="'desc'" [sortColumn]="'Date submitted'" [disabledInfinityScroll]="!(reportSearchState.nextUrl$ | async)"></app-sp-data-table>
         </div>
 
-      <div class="contact-trace" *ngIf="views[currentView].id === 3" [style.height]="(schools$ | async).length > 1 ? 'calc(100vh - 200px)' : 'calc(100vh - 150px)'">
-        <app-sp-data-table *ngIf="showContactTraceTable; else empty" [isCheckbox]="isCheckbox$" [data$]="contactTraceData$" [loading$]="contactTraceState.loading$" [showEmptyState]="contactTraceState.isEmpty && contactTraceState.loaded$ | async" [currentPage]="currentView$.value"
-                           [emptyIcon]="'./assets/Contact Trace (Blue-Gray).svg' | resolveAsset" [emptyText]="contactTraceData.selectedStudents[0].display_name + ' did not have an overlapping pass with another student'" [height]="(schools$ | async).length > 1 ? 'calc(100vh - 200px)' : 'calc(100vh - 150px)'"
-                           [disabledInfinityScroll]="true" [showPrintButtons]="false"></app-sp-data-table>
-        <ng-template #empty>
-          <div class="contact-empty">
-            <img width="135" style="opacity: 0.2" [src]="'./assets/Contact Trace (Blue-Gray).svg' | resolveAsset" alt="Empty">
-            <div class="description">
-              Stay ahead of the spread to instantly trace back possibly infected students in your school.
-            </div>
-          </div>
-        </ng-template>
-      </div>
-
-      <div class="encounter-detection" *ngIf="views[currentView].id === 4">
-        <div *ngIf="encounterDetectedState.errored$ | async; else success">
-          <app-sp-data-table [isCheckbox]="false"
-                             [loading$]="false"
-                             [showEmptyState]="true"
-                             [emptyIcon]="'./assets/Encounter Detection (Blue-Gray).svg' | resolveAsset"
-                             [emptyText]="'You must have at-least 15 days of pass history before seeing results from Detected Encounters. Stay tuned!'"
-                             [currentPage]="'encounter_detection'"
-                             [height]="(schools$ | async).length > 1 ? 'calc(100vh - 200px)' : 'calc(100vh - 150px)'"
-                             [disabledInfinityScroll]="true"
-                             [showPrintButtons]="false"></app-sp-data-table>
+        <div class="contact-trace" *ngIf="views[currentView].id === 3" [style.height]="(schools$ | async).length > 1 ? 'calc(100vh - 200px)' : 'calc(100vh - 150px)'">
+            <app-sp-data-table *ngIf="showContactTraceTable; else empty" [isCheckbox]="isCheckbox$" [data$]="contactTraceData$" [loading$]="contactTraceState.loading$" [showEmptyState]="contactTraceState.isEmpty && contactTraceState.loaded$ | async" [currentPage]="currentView$.value"
+                [emptyIcon]="'./assets/Contact Trace (Blue-Gray).svg' | resolveAsset" [emptyText]="contactTraceData.selectedStudents[0].display_name + ' did not have an overlapping pass with another student'" [height]="(schools$ | async).length > 1 ? 'calc(100vh - 200px)' : 'calc(100vh - 150px)'"
+                [disabledInfinityScroll]="true" [showPrintButtons]="false"></app-sp-data-table>
+            <ng-template #empty>
+                <div class="contact-empty">
+                    <img width="135" style="opacity: 0.2" [src]="'./assets/Contact Trace (Blue-Gray).svg' | resolveAsset" alt="Empty">
+                    <div class="description">
+                        Stay ahead of the spread to instantly trace back possibly infected students in your school.
+                    </div>
+                </div>
+            </ng-template>
         </div>
-        <app-sp-data-table #success
-                           [isCheckbox]="isCheckbox$"
-                           [data$]="encounterDetectionData$"
-                           [loading$]="encounterDetectedState.loading$"
-                           [showEmptyState]="encounterDetectedState.isEmpty && !(encounterDetectedState.loading$ | async)"
-                           [emptyIcon]="'./assets/Encounter Detection (Blue-Gray).svg' | resolveAsset"
-                           [emptyText]="'No detected encounters found with the selected filters.'"
-                           [currentPage]="currentView$.value" [height]="(schools$ | async).length > 1 ? 'calc(100vh - 200px)' : 'calc(100vh - 150px)'"
-                           [isRowClick]="true" (rowClickEvent)="encounterClick($event)"
-                           [disabledInfinityScroll]="true" [showPrintButtons]="false"></app-sp-data-table>
-      </div>
 
+        <div class="encounter-detection" *ngIf="views[currentView].id === 4">
+            <div *ngIf="encounterDetectedState.errored$ | async; else success">
+                <app-sp-data-table [isCheckbox]="false" [loading$]="false" [showEmptyState]="true" [emptyIcon]="'./assets/Encounter Detection (Blue-Gray).svg' | resolveAsset" [emptyText]="'You must have at-least 15 days of pass history before seeing results from Detected Encounters. Stay tuned!'"
+                    [currentPage]="'encounter_detection'" [height]="(schools$ | async).length > 1 ? 'calc(100vh - 200px)' : 'calc(100vh - 150px)'" [disabledInfinityScroll]="true" [showPrintButtons]="false"></app-sp-data-table>
+            </div>
+            <app-sp-data-table #success [isCheckbox]="isCheckbox$" [data$]="encounterDetectionData$" [loading$]="encounterDetectedState.loading$" [showEmptyState]="encounterDetectedState.isEmpty && !(encounterDetectedState.loading$ | async)" [emptyIcon]="'./assets/Encounter Detection (Blue-Gray).svg' | resolveAsset"
+                [emptyText]="'No detected encounters found with the selected filters.'" [currentPage]="currentView$.value" [height]="(schools$ | async).length > 1 ? 'calc(100vh - 200px)' : 'calc(100vh - 150px)'" [isRowClick]="true" (rowClickEvent)="encounterClick($event)"
+                [disabledInfinityScroll]="true" [showPrintButtons]="false"></app-sp-data-table>
+        </div>
+
+    </div>
+</div>
+<div class="wrapper plus-plan" *ngIf="!isProUser">
+    <div class="content-wrapper">
+        <div class="ds-flex-start-start" style="margin-bottom: 40px;">
+            <div class="left">
+                <div class="ds-flex-center-start">
+                    <img [src]="'./assets/Plus Plan (Yellow).svg' | resolveAsset" alt="">
+                    <p class="title">Unlock Detected Encounters on the Plus Plan</p>
+                </div>
+                <h2 class="feature">
+                    Automatically see which students are meeting up more often
+                </h2>
+                <p class="description">Actionable insights to <span style="font-weight: bold;">start conversations about issues you never even knew about!</span></p>
+                <div class="button">
+                    <app-gradient-button [width]="'300px'" [minHeight]="'40px'" fontWeight="normal" fontSize="14px" [size]="'editable'" [hoverColor]="'#00B476'" [cursor]="'pointer'" [linkType]="'_blank'" [buttonLink]="'https://www.smartpass.app/upgradetoplus'" [text]="'Talk to Sales'"></app-gradient-button>
+                </div>
+            </div>
+            <div class="right">
+                <div>
+                    <img [src]="'./assets/Plus Plan ED Table.svg' | resolveAsset" alt="">
+                    <div class="ds-flex-center-start" style="padding: 0 46px;">
+                        <img [src]="'./assets/Artificial Intelligence.svg' | resolveAsset" alt="">
+                        <p class="description">Behind the scenes, we use artificial intelligence to determine which students have passes to similar rooms around the same times.</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="ds-flex-start-start">
+            <div class="left">
+                <p class="feature-2">
+                    Keeping tabs on {{getCountAccounts(accounts$ | async)}} students is nearly impossible. Let SmartPass do the work for you.
+                </p>
+                <p class="description-2">
+                    On any given day, hundreds of students in your school are creating passes to go places. We’ve heard over and over again repeating that they're finding more students in the hallways when they're not supposed to be, and that it's taking away from their
+                    needed educational time. <br><br> Students are getting smarter and sneakier than ever, and you might not know that Betty and Bob have been meeting up every afternoon for the past 2 weeks — <span style="font-weight: bold;">but SmartPass knows with
+                        Detected Encounters.</span>
+                </p>
+            </div>
+            <div class="right">
+                <div style="text-align: center;">
+                    <img [src]="'./assets/Plus Plan ED Dialog.svg' | resolveAsset" alt="">
+                </div>
+            </div>
+        </div>
     </div>
 </div>
