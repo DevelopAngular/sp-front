@@ -168,6 +168,7 @@
             *ngIf="tab.param === '_profile_student'"
             style="width: 32px; height: 32px; border-radius: 50%; background-color: #F0F2F5; cursor: pointer"
             class="ds-flex-center-center"
+            [ngClass]="{ 'filter-disabled': currentTab !== '_profile_student' }"
             (click)="openFilterDialog()"
           >
             <img [src]="'./assets/Filter (Blue-Gray).svg' | resolveAsset" alt="">
