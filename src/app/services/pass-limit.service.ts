@@ -65,7 +65,9 @@ export class PassLimitService {
   }
 
   createIndividualLimits(limit: IndividualPassLimitCollection) {
-    return this.http.post(`${PASS_LIMIT_ENDPOINT}/create_override`, limit, undefined, false);
+    return this.http.post(`${PASS_LIMIT_ENDPOINT}/create_override`, limit, undefined, false).pipe(
+      tap(() => this.individualLimitUpdate$.next())
+    );
   }
 
   getStudentPassLimit(studentId: string | number): Observable<StudentPassLimit> {
@@ -79,6 +81,8 @@ export class PassLimitService {
   }
 
   removeIndividualLimit(studentId: string | number) {
-    return this.http.put(`${PASS_LIMIT_ENDPOINT}/remove_override?student_id=${studentId}`, {});
+    return this.http.put(`${PASS_LIMIT_ENDPOINT}/remove_override?student_id=${studentId}`, {}).pipe(
+      tap(() => this.individualLimitUpdate$.next())
+    );
   }
 }

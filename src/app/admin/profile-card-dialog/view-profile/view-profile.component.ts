@@ -22,6 +22,7 @@ import {DarkThemeSwitch} from '../../../dark-theme-switch';
 import {ProfilePictureComponent} from '../../accounts/profile-picture/profile-picture.component';
 import {StudentPassLimit} from '../../../models/HallPassLimits';
 import { IdCardGradeLevelsComponent } from '../../id-cards/id-card-grade-levels/id-card-grade-levels.component';
+import {StudentPassLimit} from '../../../models/HallPassLimits';
 
 @Component({
   selector: 'app-view-profile',

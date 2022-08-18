@@ -231,12 +231,14 @@ export class StudentInfoCardComponent implements OnInit, AfterViewInit, OnDestro
         this.userService.clearCurrentUpdatedAccounts();
       });
 
-    if (this.userService.getFeatureFlagDigitalID()) {
+    if (!this.userService.getFeatureFlagDigitalID()) {
+      this.IDCardEnabled = true;
+    } else {
       this.idCardService.getIDCardDetails().subscribe({
         next: (result: any) => {
           if (result?.results?.digital_id_card) {
             this.IDCARDDETAILS = result.results.digital_id_card;
-            if (this.IDCARDDETAILS.enabled && this.IDCARDDETAILS.visible_to_who !== 'Staff only') {
+            if (this.IDCARDDETAILS.enabled && this.IDCARDDETAILS.visible_to_who != 'Staff only') {
               this.IDCardEnabled = true;
             }
           }
@@ -330,6 +332,7 @@ export class StudentInfoCardComponent implements OnInit, AfterViewInit, OnDestro
           textColor: '#7f879d',
           backgroundColor: '#F4F4F4',
           action: 'idcard',
+          isPro: !this.userService.getFeatureFlagDigitalID()
           // tooltip: 'Copy a private link to this student and send it to another staff member at your school.'
         }
       );
@@ -390,31 +393,38 @@ export class StudentInfoCardComponent implements OnInit, AfterViewInit, OnDestro
         } else if (action === 'delete') {
           this.userService.deleteUserRequest(this.profile, '_profile_student');
         } else if (action === 'idcard') {
-          const idCardData: IDCard = {
-            backgroundColor: this.IDCARDDETAILS.color,
-            greadLevel: this.IDCARDDETAILS.show_grade_levels ? this.profile.grade_level : null,
-            idNumberData: this.profile?.custom_id ? {
-              idNumber: this.profile?.custom_id,
-              barcodeURL: await this.qrBarcodeGenerator.selectBarcodeType(this.IDCARDDETAILS.barcode_type, this.profile?.custom_id)
-            } : {idNumber: '', barcodeURL: ''},
-            barcodeType: this.IDCARDDETAILS.barcode_type,
-            backsideText: this.IDCARDDETAILS.backside_text,
-            logoURL: this.IDCARDDETAILS.signed_url,
-            profilePicture: this.profile.profile_picture,
-            schoolName: 'Demo School',
-            userName: this.profile.display_name,
-            userRole: 'Student',
-            showCustomID: this.IDCARDDETAILS.show_custom_ids
-            // userRole: this.profile.isStudent() ?  'Student' : 'Staff'
-          };
+          if (!this.userService.getFeatureFlagDigitalID()) {
+            window.open('https://www.smartpass.app/idcards', '_blank');
+            // const dialogRef = this.dialog.open(IdcardOverlayContainerComponent, {
+            //   panelClass: "id-card-overlay-container",
+            //   backdropClass: "custom-bd",
+            //   data: {isPro: true}
+            // });
+          } else {
+            const idCardData: IDCard = {
+              backgroundColor: this.IDCARDDETAILS.color,
+              greadLevel: this.IDCARDDETAILS.show_grade_levels ? this.profile.grade_level : null,
+              idNumberData: this.profile?.custom_id ? {
+                idNumber: this.profile?.custom_id,
+                barcodeURL: await this.qrBarcodeGenerator.selectBarcodeType(this.IDCARDDETAILS.barcode_type, this.profile?.custom_id)
+              } : {idNumber: '', barcodeURL: ''},
+              barcodeType: this.IDCARDDETAILS.barcode_type,
+              backsideText: this.IDCARDDETAILS.backside_text,
+              logoURL: this.IDCARDDETAILS.signed_url,
+              profilePicture: this.profile.profile_picture,
+              schoolName: 'Demo School',
+              userName: this.profile.display_name,
+              userRole: 'Student',
+              showCustomID: this.IDCARDDETAILS.show_custom_ids
+              // userRole: this.profile.isStudent() ?  'Student' : 'Staff'
+            };
 
-          // idCardData.idNumberData.barcodeURL = await this.qrBarcodeGenerator.selectBarcodeType('code39', 123456);
-
-          const dialogRef = this.dialog.open(IdcardOverlayContainerComponent, {
-            panelClass: 'id-card-overlay-container',
-            backdropClass: 'custom-bd',
-            data: {idCardData: idCardData, isLoggedIn: false}
-          });
+            this.dialog.open(IdcardOverlayContainerComponent, {
+              panelClass: 'id-card-overlay-container',
+              backdropClass: 'custom-bd',
+              data: {idCardData: idCardData, isLoggedIn: false}
+            });
+          }
         }
       });
   }
