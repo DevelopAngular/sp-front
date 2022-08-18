@@ -22,10 +22,9 @@ import {DarkThemeSwitch} from '../../../dark-theme-switch';
 import {MatDialog, MatDialogRef} from '@angular/material/dialog';
 import {AddUserDialogComponent} from '../../add-user-dialog/add-user-dialog.component';
 import {User} from '../../../models/User';
-import {debounceTime, filter, map, mapTo, switchMap, take, takeUntil} from 'rxjs/operators';
+import {debounceTime, filter, map, mapTo, skipUntil, switchMap, take, takeUntil} from 'rxjs/operators';
 import {UserService} from '../../../services/user.service';
 import {AddAccountPopupComponent} from '../add-account-popup/add-account-popup.component';
-import {BulkAddComponent} from '../bulk-add/bulk-add.component';
 import {SchoolSyncInfo} from '../../../models/SchoolSyncInfo';
 import {IntegrationsDialogComponent} from '../integrations-dialog/integrations-dialog.component';
 import {Ggl4SettingsComponent} from '../integrations-dialog/ggl4-settings/ggl4-settings.component';
@@ -42,6 +41,7 @@ import {AdminPassLimitDialogComponent} from '../../../admin-pass-limits-dialog/a
 import {ConnectedPosition} from '@angular/cdk/overlay';
 import {PassLimitBulkEditComponent} from '../../../pass-limit-bulk-edit/pass-limit-bulk-edit.component';
 import {RecommendedDialogConfig} from '../../../shared/shared-components/confirmation-dialog/confirmation-dialog.component';
+import {PassLimitService} from '../../../services/pass-limit.service';
 
 @Component({
   selector: 'app-accounts-header',
@@ -101,9 +101,8 @@ export class AccountsHeaderComponent implements OnInit, AfterViewInit, OnDestroy
     {
       text: 'Has Individual Pass Limit',
       label: 'hasIndividualPassLimit',
-      filterCallback: (account): boolean => {
-        return !!account?.limit?.description;
-      }
+      roles: ['_profile_student'], // to be used for later, more complex implementations
+      filterCallback: (account): boolean => account?.limit?.isIndividual
     }
   ];
 
@@ -111,6 +110,7 @@ export class AccountsHeaderComponent implements OnInit, AfterViewInit, OnDestroy
     return Object.values(f).filter(Boolean).length > 0;
   }));
   activeFilters$;
+  adminPassLimitDialogRef: MatDialogRef<AdminPassLimitDialogComponent>;
 
   @HostListener('window:resize', ['$event.target'])
   onResize(event) {
@@ -126,6 +126,7 @@ export class AccountsHeaderComponent implements OnInit, AfterViewInit, OnDestroy
     private tableService: TableService,
     private toast: ToastService,
     private cdr: ChangeDetectorRef,
+    private passLimitsService: PassLimitService
   ) {
   }
 
@@ -414,11 +415,19 @@ export class AccountsHeaderComponent implements OnInit, AfterViewInit, OnDestroy
   }
 
   openPassLimits() {
-    this.matDialog.open(AdminPassLimitDialogComponent, {
+    this.adminPassLimitDialogRef = this.matDialog.open(AdminPassLimitDialogComponent, {
       hasBackdrop: true,
       panelClass: 'overlay-dialog',
       backdropClass: 'custom-bd',
       width: '425px'
+    });
+
+    this.adminPassLimitDialogRef.afterClosed().pipe(
+      skipUntil(this.passLimitsService.individualLimitUpdate$)
+    ).subscribe({
+      next: () => {
+        this.tableService.activeFilters$.next(this.tableService.activeFilters$.getValue());
+      }
     });
   }
 
