@@ -25,6 +25,7 @@ export class IntegrationsDialogComponent implements OnInit, OnDestroy {
   gSuiteOrgs$: Observable<GSuiteOrgs>;
   cleverSyncInfo$: Observable<CleverInfo>;
   cleverSyncLoading$: Observable<boolean>;
+  classlinkSyncLoading$: Observable<boolean>;
   page: number = 1;
   settingsData: {
     action: string,
@@ -52,6 +53,7 @@ export class IntegrationsDialogComponent implements OnInit, OnDestroy {
     this.schoolSyncInfo$ = this.adminService.schoolSyncInfo$;
     this.cleverSyncInfo$ = this.adminService.cleverInfoData$;
     this.cleverSyncLoading$ = this.adminService.syncLoading$;
+    this.classlinkSyncLoading$ = this.adminService.syncLoading$;
     this.frameMotion$ = this.formService.getFrameMotionDirection();
     this.userService.getUploadedGroupsRequest();
 

@@ -8,7 +8,7 @@
         </div>
     </div>
     <div class="content" *ngIf="schoolSyncInfo$ | async as schoolSyncInfo" [attr.data-motion-translate]="(frameMotion$ | async).direction">
-        <div class="using" *ngIf="schoolSyncInfo.is_gg4l_enabled || schoolSyncInfo.is_gsuite_enabled || schoolSyncInfo.is_clever_enabled || isUploadedProfilePictures">
+        <div class="using" *ngIf="schoolSyncInfo.is_gg4l_enabled || schoolSyncInfo.is_gsuite_enabled || schoolSyncInfo.is_clever_enabled || isUploadedProfilePictures || schoolSyncInfo.is_classlink_enabled">
             <div class="title">Integrations You’re Using</div>
             <app-integration-card *ngIf="schoolSyncInfo.is_clever_enabled" [icon]="'./assets/Clever (Blue).svg'" [title]="'Clever'" [style.padding]="'10px'" [status]="schoolSyncInfo.is_clever_enabled ? 'done' : 'disconnect'" [subtitle]="schoolSyncInfo.is_clever_enabled ? ((cleverSyncLoading$ | async) ? 'Sync in Progress...' : 'Last Sync: ' + getLastSync(cleverSyncInfo$ | async)) : 'Sync accounts automatically from any SIS with Clever.'"
                 [learnMoreLink]="'https://www.smartpass.app/clever'" (setUp)="openSettings($event,'clever')"></app-integration-card>
@@ -24,9 +24,11 @@
                 [subtitle]="schoolSyncInfo.is_gg4l_enabled ? (!schoolSyncInfo.login_provider ? 'Almost done! Adjust settings for account sync.' : !(gg4lSyncInfo$ | async).last_successful_sync ? 'Never synced before' : 'Last Sync: ' + formatDate((gg4lSyncInfo$ | async).last_successful_sync)) : 'Sync accounts automatically from any SIS through GG4L.'"
                 [learnMoreLink]="'https://www.smartpass.app/gg4l'" (setUp)="openSettings($event,'gg4l')">
             </app-integration-card>
+            <app-integration-card *ngIf="schoolSyncInfo.is_classlink_enabled" [icon]="'./assets/ClassLink.svg'" [title]="'ClassLink'" [style.padding]="'10px'" [status]="schoolSyncInfo.is_classlink_enabled ? 'done' : 'disconnect'" [subtitle]="schoolSyncInfo.is_classlink_enabled ? ((classlinkSyncLoading$ | async) ? 'Sync in Progress...' : 'Last Sync: ' + getLastSync(classlinkSyncInfo$ | async)) : 'Sync accounts automatically with ClassLink.'"
+            [learnMoreLink]="'https://www.smartpass.app/classlink'" (setUp)="openSettings($event,'classlink')"></app-integration-card>
         </div>
 
-        <mat-divider *ngIf="schoolSyncInfo.is_gg4l_enabled || schoolSyncInfo.is_gsuite_enabled || schoolSyncInfo.is_clever_enabled" [style.width]="'100%'"></mat-divider>
+        <mat-divider *ngIf="schoolSyncInfo.is_gg4l_enabled || schoolSyncInfo.is_gsuite_enabled || schoolSyncInfo.is_clever_enabled || schoolSyncInfo.is_classlink_enabled" [style.width]="'100%'"></mat-divider>
 
         <div class="using" *ngIf="!schoolSyncInfo.is_gg4l_enabled || !schoolSyncInfo.is_gsuite_enabled || !schoolSyncInfo.is_clever_enabled">
             <app-integration-card *ngIf="!schoolSyncInfo.is_clever_enabled" [icon]="'./assets/Clever (Blue).svg'" [title]="'Clever'" [style.padding]="'10px'" [status]="'disconnect'" [subtitle]="'Sync accounts automatically from any SIS with Clever.'" [learnMoreLink]="'https://www.smartpass.app/clever'"
@@ -43,6 +45,8 @@
             <app-integration-card *ngIf="!schoolSyncInfo.is_gg4l_enabled" [icon]="'./assets/GG4L (Blue).svg'" [title]="'GG4L'" [status]="'disconnect'" [style.padding]="'10px'" [subtitle]="'Sync accounts automatically from any SIS through GG4L.'" [learnMoreLink]="'https://www.smartpass.app/gg4l'"
                 (setUp)="openSettings($event,'gg4l')">
             </app-integration-card>
+            <app-integration-card id="intercom-Launcher" *ngIf="!schoolSyncInfo.is_classlink_enabled" [icon]="'./assets/ClassLink.svg'" [title]="'ClassLink'" [style.padding]="'10px'" [status]="'disconnect'" [subtitle]="'Sync accounts automatically with ClassLink.'" [learnMoreLink]="'https://www.smartpass.app/classlink'"
+             ></app-integration-card>
         </div>
 
     </div>
@@ -61,4 +65,7 @@
 </div>
 <div *ngIf="page === 2 && settingsData.action === 'grade_level'" [@NextStep]="{ value: '', params: frameMotion$ | async}">
     <app-grade-levels [page]="isUploadedGradeLevels ? 5 : 2" (backEmit)="back()"></app-grade-levels>
+</div>
+<div *ngIf="page === 2 && settingsData.action === 'classlink'" [@NextStep]="{ value: '', params: frameMotion$ | async}">
+    <app-class-link (backEmit)="back()"></app-class-link>
 </div>
