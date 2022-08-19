@@ -22,7 +22,6 @@ export class CreateFormService {
 
   // send modified Location to child component to update its choices
   private updatedChoice$: Subject<Location> = new Subject<Location>();
-  private updatedPinnable$: Subject<Pinnable> = new Subject<Pinnable>();
 
   constructor(
     private hallPassService: HallPassesService,
@@ -48,14 +47,6 @@ export class CreateFormService {
 
   setUpdatedChoice(loc: Location): void {
     this.updatedChoice$.next(loc);
-  }
-
-  getUpdatedPinnable(): Observable<Pinnable> {
-    return (this.updatedPinnable$ as Observable<Pinnable>);
-  }
-
-  setUpdatedPinnable(pinn: Pinnable): void {
-    this.updatedPinnable$.next(pinn);
   }
 
   getPinnable(filter?: boolean) {

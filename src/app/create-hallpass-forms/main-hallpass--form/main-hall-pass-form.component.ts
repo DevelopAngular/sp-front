@@ -260,16 +260,7 @@ export class MainHallPassFormComponent implements OnInit, OnDestroy {
       });
     this.locationsService.listenPassLimitSocket().subscribe(loc => {
       this.locationsService.updatePassLimitRequest(loc);
-      // is this location a pinnable?
     });
-
-    /*this.formService.getUpdatedChoice().pipe(
-      takeUntil(this.destroy$)
-    ).subscribe();
-
-    this.formService.getUpdatedPinnable().pipe(
-      takeUntil(this.destroy$)
-    ).subscribe();*/
 
     this.locationsService.listenLocationSocket().pipe(
       takeUntil(this.destroy$),
@@ -310,7 +301,7 @@ export class MainHallPassFormComponent implements OnInit, OnDestroy {
       takeUntil(this.destroy$),
       filter(res => !!res),
       map((res) => {
-        this.formService.setUpdatedPinnable(res.data);
+        this.locationsService.updatePinnableSuccessState(res.data);
       }),
     ).subscribe();
 

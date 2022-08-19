@@ -81,7 +81,6 @@ export class ToWhereComponent implements OnInit {
     'to-header_animation-back': false
   };
 
-  updatedPinnable$: Observable<Pinnable>;
   destroy$: Subject<any> = new Subject<any>();
 
   constructor(
