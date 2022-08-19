@@ -33,7 +33,7 @@ export class PassLimitInputComponent implements OnInit, OnDestroy {
 
   ngOnInit(): void {
     this.limitArray = new Array(51).fill(0).map((_, i) => ({
-      text: `${i} passes`,
+      text: `${i} ${i === 1 ? 'pass' : 'passes'}`,
       value: i
     }));
     if (this.isIndividual) {

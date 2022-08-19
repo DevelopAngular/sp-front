@@ -212,6 +212,7 @@ export class MainHallPassFormComponent implements OnInit, OnDestroy {
         };
         break;
     }
+    this.FORM_STATE.passLimitInfo = this.dialogData.passLimitInfo;
 
     this.setFormSize();
     this.setContainerSize('end');

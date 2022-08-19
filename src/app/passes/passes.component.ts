@@ -1,6 +1,6 @@
 import {
   AfterViewInit,
-  ChangeDetectionStrategy,
+  ChangeDetectionStrategy, ChangeDetectorRef,
   Component,
   ElementRef,
   HostListener,
@@ -253,7 +253,8 @@ export class PassesComponent implements OnInit, AfterViewInit, OnDestroy {
     private sideNavService: SideNavService,
     private locationsService: LocationsService,
     private passLimitsService: PassLimitService,
-    private updateService: CheckForUpdateService
+    private updateService: CheckForUpdateService,
+    private cdr: ChangeDetectorRef
   ) {
 
     this.userService.user$
@@ -317,7 +318,8 @@ export class PassesComponent implements OnInit, AfterViewInit, OnDestroy {
             tap(data => {
               this.passLimitInfo = data;
               if (this.createHallPassDialogRef && this.createHallPassDialogRef.getState() === MatDialogState.OPEN) {
-                this.createHallPassDialogRef.componentInstance.dialogData.passLimitInfo = this.passLimitInfo;
+                this.createHallPassDialogRef.componentInstance.FORM_STATE.passLimitInfo = this.passLimitInfo;
+                this.cdr.detectChanges();
               }
             })
           );

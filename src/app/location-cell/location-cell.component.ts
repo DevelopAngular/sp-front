@@ -18,42 +18,21 @@ import {KeyboardShortcutsService} from '../services/keyboard-shortcuts.service';
 })
 export class LocationCellComponent implements OnInit, OnDestroy {
 
-  @Input()
-  value: Location;
-
-  @Input()
-  type: string;
-
-  @Input()
-  starred: boolean;
-
-  @Input()
-  showStar: boolean;
-
-  @Input()
-  forStaff: boolean;
-
-  @Input()
-  forLater: boolean;
-
-  @Input()
-  hasLocks: boolean = false;
-
-  @Input()
-  valid: boolean = true;
-
-  @Input()
-  allowOnStar: boolean = false;
-
+  @Input() value: Location;
+  @Input() type: string;
+  @Input() starred: boolean;
+  @Input() showStar: boolean;
+  @Input() forStaff: boolean;
+  @Input() forLater: boolean;
+  @Input() hasLocks = false;
+  @Input() valid = true;
+  @Input() allowOnStar = false;
   @Input() currentPage: 'from' | 'to';
-
   @Input() passLimit: PassLimit;
-
   @Input() isSameRoom: boolean;
-
   @Input() isFavorite: boolean;
-
   @Input() disabledRoom: boolean;
+  @Input() kioskMode = false;
 
   @Output() onSelect: EventEmitter<any> = new EventEmitter();
   @Output() onStar: EventEmitter<any> = new EventEmitter();
@@ -61,15 +40,12 @@ export class LocationCellComponent implements OnInit, OnDestroy {
   @ViewChild('cell', { static: true }) cell: ElementRef;
 
   currentSchool: School;
-
   showTooltipWithDelay: boolean;
-
-  overStar: boolean = false;
+  overStar = false;
   hovered: boolean;
   pressed: boolean;
   intervalId;
-  tabIndex: number = 1;
-
+  tabIndex = 1;
   destroy$: Subject<any> = new Subject<any>();
 
   constructor(
@@ -84,6 +60,9 @@ export class LocationCellComponent implements OnInit, OnDestroy {
   }
 
   get showLock() {
+    if (this.kioskMode) { // allows for checking restricted passes on kiosk mode due to pass limits
+      return (this.value.restricted && !this.forLater) || (this.value.scheduling_restricted && this.forLater);
+    }
     return !this.forStaff && ((this.value.restricted && !this.forLater) || (this.value.scheduling_restricted && this.forLater));
   }
 

@@ -95,7 +95,7 @@ export class ToCategoryComponent implements OnInit {
   }
 
   ngOnInit() {
-
+    console.log(this.formState);
     this.frameMotion$ = this.formService.getFrameMotionDirection();
     this.fromLocation = this.formState.data.direction.from;
     this.pinnable = this.formState.data.direction.pinnable;
@@ -144,13 +144,13 @@ export class ToCategoryComponent implements OnInit {
    const students = selectedStudents.map(s => ''+s.id);
    const ruleStudents = location.visibility_students.map(s => ''+s.id);
    const rule = location.visibility_type;
-        
-   // skipped are students that do not qualify to go forward     
+
+   // skipped are students that do not qualify to go forward
    let skipped = this.visibilityService.calculateSkipped(students, ruleStudents, rule);
 
     if (!skipped || skipped.length === 0) {
       forwardAndEmit();
-      return; 
+      return;
     }
 
     let text =  'This room is only available to certain students';
@@ -162,7 +162,7 @@ export class ToCategoryComponent implements OnInit {
       title = 'These students do not have permission to go to this room:';
       denyText = 'Skip these students';
     } else {
-      title = (names?.join(', ') ?? 'Student') + ' does not have permission to go to this room'; 
+      title = (names?.join(', ') ?? 'Student') + ' does not have permission to go to this room';
     }
 
     this.dialog.open(ConfirmationDialogComponent, {
@@ -185,16 +185,16 @@ export class ToCategoryComponent implements OnInit {
     }).afterClosed().pipe(
       takeUntil(this.destroy$),
     ).subscribe(override => {
-      this.formState.data.roomOverride = !!override; 
-     
+      this.formState.data.roomOverride = !!override;
+
       if (override === undefined) {
-        return;     
+        return;
       }
-     
+
       // override case
       if (override) {
         forwardAndEmit();
-        return; 
+        return;
       }
 
       // SKIPPING case
@@ -216,9 +216,9 @@ export class ToCategoryComponent implements OnInit {
         return;
       }
 
-      this.formState.data.roomStudents = roomStudents; 
+      this.formState.data.roomStudents = roomStudents;
       forwardAndEmit();
-    }); 
+    });
   }
 
   back() {

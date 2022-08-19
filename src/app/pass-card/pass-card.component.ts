@@ -38,17 +38,17 @@ import {PassLimitService} from '../services/pass-limit.service';
 export class PassCardComponent implements OnInit, OnDestroy {
 
   @Input() pass: HallPass;
-  @Input() forInput: boolean = false;
-  @Input() fromPast: boolean = false;
-  @Input() forFuture: boolean = false;
-  @Input() isActive: boolean = false;
-  @Input() forStaff: boolean = false;
-  @Input() forMonitor: boolean = false;
-  @Input() forKioskMode: boolean = false;
+  @Input() forInput = false;
+  @Input() fromPast = false;
+  @Input() forFuture = false;
+  @Input() isActive = false;
+  @Input() forStaff = false;
+  @Input() forMonitor = false;
+  @Input() forKioskMode = false;
   @Input() formState: Navigation;
   @Input() students: User[] = [];
-  @Input() isOpenBigPass: boolean = false;
-  @Input() fullScreenButton: boolean = false;
+  @Input() isOpenBigPass = false;
+  @Input() fullScreenButton = false;
 
   @Output() cardEvent: EventEmitter<any> = new EventEmitter();
   @Output() scaleCard: EventEmitter<boolean> = new EventEmitter<boolean>();
@@ -57,15 +57,15 @@ export class PassCardComponent implements OnInit, OnDestroy {
   @ViewChild('confirmDialogBody') confirmDialog: TemplateRef<HTMLElement>;
   @ViewChild('confirmDialogBodyVisibility') confirmDialogVisibility: TemplateRef<HTMLElement>;
 
-  timeLeft: string = '';
-  valid: boolean = true;
+  timeLeft = '';
+  valid = true;
   returnData: any = {};
-  overlayWidth: string = '0px';
-  buttonWidth: number = 288;
+  overlayWidth = '0px';
+  buttonWidth = 288;
 
   selectedDuration: number;
   selectedTravelType: string;
-  cancelOpen: boolean = false;
+  cancelOpen = false;
   selectedStudents: User[] = [];
   fromHistory;
   fromHistoryIndex;
@@ -564,12 +564,6 @@ export class PassCardComponent implements OnInit, OnDestroy {
               remove(body['students'] as number[], elem => students.includes(elem));
               // server side "no students" case is seen as bad request
               if (body['students'].length === 0) {
-                this.toastService.openToast({
-                  title: 'Skiping left no students to operate on',
-                  subtitle: 'Last operation did not proceeed',
-                  type: 'error',
-                });
-                this.dialogRef.close();
                 throw new Error('No students to create passes for');
               }
               return of(null);
