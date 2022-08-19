@@ -24,6 +24,7 @@ import {profilePicturesReducer} from '../profile-pictures/reducers';
 import {loginDataReducer} from '../login-data/reducers';
 import {exclusionGroupsReducer} from '../encounters-prevention/excusion-groups/reducers/exclusion-groups.reducer';
 import {smartpassSearchReducer} from '../smartpass-search/reducers/smartpass-search.reducer';
+import { encounterDetectionReducer } from '../encounter-detection/reducers';
 
 
 export interface AppState {
@@ -53,6 +54,7 @@ export interface AppState {
   readonly loginData;
   readonly exclusionGroups;
   readonly smartpassSearch;
+  readonly encounterDetection;
 }
 
 export const reducers = {
@@ -82,4 +84,5 @@ export const reducers = {
   loginData: loginDataReducer,
   exclusionGroups: exclusionGroupsReducer,
   smartpassSearch: smartpassSearchReducer,
+  encounterDetection: encounterDetectionReducer
 };

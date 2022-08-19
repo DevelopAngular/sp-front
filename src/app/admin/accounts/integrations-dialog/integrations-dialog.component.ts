@@ -58,7 +58,6 @@ export class IntegrationsDialogComponent implements OnInit, OnDestroy {
     merge(of(this.userService.getUserSchool()), this.userService.getCurrentUpdatedSchool$().pipe(filter(s => !!s)))
         .pipe(takeUntil(this.destroy$))
         .subscribe(school => {
-          console.log("school : ", school)
           this.isUploadedProfilePictures = school.profile_pictures_completed;
         });
 

@@ -221,14 +221,14 @@ export class AccountsHeaderComponent implements OnInit, AfterViewInit, OnDestroy
           }
         });
       } else if (action === 'bulk') {
-        const BAAD = this.matDialog.open(BulkAddComponent, {
-          width: '425px', height: '500px',
-          panelClass: 'accounts-profiles-dialog',
-          backdropClass: 'custom-bd',
-          data: {
-            role: !this.currentTab ? '_all' : this.currentTab,
-          }
-        });
+        // const BAAD = this.matDialog.open(BulkAddComponent, {
+        //   width: '425px', height: '500px',
+        //   panelClass: 'accounts-profiles-dialog',
+        //   backdropClass: 'custom-bd',
+        //   data: {
+        //     role: !this.currentTab ? '_all' : this.currentTab,
+        //   }
+        // });
       }
     });
 

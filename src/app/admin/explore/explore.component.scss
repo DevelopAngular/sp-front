@@ -1,4 +1,5 @@
 @import "../../../sp-colors";
+@import "../../../design-system.scss";
 :host {
     width: 100%;
     height: 100vh;
@@ -6,7 +7,7 @@
 }
 
 .wrapper {
-    padding: 25px 29px 25px 25px;
+    padding: 35px 30px;
     //height: 100vh;
     .header {
         background-color: $white;
@@ -52,8 +53,8 @@
                 padding: 0 10px;
             }
             &.not-alone {
-              display: flex;
-              gap: 1rem;
+                display: flex;
+                gap: 1rem;
             }
         }
         .filters {
@@ -86,6 +87,41 @@
                     margin-top: 41px;
                     text-align: center;
                     width: 386px;
+                }
+            }
+        }
+    }
+    &.plus-plan {
+        background-color: $gray100;
+        overflow-y: auto;
+        height: 100vh;
+        .content-wrapper {
+            .left {
+                width: 50%;
+                padding: 20px;
+                .title {
+                    @include textSize(17px);
+                    margin-left: 10px;
+                }
+                .feature {
+                    @include textSize(39px, bold);
+                }
+                .description {
+                    @include textSize(17px, 300, $gray500);
+                }
+                .feature-2 {
+                    @include textSize(20px, bold);
+                }
+                .description-2 {
+                    line-height: 1.5;
+                    @include textSize(14px, 300, $gray500);
+                }
+            }
+            .right {
+                width: 50%;
+                .description {
+                    @include textSize(11px, normal, $gray500);
+                    padding-left: 10px;
                 }
             }
         }

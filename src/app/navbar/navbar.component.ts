@@ -562,7 +562,6 @@ export class NavbarComponent implements AfterViewInit, OnInit, OnDestroy {
         !this.isSafari
       ) {
         this.notifService.initNotifications(true).then((hasPerm) => {
-          console.log(`Has permission to show notifications: ${hasPerm}`);
 
           notifRef = this.dialog.open(NotificationFormComponent, {
             panelClass: 'form-dialog-container',

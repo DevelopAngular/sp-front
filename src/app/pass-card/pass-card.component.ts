@@ -447,11 +447,14 @@ export class PassCardComponent implements OnInit, OnDestroy {
         return errors.pipe(
           tap(errorResponse => {
             const isVisibilityError = ('visibility_alerts' in errorResponse.error);
-            console.log('me', errorResponse, isVisibilityError)
             // a student has been checked server side and had no room visibility
             if (!this.forStaff) {
-                const roomNames = errorResponse.error.visibility_alerts.map(r => r.location_title);
-                const title = ((roomNames.length > 1) ? 'Rooms ' : 'Room ') + roomNames.join(', ') + ' not available';
+                const roomNames = isVisibilityError ? errorResponse.error.visibility_alerts.map(r => r?.location_title ?? '') : [''];
+                const title = (roomNames.length > 1
+                               ? 'Rooms ' + roomNames.join(', ')
+                               : roomNames[0] === ''
+                                ? 'Room'
+                                : 'Room ' + roomNames[0]) + ' not available';
                 this.toastService.openToast({
                   title,
                   subtitle: 'Please ask your teacher to create a pass for you.',
@@ -461,11 +464,11 @@ export class PassCardComponent implements OnInit, OnDestroy {
                 this.performingAction = false;
                 //this.dialogRef.close();
                 throw 'this student has been subject of room visibility rules';
-
-              return
             }
             // not our error case? dispatch it to the next retryWhen
-            if (! isVisibilityError) throw errorResponse;
+            if (! isVisibilityError) {
+              throw errorResponse;
+            }
           }),
           concatMap(({error}) => getOverrideFromDialog(error)),
           concatMap(({override, students}: { override: boolean, students: number[] }) => {

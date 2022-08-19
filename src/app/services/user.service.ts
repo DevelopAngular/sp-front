@@ -426,6 +426,10 @@ export class UserService implements OnDestroy {
     return this.getUserSchool().feature_flag_digital_id
   }
 
+  getFeatureEncounterDetection(): boolean {
+    return this.getUserSchool().feature_flag_encounter_detection
+  }
+
   getCurrentUpdatedSchool$(): Observable<School> {
     return this.http.currentUpdateSchool$;
   }
@@ -908,8 +912,14 @@ export class UserService implements OnDestroy {
     return this.http.get(`v1/integrations/upload/custom_ids/setup`);
   }
 
-  uploadIDNumbers(body) {
-    return this.http.post('v1/integrations/upload/custom_ids', body);
+  uploadIDNumbers(body){
+    const httpOptions = {
+      headers: new HttpHeaders({
+        'Content-Type': 'application/x-www-form-urlencoded',
+      })
+    };
+
+    return this.http.post('v1/integrations/upload/custom_ids', body, httpOptions);
   }
 
   getMissingIDNumbers() {
@@ -920,8 +930,14 @@ export class UserService implements OnDestroy {
     return this.http.get(`v1/integrations/upload/grade_levels/setup`);
   }
 
-  uploadGradeLevels(body) {
-    return this.http.post('v1/integrations/upload/grade_levels', body);
+  uploadGradeLevels(body){
+    const httpOptions = {
+      headers: new HttpHeaders({
+        'Content-Type': 'application/x-www-form-urlencoded',
+      })
+    };
+
+    return this.http.post('v1/integrations/upload/grade_levels', body, httpOptions);
   }
 
   getMissingGradeLevels() {
