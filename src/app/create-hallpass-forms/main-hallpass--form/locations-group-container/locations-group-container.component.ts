@@ -16,7 +16,8 @@ import {RestrictedMessageComponent} from './restricted-message/restricted-messag
 import {ToWhereComponent} from './to-where/to-where.component';
 import {ScreenService} from '../../../services/screen.service';
 import {DeviceDetection} from '../../../device-detection.helper';
-import {filter, map} from 'rxjs/operators';
+import {combineLatest} from 'rxjs';
+import {filter, map, shareReplay, startWith} from 'rxjs/operators';
 import {Location} from '../../../models/Location';
 import {PassLimitInfo} from '../../../models/HallPassLimits';
 import {LocationVisibilityService} from '../location-visibility.service';
@@ -53,7 +54,6 @@ export class LocationsGroupContainerComponent implements OnInit {
     @Inject(MAT_DIALOG_DATA) public dialogData: any,
     private dataService: DataService,
     private formService: CreateFormService,
-    private locationsService: LocationsService,
     private screenService: ScreenService,
     private visibilityService: LocationVisibilityService,
   ) {
@@ -129,7 +129,9 @@ export class LocationsGroupContainerComponent implements OnInit {
 
     this.data.fromLocation = this.FORM_STATE.data.direction && this.FORM_STATE.data.direction.from ? this.FORM_STATE.data.direction.from : null;
     this.data.toLocation = this.FORM_STATE.data.direction && this.FORM_STATE.data.direction.to ? this.FORM_STATE.data.direction.to : null;
-    this.pinnables = this.formService.getPinnable(!!this.dialogData['kioskModeRoom']).pipe(
+    this.pinnables = combineLatest(
+      this.formService.getUpdatedPinnable().pipe(startWith(null)),
+      this.formService.getPinnable(!!this.dialogData['kioskModeRoom']).pipe(
       // restrict all rooms, so the teacher request is mandatory
       filter(pins => pins.length > 0),
       map(pins => {
@@ -165,6 +167,11 @@ export class LocationsGroupContainerComponent implements OnInit {
         }
         return pins;
       }),
+    )).pipe(
+      map(([updated, pp]) => {
+        if (!updated) return pp;
+        return pp.map(p => p.id === updated.id ? updated : p);
+      })
     );
     this.user$ = this.dataService.currentUser;
     this.pinnable = this.FORM_STATE.data.direction ? this.FORM_STATE.data.direction.pinnable : null;

@@ -24,11 +24,11 @@ export interface Paged<T> {
 }
 
 function Visibility(): any {
-  return function (target, property, descriptor) {
+  return function (target: HTMLElement, property: string, descriptor: Object) {
     let values: any[];
 
     return {
-      set: function (vv) {
+      set: function (vv: any[]) {
         // filtering apply only for a student
         if (vv.length > 0 && !this.forStaff) {
           // test if we have Location's
@@ -259,7 +259,9 @@ export class LocationTableComponent implements OnInit, OnDestroy {
         }
       });
 
-    this.updatedLocation$?.subscribe(res => this.updateOrAddChoices(res));
+      this.updatedLocation$?.pipe(
+        takeUntil(this.destroy$),
+      ).subscribe(res => this.updateOrAddChoices(res));
 
   }
 

@@ -1,4 +1,4 @@
-import {Component, ElementRef, EventEmitter, HostListener, Inject, Input, OnInit, OnDestroy, Output, TemplateRef, ViewChild} from '@angular/core';
+import {Component, ElementRef, EventEmitter, HostListener, Inject, Input, OnInit, Output, TemplateRef, ViewChild} from '@angular/core';
 import {MatDialogRef} from '@angular/material/dialog';
 import {ToastService} from '../../../../services/toast.service';
 import {Pinnable} from '../../../../models/Pinnable';
@@ -12,7 +12,7 @@ import {ToWhereGridRestrictionSm} from '../../../../models/to-where-grid-restric
 import {ToWhereGridRestrictionMd} from '../../../../models/to-where-grid-restrictions/ToWhereGridRestrictionMd';
 import {MAT_DIALOG_DATA, MatDialog} from '@angular/material/dialog';
 import {Subject, BehaviorSubject, fromEvent, Observable} from 'rxjs';
-import {filter, take, takeUntil} from 'rxjs/operators';
+import {filter, take, takeUntil, switchMap, startWith} from 'rxjs/operators';
 import {DeviceDetection} from '../../../../device-detection.helper';
 import {StorageService} from '../../../../services/storage.service';
 import {TooltipDataService} from '../../../../services/tooltip-data.service';
@@ -81,6 +81,7 @@ export class ToWhereComponent implements OnInit {
     'to-header_animation-back': false
   };
 
+  updatedPinnable$: Observable<Pinnable>;
   destroy$: Subject<any> = new Subject<any>();
 
   constructor(

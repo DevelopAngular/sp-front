@@ -74,7 +74,6 @@ export class FromWhereComponent implements OnInit, OnDestroy {
   }
 
   updatedLocation$: Observable<Location>;
-
   destroy$: Subject<any> = new Subject<any>();
 
   // keep unfiltered students before entering (with posible filtering) to pass card view
@@ -118,9 +117,6 @@ export class FromWhereComponent implements OnInit, OnDestroy {
       .subscribe((u: User) => this.student = u);
 
       this.updatedLocation$ = this.formService.getUpdatedChoice();
-      this.updatedLocation$.pipe(
-        takeUntil(this.destroy$),
-      );
   }
 
   private student: User;

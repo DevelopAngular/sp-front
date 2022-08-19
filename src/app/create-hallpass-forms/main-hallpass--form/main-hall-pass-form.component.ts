@@ -5,7 +5,7 @@ import {Pinnable} from '../../models/Pinnable';
 import {User} from '../../models/User';
 import {StudentList} from '../../models/StudentList';
 import {NextStep} from '../../animations';
-import {BehaviorSubject, combineLatest, Subject, Observable, of} from 'rxjs';
+import {BehaviorSubject, combineLatest, Subject} from 'rxjs';
 import {CreateFormService} from '../create-form.service';
 import {filter, map, takeUntil, withLatestFrom} from 'rxjs/operators';
 import {cloneDeep, find} from 'lodash';
@@ -263,11 +263,16 @@ export class MainHallPassFormComponent implements OnInit, OnDestroy {
       // is this location a pinnable?
     });
 
-    this.formService.getUpdatedChoice().pipe(
+    /*this.formService.getUpdatedChoice().pipe(
       takeUntil(this.destroy$)
     ).subscribe();
 
+    this.formService.getUpdatedPinnable().pipe(
+      takeUntil(this.destroy$)
+    ).subscribe();*/
+
     this.locationsService.listenLocationSocket().pipe(
+      takeUntil(this.destroy$),
       withLatestFrom(this.passesService.pinnables$),
       filter(combo => {
         const [, pinns] = combo;
@@ -298,6 +303,14 @@ export class MainHallPassFormComponent implements OnInit, OnDestroy {
           console.log(e);
           return null;
         }
+      }),
+    ).subscribe();
+
+    this.locationsService.listenPinnableSocket().pipe(
+      takeUntil(this.destroy$),
+      filter(res => !!res),
+      map((res) => {
+        this.formService.setUpdatedPinnable(res.data);
       }),
     ).subscribe();
 

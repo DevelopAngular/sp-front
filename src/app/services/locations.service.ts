@@ -202,6 +202,10 @@ export class LocationsService {
       return this.pollingService.listen('location.patched');
     }
 
+    listenPinnableSocket() {
+      return this.pollingService.listen('pinnable.patched');
+    }
+
     /////// Favorite Locations
     getFavoriteLocationsRequest() {
       this.store.dispatch(getFavoriteLocations());
