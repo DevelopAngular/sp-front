@@ -32,7 +32,6 @@ export enum States { from = 1, toWhere = 2, category = 3, restrictedTarget = 4, 
 export class LocationsGroupContainerComponent implements OnInit {
 
   @Input() FORM_STATE: Navigation;
-  @Input() passLimitInfo: PassLimitInfo;
   @Output() nextStepEvent: EventEmitter<any> = new EventEmitter<any>();
 
   @ViewChild(FromWhereComponent) fromWhereComp;
@@ -176,15 +175,12 @@ export class LocationsGroupContainerComponent implements OnInit {
           }
         });
 
-        const pl = 'passLimitInfo' in this.FORM_STATE
-          ? this.FORM_STATE.passLimitInfo
-          : this.passLimitInfo;
-
-        if (!pl?.showPasses) {
+        const { passLimitInfo } = this.FORM_STATE;
+        if (!passLimitInfo?.showPasses) {
           return pins;
         }
 
-        if (pl.current === 0) {
+        if (passLimitInfo.current === 0) {
           pins.forEach(p => {
             if (p.location === null) { // ignore folders
               return p;
@@ -327,10 +323,8 @@ export class LocationsGroupContainerComponent implements OnInit {
   }
 
   fromCategory(location) {
-    const pl = 'passLimitInfo' in this.FORM_STATE
-      ? this.FORM_STATE.passLimitInfo
-      : this.passLimitInfo;
-    location.restricted = location.restricted || (pl?.showPasses && pl?.current === 0);
+    const { passLimitInfo } = this.FORM_STATE;
+    location.restricted = location.restricted || (passLimitInfo?.showPasses && passLimitInfo?.current === 0);
     this.data.toLocation = location;
     this.FORM_STATE.data.direction.to = location;
     if (((location.restricted && !this.FORM_STATE.forLater) || (location.scheduling_restricted && this.FORM_STATE.forLater)) && !this.isStaff) {
