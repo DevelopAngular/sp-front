@@ -1,16 +1,17 @@
-import { Component, EventEmitter, Input, OnInit, Output } from '@angular/core';
+import { Component, EventEmitter, Input, OnDestroy, OnInit, Output } from '@angular/core';
 import { Navigation } from '../../main-hall-pass-form.component';
 import { Location } from '../../../../models/Location';
 import { CreateFormService } from '../../../create-form.service';
-import {BehaviorSubject, Observable} from 'rxjs';
+import {Subject, BehaviorSubject, Observable} from 'rxjs';
 import {StorageService} from '../../../../services/storage.service';
+import {takeUntil} from 'rxjs/operators';
 
 @Component({
   selector: 'app-student-footer',
   templateUrl: './student-footer.component.html',
   styleUrls: ['./student-footer.component.scss']
 })
-export class StudentFooterComponent implements OnInit {
+export class StudentFooterComponent implements OnInit, OnDestroy {
 
   @Input() formState: Navigation;
 
@@ -28,6 +29,8 @@ export class StudentFooterComponent implements OnInit {
   frameMotion$: BehaviorSubject<any>;
 
   isGrid: boolean;
+
+  destroy$: Subject<any> = new Subject<any>();
 
   constructor(
     private formService: CreateFormService,
@@ -63,7 +66,7 @@ export class StudentFooterComponent implements OnInit {
     }
 
     this._fromLocationText$ = new BehaviorSubject(this.fromLocationText());
-    this.fromLocationText$ = this._fromLocationText$.asObservable();
+    this.fromLocationText$ = this._fromLocationText$.asObservable().pipe(takeUntil(this.destroy$));
     this.formService.getUpdatedChoice().subscribe(loc => {
       if(!this.formState.data.direction.to) {
         this.formState.data.direction.from = loc;
@@ -71,6 +74,11 @@ export class StudentFooterComponent implements OnInit {
         this._fromLocationText$.next(this.fromLocationText());
       } 
     });
+  }
+
+  ngOnDestroy() {
+    this.destroy$.next();
+    this.destroy$.complete();
   }
 
   switchLocsView(evt: Event) {

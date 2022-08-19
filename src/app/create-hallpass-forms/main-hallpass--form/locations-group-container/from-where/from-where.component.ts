@@ -1,6 +1,5 @@
 import {Component, ElementRef, EventEmitter, HostListener, Input, OnInit, OnDestroy, Output, Inject, TemplateRef, ViewChild} from '@angular/core';
 import {MAT_DIALOG_DATA, MatDialog, MatDialogRef} from '@angular/material/dialog';
-import {ToastService} from '../../../../services/toast.service';
 import {Navigation} from '../../main-hall-pass-form.component';
 import {CreateFormService} from '../../../create-form.service';
 import {Subject, BehaviorSubject, fromEvent, Observable} from 'rxjs';
@@ -84,7 +83,6 @@ export class FromWhereComponent implements OnInit, OnDestroy {
     public dialogRef: MatDialogRef<FromWhereComponent>,
     @Inject(MAT_DIALOG_DATA) public data: any,
     private visibilityService: LocationVisibilityService,
-    private toastService: ToastService,
     private formService: CreateFormService,
     public screenService: ScreenService,
     private userService: UserService,
