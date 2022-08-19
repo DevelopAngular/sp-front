@@ -1,7 +1,7 @@
 import {Component, EventEmitter, Input, OnInit, Output} from '@angular/core';
 import {Navigation} from '../../main-hall-pass-form.component';
 import {CreateFormService} from '../../../create-form.service';
-import {BehaviorSubject} from 'rxjs';
+import {BehaviorSubject, Observable} from 'rxjs';
 import {ScreenService} from '../../../../services/screen.service';
 import {StorageService} from '../../../../services/storage.service';
 
@@ -40,7 +40,9 @@ export class TeacherFooterComponent implements OnInit {
     private storage: StorageService
   ) { }
 
-  get fromLocationText() {
+  private _fromLocationText$: BehaviorSubject<string>;
+  public fromLocationText$: Observable<string>;
+  fromLocationText() {
     return this.fromLocation ? this.fromLocation.title : 'Origin';
   }
 
@@ -63,6 +65,16 @@ export class TeacherFooterComponent implements OnInit {
   ngOnInit() {
     this.isGrid = JSON.parse(this.storage.getItem('isGrid'));
     this.frameMotion$ = this.formService.getFrameMotionDirection();
+
+    this._fromLocationText$ = new BehaviorSubject(this.fromLocationText());
+    this.fromLocationText$ = this._fromLocationText$.asObservable();
+    this.formService.getUpdatedChoice().subscribe(loc => {
+      if(!this.formState.data.direction.to) {
+        this.formState.data.direction.from = loc;
+        this.fromLocation = loc;
+        this._fromLocationText$.next(this.fromLocationText());
+      } 
+    });
   }
 
   goToFromWhere(evt: Event) {

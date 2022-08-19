@@ -286,7 +286,6 @@ export class MainHallPassFormComponent implements OnInit, OnDestroy {
             // TODO: only update state if it is related to user
             this.locationsService.updatePinnableSuccessState(found);
             this.formService.setUpdatedChoice(loc);
-
             return found;
           }
           return null;

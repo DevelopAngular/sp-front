@@ -26,6 +26,7 @@ import {
 import {LocationVisibilityService} from '../../location-visibility.service';
 import {UserService} from '../../../../services/user.service';
 import {User} from '../../../../models/User';
+import {Location} from '../../../../models/Location';
 
 @Component({
   selector: 'app-to-where',
@@ -81,6 +82,7 @@ export class ToWhereComponent implements OnInit {
     'to-header_animation-back': false
   };
 
+  updatedLocation$: Observable<Location>;
   destroy$: Subject<any> = new Subject<any>();
 
   constructor(
@@ -127,8 +129,9 @@ export class ToWhereComponent implements OnInit {
       this.passLimits = res;
     });
 
-    if (this.formState.data.roomStudentsAfterFromStep)
+    if (this.formState.data.roomStudentsAfterFromStep) {
       this.formState.data.roomStudents = [...this.formState.data.roomStudentsAfterFromStep];
+    }
 
    this.userService.userData
     .pipe(
@@ -136,6 +139,8 @@ export class ToWhereComponent implements OnInit {
       take(1),
     )
     .subscribe((u: User) => this.student = u);
+
+    this.updatedLocation$ = this.formService.getUpdatedChoice();
   }
 
   private student: User;

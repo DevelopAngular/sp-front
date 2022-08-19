@@ -2,7 +2,7 @@ import { Component, EventEmitter, Input, OnInit, Output } from '@angular/core';
 import { Navigation } from '../../main-hall-pass-form.component';
 import { Location } from '../../../../models/Location';
 import { CreateFormService } from '../../../create-form.service';
-import {BehaviorSubject} from 'rxjs';
+import {BehaviorSubject, Observable} from 'rxjs';
 import {StorageService} from '../../../../services/storage.service';
 
 @Component({
@@ -34,7 +34,9 @@ export class StudentFooterComponent implements OnInit {
     private storage: StorageService,
   ) { }
 
-  get fromLocationText() {
+  private _fromLocationText$: BehaviorSubject<string>;
+  public fromLocationText$: Observable<string>;
+  fromLocationText() {
     return this.fromLocation ? this.fromLocation.title : 'Origin';
   }
 
@@ -59,6 +61,16 @@ export class StudentFooterComponent implements OnInit {
       this.fromLocation = this.formState.data.direction.from;
       this.toLocation = this.formState.data.direction.to;
     }
+
+    this._fromLocationText$ = new BehaviorSubject(this.fromLocationText());
+    this.fromLocationText$ = this._fromLocationText$.asObservable();
+    this.formService.getUpdatedChoice().subscribe(loc => {
+      if(!this.formState.data.direction.to) {
+        this.formState.data.direction.from = loc;
+        this.fromLocation = loc;
+        this._fromLocationText$.next(this.fromLocationText());
+      } 
+    });
   }
 
   switchLocsView(evt: Event) {
