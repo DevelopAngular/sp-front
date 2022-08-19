@@ -129,6 +129,7 @@ export class PassLimitStudentInfoComponent implements OnInit {
       panelClass: 'overlay-dialog',
       backdropClass: 'custom-bd',
       width: '425px',
+      height: '500px'
     });
   }
 
