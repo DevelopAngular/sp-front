@@ -355,6 +355,8 @@ export class IntroComponent implements OnInit, AfterViewInit {
       notificationDialog = this.dialog.open(NotificationFormComponent, {
         panelClass: 'form-dialog-container',
         backdropClass: 'custom-backdrop',
+        width: '462px',
+        height: '600px',
       });
       return;
     }
@@ -364,6 +366,8 @@ export class IntroComponent implements OnInit, AfterViewInit {
             notificationDialog = this.dialog.open(NotificationFormComponent, {
             panelClass: 'form-dialog-container',
             backdropClass: 'custom-backdrop',
+            width: '462px',
+              height: '600px',
            });
       }
     });

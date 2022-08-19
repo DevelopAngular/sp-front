@@ -36,7 +36,12 @@ import {LocationCellComponent} from '../location-cell/location-cell.component';
 import {InvitationCardComponent} from '../invitation-card/invitation-card.component';
 import {ReportFormComponent} from '../report-form/report-form.component';
 import {NotificationFormComponent} from '../notification-form/notification-form.component';
+import {NotificationFormInfoComponent} from '../notification-form/notification-form-info/notification-form-info.component';
 import {OfflineBarComponent} from '../offline-bar/offline-bar.component';
+import {NotificationRoomFormComponent } from '../notification-form/notification-room-form/notification-room-form.component';
+import {NotificationSelectStudentsComponent } from '../notification-form/notification-select-students/notification-select-students.component';
+import {NotificationSelectStudentsDialogComponent } from '../notification-form/notification-select-students-dialog/notification-select-students-dialog.component';
+import {NotificationOptionComponent} from '../notification-form/notification-option/notification-option.component';
 import {KioskSettingsDialogComponent} from '../kiosk-settings-dialog/kiosk-settings-dialog.component';
 
 
@@ -83,6 +88,11 @@ import {KioskSettingsDialogComponent} from '../kiosk-settings-dialog/kiosk-setti
       InvitationCardComponent,
       ReportFormComponent,
       NotificationFormComponent,
+      NotificationFormInfoComponent,
+      NotificationRoomFormComponent,
+      NotificationSelectStudentsComponent,
+      NotificationSelectStudentsDialogComponent,
+      NotificationOptionComponent,
       OfflineBarComponent,
       KioskSettingsDialogComponent,
     ],

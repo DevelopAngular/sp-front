@@ -332,6 +332,10 @@ $primaryFont: "Inter", "Arimo", "Arial", sans-serif;
   word-break: break-word;
   text-align: center;
 
+  .link {
+    color: invert(#050411);
+  }
+
   .only-admin {
     width: 93px;
     height: 20px;
@@ -779,3 +783,4 @@ $primaryFont: "Inter", "Arimo", "Arial", sans-serif;
 }
 
 /* === end === */
+

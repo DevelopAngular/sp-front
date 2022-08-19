@@ -44,7 +44,7 @@ export class PinnablesEffects {
       .pipe(
         ofType(pinnablesActions.removePinnable),
         concatMap((action: any) => {
-          return this.passesService.deletePinnable(action.id)
+          return this.passesService.deletePinnable(action.id, action.add_to_folder)
             .pipe(
               map(res => {
                 return pinnablesActions.removeSuccessPinnable({id: action.id});

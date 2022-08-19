@@ -84,7 +84,7 @@ export class TeacherPinStudentComponent implements OnInit, OnDestroy {
         takeUntil(this.destroy$),
         switchMap((event: KeyboardEvent) => {
           this.cdr.detectChanges();
-          if (!isNaN(parseFloat(event.key)) && (event.target as any).id === this.requestId) {
+          if (!isNaN(parseFloat(event.key)) && +(event.target as any).id === +this.requestId) {
             this.pin += event.key;
             if (this.pin.length <= 4) {
               const currentElem = this.circles.find(c => c.id === this.pin.length);
@@ -99,6 +99,7 @@ export class TeacherPinStudentComponent implements OnInit, OnDestroy {
                     if (error.error.detail === 'Override confirmation needed') {
                       const overrideDialogRef = this.dialog.open(ConfirmationDialogComponent, {
                         ...RecommendedDialogConfig,
+                        width: '450px',
                         data: {
                           headerText: `Student's Pass limit reached: ${this.request.student.display_name} has had ${this.passLimit}/${this.passLimit} passes today`,
                           buttons: {

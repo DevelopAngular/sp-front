@@ -262,7 +262,7 @@ export class SettingsComponent implements OnInit, OnDestroy {
       'title': 'Favorites'
     });
     this.settings.push({
-      'hidden': this.isMobile,
+      'hidden': this.isMobile || this.isKioskMode,
       'background': '#E32C66',
       'icon': 'Notifications',
       'action': 'notifications',

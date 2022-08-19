@@ -7,7 +7,10 @@ import {
   Input,
   OnDestroy,
   OnInit,
-  Output
+  AfterViewInit,
+  Output,
+  QueryList,
+  ViewChildren
 } from '@angular/core';
 import {MatDialog} from '@angular/material/dialog';
 import {BehaviorSubject, Observable, Subject} from 'rxjs';
@@ -33,6 +36,8 @@ import {SpAppearanceComponent} from '../sp-appearance/sp-appearance.component';
 import {User} from '../models/User';
 import {UserService} from '../services/user.service';
 import * as moment from 'moment';
+import {Router} from '@angular/router';
+import {PassTileComponent} from '../pass-tile/pass-tile.component';
 
 export class SortOption {
   constructor(private name: string, public value: string) {
@@ -53,7 +58,6 @@ export class SortOption {
 export class PassCollectionComponent implements OnInit, OnDestroy {
 
   @Input() mock = false;
-  @Input() displayState = 'grid';
   @Input() title: string;
   @Input() icon: string;
   @Input() emptyMessage;
@@ -88,6 +92,8 @@ export class PassCollectionComponent implements OnInit, OnDestroy {
   @Output() passClick = new EventEmitter<boolean>();
   @Output() searchValue = new EventEmitter<string>();
   @Output() randomString = new EventEmitter<string>();
+
+  @ViewChildren(PassTileComponent) passTileComponents: QueryList<PassTileComponent>;
 
   currentPasses$: Observable<any>;
   activePassTime$;
@@ -137,7 +143,7 @@ export class PassCollectionComponent implements OnInit, OnDestroy {
       public screenService: ScreenService,
       private cdr: ChangeDetectorRef,
       private passesService: HallPassesService,
-      private userService: UserService,
+      private userService: UserService
   ) {}
 
   get gridTemplate() {
@@ -164,8 +170,10 @@ export class PassCollectionComponent implements OnInit, OnDestroy {
       return 'Past 3 days';
     } else if (this.selectedSort === 'past-seven-days') {
       return 'Past 7 days';
-    } else if (this.selectedSort === 'past-seven-days') {
-      return null;
+    } else if (this.selectedSort === 'all_time' || !this.selectedSort) {
+      return 'All Time';
+    } else if (this.selectedSort === 'school-year') {
+      return 'This school year';
     }
   }
 
@@ -181,6 +189,19 @@ export class PassCollectionComponent implements OnInit, OnDestroy {
           // const studentName = pass.student.display_name;
           const random = [destinationName];
           this.randomString.emit(random[Math.floor(Math.random() * random.length)]);
+
+          const dialog = window.history.state.open_on_load?.dialog;
+          const id = window.history.state.id;
+          passes.forEach(p => {
+              if ((p instanceof HallPass || pass instanceof Invitation) &&
+                  dialog === 'main/passes/open_pass' && p.id === id) {
+                  this.initializeDialog(p);
+              }
+
+              if (pass instanceof Request && dialog === 'main/passes/open_request' && p.id === id) {
+                  this.initializeDialog(p);
+              }
+          });
       });
     }
 
@@ -198,6 +219,37 @@ export class PassCollectionComponent implements OnInit, OnDestroy {
     });
 
     this.isEnabledProfilePictures$ = this.userService.isEnableProfilePictures$;
+  }
+
+  ngAfterViewInit() {
+    const id = window.history.state.id;
+    let opened = false;
+    this.passTileComponents.changes.subscribe(passTiles => {
+      if (opened) {
+        return;
+      }
+
+      passTiles.forEach(passTile => {
+        if (passTile.pass.id !== id) {
+          return;
+        }
+
+        const dialog = window.history.state.open_on_load?.dialog;
+        opened = true;
+
+        const event = {
+          time$: passTile.activePassTime$,
+          pass: passTile.pass,
+        };
+
+        if ((passTile.pass instanceof HallPass || passTile.pass instanceof Invitation) &&
+          dialog === 'main/passes/open_pass' && passTile.pass.id === id) {
+          this.showPass(event);
+        } else if (passTile.pass instanceof Request && dialog === 'main/passes/open_request' && passTile.pass.id === id) {
+          this.showPass(event);
+        }
+      });
+    });
   }
 
   ngOnDestroy() {
@@ -235,6 +287,7 @@ export class PassCollectionComponent implements OnInit, OnDestroy {
       { display: 'Today', color: this.darkTheme.getColor(), action: 'today'},
       { display: 'Past 3 days', color: this.darkTheme.getColor(), action: 'past-three-days'},
       { display: 'Past 7 days', color: this.darkTheme.getColor(), action: 'past-seven-days'},
+      { display: 'This school year', color: this.darkTheme.getColor(), action: 'school-year' },
       { display: 'All Time', color: this.darkTheme.getColor(), action: 'all_time', divider: this.user.show_expired_passes && !User.fromJSON(this.user).isStudent() }
     ];
     if (this.user.show_expired_passes && User.fromJSON(this.user).isTeacher()) {
@@ -255,15 +308,18 @@ export class PassCollectionComponent implements OnInit, OnDestroy {
       .pipe(filter(res => !!res))
       .subscribe(action => {
         if (action !== 'hide_expired_pass') {
-          if (this.selectedSort === action || action === 'all_time') {
-            this.selectedSort = null;
+
+          if (this.selectedSort === action) {
+            this.selectedSort = 'all_time';
           } else {
             this.selectedSort = action;
           }
+
+          const value = this.selectedSort === 'all_time' ? null : this.selectedSort;
           this.cdr.detectChanges();
-          this.passesService.updateFilterRequest(this.filterModel, this.selectedSort);
-          this.passesService.filterExpiredPassesRequest(this.user, this.selectedSort);
-          this.filterPasses.emit(this.selectedSort);
+          this.passesService.updateFilterRequest(this.filterModel, value);
+          this.passesService.filterExpiredPassesRequest(this.user, value);
+          this.filterPasses.emit(value);
         } else {
           this.openAppearance();
         }
@@ -289,6 +345,9 @@ export class PassCollectionComponent implements OnInit, OnDestroy {
     let data: any;
 
     if (pass instanceof HallPass) {
+      if (!!this.kioskMode.getCurrentRoom().value) {
+        pass['cancellable_by_student'] = false;
+      }
       data = {
         pass: pass,
         fromPast: pass['end_time'] < now,

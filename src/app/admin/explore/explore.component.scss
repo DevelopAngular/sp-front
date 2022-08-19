@@ -51,6 +51,10 @@
                 color: $blue-gray;
                 padding: 0 10px;
             }
+            &.not-alone {
+              display: flex;
+              gap: 1rem;
+            }
         }
         .filters {
             margin-left: 23px;

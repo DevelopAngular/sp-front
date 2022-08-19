@@ -1,13 +1,12 @@
-import {ChangeDetectionStrategy, ChangeDetectorRef, Component, ElementRef, OnDestroy, OnInit} from '@angular/core';
+import {ChangeDetectionStrategy, ChangeDetectorRef, Component, ElementRef, OnDestroy, OnInit, ViewChild} from '@angular/core';
+import {HttpErrorResponse} from '@angular/common/http';
 import {BehaviorSubject, combineLatest, iif, Observable, of, Subject, Subscription} from 'rxjs';
 import {MatDialog} from '@angular/material/dialog';
-import {PagesDialogComponent} from './pages-dialog/pages-dialog.component';
-import {filter, map, switchMap, take, takeUntil, tap, withLatestFrom} from 'rxjs/operators';
+import {filter, map, switchMap, take, takeUntil, tap, withLatestFrom, retryWhen, delay, concatMap, catchError} from 'rxjs/operators';
 import {StudentFilterComponent} from './student-filter/student-filter.component';
 import {StatusFilterComponent} from './status-filter/status-filter.component';
 import {User} from '../../models/User';
 import {HallPass} from '../../models/HallPass';
-import {PassLike} from '../../models';
 import {HallPassesService} from '../../services/hall-passes.service';
 import {DomSanitizer} from '@angular/platform-browser';
 import {HttpService} from '../../services/http-service';
@@ -25,14 +24,22 @@ import {AdminService} from '../../services/admin.service';
 import {constructUrl} from '../../live-data/helpers';
 import {UserService} from '../../services/user.service';
 import * as moment from 'moment';
-import {Report, Status, ReportDataUpdate} from '../../models/Report';
+import {Report, Status} from '../../models/Report';
 import {Util} from '../../../Util';
 import {Dictionary} from '@ngrx/entity';
 import {ReportInfoDialogComponent} from './report-info-dialog/report-info-dialog.component';
 import {XlsxService} from '../../services/xlsx.service';
 import { ComponentsService } from '../../services/components.service';
+import {ConsentMenuComponent} from '../../consent-menu/consent-menu.component';
+import {
+  ConfirmationDialogComponent, ConfirmationTemplates,
+  RecommendedDialogConfig
+} from '../../shared/shared-components/confirmation-dialog/confirmation-dialog.component';
+import {SpDataTableComponent} from '../sp-data-table/sp-data-table.component';
+import {ActivatedRoute, Router} from '@angular/router';
 
-declare const window;
+declare const window: Window & typeof globalThis & {passClick: any, reportedPassClick: any};
+type OverflownTries = HttpErrorResponse & {overflown: boolean};
 
 export interface View {
   [view: string]: CurrentView;
@@ -62,6 +69,11 @@ export interface SearchData {
   selectedStatus?: Status;
 }
 
+export type PassRemovedResponse = {
+  dids: number[];
+  error: Error | null;
+}
+
 @Component({
   selector: 'app-explore',
   templateUrl: './explore.component.html',
@@ -69,6 +81,8 @@ export interface SearchData {
   changeDetection: ChangeDetectionStrategy.OnPush
 })
 export class ExploreComponent implements OnInit, OnDestroy {
+
+  @ViewChild(SpDataTableComponent) passtable!: SpDataTableComponent;
 
   views: View = {
     'pass_search': {id: 1, title: 'Passes', color: '#00B476', icon: 'Pass Search', action: 'pass_search'},
@@ -136,7 +150,7 @@ export class ExploreComponent implements OnInit, OnDestroy {
 
   currentView$: BehaviorSubject<string> = new BehaviorSubject<string>(this.storage.getItem('explore_page') || 'pass_search');
 
-  sortColumn: string = 'Pass start time';
+  sortColumn = 'Pass start time';
   currentColumns: any;
   selectedRows: any[] = [];
   allData: any[] = [];
@@ -162,7 +176,9 @@ export class ExploreComponent implements OnInit, OnDestroy {
     private adminService: AdminService,
     public xlsx: XlsxService,
     private userService: UserService,
-    private componentService: ComponentsService
+    private componentService: ComponentsService,
+    private route: ActivatedRoute,
+    private router: Router
     ) {
     window.passClick = (id) => {
       this.passClick(id);
@@ -170,6 +186,9 @@ export class ExploreComponent implements OnInit, OnDestroy {
     window.reportedPassClick = (id, invisBackdrop) => {
       this.openPassDialog(id, !!invisBackdrop);
     };
+    if (window.history.state.open_on_load?.dialog === 'admin/explore/report_search') {
+      this.currentView$.next('report_search');
+    }
   }
 
   dateText({start, end}): string {
@@ -234,11 +253,18 @@ export class ExploreComponent implements OnInit, OnDestroy {
         this.allData = [];
         if (view === 'pass_search') {
           this.isCheckbox$.next(true);
+          this.adminCalendarOptions = {
+            rangeId: 'range_6',
+            toggleResult: 'Range'
+          };
           this.passSearchData = {
             selectedStudents: null,
             selectedDestinationRooms: null,
             selectedOriginRooms: null,
-            selectedDate: null,
+            selectedDate: {
+              start: moment('1/8/2022', 'DD/MM/YYYY'),
+              end: moment(moment(), 'DD/MM/YYYY')
+            },
           };
           this.search(300);
           return this.hallPassService.passesLoaded$;
@@ -246,17 +272,32 @@ export class ExploreComponent implements OnInit, OnDestroy {
           this.isCheckbox$.next(true);
           this.showContactTraceTable = false;
           this.clearContactTraceData();
-          this.adminCalendarOptions = null;
+          this.adminCalendarOptions = {
+            rangeId: 'range_6',
+            toggleResult: 'Range'
+          };
+          // this.adminCalendarOptions = null;
           this.contactTraceData = {
             selectedStudents: null,
-            selectedDate: null
+            selectedDate: {
+              start: moment('1/8/' + moment().year(), 'DD/MM/YYYY'),
+              end: moment(moment(), 'DD/MM/YYYY')
+            }
           };
+          this.cdr.detectChanges();
           return this.contactTraceService.contactTraceLoaded$;
         } else if (view === 'report_search') {
+          this.adminCalendarOptions = {
+            rangeId: 'range_6',
+            toggleResult: 'Range'
+          };
           this.isCheckbox$.next(false);
           this.reportSearchData = {
             selectedStudents: null,
-            selectedDate: null,
+            selectedDate: {
+              start: moment('1/8/' + moment().year(), 'DD/MM/YYYY'),
+              end: moment(moment(), 'DD/MM/YYYY')
+            },
             selectedStatus: null,
             selectedTeachers: null
           };
@@ -424,8 +465,8 @@ export class ExploreComponent implements OnInit, OnDestroy {
               const _passTile = (
                 data?.reported_pass?.gradient_color &&
                 data?.reported_pass?.id
-              ) ? 
-                `<div class="pass-icon" onClick="reportedPassClick(${data.reported_pass.id})" style="background: ${this.getGradient(data.reported_pass.gradient_color)}; cursor: pointer">` 
+              ) ?
+                `<div class="pass-icon" onClick="reportedPassClick(${data.reported_pass.id})" style="background: ${this.getGradient(data.reported_pass.gradient_color)}; cursor: pointer">`
                 : '';
               const passTile = this.domSanitizer.bypassSecurityTrustHtml(_passTile);
               const result = {
@@ -449,6 +490,9 @@ export class ExploreComponent implements OnInit, OnDestroy {
         .subscribe(res => {
           this.selectedRows = res;
         });
+
+        // count passes emits on a new search thata assumes any previous selection is cleared
+        this.passSearchState.countPasses$.subscribe(_ => this.clearTableSelection());
 
 
   }
@@ -491,6 +535,131 @@ export class ExploreComponent implements OnInit, OnDestroy {
     // });
   }
 
+  openConsentDeletePasses(event: Event) {
+    const ActionPassDeletion = 'deletePasses';
+
+    const deletePasses = {
+      display: this.selectedRows.length > 1 ? 'Delete passes' : 'Delete the pass',
+      color: '#E32C66',// $red500
+      action: ActionPassDeletion,
+      icon: './assets/Delete (Red).svg',
+    };
+    const consent = this.dialog.open(ConsentMenuComponent, {
+      panelClass: 'consent-dialog-container',
+      backdropClass: 'invis-backdrop',
+      data: {
+        trigger: new ElementRef(event.currentTarget),
+        options: [deletePasses],
+      }
+    });
+
+    consent.afterClosed().subscribe((action: string | undefined) => {
+      if (action === undefined || action !== ActionPassDeletion) {
+        this.clearTableSelection();
+        return;
+      }
+      
+      const num = this.selectedRows.length;
+      const headerText = num === 1 ? 'Delete the pass ?' : `Delete ${num} passes ?`;
+      const detailText = `You are about to delete ${num} ${num === 1 ? 'pass' : 'passes'}. Deleted records can\'t be restored after 90 days.`;
+
+      // open dialog to "after 90 days deletion"
+      this.dialog.open(ConfirmationDialogComponent, {
+        ...RecommendedDialogConfig,
+        data: {
+          headerText,
+          buttons: {
+            confirmText: 'Delete',
+            denyText: 'Cancel'
+          },
+          body: null,
+          templateData: {detailText},
+        } as ConfirmationTemplates
+      }).afterClosed().subscribe((choice: boolean | undefined) => {
+        if (! choice) return this.clearTableSelection();
+        const data: any = {};
+        data['removed'] = true;
+        data['ids'] = this.selectedRows.map(s => +s.id);
+        const replacedRows = this.passtable.dataSource.allData.map(s => {
+          // a soon to be deleted case?
+          if (data['ids'].includes(+s.id)) return this.passtable.generateOneFakeData();
+          // just keep the old row
+          return {...s};
+        });
+        // keep original data
+        const originalRows = [...this.passtable.dataSource.allData];
+        // replace soon to be deleted rows with fake rows
+        this.passtable.dataSource.setFakeData([...replacedRows]);
+        this.hallPassService.hidePasses(data).pipe(
+          tap((r:PassRemovedResponse) => {
+            if (!('dids' in r)) throw new Error('missing in data shape');
+
+            this.passtable.dataSource.allData = originalRows.filter(s => !r.dids.includes(+s.id));
+            // just update the totalCOunt and lastAddedPasses
+            this.hallPassService.changePassesCollection(r.dids);
+            this.clearTableSelection();
+          }),
+          takeUntil(this.destroy$),
+          retryWhen((errors: Observable<HttpErrorResponse>) => errors.pipe(
+            // deal with errors secquentially
+            concatMap((e: HttpErrorResponse, i: number) => iif(
+              () => {
+                const s: number = +e.status;
+                // error is related to the client
+                // so do not retry, jump directly to the toast
+                if (s >= 400 && s < 500) {
+                  return true;
+                };
+                // only server errors have to be retried for more times
+                // as they can dissapear meanwhile
+                return i > 1;
+              },// after 1 original try + 2 retries shows a toast
+              of(e).pipe(
+                take(1),
+                tap(e => {
+                  const message: string = !!e?.error ? (e.error.detail ?? e.error.message ?? e.message) : e.message;
+                  // progress-interceptor have hall_pass as excepted url 
+                  // so it will not catch any error thrown under hall_pass urls
+                  // notify the admin is how we deal with this kind of error
+                  this.toastService.openToast(
+                    { title: `${message}`,
+                      subtitle: `Trying ${i+1} times but did not succeed to remove the passes`,
+                      type: 'error',
+                      showButton: false }
+                  );
+                  // throw a special error that dies silently
+                  const eo = <OverflownTries>e;
+                  eo.overflown = true;
+                  throw eo;
+              })),
+              of(e).pipe(
+                delay(300), 
+                tap(e => console.log(`retrying ${e.message}`)),
+              ),
+            )),
+           )),
+
+          catchError(e => {
+            // discard fake rows
+            this.passtable.dataSource.allData = originalRows;
+            // an OverflownTries error has been dealt with it above
+            if ('overflown' in e) return of(null);
+            // other errors are thrown  
+            throw e;
+          }),
+
+        ).subscribe();
+      });
+
+    });
+  
+  }
+
+  clearTableSelection() {
+    this.tableService.clearSelectedUsers.next(true)
+    this.selectedRows = [];
+  }
+
   passClick(id) {
     iif(
       () => ['pass_search'].includes(this.currentView$.getValue()),
@@ -520,7 +689,7 @@ export class ExploreComponent implements OnInit, OnDestroy {
   }
 
   openFilter(event, action) {
-    UNANIMATED_CONTAINER.next(true);
+    UNANIMATED_CONTAINER.next(true);;
     if (action === 'students' || action === 'destination' || action === 'origin') {
       const studentFilter = this.dialog.open(StudentFilterComponent, {
         id: `${action}_filter`,
@@ -730,11 +899,11 @@ export class ExploreComponent implements OnInit, OnDestroy {
   openPassDialog(pid: number|null, invisBackdrop: boolean|null=false) {
     if (pid === null) return;
 
-    this.reportSearchState.entities$ 
+    this.reportSearchState.entities$
       .pipe(
         take(1),
         map((rr: Dictionary<Report>): HallPass|null => {
-          
+
           const filtered = Object.entries(rr)
             .filter(([_,v]) => +v?.reported_pass_id === +pid);// force number equality
 

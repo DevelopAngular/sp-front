@@ -179,12 +179,24 @@
   </defs>
 </svg>
 
-<ng-template #confirmDialogBody let-students="students" let-passLimit="passLimit">
-  <div *ngIf="students.length > 1" class="ds-dialog-normal-text">
-    <p *ngFor="let s of students">{{s.displayName}}: {{passLimit}}/{{passLimit}} passes today</p>
+<ng-template #confirmDialogBody let-totalStudents="totalStudents" let-limitReachedStudents="limitReachedStudents" let-passLimit="passLimit">
+  <div *ngIf="totalStudents > 1" class="ds-dialog-normal-text">
+    <p *ngFor="let s of limitReachedStudents">{{s.displayName}}: {{passLimit}}/{{passLimit}} passes today</p>
   </div>
 
-  <div *ngIf="students.length === 1" class="ds-dialog-normal-text">
+  <div *ngIf="totalStudents === 1" class="ds-dialog-normal-text">
     <span>If it's an emergency, you can override the limit.</span>
   </div>
+</ng-template>
+
+<ng-template let-alerts="alerts" #confirmDialogBodyVisibility>
+  <ng-container *ngFor="let a of alerts">
+  <div class="ds-dialog-title">
+    <span>{{a.phrase}}</span>
+  </div>
+
+  <div class="ds-dialog-normal-text ds-mb-10">
+      <p>{{a.students}}</p>
+  </div>
+  </ng-container>
 </ng-template>

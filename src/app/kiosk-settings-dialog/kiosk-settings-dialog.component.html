@@ -1,0 +1,55 @@
+<div class="kiosk-settings-wrapper">
+  <div class="kiosk-settings-header">
+    <div style="width:70px;"></div>
+    <div class="kiosk-settings-title">
+      <div><img [src]="'./assets/Tablet (White).svg' | resolveAsset" alt=""></div>
+      <span>Kiosk Mode Options</span>
+    </div>
+    <div style="height: 40px">
+      <app-gradient-button size="editable" width="70px" minHeight="40px" fontSize="14px" (click)="close()">Done</app-gradient-button>
+    </div>
+  </div>
+  <div class="kiosk-settings">
+    <div class="kiosk-setting-option">
+      <div class="kiosk-settings-info">
+        <span class="kiosk-settings-title">
+          Type in name
+        </span>
+        <span class="kiosk-settings-description">
+          Students can search for their own name to create a pass.
+        </span>
+      </div>
+      <div class="kiosk-settings-toggle">
+        <app-toggle-input [form]="this.form" controlName="findByName" controlSize="small" [delimiter]="false"></app-toggle-input>
+      </div>
+    </div>
+    <div class="kiosk-setting-option">
+      <div class="kiosk-settings-info">
+        <span class="kiosk-settings-title">
+          Type in ID number
+        </span>
+        <span class="kiosk-settings-description">
+          Students can search for their name by typing in their ID number.
+        </span>
+      </div>
+      <div class="kiosk-settings-toggle">
+        <app-toggle-input [form]="this.form" controlName="findById" controlSize="small" [delimiter]="false"></app-toggle-input>
+      </div>
+    </div>
+    <div class="kiosk-setting-option">
+      <div class="kiosk-settings-info">
+        <span class="kiosk-settings-title">
+          ID Scanning
+        </span>
+        <span class="kiosk-settings-description">
+          Students can scan their ID to create a pass.
+          <b>You must have a compatible third-party scanner attached to this device. </b>
+          <a href="#">Learn more.</a>
+        </span>
+      </div>
+      <div class="kiosk-settings-toggle">
+        <app-toggle-input [form]="this.form" controlName="findByScan" controlSize="small" [delimiter]="false"></app-toggle-input>
+      </div>
+    </div>
+  </div>
+</div>

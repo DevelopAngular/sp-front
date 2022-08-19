@@ -3,6 +3,13 @@ import {BehaviorSubject, Observable} from 'rxjs';
 import {Location} from '../models/Location';
 import {StorageService} from './storage.service';
 import {LocationsService} from './locations.service';
+import {HttpService} from './http-service';
+
+export interface KioskSettings {
+  findByName: boolean;
+  findById: boolean;
+  findByScan: boolean;
+}
 
 export interface KioskSettings {
   findByName: boolean;
@@ -22,6 +29,7 @@ export class KioskModeService {
   constructor(
     private storageService: StorageService,
     private locationsService: LocationsService,
+    private http: HttpService,
   ) {
   }
 

@@ -1,19 +1,20 @@
 import {Component, ElementRef, EventEmitter, Inject, Input, OnDestroy, OnInit, Output, TemplateRef, ViewChild} from '@angular/core';
+import {HttpErrorResponse} from '@angular/common/http';
 import {Request} from '../models/Request';
 import {User} from '../models/User';
 import {Util} from '../../Util';
 import {MAT_DIALOG_DATA, MatDialog, MatDialogRef} from '@angular/material/dialog';
 import {ConsentMenuComponent} from '../consent-menu/consent-menu.component';
-import {Navigation} from '../create-hallpass-forms/main-hallpass--form/main-hall-pass-form.component';
+import {MainHallPassFormComponent, Navigation} from '../create-hallpass-forms/main-hallpass--form/main-hall-pass-form.component';
 import {getInnerPassName} from '../pass-tile/pass-display-util';
 import {DataService} from '../services/data-service';
 import {LoadingService} from '../services/loading.service';
-import {concatMap, filter, map, pluck, switchMap, takeUntil, tap} from 'rxjs/operators';
+import {catchError, concatMap, filter, map, pluck, switchMap, takeUntil, tap} from 'rxjs/operators';
 import {CreateHallpassFormsComponent} from '../create-hallpass-forms/create-hallpass-forms.component';
 import {CreateFormService} from '../create-hallpass-forms/create-form.service';
 import {RequestsService} from '../services/requests.service';
 import {NextStep, scalePassCards} from '../animations';
-import {BehaviorSubject, from, interval, Observable, of, Subject} from 'rxjs';
+import {BehaviorSubject, from, interval, Observable, of, Subject, throwError} from 'rxjs';
 
 import * as moment from 'moment';
 import {isNull, uniq, uniqBy} from 'lodash';
@@ -37,6 +38,7 @@ import {
   ConfirmationTemplates,
   RecommendedDialogConfig
 } from '../shared/shared-components/confirmation-dialog/confirmation-dialog.component';
+import {ConfirmDeleteKioskModeComponent} from './confirm-delete-kiosk-mode/confirm-delete-kiosk-mode.component';
 
 const sleep = (ms: number) => new Promise(resolve => {
   setTimeout(() => resolve(null), ms);
@@ -94,6 +96,7 @@ export class RequestCardComponent implements OnInit, OnDestroy {
   solidColorRgba2: string;
   removeShadow: boolean;
   leftTextShadow: boolean;
+  kioskModeRestricted: boolean;
 
   passLimits: { [id: number]: PassLimit };
 
@@ -120,7 +123,8 @@ export class RequestCardComponent implements OnInit, OnDestroy {
     private domCheckerService: DomCheckerService,
     private userService: UserService,
     private locationsService: LocationsService,
-    private passLimitsService: PassLimitService
+    private passLimitsService: PassLimitService,
+    private createPassFormRef: MatDialogRef<CreateHallpassFormsComponent>
   ) {
   }
 
@@ -135,6 +139,9 @@ export class RequestCardComponent implements OnInit, OnDestroy {
   get teacherNames() {
     const destination = this.request.destination;
     const origin = this.request.origin;
+    if (this.formState && this.formState.kioskMode) {
+      return origin.teachers;
+    }
     if (destination.scheduling_request_mode === 'all_teachers_in_room') {
       if (destination.scheduling_request_send_origin_teachers && destination.scheduling_request_send_destination_teachers) {
         return [...destination.teachers, ...origin.teachers];
@@ -301,14 +308,20 @@ export class RequestCardComponent implements OnInit, OnDestroy {
       'travel_type': this.selectedTravelType,
       'duration': this.selectedDuration * 60,
     };
-    if (this.isFutureOrNowTeachers) {
+
+    if (this.isFutureOrNowTeachers && !this.formState.kioskMode) {
       if (this.forFuture) {
         body.teachers = uniq(this.futureTeachers.map(t => t.id));
       } else {
         body.teachers = uniq(this.nowTeachers.map(t => t.id));
       }
     } else {
-      body.teacher = this.request.teacher.id;
+      if (this.formState.kioskMode) {
+        body.teachers = uniq(this.formState.data.direction.from.teachers.map(t => t.id));
+        body.student_id = this.formState.data.kioskModeStudent.id;
+      } else {
+        body.teacher = this.request.teacher.id;
+      }
     }
 
     if (this.forStaff) {
@@ -332,17 +345,25 @@ export class RequestCardComponent implements OnInit, OnDestroy {
     } else {
       this.requestService.createRequest(body).pipe(
         takeUntil(this.destroy$),
-        switchMap(res => {
+        switchMap((res: Request) => {
+          this.request = res;
+          this.forInput = false;
+          this.kioskModeRestricted = true;
+          if (this.formState.kioskMode) {
+            this.createPassFormRef.disableClose = true;
+          }
           return this.formState.previousStep === 1 ? this.requestService.cancelRequest(this.request.id) :
             (this.formState.missedRequest ? this.requestService.cancelInvitation(this.formState.data.request.id, '') : of(null));
         }))
         .subscribe((res) => {
           this.performingAction = true;
-          if ((DeviceDetection.isAndroid() || DeviceDetection.isIOSMobile()) && this.forFuture) {
-            this.dataService.openRequestPageMobile();
-            this.navbarData.inboxClick$.next(true);
+          if (!this.formState.kioskMode) {
+            if ((DeviceDetection.isAndroid() || DeviceDetection.isIOSMobile()) && this.forFuture) {
+              this.dataService.openRequestPageMobile();
+              this.navbarData.inboxClick$.next(true);
+            }
+            this.dialogRef.close();
           }
-          this.dialogRef.close();
         });
     }
   }
@@ -418,47 +439,59 @@ export class RequestCardComponent implements OnInit, OnDestroy {
   }
 
   cancelRequest(evt: MouseEvent) {
-
-    if (!this.cancelOpen) {
-      const target = new ElementRef(evt.currentTarget);
-      this.options = [];
-      this.header = '';
-      if (!this.forInput) {
-        if (this.forStaff) {
-          this.options.push(this.genOption('Attach Message & Deny', '#7f879d', 'deny_with_message', './assets/Message (Blue-Gray).svg'));
-          this.options.push(this.genOption('Deny Pass Request', '#E32C66', 'deny', './assets/Cancel (Red).svg', 'rgba(227, 44, 102, .1)', 'rgba(227, 44, 102, .15)'));
-        } else {
-          if (this.invalidDate) {
-            this.options.push(this.genOption('Change Date & Time to Resend', '#7f879d', 'change_date'));
-          }
-          this.options.push(this.genOption('Delete Pass Request', '#E32C66', 'delete', './assets/Delete (Red).svg', 'rgba(227, 44, 102, .1)', 'rgba(227, 44, 102, .15)'));
-        }
-        this.header = 'Are you sure you want to ' + (this.forStaff ? 'deny' : 'delete') + ' this pass request' + (this.forStaff ? '' : ' you sent') + '?';
-      } else {
-        if (!this.pinnableOpen) {
-          this.formState.step = this.formState.previousStep === 1 ? 1 : 3;
-          this.formState.previousStep = 4;
-          this.createFormService.setFrameMotionDirection('disable');
-          this.cardEvent.emit(this.formState);
-        }
-        return false;
-      }
-
-      UNANIMATED_CONTAINER.next(true);
-      this.cancelOpen = true;
-      const cancelDialog = this.dialog.open(ConsentMenuComponent, {
-        panelClass: 'consent-dialog-container',
-        backdropClass: 'invis-backdrop',
-        data: {'header': this.header, 'options': this.options, 'trigger': target}
+    if (this.formState && this.formState.kioskMode && !this.forInput) {
+      const CD = this.dialog.open(ConfirmDeleteKioskModeComponent, {
+        panelClass: 'overlay-dialog'
       });
 
-      cancelDialog.afterClosed()
-        .pipe(
-          tap(() => UNANIMATED_CONTAINER.next(false))
-        )
-        .subscribe(action => {
+      CD.afterClosed().subscribe(action => {
+        if (action === 'delete') {
           this.chooseAction(action);
+        }
+      });
+    } else {
+      if (!this.cancelOpen) {
+        const target = new ElementRef(evt.currentTarget);
+        this.options = [];
+        this.header = '';
+        if (!this.forInput) {
+          if (this.forStaff) {
+            this.options.push(this.genOption('Attach Message & Deny', '#7f879d', 'deny_with_message', './assets/Message (Blue-Gray).svg'));
+            this.options.push(this.genOption('Deny Pass Request', '#E32C66', 'deny', './assets/Cancel (Red).svg', 'rgba(227, 44, 102, .1)', 'rgba(227, 44, 102, .15)'));
+          } else {
+            if (this.invalidDate) {
+              this.options.push(this.genOption('Change Date & Time to Resend', '#7f879d', 'change_date'));
+            }
+            this.options.push(this.genOption('Delete Pass Request', '#E32C66', 'delete', './assets/Delete (Red).svg', 'rgba(227, 44, 102, .1)', 'rgba(227, 44, 102, .15)'));
+          }
+          this.header = 'Are you sure you want to ' + (this.forStaff ? 'deny' : 'delete') + ' this pass request' + (this.forStaff ? '' : ' you sent') + '?';
+        } else {
+          if (!this.pinnableOpen) {
+            this.formState.step = this.formState.previousStep === 1 ? 1 : 3;
+            this.formState.previousStep = 4;
+            this.createFormService.setFrameMotionDirection('disable');
+            this.cardEvent.emit(this.formState);
+          }
+          return false;
+        }
+
+        UNANIMATED_CONTAINER.next(true);
+        this.cancelOpen = true;
+        const cancelDialog = this.dialog.open(ConsentMenuComponent, {
+          panelClass: 'consent-dialog-container',
+          backdropClass: 'invis-backdrop',
+          data: {'header': this.header, 'options': this.options, 'trigger': target}
         });
+
+        cancelDialog.afterClosed()
+          .pipe(
+            tap(() => UNANIMATED_CONTAINER.next(false))
+          )
+          .subscribe(action => {
+            this.chooseAction(action);
+          });
+      }
+
     }
   }
 
@@ -581,7 +614,7 @@ export class RequestCardComponent implements OnInit, OnDestroy {
       ...RecommendedDialogConfig,
       width: '450px',
       data: {
-        headerText: `Student's Pass limit reached: ${this.request.student.display_name} has had ${studentPassLimit}/${studentPassLimit} passes today`,
+        headerText: `Student's Pass limit reached: ${this.request.student.display_name} has had ${studentPassLimit.passLimit}/${studentPassLimit.passLimit} passes today`,
         buttons: {
           confirmText: 'Override limit',
           denyText: 'Cancel'
@@ -593,7 +626,7 @@ export class RequestCardComponent implements OnInit, OnDestroy {
           background: '#6651F1'
         }
       } as ConfirmationTemplates
-    }).afterClosed().pipe(tap(console.log));
+    }).afterClosed();
 
     // Since both pass limits must be checked, chaining together the dialog Observable results is a clean way to perform this
     // if the room pass limit is reached, then open the room pass limit dialog, else continue as normal
@@ -613,12 +646,7 @@ export class RequestCardComponent implements OnInit, OnDestroy {
         // If the room pass limit is allowed and the student pass limit is reached then
         // open the student pass limit dialog and check its result,
         // else, allow the creation of the result
-        return studentPassLimitReached ? openStudentPassLimitDialog().pipe(tap(approvePass => {
-          console.log(approvePass);
-          if (approvePass) {
-            this.approveRequest();
-          }
-        })) : of(true);
+        return studentPassLimitReached ? openStudentPassLimitDialog() : of(true);
       })
     );
 
@@ -626,25 +654,31 @@ export class RequestCardComponent implements OnInit, OnDestroy {
   }
 
   approveRequest() {
-    const approvePass = () => {
-      this.performingAction = true;
-      const body = [];
-      this.requestService.acceptRequest(this.request.id, body)
-        .pipe(takeUntil(this.destroy$))
-        .subscribe(() => {
-          this.dialogRef.close();
-        });
-    };
-
-    if (this.request.destination.id in this.passLimits) {
-      this.passLimitPromise().then(allowed => {
-        if (allowed) {
-          approvePass();
+    this.performingAction = true;
+    this.requestService.acceptRequest(this.request.id, {}).pipe(
+      catchError((errorResponse: HttpErrorResponse) => {
+        try {
+          if (errorResponse?.error?.errors?.[0] !== 'Override confirmation needed') {
+            return throwError(errorResponse);
+          }
+        } catch {
+          return throwError(errorResponse);
         }
-      });
-    } else {
-      approvePass();
-    }
+
+        return from(this.passLimitPromise()).pipe(
+          concatMap(overrideResponse => {
+            if (overrideResponse) {
+              return this.requestService.acceptRequest(this.request.id, {override: true});
+            }
+
+            return of(null);
+          })
+        );
+      })
+    ).subscribe(() => {
+      this.performingAction = false;
+      this.dialogRef.close();
+    });
   }
 
   cancelClick() {

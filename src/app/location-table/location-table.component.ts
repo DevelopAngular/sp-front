@@ -1,7 +1,7 @@
 import {Component, ElementRef, EventEmitter, Input, OnDestroy, OnInit, Output, ViewChild} from '@angular/core';
 import {HttpService} from '../services/http-service';
 import {Location} from '../models/Location';
-import {filter, map, pluck, switchMap, takeUntil} from 'rxjs/operators';
+import {filter, map, pluck, switchMap, takeUntil, take} from 'rxjs/operators';
 import {LocationsService} from '../services/locations.service';
 import {combineLatest, iif, Observable, of, Subject, zip} from 'rxjs';
 import {filter as _filter, sortBy} from 'lodash';
@@ -12,6 +12,9 @@ import {TooltipDataService} from '../services/tooltip-data.service';
 import {PassLimit} from '../models/PassLimit';
 import {DeviceDetection} from '../device-detection.helper';
 import {CdkDragDrop, moveItemInArray} from '@angular/cdk/drag-drop';
+import {LocationVisibilityService} from '../create-hallpass-forms/main-hallpass--form/location-visibility.service';
+import {UserService} from '../services/user.service';
+import {User} from '../models/User';
 
 
 export interface Paged<T> {
@@ -61,7 +64,25 @@ export class LocationTableComponent implements OnInit, OnDestroy {
 
   @ViewChild('item') currentItem: ElementRef;
 
-  choices: any[] = [];
+  private _choices: any[] = [];
+  get choices(): any[] {
+    return this._choices;
+  }
+  set choices(values: any[]) {
+    // filtering apply only for a student
+    if (values.length > 0 && !this.forStaff) {
+      // test if we have Location's
+      let v = values[0];
+      try {
+        v = Location.fromJSON(v);
+        const student = [''+ this.user.id];
+        values = values.filter((loc: Location) => this.visibilityService.filterByVisibility(loc, student));
+      }catch (e) {}
+    }
+    // add posible filtered values
+    this._choices = values;
+  };
+
   noChoices:boolean = false;
   mainContentVisibility: boolean = false;
   starredChoices: any[] = [];
@@ -72,6 +93,8 @@ export class LocationTableComponent implements OnInit, OnDestroy {
   pinnablesLoaded: boolean;
 
   passLimits: {[id: number]: PassLimit} = {};
+  
+  private user: User;
 
   showSpinner$: Observable<boolean>;
   loaded$: Observable<boolean>;
@@ -86,7 +109,9 @@ export class LocationTableComponent implements OnInit, OnDestroy {
       private pinnableService: HallPassesService,
       private shortcutsService: KeyboardShortcutsService,
       public screenService: ScreenService,
-      public tooltipService: TooltipDataService
+      public tooltipService: TooltipDataService,
+      private userService: UserService,
+      private visibilityService: LocationVisibilityService,
   ) {}
 
   get isMobile() {
@@ -94,6 +119,13 @@ export class LocationTableComponent implements OnInit, OnDestroy {
   }
 
   ngOnInit() {
+    this.userService.userData
+    .pipe(
+      filter(u => !!u),
+      take(1),
+    )
+    .subscribe((u: User) => this.user = u);
+
     this.pinnableService.loadedPinnables$.pipe(
       filter(res => res && !this.isFavoriteForm),
       switchMap(value => {
@@ -213,6 +245,14 @@ export class LocationTableComponent implements OnInit, OnDestroy {
         }
       });
 
+  }
+
+  filterByVisibility(location: Location) {
+    const students = [''+this.user.id];
+    const ruleStudents = location.visibility_students.map(s => ''+s.id);
+    const rule = location.visibility_type;
+    let skipped = this.visibilityService.calculateSkipped(students, ruleStudents, rule);
+    return skipped === undefined;
   }
 
   normalizeLocations(loc) {

@@ -1,0 +1,201 @@
+<div class="wrapper">
+    <div class="heading" #header>
+        <div class="back-button">
+            <img (click)="back()" *ngIf="page !== 3 && page !== 4" [src]="'./assets/Back Button (Light-Gray).svg'" alt="Back Button (Blue-White).svg">
+            <div class="cancel" (click)="openConfirm($event)" *ngIf="page === 3 && !(showProcessingSpinner$ | async)">Cancel</div>
+            <!-- <div class="cancel" (click)="dialog.closeAll()" *ngIf="page === 3 && (showProcessingSpinner$ | async)">Close</div> -->
+        </div>
+        <div class="ds-dialog-title-white ds-flex-center-center">
+            <img [src]="'./assets/ID Numbers(White).svg' | resolveAsset" width="20" height="20" alt="(White).svg" class="ds-mr-10">
+            <span>ID Numbers</span>
+        </div>
+        <div class="save-button" [customToolTip]="(!uploadingProgress.images.complete || !uploadingProgress.csv.complete) && page === 2 ? 'Make sure to add the profile picture files and the map file before uploading!' : null">
+            <app-gradient-button *ngIf="page !== 3 && page !== 5" [disabled]="!uploadingProgress.csv.complete && page === 2" [size]="'small'" [gradient]="'#FFFFFF, #FFFFFF'" [hoverColor]="'#FCFDFF'" [textColor]="'#1F195E'" [cursor]="'pointer'" (buttonClick)="nextPage()">
+                <div class="ds-flex-center-start">
+                    <span>
+             {{ page === 4 ? 'Done' : 'Next' }}
+            </span>
+                </div>
+            </app-gradient-button>
+            <!-- <div class="dots" *ngIf="page === 5" #dots>
+                <app-icon-button [size]="17" [srcString]="'Dots'" [onDarkShade]="true" (clickEvent)="openSettings()"></app-icon-button>
+            </div> -->
+            <div class="incomplete" *ngIf="false">Incomplete</div>
+        </div>
+    </div>
+
+    <div class="content">
+        <div class="page" *ngIf="page === 1">
+            <div class="center-content">
+                <img style="margin-right: 15px" [src]="'./assets/emptyStates/upload-file.svg' | resolveAsset">
+                <div style="margin-top: 35px" class="ds-dialog-heading">Add Profile Pictures</div>
+                <div class="subtitle">Quickly add profile pictures for all your users with an image map from your SIS.</div>
+                <app-gradient-button [gradient]="'#07ABC3, #07ABC3'" [hoverColor]="'#07ABC3'" [rightIcon]="'./assets/Chevron Right (White).svg'" (buttonClick)="nextPage()">Continue
+                </app-gradient-button>
+            </div>
+        </div>
+
+        <div class="page" [style.padding]="'30px 25px 0 30px'" *ngIf="page === 2">
+            <!-- <div class="step-wrapper"> -->
+            <!-- <div class="step-container">
+                    <div class="step-number" [ngClass]="{selected: uploadingProgress.csv.complete}">1</div>
+                    <div class="step"> -->
+            <div class="ds-dialog-heading">Add map file</div>
+            <div class="description">
+                Upload a CSV containing the email and the corresponding ID number.
+            </div>
+            <!-- </div>
+                </div> -->
+            <div class="buttons">
+                <app-gradient-button [gradient]="!uploadingProgress.csv.inProcess && !uploadingProgress.csv.complete ? '#7F879D, #7F879D' : '#07ABC3, #07ABC3'" [hoverColor]="'#7F879D'" [leftIcon]="'./assets/Simple CSV (White).svg'" (buttonClick)="csvFile.click()" [size]="'small'">{{ !uploadingProgress.csv.inProcess && !uploadingProgress.csv.complete ? 'Choose CSV' : 'File selected' }}
+                </app-gradient-button>
+                <app-gradient-button [style.margin-left]="'7px'" [size]="'small'" [gradient]="'#F4F4F4, #F4F4F4'" [buttonLink]="'./assets/xlsx/SmartPass ID Number Template.csv'" [linkType]="'_self'" [download]="true" [hoverColor]="'#F4F4F4'" [textColor]="'#1E194F'" [leftIcon]="'./assets/Download (Navy).svg'"
+                    [text]="'Download Template'" [cursor]="'pointer'">
+                </app-gradient-button>
+
+                <input type="file" accept=".csv" [formControl]="form.get('csvFile')" #csvFile style="display: none" />
+            </div>
+            <!-- </div> -->
+
+        </div>
+
+        <div class="page" *ngIf="page === 3">
+
+            <div class="image-container" *ngIf="!(showProcessingSpinner$ | async); else complete">
+
+
+
+                <svg width="114px" height="97px" viewBox="0 0 114 97" version="1.1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink">
+    <defs>
+        <path d="M87.6923077,0 C77.9716154,0 70.4087721,5.01568526 69.5800798,5.58886708 C65.6120028,8.32250344 64.6145686,13.7316313 67.2935686,17.7483131 C69.9725686,21.7649949 75.412026,22.835233 79.4283337,20.1853693 C79.4634106,20.1545057 83.334,17.6363636 87.6923077,17.6363636 C89.8714615,17.6363636 92.0769231,18.7369142 92.0769231,20.8312324 C92.0769231,23.2430051 88.4734532,24.0387772 87.2983763,24.2327772 C86.9169148,24.2768677 86.6098558,24.313863 86.390625,24.3447267 C81.7078558,25.0545903 78.4261772,29.370608 78.9830234,34.1015625 C79.5398695,38.832517 83.6840151,42.2399198 88.4544766,41.8519198 C88.8885535,41.8122336 89.3262609,41.7672476 89.7647225,41.7055204 C91.8956455,41.542384 95.0965551,41.8778894 96.1532474,42.7905712 C96.4382474,43.0374803 96.4615385,44.0107871 96.4615385,44.3061962 C96.4615385,48.2567416 87.78,48.5 87.6923077,48.5 C85.5219231,48.5 83.1894436,47.7253095 81.475059,46.975764 C82.6457513,50.4721731 83.3076923,54.2859662 83.3076923,58.3687844 C83.3076923,60.873148 82.9331497,63.2620508 82.2886112,65.5680054 C84.0073805,65.8986872 85.8069231,66.1363636 87.6923077,66.1363636 C100.363846,66.1363636 114,59.3059235 114,44.3061962 C114,36.7225598 110.629397,32.1033493 107.739936,29.5460765 C108.928166,27.0240765 109.615385,24.1248233 109.615385,20.8312324 C109.615385,9.15155054 99.9867692,0 87.6923077,0 Z M21.1951624,0.0344460227 C20.5079423,0.0925221273 19.8170913,0.231546055 19.1484375,0.456409691 L5.99459135,4.8655006 C1.39951442,6.40868242 -1.07635468,11.3966733 0.453876092,16.0174006 C1.98410686,20.6425369 6.96633173,23.1320199 11.5438702,21.5976563 L13.1538462,21.0551313 L13.1538462,48.5 L8.76923077,48.5 C3.92861538,48.5 0,52.4505455 0,57.3181818 C0,62.1858182 3.92861538,66.1363636 8.76923077,66.1363636 L27.6521934,66.1363636 C22.3599626,61.0923636 20.4824567,53.0996474 23.6700721,46.0715565 C25.2003029,42.6941929 27.5660769,39.1059512 30.6923077,35.9358149 L30.6923077,8.81818182 C30.6923077,5.98313636 29.3415037,3.31983867 27.0527345,1.66202049 C25.339446,0.421963668 23.2568221,-0.13978185 21.1951624,0.0344460227 Z M52.6153846,35.2727273 C41.2416923,35.2727273 34.0849038,44.3611731 31.6514423,49.7314459 C29.6432885,54.1581731 31.5867008,59.3892817 35.9932375,61.4086454 C40.3910068,63.4235999 45.5974657,61.47375 47.6056195,57.0426136 C47.6275426,57.0029318 49.7697692,52.9090909 52.6153846,52.9090909 C54.0403846,52.9090909 57.0039725,52.9054402 57.0171263,58.2051675 C56.3638186,61.9352584 45.5113475,71.2888008 39.6841936,76.3151645 C37.6102705,78.1008463 35.5674519,79.8700601 33.6382212,81.5940147 C30.915375,84.0278329 29.9726143,87.8949539 31.2660758,91.3164085 C32.563922,94.7378586 35.8223077,97 39.4615385,97 L70.1538462,97 C74.9944615,97 78.9230769,93.0494545 78.9230769,88.1818182 C78.9230769,83.3141818 74.9944615,79.3636364 70.1538462,79.3636364 L62.6006622,79.3636364 C69.510816,72.5736364 74.5384615,65.7584208 74.5384615,58.3687844 C74.5384615,44.766739 65.5236923,35.2727273 52.6153846,35.2727273 Z" id="path-vrmylsjpyo-1"></path>
+    </defs>
+    <g id="Kiosk-Mode:-ID-Scanning-(SP-1043)" stroke="none" stroke-width="1" fill="none" fill-rule="evenodd">
+        <g id="Import" transform="translate(-1934.000000, -351.000000)">
+            <g id="Shape-2" transform="translate(1934.000000, 351.000000)">
+                <mask id="mask-vrmylsjpyo-2" fill="white">
+                    <use xlink:href="#path-vrmylsjpyo-1"></use>
+                </mask>
+                <use id="Shape" fill="#E2E6EC" fill-rule="nonzero" xlink:href="#path-vrmylsjpyo-1"></use>
+                <rect id="Rectangle" fill="#1F195E" mask="url(#mask-vrmylsjpyo-2)" x="-5" y="53" width="124" height="43"></rect>
+            </g>
+        </g>
+    </g>
+</svg>
+
+                <div class="ds-dialog-title" style="margin-top: 15px">{{ picturesLoaderPercent$ | async }}% Uploading ID Numbers...</div>
+
+            </div>
+
+            <ng-template #complete>
+                <div class="image-container">
+                    <div class="syncing-spin-wrapper">
+                        <img class="spinner" width="43px" height="43px" [src]="'./assets/Sync Loading (Turquoise).svg' | resolveAsset" alt="Sync">
+                        <div class="syncing-title">Pictures are being processed. This may take a while…</div>
+                    </div>
+                    <div class="syncing-description">You may close this window.<br>Processing will continue in the background.</div>
+                </div>
+            </ng-template>
+
+        </div>
+
+        <div class="page" *ngIf="page === 4">
+            <div class="upload-info" style="padding: 20px">
+                <div class="upload-title">Upload complete</div>
+                <div class="info"><span style="font-weight: bold">New IDs: </span><span>{{ allProfiles.length }} accounts</span></div>
+                <div class="info"><span style="font-weight: bold">Uploaded IDs: </span><span>{{ allProfiles.length }} accounts</span></div>
+                <div class="info"><span style="font-weight: bold">Errors: </span><span>{{ errors.length }} errors <a *ngIf="errors.length" download="error.txt" [href]="downloadData()" style="color: #E32C66; cursor: pointer;">[Download]</a></span>
+                </div>
+            </div>
+
+            <!-- <div class="uploaded-users">
+                <div class="search-input">
+                    <app-round-input [isSearch]="true" [placeholder]="'Search accounts'" [focused]="true" [width]="'242px'" [minWidth]="'242px'" (ontextupdate)="searchUsers($event)"></app-round-input>
+                </div>
+
+                <div class="user-list" *ngIf="uploadedProfiles.length; else empty">
+                    <div class="user" *ngFor="let user of uploadedProfiles">
+                        <div class="user-container">
+                            <div>
+                                <div class="picture" [ngStyle]="{'background': 'url(' + user.profile_picture + ') no-repeat left center/cover'}"></div>
+                            </div>
+                            <div class="profile-info">
+                                <div class="name">{{ user.display_name }}</div>
+                                <div class="info" *ngIf="user.student_number"><span style="font-weight: bold">Student Number: </span><span>{{ user.student_number }}</span></div>
+                                <div class="info"><span style="font-weight: bold">Image Filename: </span><span>{{ user.file_name }}</span></div>
+                            </div>
+                        </div>
+                        <mat-divider *ngIf="uploadedProfiles.length > 1"></mat-divider>
+                    </div>
+
+                </div>
+                <ng-template #empty>
+                    <div>
+                        No students found
+                    </div>
+                </ng-template>
+            </div> -->
+        </div>
+
+        <div class="update-page" *ngIf="page === 5">
+            <!-- <div class="block" *ngIf="!school.profile_pictures_enabled">
+                <div class="upload-info" style="background-color: #e5f9f1; margin-top: 15px">
+                    <div class="upload-content">
+                        <div class="text">
+                            <div class="title">Ready to enable profile pictures?</div>
+                            <div class="subtitle">Enable profile pictures so teachers can see them on pass tiles.</div>
+                        </div>
+                        <div class="button">
+                            <app-gradient-button [gradient]="'#01b376, #01b376'" (buttonClick)="switchProfilePictures(true)">Enable</app-gradient-button>
+                        </div>
+                    </div>
+                </div>
+            </div> -->
+            <div class="block" style="margin-top: 15px;">
+                <div class="upload-info">
+                    <div class="update-button">
+                        <div>
+                            <div class="title">Add or ID Numbers</div>
+                            <div class="subtitle">Bulk upload ID Numbers</div>
+                        </div>
+                        <app-gradient-button [rightIconWidth]="'15px'" [rightIcon]="'./assets/Chevron Right (White).svg'" [gradient]="'#1F195E, #1F195E'" (buttonClick)="clearData(); page = 2">New Upload</app-gradient-button>
+                    </div>
+                    <mat-divider *ngIf="accountMissingIDNumbers$.length > 0"></mat-divider>
+                    <div class="missing" *ngIf="accountMissingIDNumbers$.length > 0">
+                        <div style="display: flex; align-items: center">
+                            <img [src]="'./assets/Warning (Orange).svg'" alt="">
+                            <div class="info-title">Missing ID Numbers:</div>
+                        </div>
+                        <div class="info">
+                            {{ accountMissingIDNumbers$.length }} accounts don’t have ID Numbers.
+                        </div>
+                        <div class="info-icon">
+                            <app-icon-button (clickEvent)="generateStudentsCsv(accountMissingIDNumbers$)" [size]="24" [srcString]="'Circle Download'"></app-icon-button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <!-- <mat-divider></mat-divider>
+            <div class="upload-history">
+                <div class="ds-dialog-title" style="padding: 20px">Upload History</div>
+                <div class="block" *ngFor="let group of uploadedGroups$">
+                    <div class="upload-info" style="padding: 20px">
+                        <div class="upload-title">{{ getUploadedGroupTime(group.created) }}</div>
+                        <div class="info"><span style="font-weight: bold">New IDs: </span><span>{{ group.num_assigned_new }} accounts</span></div>
+                        <div class="info"><span style="font-weight: bold">Updated IDs: </span><span>{{ group.num_assigned_update }} accounts</span></div>
+                        <div class="info"><span style="font-weight: bold">Errors: </span><span>{{ group.error_count }} errors <span *ngIf="group.error_count" (click)="prepareErrorsToCsv(group)" style="color: #E32C66; cursor: pointer;">[Download]</span></span>
+                        </div>
+                    </div>
+                </div>
+            </div> -->
+        </div>
+
+        <div class="footer" *ngIf="page !== 4">
+            <mat-divider></mat-divider>
+            <div class="footer-content">
+                <div class="link" style="color: #7f879d">Need some help?</div>
+                <div class="link"><a style="color: #7f879d" href="https://www.smartpass.app/id-numbers" target="_blank">Watch tutorial</a></div>
+                <div class="link"><a style="color: #7f879d" href="https://www.smartpass.app/schedule-a-support-meeting" target="_blank">Schedule a call</a></div>
+            </div>
+        </div>
+    </div>
+</div>

@@ -20,10 +20,9 @@
       <img draggable="false" class="title-icon" *ngIf="titleIcon" [src]="titleIcon | resolveAsset">
       {{ roomTitle }}
     </div>
-
     <div class="right-button">
       <app-gradient-button *ngIf="isAllowedSave && (showCancelButton || currentPage === 1 || currentPage === 3)"
-       [disabled]="isFormIncomplete"
+       [disabled]="isFormIncomplete || isSaveButtonDisabled"
        [minHeight]="'40px'"
        [style.width]="'120px'"
        [gradient]="!color_profile || currentPage === 9 ? '#00B476, #00B476' : '#FFFFFF, #FFFFFF'"
@@ -54,6 +53,7 @@
           [form]="form"
           *ngIf="currentPage === 1 || currentPage === 2"
           [passLimitForm]="passLimitForm"
+          [visibilityForm]="visibilityForm"
           [isEnableRoomTrigger$]="enableRoomTrigger"
           [showErrors]="showErrors"
           (roomDataResult)="roomResult($event)"
@@ -67,6 +67,7 @@
 
         <app-new-room-in-folder
           [form]="form" *ngIf="currentPage === 5"
+          [visibilityForm]="visibilityForm"
           [passLimitForm]="passLimitForm"
           [isEnableRoomTrigger$]="enableRoomTrigger"
           [showErrors]="showErrors"
@@ -82,6 +83,7 @@
           (errorsEmit)="showFormErrors()"
           [form]="form"
           [passLimitForm]="passLimitForm"
+          [visibilityForm]="visibilityForm"
           [isEnableRoomTrigger$]="enableRoomTrigger"
           [showErrors]="showErrors"
           (roomDataResult)="roomResult($event)"

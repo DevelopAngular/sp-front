@@ -1,12 +1,13 @@
 import {Component, ElementRef, EventEmitter, Input, OnDestroy, OnInit, Output} from '@angular/core';
-import {FormGroup} from '@angular/forms';
+import {FormGroup, Validators} from '@angular/forms';
 import {MatDialog, MatDialogRef} from '@angular/material/dialog';
 
-import {merge, Subject} from 'rxjs';
+import {combineLatest, merge, Subject} from 'rxjs';
 import {filter, pluck, takeUntil, tap} from 'rxjs/operators';
 
 import {OverlayDataService, Pages, RoomData} from '../overlay-data.service';
 import {ValidButtons} from '../advanced-options/advanced-options.component';
+import {VisibilityOverStudents, DEFAULT_VISIBILITY_STUDENTS} from '../visibility-room/visibility-room.type';
 
 import {Location} from '../../../models/Location';
 import {HallPassesService} from '../../../services/hall-passes.service';
@@ -32,6 +33,8 @@ export class RoomComponent implements OnInit, OnDestroy {
 
   @Input() passLimitForm: FormGroup;
 
+  @Input() visibilityForm?: FormGroup;
+
   @Input() isEnableRoomTrigger$: Subject<boolean>;
 
   @Output() back = new EventEmitter();
@@ -52,6 +55,7 @@ export class RoomComponent implements OnInit, OnDestroy {
           now: { state: '', data: { all_teach_assign: null, any_teach_assign: null, selectedTeachers: [] } },
           future: { state: '', data: { all_teach_assign: null, any_teach_assign: null, selectedTeachers: [] } }
       },
+      visibility: DEFAULT_VISIBILITY_STUDENTS,
       enable: true
   };
 
@@ -136,12 +140,15 @@ export class RoomComponent implements OnInit, OnDestroy {
   }
 
   ngOnInit() {
+    this.form.get('roomName').setValidators([Validators.required, Validators.maxLength(15)]);
       this.tooltipText = this.overlayService.tooltipText;
       this.currentPage = this.overlayService.pageState.getValue().currentPage;
 
     if (this.overlayService.pageState.getValue().data) {
           if (this.currentPage === Pages.EditRoom) {
               const pinnable = this.overlayService.pageState.getValue().data.pinnable;
+              const visibility: VisibilityOverStudents = {mode: pinnable.location.visibility_type, over: pinnable.location.visibility_students};
+              this.overlayService.patchData({visibility});
               this.data = {
                   roomName: pinnable.location.title,
                   roomNumber: pinnable.location.room,
@@ -151,10 +158,13 @@ export class RoomComponent implements OnInit, OnDestroy {
                   scheduling_restricted: !!pinnable.location.scheduling_restricted,
                   timeLimit: pinnable.location.max_allowed_time,
                   advOptState: this.overlayService.pageState.getValue().data.advancedOptions,
+                  visibility: this.overlayService.pageState.getValue().data?.visibility,
                   enable: pinnable.location.enable
               };
           } else if (this.currentPage === Pages.EditRoomInFolder) {
               const data: Location = this.overlayService.pageState.getValue().data.selectedRoomsInFolder[0];
+              const visibility: VisibilityOverStudents = {mode: data.visibility_type, over: data.visibility_students};
+              this.overlayService.patchData({visibility});
               this.passLimitForm.patchValue({
                 to: data.max_passes_to,
                 toEnabled: data.max_passes_to_active,
@@ -171,6 +181,7 @@ export class RoomComponent implements OnInit, OnDestroy {
                   restricted: !!data.restricted,
                   scheduling_restricted: !!data.scheduling_restricted,
                   advOptState: this.overlayService.pageState.getValue().data.advancedOptions,
+                  visibility: this.overlayService.pageState.getValue().data?.visibility,
                   enable: data.enable
               };
           }
@@ -194,7 +205,7 @@ export class RoomComponent implements OnInit, OnDestroy {
 
       this.initialData = cloneDeep(this.data);
 
-      merge(this.form.valueChanges, this.change$).pipe(
+      merge(combineLatest(this.form.valueChanges, this.form.statusChanges), this.change$).pipe(
         // debounceTime(450)
       ).subscribe(() => {
           this.checkValidRoomOptions();
@@ -207,9 +218,11 @@ export class RoomComponent implements OnInit, OnDestroy {
   }
 
   ngOnDestroy(): void {
+    this.form.get('roomName').setValidators([Validators.maxLength(15)]);
     this.destroy$.next();
     this.destroy$.complete();
     this.passLimitForm.reset();
+    this.visibilityForm?.reset();
   }
 
   checkValidRoomOptions() {
@@ -265,6 +278,10 @@ export class RoomComponent implements OnInit, OnDestroy {
           }
       }
 
+      if (this.visibilityForm.invalid) {
+        buttonsResult.incomplete = true;
+      }
+
       this.roomDataResult.emit({data: this.data, buttonState: buttonsResult, advOptButtons: this.advOptionsValidButtons});
   }
 
@@ -307,6 +324,11 @@ export class RoomComponent implements OnInit, OnDestroy {
       this.data.advOptState = options;
       this.advOptionsValidButtons = validButtons;
       this.change$.next();
+  }
+
+  visibilityChange(visibility: VisibilityOverStudents){
+    this.data.visibility = visibility;
+    this.change$.next();
   }
 
   deleteRoom(target: HTMLElement) {

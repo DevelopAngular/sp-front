@@ -6,7 +6,7 @@ import {constructUrl} from '../live-data/helpers';
 import {Logger} from './logger.service';
 import {User} from '../models/User';
 import {PollingService} from './polling-service';
-import {exhaustMap, filter, map, switchMap, take, takeUntil, tap} from 'rxjs/operators';
+import {catchError, exhaustMap, filter, map, switchMap, take, takeUntil, tap} from 'rxjs/operators';
 import {Paged} from '../models';
 import {RepresentedUser} from '../navbar/navbar.component';
 import {Store} from '@ngrx/store';
@@ -422,6 +422,10 @@ export class UserService implements OnDestroy {
     return this.http.getSchool();
   }
 
+  getFeatureFlagDigitalID(): boolean {
+    return this.getUserSchool().feature_flag_digital_id
+  }
+
   getCurrentUpdatedSchool$(): Observable<School> {
     return this.http.currentUpdateSchool$;
   }
@@ -492,7 +496,7 @@ export class UserService implements OnDestroy {
   // TODO: Make all update functions into a single function
   // TODO: Have all update intro endpoints be part of an enum
   // TODO: Share that enum with `intro.effects.ts`
-  
+
   updateIntros(device, version) {
     return this.http.patch('v1/intros/main_intro', {device, version});
   }
@@ -534,16 +538,8 @@ export class UserService implements OnDestroy {
     return this.http.get<RepresentedUser[]>('v1/users/@me/represented_users');
   }
 
-  getUserNotification(id) {
-    return this.http.get(`v1/users/${id}/notification_settings`);
-  }
-
-  enableNotification(id) {
-    return this.http.put(`v1/users/@me/notification_settings/${id}`);
-  }
-
-  disableNotification(id) {
-    return this.http.delete(`v1/users/@me/notification_settings/${id}`);
+  sendTestNotification(id) {
+    return this.http.post(`v1/users/${id}/test_notification`, new Date());
   }
 
   searchProfile(role?, limit = 5, search?) {
@@ -555,12 +551,9 @@ export class UserService implements OnDestroy {
     return this.http.get<User>(`v1/users/${id}`);
   }
 
-  searchProfileWithFilter(id) {
-    return this.http.get(`v1/users?id=${id}`);
-  }
-
-  searchUserByCardId(id): Observable<User[]> {
-    return this.http.get(constructUrl('v1/users', {search: id}));
+  possibleProfileById(id: string): Observable<User | null> {
+    return this.http.get<User>(`v1/users/${id}`, {headers: {'X-Ignore-Errors': 'true'}})
+      .pipe(catchError(err => of(null)));
   }
 
   searchProfileAll(search, type: string = 'alternative', excludeProfile?: string, gSuiteRoles?: string[]) {
@@ -766,7 +759,12 @@ export class UserService implements OnDestroy {
   }
 
   checkUserEmail(email) {
-    return this.http.post('v1/check-email', {email});
+    const httpOptions = {
+      headers: new HttpHeaders({
+        'Content-Type': 'application/x-www-form-urlencoded',
+      })
+    };
+    return this.http.post('v1/check-email', {email}, httpOptions);
   }
 
   addBulkAccountsRequest(accounts) {
@@ -789,10 +787,6 @@ export class UserService implements OnDestroy {
 
   sortTableHeader(queryParams) {
     return this.http.get(constructUrl('v1/users', queryParams));
-  }
-
-  sendTestNotification(userId) {
-    return this.http.post(`v1/users/${userId}/test_notification`, new Date());
   }
 
   updateEffectiveUser(effectiveUser) {
@@ -909,4 +903,34 @@ export class UserService implements OnDestroy {
   getNux() {
     return this.http.get('v1/nux');
   }
+
+  getStatusOfIDNumber() {
+    return this.http.get(`v1/integrations/upload/custom_ids/setup`);
+  }
+
+  uploadIDNumbers(body) {
+    return this.http.post('v1/integrations/upload/custom_ids', body);
+  }
+
+  getMissingIDNumbers() {
+    return this.http.get(`v1/users?has_custom_id=false`);
+  }
+
+  getStatusOfGradeLevel() {
+    return this.http.get(`v1/integrations/upload/grade_levels/setup`);
+  }
+
+  uploadGradeLevels(body) {
+    return this.http.post('v1/integrations/upload/grade_levels', body);
+  }
+
+  getMissingGradeLevels() {
+    return this.http.get(`v1/users?role=_profile_student&has_grade_level=false`);
+  }
+
+  possibleProfileByCustomId(id: string): Observable<User | null> {
+    return this.http.get(`v1/users/custom_id/${id}`, {headers: {'X-Ignore-Errors': 'true'}})
+      .pipe(catchError(err => of(null)));
+  }
+
 }

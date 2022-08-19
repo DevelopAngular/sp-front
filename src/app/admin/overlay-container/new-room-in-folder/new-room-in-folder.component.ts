@@ -3,15 +3,20 @@ import {FormGroup} from '@angular/forms';
 import {RoomData} from '../overlay-data.service';
 import {BehaviorSubject, Subject} from 'rxjs';
 import {ValidButtons} from '../advanced-options/advanced-options.component';
+import {DEFAULT_VISIBILITY_STUDENTS} from '../visibility-room/visibility-room.type';
+import {slideOpacity } from '../../../animations';
 
 @Component({
   selector: 'app-new-room-in-folder',
   templateUrl: './new-room-in-folder.component.html',
-  styleUrls: ['./new-room-in-folder.component.scss']
+  styleUrls: ['./new-room-in-folder.component.scss'],
+  animations: [slideOpacity],
 })
 export class NewRoomInFolderComponent implements OnInit {
 
   @Input() form: FormGroup;
+
+  @Input() visibilityForm: FormGroup;
 
   @Input() passLimitForm: FormGroup;
 
@@ -46,17 +51,18 @@ export class NewRoomInFolderComponent implements OnInit {
           now: { state: '', data: { all_teach_assign: null, any_teach_assign: null, selectedTeachers: [] } },
           future: { state: '', data: { all_teach_assign: null, any_teach_assign: null, selectedTeachers: [] } }
       },
+      visibility: DEFAULT_VISIBILITY_STUDENTS,
       enable: true
   };
 
   constructor() { }
 
   get showPubish() {
-      return this.roomValidButtons.getValue().publish;
+      return this.roomValidButtons.getValue().publish && this.visibilityForm.valid;
   }
 
   get showIncomplete() {
-      return this.roomValidButtons.getValue().incomplete;
+      return this.roomValidButtons.getValue().incomplete && this.visibilityForm.invalid;
   }
 
   get showCancel() {

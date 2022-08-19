@@ -31,6 +31,8 @@ export class IntegrationsDialogComponent implements OnInit, OnDestroy {
     status: string
   };
   isUploadedProfilePictures: boolean;
+  isUploadedGradeLevels: boolean;
+  isUploadedIDNumbers: boolean;
 
   frameMotion$: BehaviorSubject<any>;
 
@@ -56,8 +58,25 @@ export class IntegrationsDialogComponent implements OnInit, OnDestroy {
     merge(of(this.userService.getUserSchool()), this.userService.getCurrentUpdatedSchool$().pipe(filter(s => !!s)))
         .pipe(takeUntil(this.destroy$))
         .subscribe(school => {
+          console.log("school : ", school)
           this.isUploadedProfilePictures = school.profile_pictures_completed;
         });
+
+        this.userService.getStatusOfGradeLevel().subscribe({
+          next: (result: any) => {
+            if (result?.results?.setup) {
+              this.isUploadedGradeLevels = true;
+            }
+          }
+        });
+
+        this.userService.getStatusOfIDNumber().subscribe({
+          next: (result: any) => {
+            if (result?.results?.setup) {
+              this.isUploadedIDNumbers = true;
+            }
+          }
+        })
   }
 
   ngOnDestroy() {

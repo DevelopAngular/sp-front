@@ -19,6 +19,7 @@ import {DeviceDetection} from '../../../device-detection.helper';
 import {filter, map} from 'rxjs/operators';
 import {Location} from '../../../models/Location';
 import {PassLimitInfo} from '../../../models/HallPassLimits';
+import {LocationVisibilityService} from '../location-visibility.service';
 
 export enum States { from = 1, toWhere = 2, category = 3, restrictedTarget = 4, message = 5 }
 
@@ -54,6 +55,7 @@ export class LocationsGroupContainerComponent implements OnInit {
     private formService: CreateFormService,
     private locationsService: LocationsService,
     private screenService: ScreenService,
+    private visibilityService: LocationVisibilityService,
   ) {
   }
 
@@ -131,14 +133,30 @@ export class LocationsGroupContainerComponent implements OnInit {
       // restrict all rooms, so the teacher request is mandatory
       filter(pins => pins.length > 0),
       map(pins => {
+        pins = pins.filter(p => {
+          if (p.location !== null) {
+            // is a Location
+            try {
+              const loc = Location.fromJSON(p.location);
+              // TODO assumed this.user has been emited
+              const student = [''+this.user.id];
+              if (this.visibilityService.filterByVisibility(loc, student)) return p;
+            } catch (e) {
+              console.log(e.message)
+            }
+          } else if (p.location === null) {
+            return p;
+          }
+        });
+
         if (!this?.passLimitInfo?.showPasses) {
           return pins;
         }
 
         if (this.passLimitInfo.current === 0) {
           pins.forEach(p => {
-            if (p.location === null) {
-              p.location = {};
+            if (p.location === null) { // ignore folders
+              return p;
             }
             if (!p?.location?.restricted) {
               p.location.restricted = true;
@@ -281,6 +299,7 @@ export class LocationsGroupContainerComponent implements OnInit {
   }
 
   fromCategory(location) {
+    location.restricted = this.passLimitInfo?.showPasses && this.passLimitInfo?.current === 0;
     this.data.toLocation = location;
     this.FORM_STATE.data.direction.to = location;
     if (((location.restricted && !this.FORM_STATE.forLater) || (location.scheduling_restricted && this.FORM_STATE.forLater)) && !this.isStaff) {
@@ -313,6 +332,9 @@ export class LocationsGroupContainerComponent implements OnInit {
   private postComposetData(close: boolean = false, isMessage?: boolean) {
     const restricted = ((this.FORM_STATE.data.direction.to.restricted && !this.FORM_STATE.forLater) ||
       (this.FORM_STATE.data.direction.to.scheduling_restricted && !!this.FORM_STATE.forLater));
+    if (this.FORM_STATE.kioskMode && this.FORM_STATE.data.kioskModeStudent && restricted) {
+      this.isStaff =  false;
+    }
     if (!this.isStaff && !restricted) {
       this.FORM_STATE.formMode.formFactor = FormFactor.HallPass;
     }
