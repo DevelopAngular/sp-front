@@ -213,8 +213,6 @@
   </mat-tab>
 </mat-tab-group>
 
-<app-pass-limit-feedback *ngIf="!contentLoading" style="position: absolute; width: 385px; margin-top: 25px;"></app-pass-limit-feedback>
-
 <ng-template #buttonLoading let-loading="loading" let-text="text">
   <span *ngIf="!loading">{{text}}</span>
   <mat-spinner class="request-loading" *ngIf="loading" [diameter]="25"></mat-spinner>
