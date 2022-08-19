@@ -2,7 +2,7 @@
   <app-input
     #appInput
     (click)="appInput.forceFocus(); openPassLimitDropdown()"
-    color="#6651F1"
+    [color]="isIndividual ? '#E48C15' : '#6651F1'"
     [showUnits]="true"
     [units]="control.value === '1' ? 'pass' : 'passes'"
     [isFocus]="false"

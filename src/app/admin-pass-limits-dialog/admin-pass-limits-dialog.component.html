@@ -140,7 +140,7 @@
           <div class="individual-list-item ds-flex-column" *ngFor="let i of individualStudentLimits" style="font-size: 14px; display: flex; row-gap: 5px" (click)="goToIndividualLimitPage(i)">
             <div class="ds-flex-row ds-flex-center-between">
               <span class="ds-dialog-heading" style="padding-bottom: 0 !important;">{{i.student.display_name}}</span>
-              <span>{{i.passLimit === -2 ? 'Unlimited' : i.passLimit}} passes/day</span>
+              <span>{{i.passLimit === -2 ? 'Unlimited' : i.passLimit}} {{i.passLimit === 1 ? 'pass' : 'passes'}}/day</span>
             </div>
 
             <span class="ds-dialog-normal-text" *ngIf="i.description">{{i.description}}</span>
@@ -155,9 +155,6 @@
         <div class="background-header"></div>
         <img class="back-button" (click)="goToHomePage()" [src]="'./assets/Back Button (Blue-White).svg' | resolveAsset">
         <div class="title-header ds-flex-center-center" style="z-index: 10">
-          <div class="pass-limit-white ds-flex-center-center" style="background: rgb(102, 81, 241); border-radius: 6px; padding: 7px">
-            <img style="width: 25px" [src]="'./assets/Pass Limit (White).svg' | resolveAsset" alt="">
-          </div>
           <div class="ds-dialog-title" [style.margin-left]="'12px'">{{selectedExistingIndividualLimit ? "Edit" : "New"}} Individual Limit</div>
         </div>
       </div>
@@ -176,9 +173,8 @@
       </ng-template>
 
       <div class="content">
-        <ng-container *ngIf="showPassLimitNux" [ngTemplateOutlet]="passLimitNux"></ng-container>
-        <section class="individual-name ds-my-20">
-          <p class="ds-dialog-heading ds-blue-gray" style="padding: 0 !important">Student</p>
+        <section class="individual-name ds-mb-20">
+          <p class="ds-dialog-heading ds-blue-gray" style="padding: 0 !important; margin-top: 4px !important;">Student</p>
           <app-sp-search *ngIf="!selectedExistingIndividualLimit" #studentSearch (onUpdate)="updateStudentList($event)" [chipsMode]="true"></app-sp-search>
           <div class="selected-name" *ngIf="selectedExistingIndividualLimit as iLimit">
             <div class="student-picture">
@@ -194,7 +190,7 @@
 
         <section class="individual-limit-override ds-mb-20">
           <span class="ds-dialog-heading ds-blue-gray" style="padding: 0 !important">Limit</span>
-          <p class="ds-dialog-normal-text" style="margin-top: 4px">This limit overrides the School Pass Limit of {{passLimit?.passLimit}} passes/day</p>
+          <p class="ds-dialog-normal-text" style="margin-top: 4px">This limit overrides the School Pass Limit of {{passLimit?.passLimit}} {{passLimit?.passLimit === 1 ? 'pass' : 'passes'}}/day</p>
           <app-pass-limit-input
             #individualPassLimitInput
             [formGroup]="individualOverrideForm"
