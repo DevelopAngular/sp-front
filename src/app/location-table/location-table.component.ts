@@ -15,6 +15,7 @@ import {CdkDragDrop, moveItemInArray} from '@angular/cdk/drag-drop';
 import {LocationVisibilityService} from '../create-hallpass-forms/main-hallpass--form/location-visibility.service';
 import {UserService} from '../services/user.service';
 import {User} from '../models/User';
+import {PassLimitInfo} from '../models/HallPassLimits';
 
 
 export interface Paged<T> {
@@ -32,7 +33,7 @@ export interface Paged<T> {
 export class LocationTableComponent implements OnInit, OnDestroy {
 
   @Input() category: string;
-  @Input() forKioskMode: boolean = false;
+  @Input() forKioskMode = false;
   @Input() placeholder: string;
   @Input() type: string;
   @Input() showStars: boolean;
@@ -57,6 +58,7 @@ export class LocationTableComponent implements OnInit, OnDestroy {
   @Input() originLocation: any;
   @Input() searchTeacherLocations: boolean;
   @Input() currentPage: 'from' | 'to';
+  @Input() passLimitInfo: PassLimitInfo;
 
   @Output() onSelect: EventEmitter<any> = new EventEmitter();
   @Output() onStar: EventEmitter<string> = new EventEmitter();
@@ -81,12 +83,12 @@ export class LocationTableComponent implements OnInit, OnDestroy {
     }
     // add posible filtered values
     this._choices = values;
-  };
+  }
 
-  noChoices:boolean = false;
-  mainContentVisibility: boolean = false;
+  noChoices = false;
+  mainContentVisibility = false;
   starredChoices: any[] = [];
-  search: string = '';
+  search = '';
   favoritesLoaded: boolean;
   hideFavorites: boolean;
   pinnables;
@@ -196,13 +198,20 @@ export class LocationTableComponent implements OnInit, OnDestroy {
 
           request$.pipe(takeUntil(this.destroy$)).subscribe(res => {
               this.choices = res;
+              this.choices = res.map(loc => {
+                loc.restricted = loc.restricted || this.passLimitInfo?.current === 0;
+                return loc;
+              });
           });
         } else {
           const request$ = this.isFavoriteForm ? this.locationService.getLocationsWithConfigRequest(url).pipe(filter((res) => !!res.length)) :
             this.locationService.getLocationsFromCategory(url, this.category).pipe(filter((res) => !!res.length));
 
                 request$.pipe(takeUntil(this.destroy$)).subscribe(p => {
-                  this.choices = p;
+                  this.choices = p.map(loc => {
+                    loc.restricted = loc.restricted || this.passLimitInfo?.current === 0;
+                    return loc;
+                  });
                   this.noChoices = !this.choices.length;
                   this.pinnablesLoaded = true;
                   this.mainContentVisibility = true;
@@ -268,7 +277,14 @@ export class LocationTableComponent implements OnInit, OnDestroy {
         }
       }
     }
+
+    // We don't need to restrict the location by pass limit if the location is for later
+    if (this.forLater) {
       return loc;
+    }
+
+    loc.restricted = loc.restricted || this.passLimitInfo?.current === 0;
+    return loc;
   }
 
   ngOnDestroy(): void {
