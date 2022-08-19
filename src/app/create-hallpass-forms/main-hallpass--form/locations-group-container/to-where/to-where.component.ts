@@ -12,7 +12,7 @@ import {ToWhereGridRestrictionSm} from '../../../../models/to-where-grid-restric
 import {ToWhereGridRestrictionMd} from '../../../../models/to-where-grid-restrictions/ToWhereGridRestrictionMd';
 import {MAT_DIALOG_DATA, MatDialog} from '@angular/material/dialog';
 import {Subject, BehaviorSubject, fromEvent, Observable} from 'rxjs';
-import {filter, take, takeUntil, switchMap, startWith} from 'rxjs/operators';
+import {filter, take, takeUntil} from 'rxjs/operators';
 import {DeviceDetection} from '../../../../device-detection.helper';
 import {StorageService} from '../../../../services/storage.service';
 import {TooltipDataService} from '../../../../services/tooltip-data.service';
@@ -146,7 +146,11 @@ export class ToWhereComponent implements OnInit {
   }
 
   isValidPinnable(pinnable: Pinnable) {
-    if (pinnable.location.id === this.location.id)
+    // === and ids are dangerous as ids are numeric strings or numbers
+    // using == will pose its own dangers
+    // if (pinnable.location.id == this.location.id)
+    // as we know ids are numbers we cast them to pure numbers
+    if (+pinnable.location.id === +this.location.id)
       return false;
 
     if (this.isStaff && !this.formState.kioskMode)

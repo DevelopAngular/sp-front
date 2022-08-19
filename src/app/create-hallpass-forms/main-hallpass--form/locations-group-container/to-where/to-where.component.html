@@ -53,7 +53,7 @@
                 [forLater]="!!date"
                 [pinnable]="pinnable"
                 [currentPage]="'to'"
-                [isSameRoom]="(pinnable.location && location ? pinnable.location.id === location.id : false)"
+                [isSameRoom]="(pinnable.location && location ? +pinnable.location.id === +location.id : false)"
                 (onSelectEvent)="pinnableSelected($event)"
               ></app-pinnable>
             </mat-grid-tile>
