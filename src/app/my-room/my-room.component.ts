@@ -33,6 +33,7 @@ import {UNANIMATED_CONTAINER} from '../consent-menu-overlay';
 import {GoogleLoginService} from '../services/google-login.service';
 import * as moment from 'moment';
 import {CheckForUpdateService} from '../services/check-for-update.service';
+import { KioskModeDialogComponent } from '../kiosk-mode/kiosk-mode-dialog/kiosk-mode-dialog.component';
 
 
 @Component({
@@ -374,21 +375,33 @@ export class MyRoomComponent implements OnInit, OnDestroy, AfterViewInit {
   }
 
   setRoomToKioskMode() {
-    let kioskRoom;
-    if (this.roomOptions.length === 1) {
-        kioskRoom = this.roomOptions[0];
-    } else {
-      kioskRoom = Object.assign({}, this.selectedLocation);
-    }
-    this.kioskMode.setCurrentRoom(kioskRoom);
-    this.userService.saveKioskModeLocation(kioskRoom.id).subscribe((res: any) => {
-      // Switch into kiosk mode
+    const dialogRef = this.dialog.open(KioskModeDialogComponent, {
+      panelClass: 'accounts-profiles-dialog',
+      backdropClass: 'custom-bd',
+      width: '425px',
+      height: '480px',
+      data: {selectedRoom: this.selectedLocation}
+    });
 
-      this.storage.setItem('kioskToken', res.access_token);
-      // this.storage.setItem('refresh_token', res.refresh_token);
-      this.loginService.updateAuth({username: this.user.primary_email, type: 'demo-login', kioskMode: true});
-      this.http.kioskTokenSubject$.next(res);
-      this.router.navigate(['main/kioskMode']);
+    dialogRef.afterClosed().subscribe((result) => {
+      if (result) {
+        let kioskRoom;
+        if (this.roomOptions.length === 1) {
+            kioskRoom = this.roomOptions[0];
+        } else {
+          kioskRoom = Object.assign({}, this.selectedLocation);
+        }
+        this.kioskMode.setCurrentRoom(kioskRoom);
+        this.userService.saveKioskModeLocation(kioskRoom.id).subscribe((res: any) => {
+          // Switch into kiosk mode
+    
+          this.storage.setItem('kioskToken', res.access_token);
+          // this.storage.setItem('refresh_token', res.refresh_token);
+          this.loginService.updateAuth({username: this.user.primary_email, type: 'demo-login', kioskMode: true});
+          this.http.kioskTokenSubject$.next(res);
+          this.router.navigate(['main/kioskMode']);
+        });
+      }
     });
 
   }

@@ -1,0 +1,51 @@
+<div class="wrapper">
+    <div class="heading" #header>
+        <div class="back-button">
+            <img (click)="back()" [src]="'./assets/Back Button (Gray-White).svg'" alt="Back Button (Blue-White).svg">
+        </div>
+        <div class="ds-dialog-title-navy ds-flex-center-center">
+            <img [src]="'./assets/Kiosk Mode (Blue-White).svg'" width="20" height="20" alt="(White).svg" class="ds-mr-10">
+            <span>Kiosk Mode for {{data.selectedRoom.title}}</span>
+        </div>
+    </div>
+    <div class="content">
+        <div class="page">
+            <div class="block" style="margin-top: 15px;">
+                <div class="kiosk-mode ds-flex-start-between">
+                    <div class="left">
+                        <div class="title">Enter Kiosk Mode <span class="support-icon" customToolTip [contentTemplate]="kioskModeHelp"><img width="14px" [src]="'./assets/Support (Gray-200).svg' | resolveAsset"></span></div>
+                        <ng-template #kioskModeHelp>
+                            <div class="ds-tooltip" style="width: 200px">Use this username and password to sign in directly to this room’s kiosk. <a href="http://smartpass.app/kioskmode" target="_blank" class="link">Learn more</a></div>
+                        </ng-template>
+                        <p class="description">You’ll be asked to sign in again to return to your teacher view.</p>
+                    </div>
+                    <div class="buttons">
+                        <app-gradient-button [gradient]="'#1F195E, #1F195E'" [textColor]="'#FFFFFF'" [rightIcon]="'./assets/Redirect (White).svg'" [rightIconWidth]="'12px'" (buttonClick)="dialogRef.close(true);">Kiosk Mode</app-gradient-button>
+                    </div>
+
+                </div>
+            </div>
+            <div class="block" style="margin: 15px 0;">
+                <div class="title">Dedicated Login</div>
+                <p class="description">Sign in directly to Kiosk Mode for this room using this login. Go to smartpass.app/sign-in to sign in.</p>
+                <div [formGroup]="loginInfoForm" style="margin-top: 12px;">
+                    <div class="group">
+                        <div class="label">Username</div>
+                        <div class="input-wrapper">
+                            <input type="text" class="input" [formControl]="loginInfoForm.get('username')">
+                        </div>
+                        <!-- <app-input width="200px" [fieldSpace]="'0px'" [disabled]="true" [input_value]="'library-53283'" [formGroup]="loginInfoForm" [controlName]="loginInfoForm.get('username')"></app-input> -->
+                    </div>
+                    <div class="group">
+                        <div class="label">Password</div>
+                        <div class="input-wrapper">
+                            <input type="text" class="input" [formControl]="loginInfoForm.get('password')">
+                            <img width="15" [src]="'./assets/Refresh (Blue-Gray).svg' | resolveAsset" [customToolTip]="'Reset Password'" />
+                        </div>
+                        <!-- <app-input width="200px" [fieldSpace]="'0px'" [disabled]="true" [input_value]="'wlkjwFwka93'" [formGroup]="loginInfoForm" [controlName]="loginInfoForm.get('password')"></app-input> -->
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
