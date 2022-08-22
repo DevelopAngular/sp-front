@@ -23,6 +23,35 @@ export interface Paged<T> {
   previous: string;
 }
 
+function Visibility(): any {
+  return function (target: HTMLElement, property: string, descriptor: Object) {
+    let values: any[];
+
+    return {
+      set: function (vv: any[]) {
+        // filtering apply only for a student
+        if (vv.length > 0 && !this.forStaff) {
+          // test if we have Location's
+          let v = vv[0];
+          try {
+            v = Location.fromJSON(v);
+            const student = [''+ this.user.id];
+            vv = vv.filter((loc: Location) => this.visibilityService.filterByVisibility(loc, student));
+          }catch (e) {
+            console.log(e);
+          }
+        }
+        values = vv;
+      },
+      get: function() {
+        return values;
+      },
+      enumerable: true,
+      configurable: true
+    };
+  };
+}
+
 @Component({
   selector: 'app-location-table',
   templateUrl: './location-table.component.html',
@@ -57,6 +86,7 @@ export class LocationTableComponent implements OnInit, OnDestroy {
   @Input() originLocation: any;
   @Input() searchTeacherLocations: boolean;
   @Input() currentPage: 'from' | 'to';
+  @Input() updatedLocation$?: Observable<Location> | undefined;
 
   @Output() onSelect: EventEmitter<any> = new EventEmitter();
   @Output() onStar: EventEmitter<string> = new EventEmitter();
@@ -64,26 +94,11 @@ export class LocationTableComponent implements OnInit, OnDestroy {
 
   @ViewChild('item') currentItem: ElementRef;
 
-  private _choices: any[] = [];
-  get choices(): any[] {
-    return this._choices;
-  }
-  set choices(values: any[]) {
-    // filtering apply only for a student
-    if (values.length > 0 && !this.forStaff) {
-      // test if we have Location's
-      let v = values[0];
-      try {
-        v = Location.fromJSON(v);
-        values = values.filter((loc: Location) => this.filterByVisibility(loc));
-      }catch (e) {}
-    }
-    // add posible filtered values
-    this._choices = values;
-  };
-
+  @Visibility()
+  choices: any[] = [];
   noChoices:boolean = false;
   mainContentVisibility: boolean = false;
+  @Visibility()
   starredChoices: any[] = [];
   search: string = '';
   favoritesLoaded: boolean;
@@ -244,14 +259,59 @@ export class LocationTableComponent implements OnInit, OnDestroy {
         }
       });
 
+      this.updatedLocation$?.pipe(
+        takeUntil(this.destroy$),
+      ).subscribe(res => this.updateOrAddChoices(res));
+
   }
 
-  filterByVisibility(location: Location) {
-    const students = [''+this.user.id];
-    const ruleStudents = location.visibility_students.map(s => ''+s.id);
-    const rule = location.visibility_type;
-    let skipped = this.visibilityService.calculateSkipped(students, ruleStudents, rule);
-    return skipped === undefined;
+  private choiceFunc(loc) {
+    return function(choice) {
+      if (choice instanceof Location) { 
+        if (choice.id === loc.id) {
+          return loc;
+        } else {
+          return choice;
+        }
+      } else {
+        try {
+          const l = Location.fromJSON(choice);
+          if (l.id === loc.id) return JSON.parse(JSON.stringify(loc));
+        } catch(e) {}
+        return JSON.parse(JSON.stringify(choice));
+      }
+    }
+  }
+
+  // check if modified location exists on choices
+  private isFoundChoice(loc: Location, choices) {
+    for (let i = 0; i < choices.length; i++) {
+      if (choices[i] instanceof Location) { 
+        if (choices[i].id === loc.id) {
+          return true;
+        } 
+      } else {
+        try {
+          const l = Location.fromJSON(choices[i]);
+          if (l.id === loc.id) return true;
+        } catch(e) {}
+      }
+    }
+    return false;
+  }
+
+  private updateOrAddChoices(loc: Location) {
+    const mapping = this.choiceFunc(loc);
+    if (!this.isFoundChoice(loc, this.choices)) {
+      this.choices = [JSON.parse(JSON.stringify(loc)), ...this.choices];
+    } else {
+      this.choices = this.choices.map(mapping);
+    }
+    if (!this.isFoundChoice(loc, this.starredChoices)) {
+      this.starredChoices = [JSON.parse(JSON.stringify(loc)), ...this.starredChoices];
+    } else {
+      this.starredChoices = this.starredChoices.map(mapping);
+    }
   }
 
   normalizeLocations(loc) {

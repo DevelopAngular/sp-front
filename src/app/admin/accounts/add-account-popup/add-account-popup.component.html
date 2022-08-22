@@ -1,6 +1,6 @@
 <div class="wrapper">
   <div class="options">
-    <div class="option-container" style="box-sizing: border-box; padding: 0 10px" *ngFor="let option of options let i = index">
+    <div class="option-container" *ngFor="let option of options let i = index">
       <div class="option"
            #op
            (mouseenter)="op.hover = true"
@@ -15,6 +15,12 @@
         <div class="title">{{ option.title }}</div>
       </div>
       <mat-divider *ngIf="i === 1 && options.length > 2"></mat-divider>
+    </div>
+    <div class="option-container" id="bulk-add-users">
+      <div class="option" data-intercom-target="#bulk-add-users">
+        <img [src]="'./assets/Bulk Accounts (Blue-Gray).svg' | resolveAsset" alt="Bulk add">
+        <div class="title">Bulk add standard accounts</div>
+      </div>
     </div>
 
   </div>

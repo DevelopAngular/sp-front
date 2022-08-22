@@ -7,7 +7,7 @@ import {StudentList} from '../../models/StudentList';
 import {NextStep} from '../../animations';
 import {BehaviorSubject, combineLatest, Subject} from 'rxjs';
 import {CreateFormService} from '../create-form.service';
-import {filter, map, takeUntil} from 'rxjs/operators';
+import {filter, map, takeUntil, withLatestFrom} from 'rxjs/operators';
 import {cloneDeep, find} from 'lodash';
 import {LocationsService} from '../../services/locations.service';
 import {ScreenService} from '../../services/screen.service';
@@ -258,9 +258,51 @@ export class MainHallPassFormComponent implements OnInit, OnDestroy {
       .subscribe(rooms => {
         this.FORM_STATE.data.teacherRooms = rooms;
       });
-    this.locationsService.listenPassLimitSocket().subscribe(res => {
-      this.locationsService.updatePassLimitRequest(res);
+    this.locationsService.listenPassLimitSocket().subscribe(loc => {
+      this.locationsService.updatePassLimitRequest(loc);
     });
+
+    this.locationsService.listenLocationSocket().pipe(
+      takeUntil(this.destroy$),
+      withLatestFrom(this.passesService.pinnables$),
+      filter(combo => {
+        const [, pinns] = combo;
+        return pinns?.length > 0;
+      }),
+      map(([res, pinns]) => {
+        try {
+          const loc: Location = Location.fromJSON(res.data);
+          this.locationsService.updateLocationSuccessState(loc);
+          const found = pinns.find(p => {
+            return !!p.location ? p.location.id == res.data.id : true;
+          });
+          if (found) {
+            const hasLocation = 'location' in found;
+            // update location of pinnable
+            if (hasLocation) {
+              found.location = loc;
+              found.title = loc.title;
+            }
+            // TODO: only update state if it is related to user
+            this.locationsService.updatePinnableSuccessState(found);
+            this.formService.setUpdatedChoice(loc);
+            return found;
+          }
+          return null;
+        } catch (e) {
+          console.log(e);
+          return null;
+        }
+      }),
+    ).subscribe();
+
+    this.locationsService.listenPinnableSocket().pipe(
+      takeUntil(this.destroy$),
+      filter(res => !!res),
+      map((res) => {
+        this.locationsService.updatePinnableSuccessState(res.data);
+      }),
+    ).subscribe();
 
     this.dialogRef
       .backdropClick()

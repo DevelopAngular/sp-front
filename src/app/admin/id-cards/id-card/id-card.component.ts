@@ -11,9 +11,9 @@ import { UserService } from "../../../services/user.service";
 })
 export class IdCardComponent implements OnInit {
 
-  @Input() userName: string = 'Dan San Buenaventura';
+  @Input() userName: string = 'Nicholas Demarco';
   @Input() schoolName: string = 'Walt Whitman High School';
-  @Input() userRole: string = 'Staff';
+  @Input() userRole: string = 'Student';
   @Input() backgroundColor: string = "#00B476";
   @Input() barcodeType: string = "qr-code";
   @Input() profile_picture: string;

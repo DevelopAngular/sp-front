@@ -165,6 +165,11 @@ export class ToCategoryComponent implements OnInit {
       title = (names?.join(', ') ?? 'Student') + ' does not have permission to go to this room'; 
     }
 
+    const roomStudents = selectedStudents.filter(s => (!skipped.includes(''+s.id)));
+    const noStudentsCase = roomStudents.length === 0;
+    
+    if (noStudentsCase) denyText = 'Cancel';
+
     this.dialog.open(ConfirmationDialogComponent, {
       panelClass: 'overlay-dialog',
       backdropClass: 'custom-backdrop',
@@ -200,19 +205,11 @@ export class ToCategoryComponent implements OnInit {
       // SKIPPING case
       // avoid a certain no students case
       if (selectedStudents.length === 1) {
-        this.dialogRef.close();
+        //this.dialogRef.close();
         return;
       }
 
-      // filter out the skipped students
-      const roomStudents = selectedStudents.filter(s => (!skipped.includes(''+s.id)));
-      // avoid no students case
-      if (roomStudents.length === 0) {
-        this.toastService.openToast({
-          title: 'Skiping will left no students to operate on',
-          subtitle: 'Last operation did not proceeed',
-          type: 'error',
-        });
+      if (noStudentsCase) {
         return;
       }
 

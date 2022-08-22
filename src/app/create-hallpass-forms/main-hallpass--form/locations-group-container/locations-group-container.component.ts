@@ -16,9 +16,11 @@ import {RestrictedMessageComponent} from './restricted-message/restricted-messag
 import {ToWhereComponent} from './to-where/to-where.component';
 import {ScreenService} from '../../../services/screen.service';
 import {DeviceDetection} from '../../../device-detection.helper';
-import {filter, map} from 'rxjs/operators';
+import {combineLatest} from 'rxjs';
+import {filter, map, shareReplay, startWith} from 'rxjs/operators';
 import {Location} from '../../../models/Location';
 import {PassLimitInfo} from '../../../models/HallPassLimits';
+import {LocationVisibilityService} from '../location-visibility.service';
 
 export enum States { from = 1, toWhere = 2, category = 3, restrictedTarget = 4, message = 5 }
 
@@ -52,8 +54,8 @@ export class LocationsGroupContainerComponent implements OnInit {
     @Inject(MAT_DIALOG_DATA) public dialogData: any,
     private dataService: DataService,
     private formService: CreateFormService,
-    private locationsService: LocationsService,
     private screenService: ScreenService,
+    private visibilityService: LocationVisibilityService,
   ) {
   }
 
@@ -131,6 +133,22 @@ export class LocationsGroupContainerComponent implements OnInit {
       // restrict all rooms, so the teacher request is mandatory
       filter(pins => pins.length > 0),
       map(pins => {
+        pins = pins.filter(p => {
+          if (p.location !== null) {
+            // is a Location
+            try {
+              const loc = Location.fromJSON(p.location);
+              // TODO assumed this.user has been emited
+              const student = [''+this.user.id];
+              if (this.visibilityService.filterByVisibility(loc, student)) return p;
+            } catch (e) {
+              console.log(e.message)
+            }
+          } else if (p.location === null) {
+            return p;
+          }
+        });
+
         if (!this?.passLimitInfo?.showPasses) {
           return pins;
         }
@@ -148,6 +166,7 @@ export class LocationsGroupContainerComponent implements OnInit {
         return pins;
       }),
     );
+
     this.user$ = this.dataService.currentUser;
     this.pinnable = this.FORM_STATE.data.direction ? this.FORM_STATE.data.direction.pinnable : null;
     this.user$.subscribe((user: User) => {
@@ -281,7 +300,7 @@ export class LocationsGroupContainerComponent implements OnInit {
   }
 
   fromCategory(location) {
-    location.restricted = this.passLimitInfo?.showPasses && this.passLimitInfo?.current === 0;
+    location.restricted = location.restricted || (this.passLimitInfo?.showPasses && this.passLimitInfo?.current === 0);
     this.data.toLocation = location;
     this.FORM_STATE.data.direction.to = location;
     if (((location.restricted && !this.FORM_STATE.forLater) || (location.scheduling_restricted && this.FORM_STATE.forLater)) && !this.isStaff) {

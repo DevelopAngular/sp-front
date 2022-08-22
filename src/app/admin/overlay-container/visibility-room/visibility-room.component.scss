@@ -69,7 +69,7 @@
   }
 }
 
-.with-triangle:after {
+.with-triangle:after, .with-triangle::after {
   display: inline-flex;
   content: '';
   background-image: url('/assets/Rect (Blue-Gray).svg');
@@ -114,7 +114,7 @@ ul.error {
     cursor: pointer;
     padding: 10px;
     display: flex;
-    &:hover {
+    &.selected, &:hover {
      color: $navy500;
      background-color: $navy100;
      border-radius: 7px;
@@ -127,6 +127,14 @@ ul.error {
       height: 16px;
       margin: 0 0 0 auto;
      }
+    }
+    &.selected.grayed {
+      color: $gray500;  
+      background-color: $gray100;
+      &:after {
+        background-image: none;
+        background-size: none;
+      }
     }
   }
 }

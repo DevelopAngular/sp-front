@@ -1,4 +1,4 @@
-import {Component, ElementRef, EventEmitter, HostListener, Inject, Input, OnInit, OnDestroy, Output, TemplateRef, ViewChild} from '@angular/core';
+import {Component, ElementRef, EventEmitter, HostListener, Inject, Input, OnInit, Output, TemplateRef, ViewChild} from '@angular/core';
 import {MatDialogRef} from '@angular/material/dialog';
 import {ToastService} from '../../../../services/toast.service';
 import {Pinnable} from '../../../../models/Pinnable';
@@ -26,6 +26,7 @@ import {
 import {LocationVisibilityService} from '../../location-visibility.service';
 import {UserService} from '../../../../services/user.service';
 import {User} from '../../../../models/User';
+import {Location} from '../../../../models/Location';
 
 @Component({
   selector: 'app-to-where',
@@ -81,6 +82,7 @@ export class ToWhereComponent implements OnInit {
     'to-header_animation-back': false
   };
 
+  updatedLocation$: Observable<Location>;
   destroy$: Subject<any> = new Subject<any>();
 
   constructor(
@@ -127,8 +129,9 @@ export class ToWhereComponent implements OnInit {
       this.passLimits = res;
     });
 
-    if (this.formState.data.roomStudentsAfterFromStep)
+    if (this.formState.data.roomStudentsAfterFromStep) {
       this.formState.data.roomStudents = [...this.formState.data.roomStudentsAfterFromStep];
+    }
 
    this.userService.userData
     .pipe(
@@ -136,6 +139,8 @@ export class ToWhereComponent implements OnInit {
       take(1),
     )
     .subscribe((u: User) => this.student = u);
+
+    this.updatedLocation$ = this.formService.getUpdatedChoice();
   }
 
   private student: User;
@@ -146,7 +151,11 @@ export class ToWhereComponent implements OnInit {
   }
 
   isValidPinnable(pinnable: Pinnable) {
-    if (pinnable.location.id === this.location.id)
+    // === and ids are dangerous as ids are numeric strings or numbers
+    // using == will pose its own dangers
+    // if (pinnable.location.id == this.location.id)
+    // as we know ids are numbers we cast them to pure numbers
+    if (+pinnable.location.id === +this.location.id)
       return false;
 
     if (this.isStaff && !this.formState.kioskMode)
@@ -243,22 +252,6 @@ export class ToWhereComponent implements OnInit {
         return;
       }
 
-      // students go forward
-      /*if (!this.isStaff) {
-        this.formState.data.roomStudents = [this.student];
-        this.forwardAndEmit();
-        return;
-      }*/
-
-     /*
-      this.visibilityService.howToActOnChooseLocation(
-        this.formState,
-        location,
-        this.confirmDialogVisibility,
-        this.forwardAndEmit.bind(this),
-        this.destroy$,
-      );
-     */
      // staff only
      const selectedStudents = this.formState.data.roomStudents ?? this.formState.data.selectedStudents;
      const students = selectedStudents.map(s => ''+s.id);
@@ -285,10 +278,16 @@ export class ToWhereComponent implements OnInit {
         title = (names?.join(', ') ?? 'Student') + ' does not have permission to go to this room';
       }
 
+      const roomStudents = selectedStudents.filter(s => (!skipped.includes(''+s.id)));
+      const noStudentsCase = roomStudents.length === 0;
+      
+      if (noStudentsCase) denyText = 'Cancel';
+
       this.dialog.open(ConfirmationDialogComponent, {
         panelClass: 'overlay-dialog',
         backdropClass: 'custom-backdrop',
         closeOnNavigation: true,
+        width: '450px',
         data: {
           headerText: '',
           body: this.confirmDialogVisibility,
@@ -320,19 +319,11 @@ export class ToWhereComponent implements OnInit {
         // SKIPPING case
         // avoid a certain no students case
         if (selectedStudents.length === 1) {
-          this.dialogRef.close();
+          //this.dialogRef.close();
           return;
         }
 
-        // filter out the skipped students
-        const roomStudents = selectedStudents.filter(s => (!skipped.includes(''+s.id)));
-        // avoid no students case
-        if (roomStudents.length === 0) {
-          this.toastService.openToast({
-            title: 'Skiping will left no students to operate on',
-            subtitle: 'Last operation did not proceeed',
-            type: 'error',
-          });
+        if (noStudentsCase) {
           return;
         }
 

@@ -33,7 +33,7 @@ export class FeedbackButtonComponent implements OnInit {
   }
 
   openWindow() {
-    _refiner('showForm', '31b6c030-820a-11ec-9c99-8b41a98d875d', true);
+    // _refiner('showForm', '31b6c030-820a-11ec-9c99-8b41a98d875d', true);
   }
 
 }
