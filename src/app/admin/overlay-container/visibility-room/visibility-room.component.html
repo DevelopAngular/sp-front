@@ -74,4 +74,19 @@
       </ul>
     </ng-template>
 
+    <ng-template
+      #gradeLevel
+      let-data
+    >
+      <ul
+        class="panel"
+      >
+        <li
+            *ngFor="let grade of grades$ | async"
+        >
+          {{grade}}
+        </li>
+      </ul>
+    </ng-template>
+
 </div>

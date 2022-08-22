@@ -1,8 +1,8 @@
 import {KeyValue} from '@angular/common';
-import { Component, OnInit, AfterViewInit, OnDestroy, Input, Output, EventEmitter, ViewChild, ElementRef, TemplateRef, Renderer2} from '@angular/core';
+import { Component, OnInit, AfterViewInit, OnDestroy, Input, Output, EventEmitter, ViewChild, ElementRef, TemplateRef, Renderer2, HostListener} from '@angular/core';
 import {FormGroup} from '@angular/forms';
 import {MatDialog, MatDialogRef} from '@angular/material/dialog';
-import {Subject} from 'rxjs';
+import {Subject, Observable} from 'rxjs';
 import {tap, take, takeUntil, filter, finalize, startWith} from 'rxjs/operators';
 import {cloneDeep, isEqual} from 'lodash';
 
@@ -27,6 +27,8 @@ export class VisibilityRoomComponent implements OnInit, AfterViewInit, OnDestroy
   @ViewChild('panel') panelRef: TemplateRef<any>;
   // access to search component public methods: cancel, etc
   @ViewChild(SPSearchComponent) searchComponent: SPSearchComponent;
+  // grade level
+  @ViewChild('gradeLevel') gradeLevelRef: TemplateRef<any>;
   
   @Input() data?: VisibilityOverStudents = DEFAULT_VISIBILITY_STUDENTS; 
 
@@ -81,11 +83,12 @@ export class VisibilityRoomComponent implements OnInit, AfterViewInit, OnDestroy
     this.myid += 1;
   }
 
+  grades$: Observable<string[]> = new Observable<string[]>();
+
   ngOnInit(): void {
-    this.dataService.getGradesList().pipe(
+    this.grades$ = this.dataService.getGradesList().pipe(
       takeUntil(this.destroy$),
-      tap(v => console.log(v)),
-    ).subscribe();
+    );
 
     if (!this.data) {
       this.data = this.overlayService.pageState.getValue().data?.visibility ?? DEFAULT_VISIBILITY_STUDENTS;
@@ -116,7 +119,7 @@ export class VisibilityRoomComponent implements OnInit, AfterViewInit, OnDestroy
       tap(() => this.visibilityChange())
     ).subscribe();
 
-    setInterval(() => console.log('MYID, PRISTINE:', this.myid, this.visibilityForm.pristine), 2000);
+    //setInterval(() => console.log('MYID, PRISTINE:', this.myid, this.visibilityForm.pristine), 2000);
   }
 
   unlisten: () => void;
@@ -151,6 +154,9 @@ export class VisibilityRoomComponent implements OnInit, AfterViewInit, OnDestroy
   // triggers this method in order to hide the errors 
   public onSearchComponentFocus() {
     this.showErrorsVisibility = false;
+    // open grade level options
+    this.openGradeLevelDialog();
+
   }
 
   ngOnDestroy(): void {
@@ -159,7 +165,72 @@ export class VisibilityRoomComponent implements OnInit, AfterViewInit, OnDestroy
     this.unlisten();
   }
 
-  private panelDialog: MatDialogRef<TemplateRef<any>> | undefined;
+  @HostListener('document:click', ['$event'])
+  clickout(event) {
+    if (this.clickoutFn) {
+      this.clickoutFn(event);
+    }
+  }
+
+  clickoutFn: Function;
+  
+  private gradeLevelDialog: MatDialogRef<TemplateRef<any>> | undefined;
+
+  openGradeLevelDialog() {
+    const PANEL_ID = 'grade-level-options';
+
+    const panelDialogExists = this.dialog.getDialogById(PANEL_ID);
+    if (panelDialogExists) return;
+
+    const conf = {
+      id: PANEL_ID,
+      panelClass: 'consent-dialog-container',
+      hasBackdrop: false,
+      autofocus: false,
+    };
+    this.gradeLevelDialog = this.dialog.open(this.gradeLevelRef, conf);
+    this.positionGradeLevelDialog();
+    this.gradeLevelDialog.afterClosed().subscribe(() => {
+      this.clickoutFn = null;
+    });
+    this.gradeLevelDialog.afterOpened().subscribe(() => {
+      this.clickoutFn = this.closeGradeLevelDialog;
+    });
+
+    /*this.panelDialog.afterClosed()
+    .pipe(
+      take(1),
+      filter( (v: VisibilityMode | null) => !!v && (v !== this.mode)),
+      tap((v: VisibilityMode) => {
+        // init new mode
+        this.selectedStudents = [];
+        this.mode = v;
+        this.modeView = this.modes[v];
+        if (!this.prevdata[v]) {
+          this.resetSearchComponent();
+        } else {
+          this.setSearchComponent(this.prevdata[v].over);
+        }
+      }),
+      finalize(() => {
+        this.didOpen = false;
+        this.panelDialog = undefined;
+        // component is untouched
+        //this.dirty.next(false);
+      }),
+    ).subscribe();*/
+  }
+
+  closeGradeLevelDialog(event: MouseEvent) {
+    const $matContainer = this.gradeLevelRef.elementRef.nativeElement.parentElement;
+    const rect = $matContainer.getBoundingClientRect()
+    if(
+      event.clientX <= rect.left || event.clientX >= rect.right || 
+      event.clientY <= rect.top || event.clientY >= rect.bottom)
+    {
+      this.gradeLevelDialog.close();
+    }
+  }
 
   private dirty: Subject<boolean> = new Subject<boolean>();
 
@@ -167,6 +238,8 @@ export class VisibilityRoomComponent implements OnInit, AfterViewInit, OnDestroy
   private asIs = (a: KeyValue<number,string>, b: KeyValue<number,string>): number => {
     return 0;
   };
+
+  private panelDialog: MatDialogRef<TemplateRef<any>> | undefined;
 
   handleOpenClose() {
     const PANEL_ID = 'opener-visibility-options';
@@ -292,6 +365,19 @@ export class VisibilityRoomComponent implements OnInit, AfterViewInit, OnDestroy
       left: rect.left + (rect.width - 270) + 'px', 
     };
     this.panelDialog.updatePosition(position)
+  }
+
+  private positionGradeLevelDialog() {
+    // input search should exists
+    const $rect = this.searchComponent.input['input']['nativeElement'];
+    const rect = $rect.getBoundingClientRect();
+    // bottom right related to opener
+    const position = {
+      top: (rect.bottom) + 'px', 
+      // 270 is taken from CSS not live calculated
+      left: rect.left + (rect.width - 270) + 'px', 
+    };
+    this.gradeLevelDialog.updatePosition(position)
   }
 
 
