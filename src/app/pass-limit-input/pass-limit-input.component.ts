@@ -59,7 +59,8 @@ export class PassLimitInputComponent implements OnInit, OnDestroy {
     const coords = this.passLimitInputWrapper.nativeElement.getBoundingClientRect();
 
     this.passLimitDropdownRef = this.dialog.open(this.passLimitDropdownTemplate, {
-      hasBackdrop: false,
+      hasBackdrop: true,
+      backdropClass: 'cdk-overlay-transparent-backdrop',
       panelClass: ['overlay-dialog', 'show-overlay'],
       closeOnNavigation: true,
       width: '220px',

@@ -173,37 +173,56 @@
       </ng-template>
 
       <div class="content">
-        <section class="individual-name ds-mb-20">
-          <p class="ds-dialog-heading ds-blue-gray" style="padding: 0 !important; margin-top: 4px !important;">Student</p>
-          <app-sp-search *ngIf="!selectedExistingIndividualLimit" #studentSearch (onUpdate)="updateStudentList($event)" [chipsMode]="true"></app-sp-search>
-          <div class="selected-name" *ngIf="selectedExistingIndividualLimit as iLimit">
-            <div class="student-picture">
-              <div *ngIf="iLimit.student.profile_picture; else d"
-                   [ngStyle]="{'background': 'url(' + iLimit.student.profile_picture + ') no-repeat left center/cover', width: '23px', height: '23px'}"></div>
-              <ng-template #d>
-                <img width="23" height="23" [src]="'./assets/Avatar Default.svg' | resolveAsset" alt="">
-              </ng-template>
+        <div>
+          <section class="individual-name ds-mb-15">
+            <p class="ds-dialog-heading ds-blue-gray" style="padding: 0 !important; margin-top: 0px !important;">Student</p>
+            <app-sp-search *ngIf="!selectedExistingIndividualLimit" #studentSearch (onUpdate)="updateStudentList($event)" [chipsMode]="true"></app-sp-search>
+            <div class="selected-name" *ngIf="selectedExistingIndividualLimit as iLimit">
+              <div class="student-picture">
+                <div *ngIf="iLimit.student.profile_picture; else d"
+                     [ngStyle]="{'background': 'url(' + iLimit.student.profile_picture + ') no-repeat left center/cover', width: '23px', height: '23px'}"></div>
+                <ng-template #d>
+                  <img width="23" height="23" [src]="'./assets/Avatar Default.svg' | resolveAsset" alt="">
+                </ng-template>
+              </div>
+              <div class="name">{{ iLimit.student.display_name }}</div>
             </div>
-            <div class="name">{{ iLimit.student.display_name }}</div>
-          </div>
-        </section>
+          </section>
 
-        <section class="individual-limit-override ds-mb-20">
-          <span class="ds-dialog-heading ds-blue-gray" style="padding: 0 !important">Limit</span>
-          <p class="ds-dialog-normal-text" style="margin-top: 4px">This limit overrides the School Pass Limit of {{passLimit?.passLimit}} {{passLimit?.passLimit === 1 ? 'pass' : 'passes'}}/day</p>
-          <app-pass-limit-input
-            #individualPassLimitInput
-            [formGroup]="individualOverrideForm"
-            [control]="individualOverrideForm.get('passLimit')"
-            [isIndividual]="true"
-          ></app-pass-limit-input>
-        </section>
+          <section class="individual-limit-override ds-mb-15">
+            <span class="ds-dialog-heading ds-blue-gray" style="padding: 0 !important">Limit</span>
+            <p class="ds-dialog-normal-text" style="margin-top: 4px">This limit overrides the School Pass Limit of {{passLimit?.passLimit}} {{passLimit?.passLimit === 1 ? 'pass' : 'passes'}}/day</p>
+            <app-pass-limit-input
+              #individualPassLimitInput
+              [formGroup]="individualOverrideForm"
+              [control]="individualOverrideForm.get('passLimit')"
+              [isIndividual]="true"
+            ></app-pass-limit-input>
+          </section>
 
-        <section class="individual-limit-description" style="margin-bottom: 60px">
-          <span class="ds-dialog-heading ds-blue-gray" style="padding: 0 !important">Description</span>
-          <p class="ds-dialog-normal-text" style="margin-top: 4px">This description will only be visible to staff, not students.</p>
-          <app-textarea width="85%" [control]="individualOverrideForm.get('description')" placeholder="Ex. Parents requested"></app-textarea>
-        </section>
+          <section class="individual-limit-description" style="margin-bottom: 10px">
+            <span class="ds-dialog-heading ds-blue-gray" style="padding: 0 !important">Description</span>
+            <p class="ds-dialog-normal-text" style="margin-top: 4px">This description will only be visible to staff, not students.</p>
+            <app-textarea width="85%" [control]="individualOverrideForm.get('description')" placeholder="Ex. Parents requested"></app-textarea>
+          </section>
+        </div>
+
+        <div class="delete-button ds-flex-center-center">
+          <app-gradient-button
+            [disabled]="requestLoading"
+            size="editable"
+            minHeight="40px"
+            minWidth="190px"
+            fontSize="14px"
+            cornerRadius="8px"
+            padding="0px 16px"
+            (buttonClick)="openDeleteDialog()"
+            gradient="#E32C66"
+            textColor="#FFFFFF">
+            <ng-template [ngTemplateOutlet]="buttonLoading" [ngTemplateOutletContext]="{loading: deleteLoading, text: 'Remove individual limit'}"></ng-template>
+          </app-gradient-button>
+        </div>
+
       </div>
     </div>
   </mat-tab>
@@ -231,4 +250,11 @@
       <img style="width: 14px; height: 14px" src="../../assets/Close%20(Grey).svg">
     </button>
   </div>
+</ng-template>
+
+<ng-template #deleteDialogBody>
+  <p class="ds-dialog-normal-text" style="font-size: 15px !important; margin: 4px 0">
+    When you remove the individual limit, the student's pass limit will be restored to the
+    school limit if turned on.
+  </p>
 </ng-template>
