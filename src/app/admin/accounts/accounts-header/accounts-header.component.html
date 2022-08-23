@@ -165,7 +165,7 @@
           ></app-tab-button>
 
           <div
-            *ngIf="tab.param === '_profile_student'"
+            *ngIf="!(isFilterActive$ | async) && (tab.param === '_profile_student')"
             style="width: 32px; height: 32px; border-radius: 50%; background-color: #F0F2F5; cursor: pointer"
             class="ds-flex-center-center"
             [ngClass]="{ 'filter-disabled': currentTab !== '_profile_student' }"
@@ -173,18 +173,18 @@
           >
             <img [src]="'./assets/Filter (Blue-Gray).svg' | resolveAsset" alt="">
           </div>
+
+          <div *ngIf="(isFilterActive$ | async) && tab.param === '_profile_student'" class="filter-chips">
+            <div class="filter-chip ds-flex-row ds-flex-center-start" style="display: inline-flex !important" *ngFor="let filter of ((activeFilters$ | async) | keyvalue)">
+              <img style="width: 14px; height: 14px" [src]="'./assets/Filter (Navy).svg' | resolveAsset" alt="">
+              <span class="ds-mx-5">{{filter?.value?.text}}</span>
+              <img style="width: 18px; height: 18px; cursor: pointer" [src]="'./assets/Cancel (Light Navy).svg' | resolveAsset" alt="" (click)="removeFilter(filter?.value?.label)">
+            </div>
+          </div>
         </div>
 
       </div>
       <div class="selected-tab-pointer" #tabPointer [style.left]="pts" [style.background-color]="darkTheme.getColor({white: '#1F195E', dark: '#FFFFFF'})"></div>
-    </div>
-
-    <div *ngIf="isFilterActive$ | async" class="filter-chips" class="ds-m-10">
-      <div class="filter-chip ds-flex-row ds-flex-center-start" style="display: inline-flex !important" *ngFor="let filter of ((activeFilters$ | async) | keyvalue)">
-        <img style="width: 14px; height: 14px" [src]="'./assets/Filter (Navy).svg' | resolveAsset" alt="">
-        <span class="ds-mx-5">{{filter?.value?.text}}</span>
-        <img style="width: 14px; height: 14px; cursor: pointer" [src]="'./assets/Cancel (Light Navy).svg' | resolveAsset" alt="" (click)="removeFilter(filter?.value?.label)">
-      </div>
     </div>
   </div>
 </div>
@@ -223,7 +223,7 @@
 </svg>
 
 <ng-template #filterDialogTemplate>
-  <div class="filter-dialog-wrapper">
+  <div class="action-sheet-dialog">
     <div class="options">
       <div class="option" *ngFor="let limit of filterOptions" [mat-dialog-close]="limit">
         <div class="title">
