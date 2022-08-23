@@ -83,7 +83,7 @@
             </span>
 
               <div *ngIf="data.studentPassLimit?.passLimit && data.studentPassLimit?.isIndividual" class="ds-flex-column ds-mt-5" style="display: flex;">
-                <span style="color: #E48C15; font-size: 14px;">{{data.studentPassLimit.passLimit === -2 ? "Unlimited" : data.studentPassLimit.passLimit}} passes/day</span>
+                <span style="color: #E48C15; font-size: 14px; font-weight: 500;">{{data.studentPassLimit.passLimit === -2 ? "Unlimited" : data.studentPassLimit.passLimit}} passes/day</span>
                 <span style="color: grey; font-size: 14px;" *ngIf="data.studentPassLimit.description">{{data.studentPassLimit.description}}</span>
               </div>
             </div>
@@ -138,24 +138,8 @@
         <div class="content" style="justify-content: space-between">
           <div>
             <div style="display: flex" class="ds-flex-column ds-mt-10">
-          <span class="ds-dialog-heading" style="padding-bottom: 0 !important;">
-            Limit
-            <div style="display: inline" customToolTip [contentTemplate]="passLimitLearnMore">
-              <img
-                class="support-icon"
-                [src]="'./assets/Support (Gray-200).svg' | resolveAsset">
-            </div>
-            <ng-template #passLimitLearnMore>
-              <div class="ds-tooltip">
-                <span>
-                  Limit the number of passes all students can have per day.
-                  <a href="https://www.smartpass.app/passlimits" style="color: white" target="_blank"> Learn more</a>
-                </span>
-              </div>
-             </ng-template>
-          </span>
-              <p *ngIf="data.studentPassLimit?.passLimit" class="ds-dialog-normal-text">This limit overrides the School Pass Limit of {{data.studentPassLimit.passLimit}} passes/day, and any previous limit
-                set.</p>
+              <span class="ds-dialog-heading" style="padding-bottom: 0 !important;">Limit</span>
+              <p *ngIf="data.studentPassLimit?.passLimit" class="ds-dialog-normal-text">This limit overrides the School Pass Limit of {{data.studentPassLimit.passLimit}} passes/day.</p>
             </div>
 
             <app-pass-limit-input
@@ -222,7 +206,7 @@
 </ng-template>
 
 <ng-template #deleteDialogBody>
-  <p>
+  <p class="ds-dialog-normal-text" style="font-size: 15px !important; margin: 4px 0">
     When you remove the individual limit, the student's pass limit will be restored to the
     school limit if turned on.
   </p>

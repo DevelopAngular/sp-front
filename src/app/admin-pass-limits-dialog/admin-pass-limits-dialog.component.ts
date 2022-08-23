@@ -1,11 +1,11 @@
-import {Component, OnDestroy, OnInit, ViewChild} from '@angular/core';
+import {Component, OnDestroy, OnInit, TemplateRef, ViewChild} from '@angular/core';
 import {FormArray, FormControl, FormGroup, ValidationErrors, ValidatorFn, Validators} from '@angular/forms';
 
 import {MatDialog, MatDialogRef, MatDialogState} from '@angular/material/dialog';
 import {MatTabGroup} from '@angular/material/tabs';
 import {cloneDeep} from 'lodash';
 import {forkJoin, Observable, of, Subscription} from 'rxjs';
-import {concatMap, delay, map, tap} from 'rxjs/operators';
+import {concatMap, delay, filter, map, tap} from 'rxjs/operators';
 
 import {ScreenService} from '../services/screen.service';
 import {PassLimitService} from '../services/pass-limit.service';
@@ -15,6 +15,10 @@ import {SPSearchComponent} from '../sp-search/sp-search.component';
 import {UserService} from '../services/user.service';
 import {IntroData} from '../ngrx/intros';
 import {PassLimitInputComponent} from '../pass-limit-input/pass-limit-input.component';
+import {
+  ConfirmationDialogComponent,
+  ConfirmationTemplates, RecommendedDialogConfig
+} from '../shared/shared-components/confirmation-dialog/confirmation-dialog.component';
 
 const schoolPassLimitRangeValidator = (): ValidatorFn => (form: FormGroup): ValidationErrors => {
   const num = parseInt(form.value['passLimit'], 10);
@@ -65,6 +69,7 @@ export class AdminPassLimitDialogComponent implements OnInit, OnDestroy {
   showLimitFormatError = false;
   requestLoading = false;
   contentLoading = true;
+  deleteLoading = false;
   showPassLimitNux: boolean;
   introsData: IntroData;
   introSubs: Subscription;
@@ -79,6 +84,7 @@ export class AdminPassLimitDialogComponent implements OnInit, OnDestroy {
   @ViewChild('studentSearch') studentSearcher: SPSearchComponent;
   @ViewChild('schoolPassLimitInput') schoolPassLimitInput: PassLimitInputComponent;
   @ViewChild('individualPassLimitInput') individualPassLimitInput: PassLimitInputComponent;
+  @ViewChild('deleteDialogBody') deleteDialogBody: TemplateRef<HTMLElement>;
 
   constructor(
     private dialog: MatDialog,
@@ -323,6 +329,35 @@ export class AdminPassLimitDialogComponent implements OnInit, OnDestroy {
         this.individualLoading = false;
         this.goToHomePage();
       },
+    });
+  }
+
+  openDeleteDialog() {
+    const id = this.individualOverrideForm.value.students[0];
+    this.dialog.open<ConfirmationDialogComponent, ConfirmationTemplates, boolean>(ConfirmationDialogComponent, {
+      ...RecommendedDialogConfig,
+      width: '450px',
+      data: {
+        headerText: 'Remove the individual limit?',
+        body: this.deleteDialogBody,
+        buttons: {
+          confirmText: 'Remove limit',
+          denyText: 'Cancel',
+        },
+        templateData: {}
+      }
+    }).afterClosed().pipe(
+      filter(Boolean),
+      tap(() => this.deleteLoading = true),
+      concatMap(() => this.passLimitService.removeIndividualLimit(id)),
+      concatMap(() => this.passLimitService.getIndividualLimits()),
+    ).subscribe({
+      next: (individualLimits) => {
+        this.individualStudentLimits = individualLimits;
+        this.deleteLoading = false;
+        this.goToHomePage();
+      },
+      error: console.error
     });
   }
 
