@@ -80,12 +80,22 @@
 }
 
 .individual-list-item {
-  padding: 10px;
-  background: white;
   border-radius: 8px;
-  margin: 15px 0;
+  border: 1px solid $gray300;
+  box-shadow: 0 2px 5px rgba(0, 0, 0, 0.05);
+  min-height: 50px;
+  display: flex;
+  flex-direction: column;
+  position: relative;
+  justify-content: center;
   cursor: pointer;
-  box-shadow: rgba(0, 0, 0, 0.05) 0px 5px 2px 0;
+  transition: background-color .2s ease;
+  padding: 10px;
+  margin: 10px 0;
+
+  &:hover {
+    background-color: #DEE0E6;
+  }
 
   span:last-of-type {
     color: $orange500;
