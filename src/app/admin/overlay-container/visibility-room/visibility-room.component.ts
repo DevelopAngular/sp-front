@@ -3,7 +3,7 @@ import { Component, OnInit, AfterViewInit, OnDestroy, Input, Output, EventEmitte
 import {FormGroup} from '@angular/forms';
 import {MatDialog, MatDialogRef} from '@angular/material/dialog';
 import {Subject, Observable} from 'rxjs';
-import {tap, take, takeUntil, filter, finalize, startWith} from 'rxjs/operators';
+import {tap, take, takeUntil, filter, finalize, startWith, shareReplay} from 'rxjs/operators';
 import {cloneDeep, isEqual} from 'lodash';
 
 import {User} from '../../../models/User';
@@ -28,7 +28,7 @@ export class VisibilityRoomComponent implements OnInit, AfterViewInit, OnDestroy
   // access to search component public methods: cancel, etc
   @ViewChild(SPSearchComponent) searchComponent: SPSearchComponent;
   // grade level
-  @ViewChild('gradeLevel') gradeLevelRef: TemplateRef<any>;
+  @ViewChild('gradeLevel') gradeLevelTpl: TemplateRef<any>;
   
   @Input() data?: VisibilityOverStudents = DEFAULT_VISIBILITY_STUDENTS; 
 
@@ -88,6 +88,7 @@ export class VisibilityRoomComponent implements OnInit, AfterViewInit, OnDestroy
   ngOnInit(): void {
     this.grades$ = this.dataService.getGradesList().pipe(
       takeUntil(this.destroy$),
+      shareReplay(1),
     );
 
     if (!this.data) {
@@ -175,20 +176,20 @@ export class VisibilityRoomComponent implements OnInit, AfterViewInit, OnDestroy
   clickoutFn: Function;
   
   private gradeLevelDialog: MatDialogRef<TemplateRef<any>> | undefined;
+  private readonly GRADE_LEVEl_DIALOG_ID = 'grade-level-options';
 
   openGradeLevelDialog() {
-    const PANEL_ID = 'grade-level-options';
 
-    const panelDialogExists = this.dialog.getDialogById(PANEL_ID);
+    const panelDialogExists = this.dialog.getDialogById(this.GRADE_LEVEl_DIALOG_ID);
     if (panelDialogExists) return;
 
     const conf = {
-      id: PANEL_ID,
+      id: this.GRADE_LEVEl_DIALOG_ID,
       panelClass: 'consent-dialog-container',
       hasBackdrop: false,
       autofocus: false,
     };
-    this.gradeLevelDialog = this.dialog.open(this.gradeLevelRef, conf);
+    this.gradeLevelDialog = this.dialog.open(this.gradeLevelTpl, conf);
     this.positionGradeLevelDialog();
     this.gradeLevelDialog.afterClosed().subscribe(() => {
       this.clickoutFn = null;
@@ -196,6 +197,8 @@ export class VisibilityRoomComponent implements OnInit, AfterViewInit, OnDestroy
     this.gradeLevelDialog.afterOpened().subscribe(() => {
       this.clickoutFn = this.closeGradeLevelDialog;
     });
+
+    console.log(this.grades$)
 
     /*this.panelDialog.afterClosed()
     .pipe(
@@ -222,7 +225,12 @@ export class VisibilityRoomComponent implements OnInit, AfterViewInit, OnDestroy
   }
 
   closeGradeLevelDialog(event: MouseEvent) {
-    const $matContainer = this.gradeLevelRef.elementRef.nativeElement.parentElement;
+    const $matContainer = document.getElementById(this.GRADE_LEVEl_DIALOG_ID);
+    if (!$matContainer) {
+      this.gradeLevelDialog?.close();// might be undefined
+      return 
+    }
+
     const rect = $matContainer.getBoundingClientRect()
     if(
       event.clientX <= rect.left || event.clientX >= rect.right || 
@@ -361,8 +369,8 @@ export class VisibilityRoomComponent implements OnInit, AfterViewInit, OnDestroy
     // bottom right related to opener
     const position = {
       top: (rect.bottom) + 'px', 
-      // 270 is taken from CSS not live calculated
-      left: rect.left + (rect.width - 270) + 'px', 
+      // 270 is taken from CSS not live calculated, also 13 represents padding
+      left: rect.left + (rect.width - 270 - 13) + 'px', 
     };
     this.panelDialog.updatePosition(position)
   }
@@ -374,8 +382,8 @@ export class VisibilityRoomComponent implements OnInit, AfterViewInit, OnDestroy
     // bottom right related to opener
     const position = {
       top: (rect.bottom) + 'px', 
-      // 270 is taken from CSS not live calculated
-      left: rect.left + (rect.width - 270) + 'px', 
+      // 270 is taken from CSS not live calculated, also 13 represents padding
+      left: rect.left + (rect.width - 270 - 13) + 'px', 
     };
     this.gradeLevelDialog.updatePosition(position)
   }

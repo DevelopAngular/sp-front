@@ -76,17 +76,18 @@
 
     <ng-template
       #gradeLevel
-      let-data
     >
-      <ul
-        class="panel"
-      >
-        <li
-            *ngFor="let grade of grades$ | async"
+      <ng-container *ngIf="grades$ | async as inf">
+        <ul
+          class="panel"
         >
-          {{grade}}
-        </li>
-      </ul>
+          <li
+              *ngFor="let grade of inf['grade_level']"
+          >
+            {{grade}}
+          </li>
+        </ul>
+      </ng-container>
     </ng-template>
 
 </div>
