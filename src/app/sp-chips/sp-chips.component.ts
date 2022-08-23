@@ -16,6 +16,7 @@ export class SpChipsComponent implements OnInit {
   @Input() preventRemovingLast: boolean = false;
   @Input() suggestedTeacher: User;
   @Input() isProposed: boolean;
+  @Input() hideAddButton: boolean;
   @Input() textAddButton: string | null; 
   @Input() selectedTarget: 'users' | 'orgunits' | 'roles' | 'rooms' = 'users';
 
@@ -28,9 +29,15 @@ export class SpChipsComponent implements OnInit {
   ) { }
 
   get results() {
+    if (!this.selectedProfiles?.length) {
+      return [];
+    }
     // here for room visibility feature
     // not having a title...
-    if (this.selectedProfiles.length > 0 && !('title' in this.selectedProfiles[0])) {
+    if (this.selectedProfiles.length > 0 && (
+        (typeof this.selectedProfiles[0] !== 'object') || 
+        !('title' in this.selectedProfiles[0])
+      )) {
       return this.selectedProfiles;
     }
     // this is expected for a teacher instance

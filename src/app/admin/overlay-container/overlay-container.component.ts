@@ -497,8 +497,8 @@ export class OverlayContainerComponent implements OnInit, OnDestroy {
           if (c.value === null) return null;
           // only visible_all_students do not need a group of students
           // ensures non-all modes have a non-empty over array (students)
-          if (c.value.mode !== 'visible_all_students' && c.value.over.length === 0) {
-            return {needover: 'you must select at least 1 student.'};
+          if (c.value.mode !== 'visible_all_students' && c.value.over.length === 0 && c.value.grade.length === 0) {
+            return {needover: 'you must select at least 1 student or a grade.'};
           }
           return null;
         }]
@@ -509,7 +509,7 @@ export class OverlayContainerComponent implements OnInit, OnDestroy {
 
   getVisibilityStudents(loc: Location): VisibilityOverStudents {
     if (!loc) return DEFAULT_VISIBILITY_STUDENTS;
-    return {mode: loc.visibility_type, over: loc.visibility_students};
+    return {mode: loc.visibility_type, over: loc.visibility_students, grade: loc.visibility_grade};
   }
 
   generateAdvOptionsModel(loc: Location) {

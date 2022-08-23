@@ -43,6 +43,8 @@ export class VisibilityRoomComponent implements OnInit, AfterViewInit, OnDestroy
   // reasons the component exists for
   // 1) the students to be subject of visibility room rule
   selectedStudents: User[] = [];
+  // grade levels
+  selectedGradeLevels: string[] = [];
   // related setting to search component
   showOptions = false;
   // 2) how visibility room rule will operate - value that has meaning for database
@@ -71,8 +73,6 @@ export class VisibilityRoomComponent implements OnInit, AfterViewInit, OnDestroy
    return this.mode !== 'visible_all_students';
   }
 
-  private myid = 0;
-
   constructor(
     public dialog: MatDialog,
     public overlayService: OverlayDataService,
@@ -80,7 +80,6 @@ export class VisibilityRoomComponent implements OnInit, AfterViewInit, OnDestroy
     private dataService: DataService,
   ) {
     this.modeView = this.modes[this.mode];
-    this.myid += 1;
   }
 
   grades$: Observable<string[]> = new Observable<string[]>();
@@ -97,6 +96,7 @@ export class VisibilityRoomComponent implements OnInit, AfterViewInit, OnDestroy
     this.mode = this.data.mode;
     this.modeView = this.modes[this.data.mode];
     this.selectedStudents = this.data.over; 
+    this.selectedGradeLevels = this.data.grade;
 
     const hasChanged = !this.isEqualPrevData(this.data);
     // keep last non-all data
@@ -107,7 +107,7 @@ export class VisibilityRoomComponent implements OnInit, AfterViewInit, OnDestroy
       startWith(hasChanged),
     ).subscribe((v: boolean) => {
       const c = this.visibilityForm.get('visibility');
-      console.log('MYID, DIRTY PRISTINE:', this.myid, v, this.visibilityForm.pristine)
+      console.log('PRISTINE VAL:', this.visibilityForm.pristine, c.value)
       if (v) {
         c.markAsDirty();
       } else {
@@ -146,11 +146,17 @@ export class VisibilityRoomComponent implements OnInit, AfterViewInit, OnDestroy
         if (isInput || isOpener || fromdialog) {
           this.showErrorsVisibility = false;
         }
+        // TODO search left opened  will close on clicking elsewhere
+        /*} else if (this.isShowSearch) {
+          this.searchComponent.inputField = false;
+        }*/
       } catch (e) {
         console.log('RV.listen', e);
       }
     });
   }
+
+  private allowOpenGradeLevel: boolean = true;
   // the focus of internal input native of app-search
   // triggers this method in order to hide the errors 
   public onSearchComponentFocus() {
@@ -183,6 +189,17 @@ export class VisibilityRoomComponent implements OnInit, AfterViewInit, OnDestroy
     const panelDialogExists = this.dialog.getDialogById(this.GRADE_LEVEl_DIALOG_ID);
     if (panelDialogExists) return;
 
+    if (this.searchComponent.inputField) {
+      const $input = this.searchComponent.input['input']['nativeElement'];
+      // non empty field  cancels the dialog opening
+      if ($input.value.length) return;
+    }
+
+    if (!this.allowOpenGradeLevel) {
+      this.allowOpenGradeLevel = !this.allowOpenGradeLevel;
+      return;
+    }
+
     const conf = {
       id: this.GRADE_LEVEl_DIALOG_ID,
       panelClass: 'consent-dialog-container',
@@ -191,37 +208,24 @@ export class VisibilityRoomComponent implements OnInit, AfterViewInit, OnDestroy
     };
     this.gradeLevelDialog = this.dialog.open(this.gradeLevelTpl, conf);
     this.positionGradeLevelDialog();
-    this.gradeLevelDialog.afterClosed().subscribe(() => {
+    this.gradeLevelDialog.afterClosed()
+    .pipe(
+      take(1),
+      // TODO selectedGradeLevels it is not in sync with visibilityForm 
+      tap(() => this.selectedGradeLevels = [...this.visibilityForm.value.visibility.grade]),
+    )
+    .subscribe(() => {
       this.clickoutFn = null;
     });
     this.gradeLevelDialog.afterOpened().subscribe(() => {
       this.clickoutFn = this.closeGradeLevelDialog;
     });
 
-    console.log(this.grades$)
+    this.allowOpenGradeLevel = !this.allowOpenGradeLevel;
+  }
 
-    /*this.panelDialog.afterClosed()
-    .pipe(
-      take(1),
-      filter( (v: VisibilityMode | null) => !!v && (v !== this.mode)),
-      tap((v: VisibilityMode) => {
-        // init new mode
-        this.selectedStudents = [];
-        this.mode = v;
-        this.modeView = this.modes[v];
-        if (!this.prevdata[v]) {
-          this.resetSearchComponent();
-        } else {
-          this.setSearchComponent(this.prevdata[v].over);
-        }
-      }),
-      finalize(() => {
-        this.didOpen = false;
-        this.panelDialog = undefined;
-        // component is untouched
-        //this.dirty.next(false);
-      }),
-    ).subscribe();*/
+  openGradeLevelDialogByChip() {
+    
   }
 
   closeGradeLevelDialog(event: MouseEvent) {
@@ -238,6 +242,23 @@ export class VisibilityRoomComponent implements OnInit, AfterViewInit, OnDestroy
     {
       this.gradeLevelDialog.close();
     }
+  }
+
+  handleGradeLevelSelected(grade: string) {
+    const visibility = this.visibilityForm.value.visibility;
+    visibility.grade = [...visibility?.grade ?? [], grade].filter((v, i, self) => self.indexOf(v) === i);
+    this.visibilityForm.patchValue({visibility});
+    this.visibilityForm.markAsDirty();
+    this.gradeLevelDialog.close();
+    this.searchComponent.inputField = false;
+    this.allowOpenGradeLevel = true;
+  }
+
+  updateGradeLevel(grades: string[]) {
+    const visibility = this.visibilityForm.value.visibility;
+    visibility.grade = [...grades ?? []].filter((v, i, self) => self.indexOf(v) === i);
+
+    this.visibilityForm.patchValue({visibility});
   }
 
   private dirty: Subject<boolean> = new Subject<boolean>();
@@ -301,7 +322,7 @@ export class VisibilityRoomComponent implements OnInit, AfterViewInit, OnDestroy
 
   public visibilityChange() {
     // prepare data for external use
-    this.data = {mode: this.mode, over: this.selectedStudents};
+    this.data = {mode: this.mode, over: this.selectedStudents, grade: this.selectedGradeLevels};
     
     // sync with page state
     this.overlayService.patchData({data: this.data});
@@ -329,6 +350,7 @@ export class VisibilityRoomComponent implements OnInit, AfterViewInit, OnDestroy
       [data.mode]: {
         mode: data.mode, 
         over: cloneDeep(data.over),
+        grade: cloneDeep(data.grade),
       }
     };
   }
@@ -388,7 +410,7 @@ export class VisibilityRoomComponent implements OnInit, AfterViewInit, OnDestroy
     this.gradeLevelDialog.updatePosition(position)
   }
 
-
+  // UI hover color
   hoveredNonSelected: boolean | null
   
   onEnter(mode: string) {

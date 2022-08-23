@@ -26,6 +26,18 @@
     {{ modeView.text }}
   </span>
 
+    <div class="chip">
+      {{visibilityForm.isDirty | json }} {{visibilityForm.value.visibility | json}}
+      <app-sp-chips
+        *ngIf="isShowSearch"
+        [preventRemovingLast]="false"
+        [hideAddButton]="true"
+        [selectedProfiles]="visibilityForm.value.visibility.grade"
+        [selectedTarget]="null"
+        (add)="openGradeLevelDialogByChip()"
+        (updateSelectedEvent)="updateGradeLevel($event)"
+      ></app-sp-chips>
+    </div>
     <div class="students-search">
       <app-sp-search
         *ngIf="isShowSearch"
@@ -83,6 +95,7 @@
         >
           <li
               *ngFor="let grade of inf['grade_level']"
+              (click)="handleGradeLevelSelected(grade)"
           >
             {{grade}}
           </li>
