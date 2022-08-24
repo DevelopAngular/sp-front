@@ -67,6 +67,13 @@
       background-image: url('/assets/Rect (Red500).svg');
     }
   }
+
+  &.grades {
+    justify-content: left;
+    margin: 0;
+    padding-left: 0;
+    width: 100%;
+  }
 }
 
 .with-triangle:after, .with-triangle::after {

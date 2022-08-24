@@ -18,6 +18,7 @@ export class SpChipsComponent implements OnInit {
   @Input() isProposed: boolean;
   @Input() hideAddButton: boolean;
   @Input() textAddButton: string | null; 
+  @Input() textPrepend: string | null; 
   @Input() selectedTarget: 'users' | 'orgunits' | 'roles' | 'rooms' = 'users';
 
   @Output() add: EventEmitter<boolean> = new EventEmitter();
@@ -58,9 +59,9 @@ export class SpChipsComponent implements OnInit {
 
   getBackground(item) {
     if (item.hovered) {
-      return '#F7F7F7';
+      return '#E2E6EC';
     } else {
-      return '#F7F7F7';
+      return '#E2E6EC';
     }
   }
   chipHover(chip: any, hover: boolean ) {

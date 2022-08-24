@@ -26,13 +26,14 @@
     {{ modeView.text }}
   </span>
 
-    <div class="chip">
+    <div class="chip grades">
       <app-sp-chips
         *ngIf="isShowSearch"
         [preventRemovingLast]="false"
         [hideAddButton]="true"
         [selectedProfiles]="visibilityForm.value.visibility.grade"
         [selectedTarget]="null"
+        [textPrepend]="'Grade:'"
         (add)="openGradeLevelDialogByChip()"
         (updateSelectedEvent)="updateGradeLevel($event)"
       ></app-sp-chips>
@@ -88,18 +89,23 @@
     <ng-template
       #gradeLevel
     >
-      <ng-container *ngIf="grades$ | async as inf">
-        <ul
-          class="panel"
-        >
-          <li
-              *ngFor="let grade of inf['grade_level']"
-              (click)="handleGradeLevelSelected(grade)"
-          >
-            {{grade}}
-          </li>
+        <ul class="panel">
+          <li>by grade</li>
+          <ng-container *ngIf="grades$ | async as inf; else loading">
+            <li
+                *ngFor="let grade of inf['grade_level']"
+                (click)="handleGradeLevelSelected(grade)"
+            >
+              {{grade}}
+            </li>
+          </ng-container>
         </ul>
-      </ng-container>
+    </ng-template>
+
+    <ng-template #loading>
+      <li class="selected">
+        <mat-spinner [color]="'accent'" [diameter]="30"></mat-spinner>
+      </li>
     </ng-template>
 
 </div>

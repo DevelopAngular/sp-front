@@ -7,7 +7,7 @@
     [style.color]="textColor(chip)">
     <img *ngIf="selectedTarget === 'roles'" width="16" style="margin-right: 5px" [src]="teacher.icon" alt="Icon">
     <span [style.cursor]="'default'" [style.user-select]="'none'">
-      {{selectedTarget === 'users' ? teacher.display_name : selectedTarget === 'roles' ? teacher.role : selectedTarget === 'rooms' ? teacher.title : teacher.as !== undefined ? teacher.as : teacher}}
+      <span style="font-weight: bold" *ngIf="!!textPrepend">{{textPrepend}}</span> {{selectedTarget === 'users' ? teacher.display_name : selectedTarget === 'roles' ? teacher.role : selectedTarget === 'rooms' ? teacher.title : teacher.as !== undefined ? teacher.as : teacher}}
     </span>
     <div *ngIf="chip.hovered && !teacher.lockAccount" class="delete">
 

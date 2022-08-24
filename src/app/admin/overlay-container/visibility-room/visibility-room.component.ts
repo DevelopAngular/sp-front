@@ -297,13 +297,19 @@ export class VisibilityRoomComponent implements OnInit, AfterViewInit, OnDestroy
       take(1),
       filter( (v: VisibilityMode | null) => !!v && (v !== this.mode)),
       tap((v: VisibilityMode) => {
+        
         // init new mode
         const visibility: VisibilityOverStudents = DEFAULT_VISIBILITY_STUDENTS;
         visibility.over = this.selectedStudents = [];
         visibility.grade = this.selectedGradeLevels = [];
         visibility.mode = this.mode = v;
+        if (v !== 'visible_all_students'  && this.prevdata[v]) {
+          visibility.over = this.selectedStudents = this.prevdata[v].over;
+          visibility.grade = this.selectedGradeLevels = this.prevdata[v].grade;
+        }
         this.visibilityForm.setValue({visibility});
         this.modeView = this.modes[v];
+
         if (!this.prevdata[v]) {
           this.resetSearchComponent();
         } else {
