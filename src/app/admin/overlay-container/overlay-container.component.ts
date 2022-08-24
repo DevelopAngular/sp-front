@@ -371,7 +371,7 @@ export class OverlayContainerComponent implements OnInit, OnDestroy {
       }),
       map(({visibility: v}: {visibility: VisibilityOverStudents}): VisibilityOverStudents => v),
     ).subscribe((v: VisibilityOverStudents) => {
-      this.visibility = v;
+      this.visibility = cloneDeep(v);
     });
 
       if (this.currentPage === Pages.EditFolder || this.currentPage === Pages.EditRoom || this.currentPage === Pages.EditRoomInFolder) {

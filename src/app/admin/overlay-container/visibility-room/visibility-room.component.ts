@@ -226,10 +226,6 @@ export class VisibilityRoomComponent implements OnInit, AfterViewInit, OnDestroy
     this.allowOpenGradeLevel = !this.allowOpenGradeLevel;
   }
 
-  openGradeLevelDialogByChip() {
-    
-  }
-
   closeGradeLevelDialog(event: MouseEvent) {
     const $matContainer = document.getElementById(this.GRADE_LEVEl_DIALOG_ID);
     if (!$matContainer) {
@@ -249,12 +245,15 @@ export class VisibilityRoomComponent implements OnInit, AfterViewInit, OnDestroy
   handleGradeLevelSelected(grade: string) {
     const visibility = this.visibilityForm.value.visibility;
     visibility.grade = [...visibility?.grade ?? [], grade].filter((v, i, self) => self.indexOf(v) === i);
+
     this.mode = visibility.mode;
     this.selectedStudents = visibility.over;
     this.selectedGradeLevels = visibility.grade;
 
-    this.visibilityForm.patchValue({visibility});
-    this.visibilityForm.markAsDirty();
+    this.change$.next();
+
+    //this.visibilityForm.patchValue({visibility});
+    //this.visibilityForm.markAsDirty();
 
     this.gradeLevelDialog.close();
     this.searchComponent.inputField = false;
@@ -262,10 +261,18 @@ export class VisibilityRoomComponent implements OnInit, AfterViewInit, OnDestroy
   }
 
   updateGradeLevel(grades: string[]) {
-    const visibility = this.visibilityForm.value.visibility;
+    let visibility = this.visibilityForm.value.visibility;
     visibility.grade = [...grades ?? []].filter((v, i, self) => self.indexOf(v) === i);
+    visibility = cloneDeep(visibility);
 
-    this.visibilityForm.patchValue({visibility});
+    this.mode = visibility.mode;
+    this.selectedStudents = visibility.over;
+    this.selectedGradeLevels = visibility.grade;
+
+    this.change$.next();
+    this.dirty.next();
+
+    //this.visibilityForm.patchValue({visibility});
   }
 
   private dirty: Subject<boolean> = new Subject<boolean>();
@@ -303,7 +310,7 @@ export class VisibilityRoomComponent implements OnInit, AfterViewInit, OnDestroy
         visibility.over = this.selectedStudents = [];
         visibility.grade = this.selectedGradeLevels = [];
         visibility.mode = this.mode = v;
-        if (v !== 'visible_all_students'  && this.prevdata[v]) {
+        if (v !== 'visible_all_students' && this.prevdata[v]) {
           visibility.over = this.selectedStudents = this.prevdata[v].over;
           visibility.grade = this.selectedGradeLevels = this.prevdata[v].grade;
         }
@@ -338,14 +345,14 @@ export class VisibilityRoomComponent implements OnInit, AfterViewInit, OnDestroy
 
   public visibilityChange() {
     // prepare data for external use
-    this.data = {mode: this.mode, over: this.selectedStudents, grade: this.selectedGradeLevels};
-    
+    this.data = {mode: this.mode, over: [...this.selectedStudents], grade: [...this.selectedGradeLevels]};
+   const data = cloneDeep(this.data); 
     // sync with page state
-    this.overlayService.patchData({data: this.data});
+    this.overlayService.patchData({data});
 
-    this.visibilityForm.setValue({visibility: this.data});
+    this.visibilityForm.setValue({visibility: data});
     // notify parent of selected option
-    this.optionSelectedEvent.emit(this.data);
+    this.optionSelectedEvent.emit(data);
 
     // keep last modification
     this.updatePrevData();
@@ -365,10 +372,11 @@ export class VisibilityRoomComponent implements OnInit, AfterViewInit, OnDestroy
       ...this.prevdata,
       [data.mode]: {
         mode: data.mode, 
-        over: cloneDeep(data.over),
-        grade: cloneDeep(data.grade),
+        over: data.over,
+        grade: data.grade,
       }
     };
+    this.prevdata = cloneDeep(this.prevdata);
   }
 
   private isEqualPrevData(data: VisibilityOverStudents): boolean {
