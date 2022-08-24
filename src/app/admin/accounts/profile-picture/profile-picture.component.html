@@ -58,7 +58,7 @@
           <div class="step">
             <div class="ds-dialog-heading">Add map file</div>
             <div class="description">
-              Upload a CSV containing the email or Clever ID, and the corresponding image filename.
+              Upload an Excel file (.xlsx) containing the email or Clever ID, and the corresponding image filename.
             </div>
           </div>
         </div>
@@ -69,7 +69,7 @@
             [leftIcon]="'./assets/Simple CSV (White).svg'"
             (buttonClick)="csvFile.click()"
             [size]="'small'"
-          >{{ !uploadingProgress.csv.inProcess && !uploadingProgress.csv.complete ? 'Choose CSV' : 'File selected' }}
+          >{{ !uploadingProgress.csv.inProcess && !uploadingProgress.csv.complete ? 'Choose Excel File' : 'File selected' }}
           </app-gradient-button>
           <app-gradient-button
             [style.margin-left]="'7px'"
@@ -101,7 +101,7 @@
             </div>
           </div>
         </div>
-        <div class="button">
+        <div class="button" style="margin-left: 10px">
           <app-gradient-button
             [gradient]="!uploadingProgress.images.inProcess && !uploadingProgress.images.complete ? '#7F879D, #7F879D' : '#07ABC3, #07ABC3'"
             [hoverColor]="'#7F879D'"
