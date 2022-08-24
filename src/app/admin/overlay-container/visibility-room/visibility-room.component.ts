@@ -128,6 +128,8 @@ export class VisibilityRoomComponent implements OnInit, AfterViewInit, OnDestroy
   ngAfterViewInit() {
     if (this.selectedStudents.length > 0) {
       this.searchComponent.inputField = false;
+    } else if (this.selectedGradeLevels.length > 0) {
+      this.searchComponent.inputField = false;
     }
 
     this.unlisten = this.renderer.listen('document', 'click', event => {
@@ -247,8 +249,13 @@ export class VisibilityRoomComponent implements OnInit, AfterViewInit, OnDestroy
   handleGradeLevelSelected(grade: string) {
     const visibility = this.visibilityForm.value.visibility;
     visibility.grade = [...visibility?.grade ?? [], grade].filter((v, i, self) => self.indexOf(v) === i);
+    this.mode = visibility.mode;
+    this.selectedStudents = visibility.over;
+    this.selectedGradeLevels = visibility.grade;
+
     this.visibilityForm.patchValue({visibility});
     this.visibilityForm.markAsDirty();
+
     this.gradeLevelDialog.close();
     this.searchComponent.inputField = false;
     this.allowOpenGradeLevel = true;
@@ -291,8 +298,11 @@ export class VisibilityRoomComponent implements OnInit, AfterViewInit, OnDestroy
       filter( (v: VisibilityMode | null) => !!v && (v !== this.mode)),
       tap((v: VisibilityMode) => {
         // init new mode
-        this.selectedStudents = [];
-        this.mode = v;
+        const visibility: VisibilityOverStudents = DEFAULT_VISIBILITY_STUDENTS;
+        visibility.over = this.selectedStudents = [];
+        visibility.grade = this.selectedGradeLevels = [];
+        visibility.mode = this.mode = v;
+        this.visibilityForm.setValue({visibility});
         this.modeView = this.modes[v];
         if (!this.prevdata[v]) {
           this.resetSearchComponent();

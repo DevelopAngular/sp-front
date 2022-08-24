@@ -27,7 +27,6 @@
   </span>
 
     <div class="chip">
-      {{visibilityForm.isDirty | json }} {{visibilityForm.value.visibility | json}}
       <app-sp-chips
         *ngIf="isShowSearch"
         [preventRemovingLast]="false"
@@ -45,7 +44,7 @@
         [chipsMode]="true"
         [focused]="true"
         [cancelButton]="false"
-        [textAddButton]="'Add student'"
+        [textAddButton]="'Add student, grade level'"
         [selectedOptions]="selectedStudents"
         (onUpdate)="addFoundStudents($event)"
         (focusEvent)="onSearchComponentFocus()"

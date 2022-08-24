@@ -509,7 +509,7 @@ export class OverlayContainerComponent implements OnInit, OnDestroy {
 
   getVisibilityStudents(loc: Location): VisibilityOverStudents {
     if (!loc) return DEFAULT_VISIBILITY_STUDENTS;
-    return {mode: loc.visibility_type, over: loc.visibility_students, grade: loc.visibility_grade};
+    return {...DEFAULT_VISIBILITY_STUDENTS, mode: loc.visibility_type, over: loc.visibility_students, grade: loc.visibility_grade};
   }
 
   generateAdvOptionsModel(loc: Location) {
@@ -752,6 +752,7 @@ export class OverlayContainerComponent implements OnInit, OnDestroy {
                 enable: this.isOpenRoom,
                 visibility_type: this.visibility.mode,
                 visibility_students: this.visibility.over.map((el: User) => el.id),
+                visibility_grade: this.visibility.grade,
                 ...this.normalizeAdvOptData()
         };
        this.locationService.createLocationRequest(location)
@@ -818,6 +819,7 @@ export class OverlayContainerComponent implements OnInit, OnDestroy {
             } else if (this.visibilityForm.pristine) {
               delete data?.visibility_students;
               delete data?.visibility_type;
+              delete data?.visibility_grade;
             }
             //location.visibility_type =
             return this.locationService.createLocation(data);
@@ -836,6 +838,7 @@ export class OverlayContainerComponent implements OnInit, OnDestroy {
             } else if (this.visibilityForm.pristine) {
               delete data?.visibility_students;
               delete data?.visibility_type;
+              delete data?.visibility_grade;
             }
 
             return this.locationService.updateLocation(id, data);
@@ -906,6 +909,7 @@ export class OverlayContainerComponent implements OnInit, OnDestroy {
 
             visibility_type: this.visibility.mode,
             visibility_students: this.visibility.over.map((el: User) => el.id),
+            visibility_grade: this.visibility.grade,
         };
 
         const mergedData = {...location, ...this.normalizeAdvOptData()};
@@ -931,10 +935,11 @@ export class OverlayContainerComponent implements OnInit, OnDestroy {
     if (this.currentPage === Pages.BulkEditRooms) {
       const patchRequests$ = (this.bulkEditData.rooms as Location[]).map(room => {
         // ensure we have visibility data
-        const {mode, over} = this.bulkEditData.roomData?.visibility ?? DEFAULT_VISIBILITY_STUDENTS ;
+        const {mode, over, grade} = this.bulkEditData.roomData?.visibility ?? DEFAULT_VISIBILITY_STUDENTS ;
         const visibilityBulkData = {
           visibility_type: mode,
           visibility_students: over.map(s => ''+s.id),
+          visibility_grade: grade,
         };
         
         let data = {
@@ -947,6 +952,7 @@ export class OverlayContainerComponent implements OnInit, OnDestroy {
         if (!this.visibilityForm.dirty) {
           delete data.visibility_students;
           delete data.visibility_type; 
+          delete data.visibility_grade;
         }
         return this.locationService.updateLocationRequest(room.id, data).pipe(
           filter(res => !!res));
@@ -1110,6 +1116,7 @@ export class OverlayContainerComponent implements OnInit, OnDestroy {
       enable: room.enable,
       visibility_students: room.visibility?.over || DEFAULT_VISIBILITY_STUDENTS.over,
       visibility_type: room.visibility?.mode || DEFAULT_VISIBILITY_STUDENTS.mode,
+      visibility_grade: room.visibility?.grade || DEFAULT_VISIBILITY_STUDENTS.grade,
     };
   }
 
