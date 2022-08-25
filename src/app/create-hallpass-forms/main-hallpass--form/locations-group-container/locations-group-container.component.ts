@@ -140,13 +140,13 @@ export class LocationsGroupContainerComponent implements OnInit {
               const loc = Location.fromJSON(p.location);
               // TODO assumed this.user has been emited
               const student = [''+this.user.id];
-              if (this.visibilityService.filterByVisibility(loc, student)) return p;
+              if (!this.isStaff && this.visibilityService.filterByVisibility(loc, student)) return p;
+              return p;
             } catch (e) {
               console.log(e.message)
             }
-          } else if (p.location === null) {
-            return p;
           }
+          return p;
         });
 
         if (!this?.passLimitInfo?.showPasses) {
