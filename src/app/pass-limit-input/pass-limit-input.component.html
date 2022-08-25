@@ -10,6 +10,7 @@
     placeholder="# of passes"
     [formGroup]="formGroup"
     [controlName]="control"
+    [input_value]="control.value"
     (blurEvent)="passLimitDropdownRef?.close()"></app-input>
 
   <div class="per-day-wrapper">
