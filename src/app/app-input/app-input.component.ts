@@ -69,7 +69,7 @@ export class AppInputComponent implements OnInit, OnChanges, OnDestroy {
 
   get minLeftMargin() {
     if (this.controlName.value === 'Unlimited') { // TODO: Remove in future, since this is specific to pass limits
-      return 97;
+      return 94;
     }
     const value = parseFloat(this.controlName.value);
     if (Number.isNaN(value)) {
