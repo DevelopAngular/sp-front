@@ -118,7 +118,6 @@ export class AdminPassLimitDialogComponent implements OnInit, OnDestroy {
   page = 1;
   frameMotion$ = this.formService.getFrameMotionDirection();
 
-  @ViewChild('tabGroup') dialogPages: MatTabGroup;
   @ViewChild('studentSearch') studentSearcher: SPSearchComponent;
   @ViewChild('deleteDialogBody') deleteDialogBody: TemplateRef<HTMLElement>;
   @ViewChild('schoolPassLimitInput') set setSchoolLimitInput(comp: PassLimitInputComponent) {
@@ -134,7 +133,6 @@ export class AdminPassLimitDialogComponent implements OnInit, OnDestroy {
     }
 
     this.individualPassLimitInput = comp;
-    // this.loadIndividualForm();
   }
 
   constructor(
