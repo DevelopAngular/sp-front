@@ -27,7 +27,9 @@ export class PassLimitService {
   }
 
   createPassLimit(pl: HallPassLimit) {
-    return this.http.post(`${PASS_LIMIT_ENDPOINT}/create`, pl, undefined, false);
+    return this.http.post(`${PASS_LIMIT_ENDPOINT}/create`, pl, undefined, false).pipe(
+      tap(() => this.individualLimitUpdate$.next())
+    );
   }
 
   getRemainingLimits({studentId}: { studentId: number | string }): Observable<{ remainingPasses: number }> {
@@ -35,7 +37,9 @@ export class PassLimitService {
   }
 
   updatePassLimits(pl: HallPassLimit) {
-    return this.http.put(`${PASS_LIMIT_ENDPOINT}/update`, pl);
+    return this.http.put(`${PASS_LIMIT_ENDPOINT}/update`, pl).pipe(
+      tap(() => this.individualLimitUpdate$.next())
+    );
   }
 
   /**
