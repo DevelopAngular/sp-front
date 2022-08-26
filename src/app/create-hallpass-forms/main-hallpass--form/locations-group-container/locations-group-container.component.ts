@@ -131,9 +131,11 @@ export class LocationsGroupContainerComponent implements OnInit {
     this.data.toLocation = this.FORM_STATE.data.direction && this.FORM_STATE.data.direction.to ? this.FORM_STATE.data.direction.to : null;
 
     this.user$ = this.dataService.currentUser;
-    this.user$.subscribe((user: User) => {
-      this.isStaff = user.isTeacher() || user.isAdmin() || user.isAssistant();
-      this.user = user;
+    this.user$.subscribe({
+      next: (user: User) => {
+        this.isStaff = user.isTeacher() || user.isAdmin() || user.isAssistant();
+        this.user = user;
+      },
     });
 
     this.pinnables = this.formService.getPinnable(!!this.dialogData['kioskModeRoom']).pipe(
