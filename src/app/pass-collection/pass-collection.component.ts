@@ -7,7 +7,6 @@ import {
   Input,
   OnDestroy,
   OnInit,
-  AfterViewInit,
   Output,
   QueryList,
   ViewChildren
@@ -36,7 +35,6 @@ import {SpAppearanceComponent} from '../sp-appearance/sp-appearance.component';
 import {User} from '../models/User';
 import {UserService} from '../services/user.service';
 import * as moment from 'moment';
-import {Router} from '@angular/router';
 import {PassTileComponent} from '../pass-tile/pass-tile.component';
 
 export class SortOption {
@@ -155,10 +153,6 @@ export class PassCollectionComponent implements OnInit, OnDestroy {
 
   get gridGap() {
     return this.grid_gap;
-  }
-
-  get _color() {
-    return this.darkTheme.getColor({dark: '#FFFFFF', white: '#1F195E'});
   }
 
   get selectedText() {
