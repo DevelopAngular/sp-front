@@ -1,5 +1,6 @@
 import {Injectable} from '@angular/core';
 import {Location} from '../../models/Location';
+import {User} from '../../models/User';
 import {VisibilityMode} from '../../admin/overlay-container/visibility-room/visibility-room.type';
 
 @Injectable()
@@ -33,16 +34,14 @@ export class LocationVisibilityService {
     return skipped;
   }
 
-  filterByVisibility(location: Location, students: string[]): bool {
+  filterByVisibility(location: Location, students: string[]): boolean {
     const ruleStudents = location.visibility_students.map(s => ''+s.id);
     const rule = location.visibility_type;
     let skipped = this.calculateSkipped(students, ruleStudents, rule);
     return skipped === undefined;
   }
 
-  filterByGrade(location: Location, students: User[]): bool {
-    let skipped: string[] | undefined;
-
+  filterByGrade(location: Location, students: User[]): boolean {
     const rule = location.visibility_type;
     if (rule === 'visible_all_students') {
       return true;  
