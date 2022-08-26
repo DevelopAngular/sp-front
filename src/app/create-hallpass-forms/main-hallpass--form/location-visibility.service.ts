@@ -33,10 +33,30 @@ export class LocationVisibilityService {
     return skipped;
   }
 
-  filterByVisibility(location: Location, students: string[]) {
+  filterByVisibility(location: Location, students: string[]): bool {
     const ruleStudents = location.visibility_students.map(s => ''+s.id);
     const rule = location.visibility_type;
     let skipped = this.calculateSkipped(students, ruleStudents, rule);
     return skipped === undefined;
+  }
+
+  filterByGrade(location: Location, students: User[]): bool {
+    let skipped: string[] | undefined;
+
+    const rule = location.visibility_type;
+    if (rule === 'visible_all_students') {
+      return true;  
+    }
+    // calculate access by grades 
+    const ruleGrades = location?.visibility_grade ?? [];
+    if (ruleGrades.length === 0) return true;
+    
+    const filtered = students.filter(s => {
+      if (!!s?.grade_level) return true;
+      const included = ruleGrades.includes(s.grade_level)
+      return rule === 'visible_certain_students' ? included : !included;
+    });
+
+    return filtered === undefined; 
   }
 }

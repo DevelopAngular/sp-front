@@ -152,6 +152,7 @@ export class FromWhereComponent implements OnInit, OnDestroy {
           
     // skipped are students that do not qualify to go forward     
      let skipped = this.visibilityService.calculateSkipped(students, ruleStudents, rule);
+     let grades = this.visibilityService.filterByGrade(location, selectedStudents);
 
       if (!skipped || skipped.length === 0) {
         forwardAndEmit();
