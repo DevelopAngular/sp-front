@@ -123,6 +123,24 @@ ul.error {
     li {
       font-weight: 500;
       color: $navy500;
+      &.upload {
+        font-size: 14px;
+        color: $gray500;
+        background-color: $gray050;
+        display: block;
+        text-align: center;
+        width: 100%;
+        box-sizing: border-box;
+        &:hover {
+          background-color: $gray100;
+          &:after {
+            content: none !important;
+            background-image: none !important;
+            width: 0px !important;
+            height: 0px !important;
+          }
+        }
+      }
     }
   }
   li {
@@ -152,7 +170,7 @@ ul.error {
     }
     &.selected.grayed {
       color: $gray500;  
-      background-color: $gray100;
+      background-color: $gray050;
       &:after {
         background-image: none;
         background-size: none;

@@ -213,7 +213,6 @@ export class VisibilityRoomComponent implements OnInit, AfterViewInit, OnDestroy
     this.gradeLevelDialog.afterClosed()
     .pipe(
       take(1),
-      // TODO selectedGradeLevels it is not in sync with visibilityForm 
       tap(() => this.selectedGradeLevels = [...this.visibilityForm.value.visibility.grade]),
     )
     .subscribe(() => {
