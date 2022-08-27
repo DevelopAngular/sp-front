@@ -254,14 +254,10 @@ export class ToWhereComponent implements OnInit {
 
      // staff only
      const selectedStudents = this.formState.data.roomStudents ?? this.formState.data.selectedStudents;
-     const students = selectedStudents.map(s => ''+s.id);
-     const ruleStudents = location.visibility_students.map(s => ''+s.id);
-     const rule = location.visibility_type;
-
      // skipped are students that do not qualify to go forward
-     let skipped = this.visibilityService.calculateSkipped(students, ruleStudents, rule);
+     let skipped = this.visibilityService.calculateSkipped(selectedStudents, location);
 
-      if (!skipped || skipped.length === 0) {
+      if (skipped.length === 0) {
         forwardAndEmit();
         return;
       }
@@ -376,14 +372,10 @@ export class ToWhereComponent implements OnInit {
 
      // staff only
      const selectedStudents = this.formState.data.roomStudents ?? this.formState.data.selectedStudents;
-     const students = selectedStudents.map(s => ''+s.id);
-     const ruleStudents = location.visibility_students.map(s => ''+s.id);
-     const rule = location.visibility_type;
-
      // skipped are students that do not qualify to go forward
-     let skipped = this.visibilityService.calculateSkipped(students, ruleStudents, rule);
+     let skipped = this.visibilityService.calculateSkipped(selectedStudents, location);
 
-      if (!skipped || skipped.length === 0) {
+      if (skipped.length === 0) {
         forwardAndEmit();
         return;
       }

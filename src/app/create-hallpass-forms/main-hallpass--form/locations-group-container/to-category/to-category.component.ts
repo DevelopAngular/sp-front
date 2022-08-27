@@ -2,6 +2,7 @@ import {Component, ElementRef, EventEmitter, HostListener, Inject, Input, OnInit
 
 import {Navigation} from '../../main-hall-pass-form.component';
 import {Pinnable} from '../../../../models/Pinnable';
+import {User} from '../../../../models/User';
 import {CreateFormService} from '../../../create-form.service';
 import {BehaviorSubject, fromEvent, Subject} from 'rxjs';
 import {takeUntil} from 'rxjs/operators';
@@ -141,14 +142,10 @@ export class ToCategoryComponent implements OnInit {
 
    // staff only
    const selectedStudents = this.formState.data.roomStudents ?? this.formState.data.selectedStudents;
-   const students = selectedStudents.map(s => ''+s.id);
-   const ruleStudents = location.visibility_students.map(s => ''+s.id);
-   const rule = location.visibility_type;
-        
    // skipped are students that do not qualify to go forward     
-   let skipped = this.visibilityService.calculateSkipped(students, ruleStudents, rule);
+   let skipped = this.visibilityService.calculateSkipped(selectedStudents, location);
 
-    if (!skipped || skipped.length === 0) {
+    if (skipped.length === 0) {
       forwardAndEmit();
       return; 
     }

@@ -139,7 +139,7 @@ export class LocationsGroupContainerComponent implements OnInit {
             try {
               const loc = Location.fromJSON(p.location);
               // TODO assumed this.user has been emited
-              const student = [''+this.user.id];
+              const student = [this.user];
               if (this.visibilityService.filterByVisibility(loc, student)) return p;
             } catch (e) {
               console.log(e.message)

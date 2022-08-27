@@ -35,7 +35,7 @@ function Visibility(): any {
           let v = vv[0];
           try {
             v = Location.fromJSON(v);
-            const student = [''+ this.user.id];
+            const student = [this.user];
             vv = vv.filter((loc: Location) => this.visibilityService.filterByVisibility(loc, student));
           }catch (e) {
             console.log(e);

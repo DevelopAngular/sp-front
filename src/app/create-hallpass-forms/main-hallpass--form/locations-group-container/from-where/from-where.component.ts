@@ -146,15 +146,10 @@ export class FromWhereComponent implements OnInit, OnDestroy {
 
     // staff only
      const selectedStudents = this.formState.data.selectedStudents;
-     const students = selectedStudents.map(s => ''+s.id);
-     const ruleStudents = location.visibility_students.map(s => ''+s.id);
-     const rule = location.visibility_type;
-          
     // skipped are students that do not qualify to go forward     
-     let skipped = this.visibilityService.calculateSkipped(students, ruleStudents, rule);
-     let grades = this.visibilityService.filterByGrade(location, selectedStudents);
+     let skipped = this.visibilityService.calculateSkipped(selectedStudents, location);
 
-      if (!skipped || skipped.length === 0) {
+      if (skipped.length === 0) {
         forwardAndEmit();
         return; 
       }
