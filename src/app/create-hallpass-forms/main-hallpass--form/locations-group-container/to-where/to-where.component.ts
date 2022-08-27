@@ -192,6 +192,10 @@ export class ToWhereComponent implements OnInit {
   passLimitPromise(location) {
     return new Promise<boolean>(resolve => {
       const passLimit = this.passLimits[location.id];
+      // passLimits has no location.id
+      if (!passLimit){
+        return resolve(true);
+      }
       const passLimitReached = passLimit.max_passes_to_active && passLimit.max_passes_to < (passLimit.to_count + this.countStudents());
       if (!passLimitReached)
         return resolve(true);
