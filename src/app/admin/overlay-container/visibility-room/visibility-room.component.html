@@ -88,8 +88,8 @@
     <ng-template
       #gradeLevel
     >
-        <ul class="panel">
-          <li>by grade</li>
+        <ul class="panel grade-level">
+          <li class="title">by grade</li>
           <ng-container *ngIf="grades$ | async as inf; else loading">
             <li
                 *ngFor="let grade of inf['grade_level']"

@@ -114,13 +114,28 @@ ul.error {
   list-style: none;
   padding: 13px;
   margin: 0px;
-  color: $gray500;  
+  color: $gray500;
   font-size: 14px;
   font-weight: 400;
+  &.grade-level {
+    font-size: 15px;
+    width: 270px - 13px; // regular width without padding
+    li {
+      font-weight: 500;
+      color: $navy500;
+    }
+  }
   li {
     cursor: pointer;
     padding: 10px;
     display: flex;
+    &.title {
+      font-weight: 400;
+      font-size: 14px;
+      pointer-events: none;
+      text-transform: uppercase;
+      color: $gray500;
+    }
     &.selected, &:hover {
      color: $navy500;
      background-color: $navy100;
