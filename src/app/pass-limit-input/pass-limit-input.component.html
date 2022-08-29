@@ -2,7 +2,7 @@
   <app-input
     #appInput
     (click)="appInput.forceFocus(); openPassLimitDropdown()"
-    color="#6651F1"
+    [color]="isIndividual ? '#E48C15' : '#6651F1'"
     [showUnits]="true"
     [units]="control.value === '1' ? 'pass' : 'passes'"
     [isFocus]="false"
@@ -10,21 +10,24 @@
     placeholder="# of passes"
     [formGroup]="formGroup"
     [controlName]="control"
+    [input_value]="control.value"
     (blurEvent)="passLimitDropdownRef?.close()"></app-input>
 
   <div class="per-day-wrapper">
     <span>per day</span>
   </div>
-  <p class="ds-dialog-normal-text" style="width: 100%; opacity: 0.8; font-size: 12px !important;" *ngIf="control.errors || formGroup.errors">Passes must be a whole number between 0 and 50</p>
 </div>
 
 <ng-template #passLimitDropdown>
-  <div class="wrapper pass-limit-dropdown">
+  <div class="action-sheet-dialog">
     <div class="options">
-      <div class="option" *ngFor="let limit of (filteredArray$ | async)" (click)="selectValue(limit.value)">
-        <div class="title">
-          {{ limit.text }}
-        </div>
+      <div class="ds-flex-center-between option" [ngClass]="{ 'selected': control.value === limit.value }" *ngFor="let limit of (filteredArray$ | async)" (click)="selectValue(limit.value)">
+        <span>{{ limit.text }}</span>
+        <!--
+          app-input is text by default, but The value from the @Input control is a string. We use the double-equal instead of
+          the triple equal to avoid more type switching and parsing logic.
+        -->
+        <img *ngIf="control.value == limit.value" [src]="'./assets/Check (Navy).svg' | resolveAsset" alt="" style="width: 16px; height: 16px;">
       </div>
     </div>
   </div>

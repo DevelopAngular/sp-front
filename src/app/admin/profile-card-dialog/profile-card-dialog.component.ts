@@ -14,7 +14,6 @@ import {ExclusionGroup} from '../../models/ExclusionGroup';
 import {PassLimitStudentInfoComponent} from '../../pass-limit-student-info/pass-limit-student-info.component';
 import {StudentPassLimit} from '../../models/HallPassLimits';
 import {ViewProfileComponent} from './view-profile/view-profile.component';
-import {PassLimitFeedbackComponent} from '../../pass-limit-feedback/pass-limit-feedback.component';
 
 @Component({
   selector: 'app-profile-card-dialog',
@@ -36,12 +35,6 @@ export class ProfileCardDialogComponent implements OnInit {
     if (comp) {
       comp.data.studentPassLimit = this.data['profile']._originalUserProfile.limit as StudentPassLimit;
       comp.data.user = this.data['profile']._originalUserProfile;
-    }
-  }
-
-  @ViewChild('viewProfile') set viewProfilePassLimit(comp: ViewProfileComponent) {
-    if (comp) {
-      comp.studentPassLimit = this.data['profile']._originalUserProfile.limit as StudentPassLimit;
     }
   }
 

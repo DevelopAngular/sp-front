@@ -114,7 +114,7 @@ export class AccountsHeaderComponent implements OnInit, AfterViewInit, OnDestroy
 
   @HostListener('window:resize', ['$event.target'])
   onResize(event) {
-    this.isMiniButtons = this.wrapper.nativeElement.clientWidth <= 850;
+    this.isMiniButtons = this.wrapper.nativeElement.clientWidth <= 1050;
   }
 
   constructor(
@@ -184,7 +184,7 @@ export class AccountsHeaderComponent implements OnInit, AfterViewInit, OnDestroy
 
   ngAfterViewInit(): void {
     this.setCurrentUnderlinePos(this.tabRefs, this.navButtonsContainerRef);
-    this.isMiniButtons = this.wrapper.nativeElement.clientWidth <= 850;
+    this.isMiniButtons = this.wrapper.nativeElement.clientWidth <= 1260;
     this.nuxWrapperPosition = {
       originX: 'start',
       originY: 'top',
@@ -299,7 +299,8 @@ export class AccountsHeaderComponent implements OnInit, AfterViewInit, OnDestroy
     const filterDialogRef = this.matDialog.open(this.filterDialogTemplate, {
       ...RecommendedDialogConfig,
       backdropClass: ['custom-backdrop', 'cdk-overlay-transparent-backdrop'],
-      width: '225px',
+      panelClass: ['overlay-dialog', 'action-sheet-dialog'],
+      width: '244px',
       position: {
         top: `${coords.bottom + 10}px`,
         left: `${coords.left}px`
@@ -419,7 +420,8 @@ export class AccountsHeaderComponent implements OnInit, AfterViewInit, OnDestroy
       hasBackdrop: true,
       panelClass: 'overlay-dialog',
       backdropClass: 'custom-bd',
-      width: '425px'
+      width: '425px',
+      height: '500px'
     });
 
     this.adminPassLimitDialogRef.afterClosed().pipe(

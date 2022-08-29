@@ -908,5 +908,25 @@ $side) {
     }
 }
 
+.action-sheet-dialog {
+  padding: 10px;
+  font-size: 14px;
+
+  .option {
+    color: #7F879D;
+    padding: 10px;
+    border-radius: 7px;
+    cursor: pointer;
+
+    &:hover {
+      background-color: rgba(210, 210, 210, 0.3);
+    }
+
+    &.selected {
+      background: #ECF1FF;
+      @extend .ds-navy
+    }
+  }
+}
 
 /* === end === */

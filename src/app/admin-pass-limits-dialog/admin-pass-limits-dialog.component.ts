@@ -1,11 +1,11 @@
-import {Component, OnDestroy, OnInit, ViewChild} from '@angular/core';
+import {Component, OnDestroy, OnInit, TemplateRef, ViewChild} from '@angular/core';
 import {FormArray, FormControl, FormGroup, ValidationErrors, ValidatorFn, Validators} from '@angular/forms';
 
 import {MatDialog, MatDialogRef, MatDialogState} from '@angular/material/dialog';
 import {MatTabGroup} from '@angular/material/tabs';
 import {cloneDeep} from 'lodash';
 import {forkJoin, Observable, of, Subscription} from 'rxjs';
-import {concatMap, delay, map, tap} from 'rxjs/operators';
+import {concatMap, filter, map, tap} from 'rxjs/operators';
 
 import {ScreenService} from '../services/screen.service';
 import {PassLimitService} from '../services/pass-limit.service';
@@ -15,7 +15,14 @@ import {SPSearchComponent} from '../sp-search/sp-search.component';
 import {UserService} from '../services/user.service';
 import {IntroData} from '../ngrx/intros';
 import {PassLimitInputComponent} from '../pass-limit-input/pass-limit-input.component';
+import {
+  ConfirmationDialogComponent,
+  ConfirmationTemplates, RecommendedDialogConfig
+} from '../shared/shared-components/confirmation-dialog/confirmation-dialog.component';
+import {CreateFormService} from '../create-hallpass-forms/create-form.service';
+import {NextStep} from '../animations';
 
+// Ensures the school pass limit is between 0 and 50 inclusive
 const schoolPassLimitRangeValidator = (): ValidatorFn => (form: FormGroup): ValidationErrors => {
   const num = parseInt(form.value['passLimit'], 10);
   if (num === NaN || form.value['passLimit'] === '') {
@@ -27,6 +34,26 @@ const schoolPassLimitRangeValidator = (): ValidatorFn => (form: FormGroup): Vali
   return null;
 };
 
+// Ensures the school pass limit form requests hte pass limit input if the limit is enabled
+const limitsRequiredValidator = (): ValidatorFn => (form: FormGroup): ValidationErrors => {
+  const v = form.value;
+  const plValidators = v.limitEnabled
+    ? [Validators.required, Validators.pattern(/^([1-9]\d*)$|^(0){1}$/)]
+    : [Validators.pattern(/^([1-9]\d*)$|^(0){1}$/)];
+
+  form.controls['passLimit'].setValidators(plValidators);
+
+  if (!v.limitEnabled) {
+    return null;
+  }
+
+  return (v === undefined || v === null)
+    ? {limitEnabled: true}
+    : null;
+};
+
+// Ensures the school pass limit is between -2 and 50 inclusive
+// -2 means Unlimited passes, -1 means no individual limit set
 const individualPassLimitRangeValidator = (): ValidatorFn => (form: FormGroup): ValidationErrors => {
   if (form.value['passLimit'] === 'Unlimited') {
     return null;
@@ -49,43 +76,72 @@ const individualPassLimitRangeValidator = (): ValidatorFn => (form: FormGroup): 
 @Component({
   selector: 'app-admin-pass-limits-dialog',
   templateUrl: './admin-pass-limits-dialog.component.html',
-  styleUrls: ['./admin-pass-limits-dialog.component.scss']
+  styleUrls: ['./admin-pass-limits-dialog.component.scss'],
+  animations: [NextStep]
 })
 export class AdminPassLimitDialogComponent implements OnInit, OnDestroy {
+  requestLoading = false;
+  contentLoading = true;
+  deleteLoading = false;
   hasPassLimit: boolean;
   passLimit: HallPassLimit;
+  individualStudentLimits: IndividualPassLimit[] = [];
+
+  // school pass limit form props
   passLimitForm = new FormGroup({
     limitEnabled: new FormControl(false),
     passLimit: new FormControl(null, Validators.pattern(/^([1-9]\d*)$|^(0){1}$/)),
     frequency: new FormControl(null, Validators.required)
-  }, schoolPassLimitRangeValidator());
-  passLimitFormSubs: Subscription;
+  }, [schoolPassLimitRangeValidator(), limitsRequiredValidator()]);
   passLimitFormChanged: Observable<boolean> = of(false);
   passLimitFormLastValue: { limitEnabled: boolean, passLimit: string, frequency: string };
-  showLimitFormatError = false;
-  requestLoading = false;
-  contentLoading = true;
-  showPassLimitNux: boolean;
-  introsData: IntroData;
-  introSubs: Subscription;
-  individualStudentLimits: IndividualPassLimit[] = [];
-  individualOverrideForm: FormGroup;
+  schoolPassLimitInput: PassLimitInputComponent;
+
+  // individual form props
+  individualOverrideForm = new FormGroup({
+    students: new FormArray([], Validators.required),
+    passLimit: new FormControl(null, Validators.pattern(/^([1-9]\d*)$|^(0){1}$|^(Unlimited)$/)),
+    description: new FormControl(null)
+  }, individualPassLimitRangeValidator());
   individualFormPreviousValue: { students: string[], passLimit: string, description: string };
   individualFormChanged: Observable<boolean>;
   individualLoading: boolean;
   selectedExistingIndividualLimit: IndividualPassLimit;
+  individualPassLimitInput: PassLimitInputComponent;
 
-  @ViewChild('tabGroup') dialogPages: MatTabGroup;
+  // nux props
+  showPassLimitNux: boolean;
+  introsData: IntroData;
+  introSubs: Subscription;
+
+  // Framer motion controls
+  page = 1;
+  frameMotion$ = this.formService.getFrameMotionDirection();
+
   @ViewChild('studentSearch') studentSearcher: SPSearchComponent;
-  @ViewChild('schoolPassLimitInput') schoolPassLimitInput: PassLimitInputComponent;
-  @ViewChild('individualPassLimitInput') individualPassLimitInput: PassLimitInputComponent;
+  @ViewChild('deleteDialogBody') deleteDialogBody: TemplateRef<HTMLElement>;
+  @ViewChild('schoolPassLimitInput') set setSchoolLimitInput(comp: PassLimitInputComponent) {
+    if (!comp) {
+      return;
+    }
+
+    this.schoolPassLimitInput = comp;
+  }
+  @ViewChild('individualPassLimitInput') set individualInput(comp: PassLimitInputComponent) {
+    if (!comp) {
+      return;
+    }
+
+    this.individualPassLimitInput = comp;
+  }
 
   constructor(
     private dialog: MatDialog,
     public dialogRef: MatDialogRef<AdminPassLimitDialogComponent>,
     public screenService: ScreenService,
     private passLimitService: PassLimitService,
-    private userService: UserService
+    private userService: UserService,
+    public formService: CreateFormService,
   ) {
   }
 
@@ -100,12 +156,6 @@ export class AdminPassLimitDialogComponent implements OnInit, OnDestroy {
      * If the pass limit does not exist, then the slider creates the limit when enabled
      * If a pass limit already exists, then the slider enables/disables the limit
      */
-
-    this.passLimitFormSubs = this.passLimitForm.valueChanges.subscribe((v) => {
-      v.enabled
-        ? this.passLimitForm.controls['passLimit'].setValidators([Validators.required, Validators.pattern(/^([1-9]\d*)$|^(0){1}$/)])
-        : this.passLimitForm.controls['passLimit'].setValidators([Validators.pattern(/^([1-9]\d*)$|^(0){1}$/)]);
-    });
     this.passLimitForm.disable();
     forkJoin({
       pl: this.passLimitService.getPassLimit(),
@@ -115,17 +165,12 @@ export class AdminPassLimitDialogComponent implements OnInit, OnDestroy {
         this.hasPassLimit = !!pl.pass_limit;
         if (this.hasPassLimit) {
           this.passLimit = pl.pass_limit;
-          this.contentLoading = false;
-          this.passLimitForm.patchValue({limitEnabled: this.passLimit.limitEnabled});
+          this.passLimitForm.patchValue(this.passLimit);
           this.individualStudentLimits = overrides;
-          return of(true).pipe(delay(100));
         }
         return of(true);
       }),
       tap(() => {
-        if (this.hasPassLimit) {
-          this.passLimitForm.patchValue(this.passLimit);
-        }
         this.passLimitFormLastValue = this.passLimitForm.value;
         this.passLimitFormChanged = this.passLimitForm.valueChanges.pipe(
           map(v => {
@@ -133,17 +178,19 @@ export class AdminPassLimitDialogComponent implements OnInit, OnDestroy {
               v.passLimit = parseInt(v.passLimit, 10);
             }
             const {invalid, dirty} = this.passLimitForm.get('passLimit');
-            this.showLimitFormatError = invalid && dirty;
             return JSON.stringify(v) !== JSON.stringify(this.passLimitFormLastValue);
           }));
         this.passLimitForm.enable();
         this.contentLoading = false;
       })
     ).subscribe();
+
     this.introSubs = this.userService.introsData$.subscribe(intros => {
       this.introsData = intros;
       this.showPassLimitNux = !intros?.admin_pass_limit_message?.universal?.seen_version;
     });
+
+    this.loadIndividualForm();
   }
 
   resetPassLimitsForm() {
@@ -174,7 +221,6 @@ export class AdminPassLimitDialogComponent implements OnInit, OnDestroy {
         this.passLimitFormChanged = this.passLimitForm.valueChanges.pipe(
           map(v => {
             const {invalid, dirty} = this.passLimitForm.get('passLimit');
-            this.showLimitFormatError = invalid && dirty;
             if (v?.passLimit) {
               v.passLimit = parseInt(v.passLimit, 10);
             }
@@ -214,29 +260,30 @@ export class AdminPassLimitDialogComponent implements OnInit, OnDestroy {
     this.showPassLimitNux = false;
   }
 
-  private goToPage(pageNumber: number) {
-    if (pageNumber < 1) {
-      throw new Error('Page Numbers cannot be less than 1');
-    }
-    this.dialogPages.selectedIndex = pageNumber - 1;
-  }
-
   goToIndividualLimitPage(limit?: IndividualPassLimit) {
-    this.initIndividualForm(limit);
-    this.goToPage(2);
+    this.formService.setFrameMotionDirection();
+    setTimeout(() => {
+      this.loadIndividualForm(limit);
+      this.page = 2;
+    }, 100);
   }
 
   goToHomePage() {
-    this.destroyIndividualForm();
-    this.goToPage(1);
+    this.formService.setFrameMotionDirection('back');
+    setTimeout(() => {
+      this.destroyIndividualForm();
+      this.page = 1;
+    }, 100);
   }
 
-  private initIndividualForm(limit?: IndividualPassLimit) {
-    this.selectedExistingIndividualLimit = limit;
+  // loads individual form with properly parsed values
+  // limit param is only truthy when loading an already existing limit
+  // most likely, the user wants to edit an individual limit if this is truthy
+  private loadIndividualForm(limit?: IndividualPassLimit) {
+    this.selectedExistingIndividualLimit = limit || this.selectedExistingIndividualLimit;
     const controls: FormControl[] = [];
-
     if (!!limit) {
-      controls.push(new FormControl(limit.student.id));
+      controls.push(new FormControl(limit.student.id, Validators.required));
     }
 
     let passLimitValue = limit?.passLimit?.toString() || '10';
@@ -244,30 +291,25 @@ export class AdminPassLimitDialogComponent implements OnInit, OnDestroy {
       passLimitValue = 'Unlimited';
     }
 
-    this.individualOverrideForm = new FormGroup({
-      students: new FormArray(controls, Validators.required),
-      passLimit: new FormControl(passLimitValue, Validators.pattern(/^([1-9]\d*)$|^(0){1}$|^(Unlimited)$/)),
-      description: new FormControl(limit?.description || '')
-    }, individualPassLimitRangeValidator());
+    this.individualOverrideForm.removeControl('students');
+    this.individualOverrideForm.addControl('students', new FormArray(controls));
+    this.individualOverrideForm.patchValue({
+      passLimit: passLimitValue,
+      description: limit?.description || ''
+    });
     this.individualFormPreviousValue = this.individualOverrideForm.value;
     this.individualFormChanged = this.individualOverrideForm.valueChanges.pipe(map(v => {
       const { students, passLimit, description } = v;
       const str1 = JSON.stringify(students) + JSON.stringify(passLimit) + JSON.stringify(description);
-      const str2 = JSON.stringify(this.individualFormPreviousValue.students) + JSON.stringify(this.individualFormPreviousValue.passLimit) + JSON.stringify(this.individualFormPreviousValue.description);
+      const str2 = JSON.stringify(this.individualFormPreviousValue?.students) + JSON.stringify(this.individualFormPreviousValue?.passLimit) + JSON.stringify(this.individualFormPreviousValue?.description);
       return str1 !== str2;
-      // console.log(v);
-      // console.log(this.individualFormPreviousValue);
-      // return JSON.stringify(v) !== JSON.stringify(this.individualFormPreviousValue);
     }));
-    setTimeout(() => {
-      this.individualOverrideForm.patchValue({ passLimit: passLimitValue }, { emitEvent: true });
-    }, 100);
   }
 
   private destroyIndividualForm() {
     this.individualFormPreviousValue = undefined;
+    this.resetIndividualForm();
     this.individualFormChanged = of(false);
-    this.individualOverrideForm = null;
     this.selectedExistingIndividualLimit = undefined;
   }
 
@@ -323,6 +365,35 @@ export class AdminPassLimitDialogComponent implements OnInit, OnDestroy {
         this.individualLoading = false;
         this.goToHomePage();
       },
+    });
+  }
+
+  openDeleteDialog() {
+    const id = this.individualOverrideForm.value.students[0];
+    this.dialog.open<ConfirmationDialogComponent, ConfirmationTemplates, boolean>(ConfirmationDialogComponent, {
+      ...RecommendedDialogConfig,
+      width: '450px',
+      data: {
+        headerText: 'Remove the individual limit?',
+        body: this.deleteDialogBody,
+        buttons: {
+          confirmText: 'Remove limit',
+          denyText: 'Cancel',
+        },
+        templateData: {}
+      }
+    }).afterClosed().pipe(
+      filter(Boolean),
+      tap(() => this.deleteLoading = true),
+      concatMap(() => this.passLimitService.removeIndividualLimit(id)),
+      concatMap(() => this.passLimitService.getIndividualLimits()),
+    ).subscribe({
+      next: (individualLimits) => {
+        this.individualStudentLimits = individualLimits;
+        this.deleteLoading = false;
+        this.goToHomePage();
+      },
+      error: console.error
     });
   }
 

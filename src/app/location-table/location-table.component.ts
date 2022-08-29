@@ -15,6 +15,7 @@ import {CdkDragDrop, moveItemInArray} from '@angular/cdk/drag-drop';
 import {LocationVisibilityService} from '../create-hallpass-forms/main-hallpass--form/location-visibility.service';
 import {UserService} from '../services/user.service';
 import {User} from '../models/User';
+import {PassLimitInfo} from '../models/HallPassLimits';
 
 
 export interface Paged<T> {
@@ -32,7 +33,7 @@ export interface Paged<T> {
 export class LocationTableComponent implements OnInit, OnDestroy {
 
   @Input() category: string;
-  @Input() forKioskMode: boolean = false;
+  @Input() forKioskMode = false;
   @Input() placeholder: string;
   @Input() type: string;
   @Input() showStars: boolean;
@@ -57,6 +58,7 @@ export class LocationTableComponent implements OnInit, OnDestroy {
   @Input() originLocation: any;
   @Input() searchTeacherLocations: boolean;
   @Input() currentPage: 'from' | 'to';
+  @Input() passLimitInfo: PassLimitInfo;
 
   @Output() onSelect: EventEmitter<any> = new EventEmitter();
   @Output() onStar: EventEmitter<string> = new EventEmitter();
@@ -81,19 +83,19 @@ export class LocationTableComponent implements OnInit, OnDestroy {
     }
     // add posible filtered values
     this._choices = values;
-  };
+  }
 
-  noChoices:boolean = false;
-  mainContentVisibility: boolean = false;
+  noChoices = false;
+  mainContentVisibility = false;
   starredChoices: any[] = [];
-  search: string = '';
+  search = '';
   favoritesLoaded: boolean;
   hideFavorites: boolean;
   pinnables;
   pinnablesLoaded: boolean;
 
   passLimits: {[id: number]: PassLimit} = {};
-  
+
   private user: User;
 
   showSpinner$: Observable<boolean>;
@@ -195,14 +197,20 @@ export class LocationTableComponent implements OnInit, OnDestroy {
             this.locationService.getLocationsWithConfigRequest(url);
 
           request$.pipe(takeUntil(this.destroy$)).subscribe(res => {
-              this.choices = res.filter(loc => !loc.restricted);
+              this.choices = res.map(loc => {
+                loc.restricted = loc.restricted || this.passLimitInfo?.current === 0;
+                return loc;
+              });
           });
         } else {
           const request$ = this.isFavoriteForm ? this.locationService.getLocationsWithConfigRequest(url).pipe(filter((res) => !!res.length)) :
             this.locationService.getLocationsFromCategory(url, this.category).pipe(filter((res) => !!res.length));
 
                 request$.pipe(takeUntil(this.destroy$)).subscribe(p => {
-                  this.choices = p;
+                  this.choices = p.map(loc => {
+                    loc.restricted = loc.restricted || this.passLimitInfo?.current === 0;
+                    return loc;
+                  });
                   this.noChoices = !this.choices.length;
                   this.pinnablesLoaded = true;
                   this.mainContentVisibility = true;
@@ -216,12 +224,9 @@ export class LocationTableComponent implements OnInit, OnDestroy {
         .pipe(takeUntil(this.destroy$))
         .subscribe((stars: any[]) => {
           this.pinnablesLoaded = true;
-          this.starredChoices = this.kioskModeFilter(stars.map(val => Location.fromJSON(val)));
+          this.starredChoices = stars.map(val => Location.fromJSON(val));
           if (this.isFavoriteForm) {
               this.choices = [...this.starredChoices, ...this.choices].sort((a, b) => a.id - b.id);
-          }
-          if (this.forKioskMode) {
-            this.choices = this.choices.filter(loc => !loc.restricted);
           }
           this.favoritesLoaded = true;
             this.mainContentVisibility = true;
@@ -271,7 +276,14 @@ export class LocationTableComponent implements OnInit, OnDestroy {
         }
       }
     }
+
+    // We don't need to restrict the location by pass limit if the location is for later
+    if (this.forLater) {
       return loc;
+    }
+
+    loc.restricted = loc.restricted || this.passLimitInfo?.current === 0;
+    return loc;
   }
 
   ngOnDestroy(): void {
@@ -298,9 +310,6 @@ export class LocationTableComponent implements OnInit, OnDestroy {
 
         this.locationService.searchLocationsRequest(url)
           .pipe(
-            map((locs: any) => {
-              return this.kioskModeFilter(locs);
-            }),
             takeUntil(this.destroy$),
             switchMap(locs => {
               if (this.searchTeacherLocations) {
@@ -343,11 +352,7 @@ export class LocationTableComponent implements OnInit, OnDestroy {
           this.choices = this.staticChoices;
         } else {
           iif(() => !!this.category, this.locationService.locsFromCategory$, this.locationService.locations$)
-            .pipe(
-              takeUntil(this.destroy$),
-              map(locs => {
-                return this.kioskModeFilter(locs);
-            }))
+            .pipe(takeUntil(this.destroy$))
             .subscribe(res => {
               this.choices = res;
               this.hideFavorites = false;
@@ -358,15 +363,6 @@ export class LocationTableComponent implements OnInit, OnDestroy {
       }
 
   }
-
-  kioskModeFilter(locs: Location[]) {
-    if (this.forKioskMode) {
-      return locs.filter(loc => !loc.restricted);
-    } else {
-      return locs;
-    }
-  }
-
 
   isValidLocation(locationId: any) {
     if (this.isFavoriteForm)
@@ -397,7 +393,7 @@ export class LocationTableComponent implements OnInit, OnDestroy {
                 const locs = sortBy([...rooms, ...favorites], (item) => {
                   return item.title.toLowerCase();
                 });
-                return this.kioskModeFilter(locs);
+                return locs;
               } else {
                 return rooms;
               }

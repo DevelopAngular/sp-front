@@ -1,14 +1,13 @@
-import {ChangeDetectorRef, Component, ElementRef, EventEmitter, Inject, Input, OnInit, Output, TemplateRef, ViewChild} from '@angular/core';
+import {ChangeDetectorRef, Component, EventEmitter, Inject, Input, OnInit, Output, TemplateRef, ViewChild} from '@angular/core';
 import {MAT_DIALOG_DATA, MatDialog, MatDialogRef, MatDialogState} from '@angular/material/dialog';
 import {HallPassLimit, StudentPassLimit} from '../models/HallPassLimits';
 import {User} from '../models/User';
 import {Router} from '@angular/router';
 import {PassLimitService} from '../services/pass-limit.service';
-import {BehaviorSubject, Observable} from 'rxjs';
+import {Observable} from 'rxjs';
 import {FormControl, FormGroup, ValidationErrors, ValidatorFn, Validators} from '@angular/forms';
 import {PassLimitInputComponent} from '../pass-limit-input/pass-limit-input.component';
 import {concatMap, filter, map, switchMap, tap} from 'rxjs/operators';
-import {MatTabGroup} from '@angular/material/tabs';
 import {AdminPassLimitDialogComponent} from '../admin-pass-limits-dialog/admin-pass-limits-dialog.component';
 import {
   ConfirmationDialogComponent, ConfirmationTemplates,
@@ -16,6 +15,7 @@ import {
 } from '../shared/shared-components/confirmation-dialog/confirmation-dialog.component';
 import {CreateFormService} from '../create-hallpass-forms/create-form.service';
 import {PassLimitFeedbackComponent} from '../pass-limit-feedback/pass-limit-feedback.component';
+import {NextStep} from '../animations';
 
 const individualPassLimitRangeValidator = (): ValidatorFn => (form: FormGroup): ValidationErrors => {
   if (form.value['passLimit'] === 'Unlimited') {
@@ -34,7 +34,8 @@ const individualPassLimitRangeValidator = (): ValidatorFn => (form: FormGroup): 
 @Component({
   selector: 'app-pass-limit-student-info',
   templateUrl: './pass-limit-student-info.component.html',
-  styleUrls: ['./pass-limit-student-info.component.scss']
+  styleUrls: ['./pass-limit-student-info.component.scss'],
+  animations: [NextStep]
 })
 export class PassLimitStudentInfoComponent implements OnInit {
   @Input() set inputData(data: { studentPassLimit: StudentPassLimit, user: User }) {
@@ -52,14 +53,19 @@ export class PassLimitStudentInfoComponent implements OnInit {
   // TODO: come up with a better way of sharing this component
   @Input() isDialog = true; // this is not usually a good approach, literally anything is better than this
 
+  // button and border controls
+  // gives either the school or individual limits their border based on incoming data
   isAdmin: boolean;
   individualEditButton: boolean;
   schoolEditButton: boolean;
   individualBorder: boolean;
   schoolLimitBorder: boolean;
 
+  // request spinner controls
   requestLoading = false;
   deleteLoading = false;
+
+  // individual form controls
   passLimitForm = new FormGroup({
     passLimit: new FormControl(null, [Validators.required, Validators.pattern(/^([1-9]\d*)$|^(0){1}$|^(Unlimited)$/)]),
     description: new FormControl(null)
@@ -67,9 +73,11 @@ export class PassLimitStudentInfoComponent implements OnInit {
   passLimitFormLastValue = { passLimit: null, description: '' };
   passLimitFormChanged: Observable<boolean>;
   schoolPassLimit: HallPassLimit;
-  frameMotion$: BehaviorSubject<any>;
 
-  @ViewChild('tabGroup') tabGroup: MatTabGroup;
+  // framer motion controls
+  page = 1;
+  frameMotion$ = this.framerMotionService.getFrameMotionDirection();
+
   @ViewChild('passLimitInput') passLimitInput: PassLimitInputComponent;
   @ViewChild('deleteDialogBody') deleteDialogBody: TemplateRef<HTMLElement>;
   @ViewChild(PassLimitFeedbackComponent) set feedbackPosition(comp: PassLimitFeedbackComponent) {
@@ -90,11 +98,10 @@ export class PassLimitStudentInfoComponent implements OnInit {
     private dialogRef: MatDialogRef<PassLimitStudentInfoComponent>,
     private passLimitsService: PassLimitService,
     private cdr: ChangeDetectorRef,
-    private framerMotion: CreateFormService
+    private framerMotionService: CreateFormService
   ) { }
 
   ngOnInit(): void {
-    this.frameMotion$ = this.framerMotion.getFrameMotionDirection();
     this.isAdmin = this.data.user.roles.includes('manage_school');
     this.setBordersAndButtons();
     this.passLimitsService.getPassLimit().subscribe({
@@ -129,34 +136,40 @@ export class PassLimitStudentInfoComponent implements OnInit {
       panelClass: 'overlay-dialog',
       backdropClass: 'custom-bd',
       width: '425px',
+      height: '500px'
     });
   }
 
   loadForm() {
-    if (this.data.studentPassLimit.isIndividual) {
-      let passLimit: number | string = this.data?.studentPassLimit?.passLimit || null;
-      if (passLimit === -2) {
-        passLimit = 'Unlimited';
+    this.framerMotionService.setFrameMotionDirection();
+    setTimeout(() => {
+      if (this.data.studentPassLimit.isIndividual) {
+        let passLimit: number | string = this.data?.studentPassLimit?.passLimit || null;
+        if (passLimit === -2) {
+          passLimit = 'Unlimited';
+        }
+        const value = {
+          passLimit,
+          description: this.data?.studentPassLimit?.description || null
+        };
+
+        this.passLimitFormLastValue = value;
+        this.passLimitForm.patchValue(value);
       }
-      const value = {
-        passLimit,
-        description: this.data?.studentPassLimit?.description || null
-      };
-
-
-      this.passLimitFormLastValue = value;
-      this.passLimitForm.patchValue(value);
-    }
-    this.tabGroup.selectedIndex = 1;
+      this.page = 2;
+    }, 100);
   }
 
   backToHomePage() {
-    this.passLimitFormLastValue = {
-      passLimit: null,
-      description: null
-    };
-    this.passLimitForm.reset();
-    this.tabGroup.selectedIndex = 0;
+    this.framerMotionService.setFrameMotionDirection('back');
+    setTimeout(() => {
+      this.passLimitFormLastValue = {
+        passLimit: null,
+        description: null
+      };
+      this.passLimitForm.reset();
+      this.page = 1;
+    }, 100);
   }
 
   updatePassLimits() {

@@ -86,6 +86,7 @@ export class StudentInfoCardComponent implements OnInit, AfterViewInit, OnDestro
   user: User;
 
   school: School;
+  studentPassLimitSubs: Subscription;
   studentPassLimit: StudentPassLimit;
 
   adminCalendarOptions = {
@@ -189,30 +190,36 @@ export class StudentInfoCardComponent implements OnInit, AfterViewInit, OnDestro
       .subscribe(user => {
         this.user = user;
       });
-    this.route.params
-      .pipe(
-        switchMap((params) => {
-          return this.userService.searchProfileById(params['id']);
-        }),
-        concatMap(user => {
-          this.profile = user;
-          this.school = this.userService.getUserSchool();
-          this.passesService.getQuickPreviewPassesRequest(this.profile.id, true);
-          this.getUserStats();
-          this.studentStats$ = this.userService.studentsStats$.pipe(map(stats => stats[this.profile.id]));
-          this.encounterPreventionService.getExclusionGroupsRequest({student: this.profile.id});
 
-          return merge(
-            this.passLimitsService.watchPassLimits(),
-            this.passLimitsService.watchIndividualPassLimit(this.profile.id)
-          ).pipe(concatMap(() => this.passLimitsService.getStudentPassLimit(this.profile.id)));
-        }),
-        takeUntil(this.destroy$)
-      ).subscribe((res: StudentPassLimit) => {
-        this.studentPassLimit = res;
-        console.log(this.studentPassLimit);
-        this.cdr.detectChanges();
-      });
+    this.route.params.pipe(
+      filter(params => 'id' in params),
+      switchMap(params => this.userService.searchProfileById(params['id'])),
+      takeUntil(this.destroy$)
+    ).subscribe({
+      next: user => {
+        this.profile = user;
+        this.school = this.userService.getUserSchool();
+        this.passesService.getQuickPreviewPassesRequest(this.profile.id, true);
+        this.getUserStats();
+        this.studentStats$ = this.userService.studentsStats$.pipe(map(stats => stats[this.profile.id]));
+        this.encounterPreventionService.getExclusionGroupsRequest({student: this.profile.id});
+
+        if (this.studentPassLimitSubs) {
+          this.studentPassLimitSubs.unsubscribe();
+        }
+
+        this.studentPassLimitSubs = merge(
+          this.passLimitsService.watchPassLimits(),
+          this.passLimitsService.watchIndividualPassLimit(this.profile.id)
+        )
+          .pipe(concatMap(() => this.passLimitsService.getStudentPassLimit(this.profile.id)))
+          .subscribe(res => {
+            this.studentPassLimit = res;
+            this.cdr.detectChanges();
+          });
+      }
+    });
+
     this.exclusionGroups$ = this.encounterPreventionService.exclusionGroups$;
     this.exclusionGroupsLoading$ = this.encounterPreventionService.exclusionGroupsLoading$;
     this.lastStudentPasses$ = this.passesService.quickPreviewPasses$.pipe(map(passes => passes.map(pass => HallPass.fromJSON(pass))));
@@ -592,6 +599,7 @@ export class StudentInfoCardComponent implements OnInit, AfterViewInit, OnDestro
   openPassLimitsDialog() {
     this.passLimitStudentInfoRef = this.dialog.open(PassLimitStudentInfoComponent, {
       ...RecommendedDialogConfig,
+      height: '500px',
       width: '425px',
       data: {
         studentPassLimit: this.studentPassLimit,
