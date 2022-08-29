@@ -1,4 +1,5 @@
 import {
+  AfterViewInit,
   ChangeDetectionStrategy,
   ChangeDetectorRef,
   Component,
@@ -22,7 +23,7 @@ import {PassLike} from '../models';
 import {PassCardComponent} from '../pass-card/pass-card.component';
 import {ReportFormComponent} from '../report-form/report-form.component';
 import {RequestCardComponent} from '../request-card/request-card.component';
-import {filter, take, takeUntil, tap} from 'rxjs/operators';
+import {filter, map, take, takeUntil, tap} from 'rxjs/operators';
 import {TimeService} from '../services/time.service';
 import {DarkThemeSwitch} from '../dark-theme-switch';
 import {KioskModeService} from '../services/kiosk-mode.service';
@@ -53,7 +54,7 @@ export class SortOption {
   changeDetection: ChangeDetectionStrategy.OnPush
 })
 
-export class PassCollectionComponent implements OnInit, OnDestroy {
+export class PassCollectionComponent implements OnInit, AfterViewInit, OnDestroy {
 
   @Input() mock = false;
   @Input() title: string;
@@ -68,12 +69,12 @@ export class PassCollectionComponent implements OnInit, OnDestroy {
   @Input() hasSort = false;
   @Input() maxHeight;
   @Input() showEmptyHeader: boolean;
-  @Input() columnViewIcon: boolean = true;
-  @Input() smoothlyUpdating: boolean = false;
-  @Input() grid_template_columns: string = '143px';
-  @Input() grid_gap: string = '10px';
+  @Input() columnViewIcon = true;
+  @Input() smoothlyUpdating = false;
+  @Input() grid_template_columns = '143px';
+  @Input() grid_gap = '10px';
   @Input() isAdminPage: boolean;
-  @Input() headerWidth: string = '100%';
+  @Input() headerWidth = '100%';
   @Input() passProvider: Observable<any>;
   @Input() hasFilterPasses: boolean;
   @Input() filterModel: string;
@@ -81,7 +82,7 @@ export class PassCollectionComponent implements OnInit, OnDestroy {
   @Input() user: User;
   @Input() selectedSort = null;
   @Input() searchPanel: boolean;
-  @Input() showProfilePictures: boolean = true;
+  @Input() showProfilePictures = true;
 
   @Output() sortMode = new EventEmitter<string>();
   @Output() reportFromPassCard = new EventEmitter();
@@ -93,7 +94,7 @@ export class PassCollectionComponent implements OnInit, OnDestroy {
 
   @ViewChildren(PassTileComponent) passTileComponents: QueryList<PassTileComponent>;
 
-  currentPasses$: Observable<any>;
+  currentPasses$: Observable<PassLike[]>;
   activePassTime$;
   search: string;
   timers: number[] = [];
@@ -174,6 +175,12 @@ export class PassCollectionComponent implements OnInit, OnDestroy {
   ngOnInit() {
     if (this.passProvider) {
       this.currentPasses$ = this.passProvider.pipe(
+        map(passes => {
+          if (!this.isActive) {
+            return passes;
+          }
+          return passes.filter(p => Date.now() < new Date(p.end_time).getTime());
+        }),
         tap(passes => this.currentPassesEmit.emit(passes)),
       );
 
@@ -301,6 +308,7 @@ export class PassCollectionComponent implements OnInit, OnDestroy {
     filterDialog.afterClosed()
       .pipe(filter(res => !!res))
       .subscribe(action => {
+        console.log(action);
         if (action !== 'hide_expired_pass') {
 
           if (this.selectedSort === action) {
@@ -364,7 +372,9 @@ export class PassCollectionComponent implements OnInit, OnDestroy {
         forStaff: this.forStaff,
       };
     }
-    if (data.isActive) data.hideReport = true;
+    if (data.isActive) {
+      data.hideReport = true;
+    }
     const dialogRef = this.dialog.open(PassCollectionComponent.getDetailDialog(pass), {
       panelClass: (this.forStaff ? 'teacher-' : 'student-') + 'pass-card-dialog-container',
       backdropClass: 'custom-backdrop',
