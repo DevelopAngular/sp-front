@@ -124,18 +124,12 @@ export class LoginComponent implements OnInit, OnDestroy {
     });
   }
 
-  ngAfterViewInit() {
-    const allow = this.storage.getItem('studentAllowMobile') ?? 'true';
-    if (allow === 'false') {
-      this.loginService.loginErrorMessage$.next('Your school admin has disabled SmartPass for mobile devices');
-      this.storage.removeItem('studentAllowMobile');
-    }
-  }
-
   ngOnDestroy() {
+    window.Intercom('update', {'hide_default_launcher': false});
     this.destroyer$.next(null);
     this.destroyer$.complete();
   }
+ 
 
   formMobileUpdatePosition() {
     if (this.isMobileDevice) {

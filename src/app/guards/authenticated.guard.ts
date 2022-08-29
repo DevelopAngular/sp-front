@@ -36,11 +36,12 @@ export class AuthenticatedGuard implements CanActivate {
             if (this.storage.getItem('gg4l_invalidate')) {
               this.storage.removeItem('gg4l_invalidate');
             }
+
+            this.storage.setItem('studentAllowMobile', studentAllowMobile);
             if (!studentAllowMobile) {
-              this.storage.setItem('studentAllowMobile', studentAllowMobile);
-              this.allowMobile.clearInternal();
-              this.router.navigate(['sign-out']);
+              this.router.navigate(['/mobile-restriction']);
             }
+
           }
           return isAuthenticated;
         })
