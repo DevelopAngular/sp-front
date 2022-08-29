@@ -1,0 +1,132 @@
+@import '../../../../sp-colors';
+
+.background {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: flex-start;
+  background-color: $gray050;
+  box-sizing: border-box;
+  padding: 20px;
+  border-radius: 10px;
+  min-height: 70px;
+  min-width: 470px;
+  margin: auto 30px;// to resemble the other options
+  .label {
+    color: $navy;
+    font-size: 15px;
+    font-weight: bold;
+  }
+}
+
+.head-icon {
+  padding-right: 1rem;
+}
+
+.support-icon {
+  width: 17px;
+  height: 17px;
+  cursor: help;
+  margin-left: 7px;
+}
+
+.chip {
+  display: flex;
+  align-items: center;
+  box-sizing: border-box;
+  padding: 7px;
+  border-radius: 8px;
+  font-size: 14px;
+  font-weight: 500;
+  line-height: 1.12;
+  min-height: 40px;
+  margin: 0 0 0 auto;
+  text-align: center;
+  cursor: pointer;
+  &.visibility-all {
+    color: $gray500;
+    background-color: $gray100;
+    border: 1px solid $gray200;
+    &.with-triangle:after {
+      background-image: url('/assets/Rect (Blue-Gray).svg');
+    }
+  }
+  &.visibility-allow {
+    color: $green500;
+    background-color: $green100;
+    border: 1px solid $green200;
+    &.with-triangle:after {
+      background-image: url('/assets/Rect (Green500).svg');
+    }
+  }
+  &.visibility-denny {
+    color: $red500;
+    background-color: $red100;
+    border: 1px solid $red200;
+    &.with-triangle:after {
+      background-image: url('/assets/Rect (Red500).svg');
+    }
+  }
+}
+
+.with-triangle:after, .with-triangle::after {
+  display: inline-flex;
+  content: '';
+  background-image: url('/assets/Rect (Blue-Gray).svg');
+  background-size: 8px 6px;
+  margin-left: 8px;
+  width: 8px;
+  height: 6px;
+}
+
+.students-search {
+  flex: 0 0 100%;
+}
+
+ul.error {
+  color: $red500;
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  font-size: 0.9rem;
+  position: relative;
+  top: 0; // for animation
+  & > li:first-letter {
+    text-transform: uppercase;
+  }
+}
+
+.panel {
+  display: flex;
+  flex-flow: column;
+  justify-content: center;
+  background-color: $white;
+  border-radius: 9px;
+  min-height: 70px;
+  width: 270px;
+  list-style: none;
+  padding: 13px;
+  margin: 0px;
+  color: $gray500;  
+  font-size: 14px;
+  font-weight: 400;
+  li {
+    cursor: pointer;
+    padding: 10px;
+    display: flex;
+    &:hover {
+     color: $navy500;
+     background-color: $navy100;
+     border-radius: 7px;
+     &:after {
+      content: '';
+      background-image: url('/assets/Check (Navy).svg');
+      background-size: 16px 16px;
+      margin-left: 8px;
+      width: 16px;
+      height: 16px;
+      margin: 0 0 0 auto;
+     }
+    }
+  }
+}

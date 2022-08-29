@@ -45,7 +45,8 @@ export class NuxTooltipRendererDirective implements OnInit, OnDestroy, OnChanges
     private _overlay: Overlay,
     private _overlayPositionBuilder: OverlayPositionBuilder,
     private _elementRef: ElementRef
-  ) { }
+  ) {
+  }
 
   ngOnInit() {
     const positionStrategy = this._overlayPositionBuilder
@@ -68,6 +69,16 @@ export class NuxTooltipRendererDirective implements OnInit, OnDestroy, OnChanges
   }
 
   ngOnChanges(changes: SimpleChanges) {
+    if (changes?.position?.currentValue) {
+      if (!this._overlayRef) {
+        return;
+      }
+
+      const newPositionStrategy = this._overlayPositionBuilder
+        .flexibleConnectedTo(this._elementRef)
+        .withPositions([changes?.position?.currentValue]);
+      this._overlayRef.updatePositionStrategy(newPositionStrategy);
+    }
   }
 
   ngOnDestroy() {

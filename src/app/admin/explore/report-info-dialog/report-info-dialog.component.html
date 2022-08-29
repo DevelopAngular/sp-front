@@ -7,8 +7,12 @@
   <div class="content" (scroll)="scroll($event)">
     <div class="block">
       <div class="status">
+      <div class="title">Status</div>
         <app-status-chip 
+          [editable]="data?.isAdmin" 
           [status]="report.status"
+          [remoteid]="report.id"
+          [forceLookHovered]="true"
         ></app-status-chip>
       </div>
       <div class="title">Student</div>
@@ -21,6 +25,17 @@
       <div class="subtitle">{{ report.message || 'No report message' }}</div>
     </div>
 
+    <div class="block"
+      *ngIf="!!report.reported_pass_id"
+         (click)="reportedPassClick()"
+    >
+      <div class="title">Pass</div>
+        <app-pass-tile
+          [forStaff]="data.forStaff"
+          [pass]="report.reported_pass"
+          [isActive]="isReportedPassActive === null ? null : isReportedPassActive"
+        ></app-pass-tile>
+    </div>
     <mat-divider></mat-divider>
 
     <div class="container">

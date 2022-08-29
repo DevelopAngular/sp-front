@@ -27,7 +27,9 @@
       [forFuture]="!!FORM_STATE.data.date"
       [forInput]="true"
       (closeCard)="openBigPass(false)"
+      [passLimitInfo]="passLimitInfo"
     ></app-big-student-pass-card>
+      <app-pass-limit-info *ngIf="!isOpenBigCard" [passLimitInfo]="passLimitInfo"></app-pass-limit-info>
   </div>
   <div [style.height]="FORM_STATE.formMode.role === 1 ? '451px' : '412px'"
        [style.width]="'334px'"
@@ -36,7 +38,7 @@
     <app-request-card
       *ngIf="!isOpenBigCard || forStaff"
       [request]="template"
-      [forStaff]="forStaff"
+      [forStaff]="forStaff && !FORM_STATE.kioskMode"
       [forInput]="true"
       [formState]="FORM_STATE"
       [forFuture]="!!FORM_STATE.data.date"

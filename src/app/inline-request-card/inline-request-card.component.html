@@ -44,7 +44,7 @@
                           <span style="user-select: text">{{ (request?.attachment_message===''?'No message':request?.attachment_message) }}</span>
                             <div *ngIf="request?.status==='declined'">
                                 <br>
-                                <span [style.font-weight]="'bold'">Message from {{request?.teacher.last_name}}:</span><br>
+                                <span [style.font-weight]="'bold'">Message from {{request?.teachers[0]?.last_name || "Teacher"}}:</span><br>
                               <span style="user-select: text">{{ (request?.declined_message===''?'No message':request?.declined_message) }}</span> <!-- deny_message -->
                             </div>
                         </div>
@@ -69,7 +69,7 @@
                     <span style="user-select: text">{{ (request?.attachment_message===''?'No message':request?.attachment_message) }}</span>
                     <div *ngIf="request?.status==='declined'">
                       <br>
-                      <span [style.font-weight]="'bold'">Message from {{request?.teacher.last_name}}:</span><br>
+                      <span [style.font-weight]="'bold'">Message from {{request?.teachers[0]?.last_name || "Teacher"}}:</span><br>
                       <span style="user-select: text">{{ (request?.declined_message===''?'No message':request?.declined_message) }}</span> <!-- deny_message -->
                     </div>
                   </div>
@@ -81,8 +81,6 @@
             </app-pager>
 
         </div>
-
-        <mat-divider *ngIf="false"></mat-divider>
 
         <div class="bottom-block">
           <div class="pin-button" *ngIf="request?.status !=='declined'" (mouseenter)="onHover(desc, title);"
@@ -126,7 +124,7 @@
     </div>
 
   <div class="inline-request-content" *ngIf="activeTeacherPin">
-    <app-teacher-pin-student [requestId]="request.id"></app-teacher-pin-student>
+    <app-teacher-pin-student [request]="request" [requestId]="request.id" (pinResult)="activeTeacherPin = false"></app-teacher-pin-student>
   </div>
 </div>
 

@@ -1,0 +1,40 @@
+@import "src/design-system";
+@import "src/sp-colors";
+
+.confirm-dialog {
+  padding: 25px;
+  display: flex;
+  gap: 15px;
+  height: calc(100% - 50px);
+  box-shadow: 0 2px 26px 0 rgba(0, 0, 0, .4);
+
+  .icon-wrapper {
+    text-align: center;
+    height: 30px;
+    width: 30px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    border-radius: 6px;
+    padding: 4px 6px;
+
+    img {
+      height: 23px;
+    }
+  }
+
+  .main-wrapper {
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+    height: 100%;
+
+    .buttons {
+      display: flex;
+      flex-direction: row;
+      justify-content: flex-end;
+      gap: 10px;
+      margin-top: 30px;
+    }
+  }
+}

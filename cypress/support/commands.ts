@@ -64,4 +64,18 @@ Cypress.Commands.add('logoutTeacher', () => {
   cy.wait(5000);
 });
 
+Cypress.Commands.add('logoutAdmin', () => {
+  // the concrete div.icon-button-container seems to properly trigger click event
+  cy.get('app-nav app-icon-button div.icon-button-container').click({force: true});
+  cy.get('app-root mat-dialog-container > app-settings div.sign-out', {timeout: 1000}).click({force: true});
+  cy.wait(2500);
+});
+
+Cypress.Commands.add('switchSchool', (name: string) => {
+  cy.get('app-school-toggle-bar div.selected-school').click();
+  cy.get('app-dropdown').should('be.visible');
+  cy.get('app-dropdown div.option-data').should('have.length.at.least', 2);
+  cy.get('app-dropdown').contains(name).parent().parent().click();
+});
+
 

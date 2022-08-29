@@ -1,0 +1,16 @@
+@import '../../../../design-system.scss';
+@import '../../../../sp-colors.scss';
+.dialog-wrapper {
+    width: 400px;
+    padding: 20px;
+    .title {
+        margin-top: 0;
+        margin-bottom: 6px;
+    }
+    .message {
+        @include textSize(15px, normal, $color: $gray500);
+    }
+    .buttons {
+        padding: 15px 0 0;
+    }
+}

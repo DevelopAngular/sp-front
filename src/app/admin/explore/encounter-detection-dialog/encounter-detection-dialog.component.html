@@ -1,0 +1,75 @@
+<div class="wrapper" *ngIf="page == 1">
+    <div class="heading" #header>
+        <div class="back-button">
+            <img (click)="goBack()" [src]="'./assets/Back Button (Light-Gray).svg'" alt="Back Button (Blue-White).svg">
+            <!-- <div class="cancel" (click)="openConfirm($event)" *ngIf="page === 3 && !(showProcessingSpinner$ | async)">Cancel</div> -->
+            <!-- <div class="cancel" (click)="dialog.closeAll()" *ngIf="page === 3 && (showProcessingSpinner$ | async)">Close</div> -->
+        </div>
+        <div class="ds-dialog-title-white ds-flex-center-center">
+            <!-- <img [src]="'./assets/Grade level (White).svg' | resolveAsset" width="20" height="20" alt="(White).svg" class="ds-mr-10"> -->
+            <span>Encounter</span>
+        </div>
+    </div>
+    <div class="content">
+        <div class="page">
+            <div class="block" style="margin-top: 15px;">
+                <div class="students-info">
+                    <div class="students-name">
+                        <div class="title">Students</div>
+                        <div class="subtitle">
+                            <div class="ds-flex-center-start name-wrapper"><img [src]="firstUser.profile_picture ? firstUser.profile_picture : './assets/Avatar Default.svg' | resolveAsset">
+                                <p class="student-name">{{firstUser.display_name}}</p>
+                            </div>
+                            <div class="ds-flex-center-start name-wrapper"><img [src]="secondUser.profile_picture ? secondUser.profile_picture : './assets/Avatar Default.svg' | resolveAsset">
+                                <p class="student-name">{{secondUser.display_name}}</p>
+                            </div>
+                        </div>
+                    </div>
+                    <mat-divider></mat-divider>
+                    <div class="block-button" (click)="goToEPGroup()">
+                        <div class="ds-flex-center-between">
+                            <div class="ds-flex-center-start">
+                                <app-octagon [size]="21">
+                                    <img style="position: absolute; z-index: 10; height: 14px" [src]="'./assets/Walking One (White).svg' | resolveAsset">
+                                </app-octagon>
+                                <div class="info" style="margin-left: 8px">Create Encounter Prevention Group</div>
+                            </div>
+                            <img style="height: 14px" [src]="'./assets/Plus (Gray-500).svg' | resolveAsset">
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="block" style="margin: 15px 0;">
+                <div class="title">{{CLONNED_ENCOUNTER_DATA?.length}} Encounters</div>
+                <div>
+                    <div class="encounter" *ngFor="let encounter of CLONNED_ENCOUNTER_DATA; let i = index">
+                        <p class="date-duration">{{encounter.encounterDate}}, {{encounter.durationOfContact}} min overlap</p>
+                        <div class="collection-grid-wrapper">
+                            <div class="tile">
+                                <!-- <app-pass-tile
+                                 [timerEvent]="timerEvent"
+                                 [fromPast]="fromPast"
+                                 [forFuture]="forFuture"
+                                 [isActive]="isActive"
+                                 [forStaff]="forStaff"
+                                 [pass]="pass"
+                                 [allowPopup]="true"
+                                 [profileImage]="showProfilePictures"
+                                 [isEnableProfilePictures]="(isEnabledProfilePictures$ | async) && (!!user && !!user.show_profile_pictures)"
+                                ></app-pass-tile> -->
+                                <app-pass-tile [forFuture]="false" [fromPast]="true" [forStaff]="true" [pass]="encounter.firstStudentPass" [profileImage]="false" [isMiniCard]="false" (tileSelected)="openPassCard($event)"></app-pass-tile>
+                            </div>
+                            <div class="tile">
+                                <app-pass-tile [forFuture]="false" [fromPast]="true" [forStaff]="true" [pass]="encounter.secondStudentPass" [profileImage]="false" [isMiniCard]="false" (tileSelected)="openPassCard($event)"></app-pass-tile>
+                            </div>
+                        </div>
+                        <mat-divider *ngIf="i + 1 < CLONNED_ENCOUNTER_DATA.length"></mat-divider>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+<div class="wrapper" *ngIf="page == 2">
+    <app-encounter-prevention-dialog [forceNextPage]="'newGroup'" [currentUser]="firstUser" [secondUser]="secondUser" (backEmit)="goBack()"></app-encounter-prevention-dialog>
+</div>

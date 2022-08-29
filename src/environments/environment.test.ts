@@ -24,4 +24,7 @@ export const environment = {
     messagingSenderId: '625620388494'
   },
   funData: false,
+  localizejs: {
+    apiKey: 'k2CZfKQ5Wqkbk',
+  },
 };

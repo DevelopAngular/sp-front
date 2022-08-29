@@ -14,7 +14,7 @@
      (mouseleave)="onHover(false)"
 
      appCrossPointerEventTarget
-     (pointerDownEvent)="buttonDown = true"
+     (pointerDownEvent)="buttonDown = true; $event.stopPropagation()"
      (pointerCancelEvent)="buttonDown = false"
      (pointerClickEvent)="buttonDown = false; hovered = false; onClick($event)"
 

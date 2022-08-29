@@ -1,8 +1,8 @@
 <div class="wrapper">
-  <div class="new">New</div>
-  <div class="info">{{ description }}</div>
-  <div class="buttons">
-    <app-gradient-button [gradient]="'#70819f, #70819f'" [buttonLink]="link" [text]="'Learn more'" (buttonClick)="gotItEvent.emit(true)"></app-gradient-button>
+  <div *ngIf="showBadge" class="new ds-flex-center-center ds-py-5 ds-px-0 ds-mb-20">NEW</div>
+  <div class="info ds-mb-20" [ngClass]="{ 'ds-mt-10': !showBadge }">{{ description }}</div>
+  <div class="buttons ds-flex-end-end">
+    <app-gradient-button *ngIf="link" gradient="#70819f, #70819f" [buttonLink]="link" text="Learn more" (buttonClick)="gotItEvent.emit(true)"></app-gradient-button>
     <app-gradient-button style="margin-left: 10px" (buttonClick)="gotItEvent.emit(true)">Got it!</app-gradient-button>
   </div>
 </div>

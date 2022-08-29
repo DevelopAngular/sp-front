@@ -5,15 +5,44 @@ import {HttpService} from './http-service';
 
 import {switchMap, take} from 'rxjs/operators';
 import {DeviceDetection} from '../device-detection.helper';
+import {User} from '../models/User';
+import {Observable} from 'rxjs';
+import {map} from 'rxjs/operators';
 
 declare var window: any;
+
+export interface RoomSettings {
+  from: boolean;
+  to: boolean;
+  expired: boolean;
+}
+
+export interface MyRoomsType {
+  [key: string]: RoomSettings;
+}
+
+export interface UserNotificationSettings {
+  encounterPreventionEmail: boolean;
+  myRooms: MyRoomsType;
+  myRoomsPush: boolean;
+  passRequestsEmail: boolean;
+  passRequestsPush: boolean;
+  reportsEmail: boolean;
+  scheduledPassesEmail: boolean;
+  scheduledPassesPush: boolean;
+  settingsVersion: string;
+  studentPassesEmail: boolean;
+  studentPassesPush: boolean;
+  studentIds: number[];
+  weeklySummaryEmail: boolean;
+}
 
 @Injectable({
   providedIn: 'root'
 })
 export class NotificationService {
 
-  listening: boolean = false;
+  listening = false;
   registration: any = {};
 
   /**
@@ -44,7 +73,10 @@ export class NotificationService {
     return NotificationService.hasSupport && window.Notification.permission !== 'denied' && window.Notification.permission !== 'granted';
   }
 
-  constructor(private afm: AngularFireMessaging, private http: HttpService) {
+  constructor(
+    private afm: AngularFireMessaging,
+    private http: HttpService
+  ) {
     this.afm.messages.subscribe((message) => {
       const notif: Notif = Notif.fromJSON(message);
       this.displayNotification(notif);
@@ -164,4 +196,22 @@ export class NotificationService {
   private errorFunc() {
     console.log('Notif errored');
   }
+
+  getUserNotification(user: User): Observable<UserNotificationSettings> {
+    return this.http.get(`v1/users/${user.id}/notification_settings`)
+      .pipe(map((settings: UserNotificationSettings) => {
+        settings.studentIds = [];
+        return settings;
+      }));
+  }
+
+  updateUserNotification(user: User, data: UserNotificationSettings): Observable<any> {
+    return this.http.post(
+      `v1/users/${user.id}/notification_settings`,
+      JSON.stringify(data),
+      {headers: {'Content-Type': 'application/json'}},
+      false
+    );
+  }
+
 }

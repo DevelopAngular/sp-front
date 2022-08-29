@@ -77,7 +77,7 @@ context('Hall Monitor Page', () => {
 
       cy.visit('http://localhost:4200/main/hallmonitor');
       cy.wait(1000);
-      cy.get('div.content app-pass-collection app-pass-tile div.tile-wrapper').should('have.length', 1);
+      cy.get('div.content app-pass-collection app-pass-tile div.tile-wrapper').its('length').should('be.gte', 1);
     });
 
     it('should end a pass', () => {

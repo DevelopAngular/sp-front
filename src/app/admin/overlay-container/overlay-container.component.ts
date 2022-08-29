@@ -1,10 +1,10 @@
 import {Component, ElementRef, Inject, OnDestroy, OnInit, ViewChild} from '@angular/core';
-import {AbstractControl, FormControl, FormGroup, Validators} from '@angular/forms';
+import {AbstractControl, FormControl, FormGroup, Validators, ValidationErrors} from '@angular/forms';
 import {MAT_DIALOG_DATA, MatDialog, MatDialogRef} from '@angular/material/dialog';
 import {DomSanitizer} from '@angular/platform-browser';
 
-import {BehaviorSubject, combineLatest, forkJoin, fromEvent, merge, Observable, of, Subject, zip} from 'rxjs';
-import {debounceTime, distinctUntilChanged, filter, map, switchMap, take, takeUntil, tap} from 'rxjs/operators';
+import {BehaviorSubject, combineLatest, forkJoin, fromEvent, merge, Observable, of, Subject, zip, throwError} from 'rxjs';
+import {debounceTime, distinctUntilChanged, filter, map, switchMap, take, takeUntil, tap, catchError} from 'rxjs/operators';
 
 import {bumpIn, NextStep} from '../../animations';
 import {Pinnable} from '../../models/Pinnable';
@@ -18,8 +18,10 @@ import {CreateFormService} from '../../create-hallpass-forms/create-form.service
 import {FolderData, OverlayDataService, Pages, RoomData} from './overlay-data.service';
 import {cloneDeep, differenceBy, filter as _filter, isString, pullAll} from 'lodash';
 import {ColorProfile} from '../../models/ColorProfile';
+import {User} from '../../models/User';
 import {ToastService} from '../../services/toast.service';
 import {ConsentMenuComponent} from '../../consent-menu/consent-menu.component';
+import {VisibilityOverStudents, DEFAULT_VISIBILITY_STUDENTS} from './visibility-room/visibility-room.type';
 
 @Component({
   selector: 'app-overlay-container',
@@ -83,9 +85,12 @@ export class OverlayContainerComponent implements OnInit, OnDestroy {
   isOpenRoom: boolean;
   showErrors: boolean;
 
+  visibilityForm: FormGroup;
+  visibility: VisibilityOverStudents = DEFAULT_VISIBILITY_STUDENTS;
+
   showPublishSpinner: boolean;
   iconTextResult$: Subject<string> = new Subject<string>();
-  showBottomShadow: boolean = true;
+  showBottomShadow = true;
 
   advOptState: OptionState = {
       now: { state: '', data: { all_teach_assign: null, any_teach_assign: null, selectedTeachers: [] } },
@@ -142,7 +147,8 @@ export class OverlayContainerComponent implements OnInit, OnDestroy {
         case 'editRoom':
             this.overlayService.changePage(Pages.EditRoom, 0, {
                 pinnable: this.pinnable,
-                advancedOptions: this.generateAdvOptionsModel(this.pinnable.location)
+                advancedOptions: this.generateAdvOptionsModel(this.pinnable.location),
+                visibility: this.getVisibilityStudents(this.pinnable.location),
             });
             colors = this.pinnable.color_profile.gradient_color;
             this.selectedIcon = this.pinnable.icon;
@@ -159,7 +165,7 @@ export class OverlayContainerComponent implements OnInit, OnDestroy {
           break;
     }
     this.currentPage = this.overlayService.pageState.getValue().currentPage;
-      this.gradientColor = 'radial-gradient(circle at 98% 97%,' + colors + ')';
+      this.gradientColor = 'radial-gradient(circle at 98% 97%,' + (colors || ' #FFFFFF, #FFFFFF') + ')';
   }
 
   get roomTitle() {
@@ -182,6 +188,9 @@ export class OverlayContainerComponent implements OnInit, OnDestroy {
           this.currentPage === Pages.BulkEditRoomsInFolder ||
           this.currentPage === Pages.AddExistingRooms;
   }
+
+  // how to use: change it and revert it back to FALSE after you finish
+  private isSaveButtonDisabled: boolean = false;
 
   get isFormIncomplete() {
     if (this.currentPage === Pages.NewRoom || this.currentPage === Pages.EditRoom || this.currentPage === Pages.NewFolder || this.currentPage === Pages.EditFolder) {
@@ -207,6 +216,10 @@ export class OverlayContainerComponent implements OnInit, OnDestroy {
           this.roomData.advOptState.future.data.selectedTeachers.length === 0)) {
         return true;
       }
+    }
+
+    if (this.visibilityForm.invalid) {
+      return true;
     }
 
     return !this.roomValidButtons.getValue().publish;
@@ -259,6 +272,7 @@ export class OverlayContainerComponent implements OnInit, OnDestroy {
         }
         if (this.passLimitForm.get('to').invalid && this.passLimitForm.get('toEnabled').value)
           missing.push('active pass limit');
+        if (this.visibilityForm.invalid) missing.push('room visibility');
       }
 
       if (this.currentPage === Pages.BulkEditRooms) {
@@ -312,10 +326,11 @@ export class OverlayContainerComponent implements OnInit, OnDestroy {
     this.overlayService.pageState.pipe(filter(res => !!res)).subscribe(res => {
        this.currentPage = res.currentPage;
     });
-
       this.overlayType = this.dialogData['type'];
       if (this.dialogData['pinnable']) {
         this.pinnable = this.dialogData['pinnable'];
+        // initial visibility
+        this.visibility = this.getVisibilityStudents(this.pinnable.location);
       }
       if (this.dialogData['rooms']) {
         this.pinnableToDeleteIds = this.dialogData['rooms'].map(pin => +pin.id);
@@ -349,6 +364,15 @@ export class OverlayContainerComponent implements OnInit, OnDestroy {
 
       this.getHeaderData();
       this.buildForm();
+
+    this.visibilityForm.valueChanges.pipe(
+      filter((v: {visibility: VisibilityOverStudents | null}) => {
+        return !!v?.visibility;
+      }),
+      map(({visibility: v}: {visibility: VisibilityOverStudents}): VisibilityOverStudents => v),
+    ).subscribe((v: VisibilityOverStudents) => {
+      this.visibility = v;
+    });
 
       if (this.currentPage === Pages.EditFolder || this.currentPage === Pages.EditRoom || this.currentPage === Pages.EditRoomInFolder) {
           this.icons$ = merge(
@@ -408,15 +432,15 @@ export class OverlayContainerComponent implements OnInit, OnDestroy {
       this.userService.introsData$.pipe(filter(res => !!res)),
       this.userService.nuxDates$.pipe(filter(r => !!r)),
       this.userService.user$.pipe(filter(r => !!r))
-    )
-      .pipe(
-        debounceTime(1000),
-        takeUntil(this.destroy$)
-      ).subscribe(([intros, nuxDates, user]) => {
-          this.introsData = intros;
-          // const showNux = moment(user.first_login).isBefore(moment(nuxDates[2].created), 'day');
-          this.showNuxTooltip.next(!this.introsData.disable_room_reminder.universal.seen_version);
-    });
+    ).pipe(
+      debounceTime(1000),
+      takeUntil(this.destroy$)
+    ).subscribe({
+      next: ([intros, nuxDates, user]) => {
+        this.introsData = intros;
+        // const showNux = moment(user.first_login).isBefore(moment(nuxDates[2].created), 'day');
+        this.showNuxTooltip.next(!this.introsData.disable_room_reminder.universal.seen_version);
+      }});
   }
 
   ngOnDestroy() {
@@ -428,15 +452,15 @@ export class OverlayContainerComponent implements OnInit, OnDestroy {
     this.form = new FormGroup({
         file: new FormControl(),
         roomName: new FormControl('',
-            [Validators.required, Validators.maxLength(15)],
+            [Validators.maxLength(15)],
             this.uniqueRoomNameValidator.bind(this)
         ),
         folderName: new FormControl('',
-            [Validators.required, Validators.maxLength(17)],
+            [Validators.maxLength(17)],
             this.uniqueFolderNameValidator.bind(this)
         ),
         roomNumber: new FormControl('',
-            [Validators.required, Validators.maxLength(5)]),
+            [Validators.required, Validators.maxLength(7)]),
         timeLimit: new FormControl('', [
             Validators.required,
             Validators.pattern('^[0-9]*?[0-9]+$'),
@@ -462,6 +486,30 @@ export class OverlayContainerComponent implements OnInit, OnDestroy {
         [Validators.required, Validators.pattern('^[0-9]*?[0-9]+$')]
       )
     });
+
+    this.visibilityForm = new FormGroup(
+      {visibility: new FormControl(
+        this.visibility,
+        // TODO: move validator to its own file
+        [
+          (c: AbstractControl): ValidationErrors | null => {
+          // abort, skip, abanton do not engage validation
+          if (c.value === null) return null;
+          // only visible_all_students do not need a group of students
+          // ensures non-all modes have a non-empty over array (students)
+          if (c.value.mode !== 'visible_all_students' && c.value.over.length === 0) {
+            return {needover: 'you must select at least 1 student.'};
+          }
+          return null;
+        }]
+      )},
+    );
+
+  }
+
+  getVisibilityStudents(loc: Location): VisibilityOverStudents {
+    if (!loc) return DEFAULT_VISIBILITY_STUDENTS;
+    return {mode: loc.visibility_type, over: loc.visibility_students};
   }
 
   generateAdvOptionsModel(loc: Location) {
@@ -516,26 +564,26 @@ export class OverlayContainerComponent implements OnInit, OnDestroy {
   }
 
   uniqueRoomNameValidator(control: AbstractControl) {
-      if (control.dirty) {
-        return this.locationService.checkLocationName(control.value)
-          .pipe(
-            filter(() => this.currentPage !== Pages.NewFolder && this.currentPage !== Pages.EditFolder),
-            map((res: any) => {
-              if (this.currentPage === Pages.NewRoom || this.currentPage === Pages.NewRoomInFolder) {
-                return res.title_used ? { room_name: true } : null;
+    if (control.dirty) {
+      return this.locationService.checkLocationName(control.value)
+        .pipe(
+          filter(() => this.currentPage !== Pages.NewFolder && this.currentPage !== Pages.EditFolder),
+          map((res: any) => {
+            if (this.currentPage === Pages.NewRoom || this.currentPage === Pages.NewRoomInFolder) {
+              return res.title_used ? { room_name: true } : null;
+            } else {
+              let currentRoomName: string;
+              if (this.currentPage === Pages.EditRoomInFolder || this.currentPage === Pages.NewRoomInFolder) {
+                currentRoomName = this.overlayService.pageState.getValue().data.selectedRoomsInFolder[0].title;
               } else {
-                let currentRoomName: string;
-                if (this.currentPage === Pages.EditRoomInFolder || this.currentPage === Pages.NewRoomInFolder) {
-                  currentRoomName = this.overlayService.pageState.getValue().data.selectedRoomsInFolder[0].title;
-                } else {
-                  currentRoomName = this.pinnable.location.title;
-                }
-                return res.title_used && (currentRoomName !== this.roomData.roomName) ? { room_name: true } : null;
+                currentRoomName = this.pinnable.location.title;
               }
-            }));
-      } else {
-          return of(null);
-      }
+              return res.title_used && (currentRoomName !== this.roomData.roomName) ? { room_name: true } : null;
+            }
+          }));
+    } else {
+      return of(null);
+    }
   }
 
   uniqueFolderNameValidator(control: AbstractControl) {
@@ -561,6 +609,7 @@ export class OverlayContainerComponent implements OnInit, OnDestroy {
     this.gradientColor = 'radial-gradient(circle at 98% 97%,' + color.gradient_color + ')';
   }
 
+  // TODO types here
   changeIcon(icon) {
     if (this.currentPage === Pages.EditRoom || this.currentPage === Pages.EditFolder) {
       this.isDirtyIcon = this.initialSettings.icon !== icon.inactive_icon;
@@ -617,6 +666,7 @@ export class OverlayContainerComponent implements OnInit, OnDestroy {
       } else if (roomData.advOptState.future.data.selectedTeachers.length) {
           data.scheduling_request_teachers = roomData.advOptState.future.data.selectedTeachers.map(t => t.id);
       }
+      data.enable = roomData.enable;
       return data;
   }
 
@@ -661,8 +711,27 @@ export class OverlayContainerComponent implements OnInit, OnDestroy {
       this.passLimitForm.get('to').markAsDirty();
       this.passLimitForm.get('to').setErrors(this.passLimitForm.get('to').errors);
     }
+
+    const visibilityControl = this.visibilityForm.get('visibility');
+    if (visibilityControl.invalid) {
+      visibilityControl.markAsDirty();
+      visibilityControl.setErrors(visibilityControl.errors);
+    }
+
     this.showErrors = true;
   }
+
+ catchError() {
+   return catchError(err => {
+    this.showPublishSpinner = false;
+    this.isSaveButtonDisabled = true;
+    setTimeout(() => {
+      this.dialogRef.close(true);
+      this.isSaveButtonDisabled = false;
+    }, 2000);
+    throw err;
+   });
+ }
 
   onPublish() {
     this.showPublishSpinner = true;
@@ -681,6 +750,8 @@ export class OverlayContainerComponent implements OnInit, OnDestroy {
                 max_passes_to: this.passLimitForm.get('to').valid ? +this.passLimitForm.get('to').value : 0,
                 max_passes_to_active: this.passLimitForm.get('toEnabled').value && this.passLimitForm.get('to').valid,
                 enable: this.isOpenRoom,
+                visibility_type: this.visibility.mode,
+                visibility_students: this.visibility.over.map((el: User) => el.id),
                 ...this.normalizeAdvOptData()
         };
        this.locationService.createLocationRequest(location)
@@ -691,12 +762,13 @@ export class OverlayContainerComponent implements OnInit, OnDestroy {
                const pinnable = {
                    title: this.roomData.roomName,
                    color_profile: this.color_profile.id,
-                   icon: this.selectedIcon.inactive_icon,
+                   icon: this.selectedIcon?.inactive_icon,
                    location: loc.id,
                };
                return this.hallPassService.postPinnableRequest(pinnable);
               }),
-             takeUntil(this.destroy$)
+             takeUntil(this.destroy$),
+             this.catchError(),
            )
          .subscribe(response => {
            this.toast.openToast({title: 'New room added', type: 'success'});
@@ -710,11 +782,15 @@ export class OverlayContainerComponent implements OnInit, OnDestroy {
         const newFolder = {
           title: this.folderData.folderName,
           color_profile: this.color_profile.id,
-          icon: this.selectedIcon.inactive_icon,
+          // selectedIcon is an object when is to be updated but is kept as a string
+          icon: this.selectedIcon?.inactive_icon ?? (typeof this.selectedIcon === 'string') ? this.selectedIcon : '', // last choice to be a generic icon not just a empty string?
           category: this.folderData.folderName + salt
         };
         if (this.pinnable) {
-          this.hallPassService.updatePinnableRequest(this.pinnable.id, newFolder).pipe(takeUntil(this.destroy$))
+          this.hallPassService.updatePinnableRequest(this.pinnable.id, newFolder).pipe(
+            takeUntil(this.destroy$),
+            this.catchError(),
+          )
             .subscribe(res => this.dialogRef.close(true));
         }
       }
@@ -725,6 +801,7 @@ export class OverlayContainerComponent implements OnInit, OnDestroy {
 
         forkJoin(deleteRequest$).pipe(takeUntil(this.destroy$)).subscribe();
       }
+
       let locationsToDb$;
       const touchedRooms = this.folderData.roomsInFolder.filter(room => room.isEdit || !room.category);
 
@@ -733,9 +810,14 @@ export class OverlayContainerComponent implements OnInit, OnDestroy {
           let id;
           let data;
           if (isString(location.id)) {
-            location.category = this.folderData.folderName + salt;
-            location.teachers = location.teachers.map(t => t.id);
-            return this.locationService.createLocation(location);
+            data = location;
+            data.category = this.folderData.folderName + salt;
+            data.teachers = location.teachers.map(t => t.id);
+            if (data?.visibility_students) {
+              data.visibility_students = data.visibility_students.map((s: User) => s.id);
+            }
+            //location.visibility_type =
+            return this.locationService.createLocation(data);
           } else {
             id = location.id;
             data = location;
@@ -746,6 +828,9 @@ export class OverlayContainerComponent implements OnInit, OnDestroy {
             if (data.teachers) {
               data.teachers = data.teachers.map(teacher => +teacher.id);
             }
+            if (data?.visibility_students) {
+              data.visibility_students = data.visibility_students.map((s: User) => s.id);
+            }
 
             return this.locationService.updateLocation(id, data);
           }
@@ -754,12 +839,13 @@ export class OverlayContainerComponent implements OnInit, OnDestroy {
         locationsToDb$ = [of(null)];
       }
 
-      zip(...locationsToDb$).pipe(
-        switchMap(locations => {
+      zip(...locationsToDb$).pipe( // after all locations observables emit, emit responses as an array
+        switchMap(locations => { // map each location to a switched observable request
           const newFolder = {
             title: this.folderData.folderName,
             color_profile: this.color_profile.id,
-            icon: this.selectedIcon.inactive_icon,
+            // TODO why is this.selectedIcon is a string?
+            icon: this.selectedIcon?.inactive_icon,
             category: this.folderData.folderName + salt
           };
           if (this.currentPage === Pages.EditFolder) {
@@ -778,17 +864,18 @@ export class OverlayContainerComponent implements OnInit, OnDestroy {
             );
           }
       }),
-        switchMap((res) => {
-          if (this.pinnableToDeleteIds.length) {
-            const deleteRequests = this.pinnableToDeleteIds.map(id => {
-              return this.hallPassService.deletePinnableRequest(id);
-            });
-            return zip(...deleteRequests);
-          } else {
-            return of(null);
-          }
-        }),
-        takeUntil(this.destroy$)
+      switchMap((res) => {
+        if (this.pinnableToDeleteIds.length) {
+          const deleteRequests = this.pinnableToDeleteIds.map(id => {
+            return this.hallPassService.deletePinnableRequest(id, true);
+          });
+          return zip(...deleteRequests);
+        } else {
+          return of(null);
+        }
+      }),
+      takeUntil(this.destroy$),
+      this.catchError(),
       )
       .subscribe(() => {
         this.toast.openToast({title: this.currentPage === Pages.NewFolder ? 'New folder added' : 'Folder updated', type: 'success'});
@@ -809,7 +896,10 @@ export class OverlayContainerComponent implements OnInit, OnDestroy {
             max_passes_from_active: this.passLimitForm.get('fromEnabled').value,
             max_passes_to: this.passLimitForm.get('to').valid ? +this.passLimitForm.get('to').value : 0,
             max_passes_to_active: this.passLimitForm.get('toEnabled').value && this.passLimitForm.get('to').valid,
-            enable: this.roomData.enable
+            enable: this.roomData.enable,
+
+            visibility_type: this.visibility.mode,
+            visibility_students: this.visibility.over.map((el: User) => el.id),
         };
 
         const mergedData = {...location, ...this.normalizeAdvOptData()};
@@ -822,7 +912,7 @@ export class OverlayContainerComponent implements OnInit, OnDestroy {
                 const pinnable = {
                     title: this.roomData.roomName,
                     color_profile: this.color_profile.id,
-                    icon: this.selectedIcon.inactive_icon,
+                    icon: this.selectedIcon?.inactive_icon,
                     location: loc.id,
                 };
                 return this.hallPassService.updatePinnableRequest(this.pinnable.id, pinnable);
@@ -870,6 +960,8 @@ export class OverlayContainerComponent implements OnInit, OnDestroy {
     this.overlayService.dragEvent$.next(dropAreaColor);
   }
 
+  // TODO bellow typed signature breaks things
+  //roomResult({data, buttonState}: {data: RoomData, buttonState: ValidButtons}) {
   roomResult({data, buttonState}) {
     this.roomData = data;
     this.isOpenRoom = this.roomData.enable;
@@ -993,7 +1085,9 @@ export class OverlayContainerComponent implements OnInit, OnDestroy {
       max_passes_from_active: false,
       max_passes_to: +this.passLimitForm.get('to').value,
       max_passes_to_active: !!this.passLimitForm.get('toEnabled').value,
-      enable: room.enable
+      enable: room.enable,
+      visibility_students: room.visibility?.over || DEFAULT_VISIBILITY_STUDENTS.over,
+      visibility_type: room.visibility?.mode || DEFAULT_VISIBILITY_STUDENTS.mode,
     };
   }
 

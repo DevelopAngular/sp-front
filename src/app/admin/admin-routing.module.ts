@@ -15,6 +15,7 @@ const routes: Routes = [
       // {path: 'accounts/:role', loadChildren: 'app/admin/accounts-role/accounts-role.module#AccountsRoleModule' },
       {path: 'passconfig', loadChildren: () => import('app/admin/pass-config/pass-config.module').then(m => m.PassConfigModule)},
       {path: 'myschool', loadChildren: () => import('app/admin/my-school/my-school.module').then(m => m.MySchoolModule)},
+      {path: 'idcards', loadChildren: () => import('app/admin/id-cards/id-cards.module').then(m => m.IdCardsModule)},
       {path: '**', redirectTo: '', pathMatch: 'full'},
     ]
   },

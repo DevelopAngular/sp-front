@@ -147,7 +147,11 @@
 
   </div>
 
-  <div class="student-footer-info" *ngIf="forStaff && isModal && showStudentInfoBlock">
+  <div
+    class="student-footer-info"
+    *ngIf="forStaff && isModal && showStudentInfoBlock"
+    [style.marginTop]="'58px'"
+    >
     <app-student-passes [pass]="pass" [profile]="pass.student"></app-student-passes>
   </div>
 </div>
@@ -175,4 +179,24 @@
   </defs>
 </svg>
 
+<ng-template #confirmDialogBody let-totalStudents="totalStudents" let-limitReachedStudents="limitReachedStudents" let-passLimit="passLimit">
+  <div *ngIf="totalStudents > 1" class="ds-dialog-normal-text">
+    <p *ngFor="let s of limitReachedStudents">{{s.displayName}}: {{passLimit}}/{{passLimit}} passes today</p>
+  </div>
 
+  <div *ngIf="totalStudents === 1" class="ds-dialog-normal-text">
+    <span>If it's an emergency, you can override the limit.</span>
+  </div>
+</ng-template>
+
+<ng-template let-alerts="alerts" #confirmDialogBodyVisibility>
+  <ng-container *ngFor="let a of alerts">
+  <div class="ds-dialog-title">
+    <span>{{a.phrase}}</span>
+  </div>
+
+  <div class="ds-dialog-normal-text ds-mb-10">
+      <p>{{a.students}}</p>
+  </div>
+  </ng-container>
+</ng-template>

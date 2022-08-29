@@ -29,7 +29,7 @@
       <mat-divider></mat-divider>
     </div>
 
-    <div class="request-card-content" *ngIf="!isModal">
+    <div class="request-card-content" *ngIf="!isModal && !kioskModeRestricted">
       <div class="duration-picker">
         <app-traveltype-picker
           [width]="(request.destination.travel_types.length < 2 ? '106px' : '185px')"
@@ -51,7 +51,7 @@
       </div>
     </div>
 
-    <div class="request-card-content-modal" *ngIf="isModal">
+    <div class="request-card-content-modal" *ngIf="isModal || kioskModeRestricted">
       <div class="student-view" [@.disabled]="activeTeacherPin" *ngIf="!forStaff">
 
         <div class="content-container" *ngIf="!activeTeacherPin; else teacherPin">
@@ -171,9 +171,9 @@
         </div>
 
         <ng-template #teacherPin>
-            <div class="teacher-pin">
-              <app-teacher-pin-student (pinResult)="dialogRef.close()" [requestId]="request.id"></app-teacher-pin-student>
-            </div>
+          <div class="teacher-pin">
+            <app-teacher-pin-student (pinResult)="dialogRef.close()" [request]="request" [requestId]="request.id"></app-teacher-pin-student>
+          </div>
         </ng-template>
 
       </div>
@@ -286,7 +286,11 @@
 
   </div>
 
-  <div class="student-footer-info" *ngIf="forStaff && isModal">
+  <div
+    class="student-footer-info"
+    *ngIf="forStaff && isModal"
+    [style.marginTop]="'58px'"
+    >
     <app-student-passes [pass]="request" [profile]="request.student"></app-student-passes>
   </div>
 </div>
@@ -314,3 +318,8 @@
   </defs>
 </svg>
 
+<ng-template #PassLimitOverride>
+  <div class="ds-dialog-normal-text">
+    <span>If it's an emergency, you can override the limit.</span>
+  </div>
+</ng-template>

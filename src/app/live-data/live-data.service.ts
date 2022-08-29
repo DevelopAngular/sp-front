@@ -2,7 +2,8 @@ import {Injectable} from '@angular/core';
 
 import * as moment from 'moment';
 
-import {combineLatest, empty, merge, Observable, of, Subject} from 'rxjs';
+// TODO: Replace deprecated empty() observable with EMPTY
+import {combineLatest, EMPTY, empty, merge, Observable, of, Subject} from 'rxjs';
 import {distinctUntilChanged, exhaustMap, map, pluck, scan, startWith, switchMap} from 'rxjs/operators';
 import {Paged, PassLike} from '../models';
 import {BaseModel} from '../models/base';
@@ -104,7 +105,7 @@ import {
   getMyRoomPassesLoading,
   getMyRoomPassesTotalNumber
 } from '../ngrx/pass-like-collection/nested-states/my-room-passes/states';
-
+import {HallPassLimit} from '../models/HallPassLimits';
 
 interface WatchData<ModelType extends BaseModel, ExternalEventType> {
   /**
@@ -181,6 +182,10 @@ interface WatchData<ModelType extends BaseModel, ExternalEventType> {
   handlePost: (state: State<ModelType>) => State<ModelType>;
 }
 
+export enum PassLimitEvent {
+  Update = 'pass_limit.update'
+}
+
 /**
  * For a given date, return the Date objects corresponding to the
  * previous midnight and the next midnight.
@@ -188,7 +193,7 @@ interface WatchData<ModelType extends BaseModel, ExternalEventType> {
  * @param date
  */
 function getDateLimits(date: Date) {
-  return { start: moment(date).startOf('day').toDate(), end: moment(date).endOf('day').toDate() };
+  return {start: moment(date).startOf('day').toDate(), end: moment(date).endOf('day').toDate()};
 }
 
 /**
@@ -215,6 +220,7 @@ function mergeFilters<T>(filters: FilterFunc<T>[]): FilterFunc<T> {
   };
 }
 
+// TODO: Can be an enum
 /**
  * Types of filters for hall passes.
  */
@@ -315,7 +321,7 @@ export class LiveDataService {
         setTimeout(() => {
           this.globalReload$.next(null);
         }, 5);
-    });
+      });
 
     this.globalReload$.subscribe(() => {
       console.log('Global reload event');
@@ -395,7 +401,7 @@ export class LiveDataService {
         if (config.initialUrl.includes('&active=past')) {
           this.hallPassesService.expiredPassesNextUrl$.next(json.next ? json.next.substring(json.next.search('offset')) : '');
         }
-       return json.results.map(raw => config.decoder(raw));
+        return json.results.map(raw => config.decoder(raw));
       };
 
     const fullReload$ = merge(
@@ -427,6 +433,7 @@ export class LiveDataService {
     return getDateLimits(date);
   }
 
+  // TODO: Make web socker event strings into enums
   watchHallPassesFromLocation(sortingEvents: Observable<HallPassFilter>, filter: Location[], date: Date = null): Observable<HallPass[]> {
     const filterIds = filter.map(l => l.id);
 
@@ -464,7 +471,7 @@ export class LiveDataService {
       handlePost: filterHallPasses
     }).pipe(
       map((hallPasses: HallPass[]) => {
-        return hallPasses.filter((h: any) => !h.cancelled);
+          return hallPasses.filter((h: any) => !h.cancelled);
         }
       )
     );
@@ -507,7 +514,7 @@ export class LiveDataService {
       handlePost: filterHallPasses
     }).pipe(
       map((hallPasses: HallPass[]) => {
-        return hallPasses.filter((h: any) => !h.cancelled);
+          return hallPasses.filter((h: any) => !h.cancelled);
         }
       )
     );
@@ -780,8 +787,23 @@ export class LiveDataService {
     });
   }
 
-  watchActivePassLike(student: User): Observable<PassLike> {
+  watchPassLimits(): Observable<HallPassLimit[]> {
+    // TODO: Figure out how to apply filters here
+    return this.watch<HallPassLimit, string>({
+      externalEvents: EMPTY,
+      eventNamespace: 'pass_limit',
+      initialUrl: `v1/pass_limits/`,
+      rawDecoder: data => [data['pass_limit']],
+      decoder: s => s,
+      handleExternalEvent: s => s,
+      handlePollingEvent: makePollingEventHandler([
+        new UpdateItem([PassLimitEvent.Update], s => s)
+      ]),
+      handlePost: identityFilter
+    });
+  }
 
+  watchActivePassLike(student: User): Observable<PassLike> {
     const passes$ = this.activePasses$;
     const requests$ = this.watchActiveRequests(student).pipe(map(requests => {
       return requests.filter(req => !req.request_time);

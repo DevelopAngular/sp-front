@@ -1,5 +1,6 @@
 import {Component, EventEmitter, Input, OnInit, Output} from '@angular/core';
 import {DomSanitizer} from '@angular/platform-browser';
+import {uniqBy} from 'lodash';
 import {User} from '../models/User';
 
 @Component({
@@ -8,11 +9,14 @@ import {User} from '../models/User';
   styleUrls: ['./sp-chips.component.scss']
 })
 export class SpChipsComponent implements OnInit {
+  // text for the button that triggers adding entities 
+  private textAddButtonDefault: string = 'Add';
 
   @Input() selectedProfiles: User[] | any[] = [];
   @Input() preventRemovingLast: boolean = false;
   @Input() suggestedTeacher: User;
   @Input() isProposed: boolean;
+  @Input() textAddButton: string | null; 
   @Input() selectedTarget: 'users' | 'orgunits' | 'roles' | 'rooms' = 'users';
 
   @Output() add: EventEmitter<boolean> = new EventEmitter();
@@ -23,8 +27,20 @@ export class SpChipsComponent implements OnInit {
     private sanitizer: DomSanitizer,
   ) { }
 
-  ngOnInit() {
+  get results() {
+    // here for room visibility feature
+    // not having a title...
+    if (this.selectedProfiles.length > 0 && !('title' in this.selectedProfiles[0])) {
+      return this.selectedProfiles;
+    }
+    // this is expected for a teacher instance
+    return uniqBy(this.selectedProfiles, 'title');
   }
+
+  ngOnInit() {
+    this.textAddButton = this.textAddButton ?? this.textAddButtonDefault;
+  }
+
   textColor(item) {
     if (item.hovered) {
       return this.sanitizer.bypassSecurityTrustStyle('#1F195E');

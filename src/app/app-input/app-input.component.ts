@@ -1,10 +1,8 @@
 ﻿import {Component, EventEmitter, Input, OnChanges, OnDestroy, OnInit, Output, SimpleChanges, ViewChild} from '@angular/core';
 import {MatDialog} from '@angular/material/dialog';
-import {DomSanitizer} from '@angular/platform-browser';
 import {merge, of, Subject} from 'rxjs';
 import {filter, takeUntil} from 'rxjs/operators';
 import {FormControl, FormGroup} from '@angular/forms';
-
 
 @Component({
   selector: 'app-input',
@@ -39,6 +37,8 @@ export class AppInputComponent implements OnInit, OnChanges, OnDestroy {
   @Input() tabIndex: number = 1;
   @Input() tabAttentive: boolean = false;
   @Input() forceError: boolean = false;
+  @Input() showUnits: boolean;
+  @Input() units: string;
 
   @Input() formGroup: FormGroup;
   @Input() controlName: FormControl;
@@ -49,7 +49,7 @@ export class AppInputComponent implements OnInit, OnChanges, OnDestroy {
   @Output() blurEvent = new EventEmitter();
   @Output() focusEvent = new EventEmitter();
 
-  @ViewChild('inp', { static: true }) input;
+  @ViewChild('inp', {static: true}) input;
 
   private initialValue: string | number;
 
@@ -59,19 +59,11 @@ export class AppInputComponent implements OnInit, OnChanges, OnDestroy {
   private destroy$ = new Subject();
 
 
-  constructor(
-    public dialog: MatDialog,
-    private sanitizer: DomSanitizer,
-  ) {}
-
-  get containerWidth() {
-      return this.width ? parseFloat(this.width) + 16 + 'px' : 0;
+  constructor(public dialog: MatDialog) {
   }
 
-  get showMin() {
-    return this.timeInput && !this.isFocus &&
-      (!!this.formGroup.get('timeLimit') || !!this.formGroup.get('from') || !!this.formGroup.get('to')) &&
-      this.controlName.valid;
+  get containerWidth() {
+    return this.width ? parseFloat(this.width) + 16 + 'px' : 0;
   }
 
   get minLeftMargin() {
@@ -106,8 +98,8 @@ export class AppInputComponent implements OnInit, OnChanges, OnDestroy {
     this.controlName.valueChanges
       .pipe(takeUntil(this.destroy$), filter(res => res !== undefined))
       .subscribe(res => {
-      this.onUpdate.emit(res);
-    });
+        this.onUpdate.emit(res);
+      });
   }
 
   ngOnDestroy(): void {
@@ -123,7 +115,7 @@ export class AppInputComponent implements OnInit, OnChanges, OnDestroy {
 
   updateFocus(el) {
 
-    if(this.tabAttentive) {
+    if (this.tabAttentive) {
       this.isFocus = true;
     }
 
@@ -155,7 +147,7 @@ export class AppInputComponent implements OnInit, OnChanges, OnDestroy {
 
   errorTooltipToggleMobile(element) {
     if (window.innerWidth <= 425) {
-      element.toggle()
+      element.toggle();
     }
   }
 }

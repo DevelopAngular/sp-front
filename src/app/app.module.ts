@@ -74,6 +74,9 @@ import {LoginDataEffects} from './ngrx/login-data/effects';
 import {ExclusionGroupsEffects} from './ngrx/encounters-prevention/excusion-groups/effects';
 import {ToastEffects} from './ngrx/toast/effects';
 import {SmartpassSearchEffects} from './ngrx/smartpass-search/effects';
+import { PassLimitsDialogComponent } from './teacher/pass-limits-dialog/pass-limits-dialog.component';
+import { IdcardOverlayContainerComponent } from './idcard-overlay-container/idcard-overlay-container.component';
+import { EncounterDetectionEffects } from './ngrx/encounter-detection/effects';
 
 const DEFAULT_SWIPER_CONFIG: SwiperConfigInterface = {
   direction: 'horizontal',
@@ -96,6 +99,11 @@ const appRoutes: Routes = [
   },
   {
     path: 'google_oauth',
+    loadChildren: () => import('app/login/login.module').then(m => m.LoginModule),
+    data: { hideSchoolToggleBar: true}
+  },
+  {
+    path: 'classlink_oauth',
     loadChildren: () => import('app/login/login.module').then(m => m.LoginModule),
     data: { hideSchoolToggleBar: true}
   },
@@ -126,6 +134,11 @@ const appRoutes: Routes = [
     loadChildren: () => import('app/forms/forms.module').then(m => m.FormsModule),
     data: {hideSchoolToggleBar: true, hubspot: false, authFree: true, hideScroll: false},
   },
+  {
+    path: 'links',
+    loadChildren: () => import('app/weblinks/weblinks.module').then(m => m.WeblinksModule),
+    data: {hideSchoolToggleBar: true, hubspot: false, authFree: true, hideScroll: false},
+  },
 
   {path: '**', redirectTo: 'main/passes', pathMatch: 'full'},
 ];
@@ -136,79 +149,82 @@ const appRoutes: Routes = [
     ScrollHolderDirective,
     SupportButtonComponent,
     CustomToastComponent,
+    PassLimitsDialogComponent,
+    IdcardOverlayContainerComponent,
   ],
-  imports: [
-    BrowserModule,
-    BrowserAnimationsModule,
-    ReactiveFormsModule,
-    FormsModule,
-    HttpClientModule,
-    SwiperModule,
-    CoreModule,
-    NextReleaseModule,
-    KeyboardShortcutsModule.forRoot(),
+    imports: [
+        BrowserModule,
+        BrowserAnimationsModule,
+        ReactiveFormsModule,
+        FormsModule,
+        HttpClientModule,
+        SwiperModule,
+        CoreModule,
+        NextReleaseModule,
+        KeyboardShortcutsModule.forRoot(),
 
-    RouterModule.forRoot(
-      appRoutes,
-      {
-        enableTracing: false,
-      }
-    ),
-    OAuthModule.forRoot(),
-    AngularFireModule.initializeApp(environment.firebase, 'notifyhallpass'),
-    AngularFireMessagingModule,
-    AgmCoreModule.forRoot({
-      apiKey: 'AIzaSyB-PvmYU5y4GQXh1aummcUI__LNhCtI68o',
-      libraries: ['places']
-    }),
-    StoreModule.forRoot(reducers),
-    EffectsModule.forRoot([
-      ReportsEffects,
-      PinnablesEffects,
-      AccountsEffects,
-      AllAccountsEffects,
-      AdminsEffects,
-      TeachersEffects,
-      AssistantsEffects,
-      StudentsEffects,
-      CountAccountsEffects,
-      TeacherLocationsEffects,
-      DashboardEffects,
-      PassStatsEffects,
-      StudentGroupsEffects,
-      LocationsEffects,
-      FavoriteLocationsEffects,
-      ColorsEffects,
-      SchoolsEffects,
-      UserEffects,
-      ProcessEffects,
-      PassLimitEffects,
-      PassesEffects,
-      ContactTraceEffects,
-      IntrosEffects,
-      PassLikeCollectionEffects,
-      InvitationsEffects,
-      RequestsEffects,
-      ExpiredPassesEffects,
-      FuturePassesEffects,
-      ActivePassesEffects,
-      ToLocationPassesEffects,
-      FromLocationPassesEffects,
-      HallMonitorPassesEffects,
-      MyRoomPassesEffects,
-      FiltersEffects,
-      RepresentedUsersEffects,
-      QuickPreviewPassesEffects,
-      ProfilePicturesEffects,
-      LoginDataEffects,
-      ExclusionGroupsEffects,
-      ToastEffects,
-      SmartpassSearchEffects,
-    ]),
-    StoreDevtoolsModule.instrument({}),
-    HammerModule,
-    ServiceWorkerModule.register('ngsw-worker.js', {enabled: environment.production})
-  ],
+        RouterModule.forRoot(
+            appRoutes,
+            {
+                enableTracing: false,
+            }
+        ),
+        OAuthModule.forRoot(),
+        AngularFireModule.initializeApp(environment.firebase, 'notifyhallpass'),
+        AngularFireMessagingModule,
+        AgmCoreModule.forRoot({
+            apiKey: 'AIzaSyB-PvmYU5y4GQXh1aummcUI__LNhCtI68o',
+            libraries: ['places']
+        }),
+        StoreModule.forRoot(reducers),
+        EffectsModule.forRoot([
+            ReportsEffects,
+            PinnablesEffects,
+            AccountsEffects,
+            AllAccountsEffects,
+            AdminsEffects,
+            TeachersEffects,
+            AssistantsEffects,
+            StudentsEffects,
+            CountAccountsEffects,
+            TeacherLocationsEffects,
+            DashboardEffects,
+            PassStatsEffects,
+            StudentGroupsEffects,
+            LocationsEffects,
+            FavoriteLocationsEffects,
+            ColorsEffects,
+            SchoolsEffects,
+            UserEffects,
+            ProcessEffects,
+            PassLimitEffects,
+            PassesEffects,
+            ContactTraceEffects,
+            IntrosEffects,
+            PassLikeCollectionEffects,
+            InvitationsEffects,
+            RequestsEffects,
+            ExpiredPassesEffects,
+            FuturePassesEffects,
+            ActivePassesEffects,
+            ToLocationPassesEffects,
+            FromLocationPassesEffects,
+            HallMonitorPassesEffects,
+            MyRoomPassesEffects,
+            FiltersEffects,
+            RepresentedUsersEffects,
+            QuickPreviewPassesEffects,
+            ProfilePicturesEffects,
+            LoginDataEffects,
+            ExclusionGroupsEffects,
+            ToastEffects,
+            SmartpassSearchEffects,
+            EncounterDetectionEffects
+        ]),
+        StoreDevtoolsModule.instrument({}),
+        HammerModule,
+        ServiceWorkerModule.register('ngsw-worker.js', {enabled: environment.production})
+    ],
   providers: [
     {provide: OverlayContainer, useFactory: InitOverlay},
     {provide: HTTP_INTERCEPTORS, useClass: ProgressInterceptor, multi: true},

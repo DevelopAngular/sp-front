@@ -3,7 +3,6 @@ import {MAT_DIALOG_DATA, MatDialogRef} from '@angular/material/dialog';
 
 import {Status} from '../../../models/Report';
 import {StatusBaseComponent} from '../status-base.component';
-import {StatusNotifyerService} from '../status-notifyer.service';
 
 @Component({
   selector: 'app-status-editor',
@@ -11,12 +10,12 @@ import {StatusNotifyerService} from '../status-notifyer.service';
   styleUrls: ['../status-filter/status-filter.component.scss'],
 })
 export class StatusEditorComponent extends StatusBaseComponent {
+
   type = 'editedStatus';
 
   constructor(
     @Inject(MAT_DIALOG_DATA) public data: any,
     public dialogRef: MatDialogRef<StatusEditorComponent>,
-    public notifyer: StatusNotifyerService
     ) {
     super(data, dialogRef);
   }
@@ -44,15 +43,4 @@ export class StatusEditorComponent extends StatusBaseComponent {
     if (!!dx || !!dy) this.dialogRef.updatePosition(position);
   }
 
-  chooseStatus(status: Status) {
-    const isSameStatus = (this.data?.prevstatus === status);
-    super.chooseStatus(status);
-    const remoteid = this.data?.remoteid ?? null;
-    if (remoteid === null || isSameStatus) {
-      this.notifyer.setStatus(status);
-    } else {
-      // this will do a http request
-      this.notifyer.setStatus(status, remoteid);
-      }
-    }   
-  }
+ }

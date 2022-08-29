@@ -1,0 +1,27 @@
+<div class="dialog-wrapper" (dragenter)="handleDragEvent($event, '#00B476')" (dragover)="handleDragEvent($event, '#00B476')" (dragleave)="handleDragEvent($event, '#7F879D')" (drop)="catchFile($event)">
+    <p class="ds-dialog-title header">{{isLogoAdded ? 'Update' : 'Add'}} logo</p>
+    <p class="instruction">File should be square, at least 300x300 px, and jpeg or png. Logos work best on a white or transparent background.</p>
+    <div class="drag-content main-wrapper" #dropArea>
+        <input type="file" [formControl]="form.get('file')" #file style="display: none" />
+
+        <div class="uploading-area upload-file-wrapper" *ngIf="!uploadingProgress.inProgress && !uploadingProgress.completed; else img">
+            <span class="ds-pb-10">Drop image here</span>
+            <span [style.text-decoration]="'underline'" class="choose-file-inline" (click)="file.click()">Choose file</span>
+        </div>
+        <ng-template #img>
+            <div class="set-content">
+                <img *ngIf="imageUrl" [src]="'./assets/Close (Navy).svg'" (click)="back()" class="cancel-img" width="12" alt="Check.svg">
+                <div *ngIf="imageUrl" class="set-img" [ngStyle]="{'background': 'url(' + imageUrl + ') no-repeat left center/cover'}"></div>
+            </div>
+        </ng-template>
+
+    </div>
+    <div class="ds-flex-center-between">
+        <p class="bottom-text">Need help? <span (click)="openChat($event)">Chat with us</span></p>
+        <ng-container #img>
+            <div class="buttons">
+                <app-gradient-button [disabled]="!imageUrl" appCrossPointerEventTarget (pointerClickEvent)="addLogo()">{{isLogoAdded ? 'Update' : 'Add'}} logo</app-gradient-button>
+            </div>
+        </ng-container>
+    </div>
+</div>

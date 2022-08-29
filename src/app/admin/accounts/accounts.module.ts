@@ -24,7 +24,7 @@ import {BulkAddComponent} from './bulk-add/bulk-add.component';
 import {AddRolePopupComponent} from './select-role/add-role-popup/add-role-popup.component';
 import {PermissionsDialogComponent} from '../accounts-role/permissions-dialog/permissions-dialog.component';
 import {GSuiteConnectComponent} from './g-suite-settings/g-suite-connect/g-suite-connect.component';
-import {StatusNotifyerService} from '../explore/status-notifyer.service';
+import { AdminPassLimitDialogComponent } from './admin-pass-limits-dialog/admin-pass-limits-dialog.component';
 
 @NgModule({
   declarations: [
@@ -50,13 +50,13 @@ import {StatusNotifyerService} from '../explore/status-notifyer.service';
     AddRolePopupComponent,
     PermissionsDialogComponent,
     GSuiteConnectComponent,
+    AdminPassLimitDialogComponent,
   ],
   imports: [
     CommonModule,
     AccountsRoutingModule,
     AdminSharedModule
   ],
-  providers:[StatusNotifyerService],
 })
 export class AccountsModule {
 }

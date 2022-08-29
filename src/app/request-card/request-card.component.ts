@@ -1,4 +1,5 @@
-import {Component, ElementRef, EventEmitter, Inject, Input, OnDestroy, OnInit, Output, ViewChild} from '@angular/core';
+import {Component, ElementRef, EventEmitter, Inject, Input, OnDestroy, OnInit, Output, TemplateRef, ViewChild} from '@angular/core';
+import {HttpErrorResponse} from '@angular/common/http';
 import {Request} from '../models/Request';
 import {User} from '../models/User';
 import {Util} from '../../Util';
@@ -8,12 +9,12 @@ import {Navigation} from '../create-hallpass-forms/main-hallpass--form/main-hall
 import {getInnerPassName} from '../pass-tile/pass-display-util';
 import {DataService} from '../services/data-service';
 import {LoadingService} from '../services/loading.service';
-import {filter, map, pluck, switchMap, takeUntil, tap} from 'rxjs/operators';
+import {catchError, concatMap, filter, map, pluck, switchMap, takeUntil, tap} from 'rxjs/operators';
 import {CreateHallpassFormsComponent} from '../create-hallpass-forms/create-hallpass-forms.component';
 import {CreateFormService} from '../create-hallpass-forms/create-form.service';
 import {RequestsService} from '../services/requests.service';
 import {NextStep, scalePassCards} from '../animations';
-import {BehaviorSubject, interval, Observable, of, Subject} from 'rxjs';
+import {BehaviorSubject, from, interval, Observable, of, Subject, throwError} from 'rxjs';
 
 import * as moment from 'moment';
 import {isNull, uniq, uniqBy} from 'lodash';
@@ -28,7 +29,20 @@ import {UserService} from '../services/user.service';
 import {School} from '../models/School';
 import {PassLimit} from '../models/PassLimit';
 import {LocationsService} from '../services/locations.service';
-import {PassLimitDialogComponent} from '../create-hallpass-forms/main-hallpass--form/locations-group-container/pass-limit-dialog/pass-limit-dialog.component';
+import {
+  PassLimitDialogComponent
+} from '../create-hallpass-forms/main-hallpass--form/locations-group-container/pass-limit-dialog/pass-limit-dialog.component';
+import {PassLimitService} from '../services/pass-limit.service';
+import {
+  ConfirmationDialogComponent,
+  ConfirmationTemplates,
+  RecommendedDialogConfig
+} from '../shared/shared-components/confirmation-dialog/confirmation-dialog.component';
+import {ConfirmDeleteKioskModeComponent} from './confirm-delete-kiosk-mode/confirm-delete-kiosk-mode.component';
+
+const sleep = (ms: number) => new Promise(resolve => {
+  setTimeout(() => resolve(null), ms);
+});
 
 @Component({
   selector: 'app-request-card',
@@ -39,28 +53,29 @@ import {PassLimitDialogComponent} from '../create-hallpass-forms/main-hallpass--
 export class RequestCardComponent implements OnInit, OnDestroy {
 
   @Input() request: Request;
-  @Input() forFuture: boolean = false;
-  @Input() fromPast: boolean = false;
-  @Input() forInput: boolean = false;
-  @Input() forStaff: boolean = false;
+  @Input() forFuture = false;
+  @Input() fromPast = false;
+  @Input() forInput = false;
+  @Input() forStaff = false;
   @Input() formState: Navigation;
   @Input() isOpenBigPass: boolean;
-  @Input() fullScreenButton: boolean = false;
+  @Input() fullScreenButton = false;
 
   @Output() cardEvent: EventEmitter<any> = new EventEmitter<any>();
   @Output() scaleCard: EventEmitter<boolean> = new EventEmitter<boolean>();
 
   @ViewChild('cardWrapper') cardWrapper: ElementRef;
+  @ViewChild('PassLimitOverride') overriderBody: TemplateRef<any>;
 
   selectedDuration: number;
   selectedTravelType: string;
   selectedStudents;
   fromHistory;
   fromHistoryIndex;
-  messageEditOpen: boolean = false;
-  dateEditOpen: boolean = false;
-  cancelOpen: boolean = false;
-  pinnableOpen: boolean = false;
+  messageEditOpen = false;
+  dateEditOpen = false;
+  cancelOpen = false;
+  pinnableOpen = false;
   user: User;
 
   isModal: boolean;
@@ -76,13 +91,14 @@ export class RequestCardComponent implements OnInit, OnDestroy {
 
   hoverDestroyer$: Subject<any>;
 
-  activeTeacherPin: boolean = false;
+  activeTeacherPin = false;
   solidColorRgba: string;
   solidColorRgba2: string;
   removeShadow: boolean;
   leftTextShadow: boolean;
+  kioskModeRestricted: boolean;
 
-  passLimits: {[id: number]: PassLimit};
+  passLimits: { [id: number]: PassLimit };
 
   school: School;
   isEnableProfilePictures$: Observable<boolean>;
@@ -93,21 +109,24 @@ export class RequestCardComponent implements OnInit, OnDestroy {
 
 
   constructor(
-      public dialogRef: MatDialogRef<RequestCardComponent>,
-      @Inject(MAT_DIALOG_DATA) public data: any,
-      private requestService: RequestsService,
-      public dialog: MatDialog,
-      public dataService: DataService,
-      private loadingService: LoadingService,
-      private createFormService: CreateFormService,
-      public screenService: ScreenService,
-      private shortcutsService: KeyboardShortcutsService,
-      private navbarData: NavbarDataService,
-      private storage: StorageService,
-      private domCheckerService: DomCheckerService,
-      private userService: UserService,
-      private locationsService: LocationsService
-  ) {}
+    public dialogRef: MatDialogRef<RequestCardComponent>,
+    @Inject(MAT_DIALOG_DATA) public data: any,
+    private requestService: RequestsService,
+    public dialog: MatDialog,
+    public dataService: DataService,
+    private loadingService: LoadingService,
+    private createFormService: CreateFormService,
+    public screenService: ScreenService,
+    private shortcutsService: KeyboardShortcutsService,
+    private navbarData: NavbarDataService,
+    private storage: StorageService,
+    private domCheckerService: DomCheckerService,
+    private userService: UserService,
+    private locationsService: LocationsService,
+    private passLimitsService: PassLimitService,
+    private createPassFormRef: MatDialogRef<CreateHallpassFormsComponent>
+  ) {
+  }
 
   get invalidDate() {
     return Util.invalidDate(this.request.request_time);
@@ -118,18 +137,21 @@ export class RequestCardComponent implements OnInit, OnDestroy {
   }
 
   get teacherNames() {
-      const destination = this.request.destination;
-      const origin = this.request.origin;
-      if (destination.scheduling_request_mode === 'all_teachers_in_room') {
-          if (destination.scheduling_request_send_origin_teachers && destination.scheduling_request_send_destination_teachers) {
-              return [...destination.teachers, ...origin.teachers];
-          } else if (destination.scheduling_request_send_origin_teachers) {
-              return origin.teachers;
-          } else if (destination.scheduling_request_send_destination_teachers) {
-              return destination.teachers;
-          }
+    const destination = this.request.destination;
+    const origin = this.request.origin;
+    if (this.formState && this.formState.kioskMode) {
+      return origin.teachers;
+    }
+    if (destination.scheduling_request_mode === 'all_teachers_in_room') {
+      if (destination.scheduling_request_send_origin_teachers && destination.scheduling_request_send_destination_teachers) {
+        return [...destination.teachers, ...origin.teachers];
+      } else if (destination.scheduling_request_send_origin_teachers) {
+        return origin.teachers;
+      } else if (destination.scheduling_request_send_destination_teachers) {
+        return destination.teachers;
       }
-      return [this.request.teacher];
+    }
+    return this.request.teachers;
   }
 
   get filteredTeachers() {
@@ -137,7 +159,7 @@ export class RequestCardComponent implements OnInit, OnDestroy {
   }
 
   get iconClass() {
-    return  this.forStaff || this.invalidDate || !this.forStaff && !this.forInput && !this.invalidDate ? '' : 'icon-button';
+    return this.forStaff || this.invalidDate || !this.forStaff && !this.forInput && !this.invalidDate ? '' : 'icon-button';
   }
 
   ngOnInit() {
@@ -170,12 +192,12 @@ export class RequestCardComponent implements OnInit, OnDestroy {
       });
 
     this.userService.user$
-    .pipe(
-      map(user => User.fromJSON(user)),
-      takeUntil(this.destroy$))
-    .subscribe(user => {
+      .pipe(
+        map(user => User.fromJSON(user)),
+        takeUntil(this.destroy$))
+      .subscribe(user => {
         this.user = user;
-    });
+      });
 
     this.isEnableProfilePictures$ = this.userService.isEnableProfilePictures$;
 
@@ -207,11 +229,15 @@ export class RequestCardComponent implements OnInit, OnDestroy {
   }
 
   get teacherName() {
-    return this.request.teacher.isSameObject(this.user) ? 'Me' : this.request.teacher.first_name.substr(0, 1) + '. ' + this.request.teacher.last_name;
+    return this.request.teachers.map(t => {
+      return t.isSameObject(this.user)
+        ? 'Me'
+        : t.first_name.substr(0, 1) + '. ' + t.last_name;
+    }).join(', ');
   }
 
   get gradient() {
-      return 'radial-gradient(circle at 73% 71%, ' + this.request.color_profile.gradient_color + ')';
+    return 'radial-gradient(circle at 73% 71%, ' + this.request.color_profile.gradient_color + ')';
   }
 
   get status() {
@@ -219,50 +245,52 @@ export class RequestCardComponent implements OnInit, OnDestroy {
   }
 
   get isFutureOrNowTeachers() {
-      const to = this.formState.data.direction.to;
-      if ((!this.formState.forLater && to.request_mode !== 'any_teacher') || (this.formState.forLater && to.scheduling_request_mode !== 'any_teacher') ) {
-        return to && (!this.formState.forLater && to.request_mode === 'all_teachers_in_room' || to.request_mode === 'specific_teachers' ||
+    const to = this.formState.data.direction.to;
+    if ((!this.formState.forLater && to.request_mode !== 'any_teacher') || (this.formState.forLater && to.scheduling_request_mode !== 'any_teacher')) {
+      return to && (!this.formState.forLater && to.request_mode === 'all_teachers_in_room' || to.request_mode === 'specific_teachers' ||
           (to.request_mode === 'teacher_in_room' && to.teachers.length === 1)) ||
-          (this.formState.forLater && to.scheduling_request_mode === 'all_teachers_in_room' || to.scheduling_request_mode === 'specific_teachers' ||
-            to.scheduling_request_mode === 'teacher_in_room' && to.teachers.length === 1);
-      }
+        (this.formState.forLater && to.scheduling_request_mode === 'all_teachers_in_room' || to.scheduling_request_mode === 'specific_teachers' ||
+          to.scheduling_request_mode === 'teacher_in_room' && to.teachers.length === 1);
+    }
   }
 
   generateTeachersToRequest() {
-      const to = this.formState.data.direction.to;
-      if (!this.forFuture) {
-          if (to.request_mode === 'all_teachers_in_room') {
-              if (to.request_send_destination_teachers && to.request_send_origin_teachers) {
-                  this.nowTeachers = [...this.formState.data.direction.to.teachers, ...this.formState.data.direction.from.teachers];
-              } else if (to.request_send_destination_teachers) {
-                  this.nowTeachers = this.formState.data.direction.to.teachers;
-              } else if (to.request_send_origin_teachers) {
-                  this.nowTeachers = this.formState.data.direction.from.teachers;
-              }
-          } else if (to.request_mode === 'specific_teachers' && this.request.destination.request_teachers.length === 1) {
-            this.nowTeachers = to.request_teachers;
-          } else if (to.request_mode === 'specific_teachers') {
-              this.nowTeachers = [this.request.teacher];
-          } else if (to.request_mode === 'teacher_in_room' && to.teachers.length === 1) {
-            this.nowTeachers = [this.request.teacher];
-          }
-      } else {
-          if (to.scheduling_request_mode === 'all_teachers_in_room') {
-              if (to.scheduling_request_send_origin_teachers && to.scheduling_request_send_destination_teachers) {
-                  this.futureTeachers = [...this.formState.data.direction.to.teachers, ...this.formState.data.direction.from.teachers];
-              } else if (to.scheduling_request_send_origin_teachers) {
-                  this.futureTeachers = this.formState.data.direction.from.teachers.length ? this.formState.data.direction.from.teachers : this.formState.data.direction.to.teachers;
-              } else if (to.scheduling_request_send_destination_teachers) {
-                  this.futureTeachers = this.formState.data.direction.to.teachers;
-              }
-          } else if (to.scheduling_request_mode === 'specific_teachers' && this.request.destination.scheduling_request_teachers.length === 1) {
-              this.futureTeachers = this.request.destination.scheduling_request_teachers;
-          } else if (to.scheduling_request_mode === 'specific_teachers' && this.request.destination.scheduling_request_teachers.length > 1) {
-            this.futureTeachers = [this.request.teacher];
-          } else if (to.scheduling_request_mode === 'teacher_in_room' && to.teachers.length === 1) {
-            this.futureTeachers = [this.request.teacher];
-          }
+    const to = this.formState.data.direction.to;
+    if (!this.forFuture) {
+      if (to.request_mode === 'all_teachers_in_room') {
+        if (to.request_send_destination_teachers && to.request_send_origin_teachers) {
+          this.nowTeachers = [...this.formState.data.direction.to.teachers, ...this.formState.data.direction.from.teachers];
+        } else if (to.request_send_destination_teachers) {
+          this.nowTeachers = this.formState.data.direction.to.teachers;
+        } else if (to.request_send_origin_teachers) {
+          this.nowTeachers = this.formState.data.direction.from.teachers;
+        }
+      } else if (to.request_mode === 'specific_teachers' && this.request.destination.request_teachers.length === 1) {
+        this.nowTeachers = to.request_teachers;
+      } else if (to.request_mode === 'specific_teachers') {
+        this.nowTeachers = this.request.teachers;
+      } else if (to.request_mode === 'teacher_in_room' && to.teachers.length === 1) {
+        this.nowTeachers = this.request.teachers;
       }
+    } else {
+      if (to.scheduling_request_mode === 'all_teachers_in_room') {
+        if (to.scheduling_request_send_origin_teachers && to.scheduling_request_send_destination_teachers) {
+          this.futureTeachers = [...this.formState.data.direction.to.teachers, ...this.formState.data.direction.from.teachers];
+        } else if (to.scheduling_request_send_origin_teachers) {
+          this.futureTeachers = this.formState.data.direction.from.teachers.length
+            ? this.formState.data.direction.from.teachers
+            : this.formState.data.direction.to.teachers;
+        } else if (to.scheduling_request_send_destination_teachers) {
+          this.futureTeachers = this.formState.data.direction.to.teachers;
+        }
+      } else if (to.scheduling_request_mode === 'specific_teachers' && this.request.destination.scheduling_request_teachers.length === 1) {
+        this.futureTeachers = this.request.destination.scheduling_request_teachers;
+      } else if (to.scheduling_request_mode === 'specific_teachers' && this.request.destination.scheduling_request_teachers.length > 1) {
+        this.futureTeachers = this.request.teachers;
+      } else if (to.scheduling_request_mode === 'teacher_in_room' && to.teachers.length === 1) {
+        this.futureTeachers = this.request.teachers;
+      }
+    }
   }
 
   formatDateTime(date: Date, timeOnly?: boolean) {
@@ -272,64 +300,81 @@ export class RequestCardComponent implements OnInit, OnDestroy {
   newRequest() {
     this.performingAction = true;
     this.generateTeachersToRequest();
-      const body: any = this.forFuture ? {
-          'origin' : this.request.origin.id,
-          'destination' : this.request.destination.id,
-          'attachment_message' : this.request.attachment_message,
-          'travel_type' : this.selectedTravelType,
-          'request_time' : this.request.request_time.toISOString(),
-          'duration' : this.selectedDuration * 60,
-        } : {
-          'origin' : this.request.origin.id,
-          'destination' : this.request.destination.id,
-          'attachment_message' : this.request.attachment_message,
-          'travel_type' : this.selectedTravelType,
-          'duration' : this.selectedDuration * 60,
-        };
-    if (this.isFutureOrNowTeachers) {
-          if (this.forFuture) {
-              body.teachers = uniq(this.futureTeachers.map(t => t.id));
-          } else {
-              body.teachers = uniq(this.nowTeachers.map(t => t.id));
-          }
+    const body: any = this.forFuture ? {
+      'origin': this.request.origin.id,
+      'destination': this.request.destination.id,
+      'attachment_message': this.request.attachment_message,
+      'travel_type': this.selectedTravelType,
+      'request_time': this.request.request_time.toISOString(),
+      'duration': this.selectedDuration * 60,
+    } : {
+      'origin': this.request.origin.id,
+      'destination': this.request.destination.id,
+      'attachment_message': this.request.attachment_message,
+      'travel_type': this.selectedTravelType,
+      'duration': this.selectedDuration * 60,
+    };
+
+    if (this.isFutureOrNowTeachers && !this.formState.kioskMode) {
+      if (this.forFuture) {
+        body.teachers = uniq(this.futureTeachers.map(t => t.id));
       } else {
-          body.teacher = this.request.teacher.id;
+        body.teachers = uniq(this.nowTeachers.map(t => t.id));
       }
+    } else {
+      body.teachers = uniq(this.request.teachers.map(t => t.id));
+      if (this.formState.kioskMode) {
+        body.student_id = this.formState.data.kioskModeStudent.id;
+      }
+    }
 
-      if (this.forStaff) {
-         const invitation = {
-              'students' : this.request.student.id,
-              'default_origin' : this.request.origin.id,
-              'destination' : +this.request.destination.id,
-              'date_choices' : [new Date(this.formState.data.date.date).toISOString()],
-              'duration' : this.request.duration,
-              'travel_type' : this.request.travel_type
-          };
+    if (this.forStaff) {
+      const invitation = {
+        'students': this.request.student.id,
+        'default_origin': this.request.origin.id,
+        'destination': +this.request.destination.id,
+        'date_choices': [new Date(this.formState.data.date.date).toISOString()],
+        'duration': this.request.duration,
+        'travel_type': this.request.travel_type
+      };
 
-          this.requestService.createInvitation(invitation).pipe(
-            takeUntil(this.destroy$),
-            switchMap(() => {
-              return this.requestService.cancelRequest(this.request.id);
-          })).subscribe(res => {
-              this.performingAction = true;
-              this.dialogRef.close();
-          });
-      } else {
-      this.requestService.createRequest(body).pipe(
-          takeUntil(this.destroy$),
-          switchMap(res => {
-              return this.formState.previousStep === 1 ? this.requestService.cancelRequest(this.request.id) :
-                  (this.formState.missedRequest ? this.requestService.cancelInvitation(this.formState.data.request.id, '') : of(null));
-          }))
-        .subscribe((res) => {
-          this.performingAction = true;
-          if ((DeviceDetection.isAndroid() || DeviceDetection.isIOSMobile()) && this.forFuture) {
-            this.dataService.openRequestPageMobile();
-            this.navbarData.inboxClick$.next(true);
-          }
-          this.dialogRef.close();
+      this.requestService.createInvitation(invitation).pipe(
+        takeUntil(this.destroy$),
+        switchMap(() => {
+          return this.requestService.cancelRequest(this.request.id);
+        })).subscribe(res => {
+        this.performingAction = true;
+        this.dialogRef.close();
       });
-      }
+    } else {
+      this.requestService.createRequest(body).pipe(
+        takeUntil(this.destroy$),
+        switchMap((res: Request) => {
+          this.request = res;
+          this.forInput = false;
+          this.kioskModeRestricted = true;
+          if (this.formState.kioskMode) {
+            this.createPassFormRef.disableClose = true;
+          }
+          return this.formState.previousStep === 1 ? this.requestService.cancelRequest(this.request.id) :
+            (this.formState.missedRequest ? this.requestService.cancelInvitation(this.formState.data.request.id, '') : of(null));
+        })
+      ).subscribe({
+        next: () => {
+          this.performingAction = true;
+          if (!this.formState.kioskMode) {
+            if ((DeviceDetection.isAndroid() || DeviceDetection.isIOSMobile()) && this.forFuture) {
+              this.dataService.openRequestPageMobile();
+              this.navbarData.inboxClick$.next(true);
+            }
+            this.dialogRef.close();
+          }
+        },
+        error: () => {
+          this.performingAction = false;
+        }
+      });
+    }
   }
 
   changeDate(resend_request?: boolean) {
@@ -338,22 +383,22 @@ export class RequestCardComponent implements OnInit, OnDestroy {
       let config;
       this.dialogRef.close();
       config = {
-          panelClass: 'form-dialog-container',
-          maxWidth: '100vw',
-          backdropClass: 'custom-backdrop',
-          data: {
-              'entryState': {
-                  step: 1,
-                  state: 1
-              },
-              'forInput': false,
-              'originalToLocation': this.request.destination,
-              'colorProfile': this.request.color_profile,
-              'originalFromLocation': this.request.origin,
-              'request_time': resend_request || this.invalidDate ? new Date() : this.request.request_time,
-              'request': this.request,
-              'resend_request': resend_request
-          }
+        panelClass: 'form-dialog-container',
+        maxWidth: '100vw',
+        backdropClass: 'custom-backdrop',
+        data: {
+          'entryState': {
+            step: 1,
+            state: 1
+          },
+          'forInput': false,
+          'originalToLocation': this.request.destination,
+          'colorProfile': this.request.color_profile,
+          'originalFromLocation': this.request.origin,
+          'request_time': resend_request || this.invalidDate ? new Date() : this.request.request_time,
+          'request': this.request,
+          'resend_request': resend_request
+        }
       };
       const dateDialog = this.dialog.open(CreateHallpassFormsComponent, config);
 
@@ -362,16 +407,16 @@ export class RequestCardComponent implements OnInit, OnDestroy {
         filter((state) => resend_request && state),
         switchMap((state) => {
           const body: any = {
-              'origin' : this.request.origin.id,
-              'destination' : this.request.destination.id,
-              'attachment_message' : this.request.attachment_message,
-              'travel_type' : this.request.travel_type,
-              'teacher' : this.request.teacher.id,
-              'duration' : this.request.duration,
-              'request_time': moment(state.data.date.date).toISOString()
+            'origin': this.request.origin.id,
+            'destination': this.request.destination.id,
+            'attachment_message': this.request.attachment_message,
+            'travel_type': this.request.travel_type,
+            'teachers': this.request.teachers.map(u => u.id),
+            'duration': this.request.duration,
+            'request_time': moment(state.data.date.date).toISOString()
           };
 
-         return this.requestService.createRequest(body);
+          return this.requestService.createRequest(body);
         }),
         switchMap(() => this.requestService.cancelRequest(this.request.id))
       ).subscribe();
@@ -386,62 +431,76 @@ export class RequestCardComponent implements OnInit, OnDestroy {
         maxWidth: '100vw',
         panelClass: 'form-dialog-container',
         backdropClass: 'invis-backdrop',
-        data: {'entryState': 'restrictedMessage',
-              'originalMessage': this.request.attachment_message,
-              'originalToLocation': this.request.destination,
-              'colorProfile': this.request.color_profile,
-              'originalFromLocation': this.request.origin}
+        data: {
+          'entryState': 'restrictedMessage',
+          'originalMessage': this.request.attachment_message,
+          'originalToLocation': this.request.destination,
+          'colorProfile': this.request.color_profile,
+          'originalFromLocation': this.request.origin
+        }
       });
 
-      infoDialog.afterClosed().subscribe(data =>{
-        this.request.attachment_message = data['message']===''?this.request.attachment_message:data['message'];
+      infoDialog.afterClosed().subscribe(data => {
+        this.request.attachment_message = data['message'] === '' ? this.request.attachment_message : data['message'];
         this.messageEditOpen = false;
       });
     }
   }
 
   cancelRequest(evt: MouseEvent) {
+    if (this.formState && this.formState.kioskMode && !this.forInput) {
+      const CD = this.dialog.open(ConfirmDeleteKioskModeComponent, {
+        panelClass: 'overlay-dialog'
+      });
 
-    if (!this.cancelOpen) {
-      const target = new ElementRef(evt.currentTarget);
-      this.options = [];
-      this.header = '';
-      if (!this.forInput) {
-        if (this.forStaff) {
-          this.options.push(this.genOption('Attach Message & Deny', '#7f879d', 'deny_with_message', './assets/Message (Blue-Gray).svg'));
-          this.options.push(this.genOption('Deny Pass Request', '#E32C66', 'deny', './assets/Cancel (Red).svg', 'rgba(227, 44, 102, .1)', 'rgba(227, 44, 102, .15)'));
-        } else {
-          if (this.invalidDate) {
-            this.options.push(this.genOption('Change Date & Time to Resend', '#7f879d', 'change_date'));
-          }
-          this.options.push(this.genOption('Delete Pass Request', '#E32C66', 'delete', './assets/Delete (Red).svg', 'rgba(227, 44, 102, .1)', 'rgba(227, 44, 102, .15)'));
+      CD.afterClosed().subscribe(action => {
+        if (action === 'delete') {
+          this.chooseAction(action);
         }
-        this.header = 'Are you sure you want to ' + (this.forStaff ? 'deny' : 'delete') + ' this pass request' + (this.forStaff ? '' : ' you sent') + '?';
-      } else {
-        if (!this.pinnableOpen) {
+      });
+    } else {
+      if (!this.cancelOpen) {
+        const target = new ElementRef(evt.currentTarget);
+        this.options = [];
+        this.header = '';
+        if (!this.forInput) {
+          if (this.forStaff) {
+            this.options.push(this.genOption('Attach Message & Deny', '#7f879d', 'deny_with_message', './assets/Message (Blue-Gray).svg'));
+            this.options.push(this.genOption('Deny Pass Request', '#E32C66', 'deny', './assets/Cancel (Red).svg', 'rgba(227, 44, 102, .1)', 'rgba(227, 44, 102, .15)'));
+          } else {
+            if (this.invalidDate) {
+              this.options.push(this.genOption('Change Date & Time to Resend', '#7f879d', 'change_date'));
+            }
+            this.options.push(this.genOption('Delete Pass Request', '#E32C66', 'delete', './assets/Delete (Red).svg', 'rgba(227, 44, 102, .1)', 'rgba(227, 44, 102, .15)'));
+          }
+          this.header = 'Are you sure you want to ' + (this.forStaff ? 'deny' : 'delete') + ' this pass request' + (this.forStaff ? '' : ' you sent') + '?';
+        } else {
+          if (!this.pinnableOpen) {
             this.formState.step = this.formState.previousStep === 1 ? 1 : 3;
             this.formState.previousStep = 4;
             this.createFormService.setFrameMotionDirection('disable');
             this.cardEvent.emit(this.formState);
+          }
+          return false;
         }
-        return false;
+
+        UNANIMATED_CONTAINER.next(true);
+        this.cancelOpen = true;
+        const cancelDialog = this.dialog.open(ConsentMenuComponent, {
+          panelClass: 'consent-dialog-container',
+          backdropClass: 'invis-backdrop',
+          data: {'header': this.header, 'options': this.options, 'trigger': target}
+        });
+
+        cancelDialog.afterClosed()
+          .pipe(
+            tap(() => UNANIMATED_CONTAINER.next(false))
+          )
+          .subscribe(action => {
+            this.chooseAction(action);
+          });
       }
 
-      UNANIMATED_CONTAINER.next(true);
-        this.cancelOpen = true;
-      const cancelDialog = this.dialog.open(ConsentMenuComponent, {
-        panelClass: 'consent-dialog-container',
-        backdropClass: 'invis-backdrop',
-        data: {'header': this.header, 'options': this.options, 'trigger': target}
-      });
-
-      cancelDialog.afterClosed()
-        .pipe(
-          tap(() => UNANIMATED_CONTAINER.next(false))
-        )
-        .subscribe(action => {
-          this.chooseAction(action);
-        });
     }
   }
 
@@ -452,28 +511,28 @@ export class RequestCardComponent implements OnInit, OnDestroy {
     } else if (action === 'editMessage') {
       this.editMessage();
     } else if (action === 'deny_with_message') {
-      let denyMessage: string = '';
+      let denyMessage = '';
       if (action.indexOf('Message') > -1) {
 
       } else {
         this.messageEditOpen = true;
         let config;
-          config = {
-            panelClass: 'form-dialog-container',
-            backdropClass: 'invis-backdrop',
-            data: {
-              'forInput': false,
-              'entryState': {step: 3, state: 5},
-              'teacher': this.request.teacher,
-              'originalMessage': '',
-              'originalToLocation': this.request.destination,
-              'colorProfile': this.request.color_profile,
-              'gradient': this.request.gradient_color,
-              'originalFromLocation': this.request.origin,
-              'isDeny': true,
-              'studentMessage': this.request.attachment_message
-            }
-          };
+        config = {
+          panelClass: 'form-dialog-container',
+          backdropClass: 'invis-backdrop',
+          data: {
+            'forInput': false,
+            'entryState': {step: 3, state: 5},
+            'teachers': this.request.teachers.map(u => u.id),
+            'originalMessage': '',
+            'originalToLocation': this.request.destination,
+            'colorProfile': this.request.color_profile,
+            'gradient': this.request.gradient_color,
+            'originalFromLocation': this.request.origin,
+            'isDeny': true,
+            'studentMessage': this.request.attachment_message
+          }
+        };
         const messageDialog = this.dialog.open(CreateHallpassFormsComponent, config);
 
         messageDialog.afterClosed().pipe(filter(res => !!res)).subscribe(matData => {
@@ -507,8 +566,8 @@ export class RequestCardComponent implements OnInit, OnDestroy {
             delete storageData[this.request.id];
             this.storage.setItem('pinAttempts', JSON.stringify({...storageData}));
           }
-        this.dialogRef.close();
-      });
+          this.dialogRef.close();
+        });
     } else if (action === 'change_date') {
       this.changeDate(true);
     }
@@ -516,68 +575,121 @@ export class RequestCardComponent implements OnInit, OnDestroy {
 
   denyRequest(denyMessage: string) {
     const body = {
-      'message' : denyMessage
+      'message': denyMessage
     };
     this.requestService.denyRequest(this.request.id, body)
       .pipe(takeUntil(this.destroy$))
       .subscribe((httpData) => {
-      this.dialogRef.close();
-    });
+        this.dialogRef.close();
+      });
   }
 
   genOption(display, color, action, icon?, hoverBackground?, clickBackground?) {
-    return { display, color, action, icon, hoverBackground, clickBackground };
+    return {display, color, action, icon, hoverBackground, clickBackground};
   }
 
-  passLimitPromise() {
-    return new Promise<boolean>(resolve => {
-      const passLimit = this.passLimits[this.request.destination.id];
-      const passLimitReached = passLimit.max_passes_to_active && passLimit.max_passes_to < (passLimit.to_count + 1);
-      if (!passLimitReached)
-        return resolve(true);
+  async passLimitPromise(): Promise<boolean> {
+    const passLimit = this.passLimits[this.request.destination.id]; // room pass limit
+    const passLimitReached = passLimit.max_passes_to_active && passLimit.max_passes_to < (passLimit.to_count + 1);
 
-      const dialogRef = this.dialog.open(PassLimitDialogComponent, {
-        panelClass: 'overlay-dialog',
-        backdropClass: 'custom-backdrop',
-        width: '450px',
-        height: '215px',
-        disableClose: true,
-        data: {
-          passLimit: passLimit.max_passes_to,
-          studentCount: 1,
-          currentCount: passLimit.to_count,
+    let studentPassLimitReached = false;
+    const studentPassLimit = (await this.passLimitsService.getPassLimit().toPromise()).pass_limit;
+    if (studentPassLimit?.limitEnabled) {
+      const remainingPasses = (
+        await this.passLimitsService.getRemainingLimits({studentId: this.request.student.id}).toPromise()
+      ).remainingPasses;
+      studentPassLimitReached = remainingPasses === 0;
+    }
+
+    // If neither pass limits are reached, then immediately allow accepting the request
+    if (!passLimitReached && !studentPassLimitReached) {
+      return true;
+    }
+
+    // expresses opening the room pass limit override dialog and getting the result as a function
+    const openRoomPassLimitDialog = (): Observable<boolean> => this.dialog.open(PassLimitDialogComponent, {
+      panelClass: 'overlay-dialog',
+      backdropClass: 'custom-backdrop',
+      width: '450px',
+      height: '215px',
+      disableClose: true,
+      data: {
+        passLimit: passLimit.max_passes_to,
+        studentCount: 1,
+        currentCount: passLimit.to_count,
+      }
+    }).afterClosed().pipe(map(result => result.override));
+
+    // expresses opening the student pass limit override dialog and getting the result as a function
+    const openStudentPassLimitDialog = (): Observable<boolean> => this.dialog.open(ConfirmationDialogComponent, {
+      ...RecommendedDialogConfig,
+      width: '450px',
+      data: {
+        headerText: `Student's Pass limit reached: ${this.request.student.display_name} has had ${studentPassLimit.passLimit}/${studentPassLimit.passLimit} passes today`,
+        buttons: {
+          confirmText: 'Override limit',
+          denyText: 'Cancel'
+        },
+        body: this.overriderBody,
+        templateData: {},
+        icon: {
+          name: 'Pass Limit (White).svg',
+          background: '#6651F1'
         }
-      });
-      dialogRef.afterClosed().subscribe(result => {
-        if (result.override) {
-          setTimeout(() => {
-            return resolve(true);
-          }, 200);
-        } else
-          return resolve(false);
-      });
-    });
+      } as ConfirmationTemplates
+    }).afterClosed();
+
+    // Since both pass limits must be checked, chaining together the dialog Observable results is a clean way to perform this
+    // if the room pass limit is reached, then open the room pass limit dialog, else continue as normal
+    // add a 200ms sleep to cater for the dialog closing and the other one opening
+    let flow = (passLimitReached
+      ? openRoomPassLimitDialog()
+      : of(true)).pipe(concatMap(overrideRoomPassLimit => from(sleep(200)).pipe(map(() => overrideRoomPassLimit))));
+
+    flow = flow.pipe(
+      concatMap((overrideRoomPassLimit) => {
+        // Wait until the previous dialog is closed to perform these checks
+        // If the room pass limit override is denied, then immediately return false and deny the pass request
+        if (!overrideRoomPassLimit) {
+          return of(false);
+        }
+
+        // If the room pass limit is allowed and the student pass limit is reached then
+        // open the student pass limit dialog and check its result,
+        // else, allow the creation of the result
+        return studentPassLimitReached ? openStudentPassLimitDialog() : of(true);
+      })
+    );
+
+    return await flow.toPromise();
   }
 
   approveRequest() {
-    const approvePass = () => {
-      this.performingAction = true;
-      const body = [];
-      this.requestService.acceptRequest(this.request.id, body)
-        .pipe(takeUntil(this.destroy$))
-        .subscribe(() => {
-          this.dialogRef.close();
-        });
-    }
+    this.performingAction = true;
+    this.requestService.acceptRequest(this.request.id, {}).pipe(
+      catchError((errorResponse: HttpErrorResponse) => {
+        try {
+          if (errorResponse?.error?.errors?.[0] !== 'Override confirmation needed') {
+            return throwError(errorResponse);
+          }
+        } catch {
+          return throwError(errorResponse);
+        }
 
-    if (this.request.destination.id in this.passLimits) {
-      this.passLimitPromise().then(allowed => {
-        if (allowed)
-          approvePass()
-      });
-    } else {
-      approvePass();
-    }
+        return from(this.passLimitPromise()).pipe(
+          concatMap(overrideResponse => {
+            if (overrideResponse) {
+              return this.requestService.acceptRequest(this.request.id, {override: true});
+            }
+
+            return of(null);
+          })
+        );
+      })
+    ).subscribe(() => {
+      this.performingAction = false;
+      this.dialogRef.close();
+    });
   }
 
   cancelClick() {
@@ -632,6 +744,7 @@ export class RequestCardComponent implements OnInit, OnDestroy {
 
   goToPin() {
     this.passLimitPromise().then(approved => {
+      console.log(`Approved: ${approved}`);
       this.activeTeacherPin = true;
     });
   }

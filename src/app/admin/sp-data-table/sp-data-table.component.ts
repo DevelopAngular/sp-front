@@ -6,6 +6,7 @@ import {
   HostListener,
   Injectable,
   Input,
+  OnChanges,
   OnDestroy,
   OnInit,
   Output,
@@ -42,9 +43,10 @@ export class GridTableDataSource extends DataSource<any> {
   }
 
   set allData(data: any[]) {
+    
     this._data = data;
     // this.viewport.scrollToOffset(this.offset);
-    this.viewport.setTotalContentSize(this.itemSize * data.length);
+    this.viewport.setTotalContentSize(this.itemSize * data?.length);
     this.visibleData.next(this._data);
   }
 
@@ -104,7 +106,7 @@ export class CustomVirtualScrollStrategy extends FixedSizeVirtualScrollStrategy 
   changeDetection: ChangeDetectionStrategy.OnPush,
   providers: [{provide: VIRTUAL_SCROLL_STRATEGY, useClass: CustomVirtualScrollStrategy}]
 })
-export class SpDataTableComponent implements OnInit, OnDestroy {
+export class SpDataTableComponent implements OnInit, OnDestroy, OnChanges {
 
   @Input() isCheckbox: BehaviorSubject<boolean> = new BehaviorSubject<boolean>(true);
   @Input() data$: Observable<any>;
@@ -161,7 +163,6 @@ export class SpDataTableComponent implements OnInit, OnDestroy {
     this.hasHorizontalScroll = doc.scrollWidth > doc.clientWidth;
   }
 
-
   constructor(
     private cdr: ChangeDetectorRef,
     private storage: StorageService,
@@ -180,7 +181,7 @@ export class SpDataTableComponent implements OnInit, OnDestroy {
     this.fakedata = this.generateFakeData();
     this.fakeTemplate = this.domSanitizer.bypassSecurityTrustHtml(
       `<div class="fake-container-block"
-                style="margin-left: ${this.currentPage === 'pass_search' ? '10%' : 'auto'}; width: ${this.currentPage === 'pass_search' ? '90%' : '100%'}"
+                style="margin-left: ${this.currentPage === 'pass_search' || 'encounter_detection' ? '10%' : 'auto'}; width: ${this.currentPage === 'pass_search' || 'encounter_detection' ? '90%' : '100%'}"
             ><div class="fake-block animate"></div></div>`
     );
 
@@ -194,7 +195,6 @@ export class SpDataTableComponent implements OnInit, OnDestroy {
         if (res && !loading && res >= (this.dataSource.allData.length - this.viewportDataItems)) {
           this.loadMoreData.emit();
           this.dataSource.setFakeData([...this.dataSource.allData, ...this.fakedata]);
-          console.log('loading data ==>>>>');
         }
       });
 
@@ -243,6 +243,9 @@ export class SpDataTableComponent implements OnInit, OnDestroy {
       });
   }
 
+  ngOnChanges(){
+  }
+
   ngOnDestroy() {
     this.tableService.isAllSelected$.next(false);
     this.tableService.selectRow.next([]);
@@ -264,6 +267,9 @@ export class SpDataTableComponent implements OnInit, OnDestroy {
         ...this.selectedObjects,
         [object.id]: object
       };
+    }
+    if (!this.isAllSelected()) {
+      this.tableService.isAllSelected$.next(false);
     }
   }
 
@@ -347,5 +353,12 @@ export class SpDataTableComponent implements OnInit, OnDestroy {
       });
     }
     return dataIndex;
+  }
+
+  generateOneFakeData() {
+    return {
+      'Pass': this.domSanitizer.bypassSecurityTrustHtml(`<div class="pass-icon animate" style="background: #F4F4F4; cursor: pointer"></div>`),
+      'isFake': true
+    };
   }
 }

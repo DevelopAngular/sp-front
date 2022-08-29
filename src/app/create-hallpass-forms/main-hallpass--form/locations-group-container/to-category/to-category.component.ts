@@ -1,11 +1,18 @@
-import {Component, ElementRef, EventEmitter, HostListener, Inject, Input, OnInit, Output, ViewChild} from '@angular/core';
+import {Component, ElementRef, EventEmitter, HostListener, Inject, Input, OnInit, Output, ViewChild, TemplateRef} from '@angular/core';
 
 import {Navigation} from '../../main-hall-pass-form.component';
 import {Pinnable} from '../../../../models/Pinnable';
 import {CreateFormService} from '../../../create-form.service';
-import {BehaviorSubject, fromEvent} from 'rxjs';
-import {MAT_DIALOG_DATA} from '@angular/material/dialog';
+import {BehaviorSubject, fromEvent, Subject} from 'rxjs';
+import {takeUntil} from 'rxjs/operators';
+import {MatDialog, MatDialogRef, MAT_DIALOG_DATA} from '@angular/material/dialog';
 import {DeviceDetection} from '../../../../device-detection.helper';
+import {LocationVisibilityService} from '../../location-visibility.service';
+import {ToastService} from '../../../../services/toast.service';
+import {
+  ConfirmationDialogComponent,
+  ConfirmationTemplates
+} from '../../../../shared/shared-components/confirmation-dialog/confirmation-dialog.component';
 
 @Component({
   selector: 'app-to-category',
@@ -45,6 +52,8 @@ export class ToCategoryComponent implements OnInit {
 
   @Output() backButton: EventEmitter<Navigation> = new EventEmitter<Navigation>();
 
+  @ViewChild('confirmDialogBodyVisibility') confirmDialogVisibility: TemplateRef<HTMLElement>;
+
   pinnable: Pinnable;
   animationDirection: string = 'forward';
 
@@ -56,6 +65,8 @@ export class ToCategoryComponent implements OnInit {
   };
 
   shadow: boolean = true;
+
+  destroy$: Subject<any> = new Subject<any>();
 
   @HostListener('scroll', ['$event'])
   tableScroll(event) {
@@ -71,8 +82,11 @@ export class ToCategoryComponent implements OnInit {
 
   constructor(
     private formService: CreateFormService,
+    public dialogRef: MatDialogRef<ToCategoryComponent>,
+    private dialog: MatDialog,
     @Inject(MAT_DIALOG_DATA) public dialogData: any,
-
+    private visibilityService: LocationVisibilityService,
+    private toastService: ToastService,
   ) { }
 
   get headerGradient() {
@@ -102,17 +116,109 @@ export class ToCategoryComponent implements OnInit {
     });
   }
 
+  ngOnDestroy() {
+    this.destroy$.next();
+    this.destroy$.complete();
+  }
+
   locationChosen(location) {
-    if (this.formState.formMode.role === 1) {
-      this.formService.setFrameMotionDirection('disable');
-    } else {
-      this.formService.setFrameMotionDirection('forward');
+    const forwardAndEmit = () => {
+      if (this.formState.formMode.role === 1) {
+        this.formService.setFrameMotionDirection('disable');
+      } else {
+        this.formService.setFrameMotionDirection('forward');
+      }
+
+      setTimeout(() => {
+        this.locFromCategory.emit(location);
+      }, 100);
+    };
+
+    if (!this.isStaff) {
+      forwardAndEmit();
+      return;
     }
 
-    setTimeout(() => {
-      this.locFromCategory.emit(location);
-    }, 100);
+   // staff only
+   const selectedStudents = this.formState.data.roomStudents ?? this.formState.data.selectedStudents;
+   const students = selectedStudents.map(s => ''+s.id);
+   const ruleStudents = location.visibility_students.map(s => ''+s.id);
+   const rule = location.visibility_type;
+        
+   // skipped are students that do not qualify to go forward     
+   let skipped = this.visibilityService.calculateSkipped(students, ruleStudents, rule);
 
+    if (!skipped || skipped.length === 0) {
+      forwardAndEmit();
+      return; 
+    }
+
+    let text =  'This room is only available to certain students';
+    let names = selectedStudents.filter(s => skipped.includes(''+s.id)).map(s => s.display_name);
+    let title =  'Student does not have permission to go to this room';
+    let denyText =  'Cancel';
+    if (names.length > 1) {
+      text = names?.join(', ') ?? 'This room is only available to certain students'
+      title = 'These students do not have permission to go to this room:';
+      denyText = 'Skip these students';
+    } else {
+      title = (names?.join(', ') ?? 'Student') + ' does not have permission to go to this room'; 
+    }
+
+    this.dialog.open(ConfirmationDialogComponent, {
+      panelClass: 'overlay-dialog',
+      backdropClass: 'custom-backdrop',
+      closeOnNavigation: true,
+      data: {
+        headerText: '',
+        body: this.confirmDialogVisibility,
+        buttons: {
+          confirmText: 'Override',
+          denyText,
+        },
+        templateData: {alerts: [{title, text}]},
+        icon: {
+          name: 'Eye (Green-White).svg',
+          background: '',
+        }
+      } as ConfirmationTemplates
+    }).afterClosed().pipe(
+      takeUntil(this.destroy$),
+    ).subscribe(override => {
+      this.formState.data.roomOverride = !!override; 
+     
+      if (override === undefined) {
+        return;     
+      }
+     
+      // override case
+      if (override) {
+        forwardAndEmit();
+        return; 
+      }
+
+      // SKIPPING case
+      // avoid a certain no students case
+      if (selectedStudents.length === 1) {
+        this.dialogRef.close();
+        return;
+      }
+
+      // filter out the skipped students
+      const roomStudents = selectedStudents.filter(s => (!skipped.includes(''+s.id)));
+      // avoid no students case
+      if (roomStudents.length === 0) {
+        this.toastService.openToast({
+          title: 'Skiping will left no students to operate on',
+          subtitle: 'Last operation did not proceeed',
+          type: 'error',
+        });
+        return;
+      }
+
+      this.formState.data.roomStudents = roomStudents; 
+      forwardAndEmit();
+    }); 
   }
 
   back() {

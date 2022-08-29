@@ -3,7 +3,7 @@ import {FormGroup} from '@angular/forms';
 import {OverlayDataService, Pages, RoomData} from '../overlay-data.service';
 import {Location} from '../../../models/Location';
 import {ValidButtons} from '../advanced-options/advanced-options.component';
-import {BehaviorSubject} from 'rxjs';
+import {BehaviorSubject, Subject} from 'rxjs';
 import {isNull} from 'lodash';
 
 @Component({
@@ -18,6 +18,8 @@ export class BulkEditRoomsInFolderComponent implements OnInit {
   @Input() passLimitForm: FormGroup;
 
   @Input() showErrors: boolean;
+
+  @Input() isEnableRoomTrigger$: Subject<boolean>;
 
   @Output() back = new EventEmitter();
 

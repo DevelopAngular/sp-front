@@ -1,0 +1,32 @@
+<div class="confirm-dialog">
+  <div *ngIf="data?.icon" class="icon-wrapper" [style.background]="data.icon.background">
+    <img *ngIf="data.icon?.name" [src]="'./assets/' + data.icon.name | resolveAsset">
+  </div>
+  <div class="main-wrapper">
+    <div class="ds-mb-10">
+      <p class="ds-dialog-title" style="margin: 0">{{data.headerText}}</p>
+    </div>
+
+    <ng-template [ngTemplateOutlet]="data.body" [ngTemplateOutletContext]="templateData"></ng-template>
+    <div class="buttons">
+      <app-gradient-button
+        textColor="#7083A0"
+        customBackground="#F0F2F5"
+        [withShadow]="false"
+        [mat-dialog-close]="false"
+      >{{data.buttons.denyText}}
+      </app-gradient-button>
+      <app-gradient-button
+        textColor="#FFFFFF"
+        customBackground="#E32C66"
+        [withShadow]="false"
+        [mat-dialog-close]="true"
+      >{{data.buttons.confirmText}}
+      </app-gradient-button>
+    </div>
+  </div>
+</div>
+
+<ng-template #default let-text="detailText">
+  <p class="ds-dialog-normal-text">{{text}}</p>
+</ng-template>

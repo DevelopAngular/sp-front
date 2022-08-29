@@ -9,12 +9,27 @@ import {
   OnInit,
   ViewChild
 } from '@angular/core';
-import {MatDialog} from '@angular/material/dialog';
+import {MatDialog, MatDialogRef, MatDialogState} from '@angular/material/dialog';
+// TODO: Replace combineLatest with non-deprecated implementation
 import {BehaviorSubject, combineLatest, interval, merge, Observable, of, Subject} from 'rxjs';
-import {filter, map, pluck, publishReplay, refCount, startWith, switchMap, take, takeUntil, withLatestFrom} from 'rxjs/operators';
+import {
+  concatMap,
+  distinctUntilChanged,
+  filter,
+  map,
+  pluck,
+  publishReplay,
+  refCount,
+  startWith,
+  switchMap,
+  take,
+  takeUntil,
+  tap,
+  withLatestFrom
+} from 'rxjs/operators';
 import {CreateFormService} from '../create-hallpass-forms/create-form.service';
-import {CreateHallpassFormsComponent} from '../create-hallpass-forms/create-hallpass-forms.component';
-import {LiveDataService} from '../live-data/live-data.service';
+import {CreatePassDialogData} from '../create-hallpass-forms/create-hallpass-forms.component';
+import {HallPassFilter, LiveDataService} from '../live-data/live-data.service';
 import {exceptPasses} from '../models';
 import {HallPass} from '../models/HallPass';
 import {Request} from '../models/Request';
@@ -39,6 +54,10 @@ import {SideNavService} from '../services/side-nav.service';
 import {StartPassNotificationComponent} from './start-pass-notification/start-pass-notification.component';
 import {LocationsService} from '../services/locations.service';
 import * as moment from 'moment';
+import {PassLimitService} from '../services/pass-limit.service';
+import {PassLimitInfo} from '../models/HallPassLimits';
+import {MainHallPassFormComponent} from '../create-hallpass-forms/main-hallpass--form/main-hall-pass-form.component';
+import {CheckForUpdateService} from '../services/check-for-update.service';
 
 @Component({
   selector: 'app-passes',
@@ -132,19 +151,22 @@ export class PassesComponent implements OnInit, AfterViewInit, OnDestroy {
 
   showEmptyState: Observable<boolean>;
 
-  isOpenedModal: boolean;
   destroy$: Subject<any> = new Subject();
 
   user$: Observable<User>;
   user: User;
+  passLimitInfo: PassLimitInfo;
   isStaff = false;
   currentScrollPosition: number;
+
+  isUpdateBar$: Subject<any>;
 
   isInboxClicked$: Observable<boolean>;
 
   cursor = 'pointer';
 
   public schoolsLength$: Observable<number>;
+  private createHallPassDialogRef: MatDialogRef<MainHallPassFormComponent>;
 
   @HostListener('window:resize')
   checkDeviceWidth() {
@@ -201,6 +223,7 @@ export class PassesComponent implements OnInit, AfterViewInit, OnDestroy {
     }
   }
 
+  // TODO: Move to constructor to calculate once
   get isSmartphone() {
     return DeviceDetection.isAndroid() || DeviceDetection.isIOSMobile();
   }
@@ -224,11 +247,13 @@ export class PassesComponent implements OnInit, AfterViewInit, OnDestroy {
     private scrollPosition: ScrollPositionService,
     private userService: UserService,
     private shortcutsService: KeyboardShortcutsService,
-    private  notificationButtonService: NotificationButtonService,
+    private notificationButtonService: NotificationButtonService,
     private httpService: HttpService,
     private passesService: HallPassesService,
     private sideNavService: SideNavService,
-    private locationsService: LocationsService
+    private locationsService: LocationsService,
+    private passLimitsService: PassLimitService,
+    private updateService: CheckForUpdateService
   ) {
 
     this.userService.user$
@@ -244,18 +269,62 @@ export class PassesComponent implements OnInit, AfterViewInit, OnDestroy {
             this.dataService.updateInbox(true);
           }
           return user.roles.includes('hallpass_student');
-        }) // TODO filter events to only changes.
-      )
-      .subscribe(isStudent => {
-        if (isStudent) {
+        }), // TODO filter events to only changes.
+        concatMap(isStudent => {
+
+          if (!isStudent) {
+            this.receivedRequests = this.liveDataService.requests$;
+            this.sentRequests = this.liveDataService.invitations$;
+            this.passLimitInfo = {showPasses: false};
+            return of(null);
+          }
+
+          // TODO: Pass creation will trigger the remaining passes update
+          // TODO: An update of the school wide pass limits will trigger the remaining pass limits
+          // TODO: Individual pass limit updates will trigger the remaining pass limits for this student
+
+          this.liveDataService.watchActiveHallPasses(new Subject<HallPassFilter>()).pipe(
+            distinctUntilChanged((a, b) => a.length === b.length),
+            concatMap(() => this.passLimitsService.getRemainingLimits({studentId: this.user.id}))
+          ).subscribe({
+            next: remaining => {
+              if (this.passLimitInfo?.showPasses) {
+                this.passLimitInfo.current = remaining.remainingPasses;
+              }
+            }
+          });
+
           this.receivedRequests = this.liveDataService.invitations$;
           this.sentRequests = this.liveDataService.requests$.pipe(
             map(req => req.filter((r) => !!r.request_time)));
-        } else {
-          this.receivedRequests = this.liveDataService.requests$;
-          this.sentRequests = this.liveDataService.invitations$;
-        }
-    });
+          return this.passLimitsService.watchPassLimits().pipe(
+            concatMap((newPassLimit): Observable<PassLimitInfo> => {
+              if (newPassLimit === null) {
+                return of(null);
+              }
+
+              if (!newPassLimit?.limitEnabled) {
+                return of({ showPasses: false });
+              }
+
+              return this.passLimitsService.getRemainingLimits({studentId: this.user.id}).pipe(map(r => ({
+                max: newPassLimit.passLimit,
+                showPasses: newPassLimit.limitEnabled,
+                current: r.remainingPasses
+              })));
+            }),
+            tap(data => {
+              this.passLimitInfo = data;
+              if (this.createHallPassDialogRef && this.createHallPassDialogRef.getState() === MatDialogState.OPEN) {
+                this.createHallPassDialogRef.componentInstance.dialogData.passLimitInfo = this.passLimitInfo;
+              }
+            })
+          );
+        })
+      )
+      .subscribe(() => {
+
+      });
 
     this.isActivePass$ = combineLatest(this.currentPass$, this.timeService.now$, (pass, now) => {
       return pass !== null
@@ -272,9 +341,10 @@ export class PassesComponent implements OnInit, AfterViewInit, OnDestroy {
     this.dataService.currentUser.pipe(
       takeUntil(this.destroy$),
       switchMap((user: User) => {
-        return user.roles.includes('hallpass_student') ? this.liveDataService.watchActivePassLike(user) : of(null);
-      }
-    ))
+          console.log(user);
+          return user.roles.includes('hallpass_student') ? this.liveDataService.watchActivePassLike(user) : of(null);
+        }
+      ))
       .subscribe(passLike => {
         this._zone.run(() => {
           if ((passLike instanceof HallPass || passLike instanceof Request) && this.currentScrollPosition) {
@@ -321,6 +391,7 @@ export class PassesComponent implements OnInit, AfterViewInit, OnDestroy {
   }
 
   ngOnInit() {
+    this.isUpdateBar$ = this.updateService.needToUpdate$;
     this.futurePasses = this.liveDataService.futurePasses$;
     this.activePasses = this.getActivePasses();
     this.pastPasses = this.liveDataService.expiredPasses$;
@@ -359,10 +430,10 @@ export class PassesComponent implements OnInit, AfterViewInit, OnDestroy {
       this.liveDataService.invitationsTotalNumber$,
       this.liveDataService.invitationsLoaded$,
       (length1, loaded1, length2, loaded2) => {
-            if (loaded1 && loaded2) {
-              return (length1 + length2) > 0;
-            }
-          }
+        if (loaded1 && loaded2) {
+          return (length1 + length2) > 0;
+        }
+      }
     );
 
     this.inboxLoaded = combineLatest(
@@ -420,23 +491,18 @@ export class PassesComponent implements OnInit, AfterViewInit, OnDestroy {
   }
 
   showMainForm(forLater: boolean): void {
-    if (!this.isOpenedModal) {
-      this.isOpenedModal = true;
-      const mainFormRef = this.dialog.open(CreateHallpassFormsComponent, {
-        panelClass: 'main-form-dialog-container',
-        backdropClass: 'custom-backdrop',
-        maxWidth: '100vw',
-        data: {
-          'forLater': forLater,
-          'forStaff': this.isStaff,
-          'forInput': true
-        }
-      });
-
-      mainFormRef.afterClosed().subscribe(res => {
-        this.isOpenedModal = false;
-      });
-    }
+    this.createHallPassDialogRef = this.dialog.open(MainHallPassFormComponent, {
+      closeOnNavigation: true,
+      panelClass: 'main-form-dialog-container',
+      backdropClass: 'custom-backdrop',
+      maxWidth: '100vw',
+      data: {
+        forLater: forLater,
+        forStaff: this.isStaff,
+        forInput: true,
+        passLimitInfo: this.passLimitInfo
+      } as Partial<CreatePassDialogData>
+    });
   }
 
   passClick(event) {

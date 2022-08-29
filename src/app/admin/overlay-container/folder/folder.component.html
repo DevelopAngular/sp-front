@@ -14,7 +14,7 @@
       >
       </app-input>
     </div>
-    <div *ngIf="folderRoomsLoaded">
+    <div *ngIf="folderRoomsLoaded; else folderRoomsLoading">
     <div class="rooms-wrapper rooms-in-folder">
       <div class="sticky" *ngIf="roomsImFolder.length">
         <div class="rooms-in-folder-title">
@@ -110,6 +110,18 @@
 
     </div>
     </div>
+    <ng-template #folderRoomsLoading>
+      <div 
+        class="loading-theme_blue-gray spinner loading-spinner"
+      >
+        <mat-spinner 
+          style="margin: auto"
+
+          [diameter]="30" 
+          [color]="'accent'"
+        ></mat-spinner>
+      </div>
+    </ng-template>
 
     <div class="delete-button" *ngIf="currentPage === 4 && folderRoomsLoaded">
       <app-gradient-button

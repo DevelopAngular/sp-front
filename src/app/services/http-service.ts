@@ -7,10 +7,12 @@ import {catchError, delay, exhaustMap, filter, map, mapTo, mergeMap, switchMap, 
 import {BUILD_DATE, RELEASE_NAME} from '../../build-info';
 import {environment} from '../../environments/environment';
 import {School} from '../models/School';
+import {Report} from '../models/Report';
 import {AppState} from '../ngrx/app-state/app-state';
 import {clearSchools, getSchools} from '../ngrx/schools/actions';
 import {getCurrentSchool, getLoadedSchools, getSchoolsCollection, getSchoolsLength} from '../ngrx/schools/states';
-import {GoogleLoginService, isCleverLogin, isDemoLogin, isGg4lLogin} from './google-login.service';
+import {getCurrentReportId} from '../ngrx/reports/states';
+import {GoogleLoginService, isClassLinkLogin, isCleverLogin, isDemoLogin} from './google-login.service';
 import {StorageService} from './storage.service';
 import {SafeHtml} from '@angular/platform-browser';
 import {MatDialog} from '@angular/material/dialog';
@@ -86,6 +88,7 @@ function makeConfig(config: Config, school: School, effectiveUserId): Config & {
   //   headers: headers,
   //   responseType: 'json',
   // }) as any);
+  // console.log("headers : ", headers)
 
   return Object.assign({}, config || {}, {
     headers: headers,
@@ -106,6 +109,8 @@ function makeUrl(server: LoginServer, endpoint: string) {
       url = environment.preferEnvironment.api_root + endpoint;
     } else {
       // url = 'https://smartpass.app/api/prod-us-central' + endpoint;
+      // url = 'https://smartpass.app/api/staging/' + endpoint;
+
       url = server.api_root + endpoint;
     }
   }
@@ -134,7 +139,7 @@ export interface LoginResponse {
 
 export interface LoginChoice {
   server: LoginServer;
-  gg4l_token?: string;
+  classlink_token?: string;
   clever_token?: string;
   google_token?: string;
   token?: any;
@@ -143,7 +148,7 @@ export interface LoginChoice {
 export interface AuthContext {
   server: LoginServer;
   auth: ServerAuth;
-  gg4l_token?: string;
+  classlink_token?: string;
   clever_token?: string;
   google_token?: string;
 }
@@ -167,6 +172,10 @@ class SilentError extends Error {
     this.name = 'SPSilentError';
   }
 }
+
+const AuthTypeGoogle = 'google';
+const AuthTypeClever = 'clever';
+const AuthTypeClassLink = 'classlink';
 
 @Injectable({
   providedIn: 'root'
@@ -199,7 +208,7 @@ export class HttpService implements OnDestroy {
 
   public currentLangSubject = new BehaviorSubject<string>('en');
   public currentLang$: Observable<string> = this.currentLangSubject.asObservable();
-  // should come from server 
+  // should come from server
   public langs$: Observable<string[]> = of(['en', 'es']);
 
   public kioskTokenSubject$ = new BehaviorSubject<any>(null);
@@ -213,7 +222,7 @@ export class HttpService implements OnDestroy {
   private hasRequestedToken = false;
 
   private cannotRefreshGoogle = new Error('cannot refresh google');
-  private cannotRefreshGG4L = new Error('cannot refresh gg4l');
+  private cannotRefreshClassLink = new Error('cannot refresh classlink');
   private cannotRefreshClever = new Error('cannot refresh clever');
 
   constructor(
@@ -290,7 +299,6 @@ export class HttpService implements OnDestroy {
           if ( !!lang) {
             if (langs.includes(lang)) {
               this.currentLangSubject.next(lang);
-              //this.setLang((selectedLang);
               return;
             } else {
               this.setLang(null);
@@ -432,26 +440,23 @@ export class HttpService implements OnDestroy {
           if (servers.servers.length > 0) {
             const server: LoginServer = servers.servers.find(s => s.name === (preferredEnvironment as any)) || servers.servers[0];
 
-            let gg4l_token: string;
             let clever_token: string;
             let google_token: string;
+            let classlink_token: string;
 
             const authType = this.storage.getItem('authType');
 
             if (servers.token) {
-              if (authType === 'gg4l') {
-                gg4l_token = servers.token.auth_token;
-                // if (servers.token.refresh_token) {
-                //   this.storage.setItem('refresh_token', servers.token.refresh_token);
-                // }
-              } else if (authType === 'clever') {
+              if (authType === 'clever') {
                 clever_token = servers.token.access_token;
-              } else {
+              } else if (authType === 'google') {
                 google_token = servers.token.access_token;
+              } else if  (authType === 'classlink') {
+                classlink_token = servers.token.access_token;
               }
             }
 
-            return { server, gg4l_token, clever_token, google_token };
+            return { server, classlink_token, clever_token, google_token };
           } else {
             return null;
           }
@@ -583,11 +588,11 @@ export class HttpService implements OnDestroy {
     }));
   }
 
-  loginGG4L(code: string): Observable<AuthContext> {
+  loginClassLink(code: string): Observable<AuthContext> {
 
     const c = new FormData();
     c.append('code', code);
-    c.append('provider', 'gg4l-sso');
+    c.append('provider', 'classlink');
     c.append('platform_type', 'web');
 
     const context = this.storage.getItem('auth');
@@ -601,8 +606,8 @@ export class HttpService implements OnDestroy {
       const config = new FormData();
 
       config.append('client_id', server.client_id);
-      config.append('provider', 'gg4l-sso');
-      config.append('token', response.gg4l_token || '');
+      config.append('provider', 'classlink');
+      config.append('token', response.classlink_token || '');
 
       return this.http.post(makeUrl(server, 'auth/by-token'), config).pipe(
           map((data: any) => {
@@ -614,7 +619,7 @@ export class HttpService implements OnDestroy {
 
             const auth = data as ServerAuth;
 
-            return {auth: auth, server: server, gg4l_token: response.gg4l_token} as AuthContext;
+            return {auth: auth, server: server, classlink_token: response.classlink_token} as AuthContext;
           }));
     }));
   }
@@ -670,8 +675,8 @@ export class HttpService implements OnDestroy {
     let authContext$: Observable<AuthContext>;
     if (isDemoLogin(authObject)) {
       authContext$ = this.loginManual(authObject.username, authObject.password);
-    } else if (isGg4lLogin(authObject)) {
-      authContext$ = this.loginGG4L(authObject.gg4l_code);
+    } else if (isClassLinkLogin(authObject)) {
+      authContext$ = this.loginClassLink(authObject.classlink_code);
     } else if (isCleverLogin(authObject)) {
       authContext$ = this.loginClever(authObject.clever_code);
     } else {
@@ -704,9 +709,6 @@ export class HttpService implements OnDestroy {
           const url = GoogleLoginService.googleOAuthUrl + `&redirect_uri=${this.getRedirectUrl()}google_oauth`;
           this.loginService.clearInternal(true);
           window.location.href = url;
-        } else if (err === this.cannotRefreshGG4L) {
-          this.loginService.clearInternal(true);
-          window.location.href = `https://sso.gg4l.com/oauth/auth?response_type=code&client_id=${environment.gg4l.clientId}&redirect_uri=${this.getRedirectUrl()}`;
         } else if (err === this.cannotRefreshClever) {
           this.loginService.clearInternal(true);
           const redirect = this.getEncodedRedirectUrl();
@@ -792,14 +794,6 @@ export class HttpService implements OnDestroy {
               window.location.href = url;
             });
         return throwError(this.cannotRefreshGoogle);
-      case 'gg4l':
-        this.showSignBackIn()
-            .pipe(takeUntil(this.destroyed$))
-            .subscribe(_ => {
-              this.loginService.clearInternal(true);
-              window.location.href = `https://sso.gg4l.com/oauth/auth?response_type=code&client_id=${environment.gg4l.clientId}&redirect_uri=${this.getRedirectUrl()}`;
-            });
-        return throwError(this.cannotRefreshGG4L);
       case 'clever':
         return throwError(this.cannotRefreshClever);
       default:

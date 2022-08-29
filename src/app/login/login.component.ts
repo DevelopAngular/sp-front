@@ -89,7 +89,11 @@ export class LoginComponent implements OnInit, OnDestroy {
         this.notifService.initNotifications(true);
       }
 
-      if (this.isMobileDevice && currentUser.isAdmin() && currentUser.isTeacher()) {
+      const callbackUrl: string = window.history.state.callbackUrl;
+
+      if (callbackUrl != null) {
+        this.router.navigate([callbackUrl]);
+      } else if (this.isMobileDevice && currentUser.isAdmin() && currentUser.isTeacher()) {
         this.router.navigate(['main']);
       } else {
         const loadView = currentUser.isAdmin() ? 'admin' : 'main';

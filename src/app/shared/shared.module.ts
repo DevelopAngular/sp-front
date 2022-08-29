@@ -78,16 +78,25 @@ import {EncounterPreventionDialogComponent} from '../admin/accounts/encounter-pr
 import {CreateGroupComponent} from '../admin/accounts/encounter-prevention-dialog/create-group/create-group.component';
 import {ReportDescriptionComponent} from '../admin/accounts/encounter-prevention-dialog/report-description/report-description.component';
 import {EncounterOptionsComponent} from '../admin/accounts/encounter-prevention-dialog/encounter-options/encounter-options.component';
-import {EncounterGroupDescriptionComponent} from '../admin/accounts/encounter-prevention-dialog/encounter-group-description/encounter-group-description.component';
+import {
+  EncounterGroupDescriptionComponent
+} from '../admin/accounts/encounter-prevention-dialog/encounter-group-description/encounter-group-description.component';
 import {WhiteButtonComponent} from '../ds-buttons/white-button/white-button.component';
 import {WhiteRoundButtonComponent} from '../ds-buttons/white-round-button/white-round-button.component';
 import {IconOnlyButtonComponent} from '../ds-buttons/icon-only-button/icon-only-button.component';
 import {EditAvatarComponent} from '../admin/profile-card-dialog/edit-avatar/edit-avatar.component';
 import {ProfilePictureComponent} from '../admin/accounts/profile-picture/profile-picture.component';
 import {LinkGeneratedDialogComponent} from '../admin/link-generated-dialog/link-generated-dialog.component';
-import { StatusChipComponent } from '../admin/explore/status-chip/status-chip.component';
+import {StatusChipComponent} from '../admin/explore/status-chip/status-chip.component';
+import {ConfirmationDialogComponent} from './shared-components/confirmation-dialog/confirmation-dialog.component';
 import {NuxUniversalComponent} from '../nux-components/nux-universal/nux-universal.component';
-
+import { ConfirmationComponent } from './shared-components/confirmation/confirmation.component';
+import {PassLimitInfoComponent} from '../pass-limit-info/pass-limit-info.component';
+import { IdNumbersComponent } from '../admin/accounts/id-numbers/id-numbers.component';
+import { GradeLevelsComponent } from '../admin/accounts/grade-levels/grade-levels.component';
+import {ConfirmDeleteKioskModeComponent} from '../request-card/confirm-delete-kiosk-mode/confirm-delete-kiosk-mode.component';
+import { IdCardGradeLevelsComponent } from '../admin/id-cards/id-card-grade-levels/id-card-grade-levels.component';
+import { IdCardIdNumbersComponent } from '../admin/id-cards/id-card-id-numbers/id-card-id-numbers.component';
 const DEFAULT_SWIPER_CONFIG: SwiperConfigInterface = {
   direction: 'horizontal',
   slidesPerView: 'auto'
@@ -182,8 +191,16 @@ const DEFAULT_SWIPER_CONFIG: SwiperConfigInterface = {
     EditAvatarComponent,
     ProfilePictureComponent,
     LinkGeneratedDialogComponent,
-    StatusChipComponent, 
+    StatusChipComponent,
+    ConfirmationDialogComponent,
     NuxUniversalComponent,
+    PassLimitInfoComponent,
+    ConfirmationComponent,
+    IdNumbersComponent,
+    GradeLevelsComponent,
+    IdCardGradeLevelsComponent,
+    IdCardIdNumbersComponent,
+    ConfirmDeleteKioskModeComponent
   ],
   exports: [
     ReactiveFormsModule,
@@ -261,8 +278,14 @@ const DEFAULT_SWIPER_CONFIG: SwiperConfigInterface = {
     EditAvatarComponent,
     ProfilePictureComponent,
     LinkGeneratedDialogComponent,
-    StatusChipComponent, 
+    StatusChipComponent,
     NuxUniversalComponent,
+    PassLimitInfoComponent,
+    IdNumbersComponent,
+    GradeLevelsComponent,
+    IdCardGradeLevelsComponent,
+    IdCardIdNumbersComponent,
+    ConfirmDeleteKioskModeComponent
   ],
   providers: [
     {

@@ -329,7 +329,7 @@ export class AddUserDialogComponent implements OnInit, OnDestroy {
             } else if (this.typeChosen === this.accountTypes[1]) {
 
               const regexpUsername = new RegExp('^[a-zA-Z0-9_-]{6}[a-zA-Z0-9_-]*$', 'i');
-              const regexpEmail = new RegExp('^([A-Za-z0-9_\\-.])+@([A-Za-z0-9_\\-.])+\\.([A-Za-z]{2,4})$');
+              const regexpEmail = new RegExp('^(([^<>()[\\]\\\\.,;:\\s@"]+(\\.[^<>()[\\]\\\\.,;:\\s@"]+)*)|(".+"))@((\\[[0-9]{1,3}\\.[0-9]{1,3}\\.[0-9]{1,3}\\.[0-9]{1,3}\\])|(([a-zA-Z\\-0-9]+\\.)+[a-zA-Z]{2,}))$');
 
               if (regexpUsername.test(this.newAlternativeAccount.get('addUsername').value)) {
                 const data = this.buildUserDataToDB(this.newAlternativeAccount.value);

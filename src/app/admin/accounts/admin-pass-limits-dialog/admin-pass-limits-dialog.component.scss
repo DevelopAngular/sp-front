@@ -1,0 +1,32 @@
+#closePassLimitsIntro {
+  position: absolute;
+  top: 12px;
+  right: 10px;
+  outline: 0;
+  border: 0;
+  background: transparent;
+}
+
+.accent-background-section:first-of-type {
+  display: flex;
+  margin-top: 0
+}
+
+::ng-deep .pass-limits-frequency-dialog > mat-dialog-container.mat-dialog-container {
+  box-shadow: 0px 2px 1px -1px RGB(0 0 0 / 20%), 0px 1px 1px 0px RGB(0 0 0 / 14%), 0px 1px 3px 0px RGB(0 0 0 / 12%) !important;
+  padding: 8px 16px !important;
+  background: white;
+
+  p {
+    margin: 0;
+    padding: 1em 0;
+
+    &:hover {
+      background: #F4F4F4;
+    }
+  }
+}
+
+::ng-deep .content-spinner svg > circle {
+  stroke: #00B476;
+}

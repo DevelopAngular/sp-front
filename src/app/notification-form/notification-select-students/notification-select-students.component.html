@@ -1,0 +1,15 @@
+<div class="notif-select-students">
+  <div *ngFor="let student of displayedStudents(); let i = index"
+       (click)="removeStudent(i)"
+       class="student real">
+    <div class="student-overlay">
+      <img [src]="'./assets/Close.svg' | resolveAsset" alt="">
+    </div>
+    <img alt="" [src]="student['icon'] | resolveAsset">
+    <span>{{ student['name'] }}</span>
+  </div>
+  <div class="student new" (click)="beginSearch()">
+    <img alt="" [src]="'./assets/Plus (Blue-Gray).svg' | resolveAsset">
+    <span>Add Student</span>
+  </div>
+</div>

@@ -36,6 +36,7 @@
   }
 }
 
+
 .wrapper {
   display: flex;
   align-items: center;
@@ -46,6 +47,16 @@
   @include wh(95, 40);
   &:hover {
     background-color: $gray100;
+    cursor: pointer;
+  }
+  & > span[rel="lookActiveHovered"]:hover {
+    cursor: pointer;
+  }
+  &.lookActiveHovered {
+    background-color: $gray100;
+    & > span[rel="lookActiveHovered"] {
+      background-color: $green100;
+    }
   }
   border-radius: 8px;
 }
