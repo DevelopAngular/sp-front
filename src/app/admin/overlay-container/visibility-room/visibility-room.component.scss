@@ -104,9 +104,6 @@ ul.error {
 }
 
 .panel {
-  display: flex;
-  flex-flow: column;
-  justify-content: center;
   background-color: $white;
   border-radius: 9px;
   min-height: 70px;

@@ -3,7 +3,7 @@ import { Component, OnInit, AfterViewInit, OnDestroy, Input, Output, EventEmitte
 import {FormGroup} from '@angular/forms';
 import {MatDialog, MatDialogRef} from '@angular/material/dialog';
 import {Subject, Observable} from 'rxjs';
-import {tap, take, takeUntil, filter, finalize, startWith, shareReplay} from 'rxjs/operators';
+import {map, tap, take, takeUntil, filter, finalize, startWith, shareReplay} from 'rxjs/operators';
 import {cloneDeep, isEqual} from 'lodash';
 
 import {User} from '../../../models/User';
@@ -83,11 +83,18 @@ export class VisibilityRoomComponent implements OnInit, AfterViewInit, OnDestroy
   }
 
   grades$: Observable<string[]> = new Observable<string[]>();
+  loadedGrades$: Observable<boolean>;
 
   ngOnInit(): void {
     this.grades$ = this.dataService.getGradesList().pipe(
       takeUntil(this.destroy$),
       shareReplay(1),
+    );
+
+    this.loadedGrades$ = this.grades$.pipe(
+      tap(_ => console.log('LOAD')),
+      tap(_ => this.adjustGradeDialogScroll()),
+      map(_ => true),
     );
 
     if (!this.data) {
@@ -119,8 +126,20 @@ export class VisibilityRoomComponent implements OnInit, AfterViewInit, OnDestroy
       takeUntil(this.destroy$),
       tap(() => this.visibilityChange())
     ).subscribe();
+  }
 
-    //setInterval(() => console.log('MYID, PRISTINE:', this.myid, this.visibilityForm.pristine), 2000);
+  adjustGradeDialogScroll() {
+    setTimeout(( ) => {
+      const $ul = document.querySelector('.panel.grade-level');
+      if (!!$ul) {
+        const $x = $ul.getBoundingClientRect();
+        const delta = this.bottomSearchComponent - $x.height; 
+        if (delta < 0) {
+          // deals with a posible too long grades's list
+          this.panelMaxHeight = this.bottomSearchComponent + 'px';
+        }
+      }
+    }, 0); 
   }
 
   unlisten: () => void;
@@ -191,6 +210,8 @@ export class VisibilityRoomComponent implements OnInit, AfterViewInit, OnDestroy
     const panelDialogExists = this.dialog.getDialogById(this.GRADE_LEVEl_DIALOG_ID);
     if (panelDialogExists) return;
 
+    this.loadedGrades$.pipe(take(1)).subscribe();
+
     if (this.searchComponent.inputField) {
       const $input = this.searchComponent.input['input']['nativeElement'];
       // non empty field  cancels the dialog opening
@@ -213,11 +234,16 @@ export class VisibilityRoomComponent implements OnInit, AfterViewInit, OnDestroy
     this.gradeLevelDialog.afterClosed()
     .pipe(
       take(1),
-      tap(() => this.selectedGradeLevels = [...this.visibilityForm.value.visibility.grade]),
+      tap(() => {
+        if (!!this.visibilityForm.value.visibility?.grade) {
+          this.selectedGradeLevels = [...this.visibilityForm.value.visibility.grade];
+        }
+      }),
     )
     .subscribe(() => {
       this.clickoutFn = null;
     });
+
     this.gradeLevelDialog.afterOpened().subscribe(() => {
       this.clickoutFn = this.closeGradeLevelDialog;
     });
@@ -420,17 +446,23 @@ export class VisibilityRoomComponent implements OnInit, AfterViewInit, OnDestroy
     this.panelDialog.updatePosition(position)
   }
 
+  public panelMaxHeight: string = 'none';
+  private bottomSearchComponent: number | null = null;
+
   private positionGradeLevelDialog() {
     // input search should exists
     const $rect = this.searchComponent.input['input']['nativeElement'];
     const rect = $rect.getBoundingClientRect();
+
     // bottom right related to opener
     const position = {
       top: (rect.bottom) + 'px', 
       // 270 is taken from CSS not live calculated, also 13 represents padding
       left: rect.left + (rect.width - 270 - 13) + 'px', 
     };
-    this.gradeLevelDialog.updatePosition(position)
+    this.gradeLevelDialog.updatePosition(position);
+
+    this.bottomSearchComponent = window.innerHeight - rect.bottom;
   }
 
   // UI hover color
