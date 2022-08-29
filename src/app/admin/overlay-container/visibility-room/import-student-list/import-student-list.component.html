@@ -1,0 +1,17 @@
+      <div #dropArea class="uploading-area" *ngIf="!uploadingProgress.inProgress && !uploadingProgress.completed">
+        <span class="ds-pb-10">Drop spreadsheet here</span>
+        <span [style.text-decoration]="'underline'" class="choose-file-inline" (click)="file.click()">Choose file</span>
+      </div>
+      <div *ngIf="uploadingProgress.inProgress || uploadingProgress.completed">
+        <div class="uploading-progress" #uploadingProgress
+             [style.background-image]="getProgress(uploadingProgress)">
+          <span>Importing Rooms</span>
+        </div>
+        <div class="ds-flex-column ds-flex-center-center ds-cell-text-2 ds-mt-15">
+          <span class="ds-pb-5">{{ importedRooms.length }} Rooms</span>
+          <span>{{ unknownEmails.length }} issues</span>
+        </div>
+      </div>
+
+    </div>
+    <input type="file" [formControl]="form.get('file')"  #file style="display: none"/>

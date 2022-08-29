@@ -12,6 +12,7 @@ import {VisibilityMode, ModeView, ModeViewMap, VisibilityOverStudents, DEFAULT_V
 import {OverlayDataService} from '../overlay-data.service';
 import {slideOpacity } from '../../../animations';
 import {DataService} from '../../../services/data-service';
+import {ImportStudentListComponent} from './import-student-list/import-student-list.component';
 
 @Component({
   selector: 'app-visibility-room',
@@ -231,6 +232,7 @@ export class VisibilityRoomComponent implements OnInit, AfterViewInit, OnDestroy
     };
     this.gradeLevelDialog = this.dialog.open(this.gradeLevelTpl, conf);
     this.positionGradeLevelDialog();
+
     this.gradeLevelDialog.afterClosed()
     .pipe(
       take(1),
@@ -298,6 +300,22 @@ export class VisibilityRoomComponent implements OnInit, AfterViewInit, OnDestroy
     this.dirty.next();
 
     //this.visibilityForm.patchValue({visibility});
+  }
+  
+  private studentListDialog: MatDialogRef<ImportStudentListComponent> | undefined;
+  private readonly STUDENT_LIST_DIALOG_ID = 'student-list-upload';
+
+  openStudentListDialog() {
+    const panelDialogExists = this.dialog.getDialogById(this.STUDENT_LIST_DIALOG_ID);
+    if (panelDialogExists) return;
+
+    const conf = {
+      id: this.STUDENT_LIST_DIALOG_ID,
+      panelClass: 'consent-dialog-container',
+      hasBackdrop: true,
+      autofocus: true,
+    };
+    this.studentListDialog = this.dialog.open(ImportStudentListComponent, conf);
   }
 
   private dirty: Subject<boolean> = new Subject<boolean>();

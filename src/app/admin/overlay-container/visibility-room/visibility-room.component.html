@@ -99,7 +99,9 @@
             >
               {{grade}}
             </li>
-          <li class="upload">Upload a list of students</li>
+          <li class="upload"
+            (click)="openStudentListDialog()"
+          >Upload a list of students</li>
           </ng-container>
         </ul>
     </ng-template>
