@@ -27,7 +27,10 @@ export class ImportStudentListComponent implements OnInit, OnDestroy {
         console.log(evt);
         // TODO check is right type of file?
         // create a workbook
-        const wb = XLSX.read(evt.target.result, {type: 'binary'}); 
+        const workbook = XLSX.read((evt.target as FileReader).result, {type: 'binary'}); 
+        const name = workbook.SheetNames[0];
+        const sheet = workbook.Sheets[name];
+        const data = XLSX.utils.sheet_to_json(sheet, {header: 1, blankrows: false});
       }),
       //takeUntil(this.destroy$)
     ).subscribe();
