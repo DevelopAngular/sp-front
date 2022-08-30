@@ -1,4 +1,4 @@
-import {Component, OnDestroy, OnInit, TemplateRef, ViewChild} from '@angular/core';
+import {Component, HostListener, OnDestroy, OnInit, TemplateRef, ViewChild} from '@angular/core';
 import {FormArray, FormControl, FormGroup, ValidationErrors, ValidatorFn, Validators} from '@angular/forms';
 
 import {MatDialog, MatDialogRef, MatDialogState} from '@angular/material/dialog';
@@ -100,7 +100,7 @@ export class AdminPassLimitDialogComponent implements OnInit, OnDestroy {
   // individual form props
   individualOverrideForm = new FormGroup({
     students: new FormArray([], Validators.required),
-    passLimit: new FormControl(null, Validators.pattern(/^([1-9]\d*)$|^(0){1}$|^(Unlimited)$/)),
+    passLimit: new FormControl(null, [Validators.required, Validators.pattern(/^([1-9]\d*)$|^(0){1}$|^(Unlimited)$/)]),
     description: new FormControl(null)
   }, individualPassLimitRangeValidator());
   individualFormPreviousValue: { students: string[], passLimit: string, description: string };
@@ -286,7 +286,7 @@ export class AdminPassLimitDialogComponent implements OnInit, OnDestroy {
       controls.push(new FormControl(limit.student.id, Validators.required));
     }
 
-    let passLimitValue = limit?.passLimit?.toString() || '10';
+    let passLimitValue = limit?.passLimit?.toString();
     if (passLimitValue === '-2') {
       passLimitValue = 'Unlimited';
     }
@@ -299,9 +299,12 @@ export class AdminPassLimitDialogComponent implements OnInit, OnDestroy {
     });
     this.individualFormPreviousValue = this.individualOverrideForm.value;
     this.individualFormChanged = this.individualOverrideForm.valueChanges.pipe(map(v => {
+      console.log('inside changed');
       const { students, passLimit, description } = v;
       const str1 = JSON.stringify(students) + JSON.stringify(passLimit) + JSON.stringify(description);
       const str2 = JSON.stringify(this.individualFormPreviousValue?.students) + JSON.stringify(this.individualFormPreviousValue?.passLimit) + JSON.stringify(this.individualFormPreviousValue?.description);
+      console.log(str1);
+      console.log(str2);
       return str1 !== str2;
     }));
   }
@@ -319,7 +322,11 @@ export class AdminPassLimitDialogComponent implements OnInit, OnDestroy {
       this.individualOverrideForm.removeControl('students');
       this.individualOverrideForm.addControl('students', new FormArray([]));
     }
-    this.individualOverrideForm.reset(this.individualFormPreviousValue, {emitEvent: true});
+    this.individualOverrideForm.patchValue({
+      students: [],
+      passLimit: undefined,
+      description: ''
+    }, { emitEvent: true });
     if (this.individualPassLimitInput?.passLimitDropdownRef?.getState() === MatDialogState.OPEN) {
       this.individualPassLimitInput.passLimitDropdownRef.close();
     }

@@ -91,7 +91,7 @@
           </span>
 
       <div class="individual-limits-list">
-        <p class="ds-dialog-subtitle" style="opacity: 0.5">
+        <p class="ds-details-text-bold" style="color: #B7C1CF !important;">
           No individual limits set
         </p>
 
@@ -101,7 +101,7 @@
           text="Add Limit"
           leftIcon="assets/Plus (White).svg"
           (buttonClick)="goToIndividualLimitPage()">
-          Add Pass Limit
+          Add Limit
         </app-gradient-button>
       </div>
     </div>
@@ -135,11 +135,19 @@
         </app-gradient-button>
       </div>
 
-      <div class="individual-list-item ds-flex-column" *ngFor="let i of individualStudentLimits" style="font-size: 14px; display: flex; row-gap: 5px" (click)="goToIndividualLimitPage(i)">
-        <div class="ds-flex-row ds-flex-center-between">
-          <span class="ds-dialog-heading" style="padding-bottom: 0 !important;">{{i.student.display_name}}</span>
-          <span>{{i.passLimit === -2 ? 'Unlimited' : i.passLimit}} {{i.passLimit === 1 ? 'pass' : 'passes'}}/day</span>
-        </div>
+      <div
+        #individualItem
+        (mousedown)="individualItem.classList.add('pressed')"
+        (mouseup)="individualItem.classList.remove('pressed')"
+        (mouseleave)="individualItem.classList.remove('pressed')"
+        class="individual-list-item ds-flex-column"
+        *ngFor="let i of individualStudentLimits"
+        style="font-size: 14px; display: flex; row-gap: 5px"
+        (click)="goToIndividualLimitPage(i)">
+          <div class="ds-flex-row ds-flex-center-between">
+            <span class="ds-dialog-heading" style="padding-bottom: 0 !important;">{{i.student.display_name}}</span>
+            <span>{{i.passLimit === -2 ? 'Unlimited' : i.passLimit}} {{i.passLimit === 1 ? 'pass' : 'passes'}}/day</span>
+          </div>
 
         <span class="ds-dialog-normal-text" *ngIf="i.description">{{i.description}}</span>
       </div>
@@ -199,7 +207,7 @@
 
       <section class="individual-limit-description" style="margin-bottom: 10px">
         <span class="ds-dialog-heading ds-blue-gray" style="padding: 0 !important">Description</span>
-        <p class="ds-dialog-normal-text" style="margin-top: 4px">This description will only be visible to staff, not students.</p>
+        <p class="ds-dialog-normal-text" style="margin-top: 4px">This description is only visible to staff.</p>
         <app-textarea width="85%" [control]="individualOverrideForm.get('description')" placeholder="Ex. Parents requested"></app-textarea>
       </section>
     </div>
