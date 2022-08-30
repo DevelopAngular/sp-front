@@ -2,7 +2,6 @@ import {Component, OnDestroy, OnInit, TemplateRef, ViewChild} from '@angular/cor
 import {FormArray, FormControl, FormGroup, ValidationErrors, ValidatorFn, Validators} from '@angular/forms';
 
 import {MatDialog, MatDialogRef, MatDialogState} from '@angular/material/dialog';
-import {MatTabGroup} from '@angular/material/tabs';
 import {cloneDeep} from 'lodash';
 import {forkJoin, Observable, of, Subscription} from 'rxjs';
 import {concatMap, filter, map, tap} from 'rxjs/operators';
@@ -100,7 +99,7 @@ export class AdminPassLimitDialogComponent implements OnInit, OnDestroy {
   // individual form props
   individualOverrideForm = new FormGroup({
     students: new FormArray([], Validators.required),
-    passLimit: new FormControl(null, Validators.pattern(/^([1-9]\d*)$|^(0){1}$|^(Unlimited)$/)),
+    passLimit: new FormControl(null, [Validators.required, Validators.pattern(/^([1-9]\d*)$|^(0){1}$|^(Unlimited)$/)]),
     description: new FormControl(null)
   }, individualPassLimitRangeValidator());
   individualFormPreviousValue: { students: string[], passLimit: string, description: string };
@@ -286,7 +285,7 @@ export class AdminPassLimitDialogComponent implements OnInit, OnDestroy {
       controls.push(new FormControl(limit.student.id, Validators.required));
     }
 
-    let passLimitValue = limit?.passLimit?.toString() || '10';
+    let passLimitValue = limit?.passLimit?.toString();
     if (passLimitValue === '-2') {
       passLimitValue = 'Unlimited';
     }
@@ -319,7 +318,11 @@ export class AdminPassLimitDialogComponent implements OnInit, OnDestroy {
       this.individualOverrideForm.removeControl('students');
       this.individualOverrideForm.addControl('students', new FormArray([]));
     }
-    this.individualOverrideForm.reset(this.individualFormPreviousValue, {emitEvent: true});
+    this.individualOverrideForm.patchValue({
+      students: [],
+      passLimit: undefined,
+      description: ''
+    }, { emitEvent: true });
     if (this.individualPassLimitInput?.passLimitDropdownRef?.getState() === MatDialogState.OPEN) {
       this.individualPassLimitInput.passLimitDropdownRef.close();
     }

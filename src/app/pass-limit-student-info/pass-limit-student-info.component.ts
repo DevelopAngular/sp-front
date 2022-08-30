@@ -124,7 +124,7 @@ export class PassLimitStudentInfoComponent implements OnInit {
     if (this.data.studentPassLimit) {
       this.schoolEditButton = this.data.studentPassLimit.schoolPassLimitEnabled;
       this.individualEditButton = this.data.studentPassLimit.isIndividual;
-      this.schoolLimitBorder = this.data.studentPassLimit.schoolPassLimitEnabled && !this.data.studentPassLimit.isIndividual && !this.data.studentPassLimit.noLimitsSet;
+      this.schoolLimitBorder = this.data.studentPassLimit.schoolPassLimitEnabled;
       this.individualBorder = this.data.studentPassLimit.isIndividual && !this.data.studentPassLimit.noLimitsSet;
     }
   }
