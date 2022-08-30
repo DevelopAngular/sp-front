@@ -3,6 +3,7 @@ import { MatDialog } from '@angular/material/dialog';
 import { IDCard } from '../admin/id-cards/id-card-editor/id-card-editor.component';
 import { IdcardOverlayContainerComponent } from '../idcard-overlay-container/idcard-overlay-container.component';
 import { QRBarcodeGeneratorService } from '../services/qrbarcode-generator.service';
+import { IDCardService } from '../services/IDCardService';
 
 declare const window;
 
@@ -17,10 +18,24 @@ export class MobileRestrictionComponent implements OnInit, AfterViewInit, OnDest
 
   IDCARDDETAILS: any;
 
-  constructor(private qrBarcodeGenerator: QRBarcodeGeneratorService,public dialog: MatDialog) { }
+  constructor(private qrBarcodeGenerator: QRBarcodeGeneratorService,public dialog: MatDialog, private idCardService: IDCardService) { 
+
+  }
 
   ngOnInit(): void {
     window.Intercom('update', {'hide_default_launcher': true});
+    this.idCardService.getIDCardDetails().subscribe({
+      next: (result: any) => {
+        if (result?.results?.digital_id_card) {
+          if (result.results.digital_id_card.enabled) {
+            this.IDCardEnabled = true;
+          } else {
+            return;
+          }
+          this.IDCARDDETAILS = result.results.digital_id_card;
+        }
+      },
+    });
   }
 
   ngAfterViewInit(): void {
