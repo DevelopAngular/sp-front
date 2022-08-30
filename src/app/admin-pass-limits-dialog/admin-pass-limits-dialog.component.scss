@@ -133,9 +133,14 @@
   position: relative;
   justify-content: center;
   cursor: pointer;
-  transition: background-color .2s ease;
+  transition: all .2s ease;
   padding: 10px;
   margin: 10px 0;
+  background: white;
+
+  &.pressed {
+    transform: scale(0.97);
+  }
 
   &:hover {
     background-color: #DEE0E6;
