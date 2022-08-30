@@ -53,24 +53,40 @@
 }
 
 .limit-section {
+  border: 1px solid;
+  &.school-pass-limit {
+    border-color: #6651F1;
+
+    &.disabled {
+      border-color: rgba(102, 81, 241, 0.5);
+    }
+  };
+
+  &.individual-pass-limit {
+    border-color: #E48C15;
+
+    &.disabled {
+      border-color: rgba(228, 140, 21, 0.5);
+    }
+  }
+
   padding: 20px;
   background: $gray050;
   border-radius: 10px;
   margin-bottom: 20px;
 }
-
-.show-school-border {
-  border: 1px solid #6651F1;
-}
-
-.show-individual-border {
-  border: 1px solid #E48C15;
-}
+//
+//.show-school-border {
+//  border: 1px solid #6651F1;
+//}
+//
+//.show-individual-border {
+//  border: 1px solid #E48C15;
+//}
 
 .disabled {
   pointer-events: none;
   opacity: 0.5;
-  border-width: 0 !important;
 }
 
 .disabled-individual {
