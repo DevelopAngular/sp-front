@@ -24,6 +24,7 @@
     (click)="handleOpenClose()"
   >
     {{ modeView.text }}
+    <div class="after"></div>
   </span>
 
     <div class="students-search">
@@ -70,6 +71,7 @@
             (click)="handleModeSelected(entry.key)"
         >
           {{entry.value.textmenu}}
+          <div class="after"></div>
         </li>
       </ul>
     </ng-template>

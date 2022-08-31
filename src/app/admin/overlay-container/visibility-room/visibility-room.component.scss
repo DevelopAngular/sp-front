@@ -47,7 +47,7 @@
     color: $gray500;
     background-color: $gray100;
     border: 1px solid $gray200;
-    &.with-triangle:after {
+    &.with-triangle > .after {
       background-image: url('/assets/Rect (Blue-Gray).svg');
     }
   }
@@ -55,7 +55,7 @@
     color: $green500;
     background-color: $green100;
     border: 1px solid $green200;
-    &.with-triangle:after {
+    &.with-triangle > .after {
       background-image: url('/assets/Rect (Green500).svg');
     }
   }
@@ -63,16 +63,16 @@
     color: $red500;
     background-color: $red100;
     border: 1px solid $red200;
-    &.with-triangle:after {
+    &.with-triangle > .after {
       background-image: url('/assets/Rect (Red500).svg');
     }
   }
 }
 
-.with-triangle:after, .with-triangle::after {
+.with-triangle > .after {
   display: inline-flex;
-  content: '';
   background-image: url('/assets/Rect (Blue-Gray).svg');
+  animation: fadein 0.5s;
   background-size: 8px 6px;
   margin-left: 8px;
   width: 8px;
@@ -114,18 +114,18 @@ ul.error {
     cursor: pointer;
     padding: 10px;
     display: flex;
+    transition: background-color 0.5s;
+    & > .after {
+      background-image: url('/assets/Check (Navy).svg');
+      opacity: 0;
+    }
     &.selected, &:hover {
      color: $navy500;
      background-color: $navy100;
      border-radius: 7px;
-     &:after {
-      content: '';
-      background-image: url('/assets/Check (Navy).svg');
-      background-size: 16px 16px;
-      margin-left: 8px;
-      width: 16px;
-      height: 16px;
-      margin: 0 0 0 auto;
+     & > .after {
+      animation: fadein 1s;
+      opacity: 1;
      }
     }
     &.selected.grayed {
@@ -137,4 +137,17 @@ ul.error {
       }
     }
   }
+}
+
+@keyframes fadein {
+    from { opacity: 0; }
+    to { opacity: 1; }
+}
+
+.after {
+  background-size: 16px 16px;
+  margin-left: 8px;
+  width: 16px;
+  height: 16px;
+  margin: 0 0 0 auto;
 }
