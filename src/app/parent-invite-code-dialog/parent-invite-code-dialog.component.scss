@@ -1,0 +1,25 @@
+@import "../../design-system.scss";
+@import "../../sp-colors.scss";
+.dialog-wrapper {
+    height: 200px;
+    width: 350px;
+    padding: 20px 30px;
+    .header {
+        margin-top: 0;
+        margin-bottom: 6px;
+    }
+    .instruction {
+        @include textSize(14px, normal, $gray500);
+        margin-top: 14px;
+    }
+    .input-wrapper {
+        margin: 0 auto 20px;
+        width: fit-content;
+    }
+    .buttons {
+        margin: 10px 0;
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+    }
+}

@@ -20,7 +20,6 @@ import {UNANIMATED_CONTAINER} from '../../../consent-menu-overlay';
 import {ConsentMenuComponent} from '../../../consent-menu/consent-menu.component';
 import {DarkThemeSwitch} from '../../../dark-theme-switch';
 import {ProfilePictureComponent} from '../../accounts/profile-picture/profile-picture.component';
-import { IdCardGradeLevelsComponent } from '../../id-cards/id-card-grade-levels/id-card-grade-levels.component';
 
 @Component({
   selector: 'app-view-profile',

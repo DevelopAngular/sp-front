@@ -1,0 +1,146 @@
+@import '../../../sp-colors.scss';
+@import '../../../design-system.scss';
+.wrapper {
+    .heading {
+        min-height: 70px;
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        background: #FFFFFF;
+        color: $navy500;
+        font-size: 17px;
+        font-weight: bold;
+        position: relative;
+        box-shadow: 0 1px 5px 0 rgba(0, 0, 0, .2);
+        border-top-right-radius: 14px;
+        border-top-left-radius: 14px;
+        .back-button {
+            position: absolute;
+            top: 0;
+            bottom: 0;
+            left: 25px;
+            margin: auto 0;
+            display: flex;
+            align-items: center;
+            cursor: pointer;
+            color: grey;
+            img {
+                width: 28px;
+                height: 28px;
+            }
+            .cancel {
+                color: white;
+                font-size: 15px;
+                font-weight: bold;
+            }
+            .dots {
+                position: absolute;
+                right: 25px;
+            }
+        }
+        .save-button {
+            position: absolute;
+            top: 0;
+            bottom: 0;
+            right: 20px;
+            margin: auto 0;
+            display: flex;
+            align-items: center;
+            .incomplete {
+                color: white;
+                font-size: 15px;
+                font-weight: bold;
+            }
+        }
+    }
+    .content {
+        // height: 430px;
+        position: relative;
+        overflow: auto;
+        .page {
+            padding: 12px 25px 0 30px;
+            .block {
+                background-color: #F5F6F8;
+                border-radius: 8px;
+                position: relative;
+                display: flex;
+                flex-direction: column;
+                justify-content: center;
+                .inner {
+                    padding: 20px 20px 8px;
+                    .info {
+                        padding-top: 5px;
+                        @include textSize(14px, 400, #7F879D);
+                    }
+                }
+                .title {
+                    color: $navy;
+                    font-weight: bold;
+                    font-size: 15px;
+                    padding: 0 0 10px;
+                    span {
+                        color: #72CC1B;
+                        font-weight: 600;
+                        font-size: 23px;
+                    }
+                }
+                .c-drop {
+                    position: relative;
+                    top: -5px;
+                    @include textSize(14px, 400, #1F195E);
+                    span {
+                        display: inline-block;
+                        &:first-child {
+                            margin-right: 8px;
+                        }
+                    }
+                }
+                .downlod-btn {
+                    text-align: center;
+                    padding: 20px 0px 13px 0px;
+                }
+                .description {
+                    font-size: 14px;
+                    color: $gray500;
+                    margin: 0;
+                }
+                .kiosk-mode {
+                    .left {
+                        width: 65%;
+                    }
+                }
+                .group {
+                    @include flexLayout(center, space-between);
+                    margin-top: 15px;
+                    .label {
+                        @include textSize(15px, 600, $gray500);
+                    }
+                    .input-wrapper {
+                        background-color: $gray100;
+                        border: 1px solid $gray200;
+                        border-radius: 8px;
+                        outline: none;
+                        padding: 10px;
+                        width: 60%;
+                        display: flex;
+                        align-items: center;
+                        justify-content: space-between;
+                        .input {
+                            color: $navy500;
+                            border: none;
+                        }
+                        img {
+                            cursor: pointer;
+                        }
+                    }
+                }
+            }
+        }
+    }
+}
+
+@keyframes rotate {
+    100% {
+        transform: rotate(360deg);
+    }
+}

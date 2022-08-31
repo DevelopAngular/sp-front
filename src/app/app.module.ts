@@ -77,6 +77,9 @@ import {SmartpassSearchEffects} from './ngrx/smartpass-search/effects';
 import { PassLimitsDialogComponent } from './teacher/pass-limits-dialog/pass-limits-dialog.component';
 import { IdcardOverlayContainerComponent } from './idcard-overlay-container/idcard-overlay-container.component';
 import { EncounterDetectionEffects } from './ngrx/encounter-detection/effects';
+import { ParentSignUpComponent } from './parent-sign-up/parent-sign-up.component';
+import { SharedModule } from './shared/shared.module';
+import { ParentInviteCodeDialogComponent } from './parent-invite-code-dialog/parent-invite-code-dialog.component';
 
 const DEFAULT_SWIPER_CONFIG: SwiperConfigInterface = {
   direction: 'horizontal',
@@ -151,6 +154,8 @@ const appRoutes: Routes = [
     CustomToastComponent,
     PassLimitsDialogComponent,
     IdcardOverlayContainerComponent,
+    ParentSignUpComponent,
+    ParentInviteCodeDialogComponent,
   ],
     imports: [
         BrowserModule,
@@ -223,7 +228,8 @@ const appRoutes: Routes = [
         ]),
         StoreDevtoolsModule.instrument({}),
         HammerModule,
-        ServiceWorkerModule.register('ngsw-worker.js', {enabled: environment.production})
+        ServiceWorkerModule.register('ngsw-worker.js', {enabled: environment.production}),
+        SharedModule
     ],
   providers: [
     {provide: OverlayContainer, useFactory: InitOverlay},

@@ -40,6 +40,8 @@ import {ProfilePictureComponent} from '../profile-picture/profile-picture.compon
 import * as moment from 'moment';
 import {AdminPassLimitDialogComponent} from '../admin-pass-limits-dialog/admin-pass-limits-dialog.component';
 import {ConnectedPosition} from '@angular/cdk/overlay';
+import { InviteFamiliesDialogComponent } from '../../invite-families-dialog/invite-families-dialog.component';
+import { ParentInviteCodeDialogComponent } from '../../../parent-invite-code-dialog/parent-invite-code-dialog.component';
 
 @Component({
   selector: 'app-accounts-header',
@@ -90,7 +92,8 @@ export class AccountsHeaderComponent implements OnInit, AfterViewInit, OnDestroy
     {title: 'Students', param: '_profile_student', icon_id: '#Student', role: 'student_count'},
     {title: 'Teachers', param: '_profile_teacher', icon_id: '#Teacher', role: 'teacher_count'},
     {title: 'Admins', param: '_profile_admin', icon_id: '#Admin', role: 'admin_count'},
-    {title: 'Assistants', param: '_profile_assistant', icon_id: '#Assistant', role: 'assistant_count'}
+    {title: 'Assistants', param: '_profile_assistant', icon_id: '#Assistant', role: 'assistant_count'},
+    {title: 'Parents', param: '_profile_parent', icon_id: '#Parent', role: 'parent_count'}
   ];
 
   @HostListener('window:resize', ['$event.target'])
@@ -177,6 +180,19 @@ export class AccountsHeaderComponent implements OnInit, AfterViewInit, OnDestroy
   ngOnDestroy() {
     this.destroy$.next();
     this.destroy$.complete();
+  }
+
+  openInviteFamiliesDialog(){
+    const dialogRef = this.matDialog.open(ParentInviteCodeDialogComponent, {
+      panelClass: "search-pass-card-dialog-container",
+      backdropClass: "custom-bd",
+    });
+    // const dialogRef = this.matDialog.open(InviteFamiliesDialogComponent, {
+    //   panelClass: 'accounts-profiles-dialog',
+    //   backdropClass: 'custom-bd',
+    //   width: '425px',
+    //   height: '480px',
+    // });
   }
 
   getCurrentTab() {
