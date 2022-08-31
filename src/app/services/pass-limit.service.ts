@@ -50,7 +50,7 @@ export class PassLimitService {
     return this.liveDataService.watchPassLimits().pipe(
       map(d => d[0]),
       distinctUntilChanged((a, b) => {
-        return a.limitEnabled === b.limitEnabled && a.passLimit === b.passLimit;
+        return a?.limitEnabled === b?.limitEnabled && a?.passLimit === b?.passLimit;
       }),
     );
   }
