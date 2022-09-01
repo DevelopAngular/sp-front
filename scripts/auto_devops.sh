@@ -29,9 +29,9 @@ function deploy() {
 
     template_f=$(mktemp)
 
-    value_file = chart/values.yaml
+    value_file=chart/values.yaml
     if [[ $CI_ENVIRONMENT_SLUG == "production" ]]; then
-      value_file = chart/values-production.yaml
+      value_file=chart/values-production.yaml
     fi
 
     helm template \
