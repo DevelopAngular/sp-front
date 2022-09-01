@@ -234,7 +234,7 @@ export class StudentInfoCardComponent implements OnInit, AfterViewInit, OnDestro
         }
       })
     }
-    
+
   }
 
   ngAfterViewInit() {
@@ -408,7 +408,7 @@ export class StudentInfoCardComponent implements OnInit, AfterViewInit, OnDestro
               showCustomID: this.IDCARDDETAILS.show_custom_ids
               // userRole: this.profile.isStudent() ?  'Student' : 'Staff'
             };
-        
+
             const dialogRef = this.dialog.open(IdcardOverlayContainerComponent, {
               panelClass: "id-card-overlay-container",
               backdropClass: "custom-bd",
