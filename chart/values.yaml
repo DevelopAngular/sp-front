@@ -18,15 +18,8 @@ service:
   externalPort: 80
   internalPort: 80
 resources:
-  limits:
-    cpu: 100m
-    memory: 150Mi
   requests:
-    cpu: 100m
-    memory: 100Mi
-
-postgresql:
-  resources:
-    requests:
-      memory: 1024Mi
-      cpu: 200m
+    cpu: 1000m
+    memory: 1024Mi
+  limits:
+    memory: 1024Mi
