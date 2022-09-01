@@ -93,7 +93,6 @@ export class VisibilityRoomComponent implements OnInit, AfterViewInit, OnDestroy
     );
 
     this.loadedGrades$ = this.grades$.pipe(
-      tap(_ => console.log('LOAD')),
       tap(_ => this.adjustGradeDialogScroll()),
       map(_ => true),
     );
@@ -115,7 +114,6 @@ export class VisibilityRoomComponent implements OnInit, AfterViewInit, OnDestroy
       startWith(hasChanged),
     ).subscribe((v: boolean) => {
       const c = this.visibilityForm.get('visibility');
-      console.log('PRISTINE VAL:', this.visibilityForm.pristine, c.value)
       if (v) {
         c.markAsDirty();
       } else {

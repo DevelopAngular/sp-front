@@ -130,8 +130,7 @@ ul.error {
         box-sizing: border-box;
         &:hover {
           background-color: $gray100;
-          &:after {
-            content: none !important;
+          &.after {
             background-image: none !important;
             width: 0px !important;
             height: 0px !important;
@@ -144,6 +143,7 @@ ul.error {
     cursor: pointer;
     padding: 10px;
     display: flex;
+    transition: background-color 0.5s;
     &.title {
       font-weight: 400;
       font-size: 14px;
@@ -151,7 +151,6 @@ ul.error {
       text-transform: uppercase;
       color: $gray500;
     }
-    transition: background-color 0.5s;
     & > .after {
       background-image: url('/assets/Check (Navy).svg');
       opacity: 0;
