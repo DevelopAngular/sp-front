@@ -16,6 +16,7 @@ import {HttpService} from '../services/http-service';
 import {HallPassesService} from '../services/hall-passes.service';
 import {User} from '../models/User';
 import {CheckForUpdateService} from '../services/check-for-update.service';
+import {StorageService} from '../services/storage.service';
 
 declare const window;
 
@@ -75,7 +76,8 @@ export class MainPageComponent implements OnInit, AfterViewInit, OnDestroy {
     private router: Router,
     private http: HttpService,
     private passesService: HallPassesService,
-    private updateService: CheckForUpdateService
+    private updateService: CheckForUpdateService,
+    private storage: StorageService
   ) {
 
     this.http.schoolsCollection$
@@ -217,10 +219,21 @@ export class MainPageComponent implements OnInit, AfterViewInit, OnDestroy {
   }
 
   goHome(user) {
+    const studentRedirectFromAdmin = this.storage.getItem('admin_not_teacher_student_redirect');
+    if (studentRedirectFromAdmin) {
+      const urlCommands = ['app', 'main', 'student', studentRedirectFromAdmin];
+      if (window.location.href.includes('localhost')) {
+        urlCommands.shift();
+      }
+      this.router.navigate(urlCommands);
+      this.storage.removeItem('admin_not_teacher_student_redirect');
+      return;
+    }
+
     const availableAccessTo = user.roles.filter((_role) => _role.match('admin_'));
     let tab;
     if (availableAccessTo.includes('admin_dashboard')) {
-      tab = 'dasboard';
+      tab = 'dashboard';
     } else if (availableAccessTo.includes('admin_hallmonitor')) {
       tab = 'hallmonitor';
     } else if (availableAccessTo.includes('admin_search')) {
