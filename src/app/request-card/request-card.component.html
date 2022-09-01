@@ -172,7 +172,7 @@
 
         <ng-template #teacherPin>
           <div class="teacher-pin">
-            <app-teacher-pin-student (pinResult)="dialogRef.close()" [request]="request" [requestId]="request.id"></app-teacher-pin-student>
+            <app-teacher-pin-student (pinResult)="handlePinResult($event)" [request]="request" [requestId]="request.id"></app-teacher-pin-student>
           </div>
         </ng-template>
 

@@ -107,7 +107,7 @@ export class LocationTableComponent implements OnInit, OnDestroy {
   pinnablesLoaded: boolean;
 
   passLimits: {[id: number]: PassLimit} = {};
-  
+
   private user: User;
 
   showSpinner$: Observable<boolean>;
@@ -209,7 +209,7 @@ export class LocationTableComponent implements OnInit, OnDestroy {
             this.locationService.getLocationsWithConfigRequest(url);
 
           request$.pipe(takeUntil(this.destroy$)).subscribe(res => {
-              this.choices = res.filter(loc => !loc.restricted);
+              this.choices = res;
           });
         } else {
           const request$ = this.isFavoriteForm ? this.locationService.getLocationsWithConfigRequest(url).pipe(filter((res) => !!res.length)) :
@@ -230,12 +230,9 @@ export class LocationTableComponent implements OnInit, OnDestroy {
         .pipe(takeUntil(this.destroy$))
         .subscribe((stars: any[]) => {
           this.pinnablesLoaded = true;
-          this.starredChoices = this.kioskModeFilter(stars.map(val => Location.fromJSON(val)));
+          this.starredChoices = stars.map(val => Location.fromJSON(val));
           if (this.isFavoriteForm) {
               this.choices = [...this.starredChoices, ...this.choices].sort((a, b) => a.id - b.id);
-          }
-          if (this.forKioskMode) {
-            this.choices = this.choices.filter(loc => !loc.restricted);
           }
           this.favoritesLoaded = true;
             this.mainContentVisibility = true;
@@ -357,9 +354,6 @@ export class LocationTableComponent implements OnInit, OnDestroy {
 
         this.locationService.searchLocationsRequest(url)
           .pipe(
-            map((locs: any) => {
-              return this.kioskModeFilter(locs);
-            }),
             takeUntil(this.destroy$),
             switchMap(locs => {
               if (this.searchTeacherLocations) {
@@ -392,9 +386,14 @@ export class LocationTableComponent implements OnInit, OnDestroy {
                   return item.title.toLowerCase().includes(this.search);
               }));
 
-            this.choices = (this.searchExceptFavourites && !this.forKioskMode) || !!this.category
+            this.choices = ((this.searchExceptFavourites && !this.forKioskMode) || !!this.category
                             ? [...this.filterResults(p)]
-                            : [...filtFevLoc, ...this.filterResults(p)];
+                            : [...filtFevLoc, ...this.filterResults(p)]).filter(r => {
+                              if (this.category) {
+                                return this.category === r.category;
+                              }
+                              return r;
+            });
             this.noChoices = !this.choices.length;
           });
       } else {
@@ -402,30 +401,20 @@ export class LocationTableComponent implements OnInit, OnDestroy {
           this.choices = this.staticChoices;
         } else {
           iif(() => !!this.category, this.locationService.locsFromCategory$, this.locationService.locations$)
-            .pipe(
-              takeUntil(this.destroy$),
-              map(locs => {
-                return this.kioskModeFilter(locs);
-            }))
+            .pipe(takeUntil(this.destroy$))
             .subscribe(res => {
-              this.choices = res;
+              this.choices = res.filter(r => {
+                if (this.category) {
+                  return r.category === this.category;
+                }
+                return r;
+              });
               this.hideFavorites = false;
               this.noChoices = !this.choices.length;
           });
-
         }
       }
-
   }
-
-  kioskModeFilter(locs: Location[]) {
-    if (this.forKioskMode) {
-      return locs.filter(loc => !loc.restricted);
-    } else {
-      return locs;
-    }
-  }
-
 
   isValidLocation(locationId: any) {
     if (this.isFavoriteForm)
@@ -456,7 +445,7 @@ export class LocationTableComponent implements OnInit, OnDestroy {
                 const locs = sortBy([...rooms, ...favorites], (item) => {
                   return item.title.toLowerCase();
                 });
-                return this.kioskModeFilter(locs);
+                return locs;
               } else {
                 return rooms;
               }
