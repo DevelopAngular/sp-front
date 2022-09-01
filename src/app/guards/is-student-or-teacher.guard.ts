@@ -32,14 +32,6 @@ export class IsStudentOrTeacherGuard implements CanActivate {
           this.storageService.removeItem('initialUrl');
         }
         if (u.isAdmin() && !(u.isStudent() || u.isTeacher())) {
-          if (/\/main\/student\/\d+/.test(window.location.href)) {
-            try {
-              this.storageService.setItem('admin_not_teacher_student_redirect', window.location.href.split('/').slice(-1)[0]);
-              return true;
-            } catch {
-              return false;
-            }
-          }
           this._zone.run(() => {
             this.router.navigate(['admin']);
           });

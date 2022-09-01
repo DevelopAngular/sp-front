@@ -115,6 +115,8 @@ export class ViewProfileComponent implements OnInit {
 
   loadingProfilePicture: Subject<boolean> = new Subject<boolean>();
 
+  studentSnapshotPage: string;
+
   page: number = 1;
 
   constructor(
@@ -165,6 +167,7 @@ export class ViewProfileComponent implements OnInit {
     if (this.data.profile) {
       this.profile = this.data.profile;
       this.user = User.fromJSON(this.profile._originalUserProfile);
+      this.studentSnapshotPage = window.location.origin + `/app/main/student/${this.user.id}`
       this.profileStatusActive = this.user.status;
       this.profileStatusInitial = cloneDeep(this.profileStatusActive);
       if (this.user.isTeacher() && !(this.user.isAdmin() || this.user.isAssistant())) {
@@ -271,15 +274,6 @@ export class ViewProfileComponent implements OnInit {
     this.dialogRef.backdropClick().subscribe((evt) => {
       this.back();
     });
-  }
-
-  goToStudent() {
-    let url = window.location.origin + `/app/main/student/${this.user.id}`;
-    if (window.location.href.includes('localhost')) {
-      url = url.replace('/app', '');
-    }
-    this.dialogRef.close();
-    window.open(url, '_blank');
   }
 
   getUserRole(role: string) {
@@ -552,7 +546,7 @@ export class ViewProfileComponent implements OnInit {
   }
 
   openIDNumber(){
-    this.page = 3;
+    this.page = 3; 
   }
 
 }
