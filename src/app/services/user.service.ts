@@ -768,6 +768,7 @@ export class UserService implements OnDestroy {
   checkUserEmail(email) {
     const httpOptions = {
       headers: new HttpHeaders({
+
         'Content-Type': 'application/x-www-form-urlencoded',
       })
     };
@@ -952,5 +953,48 @@ export class UserService implements OnDestroy {
     const opt = !!q ? {params: new HttpParams().set('student_id', q)} : {};
     return this.http.get('v1/users/grade_level', opt);
   }
+  
+  listOf(fields:string[], body: Record<string, string[]>) {
+    //const headers = new HttpHeaders({'Content-Type': 'application/x-www-form-urlencoded'});
+    const headers = new HttpHeaders({
+      'Content-Type': 'application/json', 
+    });
 
+    /*const params: string[][] = [];
+    for (let [k, vv] of Object.entries(body)) {
+      for (let v of vv) {
+        params.push([k, v]);
+      }
+    }
+
+    const obj = [...fields.map(x => ['f', x]), ...params];
+    const sp = new URLSearchParams(obj).toString();
+*/
+
+  /*let params = new HttpParams();
+  for (const f of fields) {
+    params = params.append('f', f);
+  }
+  let bp = new HttpParams();
+  for (const [k, vv] of Object.entries(body)) {
+    for (const v of vv) {
+      bp = bp.append(k, v);
+    }
+  }*/
+  //params = params.append('params', bp.toString());
+
+  /*let params = new FormData();
+  for (const f of fields) {
+    params.append('f', f);
+  }
+  let bp = new FormData();
+  for (const [k, vv] of Object.entries(body)) {
+    for (const v of vv) {
+      bp.append(k, v);
+    }
+  }*/
+  //const pp = params.toString();
+  const jsonstr = {f: fields, params: body};
+  return this.http.post('v1/users/listof', jsonstr, {headers}, false);
+  }
 }

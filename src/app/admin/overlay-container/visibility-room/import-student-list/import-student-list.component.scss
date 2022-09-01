@@ -1,0 +1,17 @@
+.uploading-area {
+  width: 383px;
+  height: 190px;
+  border: 2px dashed #7F879D;
+  color: #7F879D;
+  font-size: 14px;
+  border-radius: 10px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-direction: column;
+  background-color: white;
+  .choose-file-inline {
+    text-decoration: underline;
+    cursor: pointer;
+  }
+}

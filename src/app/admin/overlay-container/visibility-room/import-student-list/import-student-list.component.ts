@@ -2,6 +2,7 @@ import {Component, ElementRef, EventEmitter, Input, OnInit, OnDestroy, Output, V
 import {fromEvent, Observable, Subject} from 'rxjs';
 import {tap, map, switchMap, takeUntil} from 'rxjs/operators';
 import * as XLSX from 'xlsx';
+import {UserService} from '../../../../services/user.service';
 
 @Component({
   selector: 'app-import-student-list',
@@ -14,7 +15,7 @@ export class ImportStudentListComponent implements OnInit, OnDestroy {
   @ViewChild('file', { static: true }) fileRef: ElementRef;
 
   destroy$ = new Subject();
-  constructor() { }
+  constructor(private userService: UserService) { }
 
   ngOnInit(): void {
     fromEvent(this.fileRef.nativeElement, 'change').pipe(
@@ -31,8 +32,13 @@ export class ImportStudentListComponent implements OnInit, OnDestroy {
         const name = workbook.SheetNames[0];
         const sheet = workbook.Sheets[name];
         const data = XLSX.utils.sheet_to_json(sheet, {header: 1, blankrows: false});
+        return data.map(r => r[0]);
       }),
-      //takeUntil(this.destroy$)
+      switchMap((emails: string[]) => {
+        return this.userService.listOf(['id'], {email: emails});
+      }),
+
+      takeUntil(this.destroy$)
     ).subscribe();
   }
 
