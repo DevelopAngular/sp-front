@@ -29,7 +29,13 @@ function deploy() {
 
     template_f=$(mktemp)
 
+    value_file = chart/values.yaml
+    if [[ $CI_ENVIRONMENT_SLUG == "production" ]]; then
+      value_file = chart/values-production.yaml
+    fi
+
     helm template \
+      --values "$value_file" \
       --set service.enabled="false" \
       --set web.repository="$CI_APPLICATION_REPOSITORY" \
       --set web.tag="$CI_APPLICATION_TAG" \
@@ -39,7 +45,6 @@ function deploy() {
       --set application.track="$track" \
       --set service.url="$AUTO_DEVOPS_DOMAIN" \
       --set service.domain="$AUTO_DEVOPS_DOMAIN" \
-      --set web.replicaCount="1" \
       --namespace="$KUBE_NAMESPACE" \
       chart/ | tee "$template_f"
 
