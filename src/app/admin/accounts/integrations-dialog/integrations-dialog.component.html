@@ -26,7 +26,7 @@
             </app-integration-card>
         </div>
 
-        <mat-divider *ngIf="schoolSyncInfo.is_gg4l_enabled || schoolSyncInfo.is_gsuite_enabled || schoolSyncInfo.is_clever_enabled" [style.width]="'100%'"></mat-divider>
+        <mat-divider *ngIf="!schoolSyncInfo.is_gg4l_enabled || !schoolSyncInfo.is_gsuite_enabled || !schoolSyncInfo.is_clever_enabled" [style.width]="'90%'"></mat-divider>
 
         <div class="using" *ngIf="!schoolSyncInfo.is_gg4l_enabled || !schoolSyncInfo.is_gsuite_enabled || !schoolSyncInfo.is_clever_enabled">
             <app-integration-card *ngIf="!schoolSyncInfo.is_clever_enabled" [icon]="'./assets/Clever (Blue).svg'" [title]="'Clever'" [style.padding]="'10px'" [status]="'disconnect'" [subtitle]="'Sync accounts automatically from any SIS with Clever.'" [learnMoreLink]="'https://www.smartpass.app/clever'"
