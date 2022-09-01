@@ -13,6 +13,7 @@ import {Router} from '@angular/router';
 import {UserService} from '../../../services/user.service';
 import {GSuiteOrgs} from '../../../models/GSuiteOrgs';
 import {CleverInfo} from '../../../models/CleverInfo';
+import {ClassLinkInfo} from '../../../models/ClassLinkInfo';
 // import { EncounterDetectionService } from '../../../services/EncounterDetectionService';
 // import { EncounterDetection } from '../../../models/EncounterDetection';
 
@@ -212,6 +213,22 @@ export class SchoolsEffects {
                 return schoolsActions.getCleverInfoSuccess({cleverInfo});
               }),
               catchError(error => of(schoolsActions.getCleverInfoFailure({errorMessage: error.message})))
+            );
+        })
+      );
+  });
+
+  getSchoolClassLinkInfo$ = createEffect(() => {
+    return this.actions$
+      .pipe(
+        ofType(schoolsActions.getClassLinkInfo),
+        switchMap((action: any) => {
+          return this.adminService.getClassLinkSyncInfo()
+            .pipe(
+              map((classLinkInfo: ClassLinkInfo) => {
+                return schoolsActions.getClassLinkSuccess({classLinkInfo});
+              }),
+              catchError(error => of(schoolsActions.getClassLinkFailure({errorMessage: error.message})))
             );
         })
       );

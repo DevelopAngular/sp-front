@@ -11,6 +11,7 @@ import {CreateFormService} from '../../../create-hallpass-forms/create-form.serv
 import {NextStep} from '../../../animations';
 import {UserService} from '../../../services/user.service';
 import {filter, takeUntil} from 'rxjs/operators';
+import { ClassLinkInfo } from '../../../models/ClassLinkInfo';
 
 @Component({
   selector: 'app-integrations-dialog',
@@ -26,6 +27,7 @@ export class IntegrationsDialogComponent implements OnInit, OnDestroy {
   cleverSyncInfo$: Observable<CleverInfo>;
   cleverSyncLoading$: Observable<boolean>;
   classlinkSyncLoading$: Observable<boolean>;
+  classlinkSyncInfo$: Observable<ClassLinkInfo>;
   page: number = 1;
   settingsData: {
     action: string,
@@ -34,10 +36,12 @@ export class IntegrationsDialogComponent implements OnInit, OnDestroy {
   isUploadedProfilePictures: boolean;
   isUploadedGradeLevels: boolean;
   isUploadedIDNumbers: boolean;
+  classLinkSyncData:any
 
   frameMotion$: BehaviorSubject<any>;
 
   destroy$ = new Subject();
+  
 
   constructor(
     public dialogRef: MatDialogRef<IntegrationsDialogComponent>,
@@ -54,8 +58,18 @@ export class IntegrationsDialogComponent implements OnInit, OnDestroy {
     this.cleverSyncInfo$ = this.adminService.cleverInfoData$;
     this.cleverSyncLoading$ = this.adminService.syncLoading$;
     this.classlinkSyncLoading$ = this.adminService.syncLoading$;
+    this.classlinkSyncInfo$ = this.adminService.classLinkInfoData$
     this.frameMotion$ = this.formService.getFrameMotionDirection();
     this.userService.getUploadedGroupsRequest();
+
+    this.classlinkSyncInfo$.subscribe(res=>{
+      console.log("classLInk sink :::::",res)
+      this.classLinkSyncData =res
+    })
+
+
+
+         
 
     merge(of(this.userService.getUserSchool()), this.userService.getCurrentUpdatedSchool$().pipe(filter(s => !!s)))
         .pipe(takeUntil(this.destroy$))
