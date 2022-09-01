@@ -2,7 +2,7 @@
   <div class="collection-header" [style.width]="headerWidth">
     <div class="collection-title">
       <img *ngIf="icon" draggable="false" class="collection-icon" [src]="_icon | resolveAsset">
-      <div class="collection-title" [style.color]="_color">
+      <div class="collection-title" [style.color]="!!(this.darkTheme.isEnabled$ | async) ? '#FFFFFF' : '#1F195E'">
         {{title}}
       </div>
     </div>

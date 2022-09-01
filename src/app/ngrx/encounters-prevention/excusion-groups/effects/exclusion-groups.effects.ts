@@ -20,7 +20,14 @@ export class ExclusionGroupsEffects {
               map((groups: ExclusionGroup[]) => {
                 return exclusionGroupsActions.getExclusionGroupsSuccess({groups});
               }),
-              catchError(error => of(exclusionGroupsActions.getExclusionGroupsFailure({errorMessage: error.message})))
+              catchError(error => {
+                toast.openToastAction({data: {
+                  title: 'Oh no! Something went wrong',
+                  subtitle: `Please try refreshing the page. If the issue keeps occuring, contact us at support@smartpass.app. (${error.status})`,
+                  type: 'error'
+                }});
+                return of(exclusionGroupsActions.getExclusionGroupsFailure({errorMessage: error.message}))
+              })
             );
         })
       );
