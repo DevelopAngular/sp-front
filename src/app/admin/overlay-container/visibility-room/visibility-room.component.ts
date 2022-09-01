@@ -135,7 +135,7 @@ export class VisibilityRoomComponent implements OnInit, AfterViewInit, OnDestroy
         const delta = this.bottomSearchComponent - $x.height; 
         if (delta < 0) {
           // deals with a posible too long grades's list
-          this.panelMaxHeight = this.bottomSearchComponent + 'px';
+          this.panelMaxHeight = (this.bottomSearchComponent - 5/*small adjustment for a better position*/) + 'px';
         }
       }
     }, 0); 
@@ -151,6 +151,10 @@ export class VisibilityRoomComponent implements OnInit, AfterViewInit, OnDestroy
     }
 
     this.unlisten = this.renderer.listen('document', 'click', event => {
+      if (this.dialog.getDialogById(this.STUDENT_LIST_DIALOG_ID)) {
+        return
+      }
+
       try {
         let $input = null;
         if (this.searchComponent?.input && ('input' in this.searchComponent.input))  {
@@ -259,10 +263,11 @@ export class VisibilityRoomComponent implements OnInit, AfterViewInit, OnDestroy
     }
 
     const rect = $matContainer.getBoundingClientRect()
-    if(
-      event.clientX <= rect.left || event.clientX >= rect.right || 
-      event.clientY <= rect.top || event.clientY >= rect.bottom)
-    {
+    if (
+      (event.clientX <= rect.left || event.clientX >= rect.right || 
+      event.clientY <= rect.top || event.clientY >= rect.bottom) && 
+      !this.dialog.getDialogById(this.STUDENT_LIST_DIALOG_ID)
+    ) {
       this.gradeLevelDialog.close();
     }
   }

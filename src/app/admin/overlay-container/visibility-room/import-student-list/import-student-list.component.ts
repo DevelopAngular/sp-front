@@ -18,9 +18,15 @@ export class ImportStudentListComponent implements OnInit, OnDestroy {
   constructor(private userService: UserService) { }
 
   ngOnInit(): void {
+    const fr = new FileReader();
+
+    // reset bvalue to upload same file
+    fromEvent(this.fileRef.nativeElement, 'click').pipe(tap((evt: Event) => {
+      (evt.target as HTMLInputElement).value = '';
+    })).subscribe();
+
     fromEvent(this.fileRef.nativeElement, 'change').pipe(
       switchMap(_ => {
-        const fr = new FileReader();
         fr.readAsBinaryString(this.fileRef.nativeElement.files[0]);
         return fromEvent(fr, 'load');
       }),
