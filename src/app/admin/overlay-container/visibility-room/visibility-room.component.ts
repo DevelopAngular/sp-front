@@ -331,7 +331,13 @@ export class VisibilityRoomComponent implements OnInit, AfterViewInit, OnDestroy
     this.studentListDialog = this.dialog.open(ImportStudentListComponent, conf);
     this.studentListDialog.afterClosed().pipe(
       tap((studentList: User[]) => {
-        this.addFoundStudents([...studentList]);
+        // add existent users ?
+        //let ss: User[] = this.selectedStudents.length > 0 ? [...this.selectedStudents, ...studentList] : [...studentList];
+        // replace existent users
+        let ss: User[] = [...studentList];
+        // only unique
+        ss = [...new Map(ss.map(x => [x.id, x])).values()];
+        this.addFoundStudents(ss);
         setTimeout(() => {
           this.searchComponent.inputField = false;
           this.gradeLevelDialog.close();
@@ -339,12 +345,11 @@ export class VisibilityRoomComponent implements OnInit, AfterViewInit, OnDestroy
       }),
       catchError(err => {
         this.toastService.openToast({
-          title: 'Sorry, you can\'t start your pass right now.',
-          subtitle: 'Please try again later.',
+          title: 'Error processing the student list',
+          subtitle: err.message,
           type: 'error',
         });
         return of(null);
-         
       }),
     ).subscribe();
   }
