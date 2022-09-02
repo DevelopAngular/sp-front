@@ -59,6 +59,11 @@ export const getSchoolCleverInfo = createSelector(
   (state: SchoolsState) => state.cleverInfo
 );
 
+export const getSchoolClassLinkInfo = createSelector(
+  getSchoolsState,
+  (state: SchoolsState) => state.classLinkInfo
+);
+
 export const getSyncLoading = createSelector(
   getSchoolsState,
   (state: SchoolsState) => state.syncLoading
