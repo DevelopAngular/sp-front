@@ -221,10 +221,7 @@ export class MainPageComponent implements OnInit, AfterViewInit, OnDestroy {
   goHome(user) {
     const studentRedirectFromAdmin = this.storage.getItem('admin_not_teacher_student_redirect');
     if (studentRedirectFromAdmin) {
-      const urlCommands = ['app', 'main', 'student', studentRedirectFromAdmin];
-      if (window.location.href.includes('localhost')) {
-        urlCommands.shift();
-      }
+      const urlCommands = ['main', 'student', studentRedirectFromAdmin];
       this.router.navigate(urlCommands);
       this.storage.removeItem('admin_not_teacher_student_redirect');
       return;
