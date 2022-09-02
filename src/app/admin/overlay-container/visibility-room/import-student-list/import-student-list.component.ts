@@ -1,7 +1,10 @@
-import {Component, ElementRef, EventEmitter, Input, OnInit, OnDestroy, Output, ViewChild} from '@angular/core';
-import {fromEvent, Observable, Subject} from 'rxjs';
+import {Component, ElementRef, OnInit, OnDestroy, ViewChild, Optional, Inject} from '@angular/core';
+import {MatDialogRef} from '@angular/material/dialog';
+import {fromEvent, Subject} from 'rxjs';
 import {tap, map, switchMap, takeUntil} from 'rxjs/operators';
 import * as XLSX from 'xlsx';
+
+import {User} from '../../../../models/User';
 import {UserService} from '../../../../services/user.service';
 
 @Component({
@@ -15,11 +18,12 @@ export class ImportStudentListComponent implements OnInit, OnDestroy {
   @ViewChild('file', { static: true }) fileRef: ElementRef;
 
   destroy$ = new Subject();
-  constructor(private userService: UserService) { }
+  constructor(
+    private userService: UserService,
+    private dialogRef: MatDialogRef<ImportStudentListComponent>,
+  ) { }
 
   ngOnInit(): void {
-    const fr = new FileReader();
-
     // reset bvalue to upload same file
     fromEvent(this.fileRef.nativeElement, 'click').pipe(tap((evt: Event) => {
       (evt.target as HTMLInputElement).value = '';
@@ -27,6 +31,7 @@ export class ImportStudentListComponent implements OnInit, OnDestroy {
 
     fromEvent(this.fileRef.nativeElement, 'change').pipe(
       switchMap(_ => {
+        const fr = new FileReader();
         fr.readAsBinaryString(this.fileRef.nativeElement.files[0]);
         return fromEvent(fr, 'load');
       }),
@@ -41,9 +46,11 @@ export class ImportStudentListComponent implements OnInit, OnDestroy {
         return data.map(r => r[0]);
       }),
       switchMap((emails: string[]) => {
-        return this.userService.listOf(['id'], {email: emails});
+        return this.userService.listOf({email: emails});
       }),
-
+      tap((users: User[]) => {
+        this.dialogRef.close(users);
+      }),
       takeUntil(this.destroy$)
     ).subscribe();
   }

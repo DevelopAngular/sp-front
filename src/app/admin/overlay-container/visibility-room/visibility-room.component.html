@@ -49,7 +49,7 @@
         [selectedOptions]="selectedStudents"
         (onUpdate)="addFoundStudents($event)"
         (focusEvent)="onSearchComponentFocus()"
-        (blurEvent)="showErrorsVisibility=true;"
+        (blurEvent)="onSearchComponentBlur()"
         [form]="visibilityForm"
         [controlName]="'visibility'"
       >

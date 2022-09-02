@@ -2,8 +2,8 @@ import {KeyValue} from '@angular/common';
 import { Component, OnInit, AfterViewInit, OnDestroy, Input, Output, EventEmitter, ViewChild, ElementRef, TemplateRef, Renderer2, HostListener} from '@angular/core';
 import {FormGroup} from '@angular/forms';
 import {MatDialog, MatDialogRef} from '@angular/material/dialog';
-import {Subject, Observable} from 'rxjs';
-import {map, tap, take, takeUntil, filter, finalize, startWith, shareReplay} from 'rxjs/operators';
+import {Subject, Observable, of} from 'rxjs';
+import {map, tap, take, takeUntil, filter, finalize, startWith, shareReplay, catchError} from 'rxjs/operators';
 import {cloneDeep, isEqual} from 'lodash';
 
 import {User} from '../../../models/User';
@@ -13,6 +13,7 @@ import {OverlayDataService} from '../overlay-data.service';
 import {slideOpacity } from '../../../animations';
 import {DataService} from '../../../services/data-service';
 import {ImportStudentListComponent} from './import-student-list/import-student-list.component';
+import {ToastService} from '../../../services/toast.service';
 
 @Component({
   selector: 'app-visibility-room',
@@ -79,6 +80,7 @@ export class VisibilityRoomComponent implements OnInit, AfterViewInit, OnDestroy
     public overlayService: OverlayDataService,
     private renderer: Renderer2,
     private dataService: DataService,
+    private toastService: ToastService,
   ) {
     this.modeView = this.modes[this.mode];
   }
@@ -144,10 +146,12 @@ export class VisibilityRoomComponent implements OnInit, AfterViewInit, OnDestroy
   unlisten: () => void;
 
   ngAfterViewInit() {
-    if (this.selectedStudents.length > 0) {
-      this.searchComponent.inputField = false;
-    } else if (this.selectedGradeLevels.length > 0) {
-      this.searchComponent.inputField = false;
+    if (this?.searchComponent) {
+      if (this.selectedStudents.length > 0) {
+        this.searchComponent.inputField = false;
+      } else if (this.selectedGradeLevels.length > 0) {
+        this.searchComponent.inputField = false;
+      }
     }
 
     this.unlisten = this.renderer.listen('document', 'click', event => {
@@ -170,10 +174,9 @@ export class VisibilityRoomComponent implements OnInit, AfterViewInit, OnDestroy
         if (isInput || isOpener || fromdialog) {
           this.showErrorsVisibility = false;
         }
-        // TODO search left opened  will close on clicking elsewhere
-        /*} else if (this.isShowSearch) {
-          this.searchComponent.inputField = false;
-        }*/
+        /*if (this?.searchComponent && this.selectedStudents.length > 0) {
+        this.searchComponent.inputField = false;
+       }*/
       } catch (e) {
         console.log('RV.listen', e);
       }
@@ -188,6 +191,13 @@ export class VisibilityRoomComponent implements OnInit, AfterViewInit, OnDestroy
     // open grade level options
     this.openGradeLevelDialog();
 
+  }
+
+  public onSearchComponentBlur() {
+    if (this.dialog.getDialogById(this.GRADE_LEVEl_DIALOG_ID)) {
+      return;
+    }
+    this.showErrorsVisibility = true;
   }
 
   ngOnDestroy(): void {
@@ -319,6 +329,24 @@ export class VisibilityRoomComponent implements OnInit, AfterViewInit, OnDestroy
       autofocus: true,
     };
     this.studentListDialog = this.dialog.open(ImportStudentListComponent, conf);
+    this.studentListDialog.afterClosed().pipe(
+      tap((studentList: User[]) => {
+        this.addFoundStudents([...studentList]);
+        setTimeout(() => {
+          this.searchComponent.inputField = false;
+          this.gradeLevelDialog.close();
+        }, 0);
+      }),
+      catchError(err => {
+        this.toastService.openToast({
+          title: 'Sorry, you can\'t start your pass right now.',
+          subtitle: 'Please try again later.',
+          type: 'error',
+        });
+        return of(null);
+         
+      }),
+    ).subscribe();
   }
 
   private dirty: Subject<boolean> = new Subject<boolean>();
