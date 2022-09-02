@@ -113,6 +113,7 @@ export class AccountsComponent implements OnInit, OnDestroy {
       tap(() => this.adminService.getSpSyncingRequest()),
       tap(() => this.adminService.getGSuiteOrgsRequest()),
       tap(() => this.adminService.getCleverInfoRequest()),
+      tap(() => this.adminService.getClassLinkRequest()),
       switchMap(() => {
         return this.adminService.getOnboardProcessRequest().pipe(filter(res => !!res));
       })
