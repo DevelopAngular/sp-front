@@ -254,13 +254,15 @@ export class SettingsComponent implements OnInit, OnDestroy {
       'action': 'favorite',
       'title': 'Favorites'
     });
-    this.settings.push({
-      'hidden': this.isMobile,
-      'background': '#E32C66',
-      'icon': 'Notifications',
-      'action': 'notifications',
-      'title': 'Notifications'
-    });
+    if (this.user.isTeacher()) {
+      this.settings.push({
+        'hidden': this.isKioskMode,
+        'background': '#EBBB00',
+        'icon': 'Star',
+        'action': 'favorite',
+        'title': 'Favorites'
+      });
+    }
     this.settings.push({
       'hidden': this.isKioskMode || !this.isStaff,
       'background': '#EBBB00',
