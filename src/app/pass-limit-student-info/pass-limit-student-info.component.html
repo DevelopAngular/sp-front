@@ -10,7 +10,7 @@
   <div class="content ds-p-20" [attr.data-motion-translate]="(frameMotion$ | async).direction">
     <div
       class="limit-section school-pass-limit ds-flex-row ds-flex-center-between"
-      [ngClass]="{'disabled': data.studentPassLimit.isIndividual, 'show-school-border': schoolLimitBorder}">
+      [ngClass]="{'disabled': data.studentPassLimit.isIndividual, 'disabled-border': !data.studentPassLimit.schoolPassLimitEnabled}">
       <div class="ds-flex-column" style="display: flex">
             <span class="ds-dialog-heading" style="padding-bottom: 0 !important;">
               School Pass Limit
@@ -56,7 +56,7 @@
 
     <div
       class="limit-section individual-pass-limit ds-flex-row ds-flex-center-between"
-      [ngClass]="{ 'disabled-individual': (data.studentPassLimit.schoolPassLimitEnabled &&
+      [ngClass]="{ 'disabled-border': (data.studentPassLimit.schoolPassLimitEnabled &&
         !data.studentPassLimit.isIndividual) || !data.studentPassLimit.passLimit || data.studentPassLimit.noLimitsSet, 'show-individual-border': individualBorder}">
       <div class="ds-flex-column" style="display: flex">
             <span class="ds-dialog-heading" style="align-self: flex-start; padding-bottom: 0 !important;">

@@ -48,6 +48,7 @@ export class PassLimitStudentInfoComponent implements OnInit {
         passLimit: 'Unlimited'
       });
     }
+    console.log(this.data);
     this.setBordersAndButtons();
   }
   // TODO: come up with a better way of sharing this component
