@@ -3,7 +3,6 @@ import {Router} from '@angular/router';
 import {animate, state, style, transition, trigger} from '@angular/animations';
 import {combineLatest, Observable, Subject} from 'rxjs';
 import {SmartpassSearchService} from '../services/smartpass-search.service';
-import {DarkThemeSwitch} from '../dark-theme-switch';
 import {debounceTime, filter, take, takeUntil, tap} from 'rxjs/operators';
 import * as moment from 'moment';
 import {UserService} from '../services/user.service';
@@ -40,7 +39,7 @@ import {User} from '../models/User';
 export class SmartpassSearchComponent implements OnInit, OnDestroy {
 
   @Input() focused: boolean;
-  @Input() height: string = '40px';
+  @Input() height = '40px';
   @Input() width: string;
 
   public isFocus: boolean;
@@ -58,7 +57,6 @@ export class SmartpassSearchComponent implements OnInit, OnDestroy {
   constructor(
     private router: Router,
     private spSearchService: SmartpassSearchService,
-    public darkTheme: DarkThemeSwitch,
     private userService: UserService,
     private cdr: ChangeDetectorRef
   ) { }
