@@ -192,36 +192,6 @@
                 </div>
             </div>
 
-            <div class="block" *ngIf="user.isStudent()">
-              <div class="title" style="display: flex">
-                <app-octagon [size]="21">
-                  <img style="position: absolute; z-index: 10; height: 14px" [src]="'./assets/Walking One (White).svg' | resolveAsset">
-                </app-octagon>
-                <div style="margin-left: 8px">Encounter Prevention</div>
-              </div>
-              <div class="subtitle" style="width: 360px; white-space: normal;" *ngIf="exclusionGroups && !exclusionGroups.length; else groups">
-                Prevent students from having passes at the same time with Encounter Prevention.
-              </div>
-              <ng-template #groups>
-                <div class="groups">
-                  <div class="group"
-                       *ngFor="let group of exclusionGroups"
-                       [showToolTip]="!!group.notes"
-                       [customToolTip]="group.notes"
-                       [editable]="true"
-                       [positionStrategy]="{originX: 'center',originY: 'top',overlayX: 'center',overlayY: 'top',offsetX: 330}"
-                  >
-                    <app-encounter-group [group]="group" (clickEvent)="openExclusionGroups('groupDescription', group)"></app-encounter-group>
-                  </div>
-                </div>
-              </ng-template>
-              <app-gradient-button
-                style="margin-top: 9px"
-                [leftIcon]="'./assets/Plus (White).svg'"
-                (buttonClick)="openExclusionGroups('newGroup')"
-              >New Group</app-gradient-button>
-            </div>
-
             <mat-divider *ngIf="user.isTeacher()"></mat-divider>
             <div class="block" *ngIf="user.isTeacher()">
                 <div class="permissions">
@@ -234,7 +204,7 @@
                     </div>
                 </div>
             </div>
-            <mat-divider></mat-divider>
+            <mat-divider *ngIf="user.isAdmin()"></mat-divider>
             <div class="block" *ngIf="user.isAdmin()">
                 <div class="permissions">
                     <div class="title">Admin Permissions</div>
