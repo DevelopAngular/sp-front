@@ -286,10 +286,6 @@ export class LocationTableComponent implements OnInit, OnDestroy {
     return loc;
   }
 
-    loc.restricted = loc.restricted || this.passLimitInfo?.current === 0;
-    return loc;
-  }
-
   ngOnDestroy(): void {
     this.destroy$.next();
     this.destroy$.complete();
