@@ -16,7 +16,7 @@ import {RestrictedMessageComponent} from './restricted-message/restricted-messag
 import {ToWhereComponent} from './to-where/to-where.component';
 import {ScreenService} from '../../../services/screen.service';
 import {DeviceDetection} from '../../../device-detection.helper';
-import {filter, map} from 'rxjs/operators';
+import {filter, map, withLatestFrom} from 'rxjs/operators';
 import {Location} from '../../../models/Location';
 import {PassLimitInfo} from '../../../models/HallPassLimits';
 import {LocationVisibilityService} from '../location-visibility.service';
@@ -132,24 +132,38 @@ export class LocationsGroupContainerComponent implements OnInit {
 
     this.data.fromLocation = this.FORM_STATE.data.direction && this.FORM_STATE.data.direction.from ? this.FORM_STATE.data.direction.from : null;
     this.data.toLocation = this.FORM_STATE.data.direction && this.FORM_STATE.data.direction.to ? this.FORM_STATE.data.direction.to : null;
+
+    this.user$ = this.dataService.currentUser;
+    this.user$.subscribe({
+      next: (user: User) => {
+        this.isStaff = user.isTeacher() || user.isAdmin() || user.isAssistant();
+        this.user = user;
+      },
+    });
+
     this.pinnables = this.formService.getPinnable(!!this.dialogData['kioskModeRoom']).pipe(
       // restrict all rooms, so the teacher request is mandatory
       filter(pins => pins.length > 0),
-      map(pins => {
+      // this.user$ observable may be slover than this.pinnable$
+      // may be a chance that we will not have a this.user ready
+      // so this ensures we wait (or not) for having a user
+      withLatestFrom(this.user$),
+      map(([pins, user]) => {
         pins = pins.filter(p => {
           if (p.location !== null) {
             // is a Location
             try {
               const loc = Location.fromJSON(p.location);
-              // TODO assumed this.user has been emited
-              const student = [''+this.user.id];
+              const student = [''+user.id];
+              // staff is unfiltered
+              if (this.isStaff) return p;
+              // filter students here
               if (this.visibilityService.filterByVisibility(loc, student)) return p;
             } catch (e) {
               console.log(e.message)
             }
-          } else if (p.location === null) {
-            return p;
           }
+          return p;
         });
 
         const { passLimitInfo } = this.FORM_STATE;
@@ -170,12 +184,8 @@ export class LocationsGroupContainerComponent implements OnInit {
         return pins;
       }),
     );
-    this.user$ = this.dataService.currentUser;
+
     this.pinnable = this.FORM_STATE.data.direction ? this.FORM_STATE.data.direction.pinnable : null;
-    this.user$.subscribe((user: User) => {
-      this.isStaff = user.isTeacher() || user.isAdmin() || user.isAssistant();
-      this.user = user;
-    });
   }
 
   fromWhere(location) {

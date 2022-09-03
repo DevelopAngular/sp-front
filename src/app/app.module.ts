@@ -138,7 +138,10 @@ const appRoutes: Routes = [
     loadChildren: () => import('app/weblinks/weblinks.module').then(m => m.WeblinksModule),
     data: {hideSchoolToggleBar: true, hubspot: false, authFree: true, hideScroll: false},
   },
-
+  { 
+    path: 'mobile-restriction', 
+    loadChildren: () => import('app/mobile-restriction/mobile-restriction.module').then(m => m.MobileRestrictionModule), 
+  },
   {path: '**', redirectTo: 'main/passes', pathMatch: 'full'},
 ];
 

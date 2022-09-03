@@ -1,4 +1,4 @@
-import {Component, ElementRef, EventEmitter, OnDestroy, OnInit, Output, ViewChild} from '@angular/core';
+import {Component, ElementRef, EventEmitter, OnDestroy, AfterViewInit, OnInit, Output, ViewChild} from '@angular/core';
 import {ActivatedRoute, Router} from '@angular/router';
 import {DeviceDetection} from '../device-detection.helper';
 import {GoogleLoginService} from '../services/google-login.service';
@@ -125,9 +125,11 @@ export class LoginComponent implements OnInit, OnDestroy {
   }
 
   ngOnDestroy() {
+    window.Intercom('update', {'hide_default_launcher': false});
     this.destroyer$.next(null);
     this.destroyer$.complete();
   }
+ 
 
   formMobileUpdatePosition() {
     if (this.isMobileDevice) {

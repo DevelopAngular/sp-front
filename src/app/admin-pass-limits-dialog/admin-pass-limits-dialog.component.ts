@@ -1,7 +1,8 @@
-import {Component, OnDestroy, OnInit, TemplateRef, ViewChild} from '@angular/core';
+import {Component, HostListener, OnDestroy, OnInit, TemplateRef, ViewChild} from '@angular/core';
 import {FormArray, FormControl, FormGroup, ValidationErrors, ValidatorFn, Validators} from '@angular/forms';
 
 import {MatDialog, MatDialogRef, MatDialogState} from '@angular/material/dialog';
+import {MatTabGroup} from '@angular/material/tabs';
 import {cloneDeep} from 'lodash';
 import {forkJoin, Observable, of, Subscription} from 'rxjs';
 import {concatMap, filter, map, tap} from 'rxjs/operators';

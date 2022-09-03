@@ -66,7 +66,11 @@ export class RoomComponent implements OnInit, OnDestroy {
   inputFocusNumber: number = 1;
   forceFocus$: Subject<any> = new Subject<any>();
 
-  advOptionsValidButtons: ValidButtons;
+  advOptionsValidButtons: ValidButtons = {
+    publish: false,
+    cancel: false,
+    incomplete: false
+  };
 
   roomValidButtons: ValidButtons;
 
@@ -227,6 +231,9 @@ export class RoomComponent implements OnInit, OnDestroy {
 
   checkValidRoomOptions() {
     if (isEqual(omit(this.initialData, 'advOptState'), omit(this.data, 'advOptState'))) {
+      /**
+       * If the initial form and the changed form are equal, execution should be here
+       * */
           if (this.validForm) {
               this.roomValidButtons = {
                   publish: false,
@@ -241,6 +248,7 @@ export class RoomComponent implements OnInit, OnDestroy {
               };
           }
       } else {
+        // If the form has changed
         if (this.validForm && this.data.travelType.length) {
             this.roomValidButtons = {
                 publish: true,
@@ -248,6 +256,8 @@ export class RoomComponent implements OnInit, OnDestroy {
                 cancel: true
             };
         } else {
+          // either form is invalid or there are no travel types for the room
+          // travel types are one way and round trip
             this.roomValidButtons = {
                 publish: false,
                 incomplete: true,
@@ -261,9 +271,13 @@ export class RoomComponent implements OnInit, OnDestroy {
           cancel: false
       };
 
-      if (!this.advOptionsValidButtons) {
+
+      if (!this.advOptionsValidButtons?.publish) {
+          // if there are no changes in advanced options, such as
+          // active pass limits, restriction for now, restriction for future
           buttonsResult = this.roomValidButtons;
       } else {
+        // either pass limits, restriction for now or restriction for future are changed
           if (
             (this.validForm && this.isValidRestrictions && this.data.travelType.length) &&
             this.advOptionsValidButtons.publish || (this.roomValidButtons.publish && !this.advOptionsValidButtons.incomplete)

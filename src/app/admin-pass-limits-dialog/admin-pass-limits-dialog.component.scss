@@ -138,6 +138,11 @@
   margin: 10px 0;
   background: white;
 
+  &.no-padding-y {
+    padding-top: 0;
+    padding-bottom: 0;
+  }
+
   &.pressed {
     transform: scale(0.97);
   }

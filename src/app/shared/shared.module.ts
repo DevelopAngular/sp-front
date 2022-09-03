@@ -1,4 +1,4 @@
-﻿import {NgModule} from '@angular/core';
+import {NgModule} from '@angular/core';
 import {CommonModule} from '@angular/common';
 
 import {SmartpassLogoComponent} from '../smartpass-logo/smartpass-logo.component';
@@ -101,6 +101,7 @@ import {AdminPassLimitDialogComponent} from '../admin-pass-limits-dialog/admin-p
 import {ConfirmDeleteKioskModeComponent} from '../request-card/confirm-delete-kiosk-mode/confirm-delete-kiosk-mode.component';
 import { IdCardGradeLevelsComponent } from '../admin/id-cards/id-card-grade-levels/id-card-grade-levels.component';
 import { IdCardIdNumbersComponent } from '../admin/id-cards/id-card-id-numbers/id-card-id-numbers.component';
+import { ClassLinkComponent } from '../admin/accounts/class-link/class-link.component';
 import {PassLimitInfoComponent} from '../pass-limit-info/pass-limit-info.component';
 
 const DEFAULT_SWIPER_CONFIG: SwiperConfigInterface = {
@@ -211,7 +212,9 @@ const DEFAULT_SWIPER_CONFIG: SwiperConfigInterface = {
     GradeLevelsComponent,
     IdCardGradeLevelsComponent,
     IdCardIdNumbersComponent,
-    ConfirmDeleteKioskModeComponent
+    ConfirmDeleteKioskModeComponent,
+    ClassLinkComponent,
+
   ],
   exports: [
     ReactiveFormsModule,
@@ -301,7 +304,8 @@ const DEFAULT_SWIPER_CONFIG: SwiperConfigInterface = {
     GradeLevelsComponent,
     IdCardGradeLevelsComponent,
     IdCardIdNumbersComponent,
-    ConfirmDeleteKioskModeComponent
+    ConfirmDeleteKioskModeComponent,
+    ClassLinkComponent
   ],
   providers: [
     {

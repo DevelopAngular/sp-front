@@ -751,4 +751,12 @@ export class RequestCardComponent implements OnInit, OnDestroy {
   openBigPassCard() {
     this.scaleCard.emit(true);
   }
+
+  handlePinResult(teacherPinResponse: any) {
+    if (teacherPinResponse === 'encounter prevention') {
+      this.activeTeacherPin = false;
+      return;
+    }
+    this.dialogRef.close();
+  }
 }

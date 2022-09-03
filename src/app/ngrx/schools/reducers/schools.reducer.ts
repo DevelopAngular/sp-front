@@ -17,6 +17,7 @@ export const schoolsInitialState: SchoolsState = {
   cleverInfo: null,
   syncLoading: false,
   syncLoaded: false,
+  classLinkInfo:null,
   // encounterLoading: false,
   // encounterLoaded: false,
   // encounterDetection: null
@@ -72,6 +73,9 @@ const reducer = createReducer(
   }),
   on(schoolsActions.getCleverInfoSuccess, (state, {cleverInfo}) => {
     return {...state, loaded: true, loading: false, cleverInfo};
+  }),
+  on(schoolsActions.getClassLinkSuccess, (state, {classLinkInfo}) => {
+    return {...state, loaded: true, loading: false, classLinkInfo};
   }),
   on(
     schoolsActions.syncClever,

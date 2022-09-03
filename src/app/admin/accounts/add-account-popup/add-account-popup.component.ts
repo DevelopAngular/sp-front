@@ -14,7 +14,7 @@ export class AddAccountPopupComponent implements OnInit {
 
   options = [
     { title: 'Add standard account', icon: `./assets/Admin`, action: 'standard'},
-    // { title: 'Bulk add standard accounts', icon: './assets/Bulk Accounts', action: 'bulk' }
+    { title: 'Bulk add standard accounts', icon: './assets/Bulk Accounts', action: 'bulk' }
   ];
 
   constructor(

@@ -4,6 +4,7 @@ import {GG4LSync} from '../../../models/GG4LSync';
 import {SchoolSyncInfo} from '../../../models/SchoolSyncInfo';
 import {GSuiteOrgs} from '../../../models/GSuiteOrgs';
 import {CleverInfo} from '../../../models/CleverInfo';
+import {ClassLinkInfo} from '../../../models/ClassLinkInfo';
 
 const COMPONENT = 'Schools';
 
@@ -44,12 +45,17 @@ export const getCleverInfo = createAction(`[${COMPONENT}] Get Clever Info`);
 export const getCleverInfoSuccess = createAction(`[${COMPONENT}] Get Clever Info Success`, props<{cleverInfo: CleverInfo}>());
 export const getCleverInfoFailure = createAction(`[${COMPONENT}] Get Clever Info Failure`, props<{errorMessage: string}>());
 
+export const getClassLinkInfo = createAction(`[${COMPONENT}] Get ClassLink Info`);
+export const getClassLinkSuccess = createAction(`[${COMPONENT}] Get ClassLink Info Success`, props<{classLinkInfo: ClassLinkInfo}>());
+export const getClassLinkFailure = createAction(`[${COMPONENT}] Get ClassLink Info Failure`, props<{errorMessage: string}>());
+
 export const syncClever = createAction(`[${COMPONENT}] Sync Clever`);
 
 export const syncGsuite = createAction(`[${COMPONENT}] Sync Gsuite`);
 export const syncGsuiteSuccess = createAction(`[${COMPONENT}] Sync Gsuite Success`, props<{data: any}>());
 export const syncGsuiteFailure = createAction(`[${COMPONENT}] Sync Gsuite Failure`, props<{errorMessage: string}>());
 
+export const updateClassLinkInfo = createAction(`[${COMPONENT}] Update ClassLink Info`, props<{classLink: ClassLinkInfo}>());
 export const updateCleverInfo = createAction(`[${COMPONENT}] Update Clever Info`, props<{cleverInfo: CleverInfo}>());
 export const updateGSuiteInfo = createAction(`[${COMPONENT}] Update GsuiteInfo`, props<{gsuiteInfo: GSuiteOrgs}>());
 

@@ -286,6 +286,10 @@ export class LocationTableComponent implements OnInit, OnDestroy {
     return loc;
   }
 
+    loc.restricted = loc.restricted || this.passLimitInfo?.current === 0;
+    return loc;
+  }
+
   ngOnDestroy(): void {
     this.destroy$.next();
     this.destroy$.complete();
@@ -342,9 +346,14 @@ export class LocationTableComponent implements OnInit, OnDestroy {
                   return item.title.toLowerCase().includes(this.search);
               }));
 
-            this.choices = (this.searchExceptFavourites && !this.forKioskMode) || !!this.category
+            this.choices = ((this.searchExceptFavourites && !this.forKioskMode) || !!this.category
                             ? [...this.filterResults(p)]
-                            : [...filtFevLoc, ...this.filterResults(p)];
+                            : [...filtFevLoc, ...this.filterResults(p)]).filter(r => {
+                              if (this.category) {
+                                return this.category === r.category;
+                              }
+                              return r;
+            });
             this.noChoices = !this.choices.length;
           });
       } else {
@@ -354,14 +363,17 @@ export class LocationTableComponent implements OnInit, OnDestroy {
           iif(() => !!this.category, this.locationService.locsFromCategory$, this.locationService.locations$)
             .pipe(takeUntil(this.destroy$))
             .subscribe(res => {
-              this.choices = res;
+              this.choices = res.filter(r => {
+                if (this.category) {
+                  return r.category === this.category;
+                }
+                return r;
+              });
               this.hideFavorites = false;
               this.noChoices = !this.choices.length;
           });
-
         }
       }
-
   }
 
   isValidLocation(locationId: any) {
