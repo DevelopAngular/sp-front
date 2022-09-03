@@ -90,12 +90,13 @@
             </ng-template>
           </span>
 
-      <div class="individual-limits-list">
+      <div class="individual-limits-list ds-py-20" style="text-align: center">
         <p class="ds-details-text-bold" style="color: #B7C1CF !important;">
           No individual limits set
         </p>
 
         <app-gradient-button
+          size="medium"
           gradient="#00B476"
           textColor="#FFFFFF"
           text="Add Limit"
@@ -143,6 +144,7 @@
         class="individual-list-item ds-flex-column"
         *ngFor="let i of individualStudentLimits"
         style="font-size: 14px; display: flex; row-gap: 5px"
+        [ngClass]="{ 'no-padding-y': !i.description }"
         (click)="goToIndividualLimitPage(i)">
           <div class="ds-flex-row ds-flex-center-between">
             <span class="ds-dialog-heading" style="padding-bottom: 0 !important;">{{i.student.display_name}}</span>

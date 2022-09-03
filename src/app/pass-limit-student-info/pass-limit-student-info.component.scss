@@ -75,20 +75,12 @@
   border-radius: 10px;
   margin-bottom: 20px;
 }
-//
-//.show-school-border {
-//  border: 1px solid #6651F1;
-//}
-//
-//.show-individual-border {
-//  border: 1px solid #E48C15;
-//}
 
 .disabled {
   pointer-events: none;
   opacity: 0.5;
 }
 
-.disabled-individual {
+.disabled-border {
   border-width: 0 !important;
 }
