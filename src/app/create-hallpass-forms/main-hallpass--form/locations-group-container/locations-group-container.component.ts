@@ -147,7 +147,8 @@ export class LocationsGroupContainerComponent implements OnInit {
       withLatestFrom(this.user$),
       map(([pins, user]) => {
         pins = pins.filter(p => {
-          if (p.location !== null) {
+          // filtering here based on location and student may return (or not) a pinnable
+          if (p.type === 'location' && p.location !== null) {
             // is a Location
             try {
               const loc = Location.fromJSON(p.location);
@@ -159,8 +160,10 @@ export class LocationsGroupContainerComponent implements OnInit {
             } catch (e) {
               console.log(e.message)
             }
+          // folder containing pinnables
+          } else if (p.type === 'category') {
+            return p;
           }
-          return p;
         });
 
         if (!this?.passLimitInfo?.showPasses) {
