@@ -65,6 +65,7 @@ export class LocationTableComponent implements OnInit, OnDestroy {
 
   @ViewChild('item') currentItem: ElementRef;
 
+  // TODO make it @decorator
   private _choices: any[] = [];
   get choices(): any[] {
     return this._choices;
@@ -80,10 +81,9 @@ export class LocationTableComponent implements OnInit, OnDestroy {
          (this.forStaff && this.forKioskMode)
         )
        ) {
-      // test if we have Location's
       let v = values[0];
       try {
-        v = Location.fromJSON(v);
+        v = (v instanceof Location) ? v : Location.fromJSON(v);
         values = values.filter((loc: Location) => this.visibilityService.filterByVisibility(loc, student));
       }catch (e) {}
     } 
@@ -93,7 +93,33 @@ export class LocationTableComponent implements OnInit, OnDestroy {
 
   noChoices:boolean = false;
   mainContentVisibility: boolean = false;
-  starredChoices: any[] = [];
+  //starredChoices: any[] = [];
+  private _starredChoices: any[] = [];
+  get starredChoices(): any[] {
+    return this._starredChoices;
+  }
+  set starredChoices(values: any[]) {
+    const student = [''+ this.user.id];
+    if (this.forStaff && this.forKioskMode) {
+      student[0] = ''+this.selectedStudents[0].id;
+    }
+    // filtering apply only for a student
+    if (values.length > 0 && 
+        (!this.forStaff || 
+         (this.forStaff && this.forKioskMode)
+        )
+       ) {
+      let v = values[0];
+      try {
+        v = (v instanceof Location) ? v : Location.fromJSON(v);
+        values = values.filter((loc: Location) => this.visibilityService.filterByVisibility(loc, student));
+      }catch (e) {
+        throw e;
+      }
+    } 
+    // add posible filtered values
+    this._starredChoices = values;
+  };
   search: string = '';
   favoritesLoaded: boolean;
   hideFavorites: boolean;
