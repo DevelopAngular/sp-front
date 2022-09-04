@@ -144,17 +144,23 @@ export class LocationsGroupContainerComponent implements OnInit {
       // this.user$ observable may be slover than this.pinnable$
       // may be a chance that we will not have a this.user ready
       // so this ensures we wait (or not) for having a user
+      // this.user$ can be a student or a staff!!!
       withLatestFrom(this.user$),
       map(([pins, user]) => {
+        const student = [''+user.id];
+        // on kioskmode student is found in selectedStudents[0]
+        if (this.isStaff && this.FORM_STATE?.kioskMode) {
+          // TODO when not found case
+          student[0] = ''+this.FORM_STATE.data?.selectedStudents[0].id;
+        }
         pins = pins.filter(p => {
           // filtering here based on location and student may return (or not) a pinnable
           if (p.type === 'location' && p.location !== null) {
             // is a Location
             try {
               const loc = Location.fromJSON(p.location);
-              const student = [''+user.id];
-              // staff is unfiltered
-              if (this.isStaff) return p;
+              // staff is unfiltered but not in kiosk mode
+              if (this.isStaff && !this.FORM_STATE?.kioskMode) return p;
               // filter students here
               if (this.visibilityService.filterByVisibility(loc, student)) return p;
             } catch (e) {

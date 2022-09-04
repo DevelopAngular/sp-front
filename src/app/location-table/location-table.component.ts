@@ -57,6 +57,7 @@ export class LocationTableComponent implements OnInit, OnDestroy {
   @Input() originLocation: any;
   @Input() searchTeacherLocations: boolean;
   @Input() currentPage: 'from' | 'to';
+  @Input() selectedStudents: User[] = [];
 
   @Output() onSelect: EventEmitter<any> = new EventEmitter();
   @Output() onStar: EventEmitter<string> = new EventEmitter();
@@ -69,16 +70,23 @@ export class LocationTableComponent implements OnInit, OnDestroy {
     return this._choices;
   }
   set choices(values: any[]) {
+    const student = [''+ this.user.id];
+    if (this.forStaff && this.forKioskMode) {
+      student[0] = ''+this.selectedStudents[0].id;
+    }
     // filtering apply only for a student
-    if (values.length > 0 && !this.forStaff) {
+    if (values.length > 0 && 
+        (!this.forStaff || 
+         (this.forStaff && this.forKioskMode)
+        )
+       ) {
       // test if we have Location's
       let v = values[0];
       try {
         v = Location.fromJSON(v);
-        const student = [''+ this.user.id];
         values = values.filter((loc: Location) => this.visibilityService.filterByVisibility(loc, student));
       }catch (e) {}
-    }
+    } 
     // add posible filtered values
     this._choices = values;
   };
@@ -242,14 +250,6 @@ export class LocationTableComponent implements OnInit, OnDestroy {
         }
       });
 
-  }
-
-  filterByVisibility(location: Location) {
-    const students = [''+this.user.id];
-    const ruleStudents = location.visibility_students.map(s => ''+s.id);
-    const rule = location.visibility_type;
-    let skipped = this.visibilityService.calculateSkipped(students, ruleStudents, rule);
-    return skipped === undefined;
   }
 
   normalizeLocations(loc) {
