@@ -75,9 +75,8 @@
             [style.margin-left]="'7px'"
             [size]="'small'"
             [gradient]="'#F4F4F4, #F4F4F4'"
-            [buttonLink]="'./assets/xlsx/SmartPass Picture Map.xlsx'"
-            [linkType]="'_self'"
-            [download]="true"
+            [buttonLink]="'https://www.smartpass.app/downloads/profile-picture-mapping-template'"
+            [linkType]="'_blank'"
             [hoverColor]="'#F4F4F4'"
             [textColor]="'#1E194F'"
             [leftIcon]="'./assets/Download (Navy).svg'"
@@ -169,7 +168,7 @@
           <div class="user" *ngFor="let user of uploadedProfiles">
             <div class="user-container">
               <div>
-                <div class="picture" [ngStyle]="{'background': 'url(' + user.profile_picture + ') no-repeat left center/cover'}"></div>
+<!--                <div class="picture" [ngStyle]="{'background': 'url(' + user.profile_picture + ') no-repeat left center/cover'}"></div>-->
 <!--                <img class="picture" [src]="user.profile_picture | resolveAsset" alt="Avatar">-->
               </div>
               <div class="profile-info">
