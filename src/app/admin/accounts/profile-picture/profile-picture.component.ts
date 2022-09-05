@@ -120,7 +120,6 @@ export class ProfilePictureComponent implements OnInit, OnDestroy {
           }),
           filter(res => !!res),
           map(result => {
-            debugger;
             let arrayFiles = [];
             result.forEach(item => {
               if (isArray(item)) {
@@ -164,7 +163,6 @@ export class ProfilePictureComponent implements OnInit, OnDestroy {
   school: School;
 
   issues = [];
-  errorUpload: boolean;
   errors = [];
 
   destroy$: Subject<any> = new Subject<any>();
@@ -285,8 +283,12 @@ export class ProfilePictureComponent implements OnInit, OnDestroy {
         });
       } else {
         this.toastService.openToast({title: 'Sorry, no pictures could be mapped', subtitle: 'No pictures were able to be mapped to account email addresses or IDs. Please check the spreadsheet and photos you uploaded to make sure they map with existing accounts.', type: 'error'});
-        this.page -= 1;
-        this.clearData();
+        this.userService.createPPicturesUploadGroup().pipe(filter(r => !!r))
+          .subscribe((group) => {
+            this.userService.putProfilePicturesErrorsRequest(this.errors);
+            this.page -= 1;
+            this.clearData();
+          });
       }
     } else if (this.page === 5) {
       this.userService.clearUploadedData();
