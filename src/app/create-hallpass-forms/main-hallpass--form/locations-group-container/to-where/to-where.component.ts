@@ -32,7 +32,7 @@ import {User} from '../../../../models/User';
   templateUrl: './to-where.component.html',
   styleUrls: ['./to-where.component.scss']
 })
-export class ToWhereComponent implements OnInit {
+export class ToWhereComponent implements OnInit, OnDestroy {
   @ViewChild('header', { static: true }) header: ElementRef<HTMLDivElement>;
   @ViewChild('rc', { static: true }) set rc(rc: ElementRef<HTMLDivElement> ) {
     if (rc) {
@@ -146,7 +146,7 @@ export class ToWhereComponent implements OnInit {
   }
 
   isValidPinnable(pinnable: Pinnable) {
-    if (pinnable.location.id === this.location.id)
+    if (pinnable.location.id == this.location.id)
       return false;
 
     if (this.isStaff && !this.formState.kioskMode)

@@ -259,6 +259,7 @@ export class LocationsGroupContainerComponent implements OnInit {
       return this.FORM_STATE.state = States.category;
     } else {
       this.data.toLocation = pinnable.location;
+      console.log(this.FORM_STATE.data.direction.from, this.data.toLocation);
       this.FORM_STATE.data.direction.to = pinnable.location;
 
       const restricted = ((this.pinnable.location.restricted && !this.showDate) || (this.pinnable.location.scheduling_restricted && !!this.showDate));
