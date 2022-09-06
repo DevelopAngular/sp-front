@@ -450,11 +450,11 @@ export class PassCardComponent implements OnInit, OnDestroy {
             // a student has been checked server side and had no room visibility
             if (!this.forStaff) {
                 const roomNames = isVisibilityError ? errorResponse.error.visibility_alerts.map(r => r?.location_title ?? '') : [''];
-                const title = (roomNames.length > 1
-                               ? 'Rooms ' + roomNames.join(', ')
-                               : roomNames[0] === ''
-                                ? 'Room'
-                                : 'Room ' + roomNames[0]) + ' not available';
+                const title = `You don't have access to ${(roomNames.length > 1
+                  ? 'Rooms ' + roomNames.join(', ')
+                  : roomNames[0] === ''
+                    ? 'Room'
+                    : 'Room ' + roomNames[0])}.`;
                 this.toastService.openToast({
                   title,
                   subtitle: 'Please ask your teacher to create a pass for you.',
