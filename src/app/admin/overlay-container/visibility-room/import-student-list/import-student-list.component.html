@@ -5,12 +5,15 @@
   </div>
 
   <div class="content ds-flex-center-center ds-w-100">
-    <ng-container *ngTemplateOutlet="tpl"></ng-container>
+    <ng-container 
+      [ngTemplateOutlet]="tpl"
+      [ngTemplateOutletContext]="{$implicit: tplImplicit}"
+    ></ng-container>
   </div>
 
   <div class="ds-w-100 ds-flex-center-between">
     <p class="bottom-line">Need help? <span class="link-like" (click)="openChat($event)">Chat with us</span></p> 
-    <app-gradient-button [disabled]="true" [hoverColor]="'#00B476'" [cursor]="'pointer'" ><span>Add Students</span></app-gradient-button>
+    <app-gradient-button [disabled]="!isActive" [hoverColor]="'#00B476'" [cursor]="'pointer'" ><span>{{buttonText$ | async}}</span></app-gradient-button>
   </div>
 
 
@@ -21,7 +24,7 @@
         <span class="link-like gray" (click)="file.click()">Upload file</span>
     </div>
 
-  <input type="file" accept=".xls,.xlsx,.csv" #file style="display: none"/>
+    <input type="file" accept=".xls,.xlsx,.csv" #file style="display: none"/>
 </ng-template>
 
 <ng-template #spinning>

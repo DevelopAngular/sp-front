@@ -1,6 +1,6 @@
 import {Component, ElementRef, OnInit, OnDestroy, ViewChild, TemplateRef} from '@angular/core';
 import {MatDialogRef} from '@angular/material/dialog';
-import {fromEvent, Subject} from 'rxjs';
+import {fromEvent, Subject, Observable, BehaviorSubject} from 'rxjs';
 import {tap, map, switchMap, takeUntil} from 'rxjs/operators';
 import * as XLSX from 'xlsx';
 
@@ -29,6 +29,7 @@ export class ImportStudentListComponent implements OnInit, OnDestroy {
   @ViewChild('spinning', {read:TemplateRef, static: true}) spinningTpl: TemplateRef<HTMLElement>
   @ViewChild('issues', {read:TemplateRef, static: true}) issuesTpl: TemplateRef<HTMLElement>
   tpl: TemplateRef<HTMLElement>;
+  tplImplicit: object = {};
 
   destroy$ = new Subject();
   constructor(
@@ -41,64 +42,77 @@ export class ImportStudentListComponent implements OnInit, OnDestroy {
   loading: loadingState = {done: true, hint: ''};
   emailsFailed: string[] = [];
 
+  buttonTextSubject$: BehaviorSubject<string> = new BehaviorSubject<string>('Add students');
+  buttonText$: Observable<string>;
+
   ngOnInit(): void {
+    this.buttonText$ = this.buttonTextSubject$.asObservable();
     // render template to the DOM
     this.tpl = this.uploadTpl;
     // need this to access this.fileRef
-    setTimeout(() => {
-      // reset bvalue to upload same file
-      fromEvent(this.fileRef.nativeElement, 'click').pipe(tap((evt: Event) => {
-        (evt.target as HTMLInputElement).value = '';
-      })).subscribe();
-
-      fromEvent(this.fileRef.nativeElement, 'change').pipe(
-        tap(() => {
-          this.loading.done = false;
-          this.loading.hint = 'Examining file';
-          this.emailsFailed = [];
-          this.tpl = this.spinningTpl;
-        }),
-        switchMap(_ => {
-          const fr = new FileReader();
-          fr.readAsBinaryString(this.fileRef.nativeElement.files[0]);
-          return fromEvent(fr, 'load');
-        }),
-        map((evt: ProgressEvent) => {
-          this.loading.hint = 'Trying to read students list';
-          // TODO check is right type of file?
-          // create a workbook
-          const workbook = XLSX.read((evt.target as FileReader).result, {type: 'binary'}); 
-          const name = workbook.SheetNames[0];
-          const sheet = workbook.Sheets[name];
-          const data = XLSX.utils.sheet_to_json(sheet, {header: 1, blankrows: false});
-          return data.map(r => r[0]);
-        }),
-        tap(() => this.loading.hint = 'Verifying students'),
-        switchMap((emailsUnverified: string[])=>{
-          return this.userService.listOf({email: emailsUnverified}).pipe(
-            map((uu: User[]) => [emailsUnverified, uu])
-          );
-        }),
-        tap(([emailsUnverified, usersVerified]) => {
-          this.loading.done = true;
-          //this.loading.hint = '';
-
-          const emailsVerified = (usersVerified as User[]).map((u: User) => u.primary_email);
-          this.emailsFailed = (emailsUnverified as string[]).filter((e: string) => !emailsVerified.includes(e));
-          if (this.emailsFailed.length > 0) {
-            this.tpl = this.issuesTpl;
-          } else {
-            this.dialogRef.close(usersVerified);
-          }
-        }),
-        takeUntil(this.destroy$)
-      ).subscribe();
-    }, 0);
+    this.attachObservables();
   }
 
   ngOnDestroy(): void {
     this.destroy$.next();
     this.destroy$.complete();
+  }
+
+  attachObservables() {
+    setTimeout(() => {
+        // reset bvalue to upload same file
+        fromEvent(this.fileRef.nativeElement, 'click').pipe(tap((evt: Event) => {
+          (evt.target as HTMLInputElement).value = '';
+        })).subscribe();
+
+        fromEvent(this.fileRef.nativeElement, 'change').pipe(
+          tap(() => {
+            this.loading.done = false;
+            this.loading.hint = 'Examining file';
+            this.emailsFailed = [];
+            this.tpl = this.spinningTpl;
+          }),
+          switchMap(_ => {
+            const fr = new FileReader();
+            fr.readAsBinaryString(this.fileRef.nativeElement.files[0]);
+            return fromEvent(fr, 'load');
+          }),
+          map((evt: ProgressEvent) => {
+            this.loading.hint = 'Trying to read students list';
+            // TODO check is right type of file?
+            // create a workbook
+            const workbook = XLSX.read((evt.target as FileReader).result, {type: 'binary'}); 
+            const name = workbook.SheetNames[0];
+            const sheet = workbook.Sheets[name];
+            const data = XLSX.utils.sheet_to_json(sheet, {header: 1, blankrows: false});
+            return data.map(r => r[0]);
+          }),
+          tap(() => this.loading.hint = 'Verifying students'),
+          switchMap((emailsUnverified: string[])=>{
+            return this.userService.listOf({email: emailsUnverified}).pipe(
+              map((uu: User[]) => [emailsUnverified, uu])
+            );
+          }),
+          tap(([emailsUnverified, usersVerified]) => {
+            this.loading.done = true;
+            //this.loading.hint = '';
+
+            const emailsVerified = (usersVerified as User[]).map((u: User) => u.primary_email);
+            this.emailsFailed = (emailsUnverified as string[]).filter((e: string) => !emailsVerified.includes(e));
+            this.buttonTextSubject$.next(`Add ${emailsVerified.length} students`);
+            if (this.emailsFailed.length > 0) {
+              this.tpl = this.issuesTpl;
+            } else {
+              this.tpl = this.uploadTpl;
+              this.attachObservables();
+
+              this.buttonTextSubject$.next(`Add ${emailsVerified.length} students`);
+              //this.dialogRef.close(usersVerified);
+            }
+          }),
+          takeUntil(this.destroy$)
+        ).subscribe();
+      }, 0);
   }
 
   goUpload() {
@@ -112,14 +126,15 @@ export class ImportStudentListComponent implements OnInit, OnDestroy {
       return;
     }
     this.tpl = this.uploadTpl;
+    // reattach lost bindings
+    this.attachObservables();
   }
 
-  get showNextButton(): boolean {
+  get isActive(): boolean {
     if (this.tpl === this.uploadTpl) return false;
     if (this.tpl === this.spinningTpl) return false;
     if (this.tpl === this.issuesTpl) return false;
     return true;
-
   }
 
   openChat(event) {
