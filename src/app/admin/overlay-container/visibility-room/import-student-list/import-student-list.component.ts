@@ -9,7 +9,6 @@ import {UserService} from '../../../../services/user.service';
 import { SupportService } from '../../../../services/support.service';
 
 interface loadingState {
-  done: boolean;
   hint: string;
 }
 
@@ -39,16 +38,18 @@ export class ImportStudentListComponent implements OnInit, OnDestroy {
   ) {}
 
   // initial: no loading, no hint
-  loading: loadingState = {done: true, hint: ''};
-  emailsFailed: string[] = [];
+  loading: loadingState = {hint: ''};
 
   buttonTextSubject$: BehaviorSubject<string> = new BehaviorSubject<string>('Add students');
   buttonText$: Observable<string>;
+
+  isDisabled: boolean = true;
 
   ngOnInit(): void {
     this.buttonText$ = this.buttonTextSubject$.asObservable();
     // render template to the DOM
     this.tpl = this.uploadTpl;
+    this.tplImplicit = {text: 'Upload file', showClose: false};
     // need this to access this.fileRef
     this.attachObservables();
   }
@@ -57,6 +58,8 @@ export class ImportStudentListComponent implements OnInit, OnDestroy {
     this.destroy$.next();
     this.destroy$.complete();
   }
+
+  filename: string = '';
 
   attachObservables() {
     setTimeout(() => {
@@ -67,14 +70,14 @@ export class ImportStudentListComponent implements OnInit, OnDestroy {
 
         fromEvent(this.fileRef.nativeElement, 'change').pipe(
           tap(() => {
-            this.loading.done = false;
             this.loading.hint = 'Examining file';
-            this.emailsFailed = [];
             this.tpl = this.spinningTpl;
           }),
           switchMap(_ => {
             const fr = new FileReader();
-            fr.readAsBinaryString(this.fileRef.nativeElement.files[0]);
+            const f = this.fileRef.nativeElement.files[0];
+            fr.readAsBinaryString(f);
+            this.filename = f.name;
             return fromEvent(fr, 'load');
           }),
           map((evt: ProgressEvent) => {
@@ -94,18 +97,19 @@ export class ImportStudentListComponent implements OnInit, OnDestroy {
             );
           }),
           tap(([emailsUnverified, usersVerified]) => {
-            this.loading.done = true;
             //this.loading.hint = '';
 
             const emailsVerified = (usersVerified as User[]).map((u: User) => u.primary_email);
-            this.emailsFailed = (emailsUnverified as string[]).filter((e: string) => !emailsVerified.includes(e));
+            const emailsFailed = (emailsUnverified as string[]).filter((e: string) => !emailsVerified.includes(e));
             this.buttonTextSubject$.next(`Add ${emailsVerified.length} students`);
-            if (this.emailsFailed.length > 0) {
+            if (emailsFailed.length > 0) {
               this.tpl = this.issuesTpl;
+              this.tplImplicit = {unverified: emailsUnverified.length, fails: emailsFailed}
             } else {
               this.tpl = this.uploadTpl;
               this.attachObservables();
 
+              this.tplImplicit = {text: this.filename, showClose: true};
               this.buttonTextSubject$.next(`Add ${emailsVerified.length} students`);
               //this.dialogRef.close(usersVerified);
             }
@@ -117,24 +121,16 @@ export class ImportStudentListComponent implements OnInit, OnDestroy {
 
   goUpload() {
     // reset
-    this.loading.done = true;
     this.loading.hint = '';
-    this.emailsFailed = [];
     // render
     if (this.tpl === this.uploadTpl) {
       this.dialogRef.close();
       return;
     }
     this.tpl = this.uploadTpl;
+    this.tplImplicit = {text: 'Upload file', showClose: false};
     // reattach lost bindings
     this.attachObservables();
-  }
-
-  get isActive(): boolean {
-    if (this.tpl === this.uploadTpl) return false;
-    if (this.tpl === this.spinningTpl) return false;
-    if (this.tpl === this.issuesTpl) return false;
-    return true;
   }
 
   openChat(event) {

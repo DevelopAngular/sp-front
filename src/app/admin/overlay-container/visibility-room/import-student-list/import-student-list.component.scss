@@ -23,6 +23,10 @@
   color: $gray500;
 }
 
+.green {
+  color: $green500;
+}
+
 .content {
   .uploading-area {
     width: 100%;
@@ -31,8 +35,11 @@
     border-radius: 10px;
     position: relative;
   }
-  .issues {
+  .has-no-issues {
     background-color: $green100;
+  }
+  .has-issues {
+    background-color: $red100;
   }
 
   .close {
