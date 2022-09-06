@@ -6,6 +6,7 @@ import * as XLSX from 'xlsx';
 
 import {User} from '../../../../models/User';
 import {UserService} from '../../../../services/user.service';
+import { SupportService } from '../../../../services/support.service';
 
 interface loadingState {
   done: boolean;
@@ -33,6 +34,7 @@ export class ImportStudentListComponent implements OnInit, OnDestroy {
   constructor(
     private userService: UserService,
     private dialogRef: MatDialogRef<ImportStudentListComponent>,
+    private supportService: SupportService,
   ) {}
 
   // initial: no loading, no hint
@@ -118,6 +120,10 @@ export class ImportStudentListComponent implements OnInit, OnDestroy {
     if (this.tpl === this.issuesTpl) return false;
     return true;
 
+  }
+
+  openChat(event) {
+    this.supportService.openSupportTrigger$.next();
   }
 }
 

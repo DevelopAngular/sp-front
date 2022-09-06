@@ -1,91 +1,46 @@
 @import '../../../../../sp-colors.scss';
+@import '../../../../../design-system.scss';
 
 .wrapper {
-  height: 100%;
+  width: 446px;
+  height: 271px;
   background: white;
-  .heading {
-    min-height: 70px;
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    background: $jade;
-    color: #FFFFFF;
-    font-size: 17px;
-    font-weight: bold;
-    position: relative;
-    box-shadow: 0 1px 5px 0px rgba(0, 0, 0, .2);
-    .back-button {
-      position: absolute;
-      top: 0;
-      bottom: 0;
-      left: 25px;
-      margin: auto 0;
-      display: flex;
-      align-items: center;
-      cursor: pointer;
-      color: grey;
-      img {
-        width: 28px;
-        height: 28px;
-      }
+  border-radius: 14px;
+  box-sizing: border-box;
+  padding: 30px 30px 15px;
+}
 
-      .cancel {
-        color: white;
-        font-size: 15px;
-        font-weight: bold;
-      }
-    }
-    .save-button {
-      position: absolute;
-      top: 0;
-      bottom: 0;
-      right: 20px;
-      margin: auto 0px;
-      display: flex;
-      align-items: center;
-    }
-  }
+.bottom-line {
+  @include textSize('14px', normal, $gray500); 
+}
+
+.link-like {
+  text-decoration: underline;
+  cursor: pointer;
+}
+
+.gray {
+  color: $gray500;
 }
 
 .content {
-  min-width: 383px;
-  min-height: 190px;
   .uploading-area {
-    width: 383px;
-    height: 190px;
-    border: 2px dashed #7F879D;
-    color: #7F879D;
-    font-size: 14px;
+    width: 100%;
+    min-height: 120px;
+    border: 2px dashed $gray500;
     border-radius: 10px;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    flex-direction: column;
-    background-color: white;
-    .choose-file-inline {
-      text-decoration: underline;
-      cursor: pointer;
-    }
+    position: relative;
   }
-  .issues-screen {
-    height: 380px;
-    display: flex;
-    flex-direction: column;
-    justify-content: space-between;
-    .issues-container {
-      overflow: auto;
-      flex: 1 1 70%;
-      max-height: 70%;
-    }
-    .issues-footer {
-      display: flex;
-      align-items: center;
-      justify-content: flex-end;
-      .cancel {
-        margin-right: 25px;
-        color: $blue-gray;
-        cursor: pointer;
-      }
-    }
+  .issues {
+    background-color: $green100;
+  }
+
+  .close {
+    position: absolute;
+    top: 0px;
+    right: 0px;
+    width: 12px; 
+    padding: 10px;
+    cursor: pointer;
   }
 }
