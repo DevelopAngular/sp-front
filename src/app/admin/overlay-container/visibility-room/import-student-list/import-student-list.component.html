@@ -1,5 +1,66 @@
-<div #dropArea class="uploading-area">
-  <span class="ds-pb-10">Drop spreadsheet here</span>
-  <span [style.text-decoration]="'underline'" class="choose-file-inline" (click)="file.click()">Choose file</span>
+<div
+  class="wrapper"
+>
+
+  <div class="heading">
+    <div class="back-button">
+      <img
+        (click)="goUpload()"
+        [src]="'./assets/Back Button (Light-Gray).svg'" 
+        alt="Back Button (Blue-White).svg">
+    </div>
+
+    <div class="ds-dialog-title-white ds-flex-center-center">
+      <img [src]="'./assets/Bulk Accounts (White).svg' | resolveAsset" width="20" height="20" alt="(White).svg" class="ds-mr-10">
+      <span>Add students</span>
+    </div>
+
+    <div class="save-button" *ngIf="showNextButton">
+      <app-gradient-button
+         [size]="'small'"
+         [gradient]="'#FFFFFF, #FFFFFF'"
+         [hoverColor]="'#FCFDFF'"
+         [textColor]="'#04CD33'"
+         [cursor]="'pointer'"
+      >
+        <div class="ds-flex-center-start">
+          <span>Next</span>
+        </div>
+      </app-gradient-button>
+    </div>
+
+  </div>
+
+  <div class="content ds-flex-center-center ds-flex-column">
+    <ng-container *ngTemplateOutlet="tpl"></ng-container>
+  </div>
+
 </div>
+
+<ng-template #upload>
+    <div #dropArea class="uploading-area">
+        <span class="ds-pb-10">Drop spreadsheet here</span>
+        <span [style.text-decoration]="'underline'" class="choose-file-inline" (click)="file.click()">Choose file</span>
+    </div>
+
   <input type="file" accept=".xls,.xlsx,.csv" #file style="display: none"/>
+</ng-template>
+
+<ng-template #spinning>
+  <span class="ds-pb-10">{{loading.hint}}</span>
+  <div class="loading-theme_blue-gray">
+    <mat-spinner [color]="'accent'" [diameter]="30"></mat-spinner>
+  </div>
+</ng-template>
+
+<ng-template #issues>
+  <div class="issues-screen ds-p-25">
+
+    <div class="issues-container">
+      <div class="ds-dialog-heading ds-pt-10 ds-pb-10">Please, review</div>
+      <div *ngFor="let email of emailsFailed" class="ds-cell-text-2 ds-pb-15">
+        <div>{{email}}</div>
+      </div>
+    </div>
+  </div>
+</ng-template>

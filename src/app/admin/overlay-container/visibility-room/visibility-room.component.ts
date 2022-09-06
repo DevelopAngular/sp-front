@@ -330,6 +330,7 @@ export class VisibilityRoomComponent implements OnInit, AfterViewInit, OnDestroy
     };
     this.studentListDialog = this.dialog.open(ImportStudentListComponent, conf);
     this.studentListDialog.afterClosed().pipe(
+      filter((v => !!v)),
       tap((studentList: User[]) => {
         // add existent users ?
         //let ss: User[] = this.selectedStudents.length > 0 ? [...this.selectedStudents, ...studentList] : [...studentList];
