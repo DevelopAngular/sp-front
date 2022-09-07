@@ -1,16 +1,21 @@
 import {Component, ElementRef, OnInit, OnDestroy, ViewChild, TemplateRef} from '@angular/core';
+import {HttpErrorResponse} from '@angular/common/http';
 import {MatDialogRef} from '@angular/material/dialog';
-import {fromEvent, Subject, Observable, BehaviorSubject} from 'rxjs';
-import {tap, map, switchMap, takeUntil} from 'rxjs/operators';
+import {fromEvent, Subject, Observable, BehaviorSubject, of} from 'rxjs';
+import {tap, map, switchMap, takeUntil, catchError} from 'rxjs/operators';
 import * as XLSX from 'xlsx';
 
 import {User} from '../../../../models/User';
 import {UserService} from '../../../../services/user.service';
 import { SupportService } from '../../../../services/support.service';
 
-interface loadingState {
-  hint: string;
+interface buttonState {
+  text: string;
+  active: boolean;
+  students?: User[];
 }
+
+class FileSizeError extends Error {}
 
 @Component({
   selector: 'app-import-student-list',
@@ -37,16 +42,11 @@ export class ImportStudentListComponent implements OnInit, OnDestroy {
     private supportService: SupportService,
   ) {}
 
-  // initial: no loading, no hint
-  loading: loadingState = {hint: ''};
-
-  buttonTextSubject$: BehaviorSubject<string> = new BehaviorSubject<string>('Add students');
-  buttonText$: Observable<string>;
-
-  isDisabled: boolean = true;
+  buttonStateSubject$: BehaviorSubject<buttonState> = new BehaviorSubject<buttonState>({text: 'Add students', active: false,});
+  buttonState$: Observable<buttonState>;
 
   ngOnInit(): void {
-    this.buttonText$ = this.buttonTextSubject$.asObservable();
+    this.buttonState$ = this.buttonStateSubject$.asObservable();
     // render template to the DOM
     this.tpl = this.uploadTpl;
     this.tplImplicit = {text: 'Upload file', showClose: false};
@@ -62,6 +62,7 @@ export class ImportStudentListComponent implements OnInit, OnDestroy {
   filename: string = '';
 
   attachObservables() {
+    this.buttonStateSubject$.next({text: 'Add students', active: false});
     setTimeout(() => {
         // reset bvalue to upload same file
         fromEvent(this.fileRef.nativeElement, 'click').pipe(tap((evt: Event) => {
@@ -70,7 +71,7 @@ export class ImportStudentListComponent implements OnInit, OnDestroy {
 
         fromEvent(this.fileRef.nativeElement, 'change').pipe(
           tap(() => {
-            this.loading.hint = 'Examining file';
+            this.tplImplicit = {hint: 'Examining file'};
             this.tpl = this.spinningTpl;
           }),
           switchMap(_ => {
@@ -78,10 +79,14 @@ export class ImportStudentListComponent implements OnInit, OnDestroy {
             const f = this.fileRef.nativeElement.files[0];
             fr.readAsBinaryString(f);
             this.filename = f.name;
+            const size = (f.size / 1024 / 1024).toFixed(2); 
+            if (size > 5) {
+              throw new FileSizeError('file size is over 5 MB'); 
+            };
             return fromEvent(fr, 'load');
           }),
           map((evt: ProgressEvent) => {
-            this.loading.hint = 'Trying to read students list';
+            this.tplImplicit = {hint: 'Trying to read students list'};
             // TODO check is right type of file?
             // create a workbook
             const workbook = XLSX.read((evt.target as FileReader).result, {type: 'binary'}); 
@@ -90,43 +95,78 @@ export class ImportStudentListComponent implements OnInit, OnDestroy {
             const data = XLSX.utils.sheet_to_json(sheet, {header: 1, blankrows: false});
             return data.map(r => r[0]);
           }),
-          tap(() => this.loading.hint = 'Verifying students'),
+          tap(() => {
+            this.tplImplicit = {hint: 'Verifying students'};
+            this.buttonStateSubject$.next({text: `Add students`, active: false});
+          }),
+          map((mm: string[]) => {
+            // retain only strings that looks like an email
+            let emailsUnverified =  mm.filter(m => m.indexOf('@') !== -1);
+            // unique
+            return emailsUnverified.filter((v, i, me) => me.indexOf(v) === i);
+          }),
           switchMap((emailsUnverified: string[])=>{
             return this.userService.listOf({email: emailsUnverified}).pipe(
               map((uu: User[]) => [emailsUnverified, uu])
             );
           }),
           tap(([emailsUnverified, usersVerified]) => {
-            //this.loading.hint = '';
+            //this.hint = '';
 
             const emailsVerified = (usersVerified as User[]).map((u: User) => u.primary_email);
             const emailsFailed = (emailsUnverified as string[]).filter((e: string) => !emailsVerified.includes(e));
-            this.buttonTextSubject$.next(`Add ${emailsVerified.length} students`);
+            // we have a failure
             if (emailsFailed.length > 0) {
               this.tpl = this.issuesTpl;
-              this.tplImplicit = {unverified: emailsUnverified.length, fails: emailsFailed}
-            } else {
+              const warning = emailsFailed.length > 1 ? 
+                `${emailsFailed.length} emails from total of ${emailsUnverified.length} need atention` :
+                `${emailsFailed.length} email from total of ${emailsUnverified.length} need atention` ; 
+              this.tplImplicit = {fails: emailsFailed, warning};
+              if (emailsVerified.length > 0) {
+                this.buttonStateSubject$.next({students: <User[]>usersVerified, text: `Add ${emailsVerified.length} students`, active: true});
+              } else {
+                this.buttonStateSubject$.next({text: `Add students`, active: false});
+              }
+            } else { // we are OK
               this.tpl = this.uploadTpl;
               this.attachObservables();
 
               this.tplImplicit = {text: this.filename, showClose: true};
-              this.buttonTextSubject$.next(`Add ${emailsVerified.length} students`);
+              this.buttonStateSubject$.next({students: <User[]>usersVerified, text: `Add ${emailsVerified.length} students`, active: true});
               //this.dialogRef.close(usersVerified);
             }
           }),
-          takeUntil(this.destroy$)
+          takeUntil(this.destroy$),
+          catchError(err => {
+            this.tpl = this.issuesTpl;
+            const warning = 'The file provided is not usable'; 
+            this.tplImplicit = {fails: [], warning};
+            this.buttonStateSubject$.next({text: `Add students`, active: false});
+            if (err instanceof HttpErrorResponse) {
+              throw err;
+            }
+            if (err instanceof FileSizeError) {
+              this.tplImplicit.warning = 'File size is too big';
+            }
+            return of(null);
+          }),
         ).subscribe();
       }, 0);
   }
 
+  addStudents(ss: User[]) {
+    if (ss.length > 0) {
+      this.dialogRef.close(ss);
+    }
+  }
+
   goUpload() {
-    // reset
-    this.loading.hint = '';
     // render
     if (this.tpl === this.uploadTpl) {
       this.dialogRef.close();
       return;
     }
+
     this.tpl = this.uploadTpl;
     this.tplImplicit = {text: 'Upload file', showClose: false};
     // reattach lost bindings

@@ -252,6 +252,8 @@ export class VisibilityRoomComponent implements OnInit, AfterViewInit, OnDestroy
         if (!!this.visibilityForm.value.visibility?.grade) {
           this.selectedGradeLevels = [...this.visibilityForm.value.visibility.grade];
         }
+        // reset flag here
+        this.allowOpenGradeLevel = true;
       }),
     )
     .subscribe(() => {

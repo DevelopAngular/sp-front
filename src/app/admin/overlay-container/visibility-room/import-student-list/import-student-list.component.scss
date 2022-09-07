@@ -30,7 +30,7 @@
 .content {
   .uploading-area {
     width: 100%;
-    min-height: 120px;
+    height: 120px;
     border: 2px dashed $gray500;
     border-radius: 10px;
     position: relative;
@@ -40,6 +40,17 @@
   }
   .has-issues {
     background-color: $red100;
+  }
+  .wrap-for-scroll {
+    box-sizing: border-box;
+    overflow-y: scroll;
+    overflow-x: hidden;
+    width: 100%;
+    padding: 0px 15px;
+    p {
+      text-overflow: ellipsis;
+      overflow: hidden;
+    }
   }
 
   .close {
