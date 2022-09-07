@@ -132,36 +132,6 @@ export class SchoolsEffects {
       );
   });
 
-  getGG4LInfo$ = createEffect(() => {
-    return this.actions$.pipe(
-      ofType(schoolsActions.getSchoolsGG4LInfo),
-      concatMap(action => {
-        return this.adminService.getGG4LSyncInfo()
-          .pipe(
-            map((gg4lInfo: GG4LSync) => {
-              return schoolsActions.getSchoolsGG4LInfoSuccess({gg4lInfo});
-            }),
-            catchError(error => of(schoolsActions.getSchoolsGG4LInfoFailure({errorMessage: error.message})))
-          );
-      })
-    );
-  });
-
-  updateGG4LInfo$ = createEffect(() => {
-    return this.actions$
-      .pipe(
-        ofType(schoolsActions.updateSchoolsGG4LInfo),
-        concatMap((action: any) => {
-          return of('').pipe(
-            map((gg4lInfo: any) => {
-              return schoolsActions.updateSchoolsGG4LInfoSuccess({gg4lInfo});
-            }),
-            catchError(error => of(schoolsActions.updateSchoolsGG4LInfoFailure({errorMessage: error.message})))
-          );
-        })
-      );
-  });
-
   getGSuiteInfo$ = createEffect(() => {
     return this.actions$
       .pipe(

@@ -45,7 +45,6 @@ export class Ggl4SettingsComponent implements OnInit {
       this.page = 2;
     }
     this.frameMotion$ = this.formService.getFrameMotionDirection();
-    this.gg4lSyncInfo$ = this.adminService.gg4lInfo$;
     this.schoolSyncInfo$ = this.adminService.schoolSyncInfo$;
     this.cleverSyncInfo$ = this.adminService.cleverInfoData$;
   }
