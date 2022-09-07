@@ -107,7 +107,7 @@ ul.error {
   background-color: $white;
   border-radius: 9px;
   min-height: 70px;
-  width: 270px;
+  width: 270px - 13px;
   list-style: none;
   padding: 13px;
   margin: 0px;
@@ -116,7 +116,8 @@ ul.error {
   font-weight: 400;
   &.grade-level {
     font-size: 15px;
-    width: 270px - 13px; // regular width without padding
+    width: 278px;
+    padding: 7px 0px 0px 7px;
     li {
       font-weight: 500;
       color: $navy500;

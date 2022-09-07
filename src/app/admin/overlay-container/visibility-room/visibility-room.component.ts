@@ -437,7 +437,7 @@ export class VisibilityRoomComponent implements OnInit, AfterViewInit, OnDestroy
     const rect = $rect.getBoundingClientRect();
     // bottom right related to opener
     const position = {
-      top: (rect.bottom) + 'px', 
+      top: (rect.bottom + 7) + 'px', 
       // 270 is taken from CSS not live calculated, also 13 represents padding
       left: rect.left + (rect.width - 270 - 13) + 'px', 
     };
@@ -454,7 +454,7 @@ export class VisibilityRoomComponent implements OnInit, AfterViewInit, OnDestroy
 
     // bottom right related to opener
     const position = {
-      top: (rect.bottom) + 'px', 
+      top: (rect.bottom + 7) + 'px', 
       // 270 is taken from CSS not live calculated, also 13 represents padding
       left: rect.left + (rect.width - 270 - 13) + 'px', 
     };
