@@ -450,11 +450,11 @@ export class PassCardComponent implements OnInit, OnDestroy {
             // a student has been checked server side and had no room visibility
             if (!this.forStaff) {
                 const roomNames = isVisibilityError ? errorResponse.error.visibility_alerts.map(r => r?.location_title ?? '') : [''];
-                const title = (roomNames.length > 1
-                               ? 'Rooms ' + roomNames.join(', ')
-                               : roomNames[0] === ''
-                                ? 'Room'
-                                : 'Room ' + roomNames[0]) + ' not available';
+                const title = `You don't have access to ${(roomNames.length > 1
+                  ? 'Rooms ' + roomNames.join(', ')
+                  : roomNames[0] === ''
+                    ? 'Room'
+                    : 'Room ' + roomNames[0])}.`;
                 this.toastService.openToast({
                   title,
                   subtitle: 'Please ask your teacher to create a pass for you.',
@@ -503,17 +503,9 @@ export class PassCardComponent implements OnInit, OnDestroy {
 
       retryWhen((errors: Observable<HttpErrorResponse>) => {
         return errors.pipe(
-          filter(errorResponse => {
-            console.log('you', errorResponse);
-            return errorResponse.error?.message === 'one or more pass limits reached!';
-          }),
-          concatMap(errorResponse => {
-            return this.passLimitService.getPassLimit().pipe(map(pl => ({
-              passLimit: pl.pass_limit.passLimit,
-              errorResponse
-            })));
-          }),
-          concatMap(({errorResponse, passLimit}) => {
+          filter(errorResponse => errorResponse.error?.message === 'one or more pass limits reached!'),
+          concatMap((errorResponse) => {
+            const students = errorResponse.error.students as { displayName: string, id: number, passLimit: number }[];
             const numPasses = body['students']?.length || 1;
             let headerText: string;
             let buttons: ConfirmationTemplates['buttons'];
@@ -524,6 +516,7 @@ export class PassCardComponent implements OnInit, OnDestroy {
                 denyText: 'Skip these students'
               };
             } else if (numPasses === 1) {
+              const { passLimit } = students[0];
               headerText = `Student's Pass limit reached: ${this.selectedStudents[0].display_name} has had ${passLimit}/${passLimit} passes today`;
               buttons = {
                 confirmText: 'Override limit',
@@ -540,8 +533,7 @@ export class PassCardComponent implements OnInit, OnDestroy {
                 body: this.confirmDialog,
                 templateData: {
                   totalStudents: numPasses,
-                  limitReachedStudents: errorResponse.error.students,
-                  passLimit,
+                  limitReachedStudents: students
                 },
                 icon: {
                   name: 'Pass Limit (White).svg',

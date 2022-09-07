@@ -3,9 +3,11 @@ import {CreateFormService} from '../../../create-form.service';
 import {MatDialogRef} from '@angular/material/dialog';
 import {MainHallPassFormComponent, Navigation} from '../../main-hall-pass-form.component';
 import {ScreenService} from '../../../../services/screen.service';
+import {LocationVisibilityService} from '../../location-visibility.service';
 import {BehaviorSubject, forkJoin} from 'rxjs';
-import {PassLimitService} from '../../../../services/pass-limit.service';
 import {User} from '../../../../models/User';
+import {GSuiteSelector} from '../../../../sp-search/sp-search.component';
+import {PassLimitService} from '../../../../services/pass-limit.service';
 
 @Component({
   selector: 'app-who-you-are',
@@ -25,11 +27,25 @@ export class WhoYouAreComponent implements OnInit {
     private screenService: ScreenService,
     private passLimitsService: PassLimitService,
     private _injector: Injector,
-    private cdr: ChangeDetectorRef
+    private cdr: ChangeDetectorRef,
+    private visibilityService: LocationVisibilityService,
   ) { }
 
   ngOnInit() {
     this.frameMotion$ = this.formService.getFrameMotionDirection();
+  }
+
+  // used for filtering users found with sp-search component
+  getFilteringStudents(): (users: User[] | GSuiteSelector[]) => User[] | GSuiteSelector[] {
+    return ((uu) => {
+      const students = uu.map(u => '' + u.id);
+      const loc = this.formState.data.direction.from;
+      const ruleStudents = loc.visibility_students.map((v: User) => '' + v.id);
+      const rule = loc.visibility_type;
+      const skipped = this.visibilityService.calculateSkipped(students, ruleStudents, rule) ?? [];
+      const result = !skipped.length ? uu : uu.filter(u => !skipped.includes('' + u.id));
+      return result;
+    }).bind(this);
   }
 
   setSelectedStudents(evt) {

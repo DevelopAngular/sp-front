@@ -15,6 +15,7 @@
         [placeholder]="'Search students'"
         [list]="false"
         [emitSingleProfile]="false"
+        [filteringUsersCallback]="getFilteringStudents()"
         (onUpdate)="setSelectedStudents($event)"
       ></app-sp-search>
     </div>

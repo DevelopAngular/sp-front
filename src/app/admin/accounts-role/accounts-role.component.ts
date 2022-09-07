@@ -352,21 +352,21 @@ export class AccountsRoleComponent implements OnInit, OnDestroy {
       }};
     } else if (this.role === '_profile_teacher') {
       objectToTable = {...roleObject, ...{
-        'rooms': this.sanitizer.bypassSecurityTrustHtml(`<div class="no-wrap">` + (account.assignedTo && account.assignedTo.length ? uniqBy(account.assignedTo, 'id').map((room: any) => room.title).join(', ') : 'No rooms assigned') + `</div>`),
-        'Status': this.sanitizer.bypassSecurityTrustHtml(`<span class="status">${account.status}</span>`),
-        'Last sign-in': account.last_login ? Util.formatDateTime(new Date(account.last_login)) : 'Never signed in',
-        'Type': account.demo_account ? 'Demo' : account.sync_types[0] === 'google' ? 'G Suite' : (account.sync_types[0] === 'gg4l' ? 'GG4L' : account.sync_types[0] === 'clever' ? 'Clever' : 'Standard'),
-        'Permissions': `<div class="no-wrap">` + permissions + `</div>`
+          'rooms': this.sanitizer.bypassSecurityTrustHtml(`<div class="no-wrap">` + (account.assignedTo && account.assignedTo.length ? uniqBy(account.assignedTo, 'id').map((room: any) => room.title).join(', ') : 'No rooms assigned') + `</div>`),
+          'Status': this.sanitizer.bypassSecurityTrustHtml(`<span class="status">${account.status}</span>`),
+          'Last sign-in': account.last_login ? Util.formatDateTime(new Date(account.last_login)) : 'Never signed in',
+          'Type': account.demo_account ? 'Demo' : account.sync_types[0] === 'google' ? 'G Suite' : (account.sync_types[0] === 'gg4l' ? 'GG4L' : account.sync_types[0] === 'clever' ? 'Clever' :account.sync_types[0] === 'classlink' ? 'Classlink ': 'Standard'),
+          'Permissions': `<div class="no-wrap">` + permissions + `</div>`
       }};
     } else if (this.role === '_profile_assistant') {
       objectToTable = {...roleObject, ...{
-        'Acting on Behalf Of': this.sanitizer.bypassSecurityTrustHtml(`<div class="no-wrap">` + (account.canActingOnBehalfOf && account.canActingOnBehalfOf.length ? account.canActingOnBehalfOf.map((u: RepresentedUser) => {
-          return `${u.user.display_name} (${u.user.primary_email.slice(0, u.user.primary_email.indexOf('@'))})`;
-        }).join(', ') : 'No Teachers') + `</div>`),
-        'Status': this.sanitizer.bypassSecurityTrustHtml(`<span class="status">${account.status}</span>`),
-        'Last sign-in': account.last_login && account.last_login !== new Date() ? Util.formatDateTime(new Date(account.last_login)) : 'Never signed in',
-        'Type': account.demo_account ? 'Demo' : account.sync_types[0] === 'google' ? 'G Suite' : (account.sync_types[0] === 'gg4l' ? 'GG4L' : account.sync_types[0] === 'clever' ? 'Clever' : 'Standard'),
-        'Permissions': `<div class="no-wrap">` + permissions + `</div>`
+          'Acting on Behalf Of': this.sanitizer.bypassSecurityTrustHtml(`<div class="no-wrap">` + (account.canActingOnBehalfOf && account.canActingOnBehalfOf.length ? account.canActingOnBehalfOf.map((u: RepresentedUser) => {
+            return `${u.user.display_name} (${u.user.primary_email.slice(0, u.user.primary_email.indexOf('@'))})`;
+          }).join(', ') : 'No Teachers') + `</div>`),
+          'Status': this.sanitizer.bypassSecurityTrustHtml(`<span class="status">${account.status}</span>`),
+          'Last sign-in': account.last_login && account.last_login !== new Date() ? Util.formatDateTime(new Date(account.last_login)) : 'Never signed in',
+          'Type': account.demo_account ? 'Demo' : account.sync_types[0] === 'google' ? 'G Suite' : (account.sync_types[0] === 'gg4l' ? 'GG4L' : account.sync_types[0] === 'clever' ? 'Clever' :account.sync_types[0] === 'classlink' ? 'Classlink ': 'Standard'),
+          'Permissions': `<div class="no-wrap">` + permissions + `</div>`
       }};
     }
     const currentObj = {};

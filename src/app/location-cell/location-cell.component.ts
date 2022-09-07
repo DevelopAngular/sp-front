@@ -45,6 +45,8 @@ export class LocationCellComponent implements OnInit, OnDestroy {
   hovered: boolean;
   pressed: boolean;
   intervalId;
+  isKioskMode: boolean;
+
   tabIndex = 1;
   destroy$: Subject<any> = new Subject<any>();
 
@@ -138,6 +140,7 @@ export class LocationCellComponent implements OnInit, OnDestroy {
 
   ngOnInit() {
     this.value.starred = this.starred;
+    this.isKioskMode = this.http.checkIfTokenIsKiosk();
     if (!this.value.enable && this.currentPage === 'to') {
       this.valid = false;
     }

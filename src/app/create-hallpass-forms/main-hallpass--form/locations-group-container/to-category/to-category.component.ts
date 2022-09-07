@@ -2,6 +2,7 @@ import {Component, ElementRef, EventEmitter, HostListener, Inject, Input, OnInit
 
 import {Navigation} from '../../main-hall-pass-form.component';
 import {Pinnable} from '../../../../models/Pinnable';
+import {User} from '../../../../models/User';
 import {CreateFormService} from '../../../create-form.service';
 import {BehaviorSubject, fromEvent, Subject} from 'rxjs';
 import {takeUntil} from 'rxjs/operators';
@@ -121,6 +122,10 @@ export class ToCategoryComponent implements OnInit {
     this.destroy$.complete();
   }
 
+  get selectedStudents(): User[] {
+   return this.formState.data.roomStudents ?? this.formState.data.selectedStudents;
+  }
+
   locationChosen(location) {
     const forwardAndEmit = () => {
       if (this.formState.formMode.role === 1) {
@@ -140,8 +145,7 @@ export class ToCategoryComponent implements OnInit {
     }
 
    // staff only
-   const selectedStudents = this.formState.data.roomStudents ?? this.formState.data.selectedStudents;
-   const students = selectedStudents.map(s => ''+s.id);
+   const students = this.selectedStudents.map(s => ''+s.id);
    const ruleStudents = location.visibility_students.map(s => ''+s.id);
    const rule = location.visibility_type;
 
@@ -154,7 +158,7 @@ export class ToCategoryComponent implements OnInit {
     }
 
     let text =  'This room is only available to certain students';
-    let names = selectedStudents.filter(s => skipped.includes(''+s.id)).map(s => s.display_name);
+    let names = this.selectedStudents.filter(s => skipped.includes(''+s.id)).map(s => s.display_name);
     let title =  'Student does not have permission to go to this room';
     let denyText =  'Cancel';
     if (names.length > 1) {
@@ -199,13 +203,13 @@ export class ToCategoryComponent implements OnInit {
 
       // SKIPPING case
       // avoid a certain no students case
-      if (selectedStudents.length === 1) {
+      if (this.selectedStudents.length === 1) {
         this.dialogRef.close();
         return;
       }
 
       // filter out the skipped students
-      const roomStudents = selectedStudents.filter(s => (!skipped.includes(''+s.id)));
+      const roomStudents = this.selectedStudents.filter(s => (!skipped.includes(''+s.id)));
       // avoid no students case
       if (roomStudents.length === 0) {
         this.toastService.openToast({

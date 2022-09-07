@@ -3,10 +3,10 @@ import {Router} from '@angular/router';
 import {animate, state, style, transition, trigger} from '@angular/animations';
 import {combineLatest, Observable, Subject} from 'rxjs';
 import {SmartpassSearchService} from '../services/smartpass-search.service';
-import {DarkThemeSwitch} from '../dark-theme-switch';
-import {debounceTime, filter, take, takeUntil} from 'rxjs/operators';
+import {debounceTime, filter, take, takeUntil, tap} from 'rxjs/operators';
 import * as moment from 'moment';
 import {UserService} from '../services/user.service';
+import {User} from '../models/User';
 
 @Component({
   selector: 'app-smartpass-search',
@@ -39,7 +39,7 @@ import {UserService} from '../services/user.service';
 export class SmartpassSearchComponent implements OnInit, OnDestroy {
 
   @Input() focused: boolean;
-  @Input() height: string = '40px';
+  @Input() height = '40px';
   @Input() width: string;
 
   public isFocus: boolean;
@@ -50,13 +50,13 @@ export class SmartpassSearchComponent implements OnInit, OnDestroy {
   searchLoaded$: Observable<boolean>;
   searchResult$: Observable<any>;
   resetInputValue$: Subject<string> = new Subject<string>();
+  user: User;
 
   private destroy$ = new Subject();
 
   constructor(
     private router: Router,
     private spSearchService: SmartpassSearchService,
-    public darkTheme: DarkThemeSwitch,
     private userService: UserService,
     private cdr: ChangeDetectorRef
   ) { }
@@ -69,7 +69,7 @@ export class SmartpassSearchComponent implements OnInit, OnDestroy {
     combineLatest(
       this.userService.introsData$.pipe(filter(res => !!res)),
       this.userService.nuxDates$.pipe(filter(r => !!r)),
-      this.userService.user$.pipe(filter(r => !!r))
+      this.userService.user$.pipe(filter(r => !!r), tap(user => { this.user = user; }))
     )
       .pipe(
         debounceTime(1000),

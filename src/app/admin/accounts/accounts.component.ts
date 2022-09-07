@@ -41,7 +41,6 @@ export class AccountsComponent implements OnInit, OnDestroy {
 
   user: User;
 
-  gg4lSettingsData$: Observable<GG4LSync>;
   schoolSyncInfoData$: Observable<SchoolSyncInfo>;
   cleverSyncInfo$: Observable<CleverInfo>;
   prevRoute: string;
@@ -103,13 +102,11 @@ export class AccountsComponent implements OnInit, OnDestroy {
     });
 
     this.onboardProcessLoaded$ = this.adminService.loadedOnboardProcess$;
-    this.gg4lSettingsData$ = this.adminService.gg4lInfo$;
     this.schoolSyncInfoData$ = this.adminService.schoolSyncInfo$;
     this.cleverSyncInfo$ = this.adminService.cleverInfoData$;
 
     this.onboardProcess$ = this.http.globalReload$.pipe(
       tap(() => this.adminService.getCountAccountsRequest().pipe(take(1))),
-      tap(() => this.adminService.getGG4LSyncInfoRequest()),
       tap(() => this.adminService.getSpSyncingRequest()),
       tap(() => this.adminService.getGSuiteOrgsRequest()),
       tap(() => this.adminService.getCleverInfoRequest()),

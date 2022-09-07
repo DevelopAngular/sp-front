@@ -302,6 +302,16 @@ export class ViewProfileComponent implements OnInit {
 
   }
 
+  goToStudent() {
+    let url = window.location.origin + `/app/main/student/${this.user.id}`;
+    if (window.location.href.includes('localhost')) {
+      url = url.replace('/app', '');
+    }
+    this.dialogRef.close();
+    window.open(url, '_blank');
+  }
+
+
   updateProfile(): Observable<any> {
 
     this.disabledState = true;

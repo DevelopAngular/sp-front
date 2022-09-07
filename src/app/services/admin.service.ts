@@ -10,7 +10,7 @@ import {Store} from '@ngrx/store';
 import {
   getAddedReports,
   getFoundReports,
-  getCurrentReport, 
+  getCurrentReport,
   getIsLoadedReports,
   getIsLoadingReports,
   getReportsCollection,
@@ -41,8 +41,7 @@ import {
   updateSchoolSyncInfo,
   getClassLinkInfo
 } from '../ngrx/schools/actions';
-import {getGG4LInfoData, getGSuiteSyncInfoData, getSchoolClassLinkInfo, getSchoolCleverInfo, getSchoolSyncInfoData, getSyncLoading} from '../ngrx/schools/states';
-import {GG4LSync} from '../models/GG4LSync';
+import {getGSuiteSyncInfoData, getSchoolClassLinkInfo, getSchoolCleverInfo, getSchoolSyncInfoData, getSyncLoading} from '../ngrx/schools/states';
 import {SchoolSyncInfo} from '../models/SchoolSyncInfo';
 import {Onboard} from '../models/Onboard';
 import {CleverInfo} from '../models/CleverInfo';
@@ -77,7 +76,6 @@ export class AdminService {
 
   countAccounts$ = this.store.select(getCountAccountsResult);
   dashboardData$ = this.store.select(getDashboardDataResult);
-  gg4lInfo$: Observable<GG4LSync> = this.store.select(getGG4LInfoData);
   schoolSyncInfo$: Observable<SchoolSyncInfo> = this.store.select(getSchoolSyncInfoData);
   gSuiteInfoData$: Observable<GSuiteOrgs> = this.store.select(getGSuiteSyncInfoData);
   cleverInfoData$: Observable<CleverInfo> = this.store.select(getSchoolCleverInfo);
@@ -233,21 +231,12 @@ export class AdminService {
     return this.http.patch(`v1/schools/${id}`, settings);
   }
 
-  getGG4LSyncInfoRequest() {
-    this.store.dispatch(getSchoolsGG4LInfo());
-    return this.gg4lInfo$;
-  }
-
   getClassLinkSyncInfo() {
     return this.http.get(`v1/schools/${this.http.getSchool().id}/syncing/classlink/status`);
   }
 
   getClassLinkRequest(){
     this.store.dispatch(getClassLinkInfo());
-  }
-
-  getGG4LSyncInfo() {
-    return this.http.get(`v1/schools/${this.http.getSchool().id}/syncing/gg4l/status`);
   }
 
   getGSuiteOrgsRequest() {
@@ -260,7 +249,6 @@ export class AdminService {
   }
 
   getCleverInfoRequest() {
-    
     this.store.dispatch(getCleverInfo());
   }
 

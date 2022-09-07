@@ -20,7 +20,6 @@ export class SyncSettingsComponent implements OnInit {
   ) { }
 
   ngOnInit() {
-    this.gg4lInfo$ = this.adminService.gg4lInfo$;
     this.adminService.schoolSyncInfo$.subscribe(res => {
       if (res.login_provider === 'google-auth-token') {
         this.selectedProvider = 'Sign in with Google';

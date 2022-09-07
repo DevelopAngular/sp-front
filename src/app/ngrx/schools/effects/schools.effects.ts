@@ -6,7 +6,6 @@ import {catchError, concatMap, exhaustMap, map, switchMap} from 'rxjs/operators'
 import {School} from '../../../models/School';
 import {of} from 'rxjs';
 import {AdminService} from '../../../services/admin.service';
-import {GG4LSync} from '../../../models/GG4LSync';
 import {SchoolSyncInfo} from '../../../models/SchoolSyncInfo';
 import {GoogleLoginService} from '../../../services/google-login.service';
 import {Router} from '@angular/router';
@@ -14,8 +13,6 @@ import {UserService} from '../../../services/user.service';
 import {GSuiteOrgs} from '../../../models/GSuiteOrgs';
 import {CleverInfo} from '../../../models/CleverInfo';
 import {ClassLinkInfo} from '../../../models/ClassLinkInfo';
-// import { EncounterDetectionService } from '../../../services/EncounterDetectionService';
-// import { EncounterDetection } from '../../../models/EncounterDetection';
 
 declare const window;
 
@@ -62,23 +59,6 @@ export class SchoolsEffects {
         })
       );
   });
-
-  // EncounterDetection$ = createEffect(() => {
-  //   return this.actions$.pipe(
-  //     ofType(schoolsActions.getEncounterDetection),
-  //     concatMap(action => {
-  //       return this.EDService.getEncounterDetection(action.url)
-  //         .pipe(
-  //           map((encounterDetection: EncounterDetection) => {
-  //             return schoolsActions.getEncounterDetectionSuccess({encounterDetection});
-  //           }),
-  //           catchError(error => {
-  //             return of(schoolsActions.getEncounterDetectionFailure({errorMessage: error.message}));
-  //           })
-  //         );
-  //     })
-  //   );
-  // });
 
   showErrorToast$ = createEffect(() => {
     return this.actions$
@@ -128,36 +108,6 @@ export class SchoolsEffects {
               }),
               catchError(error => of(schoolsActions.updateSchoolSyncInfoFailure({errorMessage: error.message})))
             );
-        })
-      );
-  });
-
-  getGG4LInfo$ = createEffect(() => {
-    return this.actions$.pipe(
-      ofType(schoolsActions.getSchoolsGG4LInfo),
-      concatMap(action => {
-        return this.adminService.getGG4LSyncInfo()
-          .pipe(
-            map((gg4lInfo: GG4LSync) => {
-              return schoolsActions.getSchoolsGG4LInfoSuccess({gg4lInfo});
-            }),
-            catchError(error => of(schoolsActions.getSchoolsGG4LInfoFailure({errorMessage: error.message})))
-          );
-      })
-    );
-  });
-
-  updateGG4LInfo$ = createEffect(() => {
-    return this.actions$
-      .pipe(
-        ofType(schoolsActions.updateSchoolsGG4LInfo),
-        concatMap((action: any) => {
-          return of('').pipe(
-            map((gg4lInfo: any) => {
-              return schoolsActions.updateSchoolsGG4LInfoSuccess({gg4lInfo});
-            }),
-            catchError(error => of(schoolsActions.updateSchoolsGG4LInfoFailure({errorMessage: error.message})))
-          );
         })
       );
   });
@@ -257,6 +207,5 @@ export class SchoolsEffects {
     private router: Router,
     private userService: UserService,
     private loginService: GoogleLoginService,
-    // private EDService: EncounterDetectionService
   ) {}
 }
