@@ -80,7 +80,7 @@ export class ImportStudentListComponent implements OnInit, OnDestroy {
             fr.readAsBinaryString(f);
             this.filename = f.name;
             const size = (f.size / 1024 / 1024).toFixed(2); 
-            if (size > 5) {
+            if (+size > 5) {
               throw new FileSizeError('file size is over 5 MB'); 
             };
             return fromEvent(fr, 'load');
@@ -96,7 +96,7 @@ export class ImportStudentListComponent implements OnInit, OnDestroy {
             return data.map(r => r[0]);
           }),
           tap(() => {
-            this.tplImplicit = {hint: 'Verifying students'};
+            this.tplImplicit = {hint: 'Verifying emails'};
             this.buttonStateSubject$.next({text: `Add students`, active: false});
           }),
           map((mm: string[]) => {
@@ -146,7 +146,7 @@ export class ImportStudentListComponent implements OnInit, OnDestroy {
               throw err;
             }
             if (err instanceof FileSizeError) {
-              this.tplImplicit.warning = 'File size is too big';
+              this.tplImplicit['warning'] = 'File size is too big';
             }
             return of(null);
           }),

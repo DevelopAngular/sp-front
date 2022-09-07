@@ -252,8 +252,6 @@ export class VisibilityRoomComponent implements OnInit, AfterViewInit, OnDestroy
         if (!!this.visibilityForm.value.visibility?.grade) {
           this.selectedGradeLevels = [...this.visibilityForm.value.visibility.grade];
         }
-        // reset flag here
-        this.allowOpenGradeLevel = true;
       }),
     )
     .subscribe(() => {
@@ -344,6 +342,8 @@ export class VisibilityRoomComponent implements OnInit, AfterViewInit, OnDestroy
         setTimeout(() => {
           this.searchComponent.inputField = false;
           this.gradeLevelDialog.close();
+          // reset flag here
+          this.allowOpenGradeLevel = true;
         }, 0);
       }),
       catchError(err => {
@@ -511,9 +511,10 @@ export class VisibilityRoomComponent implements OnInit, AfterViewInit, OnDestroy
     const $rect = this.searchComponent.input['input']['nativeElement'];
     const rect = $rect.getBoundingClientRect();
 
+    const rectbottom = rect.bottom + 9;
     // bottom right related to opener
     const position = {
-      top: (rect.bottom) + 'px', 
+      top: rectbottom + 'px', 
       // 270 is taken from CSS not live calculated, also 13 represents padding
       left: rect.left + (rect.width - 270 - 13) + 'px', 
     };
