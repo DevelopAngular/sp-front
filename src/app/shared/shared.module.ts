@@ -102,6 +102,7 @@ import {ConfirmDeleteKioskModeComponent} from '../request-card/confirm-delete-ki
 import { IdCardGradeLevelsComponent } from '../admin/id-cards/id-card-grade-levels/id-card-grade-levels.component';
 import { IdCardIdNumbersComponent } from '../admin/id-cards/id-card-id-numbers/id-card-id-numbers.component';
 import { ClassLinkComponent } from '../admin/accounts/class-link/class-link.component';
+import {PassLimitInfoComponent} from '../pass-limit-info/pass-limit-info.component';
 const DEFAULT_SWIPER_CONFIG: SwiperConfigInterface = {
   direction: 'horizontal',
   slidesPerView: 'auto'
