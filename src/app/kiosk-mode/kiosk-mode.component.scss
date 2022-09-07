@@ -12,6 +12,12 @@
     grid-gap: 10px 10px;
     width: initial !important;
   }
+
+  .kiosk-mode-container {
+    .future-passes, .past-passes, .active-passes {
+      width: auto !important;
+    }
+  }
 }
 
 .kiosk-mode-container {

@@ -68,7 +68,7 @@ export class LocationCellComponent implements OnInit, OnDestroy {
   hovered: boolean;
   pressed: boolean;
   intervalId;
-  tabIndex: number = 1;
+  isKioskMode: boolean;
 
   destroy$: Subject<any> = new Subject<any>();
 
@@ -84,7 +84,7 @@ export class LocationCellComponent implements OnInit, OnDestroy {
   }
 
   get showLock() {
-    return !this.forStaff && ((this.value.restricted && !this.forLater) || (this.value.scheduling_restricted && this.forLater));
+    return (!this.forStaff || this.isKioskMode) && ((this.value.restricted && !this.forLater) || (this.value.scheduling_restricted && this.forLater));
   }
 
   get tooltipDescription(): string {
@@ -159,6 +159,7 @@ export class LocationCellComponent implements OnInit, OnDestroy {
 
   ngOnInit() {
     this.value.starred = this.starred;
+    this.isKioskMode = this.http.checkIfTokenIsKiosk();
     if (!this.value.enable && this.currentPage === 'to') {
       this.valid = false;
     }
