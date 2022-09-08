@@ -179,9 +179,9 @@
   </defs>
 </svg>
 
-<ng-template #confirmDialogBody let-totalStudents="totalStudents" let-limitReachedStudents="limitReachedStudents" let-passLimit="passLimit">
+<ng-template #confirmDialogBody let-totalStudents="totalStudents" let-limitReachedStudents="limitReachedStudents">
   <div *ngIf="totalStudents > 1" class="ds-dialog-normal-text">
-    <p *ngFor="let s of limitReachedStudents">{{s.displayName}}: {{passLimit}}/{{passLimit}} passes today</p>
+    <p *ngFor="let s of limitReachedStudents">{{s.displayName}}: {{s.passLimit}}/{{s.passLimit}} passes today</p>
   </div>
 
   <div *ngIf="totalStudents === 1" class="ds-dialog-normal-text">
