@@ -4,10 +4,9 @@ import {MatDialogRef} from '@angular/material/dialog';
 import {fromEvent, Subject, Observable, BehaviorSubject, of} from 'rxjs';
 import {tap, map, switchMap, takeUntil, catchError} from 'rxjs/operators';
 import * as XLSX from 'xlsx';
-
 import {User} from '../../../../models/User';
 import {UserService} from '../../../../services/user.service';
-import { SupportService } from '../../../../services/support.service';
+import {SupportService} from '../../../../services/support.service';
 
 interface buttonState {
   text: string;
@@ -20,10 +19,9 @@ class FileSizeError extends Error {}
 @Component({
   selector: 'app-import-student-list',
   templateUrl: './import-student-list.component.html',
-  styleUrls: ['./import-student-list.component.scss']
+  styleUrls: ['./import-student-list.component.scss'],
 })
 export class ImportStudentListComponent implements OnInit, OnDestroy {
-
   // no static: true as it is a part of a template 
   // that may not be in the DOm
   @ViewChild('dropArea') dropArea: ElementRef;
