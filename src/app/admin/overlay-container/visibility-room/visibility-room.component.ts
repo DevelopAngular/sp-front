@@ -168,15 +168,19 @@ export class VisibilityRoomComponent implements OnInit, AfterViewInit, OnDestroy
         const $opener = this.openerRef.nativeElement; 
         const isInput = $el === $input;
         const isOpener = $el === $opener; 
-        const fromdialog = !!$el.closest('#opener-visibility-options')
+        const fromdialog = !!$el.closest('#opener-visibility-options');
 
         this.showErrorsVisibility = true;
         if (isInput || isOpener || fromdialog) {
           this.showErrorsVisibility = false;
         }
-        /*if (this?.searchComponent && this.selectedStudents.length > 0) {
-        this.searchComponent.inputField = false;
-       }*/
+
+        // close search panel when clicked outside of the sensitive elements
+        /*const fromSearchInputPanel = $el.closest('.sp-search-wrapper > .input');
+        const fromSearchLinkButton = $el.closest('app-sp-chips app-gradient-button');
+        if (!fromSearchLinkButton && !fromSearchInputPanel && this.searchComponent?.inputField && this.selectedStudents.length > 0) {
+          this.searchComponent.inputField = false;
+        }*/
       } catch (e) {
         console.log('RV.listen', e);
       }
