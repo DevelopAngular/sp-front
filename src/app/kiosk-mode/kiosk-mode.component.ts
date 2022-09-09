@@ -1,20 +1,19 @@
 import {AfterViewInit, Component, ElementRef, HostListener, OnDestroy, OnInit, ViewChild} from '@angular/core';
-import {CreateHallpassFormsComponent} from '../create-hallpass-forms/create-hallpass-forms.component';
+import {MatDialog, MatDialogRef, MatDialogState} from '@angular/material/dialog';
 import {KioskModeService, KioskSettings} from '../services/kiosk-mode.service';
-import {MatDialog} from '@angular/material/dialog';
 import {LiveDataService} from '../live-data/live-data.service';
-import {BehaviorSubject, combineLatest, EMPTY, empty, Observable, of, Subject} from 'rxjs';
+import {BehaviorSubject, combineLatest, EMPTY, Observable, of, Subject} from 'rxjs';
 import {UserService} from '../services/user.service';
-import {User} from '../models/User';
 import {HallPassesService} from '../services/hall-passes.service';
 import {HallPass} from '../models/HallPass';
-import {filter, switchMap, takeUntil, startWith, catchError, map, mergeMap} from 'rxjs/operators';
+import {filter, startWith, switchMap, takeUntil, map, mergeMap} from 'rxjs/operators';
 import {JwtHelperService} from '@auth0/angular-jwt';
 import {StorageService} from '../services/storage.service';
 import {LocationsService} from '../services/locations.service';
 import {TimeService} from '../services/time.service';
 import {KioskSettingsDialogComponent} from '../kiosk-settings-dialog/kiosk-settings-dialog.component';
 import {ActivatedRoute} from '@angular/router';
+import {MainHallPassFormComponent} from '../create-hallpass-forms/main-hallpass--form/main-hall-pass-form.component';
 
 declare const window;
 
@@ -45,7 +44,9 @@ export class KioskModeComponent implements OnInit, AfterViewInit, OnDestroy {
   showButtons = new BehaviorSubject(true);
   showScanner = new BehaviorSubject(false);
 
-  @ViewChild('input', {read: ElementRef, static: true}) input: ElementRef;
+  mainFormRef: MatDialogRef<MainHallPassFormComponent>;
+
+  @ViewChild('input', { read: ElementRef, static: true }) input: ElementRef;
 
   @HostListener('window:keyup', ['$event'])
   setFocus() {
@@ -112,6 +113,33 @@ export class KioskModeComponent implements OnInit, AfterViewInit, OnDestroy {
       });
 
     this.activePassesKiosk = this.liveDataService.myRoomActivePasses$;
+
+    /**
+     * The following listener is responsible for checking if incoming hall passes are the result
+     * of an accepted pass requests.
+     *
+     * If there are more than one hall pass, and the dialog is currently opened, the pinnable key
+     * inside MainHallPassFormComponent.FORM_STATE will represent a pass request.
+     * If the origin id, destination id and student id are the same then the incoming hall pass was
+     * created from the pass request in the dialog, and therefore we can close the dialog
+     */
+    this.liveDataService.myRoomActivePasses$
+      .pipe(filter(passes => passes.length > 0 && this.mainFormRef?.getState() === MatDialogState.OPEN))
+      .subscribe({
+        next: passes => {
+          const formState = this.mainFormRef?.componentInstance?.FORM_STATE;
+          if (formState?.data.direction?.pinnable && formState?.data.kioskModeStudent) {
+            const requestMatch = passes.filter(p =>
+              p.origin.id == formState.data.direction.from.id &&
+              p.destination.id == formState.data.direction.to.id &&
+              p.student.id == formState.data.kioskModeStudent.id
+            );
+            if (requestMatch.length > 0) {
+              this.mainFormRef.close();
+            }
+          }
+        }
+      });
 
     this.kioskMode.getKioskModeSettingsSubject().subscribe((settings: KioskSettings) => {
       this.showButtons.next(settings.findById || settings.findByName);
@@ -180,23 +208,23 @@ export class KioskModeComponent implements OnInit, AfterViewInit, OnDestroy {
 
   showMainForm(forLater: boolean, student?): void {
     this.hideInput = true;
-    const mainFormRef = this.dialog.open(CreateHallpassFormsComponent, {
-      panelClass: 'main-form-dialog-container',
-      maxWidth: '100vw',
-      backdropClass: 'custom-backdrop',
-      data: {
-        'forLater': forLater,
-        'forStaff': true,
-        'forInput': true,
-        'kioskMode': true,
-        'kioskModeRoom': this.kioskMode.getCurrentRoom().value,
-        'kioskModeSelectedUser': [student],
-      }
+    this.mainFormRef = this.dialog.open(MainHallPassFormComponent, {
+        panelClass: 'main-form-dialog-container',
+        maxWidth: '100vw',
+        backdropClass: 'custom-backdrop',
+        data: {
+          'forLater': forLater,
+          'forStaff': true,
+          'forInput': true,
+          'kioskMode': true,
+          'kioskModeRoom': this.kioskMode.getCurrentRoom().value,
+          'kioskModeSelectedUser': [student]
+        }
     });
 
-    mainFormRef.afterClosed().subscribe(() => {
-      this.hideInput = false;
-      this.inputFocus();
+    this.mainFormRef.afterClosed().subscribe(() => {
+        this.hideInput = false;
+        this.inputFocus();
     });
   }
 

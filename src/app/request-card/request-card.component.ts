@@ -593,8 +593,8 @@ export class RequestCardComponent implements OnInit, OnDestroy {
     const passLimitReached = passLimit.max_passes_to_active && passLimit.max_passes_to < (passLimit.to_count + 1);
 
     let studentPassLimitReached = false;
-    const studentPassLimit = (await this.passLimitsService.getPassLimit().toPromise()).pass_limit;
-    if (studentPassLimit?.limitEnabled) {
+    const studentPassLimit = (await this.passLimitsService.getStudentPassLimit(this.request.student.id).toPromise());
+    if (!studentPassLimit.noLimitsSet) {
       const remainingPasses = (
         await this.passLimitsService.getRemainingLimits({studentId: this.request.student.id}).toPromise()
       ).remainingPasses;
@@ -744,12 +744,19 @@ export class RequestCardComponent implements OnInit, OnDestroy {
 
   goToPin() {
     this.passLimitPromise().then(approved => {
-      console.log(`Approved: ${approved}`);
       this.activeTeacherPin = true;
     });
   }
 
   openBigPassCard() {
     this.scaleCard.emit(true);
+  }
+
+  handlePinResult(teacherPinResponse: any) {
+    if (teacherPinResponse === 'encounter prevention') {
+      this.activeTeacherPin = false;
+      return;
+    }
+    this.dialogRef.close();
   }
 }

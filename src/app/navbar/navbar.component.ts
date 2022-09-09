@@ -58,6 +58,7 @@ import { IdcardOverlayContainerComponent } from '../idcard-overlay-container/idc
 import { IDCardService } from '../services/IDCardService';
 import {CheckForUpdateService} from '../services/check-for-update.service';
 import {KioskSettingsDialogComponent} from '../kiosk-settings-dialog/kiosk-settings-dialog.component';
+import {SmartpassSearchComponent} from '../smartpass-search/smartpass-search.component';
 
 declare const window;
 
@@ -84,6 +85,17 @@ export class NavbarComponent implements AfterViewInit, OnInit, OnDestroy {
   @ViewChild('setButton') settingsButton: ElementRef;
 
   @ViewChild('navButtonsContainerMobile') navButtonsContainerMobile: ElementRef;
+  @ViewChild('smartpassSearch') set spSearch(comp: SmartpassSearchComponent) {
+    if (!comp) {
+      return;
+    }
+    if (!this.user.isTeacher()) {
+      const spSearchContainer = document.querySelector<HTMLDivElement>('app-smartpass-search div.input-container');
+      if (spSearchContainer) {
+        spSearchContainer.style.display = 'none';
+      }
+    }
+  }
   @ViewChildren('tabRefMobile') tabRefsMobile: QueryList<ElementRef>;
 
   @Output() settingsClick: EventEmitter<any> = new EventEmitter<any>();
@@ -95,7 +107,7 @@ export class NavbarComponent implements AfterViewInit, OnInit, OnDestroy {
   user: User;
   representedUsers: RepresentedUser[];
   effectiveUser: RepresentedUser;
-  tab: string = 'passes';
+  tab = 'passes';
   inboxVisibility: boolean = JSON.parse(this.storage.getItem('showInbox'));
   introsData: any;
   kioskModeLocation: any;

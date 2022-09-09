@@ -13,26 +13,6 @@ export const getLoadedSchools = createSelector(
   (state: SchoolsState) => state.loaded
 );
 
-// export const getEncounterDetectionLoading = createSelector(
-//   getSchoolsState,
-//   (state: SchoolsState) => state.encounterLoading
-// );
-
-// export const getEncounterDetectionLoaded = createSelector(
-//   getSchoolsState,
-//   (state: SchoolsState) => state.encounterLoaded
-// );
-
-// export const getEncounterDetectionState = createSelector(
-//   getSchoolsState,
-//   (state: SchoolsState) => state.encounterDetection
-// );
-
-export const getGG4LInfoData = createSelector(
-  getSchoolsState,
-  (state: SchoolsState) => state.gg4lInfo
-);
-
 export const getSchoolSyncInfoData = createSelector(
   getSchoolsState,
   (state: SchoolsState) => state.syncInfo
@@ -57,6 +37,11 @@ export const getGSuiteSyncInfoData = createSelector(
 export const getSchoolCleverInfo = createSelector(
   getSchoolsState,
   (state: SchoolsState) => state.cleverInfo
+);
+
+export const getSchoolClassLinkInfo = createSelector(
+  getSchoolsState,
+  (state: SchoolsState) => state.classLinkInfo
 );
 
 export const getSyncLoading = createSelector(

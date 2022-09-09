@@ -29,6 +29,7 @@ export class FormFactorContainerComponent implements OnInit {
   public currentState: number;
   public template: Request | HallPass | Invitation | Pinnable;
   public isOpenBigCard: boolean;
+  isFuturePass = false;
 
   constructor(
     private dataService: DataService,
@@ -39,6 +40,7 @@ export class FormFactorContainerComponent implements OnInit {
   }
 
   ngOnInit() {
+    console.log(this.FORM_STATE);
     this.isOpenBigCard = JSON.parse(this.storage.getItem('pass_full_screen')) && !this.forStaff;
     const now = this.timeService.nowDate();
 

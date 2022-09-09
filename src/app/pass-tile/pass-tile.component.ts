@@ -40,7 +40,7 @@ export class PassTileComponent implements OnInit, OnDestroy, OnChanges {
   @Input() fromPast = false;
   @Input() forFuture: boolean;
   // just presents a less "active" version of pass tile
-  @Input() presentational: boolean; 
+  @Input() presentational: boolean;
   @Input() isActive = false;
   @Input() forStaff = false;
   @Input() timerEvent: Subject<any>;
@@ -101,6 +101,10 @@ export class PassTileComponent implements OnInit, OnDestroy, OnChanges {
   }
 
   get isBadgeVisible() {
+    if (this.encounterPreventionCard) {
+      return false;
+    }
+
     return isBadgeVisible(this.pass) && ((this.pass instanceof Invitation) && !this.forStaff) ||
         (this.pass instanceof Invitation && this.pass.status === 'declined') || (this.forStaff && this.pass instanceof Request);
   }

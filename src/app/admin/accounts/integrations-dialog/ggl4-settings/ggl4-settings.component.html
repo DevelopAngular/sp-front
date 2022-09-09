@@ -6,7 +6,6 @@
   <div *ngIf="page === 2" class="next-step set-up" [@NextStep]="{ value: '', params: frameMotion$ | async}">
     <app-gg4l-set-up
       [dialogAction]="dialogAction"
-      [gg4lSyncInfo]="gg4lSyncInfo$ | async"
       [schoolSyncInfo]="schoolSyncInfo$ | async"
       [cleverSyncInfo]="cleverSyncInfo$ | async"
       (back)="back()">

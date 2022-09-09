@@ -111,7 +111,7 @@ import {clearRUsers, getRUsers, updateEffectiveUser} from '../ngrx/represented-u
 import {getEffectiveUser, getRepresentedUsersCollections} from '../ngrx/represented-users/states';
 import {
   clearProfilePicturesUploadErrors,
-  clearUploadedData,
+  clearUploadedData, createUploadGroup,
   deleteProfilePicture,
   getMissingProfilePictures,
   getProfilePicturesUploadedGroups,
@@ -852,6 +852,11 @@ export class UserService implements OnDestroy {
 
   getUploadedGroupsRequest() {
     this.store.dispatch(getProfilePicturesUploadedGroups());
+  }
+
+  createPPicturesUploadGroup() {
+    this.store.dispatch(createUploadGroup());
+    return this.currentUploadedGroup$;
   }
 
   getUploadedGroups() {

@@ -2,6 +2,7 @@ import {Component, ElementRef, EventEmitter, HostListener, Inject, Input, OnInit
 
 import {Navigation} from '../../main-hall-pass-form.component';
 import {Pinnable} from '../../../../models/Pinnable';
+import {User} from '../../../../models/User';
 import {CreateFormService} from '../../../create-form.service';
 import {BehaviorSubject, fromEvent, Subject} from 'rxjs';
 import {takeUntil} from 'rxjs/operators';
@@ -95,7 +96,7 @@ export class ToCategoryComponent implements OnInit {
   }
 
   ngOnInit() {
-
+    console.log(this.formState);
     this.frameMotion$ = this.formService.getFrameMotionDirection();
     this.fromLocation = this.formState.data.direction.from;
     this.pinnable = this.formState.data.direction.pinnable;
@@ -121,6 +122,10 @@ export class ToCategoryComponent implements OnInit {
     this.destroy$.complete();
   }
 
+  get selectedStudents(): User[] {
+   return this.formState.data.roomStudents ?? this.formState.data.selectedStudents;
+  }
+
   locationChosen(location) {
     const forwardAndEmit = () => {
       if (this.formState.formMode.role === 1) {
@@ -140,21 +145,20 @@ export class ToCategoryComponent implements OnInit {
     }
 
    // staff only
-   const selectedStudents = this.formState.data.roomStudents ?? this.formState.data.selectedStudents;
-   const students = selectedStudents.map(s => ''+s.id);
+   const students = this.selectedStudents.map(s => ''+s.id);
    const ruleStudents = location.visibility_students.map(s => ''+s.id);
    const rule = location.visibility_type;
-        
-   // skipped are students that do not qualify to go forward     
+
+   // skipped are students that do not qualify to go forward
    let skipped = this.visibilityService.calculateSkipped(students, ruleStudents, rule);
 
     if (!skipped || skipped.length === 0) {
       forwardAndEmit();
-      return; 
+      return;
     }
 
     let text =  'This room is only available to certain students';
-    let names = selectedStudents.filter(s => skipped.includes(''+s.id)).map(s => s.display_name);
+    let names = this.selectedStudents.filter(s => skipped.includes(''+s.id)).map(s => s.display_name);
     let title =  'Student does not have permission to go to this room';
     let denyText =  'Cancel';
     if (names.length > 1) {
@@ -162,7 +166,7 @@ export class ToCategoryComponent implements OnInit {
       title = 'These students do not have permission to go to this room:';
       denyText = 'Skip these students';
     } else {
-      title = (names?.join(', ') ?? 'Student') + ' does not have permission to go to this room'; 
+      title = (names?.join(', ') ?? 'Student') + ' does not have permission to go to this room';
     }
 
     this.dialog.open(ConfirmationDialogComponent, {
@@ -185,27 +189,27 @@ export class ToCategoryComponent implements OnInit {
     }).afterClosed().pipe(
       takeUntil(this.destroy$),
     ).subscribe(override => {
-      this.formState.data.roomOverride = !!override; 
-     
+      this.formState.data.roomOverride = !!override;
+
       if (override === undefined) {
-        return;     
+        return;
       }
-     
+
       // override case
       if (override) {
         forwardAndEmit();
-        return; 
+        return;
       }
 
       // SKIPPING case
       // avoid a certain no students case
-      if (selectedStudents.length === 1) {
+      if (this.selectedStudents.length === 1) {
         this.dialogRef.close();
         return;
       }
 
       // filter out the skipped students
-      const roomStudents = selectedStudents.filter(s => (!skipped.includes(''+s.id)));
+      const roomStudents = this.selectedStudents.filter(s => (!skipped.includes(''+s.id)));
       // avoid no students case
       if (roomStudents.length === 0) {
         this.toastService.openToast({
@@ -216,9 +220,9 @@ export class ToCategoryComponent implements OnInit {
         return;
       }
 
-      this.formState.data.roomStudents = roomStudents; 
+      this.formState.data.roomStudents = roomStudents;
       forwardAndEmit();
-    }); 
+    });
   }
 
   back() {

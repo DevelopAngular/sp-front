@@ -385,7 +385,7 @@ export class AppComponent implements OnInit, AfterViewInit, OnDestroy {
     setTimeout(() => {
       window.intercomSettings = {
         user_id: user.id,
-        name: user.first_name,
+        name: user.display_name,
         email: user.primary_email,
         created_at: user.created,
         type: user.isAdmin() ? 'Admin' : (user.isAssistant() ? 'Assistant' : 'Teacher'),
@@ -395,8 +395,8 @@ export class AppComponent implements OnInit, AfterViewInit, OnDestroy {
         company: {
           id: this.http.getSchool().id,
           name: this.http.getSchool().name,
-          open_in_smartpass: `https://smartpass.app/app?email=smartpass-support@school.smartpass.app&school_id="${this.http.getSchool().id}`,
-          open_in_metabase: `https://metabase.int.smartpass.app/dashboard/6-school-overview?school_id="${this.http.getSchool().id}`
+          open_in_smartpass: `https://smartpass.app/app?email=smartpass-support@school.smartpass.app&school_id=${this.http.getSchool().id}`,
+          open_in_metabase: `https://metabase.int.smartpass.app/dashboard/6-school-overview?school_id=${this.http.getSchool().id}`
         }
       };
       window.Intercom('update');

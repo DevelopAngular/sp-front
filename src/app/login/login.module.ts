@@ -5,6 +5,7 @@ import { LoginRoutingModule } from './login-routing.module';
 import { LoginComponent } from './login.component';
 import { SharedModule } from '../shared/shared.module';
 import {CoreModule} from '../core/core.module';
+import {AllowMobileService} from '../services/allow-mobile.service';
 
 @NgModule({
   declarations: [
@@ -15,6 +16,7 @@ import {CoreModule} from '../core/core.module';
     LoginRoutingModule,
     SharedModule,
     CoreModule
-  ]
+  ],
+  providers: [AllowMobileService],
 })
 export class LoginModule { }

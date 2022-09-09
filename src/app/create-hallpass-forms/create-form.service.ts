@@ -66,25 +66,11 @@ export class CreateFormService {
           } else {
             return of(pinnables);
           }
-        }),
-        map(pins => {
-          if (filter) {
-            return pins.filter(pin => {
-              if (pin.type === 'category') {
-                const validLocs = pin.myLocations.filter(loc => !loc.restricted);
-                return validLocs.length;
-              } else {
-                return true;
-              }
-            });
-          } else {
-            return pins;
-          }
         })
       );
   }
 
-  setFrameMotionDirection(direction: string = 'forward') {
+  setFrameMotionDirection(direction: 'forward' | 'back' | 'disable' = 'forward') {
 
 
     switch (direction) {
