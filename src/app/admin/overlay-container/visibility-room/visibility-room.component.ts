@@ -333,9 +333,9 @@ export class VisibilityRoomComponent implements OnInit, AfterViewInit, OnDestroy
       filter((v => !!v)),
       tap((studentList: User[]) => {
         // add existent users ?
-        //let ss: User[] = this.selectedStudents.length > 0 ? [...this.selectedStudents, ...studentList] : [...studentList];
+        let ss: User[] = this.selectedStudents.length > 0 ? [...this.selectedStudents, ...studentList] : [...studentList];
         // replace existent users
-        let ss: User[] = [...studentList];
+        //let ss: User[] = [...studentList];
         // only unique
         ss = [...new Map(ss.map(x => [x.id, x])).values()];
         this.addFoundStudents(ss);

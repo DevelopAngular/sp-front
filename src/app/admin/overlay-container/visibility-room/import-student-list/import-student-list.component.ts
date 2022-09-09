@@ -94,14 +94,17 @@ export class ImportStudentListComponent implements OnInit, OnDestroy {
             return data.map(r => r[0]);
           }),
           tap(() => {
-            this.tplImplicit = {hint: 'Verifying emails'};
+            this.tplImplicit = {hint: 'Loading...'};
             this.buttonStateSubject$.next({text: `Add students`, active: false});
           }),
           map((mm: string[]) => {
-            // retain only strings that looks like an email
-            let emailsUnverified =  mm.filter(m => m.indexOf('@') !== -1);
-            // unique
-            return emailsUnverified.filter((v, i, me) => me.indexOf(v) === i);
+            return mm
+              // retain only strings that looks like an email
+              .filter(m => m.indexOf('@') !== -1)
+              // unique
+              .filter((v, i, me) => me.indexOf(v) === i)
+              // posible white space
+              .map(v => v.trim());
           }),
           switchMap((emailsUnverified: string[])=>{
             return this.userService.listOf({email: emailsUnverified}).pipe(
@@ -109,16 +112,13 @@ export class ImportStudentListComponent implements OnInit, OnDestroy {
             );
           }),
           tap(([emailsUnverified, usersVerified]) => {
-            //this.hint = '';
-
             const emailsVerified = (usersVerified as User[]).map((u: User) => u.primary_email);
             const emailsFailed = (emailsUnverified as string[]).filter((e: string) => !emailsVerified.includes(e));
             // we have a failure
             if (emailsFailed.length > 0) {
               this.tpl = this.issuesTpl;
-              const warning = emailsFailed.length > 1 ? 
-                `${emailsFailed.length} emails from total of ${emailsUnverified.length} need atention` :
-                `${emailsFailed.length} email from total of ${emailsUnverified.length} need atention` ; 
+              const s = emailsFailed.length > 1 ? 's' : '';
+              const warning = `${emailsFailed.length}/${emailsUnverified.length} email${s} have error${s}`;
               this.tplImplicit = {fails: emailsFailed, warning};
               if (emailsVerified.length > 0) {
                 this.buttonStateSubject$.next({students: <User[]>usersVerified, text: `Add ${emailsVerified.length} students`, active: true});
