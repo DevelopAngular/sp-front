@@ -3,9 +3,10 @@ import { Component, OnInit, AfterViewInit, OnDestroy, Input, Output, EventEmitte
 import {FormGroup} from '@angular/forms';
 import {MatDialog, MatDialogRef} from '@angular/material/dialog';
 import {Subject, Observable, of} from 'rxjs';
-import {map, tap, take, takeUntil, filter, finalize, startWith, shareReplay, catchError} from 'rxjs/operators';
+import {map, tap, take, takeUntil, filter, finalize, startWith, shareReplay, catchError, withLatestFrom} from 'rxjs/operators';
 import {cloneDeep, isEqual} from 'lodash';
 
+import {UserService} from '../../../services/user.service';
 import {User} from '../../../models/User';
 import {SPSearchComponent} from '../../../sp-search/sp-search.component'; 
 import {VisibilityMode, ModeView, ModeViewMap, VisibilityOverStudents, DEFAULT_VISIBILITY_STUDENTS} from './visibility-room.type';
@@ -80,6 +81,7 @@ export class VisibilityRoomComponent implements OnInit, AfterViewInit, OnDestroy
     public overlayService: OverlayDataService,
     private renderer: Renderer2,
     private dataService: DataService,
+    private UserService: UserService,
     private toastService: ToastService,
   ) {
     this.modeView = this.modes[this.mode];
@@ -87,8 +89,20 @@ export class VisibilityRoomComponent implements OnInit, AfterViewInit, OnDestroy
 
   grades$: Observable<string[]> = new Observable<string[]>();
   loadedGrades$: Observable<boolean>;
+  isGradeEnabled$: Observable<boolean>;
 
   ngOnInit(): void {
+    this.isGradeEnabled$ = this.UserService.getStatusOfGradeLevel().pipe(
+      filter(v => (!!v)), 
+      map(s => {
+        // prudently return false if we got a wrong shaped s
+        return (s as any)?.results?.status ?? false;
+      }),
+      takeUntil(this.destroy$),
+      shareReplay(1),
+    );
+    this.isGradeEnabled$.subscribe();
+
     this.grades$ = this.dataService.getGradesList().pipe(
       takeUntil(this.destroy$),
       shareReplay(1),

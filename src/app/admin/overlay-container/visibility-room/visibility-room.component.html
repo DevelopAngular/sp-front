@@ -94,9 +94,9 @@
           [ngStyle]="{'max-height': panelMaxHeight, 'overflow-y': panelMaxHeight ? 'auto' : 'initial'}"
         >
           <li class="title">by grade</li>
-          <ng-container *ngIf="grades$ | async as inf; else loading">
+          <ng-container *ngIf="grades$ | async as vm; else loading">
             <li
-                *ngFor="let grade of inf['grade_level']"
+                *ngFor="let grade of vm['grade_level']"
                 (click)="handleGradeLevelSelected(grade)"
             >
               {{grade}}
