@@ -93,10 +93,11 @@ export class VisibilityRoomComponent implements OnInit, AfterViewInit, OnDestroy
 
   ngOnInit(): void {
     this.isGradeEnabled$ = this.UserService.getStatusOfGradeLevel().pipe(
-      filter(v => (!!v)), 
+      filter(v => !!v), 
       map(s => {
         // prudently return false if we got a wrong shaped s
-        return (s as any)?.results?.status ?? false;
+        const isEnabled: boolean = (s as any)?.results?.setup ?? false;
+        return isEnabled;
       }),
       takeUntil(this.destroy$),
       shareReplay(1),
@@ -202,9 +203,9 @@ export class VisibilityRoomComponent implements OnInit, AfterViewInit, OnDestroy
   // triggers this method in order to hide the errors 
   public onSearchComponentFocus() {
     this.showErrorsVisibility = false;
-    // open grade level options
-    this.openGradeLevelDialog();
-
+    // open grade level options next loop
+    // givint time for searchComponent input native to be in DOM
+    setTimeout(() => this.openGradeLevelDialog(), 0);
   }
 
   public onSearchComponentBlur() {
@@ -232,6 +233,8 @@ export class VisibilityRoomComponent implements OnInit, AfterViewInit, OnDestroy
   private gradeLevelDialog: MatDialogRef<TemplateRef<any>> | undefined;
   private readonly GRADE_LEVEl_DIALOG_ID = 'grade-level-options';
 
+  // it needs this.searchComponent.input['input']['nativeElement'] to be in DOM
+  // call this function wraped in a setTimeot when not sure the input is DOM
   openGradeLevelDialog() {
 
     const panelDialogExists = this.dialog.getDialogById(this.GRADE_LEVEl_DIALOG_ID);
@@ -410,7 +413,8 @@ export class VisibilityRoomComponent implements OnInit, AfterViewInit, OnDestroy
           visibility.over = this.selectedStudents = this.prevdata[v].over;
           visibility.grade = this.selectedGradeLevels = this.prevdata[v].grade;
         }
-        this.visibilityForm.setValue({visibility});
+        //this.visibilityForm.setValue({visibility});
+        this.change$.next();
         this.modeView = this.modes[v];
 
         if (!this.prevdata[v]) {
@@ -440,6 +444,7 @@ export class VisibilityRoomComponent implements OnInit, AfterViewInit, OnDestroy
   }
 
   public visibilityChange() {
+    console.log('vis')
     // prepare data for external use
     this.data = {mode: this.mode, over: [...this.selectedStudents], grade: [...this.selectedGradeLevels]};
    const data = cloneDeep(this.data); 
@@ -455,7 +460,23 @@ export class VisibilityRoomComponent implements OnInit, AfterViewInit, OnDestroy
 
     // no data? shows the search input
     if (this.data.over.length === 0 && !!this.searchComponent) {
-      setTimeout(() => this.searchComponent.inputField = true, 0);
+      setTimeout(() => {
+        // check again
+        if (!this.searchComponent) return;
+
+        this.searchComponent.inputField = true;
+
+        this.isGradeEnabled$.pipe(tap((gradesEnabled: boolean) => {
+          if (gradesEnabled) {
+            // force open the dialog no matter what mode is chosen
+            this.allowOpenGradeLevel = true;
+            // but only when we show search component trigger the grade levels dialog opening
+            if (this.isShowSearch) {
+              this.onSearchComponentFocus();
+            }
+          }
+        })).subscribe();
+      }, 0);
     }
   }
 
@@ -491,8 +512,8 @@ export class VisibilityRoomComponent implements OnInit, AfterViewInit, OnDestroy
         // remove students;s chips from UI
         this.searchComponent.removeStudents();
         this.searchComponent.inputField = true;
+        //this.change$.next();
       }
-      this.change$.next();
     }, 0);
   }
 
@@ -500,7 +521,7 @@ export class VisibilityRoomComponent implements OnInit, AfterViewInit, OnDestroy
     setTimeout(() => {
       this.selectedStudents = ss;
       this.searchComponent.inputField = (ss.length === 0);
-      this.change$.next();
+      //this.change$.next();
     }, 0);
   }
 
