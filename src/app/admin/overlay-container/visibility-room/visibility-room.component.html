@@ -43,7 +43,7 @@
         *ngIf="isShowSearch"
         [overrideChipsInputField]="true"
         [chipsMode]="true"
-        [focused]="false"
+        [focused]="!allowOpenGradeLevel"
         [cancelButton]="false"
         [textAddButton]="'Add student, grade level'"
         [selectedOptions]="selectedStudents"

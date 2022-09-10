@@ -71,6 +71,8 @@ export class VisibilityRoomComponent implements OnInit, AfterViewInit, OnDestroy
   // did open the panel with options 
   didOpen: boolean = false;
 
+  searchInputFocused = false;
+
   // need to show the search UI?
   get isShowSearch(): boolean {
    return this.mode !== 'visible_all_students';
@@ -99,6 +101,7 @@ export class VisibilityRoomComponent implements OnInit, AfterViewInit, OnDestroy
         const isEnabled: boolean = (s as any)?.results?.setup ?? false;
         return isEnabled;
       }),
+      tap((v: boolean) => this.searchInputFocused = !v),
       takeUntil(this.destroy$),
       shareReplay(1),
     );
@@ -189,9 +192,6 @@ export class VisibilityRoomComponent implements OnInit, AfterViewInit, OnDestroy
         if (isInput || isOpener || fromdialog) {
           this.showErrorsVisibility = false;
         }
-        /*if (this?.searchComponent && this.selectedStudents.length > 0) {
-        this.searchComponent.inputField = false;
-       }*/
       } catch (e) {
         console.log('RV.listen', e);
       }
@@ -328,8 +328,6 @@ export class VisibilityRoomComponent implements OnInit, AfterViewInit, OnDestroy
 
     this.change$.next();
     this.dirty.next();
-
-    //this.visibilityForm.patchValue({visibility});
   }
   
   private studentListDialog: MatDialogRef<ImportStudentListComponent> | undefined;
@@ -458,25 +456,23 @@ export class VisibilityRoomComponent implements OnInit, AfterViewInit, OnDestroy
     // keep last modification
     this.updatePrevData();
 
+    // force open the dialog no matter what mode is chosen
+    this.allowOpenGradeLevel = true;
     // no data? shows the search input
-    if (this.data.over.length === 0 && !!this.searchComponent) {
-      setTimeout(() => {
+    if (this.data.over.length === 0 && this.isShowSearch) {
         // check again
         if (!this.searchComponent) return;
 
         this.searchComponent.inputField = true;
+        this.searchComponent.focused = this.searchInputFocused;
 
         this.isGradeEnabled$.pipe(tap((gradesEnabled: boolean) => {
           if (gradesEnabled) {
-            // force open the dialog no matter what mode is chosen
-            this.allowOpenGradeLevel = true;
-            // but only when we show search component trigger the grade levels dialog opening
-            if (this.isShowSearch) {
-              this.onSearchComponentFocus();
-            }
-          }
-        })).subscribe();
+      setTimeout(() => {
+            this.openGradeLevelDialog();
       }, 0);
+          } 
+        })).subscribe();
     }
   }
 
