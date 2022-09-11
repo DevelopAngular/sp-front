@@ -87,6 +87,11 @@ export class VisibilityRoomComponent implements OnInit, AfterViewInit, OnDestroy
     private toastService: ToastService,
   ) {
     this.modeView = this.modes[this.mode];
+    this.dialogIds = [
+      this.PANEL_ID,
+      this.GRADE_LEVEl_DIALOG_ID,
+      this.STUDENT_LIST_DIALOG_ID,
+    ]; 
   }
 
   grades$: Observable<string[]> = new Observable<string[]>();
@@ -177,6 +182,9 @@ export class VisibilityRoomComponent implements OnInit, AfterViewInit, OnDestroy
         return
       }
 
+     //const atleastOneExists = this.dialogIds.some(did => !!this.dialog.getDialogById(did));
+     //if (atleastOneExists) return;
+
       try {
         let $input = null;
         if (this.searchComponent?.input && ('input' in this.searchComponent.input))  {
@@ -219,6 +227,16 @@ export class VisibilityRoomComponent implements OnInit, AfterViewInit, OnDestroy
     this.destroy$.next();
     this.destroy$.complete();
     this.unlisten();
+    this.closeDialogs();
+  }
+
+  dialogIds: string[];
+
+  private closeDialogs() {
+    this.dialogIds.forEach(did => {
+      const d = this.dialog.getDialogById(did);
+      if (!!d) d.close();
+    });
   }
 
   @HostListener('document:click', ['$event'])
@@ -382,15 +400,15 @@ export class VisibilityRoomComponent implements OnInit, AfterViewInit, OnDestroy
   };
 
   private panelDialog: MatDialogRef<TemplateRef<any>> | undefined;
+  private PANEL_ID = 'opener-visibility-options';
 
   handleOpenClose() {
-    const PANEL_ID = 'opener-visibility-options';
 
-    const panelDialogExists = this.dialog.getDialogById(PANEL_ID);
+    const panelDialogExists = this.dialog.getDialogById(this.PANEL_ID);
     if (panelDialogExists) return;
 
     const conf = {
-      id: PANEL_ID,
+      id: this.PANEL_ID,
       panelClass: 'consent-dialog-container',
       backdropClass: 'invis-backdrop',
     };
@@ -425,7 +443,7 @@ export class VisibilityRoomComponent implements OnInit, AfterViewInit, OnDestroy
       }),
       finalize(() => {
         this.didOpen = false;
-        this.panelDialog = undefined;
+        //this.panelDialog = undefined;
         // component is untouched
         //this.dirty.next(false);
       }),
@@ -471,7 +489,7 @@ export class VisibilityRoomComponent implements OnInit, AfterViewInit, OnDestroy
         //this.searchComponent.focused = this.searchInputFocused;
 
         this.isGradeEnabled$.pipe(tap((gradesEnabled: boolean) => {
-          if (gradesEnabled) this.openGradeLevelDialog();
+          if (gradesEnabled) setTimeout(this.openGradeLevelDialog.bind(this), 0);
         })).subscribe();
       });
     }
