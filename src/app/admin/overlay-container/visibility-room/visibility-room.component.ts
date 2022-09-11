@@ -3,7 +3,7 @@ import { Component, OnInit, AfterViewInit, OnDestroy, Input, Output, EventEmitte
 import {FormGroup} from '@angular/forms';
 import {MatDialog, MatDialogRef} from '@angular/material/dialog';
 import {Subject, Observable, of} from 'rxjs';
-import {map, tap, take, takeUntil, filter, finalize, startWith, shareReplay, catchError, withLatestFrom} from 'rxjs/operators';
+import {map, tap, take, takeUntil, filter, finalize, startWith, shareReplay, catchError} from 'rxjs/operators';
 import {cloneDeep, isEqual} from 'lodash';
 
 import {UserService} from '../../../services/user.service';
@@ -101,7 +101,7 @@ export class VisibilityRoomComponent implements OnInit, AfterViewInit, OnDestroy
         const isEnabled: boolean = (s as any)?.results?.setup ?? false;
         return isEnabled;
       }),
-      tap((v: boolean) => this.searchInputFocused = !v),
+      //tap((v: boolean) => this.searchInputFocused = !v),
       takeUntil(this.destroy$),
       shareReplay(1),
     );
@@ -205,7 +205,7 @@ export class VisibilityRoomComponent implements OnInit, AfterViewInit, OnDestroy
     this.showErrorsVisibility = false;
     // open grade level options next loop
     // givint time for searchComponent input native to be in DOM
-    setTimeout(() => this.openGradeLevelDialog(), 0);
+    setTimeout(this.openGradeLevelDialog.bind(this), 0);
   }
 
   public onSearchComponentBlur() {
@@ -243,6 +243,8 @@ export class VisibilityRoomComponent implements OnInit, AfterViewInit, OnDestroy
     this.loadedGrades$.pipe(take(1)).subscribe();
 
     if (this.searchComponent.inputField) {
+      //TODO check empty field not by DOM
+      //this.searchComponent.inputValue$.pipe(take(1), tap(v => console.log('INPUT'))).subscribe();
       const $input = this.searchComponent.input['input']['nativeElement'];
       // non empty field  cancels the dialog opening
       if ($input.value.length) return;
@@ -445,7 +447,7 @@ export class VisibilityRoomComponent implements OnInit, AfterViewInit, OnDestroy
     console.log('vis')
     // prepare data for external use
     this.data = {mode: this.mode, over: [...this.selectedStudents], grade: [...this.selectedGradeLevels]};
-   const data = cloneDeep(this.data); 
+    const data = cloneDeep(this.data); 
     // sync with page state
     this.overlayService.patchData({data});
 
@@ -460,19 +462,18 @@ export class VisibilityRoomComponent implements OnInit, AfterViewInit, OnDestroy
     this.allowOpenGradeLevel = true;
     // no data? shows the search input
     if (this.data.over.length === 0 && this.isShowSearch) {
+      // for DOM search input field
+      setTimeout(() => {
         // check again
         if (!this.searchComponent) return;
 
         this.searchComponent.inputField = true;
-        this.searchComponent.focused = this.searchInputFocused;
+        //this.searchComponent.focused = this.searchInputFocused;
 
         this.isGradeEnabled$.pipe(tap((gradesEnabled: boolean) => {
-          if (gradesEnabled) {
-      setTimeout(() => {
-            this.openGradeLevelDialog();
-      }, 0);
-          } 
+          if (gradesEnabled) this.openGradeLevelDialog();
         })).subscribe();
+      });
     }
   }
 
