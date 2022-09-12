@@ -421,6 +421,18 @@ export class OverlayContainerComponent implements OnInit, OnDestroy {
       .subscribe(() => {
       this.dialogRef.close();
     });*/
+    /*this.dialogRef.backdropClick()
+      .pipe(
+        switchMap(() => {
+          return this.roomValidButtons;
+        }),
+        filter((rvb: ValidButtons): boolean => {
+          return Object.values(rvb).every(v => !v);
+        }),
+        tap(_ => this.dialogRef.close()),
+        takeUntil(this.destroy$),
+      )
+      .subscribe();*/
 
       fromEvent(this.block.nativeElement, 'scroll').pipe(takeUntil(this.destroy$))
         .subscribe((res: any) => {
