@@ -1167,7 +1167,9 @@ export class OverlayContainerComponent implements OnInit, AfterViewInit, OnDestr
   }
 
   private stopBubblingHere(evt: Event) {
-    evt.stopPropagation();
-    return false;
+   // evt.stopPropagation();
+    //return false;
+    this.render.setStyle(this.me.nativeElement, 'pointer-events', 'none');
+    //setTimeout(() => this.render.setStyle(this.me.nativeElement, 'pointer-events', 'initial'), 1000);
   }
 }
