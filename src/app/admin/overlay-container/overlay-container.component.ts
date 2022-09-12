@@ -1,4 +1,4 @@
-import {Component, ElementRef, Inject, OnDestroy, OnInit, AfterViewInit, ViewChild, Renderer2} from '@angular/core';
+import {Component, ElementRef, Inject, OnDestroy, OnInit, ViewChild} from '@angular/core';
 import {AbstractControl, FormControl, FormGroup, Validators, ValidationErrors} from '@angular/forms';
 import {MAT_DIALOG_DATA, MatDialog, MatDialogRef} from '@angular/material/dialog';
 import {DomSanitizer} from '@angular/platform-browser';
@@ -29,7 +29,7 @@ import {VisibilityOverStudents, DEFAULT_VISIBILITY_STUDENTS} from './visibility-
   styleUrls: ['./overlay-container.component.scss'],
   animations: [NextStep, bumpIn]
 })
-export class OverlayContainerComponent implements OnInit, AfterViewInit, OnDestroy {
+export class OverlayContainerComponent implements OnInit, OnDestroy {
 
   @ViewChild('block', { static: true }) block: ElementRef;
 
@@ -115,8 +115,6 @@ export class OverlayContainerComponent implements OnInit, AfterViewInit, OnDestr
       public overlayService: OverlayDataService,
       private toast: ToastService,
       private dialog: MatDialog,
-      private me: ElementRef,
-      private render: Renderer2,
   ) {}
 
   getHeaderData() {
@@ -406,7 +404,11 @@ export class OverlayContainerComponent implements OnInit, AfterViewInit, OnDestr
               })
           );
       }
-    this.dialogRef.backdropClick()
+    // TODO: strabge bug here!!!
+    // id backdrop is clicked once then it receives the clicks's components inside overlay-container  
+    // left here commented to indicate this elusive bug
+    // as it is unclear why it happens
+    /*this.dialogRef.backdropClick()
       .pipe(
         switchMap(() => {
           return this.roomValidButtons;
@@ -418,7 +420,7 @@ export class OverlayContainerComponent implements OnInit, AfterViewInit, OnDestr
       )
       .subscribe(() => {
       this.dialogRef.close();
-    });
+    });*/
 
       fromEvent(this.block.nativeElement, 'scroll').pipe(takeUntil(this.destroy$))
         .subscribe((res: any) => {
@@ -1160,16 +1162,5 @@ export class OverlayContainerComponent implements OnInit, AfterViewInit, OnDestr
   closeDisableRoomNux() {
     this.showNuxTooltip.next(false);
     this.userService.updateIntrosDisableRequest(this.introsData, 'universal',  '1');
-  }
-
-  ngAfterViewInit() {
-    this.render.listen(this.me.nativeElement, 'click', this.stopBubblingHere.bind(this));
-  }
-
-  private stopBubblingHere(evt: Event) {
-   // evt.stopPropagation();
-    //return false;
-    this.render.setStyle(this.me.nativeElement, 'pointer-events', 'none');
-    //setTimeout(() => this.render.setStyle(this.me.nativeElement, 'pointer-events', 'initial'), 1000);
   }
 }
