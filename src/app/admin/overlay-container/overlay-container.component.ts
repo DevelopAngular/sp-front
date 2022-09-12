@@ -1,4 +1,4 @@
-import {Component, ElementRef, Inject, OnDestroy, OnInit, ViewChild} from '@angular/core';
+import {Component, ElementRef, Inject, OnDestroy, OnInit, AfterViewInit, ViewChild, Renderer2} from '@angular/core';
 import {AbstractControl, FormControl, FormGroup, Validators, ValidationErrors} from '@angular/forms';
 import {MAT_DIALOG_DATA, MatDialog, MatDialogRef} from '@angular/material/dialog';
 import {DomSanitizer} from '@angular/platform-browser';
@@ -28,9 +28,8 @@ import {VisibilityOverStudents, DEFAULT_VISIBILITY_STUDENTS} from './visibility-
   templateUrl: './overlay-container.component.html',
   styleUrls: ['./overlay-container.component.scss'],
   animations: [NextStep, bumpIn]
-
 })
-export class OverlayContainerComponent implements OnInit, OnDestroy {
+export class OverlayContainerComponent implements OnInit, AfterViewInit, OnDestroy {
 
   @ViewChild('block', { static: true }) block: ElementRef;
 
@@ -116,6 +115,8 @@ export class OverlayContainerComponent implements OnInit, OnDestroy {
       public overlayService: OverlayDataService,
       private toast: ToastService,
       private dialog: MatDialog,
+      private me: ElementRef,
+      private render: Renderer2,
   ) {}
 
   getHeaderData() {
@@ -1159,5 +1160,14 @@ export class OverlayContainerComponent implements OnInit, OnDestroy {
   closeDisableRoomNux() {
     this.showNuxTooltip.next(false);
     this.userService.updateIntrosDisableRequest(this.introsData, 'universal',  '1');
+  }
+
+  ngAfterViewInit() {
+    this.render.listen(this.me.nativeElement, 'click', this.stopBubblingHere.bind(this));
+  }
+
+  private stopBubblingHere(evt: Event) {
+    evt.stopPropagation();
+    return false;
   }
 }

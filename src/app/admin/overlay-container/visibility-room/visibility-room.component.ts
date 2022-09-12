@@ -6,6 +6,7 @@ import {Subject, Observable, of} from 'rxjs';
 import {map, tap, take, takeUntil, filter, finalize, startWith, shareReplay, catchError} from 'rxjs/operators';
 import {cloneDeep, isEqual} from 'lodash';
 
+import {UserService} from '../../../services/user.service';
 import {User} from '../../../models/User';
 import {SPSearchComponent} from '../../../sp-search/sp-search.component'; 
 import {VisibilityMode, ModeView, ModeViewMap, VisibilityOverStudents, DEFAULT_VISIBILITY_STUDENTS} from './visibility-room.type';
@@ -70,6 +71,8 @@ export class VisibilityRoomComponent implements OnInit, AfterViewInit, OnDestroy
   // did open the panel with options 
   didOpen: boolean = false;
 
+  searchInputFocused = false;
+
   // need to show the search UI?
   get isShowSearch(): boolean {
    return this.mode !== 'visible_all_students';
@@ -80,15 +83,35 @@ export class VisibilityRoomComponent implements OnInit, AfterViewInit, OnDestroy
     public overlayService: OverlayDataService,
     private renderer: Renderer2,
     private dataService: DataService,
+    private UserService: UserService,
     private toastService: ToastService,
   ) {
     this.modeView = this.modes[this.mode];
+    this.dialogIds = [
+      this.PANEL_ID,
+      this.GRADE_LEVEl_DIALOG_ID,
+      this.STUDENT_LIST_DIALOG_ID,
+    ]; 
   }
 
   grades$: Observable<string[]> = new Observable<string[]>();
   loadedGrades$: Observable<boolean>;
+  isGradeEnabled$: Observable<boolean>;
 
   ngOnInit(): void {
+    this.isGradeEnabled$ = this.UserService.getStatusOfGradeLevel().pipe(
+      filter(v => !!v), 
+      map(s => {
+        // prudently return false if we got a wrong shaped s
+        const isEnabled: boolean = (s as any)?.results?.setup ?? false;
+        return isEnabled;
+      }),
+      //tap((v: boolean) => this.searchInputFocused = !v),
+      takeUntil(this.destroy$),
+      shareReplay(1),
+    );
+    this.isGradeEnabled$.subscribe();
+
     this.grades$ = this.dataService.getGradesList().pipe(
       takeUntil(this.destroy$),
       shareReplay(1),
@@ -159,6 +182,9 @@ export class VisibilityRoomComponent implements OnInit, AfterViewInit, OnDestroy
         return
       }
 
+     //const atleastOneExists = this.dialogIds.some(did => !!this.dialog.getDialogById(did));
+     //if (atleastOneExists) return;
+
       try {
         let $input = null;
         if (this.searchComponent?.input && ('input' in this.searchComponent.input))  {
@@ -192,9 +218,9 @@ export class VisibilityRoomComponent implements OnInit, AfterViewInit, OnDestroy
   // triggers this method in order to hide the errors 
   public onSearchComponentFocus() {
     this.showErrorsVisibility = false;
-    // open grade level options
-    this.openGradeLevelDialog();
-
+    // open grade level options next loop
+    // givint time for searchComponent input native to be in DOM
+    setTimeout(this.openGradeLevelDialog.bind(this), 0);
   }
 
   public onSearchComponentBlur() {
@@ -208,6 +234,16 @@ export class VisibilityRoomComponent implements OnInit, AfterViewInit, OnDestroy
     this.destroy$.next();
     this.destroy$.complete();
     this.unlisten();
+    this.closeDialogs();
+  }
+
+  dialogIds: string[];
+
+  private closeDialogs() {
+    this.dialogIds.forEach(did => {
+      const d = this.dialog.getDialogById(did);
+      if (!!d) d.close();
+    });
   }
 
   @HostListener('document:click', ['$event'])
@@ -222,6 +258,8 @@ export class VisibilityRoomComponent implements OnInit, AfterViewInit, OnDestroy
   private gradeLevelDialog: MatDialogRef<TemplateRef<any>> | undefined;
   private readonly GRADE_LEVEl_DIALOG_ID = 'grade-level-options';
 
+  // it needs this.searchComponent.input['input']['nativeElement'] to be in DOM
+  // call this function wraped in a setTimeot when not sure the input is DOM
   openGradeLevelDialog() {
 
     const panelDialogExists = this.dialog.getDialogById(this.GRADE_LEVEl_DIALOG_ID);
@@ -230,6 +268,8 @@ export class VisibilityRoomComponent implements OnInit, AfterViewInit, OnDestroy
     this.loadedGrades$.pipe(take(1)).subscribe();
 
     if (this.searchComponent.inputField) {
+      //TODO check empty field not by DOM
+      //this.searchComponent.inputValue$.pipe(take(1), tap(v => console.log('INPUT'))).subscribe();
       const $input = this.searchComponent.input['input']['nativeElement'];
       // non empty field  cancels the dialog opening
       if ($input.value.length) return;
@@ -315,8 +355,6 @@ export class VisibilityRoomComponent implements OnInit, AfterViewInit, OnDestroy
 
     this.change$.next();
     this.dirty.next();
-
-    //this.visibilityForm.patchValue({visibility});
   }
   
   private studentListDialog: MatDialogRef<ImportStudentListComponent> | undefined;
@@ -369,15 +407,15 @@ export class VisibilityRoomComponent implements OnInit, AfterViewInit, OnDestroy
   };
 
   private panelDialog: MatDialogRef<TemplateRef<any>> | undefined;
+  private PANEL_ID = 'opener-visibility-options';
 
   handleOpenClose() {
-    const PANEL_ID = 'opener-visibility-options';
 
-    const panelDialogExists = this.dialog.getDialogById(PANEL_ID);
+    const panelDialogExists = this.dialog.getDialogById(this.PANEL_ID);
     if (panelDialogExists) return;
 
     const conf = {
-      id: PANEL_ID,
+      id: this.PANEL_ID,
       panelClass: 'consent-dialog-container',
       backdropClass: 'invis-backdrop',
     };
@@ -400,7 +438,8 @@ export class VisibilityRoomComponent implements OnInit, AfterViewInit, OnDestroy
           visibility.over = this.selectedStudents = this.prevdata[v].over;
           visibility.grade = this.selectedGradeLevels = this.prevdata[v].grade;
         }
-        this.visibilityForm.setValue({visibility});
+        //this.visibilityForm.setValue({visibility});
+        this.change$.next();
         this.modeView = this.modes[v];
 
         if (!this.prevdata[v]) {
@@ -411,7 +450,7 @@ export class VisibilityRoomComponent implements OnInit, AfterViewInit, OnDestroy
       }),
       finalize(() => {
         this.didOpen = false;
-        this.panelDialog = undefined;
+        //this.panelDialog = undefined;
         // component is untouched
         //this.dirty.next(false);
       }),
@@ -430,9 +469,10 @@ export class VisibilityRoomComponent implements OnInit, AfterViewInit, OnDestroy
   }
 
   public visibilityChange() {
+    console.log('vis')
     // prepare data for external use
     this.data = {mode: this.mode, over: [...this.selectedStudents], grade: [...this.selectedGradeLevels]};
-   const data = cloneDeep(this.data); 
+    const data = cloneDeep(this.data); 
     // sync with page state
     this.overlayService.patchData({data});
 
@@ -443,9 +483,22 @@ export class VisibilityRoomComponent implements OnInit, AfterViewInit, OnDestroy
     // keep last modification
     this.updatePrevData();
 
+    // force open the dialog no matter what mode is chosen
+    this.allowOpenGradeLevel = true;
     // no data? shows the search input
-    if (this.data.over.length === 0 && !!this.searchComponent) {
-      setTimeout(() => this.searchComponent.inputField = true, 0);
+    if (this.data.over.length === 0 && this.isShowSearch) {
+      // for DOM search input field
+      setTimeout(() => {
+        // check again
+        if (!this.searchComponent) return;
+
+        this.searchComponent.inputField = true;
+        //this.searchComponent.focused = this.searchInputFocused;
+
+        this.isGradeEnabled$.pipe(tap((gradesEnabled: boolean) => {
+          if (gradesEnabled) setTimeout(this.openGradeLevelDialog.bind(this), 0);
+        })).subscribe();
+      });
     }
   }
 
@@ -481,8 +534,8 @@ export class VisibilityRoomComponent implements OnInit, AfterViewInit, OnDestroy
         // remove students;s chips from UI
         this.searchComponent.removeStudents();
         this.searchComponent.inputField = true;
+        //this.change$.next();
       }
-      this.change$.next();
     }, 0);
   }
 
@@ -490,7 +543,7 @@ export class VisibilityRoomComponent implements OnInit, AfterViewInit, OnDestroy
     setTimeout(() => {
       this.selectedStudents = ss;
       this.searchComponent.inputField = (ss.length === 0);
-      this.change$.next();
+      //this.change$.next();
     }, 0);
   }
 
