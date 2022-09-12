@@ -1,8 +1,13 @@
 import {Component, EventEmitter, Input, OnInit, Output} from '@angular/core';
 import {DomSanitizer} from '@angular/platform-browser';
+import {MatIconRegistry} from '@angular/material/icon';
 import {uniqBy} from 'lodash';
+import {filter, map, pluck, switchMap, take, takeUntil} from 'rxjs/operators';
 import {User} from '../models/User';
-
+import {AdminService} from '../services/admin.service';
+interface OrgUnits{
+  path:string
+}
 @Component({
   selector: 'app-sp-chips',
   templateUrl: './sp-chips.component.html',
@@ -18,14 +23,19 @@ export class SpChipsComponent implements OnInit {
   @Input() isProposed: boolean;
   @Input() textAddButton: string | null; 
   @Input() selectedTarget: 'users' | 'orgunits' | 'roles' | 'rooms' = 'users';
+  @Input() orgUnitList:String[]
 
   @Output() add: EventEmitter<boolean> = new EventEmitter();
   @Output() updateSelectedEvent: EventEmitter<User[]> = new EventEmitter();
   @Output() addSuggestedTeacher: EventEmitter<User> = new EventEmitter<User>();
+  orgUnits:any=[]
 
   constructor(
     private sanitizer: DomSanitizer,
-  ) { }
+    private adminService:AdminService
+  ) {
+  
+   }
 
   get results() {
     // here for room visibility feature
@@ -39,6 +49,7 @@ export class SpChipsComponent implements OnInit {
 
   ngOnInit() {
     this.textAddButton = this.textAddButton ?? this.textAddButtonDefault;
+    console.log("props:::",this.orgUnitList)
   }
 
   textColor(item) {
@@ -63,4 +74,16 @@ export class SpChipsComponent implements OnInit {
      chip.hovered = hover;
    }
   }
+  orgUnitDeleteCheck(item:any){
+
+    if(this.orgUnitList && this.orgUnitList.length){
+      if(this.orgUnitList.includes(item.path)){
+        return false
+      }else{
+       return true
+      }
+    }
+    
+  }
+
 }

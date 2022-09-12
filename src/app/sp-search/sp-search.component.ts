@@ -16,6 +16,7 @@ import {DeviceDetection} from '../device-detection.helper';
 import {DomCheckerService} from '../services/dom-checker.service';
 import {Overlay} from '@angular/cdk/overlay';
 import {KioskModeService} from '../services/kiosk-mode.service';
+import {AdminService} from '../services/admin.service';
 
 declare const window;
 
@@ -89,6 +90,9 @@ export class OrgUnit {
     this.selector = selector;
     this.selected = selected;
   }
+}
+interface OrgUnits{
+  path:string
 }
 
 
@@ -181,6 +185,8 @@ export class SPSearchComponent implements OnInit, OnDestroy {
   isEnableProfilePictures$: Observable<boolean>;
 
   destroy$: Subject<any> = new Subject<any>();
+  // orgUnits:OrgUnits[]=[]
+  orgUnits:String[]=[]
 
   @HostListener('document.scroll', ['$event'])
   scroll() {
@@ -199,8 +205,11 @@ export class SPSearchComponent implements OnInit, OnDestroy {
     private locationService: LocationsService,
     private domCheckerService: DomCheckerService,
     public overlay: Overlay,
-    private kioskMode: KioskModeService
-  ) {}
+    private kioskMode: KioskModeService,
+    private adminService:AdminService
+  ) {
+    this.getLatestOrgUnitList()
+  }
 
   get isMobile() {
     return DeviceDetection.isMobile();
@@ -312,6 +321,13 @@ export class SPSearchComponent implements OnInit, OnDestroy {
 
     this.user$ = this.userService.user$;
     this.isEnableProfilePictures$ = this.userService.isEnableProfilePictures$;
+
+    //subscribe for latest Orgunit list
+    // this.adminService.getGSuiteOrgsUnits().subscribe((res:OrgUnits[])=>{
+    //   this.orgUnits =res
+    //   console.log("org units:::",this.orgUnits)
+    // }) 
+    
 
   }
 
@@ -607,4 +623,13 @@ export class SPSearchComponent implements OnInit, OnDestroy {
   hasStudentRole(user) {
     return user.roles && User.fromJSON(user).isStudent();
   }
+  getLatestOrgUnitList(){
+    this.adminService.getGSuiteOrgsUnits().pipe(
+     map((res:OrgUnits[])=>{
+     return res.map(item=>item.path)
+     })
+    ).subscribe((res)=>{
+     this.orgUnits=res
+    })
+ }
 }

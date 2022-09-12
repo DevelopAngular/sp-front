@@ -5,12 +5,14 @@
         [selectedProfiles]="selectedOptions"
         [suggestedTeacher]="suggestedTeacher"
         [selectedTarget]="searchTarget"
+        [orgUnitList]="orgUnits"
         [isProposed]="isProposed"
         (add)="inputField = true"
         [textAddButton] = "textAddButton ? textAddButton : null"
         (updateSelectedEvent)="update($event)"
         (addSuggestedTeacher)="addSuggested($event)"
       ></app-sp-chips>
+      
     </div>
 </div>
 
