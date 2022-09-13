@@ -29,17 +29,22 @@ function Visibility(): any {
 
     return {
       set: function (vv: any[]) {
+        const student = [this.user];
+        if (this.forStaff && this.forKioskMode) {
+          student[0] = this.selectedStudents[0];
+        }
         // filtering apply only for a student
-        if (vv.length > 0 && !this.forStaff) {
+        if (vv.length > 0 && 
+          (!this.forStaff || 
+           (this.forStaff && this.forKioskMode)
+          )
+         ) {
           // test if we have Location's
           let v = vv[0];
           try {
-            v = Location.fromJSON(v);
-            const student = [this.user];
+            v = (v instanceof Location) ? v : Location.fromJSON(v);
             vv = vv.filter((loc: Location) => this.visibilityService.filterByVisibility(loc, student));
-          }catch (e) {
-            console.log(e);
-          }
+          }catch (e) {}
         }
         values = vv;
       },
