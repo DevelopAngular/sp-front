@@ -386,7 +386,7 @@ export class AppComponent implements OnInit, AfterViewInit, OnDestroy {
       const school: School = this.http.getSchool();
       window.intercomSettings = {
         user_id: user.id,
-        name: user.first_name,
+        name: user.display_name,
         email: user.primary_email,
         created_at: user.created,
         type: user.isAdmin() ? 'Admin' : (user.isAssistant() ? 'Assistant' : 'Teacher'),
