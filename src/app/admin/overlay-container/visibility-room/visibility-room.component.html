@@ -94,7 +94,7 @@
         >
           <li class="title">by grade</li>
           <ng-container *ngIf="grades$ | async as vm; else loading">
-            <li #gradesRendered
+            <li
                 *ngFor="let grade of vm['grade_level']"
                 (click)="handleGradeLevelSelected(grade)"
             >

@@ -32,7 +32,6 @@ export class VisibilityRoomComponent implements OnInit, AfterViewInit, OnDestroy
   @ViewChild(SPSearchComponent) searchComponent: SPSearchComponent;
   // grade level
   @ViewChild('gradeLevel') gradeLevelTpl: TemplateRef<any>;
-  @ViewChildren('gradesRendered') gradesRendered: QueryList<HTMLLIElement>;
   
   @Input() data?: VisibilityOverStudents = DEFAULT_VISIBILITY_STUDENTS; 
 
@@ -216,6 +215,8 @@ export class VisibilityRoomComponent implements OnInit, AfterViewInit, OnDestroy
         console.log('RV.listen', e);
       }
     });
+
+    this.loadedGrades$.pipe(take(1)).subscribe({next: () => this.adjustGradeDialogScroll()});
   }
 
   private allowOpenGradeLevel: boolean = true;
@@ -283,14 +284,6 @@ export class VisibilityRoomComponent implements OnInit, AfterViewInit, OnDestroy
       return;
     }
 
-    const gradesRenderedSubscription = this.gradesRendered.changes.subscribe(v => {
-      if (v?.last && v.length > 0) {
-        // reset previous scroll
-        this.panelMaxHeight = null;
-        this.adjustGradeDialogScroll();
-      }
-    });
-
     const conf = {
       id: this.GRADE_LEVEl_DIALOG_ID,
       panelClass: 'consent-dialog-container',
@@ -309,7 +302,6 @@ export class VisibilityRoomComponent implements OnInit, AfterViewInit, OnDestroy
         }
         // reset previous scroll
         this.panelMaxHeight = null;
-        gradesRenderedSubscription.unsubscribe();
       }),
     )
     .subscribe(() => {
@@ -318,11 +310,11 @@ export class VisibilityRoomComponent implements OnInit, AfterViewInit, OnDestroy
 
     this.gradeLevelDialog.afterOpened().subscribe(() => {
       this.clickoutFn = this.closeGradeLevelDialog;
+      this.adjustGradeDialogScroll()
     });
 
     this.allowOpenGradeLevel = !this.allowOpenGradeLevel;
 
-    //this.loadedGrades$.pipe(take(1)).subscribe({next: () => this.adjustGradeDialogScroll()});
   }
 
   closeGradeLevelDialog(event: MouseEvent) {
