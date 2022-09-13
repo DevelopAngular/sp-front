@@ -1,4 +1,4 @@
-import {Component, Inject, OnInit} from '@angular/core';
+import {Component, ElementRef, Inject, OnInit, ViewChild} from '@angular/core';
 import {MAT_DIALOG_DATA, MatDialog, MatDialogRef} from '@angular/material/dialog';
 import {Router} from '@angular/router';
 import {DataService} from '../../services/data-service';
@@ -11,6 +11,9 @@ import {NextStep} from '../../animations';
 import {User} from '../../models/User';
 import {EncounterPreventionService} from '../../services/encounter-prevention.service';
 import {ExclusionGroup} from '../../models/ExclusionGroup';
+import {PassLimitStudentInfoComponent} from '../../pass-limit-student-info/pass-limit-student-info.component';
+import {StudentPassLimit} from '../../models/HallPassLimits';
+import {ViewProfileComponent} from './view-profile/view-profile.component';
 
 @Component({
   selector: 'app-profile-card-dialog',
@@ -20,13 +23,22 @@ import {ExclusionGroup} from '../../models/ExclusionGroup';
 })
 export class ProfileCardDialogComponent implements OnInit {
 
-  page: number = 1;
+  page = 1;
   frameMotion$: BehaviorSubject<any>;
   profile: User;
   exclusionGroups$: Observable<ExclusionGroup[]>;
   encounterGroupPage: string;
   currentExclusionGroup: ExclusionGroup;
+  passLimitData: { studentPassLimit: StudentPassLimit, user: User };
 
+  @ViewChild('passLimitStudentInfo') set bulkEditComp(comp: PassLimitStudentInfoComponent) {
+    if (comp) {
+      comp.data.studentPassLimit = this.data['profile']._originalUserProfile.limit as StudentPassLimit;
+      comp.data.user = this.data['profile']._originalUserProfile;
+    }
+  }
+
+  // TODO: Apply proper types to dialog data
   constructor(
     @Inject(MAT_DIALOG_DATA) public data: any,
     public dialogRef: MatDialogRef<ProfileCardDialogComponent>,
@@ -41,6 +53,12 @@ export class ProfileCardDialogComponent implements OnInit {
 
   ngOnInit() {
     this.profile = this.data['profile']._originalUserProfile;
+    this.userService.user$.subscribe(user => {
+      this.passLimitData = {
+        studentPassLimit: this.data['profile']._originalUserProfile.limit as StudentPassLimit,
+        user: user
+      };
+    });
     this.frameMotion$ = this.formService.getFrameMotionDirection();
     if (User.fromJSON(this.profile).isStudent()) {
       this.encounterPreventionService.getExclusionGroupsRequest({student: this.profile.id});
@@ -67,6 +85,13 @@ export class ProfileCardDialogComponent implements OnInit {
         this.page = 3;
         this.currentExclusionGroup = group;
       }
+    }, 100);
+  }
+
+  goToPassLimits() {
+    this.formService.setFrameMotionDirection();
+    setTimeout(() => {
+      this.page = 4;
     }, 100);
   }
 

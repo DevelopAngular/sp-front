@@ -200,7 +200,8 @@ export class SPSearchComponent implements OnInit, OnDestroy {
     private domCheckerService: DomCheckerService,
     public overlay: Overlay,
     private kioskMode: KioskModeService
-  ) {}
+  ) {
+  }
 
   get isMobile() {
     return DeviceDetection.isMobile();
@@ -543,7 +544,7 @@ export class SPSearchComponent implements OnInit, OnDestroy {
   // safe to call as it checks itself to have a callback to call
   // otherwise it returns unchanged User[]
   mayRemoveStudentsByCallback(students: User[] | GSuiteSelector[]) : User[] | GSuiteSelector[] {
-    // if provided an extra filtering use it 
+    // if provided an extra filtering use it
     if (!!this.filteringUsersCallback) {
       const filtered =  this.filteringUsersCallback(students);
       this.showDummy = !filtered.length;
@@ -555,6 +556,7 @@ export class SPSearchComponent implements OnInit, OnDestroy {
   isDisabled(item: any) {
     return this.type === 'G Suite' && item && !item.role_compatible;
   }
+
   cancel(studentInput) {
     studentInput.input.nativeElement.value = '';
     studentInput.input.nativeElement.focus();
@@ -606,5 +608,10 @@ export class SPSearchComponent implements OnInit, OnDestroy {
 
   hasStudentRole(user) {
     return user.roles && User.fromJSON(user).isStudent();
+  }
+
+  reset() {
+    this.selectedOptions = [];
+    this.onUpdate.emit(undefined);
   }
 }
