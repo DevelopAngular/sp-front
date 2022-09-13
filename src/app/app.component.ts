@@ -394,10 +394,6 @@ export class AppComponent implements OnInit, AfterViewInit, OnDestroy {
         account_type: user.sync_types[0] === 'google' ? 'Google' : (user.sync_types[0] === 'clever' ? 'Clever' : 'Standard'),
         first_login_at: user.first_login,
         company: {
-          id: this.http.getSchool().id,
-          name: this.http.getSchool().name,
-          open_in_smartpass: `https://smartpass.app/app?email=smartpass-support@school.smartpass.app&school_id=${this.http.getSchool().id}`,
-          open_in_metabase: `https://metabase.int.smartpass.app/dashboard/6-school-overview?school_id=${this.http.getSchool().id}`
           id: school.id,
           name: school.name,
           id_card_access: school.feature_flag_digital_id,
