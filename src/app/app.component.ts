@@ -396,8 +396,8 @@ export class AppComponent implements OnInit, AfterViewInit, OnDestroy {
         company: {
           id: school.id,
           name: school.name,
-          id_card_access: school.feature_flag_digital_id,
-          plus_access: school.feature_flag_encounter_detection
+          'Id Card Access': school.feature_flag_digital_id,
+          'Plus Access': school.feature_flag_encounter_detection
         }
       };
       window.Intercom('update');
