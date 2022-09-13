@@ -17,11 +17,15 @@ export class ZipService {
         switchMap((data: any) => {
           const arrayFiles = [];
           const arrayNames = [];
-          for (const item in data.files) {
-            const extension = item.split('.')[item.toLowerCase().split('.').length - 1];
+          for (let item in data.files) {
+            const extension = item.split('.')[item.toLowerCase().split('.').length - 1].toLowerCase();
            if (item[0] !== '_' && (extension === 'jpeg' || extension === 'png' || extension === 'jpg')) {
-             arrayNames.push(item);
              arrayFiles.push(data.files[item].async('blob'));
+             if (item.includes('/')) {
+               const pathArray = item.split('/');
+               item = pathArray[pathArray.length - 1];
+             }
+             arrayNames.push(item);
            }
           }
           return forkJoin({
@@ -32,7 +36,7 @@ export class ZipService {
         map(({names, files}) => {
           return names.map((name, i) => {
             const newFile = new File([files[i]], name, {type: 'image/jpeg'});
-            return { file_name: name, file: newFile };
+            return { file_name: name.toLowerCase().trim(), file: newFile };
           });
         })
       );

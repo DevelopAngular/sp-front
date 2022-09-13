@@ -1,9 +1,8 @@
 import {KeyValue} from '@angular/common';
 import { Component, OnInit, AfterViewInit, OnDestroy, Input, Output, EventEmitter, ViewChild, ElementRef, TemplateRef, Renderer2} from '@angular/core';
-import {DomSanitizer} from '@angular/platform-browser';
 import {FormGroup} from '@angular/forms';
 import {MatDialog, MatDialogRef} from '@angular/material/dialog';
-import {Observable, Subject} from 'rxjs';
+import {Subject} from 'rxjs';
 import {tap, take, takeUntil, filter, finalize, startWith} from 'rxjs/operators';
 import {cloneDeep} from 'lodash';
 

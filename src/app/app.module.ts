@@ -74,7 +74,6 @@ import {LoginDataEffects} from './ngrx/login-data/effects';
 import {ExclusionGroupsEffects} from './ngrx/encounters-prevention/excusion-groups/effects';
 import {ToastEffects} from './ngrx/toast/effects';
 import {SmartpassSearchEffects} from './ngrx/smartpass-search/effects';
-import { PassLimitsDialogComponent } from './teacher/pass-limits-dialog/pass-limits-dialog.component';
 import { IdcardOverlayContainerComponent } from './idcard-overlay-container/idcard-overlay-container.component';
 import { EncounterDetectionEffects } from './ngrx/encounter-detection/effects';
 
@@ -139,7 +138,10 @@ const appRoutes: Routes = [
     loadChildren: () => import('app/weblinks/weblinks.module').then(m => m.WeblinksModule),
     data: {hideSchoolToggleBar: true, hubspot: false, authFree: true, hideScroll: false},
   },
-
+  { 
+    path: 'mobile-restriction', 
+    loadChildren: () => import('app/mobile-restriction/mobile-restriction.module').then(m => m.MobileRestrictionModule), 
+  },
   {path: '**', redirectTo: 'main/passes', pathMatch: 'full'},
 ];
 
@@ -149,7 +151,6 @@ const appRoutes: Routes = [
     ScrollHolderDirective,
     SupportButtonComponent,
     CustomToastComponent,
-    PassLimitsDialogComponent,
     IdcardOverlayContainerComponent,
   ],
     imports: [
