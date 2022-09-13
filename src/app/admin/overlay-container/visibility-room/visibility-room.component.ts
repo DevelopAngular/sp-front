@@ -1,5 +1,5 @@
 import {KeyValue} from '@angular/common';
-import { Component, OnInit, AfterViewInit, OnDestroy, Input, Output, EventEmitter, ViewChild, ElementRef, TemplateRef, Renderer2, HostListener, ViewChildren, QueryList} from '@angular/core';
+import { Component, OnInit, AfterViewInit, OnDestroy, Input, Output, EventEmitter, ViewChild, ElementRef, TemplateRef, Renderer2, HostListener} from '@angular/core';
 import {FormGroup} from '@angular/forms';
 import {MatDialog, MatDialogRef} from '@angular/material/dialog';
 import {Subject, Observable, of} from 'rxjs';
@@ -95,7 +95,6 @@ export class VisibilityRoomComponent implements OnInit, AfterViewInit, OnDestroy
   }
 
   grades$: Observable<string[]> = new Observable<string[]>();
-  loadedGrades$: Observable<boolean>;
   isGradeEnabled$: Observable<boolean>;
 
   ngOnInit(): void {
@@ -116,8 +115,6 @@ export class VisibilityRoomComponent implements OnInit, AfterViewInit, OnDestroy
       takeUntil(this.destroy$),
       shareReplay(1),
     );
-
-    this.loadedGrades$ = this.grades$.pipe(map(_ => true));
 
     if (!this.data) {
       this.data = this.overlayService.pageState.getValue().data?.visibility ?? DEFAULT_VISIBILITY_STUDENTS;
@@ -216,7 +213,6 @@ export class VisibilityRoomComponent implements OnInit, AfterViewInit, OnDestroy
       }
     });
 
-    this.loadedGrades$.pipe(take(1)).subscribe({next: () => this.adjustGradeDialogScroll()});
   }
 
   private allowOpenGradeLevel: boolean = true;
@@ -310,7 +306,9 @@ export class VisibilityRoomComponent implements OnInit, AfterViewInit, OnDestroy
 
     this.gradeLevelDialog.afterOpened().subscribe(() => {
       this.clickoutFn = this.closeGradeLevelDialog;
-      this.adjustGradeDialogScroll()
+
+      const whenLoadedAdjust$ = this.grades$.pipe(take(1), tap(() => this.adjustGradeDialogScroll()));
+      whenLoadedAdjust$.subscribe();
     });
 
     this.allowOpenGradeLevel = !this.allowOpenGradeLevel;
