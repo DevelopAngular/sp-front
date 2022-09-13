@@ -396,10 +396,8 @@ export class AppComponent implements OnInit, AfterViewInit, OnDestroy {
         company: {
           id: school.id,
           name: school.name,
-          open_in_smartpass: `https://smartpass.app/app?email=smartpass-support@school.smartpass.app&school_id="${school.id}`,
-          open_in_metabase: `https://metabase.int.smartpass.app/dashboard/6-school-overview?school_id="${school.id}`,
-          id_cards: school.feature_flag_digital_id,
-          plus_plan: school.feature_flag_encounter_detection
+          id_card_access: school.feature_flag_digital_id,
+          plus_access: school.feature_flag_encounter_detection
         }
       };
       window.Intercom('update');
