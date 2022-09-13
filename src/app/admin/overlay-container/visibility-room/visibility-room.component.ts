@@ -1,5 +1,5 @@
 import {KeyValue} from '@angular/common';
-import { Component, OnInit, AfterViewInit, OnDestroy, Input, Output, EventEmitter, ViewChild, ElementRef, TemplateRef, Renderer2, HostListener} from '@angular/core';
+import { Component, OnInit, AfterViewInit, OnDestroy, Input, Output, EventEmitter, ViewChild, ElementRef, TemplateRef, Renderer2, HostListener, ViewChildren, QueryList} from '@angular/core';
 import {FormGroup} from '@angular/forms';
 import {MatDialog, MatDialogRef} from '@angular/material/dialog';
 import {Subject, Observable, of} from 'rxjs';
@@ -32,6 +32,7 @@ export class VisibilityRoomComponent implements OnInit, AfterViewInit, OnDestroy
   @ViewChild(SPSearchComponent) searchComponent: SPSearchComponent;
   // grade level
   @ViewChild('gradeLevel') gradeLevelTpl: TemplateRef<any>;
+  @ViewChildren('gradesRendered') gradesRendered: QueryList<HTMLLIElement>;
   
   @Input() data?: VisibilityOverStudents = DEFAULT_VISIBILITY_STUDENTS; 
 
@@ -117,10 +118,7 @@ export class VisibilityRoomComponent implements OnInit, AfterViewInit, OnDestroy
       shareReplay(1),
     );
 
-    this.loadedGrades$ = this.grades$.pipe(
-      tap(_ => this.adjustGradeDialogScroll()),
-      map(_ => true),
-    );
+    this.loadedGrades$ = this.grades$.pipe(map(_ => true));
 
     if (!this.data) {
       this.data = this.overlayService.pageState.getValue().data?.visibility ?? DEFAULT_VISIBILITY_STUDENTS;
@@ -153,15 +151,20 @@ export class VisibilityRoomComponent implements OnInit, AfterViewInit, OnDestroy
   }
 
   adjustGradeDialogScroll() {
+    // re-calculate scroll adj
     setTimeout(( ) => {
       const $ul = document.querySelector('.panel.grade-level');
       if (!!$ul) {
         const $x = $ul.getBoundingClientRect();
-        const delta = this.bottomSearchComponent - $x.height; 
-        if (delta < 0) {
+      console.log($x.height)
+        const delta = this.bottomSearchComponent + $x.height - window.innerHeight; 
+        if (delta > 0) {
           // deals with a posible too long grades's list
-          this.panelMaxHeight = (this.bottomSearchComponent - 5/*small adjustment for a better position*/) + 'px';
-        }
+          this.panelMaxHeight = ($x.height - delta - (10 + 10)/*pading of the last li + ul itself*/) + 'px';
+        } else {
+          // reset previous scroll
+          this.panelMaxHeight = null;
+        } 
       }
     }, 0); 
   }
@@ -200,6 +203,8 @@ export class VisibilityRoomComponent implements OnInit, AfterViewInit, OnDestroy
         if (isInput || isOpener || fromdialog) {
           this.showErrorsVisibility = false;
         }
+
+        if (! isInput) this.allowOpenGradeLevel = true;
 
         // close search panel when clicked outside of the sensitive elements
         /*const fromSearchInputPanel = $el.closest('.sp-search-wrapper > .input');
@@ -265,8 +270,6 @@ export class VisibilityRoomComponent implements OnInit, AfterViewInit, OnDestroy
     const panelDialogExists = this.dialog.getDialogById(this.GRADE_LEVEl_DIALOG_ID);
     if (panelDialogExists) return;
 
-    this.loadedGrades$.pipe(take(1)).subscribe();
-
     if (this.searchComponent.inputField) {
       //TODO check empty field not by DOM
       //this.searchComponent.inputValue$.pipe(take(1), tap(v => console.log('INPUT'))).subscribe();
@@ -279,6 +282,14 @@ export class VisibilityRoomComponent implements OnInit, AfterViewInit, OnDestroy
       this.allowOpenGradeLevel = !this.allowOpenGradeLevel;
       return;
     }
+
+    const gradesRenderedSubscription = this.gradesRendered.changes.subscribe(v => {
+      if (v?.last && v.length > 0) {
+        // reset previous scroll
+        this.panelMaxHeight = null;
+        this.adjustGradeDialogScroll();
+      }
+    });
 
     const conf = {
       id: this.GRADE_LEVEl_DIALOG_ID,
@@ -296,6 +307,9 @@ export class VisibilityRoomComponent implements OnInit, AfterViewInit, OnDestroy
         if (!!this.visibilityForm.value.visibility?.grade) {
           this.selectedGradeLevels = [...this.visibilityForm.value.visibility.grade];
         }
+        // reset previous scroll
+        this.panelMaxHeight = null;
+        gradesRenderedSubscription.unsubscribe();
       }),
     )
     .subscribe(() => {
@@ -307,6 +321,8 @@ export class VisibilityRoomComponent implements OnInit, AfterViewInit, OnDestroy
     });
 
     this.allowOpenGradeLevel = !this.allowOpenGradeLevel;
+
+    //this.loadedGrades$.pipe(take(1)).subscribe({next: () => this.adjustGradeDialogScroll()});
   }
 
   closeGradeLevelDialog(event: MouseEvent) {
@@ -568,6 +584,8 @@ export class VisibilityRoomComponent implements OnInit, AfterViewInit, OnDestroy
     const $rect = this.searchComponent.input['input']['nativeElement'];
     const rect = $rect.getBoundingClientRect();
 
+    this.bottomSearchComponent = rect.bottom; // relative to viewport
+
     // bottom right related to opener
     const position = {
       top: (rect.bottom + 7) + 'px', 
@@ -575,8 +593,6 @@ export class VisibilityRoomComponent implements OnInit, AfterViewInit, OnDestroy
       left: rect.left + (rect.width - 270 - 13) + 'px', 
     };
     this.gradeLevelDialog.updatePosition(position);
-
-    this.bottomSearchComponent = window.innerHeight - rect.bottom;
   }
 
   // UI hover color
