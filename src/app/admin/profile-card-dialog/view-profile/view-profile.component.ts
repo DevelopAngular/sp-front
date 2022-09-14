@@ -21,6 +21,7 @@ import {ConsentMenuComponent} from '../../../consent-menu/consent-menu.component
 import {DarkThemeSwitch} from '../../../dark-theme-switch';
 import {ProfilePictureComponent} from '../../accounts/profile-picture/profile-picture.component';
 import { IdCardGradeLevelsComponent } from '../../id-cards/id-card-grade-levels/id-card-grade-levels.component';
+import {StudentPassLimit} from '../../../models/HallPassLimits';
 
 @Component({
   selector: 'app-view-profile',
@@ -34,6 +35,7 @@ export class ViewProfileComponent implements OnInit {
   @Output() nextStep: EventEmitter<any> = new EventEmitter<any>();
   @Output() close: EventEmitter<any> = new EventEmitter<any>();
   @Output() encounterGroupsEmit: EventEmitter<any> = new EventEmitter<any>();
+  @Output() passLimitsEmit: EventEmitter<any> = new EventEmitter<any>();
 
   @ViewChild('header') header: ElementRef<HTMLDivElement>;
   @ViewChild('rc') set rc(rc: ElementRef<HTMLDivElement> ) {
@@ -64,18 +66,18 @@ export class ViewProfileComponent implements OnInit {
   } = {teacher: [], admin: [], assistant: [], student: []};
 
   public assistantFor: User[];
-  public assistantForEditState: boolean = false;
+  public assistantForEditState = false;
   public assistantForInitialState: User[];
   public assistantForUpdate$: Subject<User[]> = new Subject();
 
   public permissionsForm: FormGroup;
-  public permissionsFormEditState: boolean = false;
+  public permissionsFormEditState = false;
   private permissionsFormInitialState;
 
-  public disabledState: boolean = false;
-  public headerText: string = '';
-  public headerIcon: string;
-  public layout: string = 'viewProfile';
+  public disabledState = false;
+  public headerText = '';
+  public headerIcon;
+  public layout = 'viewProfile';
 
   public orgUnitSelector: GSuiteSelector[];
   public orgUnitSelectorInitialState: GSuiteSelector;
@@ -114,6 +116,8 @@ export class ViewProfileComponent implements OnInit {
   isOpenAvatarDialog: boolean;
 
   loadingProfilePicture: Subject<boolean> = new Subject<boolean>();
+
+  studentSnapshotPage: string;
 
   page = 1;
 
@@ -165,6 +169,7 @@ export class ViewProfileComponent implements OnInit {
     if (this.data.profile) {
       this.profile = this.data.profile;
       this.user = User.fromJSON(this.profile._originalUserProfile);
+      this.studentSnapshotPage = window.location.origin + `/app/main/student/${this.user.id}`;
       this.profileStatusActive = this.user.status;
       this.profileStatusInitial = cloneDeep(this.profileStatusActive);
       if (this.user.isTeacher() && !(this.user.isAdmin() || this.user.isAssistant())) {
@@ -548,11 +553,11 @@ export class ViewProfileComponent implements OnInit {
       });
   }
 
-  openGradeLevel(){
+  openGradeLevel() {
     this.page = 2;
   }
 
-  openIDNumber(){
+  openIDNumber() {
     this.page = 3;
   }
 

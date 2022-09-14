@@ -168,8 +168,8 @@
           <div class="user" *ngFor="let user of uploadedProfiles">
             <div class="user-container">
               <div>
-<!--                <div class="picture" [ngStyle]="{'background': 'url(' + user.profile_picture + ') no-repeat left center/cover'}"></div>-->
-<!--                <img class="picture" [src]="user.profile_picture | resolveAsset" alt="Avatar">-->
+                <div class="picture" [ngStyle]="{'background': 'url(' + user.profile_picture + ') no-repeat left center/cover'}"></div>
+                <img class="picture" [src]="user.profile_picture | resolveAsset" alt="Avatar">
               </div>
               <div class="profile-info">
                 <div class="name">{{ user.display_name }}</div>

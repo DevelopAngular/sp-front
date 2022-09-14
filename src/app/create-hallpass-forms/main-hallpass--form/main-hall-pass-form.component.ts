@@ -15,8 +15,8 @@ import {DeviceDetection} from '../../device-detection.helper';
 import {HallPassesService} from '../../services/hall-passes.service';
 import {CreateHallpassFormsComponent, CreatePassDialogData} from '../create-hallpass-forms.component';
 import {UserService} from '../../services/user.service';
-import {PassLimitService} from '../../services/pass-limit.service';
 import {LocationVisibilityService} from './location-visibility.service';
+import {PassLimitInfo} from '../../models/HallPassLimits';
 
 export enum Role { Teacher = 1, Student = 2 }
 
@@ -63,6 +63,7 @@ export interface Navigation {
   missedRequest?: boolean;
   resendRequest?: boolean;
   kioskMode?: boolean;
+  passLimitInfo?: PassLimitInfo;
 }
 
 @Component({
@@ -211,6 +212,7 @@ export class MainHallPassFormComponent implements OnInit, OnDestroy {
         };
         break;
     }
+    this.FORM_STATE.passLimitInfo = this.dialogData.passLimitInfo;
 
     this.setFormSize();
     this.setContainerSize('end');
