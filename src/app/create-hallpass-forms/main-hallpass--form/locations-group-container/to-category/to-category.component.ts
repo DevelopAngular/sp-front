@@ -122,6 +122,10 @@ export class ToCategoryComponent implements OnInit {
     this.destroy$.complete();
   }
 
+  get selectedStudents(): User[] {
+   return this.formState.data.roomStudents ?? this.formState.data.selectedStudents;
+  }
+
   locationChosen(location) {
     const forwardAndEmit = () => {
       if (this.formState.formMode.role === 1) {
@@ -141,17 +145,17 @@ export class ToCategoryComponent implements OnInit {
     }
 
    // staff only
-   const selectedStudents = this.formState.data.roomStudents ?? this.formState.data.selectedStudents;
+   const students = [...this.selectedStudents];
    // skipped are students that do not qualify to go forward     
-   let skipped = this.visibilityService.calculateSkipped(selectedStudents, location);
+   let skipped = this.visibilityService.calculateSkipped(students, location);
 
-    if (skipped.length === 0) {
+    if (!skipped || skipped.length === 0) {
       forwardAndEmit();
       return; 
     }
 
     let text =  'This room is only available to certain students';
-    let names = selectedStudents.filter(s => skipped.includes(''+s.id)).map(s => s.display_name);
+    let names = this.selectedStudents.filter(s => skipped.includes(''+s.id)).map(s => s.display_name);
     let title =  'Student does not have permission to go to this room';
     let denyText =  'Cancel';
     if (names.length > 1) {
@@ -162,7 +166,7 @@ export class ToCategoryComponent implements OnInit {
       title = (names?.join(', ') ?? 'Student') + ' does not have permission to go to this room'; 
     }
 
-    const roomStudents = selectedStudents.filter(s => (!skipped.includes(''+s.id)));
+    const roomStudents = this.selectedStudents.filter(s => (!skipped.includes(''+s.id)));
     const noStudentsCase = roomStudents.length === 0;
     
     if (noStudentsCase) denyText = 'Cancel';
@@ -201,11 +205,14 @@ export class ToCategoryComponent implements OnInit {
 
       // SKIPPING case
       // avoid a certain no students case
-      if (selectedStudents.length === 1) {
+      if (this.selectedStudents.length === 1) {
         //this.dialogRef.close();
         return;
       }
 
+      // filter out the skipped students
+      const roomStudents = this.selectedStudents.filter(s => (!skipped.includes(''+s.id)));
+      // avoid no students case
       if (noStudentsCase) {
         return;
       }
