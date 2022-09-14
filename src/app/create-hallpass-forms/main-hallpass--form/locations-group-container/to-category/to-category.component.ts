@@ -149,7 +149,7 @@ export class ToCategoryComponent implements OnInit {
    // skipped are students that do not qualify to go forward     
    let skipped = this.visibilityService.calculateSkipped(students, location);
 
-    if (!skipped || skipped.length === 0) {
+    if (skipped.length === 0) {
       forwardAndEmit();
       return; 
     }

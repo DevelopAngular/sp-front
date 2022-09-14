@@ -9,7 +9,7 @@ export class LocationVisibilityService {
   constructor() { }
 
   // mimic server visibility byid  calculation
-  calculateSkipped(users: User[], location: Location): string[] | undefined {
+  calculateSkipped(users: User[], location: Location): string[] {
     const students = users.map(s => ''+s.id);
     const ruleStudents = location.visibility_students.map((s: User) => ''+s.id);
     const rule = location.visibility_type;
