@@ -34,11 +34,9 @@ export class WhoYouAreComponent implements OnInit {
   // used for filtering users found with sp-search component
   getFilteringStudents(): (users: User[] | GSuiteSelector[]) => User[] | GSuiteSelector[] {
     return ((uu) => {
-      const students = uu.map(u => ''+u.id);
+      const students = [...uu];
       const loc = this.formState.data.direction.from;
-      const ruleStudents = loc.visibility_students.map((v: User) => ''+v.id);
-      const rule = loc.visibility_type;
-      const skipped = this.visibilityService.calculateSkipped(students, ruleStudents, rule) ?? [];
+      const skipped = this.visibilityService.calculateSkipped(students, loc) ?? [];
       const result = !skipped.length ? uu : uu.filter(u => !skipped.includes(''+u.id));
       return result;
     }).bind(this);
