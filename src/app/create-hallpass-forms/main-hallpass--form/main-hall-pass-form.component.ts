@@ -7,7 +7,7 @@ import {StudentList} from '../../models/StudentList';
 import {NextStep} from '../../animations';
 import {BehaviorSubject, combineLatest, Subject} from 'rxjs';
 import {CreateFormService} from '../create-form.service';
-import {filter, map, takeUntil, withLatestFrom} from 'rxjs/operators';
+import {filter, map, takeUntil, tap} from 'rxjs/operators';
 import {cloneDeep, find} from 'lodash';
 import {LocationsService} from '../../services/locations.service';
 import {ScreenService} from '../../services/screen.service';
@@ -262,36 +262,19 @@ export class MainHallPassFormComponent implements OnInit, OnDestroy {
       this.locationsService.updatePassLimitRequest(loc);
     });
 
+    // usually a location is patched through a pinnable so those cases are handled in listenPinnableSocket
+    // but for cases as an admin adding texhers to a room or anything that modify a room
+    // this code listening to location only, separate of pinnable, is usefull
     this.locationsService.listenLocationSocket().pipe(
       takeUntil(this.destroy$),
-      withLatestFrom(this.passesService.pinnables$),
-      filter(combo => {
-        const [, pinns] = combo;
-        return pinns?.length > 0;
-      }),
-      map(([res, pinns]) => {
+      filter(res => !!res),
+      tap((res) => {
         try {
           const loc: Location = Location.fromJSON(res.data);
           this.locationsService.updateLocationSuccessState(loc);
-          const found = pinns.find(p => {
-            return !!p.location ? p.location.id == res.data.id : true;
-          });
-          if (found) {
-            const hasLocation = 'location' in found;
-            // update location of pinnable
-            if (hasLocation) {
-              found.location = loc;
-              found.title = loc.title;
-            }
-            // TODO: only update state if it is related to user
-            this.locationsService.updatePinnableSuccessState(found);
-            this.formService.setUpdatedChoice(loc);
-            return found;
-          }
-          return null;
+          this.formService.setUpdatedChoice(loc);
         } catch (e) {
           console.log(e);
-          return null;
         }
       }),
     ).subscribe();
@@ -299,8 +282,13 @@ export class MainHallPassFormComponent implements OnInit, OnDestroy {
     this.locationsService.listenPinnableSocket().pipe(
       takeUntil(this.destroy$),
       filter(res => !!res),
-      map((res) => {
+      tap((res) => {
         this.locationsService.updatePinnableSuccessState(res.data);
+
+        // update interface using filtering
+        // try catch here?
+        //const loc: Location = Location.fromJSON(res.data.location);
+        //this.formService.setUpdatedChoice(loc);
       }),
     ).subscribe();
 
