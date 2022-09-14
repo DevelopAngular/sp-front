@@ -388,7 +388,7 @@ export class AppComponent implements OnInit, AfterViewInit, OnDestroy {
         user_id: user.id,
         name: user.display_name,
         email: user.primary_email,
-        created_at: user.created,
+        created: user.created,
         type: user.isAdmin() ? 'Admin' : (user.isAssistant() ? 'Assistant' : 'Teacher'),
         status: user.status,
         account_type: user.sync_types[0] === 'google' ? 'Google' : (user.sync_types[0] === 'clever' ? 'Clever' : 'Standard'),
