@@ -11,6 +11,8 @@ import {StorageService} from '../../../../services/storage.service';
 import {ScreenService} from '../../../../services/screen.service';
 import {KeyboardShortcutsService} from '../../../../services/keyboard-shortcuts.service';
 import {pluck, takeUntil} from 'rxjs/operators';
+import {MatDialog} from '@angular/material/dialog';
+import {DropdownOptions, DropdownSelectionComponent} from '../../../../core/components/dropdown-selection/dropdown-selection.component';
 
 @Component({
   selector: 'app-date-time',
@@ -47,6 +49,12 @@ export class DateTimeComponent implements OnInit, OnDestroy {
   };
 
   destroy$: Subject<any> = new Subject<any>();
+  selectedRecurrenceFrequency = 'Does not Repeat';
+  recurrenceOptions: DropdownOptions<number>[] = [
+    { text: 'Does not repeat', value: 0 },
+    { text: 'Daily', value: 1 },
+    { text: `Weekly on ${this.requestTime.format('dddd')}`, value: 2 }
+  ];
 
 
   constructor(
@@ -54,8 +62,23 @@ export class DateTimeComponent implements OnInit, OnDestroy {
     private timeService: TimeService,
     private formService: CreateFormService,
     private storage: StorageService,
-    private shortcutsService: KeyboardShortcutsService
+    private shortcutsService: KeyboardShortcutsService,
+    private dialog: MatDialog
   ) {
+  }
+
+  get formatDate(): string {
+    const today = new Date();
+    const requestDate = this.requestTime.toDate();
+    const isToday = today.getDate() === requestDate.getDate() &&
+      today.getMonth() === requestDate.getMonth() &&
+      today.getFullYear() === requestDate.getFullYear();
+
+    if (isToday) {
+      return `Today, ${this.requestTime.format('h:mm a')}`;
+    }
+
+    return this.requestTime.format('dddd, h:mm a');
   }
 
   get gradient() {
@@ -160,5 +183,13 @@ export class DateTimeComponent implements OnInit, OnDestroy {
 
   get isPortableDevice() {
     return DeviceDetection.isIOSTablet() || DeviceDetection.isIOSMobile() || DeviceDetection.isAndroid();
+  }
+
+  openRecurrenceDropdown() {
+    this.dialog.open(DropdownSelectionComponent, {
+      data: {
+        
+      } as DropdownOptions<string>
+    })
   }
 }

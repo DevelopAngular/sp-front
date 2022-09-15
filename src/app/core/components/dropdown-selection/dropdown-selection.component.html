@@ -1,0 +1,8 @@
+<div class="action-sheet-dialog">
+  <div class="options">
+    <div class="ds-flex-center-between option" [ngClass]="{ 'selected': isSelected(option) }" *ngFor="let option of data.options" (click)="selectOption(option)">
+      <span>{{ option.text }}</span>
+      <img *ngIf="isSelected(option)" [src]="'./assets/Check (Navy).svg' | resolveAsset" alt="Option Selected Icon" style="width: 16px; height: 16px;">
+    </div>
+  </div>
+</div>
