@@ -15,29 +15,23 @@ export class LocationVisibilityService {
     const rule = location.visibility_type;
                  
     let byid: string[] = [];
+    let delta: string[] = [];
 
-    // filter by ids
-    if (rule ===  "visible_certain_students") {
-     if (ruleStudents.length === 0) {
-       byid = students;
-     } else {
-        const delta: string[] = students.filter(s => (!ruleStudents.includes(s)));
-       if (delta.length > 0) {
-         byid = delta;
-       }
-     }
-    } else if (rule === "hidden_certain_students") {
-      if (ruleStudents.length > 0) {
-        const delta: string[] = students.filter(s => ruleStudents.includes(s));
-        if (delta.length > 0) {
-          byid = delta;
-        }
+    if (ruleStudents.length > 0) {
+      // filter by ids
+      if (rule ===  "visible_certain_students") {
+       delta = students.filter(s => (!ruleStudents.includes(s)));
+      } else if (rule === "hidden_certain_students") {
+        delta = students.filter(s => ruleStudents.includes(s));
       }
+      if (delta.length > 0) byid = delta;
+      // nothing to be skipped
+      if (byid.length === 0) return [];
     }
 
     // filter by grade
     const ruleGrades = location?.visibility_grade ?? [];
-    if (ruleGrades.length === 0 || rule == 'visible_all_students') return byid;
+    if (ruleGrades.length === 0) return byid;
     
     const _bygrade: User[] = users.filter((s: User) => {
       // without grade don't put in in skipped
