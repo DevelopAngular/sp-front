@@ -270,7 +270,7 @@ export class LocationTableComponent implements OnInit, OnDestroy {
   private choiceFunc(loc) {
     return function(choice) {
       if (choice instanceof Location) { 
-        if (choice.id === loc.id) {
+        if (''+choice.id === ''+loc.id) {
           return loc;
         } else {
           return choice;
@@ -278,7 +278,7 @@ export class LocationTableComponent implements OnInit, OnDestroy {
       } else {
         try {
           const l = Location.fromJSON(choice);
-          if (l.id === loc.id) return JSON.parse(JSON.stringify(loc));
+          if (''+l.id === ''+loc.id) return JSON.parse(JSON.stringify(loc));
         } catch(e) {}
         return JSON.parse(JSON.stringify(choice));
       }
@@ -289,13 +289,13 @@ export class LocationTableComponent implements OnInit, OnDestroy {
   private isFoundChoice(loc: Location, choices) {
     for (let i = 0; i < choices.length; i++) {
       if (choices[i] instanceof Location) { 
-        if (choices[i].id === loc.id) {
+        if (''+choices[i].id === ''+loc.id) {
           return true;
         } 
       } else {
         try {
           const l = Location.fromJSON(choices[i]);
-          if (l.id === loc.id) return true;
+          if (''+l.id === ''+loc.id) return true;
         } catch(e) {}
       }
     }
@@ -308,6 +308,10 @@ export class LocationTableComponent implements OnInit, OnDestroy {
       this.choices = [JSON.parse(JSON.stringify(loc)), ...this.choices];
     } else {
       this.choices = this.choices.map(mapping);
+    }
+
+    if (!loc.starred) {
+      return;
     }
     if (!this.isFoundChoice(loc, this.starredChoices)) {
       this.starredChoices = [JSON.parse(JSON.stringify(loc)), ...this.starredChoices];
