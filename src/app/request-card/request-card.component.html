@@ -128,7 +128,7 @@
                       <div class="description-title" #desc [style.margin-left]="filteredTeachers.length > 1 ? '0px' : '15px'">
                         Pass Request sent to:
                         <span style="width: 5px"></span>
-                        <span style="font-weight: normal; font-size: 17px" *ngFor="let teacher of filteredTeachers; let i = index">
+                        <span notranslate style="font-weight: normal; font-size: 17px" *ngFor="let teacher of filteredTeachers; let i = index">
                             <span style="margin-right: 3px">{{ teacher.display_name + (i === filteredTeachers.length - 1 ? '' : ', ') }}</span>
                           </span>
                       </div>
@@ -143,9 +143,9 @@
                 <img class="request-description-icon" [src]="'./assets/Lock (White).svg' | resolveAsset">
                 <div class="request-description-text">
                   Pass Request sent to: <br>
-                  <span style="font-weight: normal; font-size: 17px" *ngFor="let teacher of filteredTeachers; let i = index">
+                  <span style="font-weight: normal; font-size: 17px" notranslate *ngFor="let teacher of filteredTeachers; let i = index">
                   {{ teacher.display_name + (i === filteredTeachers.length - 1 ? '' : ', ') }}
-                </span>
+                  </span>
                 </div>
               </div>
             </ng-template>
@@ -280,7 +280,7 @@
 
       <div class="request-card-footer" *ngIf="forStaff && !isModal">
         <div class="student-footer"></div>
-        <div class="student-text"> {{ request.student.display_name }} </div>
+        <div class="student-text" notranslate> {{ request.student.display_name }} </div>
       </div>
     </div>
 

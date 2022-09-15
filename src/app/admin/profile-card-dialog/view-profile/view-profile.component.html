@@ -26,7 +26,7 @@
             </div>
             <div class="ds-flex-center-center ds-dialog-title" style="z-index: 10" [attr.data-motion-translate]="(frameMotion$ | async).direction">
                 <!--        <img class="role-icon" [ngClass]="{'gsuite': this.layout === 'gSuiteSettings'}"  [src]="headerIcon" alt="header-icon">-->
-                <span>{{user.display_name}}</span>
+                <span notranslate>{{user.display_name}}</span>
 
             </div>
             <div class="status-button" #status>

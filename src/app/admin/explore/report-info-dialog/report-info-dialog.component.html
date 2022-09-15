@@ -16,7 +16,7 @@
         ></app-status-chip>
       </div>
       <div class="title">Student</div>
-      <div class="subtitle">{{ report.student.display_name }}</div>
+      <div class="subtitle" ignore>{{ report.student.display_name }}</div>
       <div class="subtitle">{{ report.student.primary_email }}</div>
     </div>
 
@@ -41,7 +41,7 @@
     <div class="container">
       <div class="block">
         <div class="title">Submitted by</div>
-        <div class="subtitle">{{ report.issuer.display_name }}</div>
+        <div class="subtitle" ignore>{{ report.issuer.display_name }}</div>
       </div>
       <div class="block">
         <div class="title">Date Submitted</div>

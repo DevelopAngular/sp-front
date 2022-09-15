@@ -161,7 +161,7 @@
              (mouseover)="_option.hovered = true"
              (mouseleave)="_option.hovered = false; _option.pressed = false"
         >
-          <div class="option-data_leftside">
+          <div class="option-data_leftside" notranslate>
             <span [style.color]="teacher.user.id === selectedTeacher.user.id ? darkTheme.getColor({dark: '#FFFFFF', white: '#1F195E'}) : darkTheme.getColor({dark: '#FFFFFF', white: '#7f879d'})">{{ teacher.user.display_name }}</span>
           </div>
           <div class="option-data_rightside">

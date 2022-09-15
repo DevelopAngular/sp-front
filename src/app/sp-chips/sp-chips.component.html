@@ -6,7 +6,7 @@
     [style.background-color]="getBackground(chip)"
     [style.color]="textColor(chip)">
     <img *ngIf="selectedTarget === 'roles'" width="16" style="margin-right: 5px" [src]="teacher.icon" alt="Icon">
-    <span [style.cursor]="'default'" [style.user-select]="'none'">
+    <span [style.cursor]="'default'" [style.user-select]="'none'" [attr.notranslate]="selectedTarget==='users' ? 'no' : null">
       {{selectedTarget === 'users' ? teacher.display_name : selectedTarget === 'roles' ? teacher.role : selectedTarget === 'rooms' ? teacher.title : teacher.as}}
     </span>
     <div *ngIf="chip.hovered && !teacher.lockAccount" class="delete">
@@ -46,5 +46,5 @@
    [withShadow]="false"
    [fontSize]="'14px'"
    (buttonClick)="addSuggestedTeacher.emit(suggestedTeacher)"
-  >Suggested: {{ suggestedTeacher.display_name }}</app-gradient-button>
+      >Suggested: <span notranslate>{{ suggestedTeacher.display_name }}</span></app-gradient-button>
 </div>

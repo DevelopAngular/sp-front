@@ -32,7 +32,7 @@
         <div class="quick-select_header">
           <span>Quick Select</span>
         </div>
-        <div class="quick-select_scrollable">
+        <div class="quick-select_scrollable" notranslate>
           <div *ngFor="let teacher of filteredTeachers; let i = index" #cell tabindex="0" class="quick-select_item"
                (mouseenter)="cell.hovered = true;"
                (mouseleave)="cell.hovered = false;"

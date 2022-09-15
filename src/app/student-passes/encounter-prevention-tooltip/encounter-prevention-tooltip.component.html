@@ -11,7 +11,7 @@
     <div class="group-wrapper" [@NextStep]="{ value: '', params: frameMotion$ | async}">
       <div class="group">
         <div class="group-name" *ngIf="groups[page].name">{{ groups[page].name }}</div>
-        <div class="prevention-students">
+        <div class="prevention-students" notranslate>
           <div class="student" *ngFor="let student of groups[page].users">
             <div class="student-picture">
               <div *ngIf="student.profile_picture; else d" [ngStyle]="{'background': 'url(' + student.profile_picture + ') no-repeat left center/cover', width: '23px', height: '23px'}"></div>
