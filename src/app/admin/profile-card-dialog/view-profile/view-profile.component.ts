@@ -341,9 +341,8 @@ export class ViewProfileComponent implements OnInit {
           return this.userService.deleteUserRequest(this.user, `_profile_${role.role.toLowerCase()}`);
         })).subscribe();
       }
-      zip(...this.userRoles.map(role => {
-        return this.userService.addUserToProfileRequest(this.user, role.role.toLowerCase());
-      })).subscribe();
+
+      this.userService.addUserToProfilesRequest(this.user, this.userRoles.map(r => r.role.toLowerCase()));
     }
 
    if (this.permissionsFormEditState && this.assistantForEditState) {

@@ -388,7 +388,7 @@ export class AppComponent implements OnInit, AfterViewInit, OnDestroy {
         user_id: user.id,
         name: user.display_name,
         email: user.primary_email,
-        created_at: user.created,
+        created: new Date(user.created),
         type: user.isAdmin() ? 'Admin' : (user.isAssistant() ? 'Assistant' : 'Teacher'),
         status: user.status,
         account_type: user.sync_types[0] === 'google' ? 'Google' : (user.sync_types[0] === 'clever' ? 'Clever' : 'Standard'),
@@ -396,8 +396,8 @@ export class AppComponent implements OnInit, AfterViewInit, OnDestroy {
         company: {
           id: school.id,
           name: school.name,
-          id_card_access: school.feature_flag_digital_id,
-          plus_access: school.feature_flag_encounter_detection
+          'Id Card Access': school.feature_flag_digital_id,
+          'Plus Access': school.feature_flag_encounter_detection
         }
       };
       window.Intercom('update');
