@@ -137,6 +137,8 @@ export class SPSearchComponent implements OnInit, OnDestroy {
 
   @Input() searchingTeachers: User[];
   @Input() searchingRoles: { id: number, role: string, icon: string }[];
+  @Input() orgUnits:String[]=[]
+  @Input() orgUnitExistCheck:BehaviorSubject<Boolean>
 
   @Input() filteringUsersCallback?: Function;
 
@@ -186,7 +188,7 @@ export class SPSearchComponent implements OnInit, OnDestroy {
 
   destroy$: Subject<any> = new Subject<any>();
   // orgUnits:OrgUnits[]=[]
-  orgUnits:String[]=[]
+
 
   @HostListener('document.scroll', ['$event'])
   scroll() {
@@ -208,7 +210,6 @@ export class SPSearchComponent implements OnInit, OnDestroy {
     private kioskMode: KioskModeService,
     private adminService:AdminService
   ) {
-    this.getLatestOrgUnitList()
   }
 
   get isMobile() {
@@ -321,12 +322,6 @@ export class SPSearchComponent implements OnInit, OnDestroy {
 
     this.user$ = this.userService.user$;
     this.isEnableProfilePictures$ = this.userService.isEnableProfilePictures$;
-
-    //subscribe for latest Orgunit list
-    // this.adminService.getGSuiteOrgsUnits().subscribe((res:OrgUnits[])=>{
-    //   this.orgUnits =res
-    //   console.log("org units:::",this.orgUnits)
-    // }) 
     
 
   }
@@ -624,15 +619,6 @@ export class SPSearchComponent implements OnInit, OnDestroy {
   hasStudentRole(user) {
     return user.roles && User.fromJSON(user).isStudent();
   }
-  getLatestOrgUnitList(){
-    this.adminService.getGSuiteOrgsUnits().pipe(
-     map((res:OrgUnits[])=>{
-     return res.map(item=>item.path)
-     })
-    ).subscribe((res)=>{
-     this.orgUnits=res
-    })
- }
 
   reset() {
     this.selectedOptions = [];

@@ -1,10 +1,11 @@
 import {Component, EventEmitter, Input, OnInit, Output} from '@angular/core';
 import {DomSanitizer} from '@angular/platform-browser';
 import {MatIconRegistry} from '@angular/material/icon';
-import {uniqBy} from 'lodash';
+import {remove, uniqBy} from 'lodash';
 import {filter, map, pluck, switchMap, take, takeUntil} from 'rxjs/operators';
 import {User} from '../models/User';
 import {AdminService} from '../services/admin.service';
+import {BehaviorSubject} from 'rxjs';
 interface OrgUnits{
   path:string
 }
@@ -24,6 +25,7 @@ export class SpChipsComponent implements OnInit {
   @Input() textAddButton: string | null; 
   @Input() selectedTarget: 'users' | 'orgunits' | 'roles' | 'rooms' = 'users';
   @Input() orgUnitList:String[]
+  @Input() orgUnitExistCheck:BehaviorSubject<Boolean>
 
   @Output() add: EventEmitter<boolean> = new EventEmitter();
   @Output() updateSelectedEvent: EventEmitter<User[]> = new EventEmitter();
@@ -49,7 +51,6 @@ export class SpChipsComponent implements OnInit {
 
   ngOnInit() {
     this.textAddButton = this.textAddButton ?? this.textAddButtonDefault;
-    console.log("props:::",this.orgUnitList)
   }
 
   textColor(item) {
@@ -80,10 +81,28 @@ export class SpChipsComponent implements OnInit {
       if(this.orgUnitList.includes(item.path)){
         return false
       }else{
+        this.orgUnitExistCheck.next(true)
        return true
+      
       }
     }
     
   }
+  removeSelectedProfile(){
+    let existCount=0;
+    if(this.selectedProfiles && this.selectedProfiles.length && this.orgUnitList && this.orgUnitList.length ){
+      this.selectedProfiles.forEach((sp:any)=>{
+        if(this.orgUnitList.includes(sp.path)){
+          existCount=existCount+1
+        }
+      })
+      if(existCount==this.selectedProfiles.length){
+        this.orgUnitExistCheck.next(false)
+      }
+    }
+
+  }
 
 }
+
+
