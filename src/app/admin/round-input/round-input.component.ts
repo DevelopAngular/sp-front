@@ -1,12 +1,12 @@
 import {Component, ElementRef, EventEmitter, Input, OnChanges, OnDestroy, OnInit, Output, SimpleChanges, ViewChild} from '@angular/core';
 import {MatDialog} from '@angular/material/dialog';
-import {BehaviorSubject, fromEvent, Observable, Subject} from 'rxjs';
+import {BehaviorSubject, fromEvent, Observable, Subject, merge, of} from 'rxjs';
 import {DarkThemeSwitch} from '../../dark-theme-switch';
 import {DomSanitizer} from '@angular/platform-browser';
 import {HttpService} from '../../services/http-service';
-import {debounceTime, distinctUntilChanged, takeUntil, tap} from 'rxjs/operators';
+import {debounceTime, distinctUntilChanged, takeUntil, tap, take} from 'rxjs/operators';
 import {DeviceDetection} from '../../device-detection.helper';
-
+import {StorageService} from '../../services/storage.service';
 //Can be 'text', 'multilocation', 'multiuser', or 'dates'  There may be some places where multiuser may need to be split into student and teacher. I tried finding a better way to do this, but this is just short term.
 
 export type RoundInputType = 'text' | 'multilocation' | 'multiuser' |  'dates' | 'email';
@@ -69,6 +69,7 @@ export class RoundInputComponent implements OnInit, OnChanges, OnDestroy {
     public dialog: MatDialog,
     public darkTheme: DarkThemeSwitch,
     public sanitizer: DomSanitizer,
+    private storage: StorageService,
   ) { }
 
   get labelIcon() {
@@ -154,6 +155,22 @@ export class RoundInputComponent implements OnInit, OnChanges, OnDestroy {
       });
     }
 
+    const langStored = this.storage.getItem('codelang');
+    merge(of(langStored), this.httpService.currentLang$).pipe(
+      //distinctUntilChanged(),
+      tap(lang => {
+        console.log(lang)
+        if (lang === 'es') {
+          const tr = (window as any).Localize;
+          if (!tr) {
+            return;
+          }
+          console.log('b', this.placeholder)
+          this.placeholder = tr.translate(this.placeholder)
+          console.log('a', this.placeholder)
+        }
+      }),
+    ).subscribe();
   }
 
   ngOnChanges(sc: SimpleChanges) {

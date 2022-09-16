@@ -319,6 +319,10 @@ export class HttpService implements OnDestroy {
           return;
         });
 
+        this.setLang('en');
+        // HACK!
+        this.storage.setItem('ljs-lang', 'en');
+
     this.kioskTokenSubject$.pipe(
         takeUntil(this.destroyed$),
         filter(v => !!v && !!this.getAuthContext()),

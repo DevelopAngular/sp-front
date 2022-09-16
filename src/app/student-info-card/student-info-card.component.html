@@ -42,19 +42,19 @@
 
                     <div class="content">
                         <div class="student-passes-info" *ngIf="!(loadingPassesStats$ | async); else fakeStats">
-                            <div class="card-info" [customToolTip]="'The student had ' + (passesStats$ | async)?.past_passes_today + ((passesStats$ | async)?.past_passes_today === 1 ? ' pass' : ' passes') +  ' today.'" [nonDisappearing]="false" [editable]="true">
+                          <div class="card-info" [allowVarTag]="true" [customToolTip]="'The student had ' + '<var>' + (passesStats$ | async)?.past_passes_today + '</var>' + ((passesStats$ | async)?.past_passes_today === 1 ? ' pass' : ' passes') +  ' today.'" [nonDisappearing]="false" [editable]="true">
                                 <div class="title">{{ (passesStats$ | async)?.past_passes_today }}</div>
                                 <div class="subtitle">today</div>
                             </div>
-                            <div class="card-info" [customToolTip]="'The student had ' + (passesStats$ | async)?.past_passes_week + ((passesStats$ | async)?.past_passes_week === 1 ? ' pass' : ' passes') +  ' this week.'" [nonDisappearing]="false" [editable]="true">
+                            <div class="card-info" [allowVarTag]="true" [customToolTip]="'The student had ' + '<var>' + (passesStats$ | async)?.past_passes_week + '</var>' + ((passesStats$ | async)?.past_passes_week === 1 ? ' pass' : ' passes') +  ' this week.'" [nonDisappearing]="false" [editable]="true">
                                 <div class="title">{{ (passesStats$ | async)?.past_passes_week }}</div>
                                 <div class="subtitle">this week</div>
                             </div>
                             <div class="card-info" customToolTip [contentTemplate]="tooltip" [nonDisappearing]="false" [editable]="true">
                                 <ng-template #tooltip>
-                                    <div class="ds-tooltip" style="max-width: 265px">
-                                        {{ 'The student had ' + (passesStats$ | async)?.past_passes_month + ((passesStats$ | async)?.past_passes_month === 1 ? ' pass' : ' passes') + ' this month.' }}
-                                    </div>
+                                    <div class="ds-tooltip" style="max-width: 265px"
+                                      [innerHTML]="'The student had ' + '<var>' + (passesStats$ | async)?.past_passes_month + '</var>' + ((passesStats$ | async)?.past_passes_month === 1 ? ' pass' : ' passes') + ' this month.'"
+                                    ></div>
                                 </ng-template>
                                 <div class="title">{{ (passesStats$ | async)?.past_passes_month }}</div>
                                 <div class="subtitle">this month</div>
@@ -135,8 +135,9 @@
                                     <div *ngIf="studentPassLimit?.passLimit" class="ds-flex-column" style="display: flex; gap: 3px; margin-top: 3px;">
                                       <span
                                         style="font-size: 14px !important; font-weight: 500 !important;"
-                                        [ngClass]="{ 'pass-limit-counter': true, 'individual-limit': studentPassLimit.isIndividual, 'school-limit': !studentPassLimit.isIndividual }">
-                                        {{studentPassLimit.passLimit === -2 ? "Unlimited" : studentPassLimit.passLimit}} {{studentPassLimit.passLimit === 1 ? 'pass' : 'passes'}}/day
+                                        [ngClass]="{ 'pass-limit-counter': true, 'individual-limit': studentPassLimit.isIndividual, 'school-limit': !studentPassLimit.isIndividual }"
+                                        [innerHTML]="studentPassLimit.passLimit === -2 ? 'Unlimited' : '<var>' + studentPassLimit.passLimit + '</var> ' + (studentPassLimit.passLimit === 1 ? 'pass' : 'passes') + '/day'"
+                                      >
                                       </span>
                                       <span class="ds-dialog-normal-text" style="font-weight: 400 !important;" *ngIf="studentPassLimit.description && studentPassLimit.isIndividual">{{studentPassLimit.description}}</span>
                                     </div>
@@ -188,8 +189,8 @@
 
                         <div class="form" style="flex-direction: column; align-items: flex-start">
                             <div class="form-content">
-                                <div class="title">{{ getEmailOrUsername() }}</div>
-                                <div class="value">{{ profileEmail }}</div>
+                                <div [attr.nostranslate]="(getEmailOrUsername().toLowerCase() === 'email') ? null : true" class="title">{{ getEmailOrUsername() }}</div>
+                                <div notranslate class="value">{{ profileEmail }}</div>
                             </div>
                             <div class="form-content" [style.margin]="'20px 0'">
                                 <div class="title">Grade</div>
@@ -270,7 +271,7 @@
                         </div>
                       </ng-template>
                     </div>
-                    <div class="value">{{ (studentStats$ | async)?.total_created_passes + ( (studentStats$ | async)?.total_created_passes === 1 ? ' pass' : ' passes') }}</div>
+                    <div class="value" [innerHTML]="'<var>' + (studentStats$ | async)?.total_created_passes + '</var>' + ( (studentStats$ | async)?.total_created_passes === 1 ? ' pass' : ' passes')"></div>
                   </div>
                   <div class="info-card" #outOfClass (mouseenter)="outOfClass.hovered = true" (mouseleave)="outOfClass.hovered = false">
                     <div class="title">TIME SPENT OUT OF CLASS
@@ -292,7 +293,7 @@
                                             </div>
                                         </ng-template>
                                     </div>
-                                    <div class="value">{{ secondToTime((studentStats$ | async)?.out_of_class_seconds) }}</div>
+                                    <div notranslate class="value">{{ secondToTime((studentStats$ | async)?.out_of_class_seconds) }}</div>
                                 </div>
                                 <div class="info-card" #overTime (mouseenter)="overTime.hovered = true" (mouseleave)="overTime.hovered = false">
                                     <div class="title">PASSES OVER TIME LIMIT
@@ -306,7 +307,7 @@
                                             </div>
                                         </ng-template>
                                     </div>
-                                    <div class="value">{{ (studentStats$ | async)?.over_time_limit + ( (studentStats$ | async)?.over_time_limit === 1 ? ' pass' : ' passes') }}</div>
+                                    <div class="value" [innerHTML]="'<var>' + (studentStats$ | async)?.over_time_limit + '</var>' + ( (studentStats$ | async)?.over_time_limit === 1 ? ' pass' : ' passes')"></div>
                                 </div>
                                 <div class="info-card" #autoEnded (mouseenter)="autoEnded.hovered = true" (mouseleave)="autoEnded.hovered = false">
                                     <div class="title">PASSES AUTO-ENDED
@@ -320,7 +321,7 @@
                                             </div>
                                         </ng-template>
                                     </div>
-                                    <div class="value">{{ (studentStats$ | async)?.auto_ended + ((studentStats$ | async)?.auto_ended === 1 ? ' pass' : ' passes') }}</div>
+                                    <div class="value" [innerHTML]="'<var>' + (studentStats$ | async)?.auto_ended + '</var>' + ((studentStats$ | async)?.auto_ended === 1 ? ' pass' : ' passes')"></div>
                                 </div>
                             </div>
 
