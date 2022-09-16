@@ -89,7 +89,7 @@ export class PassTileComponent implements OnInit, OnDestroy, OnChanges {
       }
       const content = this.pass instanceof Request ?
           ((this.pass.request_time && this.forFuture) ?
-            (!this.forStaff ? getInnerPassContent(this.pass) : getFormattedPassDate(this.pass)) : (this.forStaff ? 'Pass for Now' : '')) :
+            (!this.forStaff ? getInnerPassContent(this.pass) : this.sanitizer.bypassSecurityTrustHtml(getFormattedPassDate(this.pass))) : (this.forStaff ? 'Pass for Now' : '')) :
           getInnerPassContent(this.pass, (!this.pass['request_time'] && this.pass instanceof Request) ||
               !(this.pass instanceof Invitation));
      return content;
