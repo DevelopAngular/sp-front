@@ -15,7 +15,7 @@
            [cursor]="'pointer'"
            (buttonClick)="addStudents()"
         >
-          Add ({{ selectedStudents.length }})
+        Add (<var>{{ selectedStudents.length }}</var>)
         </app-gradient-button>
       </div>
     </div>
@@ -37,7 +37,7 @@
           <div class="selected" *ngFor="let room of roomsWithCategories">
             <div class="container">
               <div class="room">
-                <div class="name">{{ room.title + (room.locations ? ' (' + room.locations.length + ')' : '') }}</div>
+                <div class="name">{{ room.title + (room.locations ? ' (<var>' + room.locations.length + '</var>)' : '') }}</div>
                 <app-restriction-picker
                         [width]="265"
                         [height]="32"
@@ -59,7 +59,7 @@
       <app-gradient-button
         (buttonClick)="state === 'options' ? add() : state = 'options'"
       >
-        {{state === 'options' ? 'Add' : 'Next'}} ({{ selectedLocations.length }})
+        {{state === 'options' ? 'Add' : 'Next'}} (<var>{{ selectedLocations.length }}</var>)
       </app-gradient-button>
     </div>
   </div>
