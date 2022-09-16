@@ -1,5 +1,5 @@
 <div class="pass-limits-info"  style="position:relative;" *ngIf="passLimitInfo?.showPasses">
-  <p>{{passLimitInfo.current}}/{{passLimitInfo.max}} passes remaining today</p>
+  <p><var>{{passLimitInfo.current}}/{{passLimitInfo.max}}</var> passes remaining today</p>
   <p style="margin-top: -8px; font-size: 12px" *ngIf="passLimitInfo.current === 0">You must request a pass from your teacher</p>
 
   <div class="pass-limits-counter-icon" [ngClass]="{'pass-limit-locked': passLimitInfo.current === 0, 'pass-limit-one-remaining': passLimitInfo.current === 1}">
