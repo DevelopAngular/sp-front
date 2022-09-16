@@ -58,9 +58,13 @@ export class SchoolSettingDialogComponent implements OnInit, OnDestroy {
         }),
         )
         .subscribe((res) => {
-          console.log(res)
-          this.http.currentSchoolSubject.next(res);
-          this.dialogRef.close();
+         
+          if(res) {
+            this.http.currentSchoolSubject.next(res);
+            this.dialogRef.close();
+          }
+
+      
           // TODO: (BUG) it opens multiple toasts 
           // doublingng the number every time
           /*this.toast.openToast({
@@ -91,7 +95,7 @@ export class SchoolSettingDialogComponent implements OnInit, OnDestroy {
 
   save() {
     this.showSpinner = true;
-    this.changeSettings$.next(null);
+     this.changeSettings$.next();
   }
 
   close() {
