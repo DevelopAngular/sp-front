@@ -22,7 +22,7 @@ import {SortMenuComponent} from '../sort-menu/sort-menu.component';
 import {MyRoomAnimations} from './my-room.animations';
 import {KioskModeService} from '../services/kiosk-mode.service';
 import {bumpIn} from '../animations';
-import {DomSanitizer} from '@angular/platform-browser';
+import {DomSanitizer, Title} from '@angular/platform-browser';
 import {Router} from '@angular/router';
 import {StorageService} from '../services/storage.service';
 import {HttpService} from '../services/http-service';
@@ -94,7 +94,6 @@ export class MyRoomComponent implements OnInit, OnDestroy, AfterViewInit {
 
   @ViewChild('calendar') calendar: ElementRef;
 
-  testPasses: PassLikeProvider;
   activePasses: any;
   originPasses: any;
   destinationPasses: any;
@@ -162,10 +161,10 @@ export class MyRoomComponent implements OnInit, OnDestroy, AfterViewInit {
       public screenService: ScreenService,
       public router: Router,
       private scrollPosition: ScrollPositionService,
-      private updateService: CheckForUpdateService
+      private updateService: CheckForUpdateService,
+      private titleService: Title
   ) {
     this.setSearchDate(this.timeService.nowDate());
-    this.testPasses = new BasicPassLikeProvider(testPasses);
 
     const selectedLocationArray$ = this.selectedLocation$
       .pipe(
@@ -273,6 +272,7 @@ export class MyRoomComponent implements OnInit, OnDestroy, AfterViewInit {
           this.selectedLocation = selected;
           this.selectedLocation$.next([selected]);
         }
+        this.titleService.setTitle(`${this.selectedLocation.title} | SmartPass`);
         this.userLoaded = true;
     });
 
@@ -427,6 +427,7 @@ export class MyRoomComponent implements OnInit, OnDestroy, AfterViewInit {
         .subscribe(data => {
           this.holdScrollPosition = data.scrollPosition;
           this.selectedLocation = data.selectedRoom === 'all_rooms' ? null : data.selectedRoom;
+          this.titleService.setTitle(`${this.selectedLocation.title} | SmartPass`);
           this.selectedLocation$.next(data.selectedRoom !== 'all_rooms' ? [data.selectedRoom] : this.roomOptions);
         });
     }
@@ -475,6 +476,7 @@ export class MyRoomComponent implements OnInit, OnDestroy, AfterViewInit {
 
       dialogRef.componentInstance.onListItemClick.subscribe((location) => {
         this.selectedLocation = location;
+        this.titleService.setTitle(`${this.selectedLocation.title} | SmartPass`);
         this.selectedLocation$.next(this.selectedLocation !== null ? [this.selectedLocation] : this.roomOptions);
       });
   }

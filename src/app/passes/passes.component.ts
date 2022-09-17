@@ -58,6 +58,7 @@ import {PassLimitService} from '../services/pass-limit.service';
 import {PassLimitInfo} from '../models/HallPassLimits';
 import {MainHallPassFormComponent} from '../create-hallpass-forms/main-hallpass--form/main-hall-pass-form.component';
 import {CheckForUpdateService} from '../services/check-for-update.service';
+import {Title} from '@angular/platform-browser';
 
 @Component({
   selector: 'app-passes',
@@ -254,7 +255,8 @@ export class PassesComponent implements OnInit, AfterViewInit, OnDestroy {
     private locationsService: LocationsService,
     private passLimitsService: PassLimitService,
     private updateService: CheckForUpdateService,
-    private cdr: ChangeDetectorRef
+    private cdr: ChangeDetectorRef,
+    private titleService: Title
   ) {
 
     this.userService.user$
@@ -267,7 +269,10 @@ export class PassesComponent implements OnInit, AfterViewInit, OnDestroy {
             user.roles.includes('_profile_admin') ||
             user.roles.includes('_profile_assistant');
           if (this.isStaff) {
+            this.titleService.setTitle('SmartPass');
             this.dataService.updateInbox(true);
+          } else {
+            this.titleService.setTitle(`${user.display_name} | SmartPass`);
           }
           return user.roles.includes('hallpass_student');
         }), // TODO filter events to only changes.
