@@ -1,5 +1,5 @@
-import {Component, EventEmitter, forwardRef, Inject, Input, OnInit, Output, ViewChild} from '@angular/core';
-import {BehaviorSubject, Observable} from 'rxjs';
+import {Component, EventEmitter, forwardRef, Inject, Input, OnInit, Output, ViewChild, OnDestroy} from '@angular/core';
+import {BehaviorSubject, Observable, Subject} from 'rxjs';
 import {User} from '../../../models/User';
 import {DataService} from '../../../services/data-service';
 import {Pinnable} from '../../../models/Pinnable';
@@ -16,7 +16,7 @@ import {RestrictedMessageComponent} from './restricted-message/restricted-messag
 import {ToWhereComponent} from './to-where/to-where.component';
 import {ScreenService} from '../../../services/screen.service';
 import {DeviceDetection} from '../../../device-detection.helper';
-import {filter, map, withLatestFrom} from 'rxjs/operators';
+import {filter, map, takeUntil, withLatestFrom, tap, take} from 'rxjs/operators';
 import {Location} from '../../../models/Location';
 import {PassLimitInfo} from '../../../models/HallPassLimits';
 import {LocationVisibilityService} from '../location-visibility.service';
@@ -29,7 +29,7 @@ export enum States { from = 1, toWhere = 2, category = 3, restrictedTarget = 4, 
   styleUrls: ['./locations-group-container.component.scss'],
   animations: [NextStep]
 })
-export class LocationsGroupContainerComponent implements OnInit {
+export class LocationsGroupContainerComponent implements OnInit, OnDestroy {
 
   @Input() FORM_STATE: Navigation;
   @Input() passLimitInfo: PassLimitInfo;
@@ -57,6 +57,13 @@ export class LocationsGroupContainerComponent implements OnInit {
     private screenService: ScreenService,
     private visibilityService: LocationVisibilityService,
   ) {
+  }
+
+  private destroy$ = new Subject();
+
+  ngOnDestroy(): void {
+    this.destroy$.next();
+    this.destroy$.complete();
   }
 
   get showDate() {
@@ -191,9 +198,22 @@ export class LocationsGroupContainerComponent implements OnInit {
     );
 
     this.pinnable = this.FORM_STATE.data.direction ? this.FORM_STATE.data.direction.pinnable : null;
+
+    // is triggered by WS
+    const byws$ = this.formService.updatedByWS$;
+    this.isUpdatedByWS$ = byws$.pipe(
+      tap(v => console.log('INIT', v)),
+      takeUntil(this.destroy$), 
+    );
+    this.isUpdatedByWS$.subscribe();
   }
 
+  isUpdatedByWS$: Observable<boolean>;
+
   fromWhere(location) {
+    // this method is called through UI by user
+    this.formService.updatedByWS$.next(false);
+
     if (this.FORM_STATE.data.hasClose) {
       return this.nextStepEvent.emit(
         {
@@ -256,6 +276,9 @@ export class LocationsGroupContainerComponent implements OnInit {
   }
 
   toWhere(pinnable) {
+    // this method is called through UI by user
+    this.formService.updatedByWS$.next(false);
+
     this.pinnable = pinnable;
     this.FORM_STATE.data.direction = {
       from: this.data.fromLocation,
@@ -291,6 +314,9 @@ export class LocationsGroupContainerComponent implements OnInit {
   }
 
   toWhereFromLocation(location: Location) {
+    // this method is called through UI by user
+    this.formService.updatedByWS$.next(false);
+
     this.pinnables.pipe(
       map(pins => {
         return pins.find(pinnable => {
@@ -318,6 +344,9 @@ export class LocationsGroupContainerComponent implements OnInit {
   }
 
   fromCategory(location) {
+    // this method is called through UI by user
+    this.formService.updatedByWS$.next(false);
+
     location.restricted = location.restricted || (this.passLimitInfo?.showPasses && this.passLimitInfo?.current === 0);
     this.data.toLocation = location;
     this.FORM_STATE.data.direction.to = location;
@@ -367,11 +396,18 @@ export class LocationsGroupContainerComponent implements OnInit {
         this.FORM_STATE.formMode.formFactor = FormFactor.HallPass;
       }
     }
-    this.FORM_STATE.previousStep = 3;
-    setTimeout(() => {
-      this.FORM_STATE.step = close ? 0 : 4;
-      this.nextStepEvent.emit(this.FORM_STATE);
-    }, 100);
+
+    this.isUpdatedByWS$.pipe(
+      take(1),
+      tap((byws: boolean) => {
+        console.log('WS', byws)   
+        if (!byws) this.FORM_STATE.previousStep = 3;
+        setTimeout(() => {
+           if (!byws) this.FORM_STATE.step = close ? 0 : 4;
+          this.nextStepEvent.emit(this.FORM_STATE);
+        }, 100);
+      }),
+    ).subscribe();
   }
 
   back(event) {

@@ -273,6 +273,7 @@ export class MainHallPassFormComponent implements OnInit, OnDestroy {
           const loc: Location = Location.fromJSON(res.data);
           this.locationsService.updateLocationSuccessState(loc);
           this.formService.setUpdatedChoice(loc);
+          this.formService.updatedByWS$.next(true);
         } catch (e) {
           console.log(e);
         }
