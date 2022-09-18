@@ -24,7 +24,7 @@ import {LocationVisibilityService} from '../location-visibility.service';
 // when WS notify a change we have to skip functions that change
 // FORM_STATE state and step 
 function skipWhenWS() {
-  return function (target, key, descriptor) {
+  return function (target: any, key: string, descriptor: PropertyDescriptor) {
     const fn = descriptor.value;
     descriptor.value = function (...args) {
       const byws = this.formService.updatedByWS$.getValue(); 

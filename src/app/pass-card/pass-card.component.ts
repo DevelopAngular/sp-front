@@ -28,6 +28,8 @@ import {
   RecommendedDialogConfig
 } from '../shared/shared-components/confirmation-dialog/confirmation-dialog.component';
 import {PassLimitService} from '../services/pass-limit.service';
+import {LocationsService} from '../services/locations.service';
+import {Location} from '../models/Location';
 
 @Component({
   selector: 'app-pass-card',
@@ -130,7 +132,8 @@ export class PassCardComponent implements OnInit, OnDestroy {
     private userService: UserService,
     private toastService: ToastService,
     private encounterService: EncounterPreventionService,
-    private passLimitService: PassLimitService
+    private passLimitService: PassLimitService,
+    private locationsService: LocationsService,
   ) {
   }
 
@@ -239,6 +242,20 @@ export class PassCardComponent implements OnInit, OnDestroy {
           this.dialogRef.close({'report': this.pass.student});
         }
       });
+
+    this.locationsService.listenLocationSocket().pipe(
+      takeUntil(this.destroy$),
+      filter(res => !!res),
+      tap((res) => {
+        try {
+          const loc: Location = Location.fromJSON(res.data);
+          this.locationsService.updateLocationSuccessState(loc);
+          this.pass.destination.title = loc.title;
+        } catch (e) {
+          console.log(e);
+        }
+      }),
+    ).subscribe();
   }
 
   ngOnDestroy() {

@@ -67,7 +67,7 @@ export class StudentFooterComponent implements OnInit, OnDestroy {
 
     this._fromLocationText$ = new BehaviorSubject(this.fromLocationText());
     this.fromLocationText$ = this._fromLocationText$.asObservable().pipe(takeUntil(this.destroy$));
-    this.formService.getUpdatedChoice().subscribe(loc => {
+    this.formService.getUpdatedChoice().pipe(takeUntil(this.destroy$)).subscribe(loc => {
       if(!this.formState.data.direction.to) {
         this.formState.data.direction.from = loc;
         this.fromLocation = loc;
