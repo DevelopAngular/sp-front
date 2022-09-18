@@ -56,7 +56,11 @@
                     <div class="feedback" *ngIf="!user.isStudent() && !isKioskMode && !isMobile">
                         <app-feedback-button></app-feedback-button>
                     </div>
-                    <div [ngClass]="isIOSTablet ? 'ios-name' : 'name'" [style.color]="darkTheme.getColor({dark: '#FFFFFF', white : '#1F195E'})" *ngIf="effectiveUser" appCrossPointerEventTarget (pointerClickEvent)="showTeaches($event)">
+                    <div [ngClass]="isIOSTablet ? 'ios-name' : 'name'"
+                         [style.color]="darkTheme.getColor({dark: '#FFFFFF', white : '#1F195E'})"
+                         *ngIf="effectiveUser" appCrossPointerEventTarget
+                         (pointerClickEvent)="showTeaches($event)"
+                    >
                         <span style="font-size: 13px; font-weight: 400; color: #B7C1CF; margin-right: 7px">Acting on <br/>behalf of</span>
                         <span>
             <div class="profile-image avatar-animate" *ngIf="(isEnabledProfilePictures$ | async) && !isKioskMode">

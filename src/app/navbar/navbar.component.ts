@@ -518,18 +518,21 @@ export class NavbarComponent implements AfterViewInit, OnInit, OnDestroy {
         trigger: target.currentTarget,
         heading: 'You can create and manage passes for this teacher.',
         teachers:
-          this.representedUsers.length > 1 ? this.representedUsers : null,
-        selectedTeacher: this.effectiveUser,
+          this.representedUsers.length > 1 ? this.representedUsers.map(u => u.user) : null,
+        selectedTeacher: this.effectiveUser.user,
         mainHeader: `Hi, ${this.user.display_name}`,
+        maxHeight: '200px',
+        isHiddenSearchField: this.representedUsers.length > 4
       },
     });
     representedUsersDialog
       .afterClosed()
       .pipe(filter((res) => !!res))
-      .subscribe((v: RepresentedUser) => {
-        if (v) {
-          this.userService.updateEffectiveUser(v);
-          this.http.effectiveUserId.next(+v.user.id);
+      .subscribe((id) => {
+        if (id) {
+          const efUser = this.representedUsers.find(u => +u.user.id === +id);
+          this.userService.updateEffectiveUser(efUser);
+          this.http.effectiveUserId.next(+efUser.user.id);
         }
       });
   }

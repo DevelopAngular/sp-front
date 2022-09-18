@@ -538,7 +538,7 @@ export class UserService implements OnDestroy {
     this.store.dispatch(getRUsers());
   }
 
-  getUserRepresented() {
+    getUserRepresented() {
     return this.http.get<RepresentedUser[]>('v1/users/@me/represented_users');
   }
 
