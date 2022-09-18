@@ -1,4 +1,4 @@
-import {Component, EventEmitter, forwardRef, Inject, Input, OnInit, Output, ViewChild, OnDestroy} from '@angular/core';
+import {Component, EventEmitter, forwardRef, Inject, Input, OnInit, Output, ViewChild, OnDestroy, HostListener, ElementRef} from '@angular/core';
 import {BehaviorSubject, Observable, Subject} from 'rxjs';
 import {User} from '../../../models/User';
 import {DataService} from '../../../services/data-service';
@@ -16,10 +16,25 @@ import {RestrictedMessageComponent} from './restricted-message/restricted-messag
 import {ToWhereComponent} from './to-where/to-where.component';
 import {ScreenService} from '../../../services/screen.service';
 import {DeviceDetection} from '../../../device-detection.helper';
-import {filter, map, takeUntil, withLatestFrom, tap, take} from 'rxjs/operators';
+import {filter, map, withLatestFrom} from 'rxjs/operators';
 import {Location} from '../../../models/Location';
 import {PassLimitInfo} from '../../../models/HallPassLimits';
 import {LocationVisibilityService} from '../location-visibility.service';
+
+// when WS notify a change we have to skip functions that change
+// FORM_STATE state and step 
+function skipWhenWS() {
+  return function (target, key, descriptor) {
+    const fn = descriptor.value;
+    descriptor.value = function (...args) {
+      const byws = this.formService.updatedByWS$.getValue(); 
+      if (byws) { 
+        return;
+      }
+      return fn.apply(this, args);
+    };
+  };
+}
 
 export enum States { from = 1, toWhere = 2, category = 3, restrictedTarget = 4, message = 5 }
 
@@ -48,6 +63,23 @@ export class LocationsGroupContainerComponent implements OnInit, OnDestroy {
   pinnable: Pinnable;
   data: any = {};
   frameMotion$: BehaviorSubject<any>;
+  
+  @HostListener('document:click', ['$event'])
+  clickHandler(event: PointerEvent) {
+    // click inside component?
+    if(this.elRef.nativeElement.contains(event.target)) {
+      // event.path or event.composedPath ?
+      const names = (event?.composedPath() ?? (event as any).path).map((e: HTMLElement) => {
+        return e.tagName?.toLowerCase();
+      });
+      // those are like buttons and capture the user clicks
+      const clicked = ['app-location-cell', 'app-pinnable'].some(e => names.includes(e));
+      if (clicked) {
+        // change is triggered by user not by WSocket
+        this.formService.updatedByWS$.next(false);
+      }
+    } 
+  }
 
   constructor(
     @Inject(MAT_DIALOG_DATA) public dialogData: any,
@@ -56,6 +88,7 @@ export class LocationsGroupContainerComponent implements OnInit, OnDestroy {
     private locationsService: LocationsService,
     private screenService: ScreenService,
     private visibilityService: LocationVisibilityService,
+    private elRef: ElementRef,
   ) {
   }
 
@@ -198,22 +231,9 @@ export class LocationsGroupContainerComponent implements OnInit, OnDestroy {
     );
 
     this.pinnable = this.FORM_STATE.data.direction ? this.FORM_STATE.data.direction.pinnable : null;
-
-    // is triggered by WS
-    const byws$ = this.formService.updatedByWS$;
-    this.isUpdatedByWS$ = byws$.pipe(
-      tap(v => console.log('INIT', v)),
-      takeUntil(this.destroy$), 
-    );
-    this.isUpdatedByWS$.subscribe();
   }
 
-  isUpdatedByWS$: Observable<boolean>;
-
   fromWhere(location) {
-    // this method is called through UI by user
-    this.formService.updatedByWS$.next(false);
-
     if (this.FORM_STATE.data.hasClose) {
       return this.nextStepEvent.emit(
         {
@@ -275,10 +295,8 @@ export class LocationsGroupContainerComponent implements OnInit, OnDestroy {
     return States.message;
   }
 
+  @skipWhenWS()
   toWhere(pinnable) {
-    // this method is called through UI by user
-    this.formService.updatedByWS$.next(false);
-
     this.pinnable = pinnable;
     this.FORM_STATE.data.direction = {
       from: this.data.fromLocation,
@@ -313,10 +331,8 @@ export class LocationsGroupContainerComponent implements OnInit, OnDestroy {
     }
   }
 
+  @skipWhenWS()
   toWhereFromLocation(location: Location) {
-    // this method is called through UI by user
-    this.formService.updatedByWS$.next(false);
-
     this.pinnables.pipe(
       map(pins => {
         return pins.find(pinnable => {
@@ -343,10 +359,8 @@ export class LocationsGroupContainerComponent implements OnInit, OnDestroy {
     });
   }
 
+  @skipWhenWS()
   fromCategory(location) {
-    // this method is called through UI by user
-    this.formService.updatedByWS$.next(false);
-
     location.restricted = location.restricted || (this.passLimitInfo?.showPasses && this.passLimitInfo?.current === 0);
     this.data.toLocation = location;
     this.FORM_STATE.data.direction.to = location;
@@ -376,7 +390,7 @@ export class LocationsGroupContainerComponent implements OnInit, OnDestroy {
     this.postComposetData(denyMessage, true);
   }
 
-
+  @skipWhenWS()
   private postComposetData(close: boolean = false, isMessage?: boolean) {
     const restricted = ((this.FORM_STATE.data.direction.to.restricted && !this.FORM_STATE.forLater) ||
       (this.FORM_STATE.data.direction.to.scheduling_restricted && !!this.FORM_STATE.forLater));
@@ -397,17 +411,11 @@ export class LocationsGroupContainerComponent implements OnInit, OnDestroy {
       }
     }
 
-    this.isUpdatedByWS$.pipe(
-      take(1),
-      tap((byws: boolean) => {
-        console.log('WS', byws)   
-        if (!byws) this.FORM_STATE.previousStep = 3;
-        setTimeout(() => {
-           if (!byws) this.FORM_STATE.step = close ? 0 : 4;
-          this.nextStepEvent.emit(this.FORM_STATE);
-        }, 100);
-      }),
-    ).subscribe();
+    this.FORM_STATE.previousStep = 3;
+    setTimeout(() => {
+      this.FORM_STATE.step = close ? 0 : 4;
+      this.nextStepEvent.emit(this.FORM_STATE);
+    }, 100);
   }
 
   back(event) {
