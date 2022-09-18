@@ -27,7 +27,7 @@ export class AddAccountPopupComponent implements OnInit {
     this.syncData = this.data['syncData'];
 
     if (this.syncData.is_gsuite_enabled) {
-      this.options.push({title: 'Add Google Account', icon: './assets/Google', action: 'g_suite'});
+      this.options.push({title: 'Add Google Account', icon: './assets/Google (Blue-Gray).svg', action: 'g_suite'});
     }
     this.updateSettingsPosition();
   }
