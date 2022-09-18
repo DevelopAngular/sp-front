@@ -23,8 +23,9 @@ export interface Paged<T> {
   previous: string;
 }
 
+// TODO: it does wipe out any existent get set
 function Visibility(): any {
-  return function (target: HTMLElement, property: string, descriptor: Object) {
+  return function (target: any, property: string, descriptor: PropertyDescriptor) {
     let values: any[];
 
     return {
