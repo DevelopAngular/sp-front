@@ -8,6 +8,11 @@ import {User} from '../../../models/User';
 import {of} from 'rxjs';
 import {ProfilePicture} from '../../../models/ProfilePicture';
 import {ProfileMap} from '../../../models/ProfileMap';
+import { KioskModeService } from '../../../services/kiosk-mode.service';
+import { StorageService } from '../../../services/storage.service';
+import { GoogleLoginService } from '../../../services/google-login.service';
+import { Router } from '@angular/router';
+import { HttpService } from '../../../services/http-service';
 
 @Injectable()
 export class UserEffects {
@@ -24,6 +29,32 @@ export class UserEffects {
               }),
               catchError(error => of(userActions.getUserFailure({errorMessage: error.message})))
             );
+        })
+      );
+  });
+
+  getUserSuccess$ = createEffect(() => {
+    return this.actions$
+      .pipe(
+        ofType(userActions.getUserSuccess),
+        switchMap((user:any) => {
+          if (user.user?.extras?.dedicated_kiosk_location) {
+            let kioskRoom;
+            kioskRoom = Object.assign({}, user.user?.extras?.dedicated_kiosk_location);
+            this.kioskMode.setCurrentRoom(kioskRoom);
+            return this.userService.saveKioskModeLocation(kioskRoom.id)
+              .pipe(
+                map((res:any) => {
+                  this.storage.setItem('kioskToken', res.access_token);
+                  // this.loginService.updateAuth({username: user.user.primary_email, type: 'demo-login', kioskMode: true});
+                  this.http.kioskTokenSubject$.next(res);
+                  this.router.navigate(['main/kioskMode']);
+                  return userActions.redirectUserToKioskSuccess();
+  
+                })
+              );
+          }
+          return [userActions.redirectUserToKioskSuccess()];
         })
       );
   });
@@ -130,6 +161,11 @@ export class UserEffects {
 
   constructor(
     private actions$: Actions,
-    private userService: UserService
+    private userService: UserService,
+    private kioskMode: KioskModeService,
+    private storage: StorageService,
+    public loginService: GoogleLoginService,
+    private router: Router,
+    private http: HttpService,
   ) {}
 }
