@@ -23,7 +23,6 @@ export class KioskModeDialogComponent implements OnInit {
       username: new FormControl({value: this.data.loginData.username, disabled: true}),
       password: new FormControl({value: this.data.loginData.password, disabled: true})
     });
-    console.log("data : ", this.data);
   }
 
   fetchLoginData(){
