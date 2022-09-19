@@ -11,6 +11,7 @@ import { KioskModeService } from '../../services/kiosk-mode.service';
 export class KioskModeDialogComponent implements OnInit {
 
   loginInfoForm: FormGroup;
+  kioskData: any;
 
   constructor(
     public dialogRef: MatDialogRef<KioskModeDialogComponent>,
@@ -19,6 +20,7 @@ export class KioskModeDialogComponent implements OnInit {
   ) { }
 
   ngOnInit(): void {
+    this.kioskData = this.data;
     this.loginInfoForm = new FormGroup({
       username: new FormControl({value: this.data.loginData.username, disabled: true}),
       password: new FormControl({value: this.data.loginData.password, disabled: true})
