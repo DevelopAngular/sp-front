@@ -43,15 +43,14 @@
         *ngIf="isShowSearch"
         [overrideChipsInputField]="true"
         [chipsMode]="true"
-        [focused]="true"
+        [focused]="searchInputFocused"
         [cancelButton]="false"
         [textAddButton]="'Add student, grade level'"
         [selectedOptions]="selectedStudents"
         (onUpdate)="addFoundStudents($event)"
         (focusEvent)="onSearchComponentFocus()"
-        (blurEvent)="showErrorsVisibility=true;"
-        [form]="visibilityForm"
-        [controlName]="'visibility'"
+        (blurEvent)="onSearchComponentBlur()"
+        [formGroup]="visibilityForm"
       >
       </app-sp-search>
       <ul class="error" 
@@ -91,17 +90,19 @@
       #gradeLevel
     >
         <ul class="panel grade-level"
-          [ngStyle]="{'max-height': panelMaxHeight, 'overflow': panelMaxHeight ? 'scroll' : 'initial'}"
+          [ngStyle]="{'max-height': panelMaxHeight, 'overflow-y': panelMaxHeight ? 'auto' : 'initial'}"
         >
           <li class="title">by grade</li>
-          <ng-container *ngIf="grades$ | async as inf; else loading">
+          <ng-container *ngIf="grades$ | async as vm; else loading">
             <li
-                *ngFor="let grade of inf['grade_level']"
+                *ngFor="let grade of vm['grade_level']"
                 (click)="handleGradeLevelSelected(grade)"
             >
               {{grade}}
             </li>
-          <li class="upload">Upload a list of students</li>
+          <li class="upload"
+            (click)="openStudentListDialog()"
+          >Upload a list of students</li>
           </ng-container>
         </ul>
     </ng-template>

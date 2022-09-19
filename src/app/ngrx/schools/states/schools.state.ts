@@ -4,6 +4,7 @@ import {GG4LSync} from '../../../models/GG4LSync';
 import {SchoolSyncInfo} from '../../../models/SchoolSyncInfo';
 import {GSuiteOrgs} from '../../../models/GSuiteOrgs';
 import {CleverInfo} from '../../../models/CleverInfo';
+import {ClassLinkInfo} from '../../../models/ClassLinkInfo';
 import { EncounterDetection } from '../../../models/EncounterDetection';
 
 export interface SchoolsState extends EntityState<School> {
@@ -16,6 +17,9 @@ export interface SchoolsState extends EntityState<School> {
   cleverInfo: CleverInfo;
   syncLoading: boolean;
   syncLoaded: boolean;
+  classLinkInfo:ClassLinkInfo;
+  // classLinkInfo:ClassLinkInfo;
+
   // encounterLoading:boolean;
   // encounterLoaded:boolean;
   // encounterDetection: EncounterDetection

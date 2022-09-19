@@ -134,6 +134,8 @@ export class SPSearchComponent implements OnInit, OnDestroy {
   @Input() searchingTeachers: User[];
   @Input() searchingRoles: { id: number, role: string, icon: string }[];
 
+  @Input() filteringUsersCallback?: Function;
+
   @Output() onUpdate: EventEmitter<any> = new EventEmitter();
   @Output() blurEvent: EventEmitter<boolean> = new EventEmitter<boolean>();
   @Output() focusEvent: EventEmitter<boolean> = new EventEmitter<boolean>();
@@ -329,9 +331,10 @@ export class SPSearchComponent implements OnInit, OnDestroy {
                 .toPromise()
                 .then((paged: any) => {
                   this.pending$.next(false);
-                  this.showDummy = !paged.results.length;
+                  //this.showDummy = !paged.results.length;
                   this.isOpenedOptions.emit(true);
-                  return this.removeDuplicateStudents(paged.results);
+                  const uu = this.removeDuplicateStudents(paged.results);
+                  return this.mayRemoveStudentsByCallback(uu);
                 });
             } else if (this.type === 'G Suite' || this.type === 'GG4L') {
               let request$;
@@ -347,8 +350,9 @@ export class SPSearchComponent implements OnInit, OnDestroy {
               this.students = request$
                 .toPromise().then((users: User[]) => {
                   this.pending$.next(false);
-                  this.showDummy = !users.length;
-                  return this.removeDuplicateStudents(users);
+                  //this.showDummy = !users.length;
+                  const uu = this.removeDuplicateStudents(users);
+                  return this.mayRemoveStudentsByCallback(uu);
                 });
             }
           } else {
@@ -534,6 +538,18 @@ export class SPSearchComponent implements OnInit, OnDestroy {
       });
 
     }
+  }
+
+  // safe to call as it checks itself to have a callback to call
+  // otherwise it returns unchanged User[]
+  mayRemoveStudentsByCallback(students: User[] | GSuiteSelector[]) : User[] | GSuiteSelector[] {
+    // if provided an extra filtering use it
+    if (!!this.filteringUsersCallback) {
+      const filtered =  this.filteringUsersCallback(students);
+      this.showDummy = !filtered.length;
+      return filtered;
+    }
+    return students;
   }
 
   isDisabled(item: any) {

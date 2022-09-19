@@ -768,6 +768,7 @@ export class UserService implements OnDestroy {
   checkUserEmail(email) {
     const httpOptions = {
       headers: new HttpHeaders({
+
         'Content-Type': 'application/x-www-form-urlencoded',
       })
     };
@@ -952,5 +953,11 @@ export class UserService implements OnDestroy {
     const opt = !!q ? {params: new HttpParams().set('student_id', q)} : {};
     return this.http.get('v1/users/grade_level', opt);
   }
-
+  
+  listOf(params: Record<string, string[]>) {
+    const headers = new HttpHeaders({
+      'Content-Type': 'application/json', 
+    });
+    return this.http.post('v1/users/listof', {params}, {headers}, false);
+  }
 }

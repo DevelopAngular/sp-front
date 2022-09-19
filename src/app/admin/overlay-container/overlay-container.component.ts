@@ -28,7 +28,6 @@ import {VisibilityOverStudents, DEFAULT_VISIBILITY_STUDENTS} from './visibility-
   templateUrl: './overlay-container.component.html',
   styleUrls: ['./overlay-container.component.scss'],
   animations: [NextStep, bumpIn]
-
 })
 export class OverlayContainerComponent implements OnInit, OnDestroy {
 
@@ -405,7 +404,11 @@ export class OverlayContainerComponent implements OnInit, OnDestroy {
               })
           );
       }
-    this.dialogRef.backdropClick()
+    // TODO: strabge bug here!!!
+    // id backdrop is clicked once then it receives the clicks's components inside overlay-container  
+    // left here commented to indicate this elusive bug
+    // as it is unclear why it happens
+    /*this.dialogRef.backdropClick()
       .pipe(
         switchMap(() => {
           return this.roomValidButtons;
@@ -417,7 +420,19 @@ export class OverlayContainerComponent implements OnInit, OnDestroy {
       )
       .subscribe(() => {
       this.dialogRef.close();
-    });
+    });*/
+    /*this.dialogRef.backdropClick()
+      .pipe(
+        switchMap(() => {
+          return this.roomValidButtons;
+        }),
+        filter((rvb: ValidButtons): boolean => {
+          return Object.values(rvb).every(v => !v);
+        }),
+        tap(_ => this.dialogRef.close()),
+        takeUntil(this.destroy$),
+      )
+      .subscribe();*/
 
       fromEvent(this.block.nativeElement, 'scroll').pipe(takeUntil(this.destroy$))
         .subscribe((res: any) => {

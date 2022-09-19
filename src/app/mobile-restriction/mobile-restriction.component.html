@@ -1,0 +1,23 @@
+<div class="wrapper">
+  <div class="disablewrapper">
+    <div class="disableinner">
+      <div class="ds-flex-start-center">
+        <img [src]="'./assets/no_phone.svg'" alt="">
+      </div>
+      <div class="description">
+        <h3>Your schools has disabled <br>SmartPass on phones</h3>
+        <p>Please use SmartPass on a computer</p>
+      </div>
+    </div>
+    <div class="btn-signout">
+      <a routerLink="/sign-out">Sign out</a>
+    </div>
+  </div>
+</div>
+<div class="id-card" *ngIf="IDCardEnabled" (click)="openIDCard()">
+  <div class="wrapper">
+      <img width="18px" [src]="'./assets/Digital ID Card (White).svg'" alt="">
+      <div class="title">ID</div>
+  </div>
+</div>
+

@@ -38,14 +38,16 @@ import {
   updateCleverInfo,
   updateGSuiteInfo,
   updateSchool,
-  updateSchoolSyncInfo
+  updateSchoolSyncInfo,
+  getClassLinkInfo
 } from '../ngrx/schools/actions';
-import {getGG4LInfoData, getGSuiteSyncInfoData, getSchoolCleverInfo, getSchoolSyncInfoData, getSyncLoading} from '../ngrx/schools/states';
+import {getGG4LInfoData, getGSuiteSyncInfoData, getSchoolClassLinkInfo, getSchoolCleverInfo, getSchoolSyncInfoData, getSyncLoading} from '../ngrx/schools/states';
 import {GG4LSync} from '../models/GG4LSync';
 import {SchoolSyncInfo} from '../models/SchoolSyncInfo';
 import {Onboard} from '../models/Onboard';
 import {CleverInfo} from '../models/CleverInfo';
 import {constructUrl} from '../live-data/helpers';
+import { ClassLinkInfo } from '../models/ClassLinkInfo';
 
 @Injectable({
   providedIn: 'root'
@@ -79,6 +81,7 @@ export class AdminService {
   schoolSyncInfo$: Observable<SchoolSyncInfo> = this.store.select(getSchoolSyncInfoData);
   gSuiteInfoData$: Observable<GSuiteOrgs> = this.store.select(getGSuiteSyncInfoData);
   cleverInfoData$: Observable<CleverInfo> = this.store.select(getSchoolCleverInfo);
+  classLinkInfoData$: Observable<ClassLinkInfo> = this.store.select(getSchoolClassLinkInfo);
   syncLoading$: Observable<boolean> = this.store.select(getSyncLoading);
 
   constructor(private http: HttpService,  private store: Store<AppState>) {}
@@ -235,6 +238,14 @@ export class AdminService {
     return this.gg4lInfo$;
   }
 
+  getClassLinkSyncInfo() {
+    return this.http.get(`v1/schools/${this.http.getSchool().id}/syncing/classlink/status`);
+  }
+
+  getClassLinkRequest(){
+    this.store.dispatch(getClassLinkInfo());
+  }
+
   getGG4LSyncInfo() {
     return this.http.get(`v1/schools/${this.http.getSchool().id}/syncing/gg4l/status`);
   }
@@ -249,6 +260,7 @@ export class AdminService {
   }
 
   getCleverInfoRequest() {
+    
     this.store.dispatch(getCleverInfo());
   }
 

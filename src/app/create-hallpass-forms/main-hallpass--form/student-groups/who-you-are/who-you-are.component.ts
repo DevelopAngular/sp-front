@@ -3,7 +3,10 @@ import {CreateFormService} from '../../../create-form.service';
 import {MatDialogRef} from '@angular/material/dialog';
 import {Navigation} from '../../main-hall-pass-form.component';
 import {ScreenService} from '../../../../services/screen.service';
+import {LocationVisibilityService} from '../../location-visibility.service';
 import {BehaviorSubject} from 'rxjs';
+import {User} from '../../../../models/User';
+import {GSuiteSelector} from '../../../../sp-search/sp-search.component';
 
 @Component({
   selector: 'app-who-you-are',
@@ -21,10 +24,22 @@ export class WhoYouAreComponent implements OnInit {
     private dialogRef: MatDialogRef<WhoYouAreComponent>,
     private formService: CreateFormService,
     private screenService: ScreenService,
+    private visibilityService: LocationVisibilityService,
   ) { }
 
   ngOnInit() {
     this.frameMotion$ = this.formService.getFrameMotionDirection();
+  }
+
+  // used for filtering users found with sp-search component
+  getFilteringStudents(): (users: User[] | GSuiteSelector[]) => User[] | GSuiteSelector[] {
+    return ((uu) => {
+      const students = [...uu];
+      const loc = this.formState.data.direction.from;
+      const skipped = this.visibilityService.calculateSkipped(students, loc) ?? [];
+      const result = !skipped.length ? uu : uu.filter(u => !skipped.includes(''+u.id));
+      return result;
+    }).bind(this);
   }
 
   setSelectedStudents(evt) {

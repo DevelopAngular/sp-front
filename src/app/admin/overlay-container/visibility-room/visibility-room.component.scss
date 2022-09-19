@@ -71,6 +71,7 @@
   &.grades {
     justify-content: left;
     margin: 0;
+    margin-bottom: -7px-10px;// for grades + students to look as being in the same container compensates padding + margin 
     padding-left: 0;
     width: 100%;
   }
@@ -107,9 +108,9 @@ ul.error {
   background-color: $white;
   border-radius: 9px;
   min-height: 70px;
-  width: 270px - 13px;
+  width: 272px-10px;//substract padding as box-sizing is content
   list-style: none;
-  padding: 13px;
+  padding: 10px;
   margin: 0px;
   color: $gray500;
   font-size: 14px;

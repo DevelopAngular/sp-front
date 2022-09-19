@@ -3,6 +3,7 @@ import {BaseModel} from './base';
 export class School extends BaseModel {
     constructor(
         public display_card_room: boolean,
+        public student_can_use_mobile: boolean,
         public id: string,
         public name: string,
         public my_roles: string[],
@@ -31,6 +32,7 @@ export class School extends BaseModel {
         // console.log(JSON);
         const id: string = '' +JSON['id'],
             display_card_room: boolean = JSON['display_card_room'],
+            student_can_use_mobile: boolean = JSON[' student_can_use_mobile'],
             name: string = '' +JSON['name'],
             my_roles: string[] = JSON['my_roles'],
             pass_buffer_time: number = JSON['pass_buffer_time'],
@@ -49,6 +51,7 @@ export class School extends BaseModel {
 
         return new School(
             display_card_room,
+            student_can_use_mobile,
             id, name, my_roles,
             pass_buffer_time,
             earliest_pass_time,
