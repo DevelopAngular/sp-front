@@ -20,6 +20,7 @@ export class LocationVisibilityService {
     let byid: string[] = [];
     let delta: string[] = [];
 
+    // when we have just grades this visibility_students is empty
     if (ruleStudents.length > 0) {
       // filter by ids
       if (rule ===  "visible_certain_students") {
@@ -28,10 +29,19 @@ export class LocationVisibilityService {
         delta = students.filter(s => ruleStudents.includes(s));
       }
       byid = delta;
+
+      // all users has been cheched
+      // and there is no one to be skipped
+      // or to be checked further
+      if (byid.length == 0) {
+        return [];
+      }
     }
 
     // some students are already accepted by the more granular rule of filtering by ids
     // not all students has to be checked
+    // but all those that hasn't been skipped already
+    // maybe we find more to be skipped
     const remainUsers = users.filter(u => !byid.includes(''+u.id));
 
     // filter by grade
@@ -59,7 +69,7 @@ export class LocationVisibilityService {
     const bygrade: string[] = _bygrade.map((s: User) => ''+s.id);
     // bygrade is from remainUsers that don't contains any of bygrade
     const skipped: string[] = [...byid, ...bygrade]
-      // still keep improbable uniques
+      // keep only unique values
       .filter((uid: string, i: number, arr: string[]) => arr.indexOf(uid) === i);
     return skipped;
   }
