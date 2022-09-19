@@ -503,11 +503,11 @@ export class PassCardComponent implements OnInit, OnDestroy {
               // removal left us with no students
               // this is as canceling the process
               if (body['students'].length === 0) {
-                this.toastService.openToast({
+                /*this.toastService.openToast({
                   title: 'Skiping left no students to operate on',
                   subtitle: 'Last operation did not proceeed',
                   type: 'error',
-                });
+                });*/
                 this.performingAction = false;
                 //this.dialogRef.close();
                 throw 'no students after skiping';
@@ -581,11 +581,11 @@ export class PassCardComponent implements OnInit, OnDestroy {
               remove(body['students'] as number[], elem => students.includes(elem));
               // server side "no students" case is seen as bad request
               if (body['students'].length === 0) {
-                this.toastService.openToast({
+                /*this.toastService.openToast({
                   title: 'Skiping left no students to operate on',
                   subtitle: 'Last operation did not proceeed',
                   type: 'error',
-                });
+                });*/
                 this.dialogRef.close();
                 throw new Error('No students to create passes for');
               }

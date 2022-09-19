@@ -437,11 +437,11 @@ export class ToWhereComponent implements OnInit {
         const roomStudents = selectedStudents.filter(s => (!skipped.includes(''+s.id)));
         // avoid no students case
         if (roomStudents.length === 0) {
-          this.toastService.openToast({
+          /*this.toastService.openToast({
             title: 'Skiping will left no students to operate on',
             subtitle: 'Last operation did not proceeed',
             type: 'error',
-          });
+          });*/
           return;
         }
 
