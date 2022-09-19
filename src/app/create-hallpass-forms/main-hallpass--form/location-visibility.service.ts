@@ -1,5 +1,4 @@
 import {Injectable} from '@angular/core';
-import {union} from 'lodash'
 import {Location} from '../../models/Location';
 import {User} from '../../models/User';
 
@@ -31,13 +30,17 @@ export class LocationVisibilityService {
       byid = delta;
     }
 
+    // some students are already accepted by the more granular rule of filtering by ids
+    // not all students has to be checked
+    const remainUsers = users.filter(u => !byid.includes(''+u.id));
+
     // filter by grade
     const ruleGrades = location?.visibility_grade ?? [];
     if (ruleGrades.length === 0) {
       return byid;
     }
     
-    const _bygrade: User[] = users.filter((s: User) => {
+    const _bygrade: User[] = remainUsers.filter((s: User) => {
       // without grade don't put it in
       if (!s?.grade_level) {
         return false;
@@ -54,8 +57,10 @@ export class LocationVisibilityService {
 
     // calculate union
     const bygrade: string[] = _bygrade.map((s: User) => ''+s.id);
-
-    const skipped: string[] = union(byid, bygrade);
+    // bygrade is from remainUsers that don't contains any of bygrade
+    const skipped: string[] = [...byid, ...bygrade]
+      // still keep improbable uniques
+      .filter((uid: string, i: number, arr: string[]) => arr.indexOf(uid) === i);
     return skipped;
   }
 
