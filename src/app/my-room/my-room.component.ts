@@ -375,10 +375,8 @@ export class MyRoomComponent implements OnInit, OnDestroy, AfterViewInit {
   }
 
   setRoomToKioskMode() {
-    console.log("this.selectedLocation : ", this.selectedLocation)
     this.http.get(`v1//kiosk/${this.selectedLocation.id}/login`).subscribe({
       next:(kioskLoginInfo:any)  => {
-        console.log("result : ", kioskLoginInfo)
         const dialogRef = this.dialog.open(KioskModeDialogComponent, {
           panelClass: 'accounts-profiles-dialog',
           backdropClass: 'custom-bd',
