@@ -6,7 +6,7 @@ import {Observable, Subject} from 'rxjs';
 import {Toast} from '../models/Toast';
 import {AppState} from '../ngrx/app-state/app-state';
 import {getDataToast, getIsOpenToast, getOpenedToasts, getOpenedToastsIds} from '../ngrx/toast/states';
-import {closeToastAction, getCurrentToastData, openToastAction} from '../ngrx/toast/actions';
+import {closeAllToasts, closeToastAction, getCurrentToastData, openToastAction} from '../ngrx/toast/actions';
 
 @Injectable({
   providedIn: 'root'
@@ -32,5 +32,9 @@ export class ToastService {
 
   closeToast(ids: string[] = []) {
     this.store.dispatch(closeToastAction({ids}));
+  }
+
+  closeAllToasts() {
+    this.store.dispatch(closeAllToasts());
   }
 }
