@@ -12,7 +12,7 @@ import {RepresentedUser} from '../navbar/navbar.component';
 import {Store} from '@ngrx/store';
 import {AppState} from '../ngrx/app-state/app-state';
 import {
-  addUserToProfile,
+  addUserToProfiles,
   bulkAddAccounts,
   clearCurrentUpdatedAccount,
   getAccounts,
@@ -111,7 +111,7 @@ import {clearRUsers, getRUsers, updateEffectiveUser} from '../ngrx/represented-u
 import {getEffectiveUser, getRepresentedUsersCollections} from '../ngrx/represented-users/states';
 import {
   clearProfilePicturesUploadErrors,
-  clearUploadedData,
+  clearUploadedData, createUploadGroup,
   deleteProfilePicture,
   getMissingProfilePictures,
   getProfilePicturesUploadedGroups,
@@ -636,10 +636,14 @@ export class UserService implements OnDestroy {
     }
   }
 
-  addUserToProfileRequest(user, role) {
-    this.store.dispatch(addUserToProfile({user, role}));
-    return of(null);
+  addUserToProfilesRequest(user: User, roles: string[]) {
+    this.store.dispatch(addUserToProfiles({user, roles}));
   }
+
+  addUserToProfiles(id: string | number, roles: string[]): Observable<User> {
+    return this.http.put(`v1/users/${id}/profiles`, {profiles: roles});
+  }
+
 
   addUserToProfile(id, role) {
     return this.http.put(`v1/users/${id}/profiles/${role}`);
@@ -855,6 +859,11 @@ export class UserService implements OnDestroy {
 
   getUploadedGroupsRequest() {
     this.store.dispatch(getProfilePicturesUploadedGroups());
+  }
+
+  createPPicturesUploadGroup() {
+    this.store.dispatch(createUploadGroup());
+    return this.currentUploadedGroup$;
   }
 
   getUploadedGroups() {

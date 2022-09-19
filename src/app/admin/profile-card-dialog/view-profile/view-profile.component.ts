@@ -21,6 +21,7 @@ import {ConsentMenuComponent} from '../../../consent-menu/consent-menu.component
 import {DarkThemeSwitch} from '../../../dark-theme-switch';
 import {ProfilePictureComponent} from '../../accounts/profile-picture/profile-picture.component';
 import { IdCardGradeLevelsComponent } from '../../id-cards/id-card-grade-levels/id-card-grade-levels.component';
+import {StudentPassLimit} from '../../../models/HallPassLimits';
 
 @Component({
   selector: 'app-view-profile',
@@ -34,6 +35,7 @@ export class ViewProfileComponent implements OnInit {
   @Output() nextStep: EventEmitter<any> = new EventEmitter<any>();
   @Output() close: EventEmitter<any> = new EventEmitter<any>();
   @Output() encounterGroupsEmit: EventEmitter<any> = new EventEmitter<any>();
+  @Output() passLimitsEmit: EventEmitter<any> = new EventEmitter<any>();
 
   @ViewChild('header') header: ElementRef<HTMLDivElement>;
   @ViewChild('rc') set rc(rc: ElementRef<HTMLDivElement> ) {
@@ -64,18 +66,18 @@ export class ViewProfileComponent implements OnInit {
   } = {teacher: [], admin: [], assistant: [], student: []};
 
   public assistantFor: User[];
-  public assistantForEditState: boolean = false;
+  public assistantForEditState = false;
   public assistantForInitialState: User[];
   public assistantForUpdate$: Subject<User[]> = new Subject();
 
   public permissionsForm: FormGroup;
-  public permissionsFormEditState: boolean = false;
+  public permissionsFormEditState = false;
   private permissionsFormInitialState;
 
-  public disabledState: boolean = false;
-  public headerText: string = '';
-  public headerIcon: string;
-  public layout: string = 'viewProfile';
+  public disabledState = false;
+  public headerText = '';
+  public headerIcon;
+  public layout = 'viewProfile';
 
   public orgUnitSelector: GSuiteSelector[];
   public orgUnitSelectorInitialState: GSuiteSelector;
@@ -117,7 +119,7 @@ export class ViewProfileComponent implements OnInit {
 
   studentSnapshotPage: string;
 
-  page: number = 1;
+  page = 1;
 
   constructor(
     public dialogRef: MatDialogRef<ProfileCardDialogComponent>,
@@ -167,7 +169,7 @@ export class ViewProfileComponent implements OnInit {
     if (this.data.profile) {
       this.profile = this.data.profile;
       this.user = User.fromJSON(this.profile._originalUserProfile);
-      this.studentSnapshotPage = window.location.origin + `/app/main/student/${this.user.id}`
+      this.studentSnapshotPage = window.location.origin + `/app/main/student/${this.user.id}`;
       this.profileStatusActive = this.user.status;
       this.profileStatusInitial = cloneDeep(this.profileStatusActive);
       if (this.user.isTeacher() && !(this.user.isAdmin() || this.user.isAssistant())) {
@@ -300,6 +302,16 @@ export class ViewProfileComponent implements OnInit {
 
   }
 
+  goToStudent() {
+    let url = window.location.origin + `/app/main/student/${this.user.id}`;
+    if (window.location.href.includes('localhost')) {
+      url = url.replace('/app', '');
+    }
+    this.dialogRef.close();
+    window.open(url, '_blank');
+  }
+
+
   updateProfile(): Observable<any> {
 
     this.disabledState = true;
@@ -329,9 +341,8 @@ export class ViewProfileComponent implements OnInit {
           return this.userService.deleteUserRequest(this.user, `_profile_${role.role.toLowerCase()}`);
         })).subscribe();
       }
-      zip(...this.userRoles.map(role => {
-        return this.userService.addUserToProfileRequest(this.user, role.role.toLowerCase());
-      })).subscribe();
+
+      this.userService.addUserToProfilesRequest(this.user, this.userRoles.map(r => r.role.toLowerCase()));
     }
 
    if (this.permissionsFormEditState && this.assistantForEditState) {
@@ -541,12 +552,12 @@ export class ViewProfileComponent implements OnInit {
       });
   }
 
-  openGradeLevel(){
+  openGradeLevel() {
     this.page = 2;
   }
 
-  openIDNumber(){
-    this.page = 3; 
+  openIDNumber() {
+    this.page = 3;
   }
 
 }

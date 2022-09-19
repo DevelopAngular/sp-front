@@ -59,31 +59,8 @@
       </div>
     </div>
 
-    <div class="content-enabled" *ngIf="(schoolSyncInfo.is_gg4l_enabled && dialogAction === 'gg4l') || (schoolSyncInfo.is_clever_enabled && dialogAction === 'clever')">
-      <ng-container *ngIf="dialogAction === 'gg4l'; else clever">
-        <div class="active-top">
-          <div class="left">
-            <div class="sync-title">Last Sync</div>
-            <div class="sync-subtitle">{{ formatDate(gg4lSyncInfo.last_successful_sync) }}</div>
-            <div style="color: #00B476">Successful</div>
-          </div>
-          <div class="right">
-            <div class="sync-title">Accounts synced</div>
-            <div class="sync-subtitle">{{ gg4lSyncInfo.num_students }} students</div>
-            <div class="sync-subtitle">{{ gg4lSyncInfo.num_teachers }} teachers</div>
-            <div class="sync-subtitle">{{ gg4lSyncInfo.num_admins }} admins</div>
-          </div>
-        </div>
-        <div class="active-top">
-          <div class="left">
-            <div class="sync-title">Next sync</div>
-            <div class="sync-subtitle">{{ formatDate(gg4lSyncInfo.next_sync) }}</div>
-          </div>
-        </div>
-      </ng-container>
-
-      <ng-template #clever>
-        <ng-container *ngIf="!(syncLoading$ | async)">
+    <div class="content-enabled" *ngIf="(schoolSyncInfo.is_clever_enabled && dialogAction === 'clever')">
+      <ng-container *ngIf="!(syncLoading$ | async)">
           <div class="active-top">
             <div class="left">
               <div class="sync-title">Last Sync</div>
@@ -117,7 +94,6 @@
             </div>
           </div>
         </ng-container>
-      </ng-template>
       <mat-divider [style.margin-top]="'34px'" *ngIf="dialogAction === 'gg4l'"></mat-divider>
 
       <div class="center" *ngIf="dialogAction === 'gg4l'">

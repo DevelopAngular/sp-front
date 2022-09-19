@@ -11,15 +11,12 @@ export const schoolsInitialState: SchoolsState = {
   loading: false,
   loaded: false,
   currentSchoolId: null,
-  gg4lInfo: null,
   syncInfo: null,
   gSuiteInfo: null,
   cleverInfo: null,
   syncLoading: false,
   syncLoaded: false,
-  // encounterLoading: false,
-  // encounterLoaded: false,
-  // encounterDetection: null
+  classLinkInfo: null,
 };
 
 const reducer = createReducer(
@@ -29,22 +26,6 @@ const reducer = createReducer(
       state => ({...state, loading: true, loaded: false, currentSchoolId: null})),
   on(schoolsActions.getSchoolsSuccess, (state, {schools}) => {
     return schoolAdapter.addAll(schools, {...state, loading: false, loaded: true});
-  }),
-  // on(schoolsActions.getEncounterDetection,
-  //   state => ({...state, encoulterLoading: true, encounterLoaded: false})),
-  //   on(schoolsActions.getEncounterDetectionSuccess, (state, {encounterDetection}) => {
-  //     return {...state, encoulterLoading: false, encounterLoaded: true, encounterDetection};
-  //   }),
-  on(schoolsActions.getSchoolsGG4LInfoSuccess, (state, {gg4lInfo}) => {
-    return {
-      ...state,
-      loading: false,
-      loaded: true,
-      gg4lInfo
-    };
-  }),
-  on(schoolsActions.updateSchoolsGG4LInfoSuccess, (state, {gg4lInfo}) => {
-    return {...state};
   }),
   on(schoolsActions.getSchoolSyncInfoSuccess,
     schoolsActions.updateSchoolSyncInfoSuccess,
@@ -73,6 +54,9 @@ const reducer = createReducer(
   on(schoolsActions.getCleverInfoSuccess, (state, {cleverInfo}) => {
     return {...state, loaded: true, loading: false, cleverInfo};
   }),
+  on(schoolsActions.getClassLinkSuccess, (state, {classLinkInfo}) => {
+    return {...state, loaded: true, loading: false, classLinkInfo};
+  }),
   on(
     schoolsActions.syncClever,
     schoolsActions.syncGsuite,
@@ -80,9 +64,6 @@ const reducer = createReducer(
   on(schoolsActions.updateCleverInfo, (state, {cleverInfo}) => {
     return { ...state, syncLoaded: true, syncLoading: false, cleverInfo };
   }),
-  // on(schoolsActions.syncGsuiteSuccess, (state, {data}) => {
-  //   return { ...state, syncLoaded: true, syncLoading: false };
-  // }),
   on(schoolsActions.updateGSuiteInfo, (state, {gsuiteInfo}) => {
     return { ...state, gSuiteInfo: gsuiteInfo, syncLoaded: true, syncLoading: false };
   }),

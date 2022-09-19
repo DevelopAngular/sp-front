@@ -51,7 +51,7 @@ export class SettingsComponent implements OnInit, OnDestroy {
       'hidden': false,
       'icon': 'Referal',
       'action': 'refer',
-      'title': 'Refer a friend',
+      'title': 'Refer a teacher',
       'isNew': this.data['introsData'].referral_reminder ?
         (!this.data['introsData'].referral_reminder.universal.seen_version && this.data['showNotificationBadge'])
         : false

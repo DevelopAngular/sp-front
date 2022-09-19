@@ -23,6 +23,7 @@ import {
   ConfirmationDialogComponent, ConfirmationTemplates,
   RecommendedDialogConfig
 } from '../shared/shared-components/confirmation-dialog/confirmation-dialog.component';
+import {ToastService} from '../services/toast.service';
 
 /**
  * TODO: Restructure component
@@ -64,7 +65,8 @@ export class TeacherPinStudentComponent implements OnInit, OnDestroy {
     private cdr: ChangeDetectorRef,
     private storage: StorageService,
     private passLimitsService: PassLimitService,
-    private dialog: MatDialog
+    private dialog: MatDialog,
+    private toastService: ToastService
   ) {
   }
 
@@ -96,6 +98,18 @@ export class TeacherPinStudentComponent implements OnInit, OnDestroy {
                 .pipe(
                   mapTo(true),
                   catchError((error: HttpErrorResponse) => {
+                    if ((error.error.detail as string).includes('There are active passes for users in same prevention group')) {
+                      this.toastService.openToast({
+                        title: 'Sorry, you can\'t start your pass right now.',
+                        subtitle: 'Please try again later.',
+                        type: 'error',
+                        encounterPrevention: true,
+                        exclusionPass: this.request
+                      });
+                      // the subscription function checks for this first and emits this so RequestCardComponent
+                      // on Kiosk Mode can hide the teacher pin without closing the dialog
+                      return of('encounter prevention');
+                    }
                     if (error.error.detail === 'Override confirmation needed') {
                       const overrideDialogRef = this.dialog.open(ConfirmationDialogComponent, {
                         ...RecommendedDialogConfig,
@@ -165,6 +179,11 @@ export class TeacherPinStudentComponent implements OnInit, OnDestroy {
       )
       .subscribe((data) => {
         if (data) {
+          if (data === 'encounter prevention') {
+            this.pinResult.emit(data);
+            return;
+          }
+
           const storageData = JSON.parse(this.storage.getItem('pinAttempts'));
           if (storageData && storageData[this.requestId] === 0) {
             delete storageData[this.requestId];

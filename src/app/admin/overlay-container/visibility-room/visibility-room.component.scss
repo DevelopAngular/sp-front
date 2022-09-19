@@ -47,7 +47,7 @@
     color: $gray500;
     background-color: $gray100;
     border: 1px solid $gray200;
-    &.with-triangle:after {
+    &.with-triangle > .after {
       background-image: url('/assets/Rect (Blue-Gray).svg');
     }
   }
@@ -55,7 +55,7 @@
     color: $green500;
     background-color: $green100;
     border: 1px solid $green200;
-    &.with-triangle:after {
+    &.with-triangle > .after {
       background-image: url('/assets/Rect (Green500).svg');
     }
   }
@@ -63,16 +63,16 @@
     color: $red500;
     background-color: $red100;
     border: 1px solid $red200;
-    &.with-triangle:after {
+    &.with-triangle > .after {
       background-image: url('/assets/Rect (Red500).svg');
     }
   }
 }
 
-.with-triangle:after, .with-triangle::after {
+.with-triangle > .after {
   display: inline-flex;
-  content: '';
   background-image: url('/assets/Rect (Blue-Gray).svg');
+  animation: fadein 0.5s;
   background-size: 8px 6px;
   margin-left: 8px;
   width: 8px;
@@ -97,36 +97,61 @@ ul.error {
 }
 
 .panel {
-  display: flex;
-  flex-flow: column;
-  justify-content: center;
   background-color: $white;
   border-radius: 9px;
   min-height: 70px;
-  width: 270px;
+  width: 272px-10px;//substract padding as box-sizing is content
   list-style: none;
-  padding: 13px;
+  padding: 10px;
   margin: 0px;
-  color: $gray500;  
+  color: $gray500;
   font-size: 14px;
   font-weight: 400;
   li {
     cursor: pointer;
     padding: 10px;
     display: flex;
-    &:hover {
+    transition: background-color 0.5s;
+    &.title {
+      font-weight: 400;
+      font-size: 14px;
+      pointer-events: none;
+      text-transform: uppercase;
+      color: $gray500;
+    }
+    & > .after {
+      background-image: url('/assets/Check (Navy).svg');
+      opacity: 0;
+    }
+    &.selected, &:hover {
      color: $navy500;
      background-color: $navy100;
      border-radius: 7px;
-     &:after {
-      content: '';
-      background-image: url('/assets/Check (Navy).svg');
-      background-size: 16px 16px;
-      margin-left: 8px;
-      width: 16px;
-      height: 16px;
-      margin: 0 0 0 auto;
+     & > .after {
+      animation: fadein 1s;
+      opacity: 1;
      }
     }
+    &.selected.grayed {
+      color: $gray500;  
+      background-color: $gray050;
+      &:after {
+        background-image: none;
+        background-size: none;
+      }
+    }
   }
+}
+
+@keyframes fadein {
+    from { opacity: 0; }
+    to { opacity: 1; }
+}
+
+.after {
+  background-size: 16px 16px;
+  margin-left: 8px;
+  width: 16px;
+  height: 16px;
+  margin: 0 0 0 auto;
 }

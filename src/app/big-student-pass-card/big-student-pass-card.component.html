@@ -42,7 +42,7 @@
     </div>
     <div class="metrics">
       <app-student-metrics></app-student-metrics>
-      <app-pass-limit-info [passLimitInfo]="passLimitInfo"></app-pass-limit-info>
+      <app-pass-limit-info *ngIf="!forFuture " [passLimitInfo]="passLimitInfo"></app-pass-limit-info>
     </div>
   </div>
 </div>

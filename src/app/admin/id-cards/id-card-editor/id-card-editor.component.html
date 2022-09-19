@@ -66,10 +66,10 @@
                                             <img style="z-index: 10;" [src]="'./assets/Backside Text.svg' | resolveAsset" alt="">
                                         </div>
                                         <div class="title" style="font-weight: 500">Backside Text
-                                            <span class="support-icon" customToolTip [contentTemplate]="backsideTextHelp"><img width="13px" [src]="'./assets/Support (Gray-200).svg' | resolveAsset"></span>
+                                            <span class="support-icon" customToolTip [contentTemplate]="backsideTextHelp" [nonDisappearing]="false" [editable]="true"><img width="13px" [src]="'./assets/Support (Gray-200).svg' | resolveAsset"></span>
                                         </div>
                                         <ng-template #backsideTextHelp>
-                                            <div class="ds-tooltip" style="width: 200px">This text will appear for students on the back of the ID Card.</div>
+                                            <div class="ds-tooltip" style="width: 200px">This text will appear on the back of the ID card.</div>
                                         </ng-template>
                                     </div>
                                     <div class="button">
@@ -90,7 +90,7 @@
                                             <img style="z-index: 10;" [src]="'./assets/Profile Picture Icon.svg' | resolveAsset" alt="">
                                         </div>
                                         <div class="title" style="font-weight: 500">Profile Pictures
-                                            <span class="support-icon" customToolTip [contentTemplate]="profilePictureText"><img width="13px" [src]="'./assets/Support (Gray-200).svg' | resolveAsset"></span>
+                                            <span class="support-icon" customToolTip [contentTemplate]="profilePictureText" [nonDisappearing]="true" [editable]="true"><img width="13px" [src]="'./assets/Support (Gray-200).svg' | resolveAsset"></span>
                                         </div>
                                         <ng-template #profilePictureText>
                                             <div class="ds-tooltip" style="width: 200px">Bulk upload profile pictures for your accounts.</div>
@@ -114,7 +114,7 @@
                                             <img style="z-index: 10;" [src]="'./assets/ID Number Icon.svg' | resolveAsset" alt="">
                                         </div>
                                         <div class="title" style="font-weight: 500">ID Numbers
-                                            <span class="support-icon" customToolTip [contentTemplate]="IDNumberText"><img width="13px" [src]="'./assets/Support (Gray-200).svg' | resolveAsset"></span>
+                                            <span class="support-icon" customToolTip [contentTemplate]="IDNumberText" [nonDisappearing]="false" [editable]="true"><img width="13px" [src]="'./assets/Support (Gray-200).svg' | resolveAsset"></span>
                                         </div>
                                         <ng-template #IDNumberText>
                                             <div class="ds-tooltip" style="width: 200px">Add ID numbers to your accounts</div>
@@ -146,7 +146,7 @@
                                             <img style="z-index: 10;" [src]="'./assets/Gread Level Icon.svg' | resolveAsset" alt="">
                                         </div>
                                         <div class="title" style="font-weight: 500">Grade Levels
-                                            <span class="support-icon" customToolTip [contentTemplate]="gradeLevelText"><img width="13px" [src]="'./assets/Support (Gray-200).svg' | resolveAsset"></span>
+                                            <span class="support-icon" customToolTip [contentTemplate]="gradeLevelText" [nonDisappearing]="false" [editable]="true"><img width="13px" [src]="'./assets/Support (Gray-200).svg' | resolveAsset"></span>
                                         </div>
                                         <ng-template #gradeLevelText>
                                             <div class="ds-tooltip" style="width: 200px">Add grade levels to your accounts.</div>
@@ -169,7 +169,7 @@
                                             <img style="z-index: 10;" [src]="'./assets/Visible To (White).svg' | resolveAsset" alt="">
                                         </div>
                                         <div class="title" style="font-weight: 500">Visible to
-                                            <span class="support-icon" customToolTip [contentTemplate]="visibleToHelp"><img width="13px" [src]="'./assets/Support (Gray-200).svg' | resolveAsset"></span>
+                                            <span class="support-icon" customToolTip [contentTemplate]="visibleToHelp" [nonDisappearing]="false" [editable]="true"><img width="13px" [src]="'./assets/Support (Gray-200).svg' | resolveAsset"></span>
                                         </div>
                                         <ng-template #visibleToHelp>
                                             <div class="ds-tooltip" style="width: 200px">Choose who will see the ID cards in their SmartPass app.</div>

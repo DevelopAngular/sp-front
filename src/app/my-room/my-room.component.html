@@ -27,6 +27,9 @@
                 </div>
 
                 <div [ngClass]="isIOSTablet ? 'ios-date-display-mobile' : 'date-display-mobile'" [style.color]="darkTheme.getColor({white: '#1E194F', dark: '#FFFFFF'})">{{ dateDisplay }}</div>
+                <div class="kioskButton ds-my-10">
+                    <app-gradient-button [disabled]="!showKioskModeButton" [gradient]="'#1F195E, #1F195E'" [leftIcon]="'./assets/Kiosk Mode (White).svg'" [textColor]="'#FFFFFF'" (buttonClick)="setRoomToKioskMode()">Kiosk Mode</app-gradient-button>
+                </div>
             </div>
 
             <div class="option-wrapper option-wrapper-calendar" *ngIf="!isSearchBarClicked">
@@ -35,6 +38,7 @@
 
         </div>
     </div>
+
     <div *ngIf="UI" class="my-room-wrapper" #scrollableArea [style.height]="(schoolsLength$ | async) > 1 ? ((isUpdateBar$ | async) ? 'calc(100vh - 153px)' : 'calc(100vh - 114px)') : ((isUpdateBar$ | async) ? 'calc(100vh - 103px)' : 'calc(100vh - 64px)')">
         <div class="my-room-left" *ngIf="!(kioskMode.currentRoom$ | async)">
             <div class="my-room-header" [@headerTrigger]="headerState" *ngIf="screenService.isDesktopWidth">

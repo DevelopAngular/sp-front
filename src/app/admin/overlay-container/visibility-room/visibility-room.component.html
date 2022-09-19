@@ -24,6 +24,7 @@
     (click)="handleOpenClose()"
   >
     {{ modeView.text }}
+    <div class="after"></div>
   </span>
 
     <div class="students-search">
@@ -63,10 +64,15 @@
         *ngIf="didOpen"
       >
         <li
+            (mouseenter)="onEnter(entry.key)"
+            (mouseleave)="onLeave(entry.key)"
+            [ngClass]="{ 'selected': entry.key === mode ? true : null, 'grayed': hoveredNonSelected }"
+
             *ngFor="let entry of modes | keyvalue: asIs"
             (click)="handleModeSelected(entry.key)"
         >
           {{entry.value.textmenu}}
+          <div class="after"></div>
         </li>
       </ul>
     </ng-template>

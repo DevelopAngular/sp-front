@@ -1,3 +1,5 @@
+@import 'src/sp-colors';
+
 #closePassLimitsIntro {
   position: absolute;
   top: 12px;
@@ -7,9 +9,13 @@
   background: transparent;
 }
 
-.accent-background-section:first-of-type {
-  display: flex;
-  margin-top: 0
+.accent-background-section {
+  &:first-of-type {
+    display: flex;
+    margin-top: 0
+  }
+
+  background: transparent !important;
 }
 
 ::ng-deep .pass-limits-frequency-dialog > mat-dialog-container.mat-dialog-container {
@@ -28,5 +34,5 @@
 }
 
 ::ng-deep .content-spinner svg > circle {
-  stroke: #00B476;
+  stroke: #B7C1CF;
 }

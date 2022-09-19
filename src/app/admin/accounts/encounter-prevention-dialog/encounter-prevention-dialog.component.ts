@@ -112,7 +112,9 @@ export class EncounterPreventionDialogComponent implements OnInit, OnDestroy {
     }
     if (this.forceNextPage === 'newGroup') {
       this.state.createGroup.users.push({...this.currentUser, lockAccount: true});
-      this.secondUser ?  this.state.createGroup.users.push({...this.secondUser, lockAccount: true}) : null;
+      if (this.secondUser) {
+        this.state.createGroup.users.push({...this.secondUser, lockAccount: true});
+      }
       this.setState(true, Pages.NewGroup);
       return;
     } else if (this.forceNextPage === 'groupDescription') {

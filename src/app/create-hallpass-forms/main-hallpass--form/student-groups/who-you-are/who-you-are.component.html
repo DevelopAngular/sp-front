@@ -15,9 +15,10 @@
         [placeholder]="'Search students'"
         [list]="false"
         [emitSingleProfile]="false"
+        [filteringUsersCallback]="getFilteringStudents()"
         (onUpdate)="setSelectedStudents($event)"
       ></app-sp-search>
     </div>
   </div>
-  <img class="back-button-bottom" [src]="'./assets/Back Button (Blue-White).svg' | resolveAsset" (click)="back()">
+  <img *ngIf="formState.state === 4" class="back-button-bottom" [src]="'./assets/Back Button (Blue-White).svg' | resolveAsset" (click)="back()">
 </div>

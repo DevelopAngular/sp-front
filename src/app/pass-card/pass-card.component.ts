@@ -38,17 +38,17 @@ import {PassLimitService} from '../services/pass-limit.service';
 export class PassCardComponent implements OnInit, OnDestroy {
 
   @Input() pass: HallPass;
-  @Input() forInput: boolean = false;
-  @Input() fromPast: boolean = false;
-  @Input() forFuture: boolean = false;
-  @Input() isActive: boolean = false;
-  @Input() forStaff: boolean = false;
-  @Input() forMonitor: boolean = false;
-  @Input() forKioskMode: boolean = false;
+  @Input() forInput = false;
+  @Input() fromPast = false;
+  @Input() forFuture = false;
+  @Input() isActive = false;
+  @Input() forStaff = false;
+  @Input() forMonitor = false;
+  @Input() forKioskMode = false;
   @Input() formState: Navigation;
   @Input() students: User[] = [];
-  @Input() isOpenBigPass: boolean = false;
-  @Input() fullScreenButton: boolean = false;
+  @Input() isOpenBigPass = false;
+  @Input() fullScreenButton = false;
 
   @Output() cardEvent: EventEmitter<any> = new EventEmitter();
   @Output() scaleCard: EventEmitter<boolean> = new EventEmitter<boolean>();
@@ -57,15 +57,15 @@ export class PassCardComponent implements OnInit, OnDestroy {
   @ViewChild('confirmDialogBody') confirmDialog: TemplateRef<HTMLElement>;
   @ViewChild('confirmDialogBodyVisibility') confirmDialogVisibility: TemplateRef<HTMLElement>;
 
-  timeLeft: string = '';
-  valid: boolean = true;
+  timeLeft = '';
+  valid = true;
   returnData: any = {};
-  overlayWidth: string = '0px';
-  buttonWidth: number = 288;
+  overlayWidth = '0px';
+  buttonWidth = 288;
 
   selectedDuration: number;
   selectedTravelType: string;
-  cancelOpen: boolean = false;
+  cancelOpen = false;
   selectedStudents: User[] = [];
   fromHistory;
   fromHistoryIndex;
@@ -447,11 +447,14 @@ export class PassCardComponent implements OnInit, OnDestroy {
         return errors.pipe(
           tap(errorResponse => {
             const isVisibilityError = ('visibility_alerts' in errorResponse.error);
-            console.log('me', errorResponse, isVisibilityError)
             // a student has been checked server side and had no room visibility
             if (!this.forStaff) {
-                const roomNames = errorResponse.error.visibility_alerts.map(r => r.location_title);
-                const title = ((roomNames.length > 1) ? 'Rooms ' : 'Room ') + roomNames.join(', ') + ' not available';
+                const roomNames = isVisibilityError ? errorResponse.error.visibility_alerts.map(r => r?.location_title ?? '') : [''];
+                const title = `You don't have access to ${(roomNames.length > 1
+                  ? 'Rooms ' + roomNames.join(', ')
+                  : roomNames[0] === ''
+                    ? 'Room'
+                    : 'Room ' + roomNames[0])}.`;
                 this.toastService.openToast({
                   title,
                   subtitle: 'Please ask your teacher to create a pass for you.',
@@ -461,11 +464,11 @@ export class PassCardComponent implements OnInit, OnDestroy {
                 this.performingAction = false;
                 //this.dialogRef.close();
                 throw 'this student has been subject of room visibility rules';
-
-              return
             }
             // not our error case? dispatch it to the next retryWhen
-            if (! isVisibilityError) throw errorResponse;
+            if (! isVisibilityError) {
+              throw errorResponse;
+            }
           }),
           concatMap(({error}) => getOverrideFromDialog(error)),
           concatMap(({override, students}: { override: boolean, students: number[] }) => {
@@ -500,17 +503,9 @@ export class PassCardComponent implements OnInit, OnDestroy {
 
       retryWhen((errors: Observable<HttpErrorResponse>) => {
         return errors.pipe(
-          filter(errorResponse => {
-            console.log('you', errorResponse);
-            return errorResponse.error?.message === 'one or more pass limits reached!';
-          }),
-          concatMap(errorResponse => {
-            return this.passLimitService.getPassLimit().pipe(map(pl => ({
-              passLimit: pl.pass_limit.passLimit,
-              errorResponse
-            })));
-          }),
-          concatMap(({errorResponse, passLimit}) => {
+          filter(errorResponse => errorResponse.error?.message === 'one or more pass limits reached!'),
+          concatMap((errorResponse) => {
+            const students = errorResponse.error.students as { displayName: string, id: number, passLimit: number }[];
             const numPasses = body['students']?.length || 1;
             let headerText: string;
             let buttons: ConfirmationTemplates['buttons'];
@@ -521,6 +516,7 @@ export class PassCardComponent implements OnInit, OnDestroy {
                 denyText: 'Skip these students'
               };
             } else if (numPasses === 1) {
+              const { passLimit } = students[0];
               headerText = `Student's Pass limit reached: ${this.selectedStudents[0].display_name} has had ${passLimit}/${passLimit} passes today`;
               buttons = {
                 confirmText: 'Override limit',
@@ -537,8 +533,7 @@ export class PassCardComponent implements OnInit, OnDestroy {
                 body: this.confirmDialog,
                 templateData: {
                   totalStudents: numPasses,
-                  limitReachedStudents: errorResponse.error.students,
-                  passLimit,
+                  limitReachedStudents: students
                 },
                 icon: {
                   name: 'Pass Limit (White).svg',
@@ -561,12 +556,6 @@ export class PassCardComponent implements OnInit, OnDestroy {
               remove(body['students'] as number[], elem => students.includes(elem));
               // server side "no students" case is seen as bad request
               if (body['students'].length === 0) {
-                this.toastService.openToast({
-                  title: 'Skiping left no students to operate on',
-                  subtitle: 'Last operation did not proceeed',
-                  type: 'error',
-                });
-                this.dialogRef.close();
                 throw new Error('No students to create passes for');
               }
               return of(null);

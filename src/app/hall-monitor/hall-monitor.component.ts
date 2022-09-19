@@ -28,6 +28,7 @@ import {HallPass} from '../models/HallPass';
 import {PdfGeneratorService} from '../admin/pdf-generator.service';
 import * as moment from 'moment';
 import {CheckForUpdateService} from '../services/check-for-update.service';
+import {Title} from '@angular/platform-browser';
 
 @Component({
   selector: 'app-hall-monitor',
@@ -134,7 +135,8 @@ export class HallMonitorComponent implements OnInit, OnDestroy {
     private scrollPosition: ScrollPositionService,
     private http: HttpService,
     private pdf: PdfGeneratorService,
-    private updateService: CheckForUpdateService
+    private updateService: CheckForUpdateService,
+    private titleService: Title
   ) {
     this.activePassProvider = this.liveDataService.hallMonitorPasses$;
   }
@@ -148,6 +150,7 @@ export class HallMonitorComponent implements OnInit, OnDestroy {
   }
 
   ngOnInit() {
+    this.titleService.setTitle('Hall Monitor | SmartPass');
     this.isUpdateBar$ = this.updateService.needToUpdate$;
     this.detectDevice();
     this.schoolsLength$ = this.http.schoolsLength$;
