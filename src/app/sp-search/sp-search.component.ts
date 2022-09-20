@@ -142,8 +142,6 @@ export class SPSearchComponent implements OnInit, OnDestroy {
 
   @Input() filteringUsersCallback?: Function;
 
-  @Input() filteringUsersCallback?: Function;
-
   @Output() onUpdate: EventEmitter<any> = new EventEmitter();
   @Output() blurEvent: EventEmitter<boolean> = new EventEmitter<boolean>();
   @Output() focusEvent: EventEmitter<boolean> = new EventEmitter<boolean>();
