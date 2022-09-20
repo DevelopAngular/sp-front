@@ -7,6 +7,13 @@ export class LocationVisibilityService {
 
   constructor() { }
 
+  getIdOrThrow(s: User): string {
+    if (s?.id) {
+      return ''+s.id;
+    }
+    throw new Error('no appropriate id');
+  };
+
   // mimic server visibility byid  calculation
   calculateSkipped(users: User[], location: Location): string[] {
     const rule = location.visibility_type;
@@ -14,64 +21,35 @@ export class LocationVisibilityService {
       return [];
     }
 
-    const students = users.map(s => ''+s.id);
-    const ruleStudents = location.visibility_students.map((s: User) => ''+s.id);
+    const students = users.map((s:User) => this.getIdOrThrow(s));
+    const ruleStudents = location.visibility_students.map((s: User) => this.getIdOrThrow(s));
                  
     let byid: string[] = [];
-    let delta: string[] = [];
 
     // when we have just grades this visibility_students is empty
     if (ruleStudents.length > 0) {
       // filter by ids
-      if (rule ===  "visible_certain_students") {
-       delta = students.filter(s => (!ruleStudents.includes(s)));
-      } else if (rule === "hidden_certain_students") {
-        delta = students.filter(s => ruleStudents.includes(s));
-      }
-      byid = delta;
-
-      // all users has been cheched
-      // and there is no one to be skipped
-      // or to be checked further
-      if (byid.length == 0) {
-        return [];
-      }
+      byid = students.filter(s => ruleStudents.includes(s));
     }
-
-    // some students are already accepted by the more granular rule of filtering by ids
-    // not all students has to be checked
-    // but all those that hasn't been skipped already
-    // maybe we find more to be skipped
-    const remainUsers = users.filter(u => !byid.includes(''+u.id));
 
     // filter by grade
     const ruleGrades = location?.visibility_grade ?? [];
-    if (ruleGrades.length === 0) {
-      return byid;
-    }
-    
-    const _bygrade: User[] = remainUsers.filter((s: User) => {
+    const _bygrade: User[] = users.filter((s: User) => {
       // without grade don't put it in
       if (!s?.grade_level) {
         return false;
       }
       const toSkip = ruleGrades.includes(s.grade_level)
-      return rule === 'visible_certain_students' ? !toSkip : toSkip;
+      return toSkip;
     });
-
-    // if grades are not relevant further
-    // for union, stop it here
-    if (_bygrade.length === 0) {
-      return byid;
-    }
-
-    // calculate union
     const bygrade: string[] = _bygrade.map((s: User) => ''+s.id);
-    // bygrade is from remainUsers that don't contains any of bygrade
-    const skipped: string[] = [...byid, ...bygrade]
+
+    const accepted: string[] = [...byid, ...bygrade]
       // keep only unique values
       .filter((uid: string, i: number, arr: string[]) => arr.indexOf(uid) === i);
-    return skipped;
+    const skipped = users.filter((u: User) => !accepted.includes(''+u.id)).map((u: User) => this.getIdOrThrow(u));
+
+    return rule === 'visible_certain_students' ? skipped : accepted;
   }
 
   filterByVisibility(location: Location, students: User[]): boolean {
