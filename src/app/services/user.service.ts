@@ -12,7 +12,7 @@ import {RepresentedUser} from '../navbar/navbar.component';
 import {Store} from '@ngrx/store';
 import {AppState} from '../ngrx/app-state/app-state';
 import {
-  addUserToProfile,
+  addUserToProfiles,
   bulkAddAccounts,
   clearCurrentUpdatedAccount,
   getAccounts,
@@ -538,7 +538,7 @@ export class UserService implements OnDestroy {
     this.store.dispatch(getRUsers());
   }
 
-  getUserRepresented() {
+    getUserRepresented() {
     return this.http.get<RepresentedUser[]>('v1/users/@me/represented_users');
   }
 
@@ -633,10 +633,14 @@ export class UserService implements OnDestroy {
     }
   }
 
-  addUserToProfileRequest(user, role) {
-    this.store.dispatch(addUserToProfile({user, role}));
-    return of(null);
+  addUserToProfilesRequest(user: User, roles: string[]) {
+    this.store.dispatch(addUserToProfiles({user, roles}));
   }
+
+  addUserToProfiles(id: string | number, roles: string[]): Observable<User> {
+    return this.http.put(`v1/users/${id}/profiles`, {profiles: roles});
+  }
+
 
   addUserToProfile(id, role) {
     return this.http.put(`v1/users/${id}/profiles/${role}`);

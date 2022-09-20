@@ -5,6 +5,8 @@ export const getUser = createAction(`[User] Get User`);
 export const getUserSuccess = createAction(`[User] Get User Success`, props<{user: User}>());
 export const getUserFailure = createAction(`[User] Get User Failure`, props<{errorMessage: string}>());
 
+export const redirectUserToKioskSuccess = createAction(`[User] Redirect to Kiosk Success`);
+
 export const getUserPinAction = createAction(`[User] Get User Pin`);
 export const getUserPinSuccess = createAction(`[User] Get User Pin Success`, props<{pin: string | number}>());
 export const getUserPinFailure = createAction(`[User] Get User Pin Failure`, props<{errorMessage: string}>());

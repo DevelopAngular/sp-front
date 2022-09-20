@@ -5,6 +5,7 @@ export const TOAST = 'Toast';
 
 export const openToastAction = createAction(`[${TOAST}] Open Toast`, props<{data: Toast, id?: string}>());
 export const openToastActionSuccess = createAction(`[${TOAST}] Open Toast Success`, props<{data: Toast, id: string}>());
+export const openToastFailure = createAction(`[${TOAST}] Open Toast Failure`, props<{errorMessage: string}>());
 
 export const getCurrentToastData = createAction(`[${TOAST}] Get Toast Data`, props<{id: string}>());
 

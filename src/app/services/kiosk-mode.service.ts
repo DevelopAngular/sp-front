@@ -70,4 +70,12 @@ export class KioskModeService {
     this.storageService.setItem('kioskSettingsData', JSON.stringify(settings));
     this.currentKioskSettings$.next(settings);
   }
+  resetPassword(location: Location) {
+    return this.http.patch(`v1//kiosk/${location.id}/password`);
+  }
+
+  getAllKioskLogin(){
+    return this.http.get(`v1//kiosk/all_logins`);
+  }
+
 }

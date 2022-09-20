@@ -113,7 +113,7 @@ export class NavComponent implements OnInit, AfterViewInit, OnDestroy {
   }
 
   get showNotificationBadge() {
-    return this.user && moment(this.user.created).add(7, 'days').isSameOrBefore(moment());
+    return this.user && moment(this.user.first_login).add(30, 'days').isSameOrBefore(moment());
   }
 
   ngAfterViewInit() {

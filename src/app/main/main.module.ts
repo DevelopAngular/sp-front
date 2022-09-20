@@ -43,6 +43,7 @@ import {NotificationSelectStudentsComponent } from '../notification-form/notific
 import {NotificationSelectStudentsDialogComponent } from '../notification-form/notification-select-students-dialog/notification-select-students-dialog.component';
 import {NotificationOptionComponent} from '../notification-form/notification-option/notification-option.component';
 import {KioskSettingsDialogComponent} from '../kiosk-settings-dialog/kiosk-settings-dialog.component';
+import { KioskModeModule } from '../kiosk-mode/kiosk-mode.module';
 
 
 @NgModule({
@@ -52,6 +53,7 @@ import {KioskSettingsDialogComponent} from '../kiosk-settings-dialog/kiosk-setti
       MainRoutingModule,
       FormsModule,
       ReactiveFormsModule,
+      KioskModeModule
     ],
     declarations: [
       SettingsComponent,

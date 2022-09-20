@@ -15,6 +15,7 @@ export function filterHallPasses(state: State<HallPass>): State<HallPass> {
       'expiration_time': (a: HallPass, b: HallPass) => (+a.expiration_time) - (+b.expiration_time),
       'start_time': (a: HallPass, b: HallPass) => (+a.start_time) - (+b.start_time),
       'destination_name': (a: HallPass, b: HallPass) => compareString(a.destination.title, b.destination.title),
+      'student_email': (a: HallPass, b: HallPass) => compareString(a.student.primary_email, b.student.primary_email),
       'student_name': (a: HallPass, b: HallPass) =>
         combineComparisons(
           compareString(a.student.last_name, b.student.last_name),
@@ -48,6 +49,7 @@ export function filterHallPasses(state: State<HallPass>): State<HallPass> {
         'student.first_name',
         'student.last_name',
         'destination.title',
+        'student.primary_email'
       ] as any[]
     };
 
