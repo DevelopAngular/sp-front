@@ -151,19 +151,19 @@ export class FromWhereComponent implements OnInit, OnDestroy {
 
       if (skipped.length === 0) {
         forwardAndEmit();
-        return; 
+        return;
       }
 
       let text =  'This room is only available to certain students';
       let names = selectedStudents.filter(s => skipped.includes(''+s.id)).map(s => s.display_name);
       let title =  'Student does not have permission to come from this room';
-      let denyText =  'Cancel';
+      let denyText =  'Skip';
       if (names.length > 1) {
         text = names?.join(', ') ?? 'This room is only available to certain students'
         title = 'These students do not have permission to come from this room:';
         denyText = 'Skip these students';
       } else {
-        title = (names?.join(', ') ?? 'Student') + ' does not have permission to come from this room'; 
+        title = (names?.join(', ') ?? 'Student') + ' does not have permission to come from this room';
         if (selectedStudents.length > 1) denyText = 'Skip this student';
       }
 
@@ -193,25 +193,25 @@ export class FromWhereComponent implements OnInit, OnDestroy {
       }).afterClosed().pipe(
         takeUntil(this.destroy$),
       ).subscribe(override => {
-        this.formState.data.roomOverride = !!override; 
+        this.formState.data.roomOverride = !!override;
 
         if (override === undefined) {
-          return;        
+          return;
         }
-       
+
         // override case
         if (override) {
-          this.formState.data.roomStudents = [...this.formState.data.selectedStudents]; 
-          this.formState.data.roomStudentsAfterFromStep = [...this.formState.data.roomStudents]; 
+          this.formState.data.roomStudents = [...this.formState.data.selectedStudents];
+          this.formState.data.roomStudentsAfterFromStep = [...this.formState.data.roomStudents];
           forwardAndEmit();
-          return; 
+          return;
         }
 
         // override is false now
         // SKIPPING case
         // only one student means cancel
         if (selectedStudents.length === 1) {
-          //:wthis.dialogRef.close(); 
+          //:wthis.dialogRef.close();
           return;
         }
 
@@ -219,10 +219,10 @@ export class FromWhereComponent implements OnInit, OnDestroy {
           return;
         }
 
-        this.formState.data.roomStudents = roomStudents; 
-        this.formState.data.roomStudentsAfterFromStep = [...roomStudents]; 
+        this.formState.data.roomStudents = roomStudents;
+        this.formState.data.roomStudentsAfterFromStep = [...roomStudents];
         forwardAndEmit();
-      }); 
+      });
   }
 
 

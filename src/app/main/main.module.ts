@@ -42,6 +42,7 @@ import {NotificationRoomFormComponent } from '../notification-form/notification-
 import {NotificationSelectStudentsComponent } from '../notification-form/notification-select-students/notification-select-students.component';
 import {NotificationSelectStudentsDialogComponent } from '../notification-form/notification-select-students-dialog/notification-select-students-dialog.component';
 import {NotificationOptionComponent} from '../notification-form/notification-option/notification-option.component';
+import { KioskModeModule } from '../kiosk-mode/kiosk-mode.module';
 
 
 @NgModule({
@@ -51,6 +52,7 @@ import {NotificationOptionComponent} from '../notification-form/notification-opt
       MainRoutingModule,
       FormsModule,
       ReactiveFormsModule,
+      KioskModeModule
     ],
     declarations: [
       SettingsComponent,

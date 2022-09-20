@@ -1,8 +1,14 @@
 import {Component, EventEmitter, Input, OnInit, Output} from '@angular/core';
 import {DomSanitizer} from '@angular/platform-browser';
-import {uniqBy} from 'lodash';
+import {MatIconRegistry} from '@angular/material/icon';
+import {remove, uniqBy} from 'lodash';
+import {filter, map, pluck, switchMap, take, takeUntil} from 'rxjs/operators';
 import {User} from '../models/User';
-
+import {AdminService} from '../services/admin.service';
+import {BehaviorSubject} from 'rxjs';
+interface OrgUnits{
+  path:string
+}
 @Component({
   selector: 'app-sp-chips',
   templateUrl: './sp-chips.component.html',
@@ -20,14 +26,20 @@ export class SpChipsComponent implements OnInit {
   @Input() textAddButton: string | null; 
   @Input() textPrepend: string | null; 
   @Input() selectedTarget: 'users' | 'orgunits' | 'roles' | 'rooms' = 'users';
+  @Input() orgUnitList:String[]
+  @Input() orgUnitExistCheck:BehaviorSubject<Boolean>
 
   @Output() add: EventEmitter<boolean> = new EventEmitter();
   @Output() updateSelectedEvent: EventEmitter<User[]> = new EventEmitter();
   @Output() addSuggestedTeacher: EventEmitter<User> = new EventEmitter<User>();
+  orgUnits:any=[]
 
   constructor(
     private sanitizer: DomSanitizer,
-  ) { }
+    private adminService:AdminService
+  ) {
+  
+   }
 
   get results() {
     if (!this.selectedProfiles?.length) {
@@ -71,4 +83,34 @@ export class SpChipsComponent implements OnInit {
      chip.hovered = hover;
    }
   }
+  orgUnitDeleteCheck(item:any){
+
+    if(this.orgUnitList && this.orgUnitList.length){
+      if(this.orgUnitList.includes(item.path)){
+        return false
+      }else{
+        this.orgUnitExistCheck.next(true)
+       return true
+      
+      }
+    }
+    
+  }
+  removeSelectedProfile(){
+    let existCount=0;
+    if(this.selectedProfiles && this.selectedProfiles.length && this.orgUnitList && this.orgUnitList.length ){
+      this.selectedProfiles.forEach((sp:any)=>{
+        if(this.orgUnitList.includes(sp.path)){
+          existCount=existCount+1
+        }
+      })
+      if(existCount==this.selectedProfiles.length){
+        this.orgUnitExistCheck.next(false)
+      }
+    }
+
+  }
+
 }
+
+

@@ -11,10 +11,42 @@
     </span>
     <div *ngIf="chip.hovered && !teacher.lockAccount" class="delete">
 
-      <img
-        (click)="selectedProfiles.splice(i, 1); updateSelectedEvent.emit(this.selectedProfiles)"
-        [src]="'./assets/Cancel (Navy).svg' | resolveAsset" width="16" alt="Check.svg">
-    </div>
+    <ng-container *ngIf="selectedTarget=='orgunits' && orgUnitDeleteCheck(teacher) ;else nonDeleted" >
+      <img *ngIf="selectedTarget === 'roles'" width="16" style="margin-right: 5px" [src]="teacher.icon" alt="Icon">
+      <span class="chip-field"  customToolTip
+      [contentTemplate]="tooltip"  [style.cursor]="'default'" [style.user-select]="'none'"   >
+        <span class="material-icons" style="color:#f5de82;" >warning</span>
+        <span class="chname">{{selectedTarget === 'users' ? teacher.display_name : selectedTarget === 'roles' ? teacher.role : selectedTarget === 'rooms' ? teacher.title : teacher.as}}</span>
+
+      </span>
+      <div *ngIf="chip.hovered && !teacher.lockAccount" class="delete">
+  
+        <img
+          (click)="selectedProfiles.splice(i, 1); removeSelectedProfile(); updateSelectedEvent.emit(this.selectedProfiles)"
+          [src]="'./assets/Cancel (Navy).svg' | resolveAsset" width="16" alt="Check.svg">
+      </div>
+    </ng-container>
+    <ng-template #nonDeleted >
+      <img *ngIf="selectedTarget === 'roles'" width="16" style="margin-right: 5px" [src]="teacher.icon" alt="Icon">
+      <span #nonDeleted  [style.cursor]="'default'" [style.user-select]="'none'"  >
+        {{selectedTarget === 'users' ? teacher.display_name : selectedTarget === 'roles' ? teacher.role : selectedTarget === 'rooms' ? teacher.title : teacher.as}}
+      </span>   
+      <div *ngIf="chip.hovered && !teacher.lockAccount" class="delete">
+  
+        <img
+          (click)="selectedProfiles.splice(i, 1); updateSelectedEvent.emit(this.selectedProfiles)"
+          [src]="'./assets/Cancel (Navy).svg' | resolveAsset" width="16" alt="Check.svg">
+      </div>
+    </ng-template>
+
+    
+    <ng-template #tooltip>
+      <div class="ds-tooltip">
+        This Organizational unit or group has been deleted in Google
+      </div>
+    </ng-template>
+
+
   </div>
   <app-gradient-button class=""
     *ngIf="!hideAddButton"

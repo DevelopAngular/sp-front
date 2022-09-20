@@ -33,7 +33,7 @@ import {Location} from '../../../../models/Location';
   templateUrl: './to-where.component.html',
   styleUrls: ['./to-where.component.scss']
 })
-export class ToWhereComponent implements OnInit {
+export class ToWhereComponent implements OnInit, OnDestroy {
   @ViewChild('header', { static: true }) header: ElementRef<HTMLDivElement>;
   @ViewChild('rc', { static: true }) set rc(rc: ElementRef<HTMLDivElement> ) {
     if (rc) {
@@ -269,7 +269,7 @@ export class ToWhereComponent implements OnInit {
       let text =  'This room is only available to certain students';
       let names = selectedStudents.filter(s => skipped.includes(''+s.id)).map(s => s.display_name);
       let title =  'Student does not have permission to go to this room';
-      let denyText =  'Cancel';
+      let denyText =  'Skip';
       if (names.length > 1) {
         text = names?.join(', ') ?? 'This room is only available to certain students'
         title = 'These students do not have permission to go to this room:';
@@ -387,7 +387,7 @@ export class ToWhereComponent implements OnInit {
       let text =  'This room is only available to certain students';
       let names = selectedStudents.filter(s => skipped.includes(''+s.id)).map(s => s.display_name);
       let title =  'Student does not have permission to go to this room';
-      let denyText =  'Cancel';
+      let denyText =  'Skip';
       if (names.length > 1) {
         text = names?.join(', ') ?? 'This room is only available to certain students'
         title = 'These students do not have permission to go to this room:';

@@ -21,7 +21,6 @@ import { ClassLinkInfo } from '../../../models/ClassLinkInfo';
 })
 export class IntegrationsDialogComponent implements OnInit, OnDestroy {
 
-  gg4lSyncInfo$: Observable<GG4LSync>;
   schoolSyncInfo$: Observable<SchoolSyncInfo>;
   gSuiteOrgs$: Observable<GSuiteOrgs>;
   cleverSyncInfo$: Observable<CleverInfo>;
@@ -41,7 +40,6 @@ export class IntegrationsDialogComponent implements OnInit, OnDestroy {
   frameMotion$: BehaviorSubject<any>;
 
   destroy$ = new Subject();
-  
 
   constructor(
     public dialogRef: MatDialogRef<IntegrationsDialogComponent>,
@@ -53,7 +51,6 @@ export class IntegrationsDialogComponent implements OnInit, OnDestroy {
 
   ngOnInit() {
     this.gSuiteOrgs$ = this.adminService.gSuiteInfoData$;
-    this.gg4lSyncInfo$ = this.adminService.gg4lInfo$;
     this.schoolSyncInfo$ = this.adminService.schoolSyncInfo$;
     this.cleverSyncInfo$ = this.adminService.cleverInfoData$;
     this.cleverSyncLoading$ = this.adminService.syncLoading$;
@@ -61,15 +58,6 @@ export class IntegrationsDialogComponent implements OnInit, OnDestroy {
     this.classlinkSyncInfo$ = this.adminService.classLinkInfoData$
     this.frameMotion$ = this.formService.getFrameMotionDirection();
     this.userService.getUploadedGroupsRequest();
-
-    this.classlinkSyncInfo$.subscribe(res=>{
-      console.log("classLInk sink :::::",res)
-      this.classLinkSyncData =res
-    })
-
-
-
-         
 
     merge(of(this.userService.getUserSchool()), this.userService.getCurrentUpdatedSchool$().pipe(filter(s => !!s)))
         .pipe(takeUntil(this.destroy$))

@@ -96,7 +96,7 @@ export class ToCategoryComponent implements OnInit {
   }
 
   ngOnInit() {
-
+    console.log(this.formState);
     this.frameMotion$ = this.formService.getFrameMotionDirection();
     this.fromLocation = this.formState.data.direction.from;
     this.pinnable = this.formState.data.direction.pinnable;
@@ -151,7 +151,7 @@ export class ToCategoryComponent implements OnInit {
 
     if (skipped.length === 0) {
       forwardAndEmit();
-      return; 
+      return;
     }
 
     let text =  'This room is only available to certain students';
@@ -163,7 +163,7 @@ export class ToCategoryComponent implements OnInit {
       title = 'These students do not have permission to go to this room:';
       denyText = 'Skip these students';
     } else {
-      title = (names?.join(', ') ?? 'Student') + ' does not have permission to go to this room'; 
+      title = (names?.join(', ') ?? 'Student') + ' does not have permission to go to this room';
     }
 
     const roomStudents = this.selectedStudents.filter(s => (!skipped.includes(''+s.id)));
@@ -191,22 +191,22 @@ export class ToCategoryComponent implements OnInit {
     }).afterClosed().pipe(
       takeUntil(this.destroy$),
     ).subscribe(override => {
-      this.formState.data.roomOverride = !!override; 
-     
+      this.formState.data.roomOverride = !!override;
+
       if (override === undefined) {
-        return;     
+        return;
       }
-     
+
       // override case
       if (override) {
         forwardAndEmit();
-        return; 
+        return;
       }
 
       // SKIPPING case
       // avoid a certain no students case
       if (this.selectedStudents.length === 1) {
-        //this.dialogRef.close();
+        this.dialogRef.close();
         return;
       }
 
@@ -217,9 +217,9 @@ export class ToCategoryComponent implements OnInit {
         return;
       }
 
-      this.formState.data.roomStudents = roomStudents; 
+      this.formState.data.roomStudents = roomStudents;
       forwardAndEmit();
-    }); 
+    });
   }
 
   back() {

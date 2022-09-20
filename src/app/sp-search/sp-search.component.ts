@@ -16,6 +16,7 @@ import {DeviceDetection} from '../device-detection.helper';
 import {DomCheckerService} from '../services/dom-checker.service';
 import {Overlay} from '@angular/cdk/overlay';
 import {KioskModeService} from '../services/kiosk-mode.service';
+import {AdminService} from '../services/admin.service';
 
 declare const window;
 
@@ -90,6 +91,9 @@ export class OrgUnit {
     this.selected = selected;
   }
 }
+interface OrgUnits{
+  path:string
+}
 
 
 @Component({
@@ -133,6 +137,10 @@ export class SPSearchComponent implements OnInit, OnDestroy {
 
   @Input() searchingTeachers: User[];
   @Input() searchingRoles: { id: number, role: string, icon: string }[];
+  @Input() orgUnits:String[]=[]
+  @Input() orgUnitExistCheck:BehaviorSubject<Boolean>
+
+  @Input() filteringUsersCallback?: Function;
 
   @Input() filteringUsersCallback?: Function;
 
@@ -181,6 +189,8 @@ export class SPSearchComponent implements OnInit, OnDestroy {
   isEnableProfilePictures$: Observable<boolean>;
 
   destroy$: Subject<any> = new Subject<any>();
+  // orgUnits:OrgUnits[]=[]
+
 
   @HostListener('document.scroll', ['$event'])
   scroll() {
@@ -199,8 +209,10 @@ export class SPSearchComponent implements OnInit, OnDestroy {
     private locationService: LocationsService,
     private domCheckerService: DomCheckerService,
     public overlay: Overlay,
-    private kioskMode: KioskModeService
-  ) {}
+    private kioskMode: KioskModeService,
+    private adminService:AdminService
+  ) {
+  }
 
   get isMobile() {
     return DeviceDetection.isMobile();
@@ -312,6 +324,7 @@ export class SPSearchComponent implements OnInit, OnDestroy {
 
     this.user$ = this.userService.user$;
     this.isEnableProfilePictures$ = this.userService.isEnableProfilePictures$;
+    
 
   }
 
@@ -555,6 +568,7 @@ export class SPSearchComponent implements OnInit, OnDestroy {
   isDisabled(item: any) {
     return this.type === 'G Suite' && item && !item.role_compatible;
   }
+
   cancel(studentInput) {
     studentInput.input.nativeElement.value = '';
     studentInput.input.nativeElement.focus();
@@ -606,5 +620,10 @@ export class SPSearchComponent implements OnInit, OnDestroy {
 
   hasStudentRole(user) {
     return user.roles && User.fromJSON(user).isStudent();
+  }
+
+  reset() {
+    this.selectedOptions = [];
+    this.onUpdate.emit(undefined);
   }
 }

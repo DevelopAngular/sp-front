@@ -84,7 +84,7 @@ export class CreateFormService {
       );
   }
 
-  setFrameMotionDirection(direction: string = 'forward') {
+  setFrameMotionDirection(direction: 'forward' | 'back' | 'disable' = 'forward') {
 
 
     switch (direction) {
