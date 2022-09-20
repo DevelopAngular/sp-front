@@ -317,9 +317,10 @@ export class LiveDataService {
         pluck('id'),
         distinctUntilChanged()
       )
-      .subscribe((value) => {
+      .subscribe(() => {
         setTimeout(() => {
           this.globalReload$.next(null);
+          window.location.reload();
         }, 5);
       });
 
