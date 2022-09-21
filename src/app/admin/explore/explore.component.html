@@ -10,10 +10,10 @@
         </div>
         <div class="filters" [ngSwitch]="views[currentView].id">
             <div class="filter">
-              <app-filter-button *ngSwitchCase="1" (buttonClick)="openFilter($event, 'students')" [title]="(!passSearchData.selectedStudents || passSearchData.selectedStudents.length > 1 ? 'Students' + (passSearchData.selectedStudents && passSearchData.selectedStudents.length ? ' (<var>' + passSearchData.selectedStudents.length + '</var>)' : '') : passSearchData.selectedStudents[0].display_name)"
+              <app-filter-button *ngSwitchCase="1" (buttonClick)="openFilter($event, 'students')" [title]="(!passSearchData.selectedStudents || passSearchData.selectedStudents.length > 1 ? 'Students' + (passSearchData.selectedStudents && passSearchData.selectedStudents.length ? ' <var>(' + passSearchData.selectedStudents.length + ')</var>' : '') : passSearchData.selectedStudents[0].display_name)"
                     [filter]="passSearchData.selectedStudents && !!passSearchData.selectedStudents.length" (clearData)="passSearchData.selectedStudents = null; checkQueryParams(); autoSearch()" [openedFilter]="!!dialog.getDialogById('students_filter')">
                 </app-filter-button>
-                <app-filter-button *ngSwitchCase="2" (buttonClick)="openFilter($event, 'students')" [title]="(!reportSearchData.selectedStudents || reportSearchData.selectedStudents.length > 1 ? 'Students' + (reportSearchData.selectedStudents && reportSearchData.selectedStudents.length ? ' (' + reportSearchData.selectedStudents.length + ')' : '') : reportSearchData.selectedStudents[0].display_name)"
+                <app-filter-button *ngSwitchCase="2" (buttonClick)="openFilter($event, 'students')" [title]="(!reportSearchData.selectedStudents || reportSearchData.selectedStudents.length > 1 ? 'Students' + (reportSearchData.selectedStudents && reportSearchData.selectedStudents.length ? ' <var>(' + reportSearchData.selectedStudents.length + ')</var>' : '') : reportSearchData.selectedStudents[0].display_name)"
                     [filter]="reportSearchData.selectedStudents && !!reportSearchData.selectedStudents.length" (clearData)="reportSearchData.selectedStudents = null; autoSearch()" [openedFilter]="!!dialog.getDialogById('students_filter')">
                 </app-filter-button>
                 <app-filter-button *ngSwitchCase="3" (buttonClick)="openFilter($event, 'students')" [title]="contactTraceData.selectedStudents ? contactTraceData.selectedStudents[0].display_name : 'Student'" [filter]="contactTraceData.selectedStudents && !!contactTraceData.selectedStudents.length"
@@ -34,16 +34,16 @@
             </div>
 
             <div class="filter" *ngSwitchCase="2">
-                <app-filter-button (buttonClick)="openFilter($event, 'teachers')" [title]="(!reportSearchData.selectedTeachers || reportSearchData.selectedTeachers.length > 1 ? 'Submitted by' + (reportSearchData.selectedTeachers && reportSearchData.selectedTeachers.length ? ' (' + reportSearchData.selectedTeachers.length + ')' : '') : reportSearchData.selectedTeachers[0].display_name)"
+              <app-filter-button (buttonClick)="openFilter($event, 'teachers')" [title]="(!reportSearchData.selectedTeachers || reportSearchData.selectedTeachers.length > 1 ? 'Submitted by' + (reportSearchData.selectedTeachers && reportSearchData.selectedTeachers.length ? ' <var>(' + reportSearchData.selectedTeachers.length + '</var>)' : '') : reportSearchData.selectedTeachers[0].display_name)"
                     [filter]="reportSearchData.selectedTeachers && !!reportSearchData.selectedTeachers.length" (clearData)="reportSearchData.selectedTeachers = null; autoSearch()" [openedFilter]="!!dialog.getDialogById('teachers_filter')">
                 </app-filter-button>
             </div>
             <div class="filter" *ngSwitchCase="1">
-                <app-filter-button (buttonClick)="openFilter($event, 'origin')" [title]="'Origin' + (passSearchData.selectedOriginRooms && passSearchData.selectedOriginRooms.length ? ' (' + passSearchData.selectedOriginRooms.length + ')' : '')" [filter]="passSearchData.selectedOriginRooms && !!passSearchData.selectedOriginRooms.length"
+              <app-filter-button (buttonClick)="openFilter($event, 'origin')" [title]="'Origin' + (passSearchData.selectedOriginRooms && passSearchData.selectedOriginRooms.length ? ' <var>(' + passSearchData.selectedOriginRooms.length + '</var>)' : '')" [filter]="passSearchData.selectedOriginRooms && !!passSearchData.selectedOriginRooms.length"
                     (clearData)="passSearchData.selectedOriginRooms = null; checkQueryParams(); autoSearch()" [openedFilter]="!!dialog.getDialogById('origin_filter')"></app-filter-button>
             </div>
             <div class="filter" *ngSwitchCase="1">
-                <app-filter-button (buttonClick)="openFilter($event, 'destination')" [title]="'Destination' + (passSearchData.selectedDestinationRooms && passSearchData.selectedDestinationRooms.length ? ' (' + passSearchData.selectedDestinationRooms.length + ')' : '')"
+              <app-filter-button (buttonClick)="openFilter($event, 'destination')" [title]="'Destination' + (passSearchData.selectedDestinationRooms && passSearchData.selectedDestinationRooms.length ? ' <var>(' + passSearchData.selectedDestinationRooms.length + '</var>)' : '')"
                     [filter]="passSearchData.selectedDestinationRooms && !!passSearchData.selectedDestinationRooms.length" (clearData)="passSearchData.selectedDestinationRooms = null; checkQueryParams(); autoSearch()" [openedFilter]="!!dialog.getDialogById('destination_filter')"></app-filter-button>
             </div>
             <div class="filter">
