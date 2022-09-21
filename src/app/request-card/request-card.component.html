@@ -14,7 +14,7 @@
           <div class="pass-card-header-text">
             {{ request.destination.title }}
             <div class="card-subtitle" *ngIf="fromPast || forFuture">
-              {{ ((request.request_time && forFuture)?formatDateTime(request.request_time):(forStaff?'Pass for Now':'')) }}
+              {{ ((request.request_time && forFuture)?'<span '+(forStaff?'ignore':'notranslate')+'>'+formatDateTime(request.request_time) + '</span>':(forStaff?'Pass for Now':'')) }}
             </div>
           </div>
         </div>
@@ -244,7 +244,7 @@
               <div class="resend-button-content">
                 <mat-spinner *ngIf="performingAction" [color]="'accent'" [diameter]="35"></mat-spinner>
                 <div *ngIf="!performingAction" class="resend-button-content-title">Approve Pass Request</div>
-                <div class="resend-button-content-subtitle">{{ (request.duration/60) +' min - Received ' +formatDateTime(request.created, true) }}</div>
+                <div class="resend-button-content-subtitle">{{ '<var>'+(request.duration/60) +' min</var> - Received <var>' +formatDateTime(request.created, true) + '</var>' }}</div>
               </div>
             </app-card-button>
             <ng-template #CDate>
@@ -260,17 +260,17 @@
             <div>
               <app-pager [page]="2">
                 <div class="page-1 teacher-details" [attr.data-motion-translate]="(frameMotion$ | async).direction">
-                  <span class="bold">Pass Request Sent</span><span class="smaller"><br>to {{ studentName }}<br><br>{{ formatDateTime(request.created) }}</span>
+                  <span class="bold">Pass Request Sent</span><span class="smaller"><br>to <var>{{ studentName }}</var><br><br><var>{{ formatDateTime(request.created) }}</var></span>
                 </div>
                 <div class="page-2 teacher-details" [attr.data-motion-translate]="(frameMotion$ | async).direction">
-                  <span class="bold">Pass Request {{ status }}</span><span class="smaller"><br>by {{ teacherName }}<br><br>{{ formatDateTime(request.last_updated) }}</span>
+                  <span class="bold">Pass Request {{ status }}</span><span class="smaller"><br>by <var>{{ teacherName }}</var><br><br><var>{{ formatDateTime(request.last_updated) }}</var></span>
                 </div>
 
                 <div class="page-5 teacher-details" [attr.data-motion-translate]="(frameMotion$ | async).direction">
-                  <span class="bold">Pass Request Sent</span><span class="smaller"><br>to {{studentName}}<br><br>{{formatDateTime(request.created)}}</span>
+                  <span class="bold">Pass Request Sent</span><span class="smaller"><br>to <var>{{studentName}}</var><br><br><var>{{formatDateTime(request.created)}}</var></span>
                 </div>
                 <div class="page-6 teacher-details" [attr.data-motion-translate]="(frameMotion$ | async).direction">
-                  <span class="bold">Pass Request {{ status }}</span><span class="smaller"><br>by {{teacherName}}<br><br>{{formatDateTime(request.last_updated)}}</span>
+                  <span class="bold">Pass Request {{ status }}</span><span class="smaller"><br>by <var>{{teacherName}}</var><br><br><var>{{formatDateTime(request.last_updated)}}</var></span>
                 </div>
               </app-pager>
             </div>
