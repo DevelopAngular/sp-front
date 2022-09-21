@@ -65,7 +65,7 @@ export class ProfilePictureComponent implements OnInit, OnDestroy {
               if (typeof row[0] === 'string' && row[0].includes('@spnx.local')) {
                 row[0] = row[0].replace('@spnx.local', '');
               }
-                return of({ user_id: typeof row[0] === 'string' ? row[0].toLowerCase().trim() : row[0], file_name: row[1], isUserId: !!row[0], isFileName: !!row[1], usedId: false });
+                return of({ user_id: typeof row[0] === 'string' ? row[0].toLowerCase().trim() : row[0], file_name: row[1].toLowerCase().trim(), isUserId: !!row[0], isFileName: !!row[1], usedId: false });
             });
             return forkJoin(validate$);
           })

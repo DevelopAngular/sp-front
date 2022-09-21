@@ -18,12 +18,12 @@ export class MobileRestrictionComponent implements OnInit, AfterViewInit, OnDest
 
   IDCARDDETAILS: any;
 
-  constructor(private qrBarcodeGenerator: QRBarcodeGeneratorService,public dialog: MatDialog, private idCardService: IDCardService) { 
+  constructor(private qrBarcodeGenerator: QRBarcodeGeneratorService,public dialog: MatDialog, private idCardService: IDCardService) {
 
   }
 
   ngOnInit(): void {
-    window.Intercom('update', {'hide_default_launcher': true});
+    // window.Intercom('update', {'hide_default_launcher': true});
     this.idCardService.getIDCardDetails().subscribe({
       next: (result: any) => {
         if (result?.results?.digital_id_card) {
@@ -44,7 +44,7 @@ export class MobileRestrictionComponent implements OnInit, AfterViewInit, OnDest
 
   ngOnDestroy(): void {
     setTimeout(function() {
-      window.Intercom('update', {'hide_default_launcher': false});
+      // window.Intercom('update', {'hide_default_launcher': false});
     }, 500);
   }
 

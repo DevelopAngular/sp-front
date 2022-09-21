@@ -1,7 +1,7 @@
 import {Component, ElementRef, EventEmitter, Input, OnDestroy, OnInit, Output, ViewChild} from '@angular/core';
 import {HttpService} from '../services/http-service';
 import {Location} from '../models/Location';
-import {filter, map, pluck, switchMap, takeUntil, take} from 'rxjs/operators';
+import {filter, map, pluck, switchMap, takeUntil, take, skip} from 'rxjs/operators';
 import {LocationsService} from '../services/locations.service';
 import {combineLatest, iif, Observable, of, Subject, zip} from 'rxjs';
 import {filter as _filter, sortBy} from 'lodash';
@@ -134,6 +134,7 @@ export class LocationTableComponent implements OnInit, OnDestroy {
 
   showSpinner$: Observable<boolean>;
   loaded$: Observable<boolean>;
+  loading$: Observable<boolean>;
 
   isFocused: boolean;
 
@@ -155,8 +156,9 @@ export class LocationTableComponent implements OnInit, OnDestroy {
   }
 
   ngOnInit() {
-    this.userService.userData
+    this.userService.user$
     .pipe(
+      takeUntil(this.destroy$),
       filter(u => !!u),
       take(1),
     )
@@ -202,6 +204,8 @@ export class LocationTableComponent implements OnInit, OnDestroy {
       this.locationService.loadedFavoriteLocations$,
       (loc, fav) => loc && fav
     );
+
+    this.loading$ = this.locationService.loadingLocations$;
 
     if (!this.locationService.focused.value) {
       this.locationService.focused.next(true);
@@ -382,7 +386,11 @@ export class LocationTableComponent implements OnInit, OnDestroy {
         if (this.staticChoices && this.staticChoices.length) {
           this.choices = this.staticChoices;
         } else {
-          iif(() => !!this.category, this.locationService.locsFromCategory$, this.locationService.locations$)
+          iif(() =>
+            !!this.category,
+            this.locationService.locsFromCategory$,
+            this.locationService.locations$
+          )
             .pipe(takeUntil(this.destroy$))
             .subscribe(res => {
               this.choices = res.filter(r => {
