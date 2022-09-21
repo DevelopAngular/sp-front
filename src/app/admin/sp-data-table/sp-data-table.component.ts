@@ -176,6 +176,21 @@ export class SpDataTableComponent implements OnInit, OnDestroy, OnChanges {
     return Math.floor(this.viewport.getViewportSize() / this.itemSize);
   }
 
+  private doNotTranslateTheseColumns: Record<string, Array<string>> = {
+    'pass_search': ['Student Name', 'Pass start time', 'Duration'],
+    'encounter_detection': ['Students', '# of Encounters'],
+    'report_search': ['Student Name', 'Date submitted'],
+    '_profile_student': ['Name', 'Email/username', 'ID', 'Grade', 'Last sign-in'],
+    '_profile_teacher': ['Name', 'Email/username', 'ID', 'Last sign-in'],
+    '_profile_admin': ['Name', 'Email/username', 'ID', 'Last sign-in'],
+    '_profile_assistant': ['Name', 'Email/username', 'ID', 'Acting on Behalf Of', 'Last sign-in'],
+  };
+  attrIgnore(currentPage: string, column: string): true|null {
+    //console.log(currentPage, column)
+    const ignore = this.doNotTranslateTheseColumns[currentPage]?.includes(column) ? true : null;
+    return ignore;
+  }
+
   ngOnInit() {
     this.dataSource = new GridTableDataSource(this.data$, this.viewport, this.itemSize);
     this.fakedata = this.generateFakeData();
