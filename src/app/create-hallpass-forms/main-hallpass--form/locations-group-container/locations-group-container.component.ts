@@ -119,8 +119,10 @@ export class LocationsGroupContainerComponent implements OnInit, OnDestroy {
       } else if (this.FORM_STATE.data.selectedGroup) {
         return this.FORM_STATE.data.selectedGroup.title;
       } else {
-        return this.FORM_STATE.data.selectedStudents[0].display_name +
-          (this.FORM_STATE.data.selectedStudents.length > 1 ? ` (${this.FORM_STATE.data.selectedStudents.length - 1})` : '');
+        const students = this.FORM_STATE.data.direction.from === null 
+        ? this.FORM_STATE.data.selectedStudents
+        : this.FORM_STATE.data?.roomStudents ?? this.FORM_STATE.data.selectedStudents;
+        return students[0].display_name + (students.length > 1 ? ` (${students.length - 1})` : '');
       }
     }
   }
