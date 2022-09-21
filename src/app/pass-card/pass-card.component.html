@@ -13,7 +13,7 @@
           <img  class="pass-card-header-icon" [src]="pass.icon | resolveAsset">
           <div class="pass-card-header-text">
             {{ pass.destination.title }}
-            <div class="card-subtitle" *ngIf="fromPast || forFuture">
+            <div notranslate class="card-subtitle" *ngIf="fromPast || forFuture">
               {{ formatDateTime(pass.start_time) }}
             </div>
           </div>
