@@ -319,7 +319,6 @@ export class ToWhereComponent implements OnInit, OnDestroy {
         // SKIPPING case
         // avoid a certain no students case
         if (selectedStudents.length === 1) {
-          //this.dialogRef.close();
           return;
         }
 
@@ -338,15 +337,6 @@ export class ToWhereComponent implements OnInit, OnDestroy {
       this.passLimitPromise(pinnable.location).then(emitSelectedPinnable);
   }
 
-  /*
-  private forwardAndEmit() {
-    this.formService.setFrameMotionDirection('disable');
-    this.formService.scalableBoxController.next(true);
-    setTimeout(() => {
-      this.selectedLocation.emit(location);
-    }, 100);
-  }*/
-
   locationSelected(location) {
     const forwardAndEmit = () => {
       this.formService.setFrameMotionDirection('disable');
@@ -358,21 +348,6 @@ export class ToWhereComponent implements OnInit, OnDestroy {
 
     this.passLimitPromise(location).then((allowed) => {
       if (!allowed) return;
-
-      // students go forward
-      /*if (!this.isStaff) {
-        this.formState.data.roomStudents = [this.student];
-        forwardAndEmit();
-        return;
-      }
-
-      this.visibilityService.howToActOnChooseLocation(
-        this.formState,
-        location,
-        this.confirmDialogVisibility,
-        this.forwardAndEmit.bind(this),
-        this.destroy$,
-      );*/
 
      // staff only
      const selectedStudents = this.formState.data.roomStudents ?? this.formState.data.selectedStudents;
@@ -395,6 +370,11 @@ export class ToWhereComponent implements OnInit, OnDestroy {
       } else {
         title = (names?.join(', ') ?? 'Student') + ' does not have permission to go to this room';
       }
+
+      const roomStudents = selectedStudents.filter(s => (!skipped.includes(''+s.id)));
+      const noStudentsCase = roomStudents.length === 0;
+      
+      if (noStudentsCase) denyText = 'Cancel';
 
       this.dialog.open(ConfirmationDialogComponent, {
         panelClass: 'overlay-dialog',
@@ -430,18 +410,11 @@ export class ToWhereComponent implements OnInit, OnDestroy {
 
         // SKIPPING case
         // avoid a certain no students case
-        if (selectedStudents.length === 1) return;
+        if (selectedStudents.length === 1) {
+          return;
+        }
 
-        this.formState.data.roomOverride = !!override;
-        // filter out the skipped students
-        const roomStudents = selectedStudents.filter(s => (!skipped.includes(''+s.id)));
-        // avoid no students case
-        if (roomStudents.length === 0) {
-          /*this.toastService.openToast({
-            title: 'Skiping will left no students to operate on',
-            subtitle: 'Last operation did not proceeed',
-            type: 'error',
-          });*/
+        if (noStudentsCase) {
           return;
         }
 
