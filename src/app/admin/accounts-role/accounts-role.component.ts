@@ -3,7 +3,7 @@ import {MatDialog} from '@angular/material/dialog';
 import {BehaviorSubject, combineLatest, forkJoin, Observable, of, Subject} from 'rxjs';
 import {UserService} from '../../services/user.service';
 import {ActivatedRoute, Router} from '@angular/router';
-import {filter, map, skipUntil, switchMap, take, takeUntil, tap} from 'rxjs/operators';
+import {debounceTime, filter, map, skipUntil, switchMap, take, takeUntil, tap} from 'rxjs/operators';
 import {Util} from '../../../Util';
 import {HttpService} from '../../services/http-service';
 import {AdminService} from '../../services/admin.service';
@@ -158,10 +158,12 @@ export class AccountsRoleComponent implements OnInit, OnDestroy {
 
     this.adminService.searchAccountEmit$.asObservable()
       .pipe(
+        debounceTime(300),
         takeUntil(this.destroy$),
         tap((value) => this.userService.getAccountsRoles(this.role, value, 1000))
       )
       .subscribe(value => {
+        console.log('emitting stuff');
       this.searchValue = value;
     });
 
