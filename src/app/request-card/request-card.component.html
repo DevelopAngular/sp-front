@@ -14,7 +14,7 @@
           <div class="pass-card-header-text">
             {{ request.destination.title }}
             <div class="card-subtitle" *ngIf="fromPast || forFuture">
-              {{ ((request.request_time && forFuture)?'<span '+(forStaff?'ignore':'notranslate')+'>'+formatDateTime(request.request_time) + '</span>':(forStaff?'Pass for Now':'')) }}
+              {{ ((request.request_time && forFuture)?`<span notranslate>${formatDateTime(request.request_time)}</span>`:(forStaff?'Pass for Now':'')) }}
             </div>
           </div>
         </div>
