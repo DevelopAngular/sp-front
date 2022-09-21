@@ -6,7 +6,7 @@
           <img  class="pass-card-header-icon" [src]="invitation.icon | resolveAsset">
           <div class="pass-card-header-text">
             {{ invitation.destination.title }}
-            <div class="card-subtitle" *ngIf="fromPast || forFuture">
+            <div notranslate class="card-subtitle" *ngIf="fromPast || forFuture">
               {{ formatDateTime(invitation.date_choices[0]) }}
             </div>
           </div>
@@ -150,22 +150,22 @@
         <div class="bottom-block">
           <app-pager *ngIf="invitation.status !== 'pending'; else pending" [page]="2">
             <div class="page-1" [attr.data-motion-translate]="true">
-              <span class="bold">Pass Request Sent</span><span class="smaller"><br>by {{issuerName + ' - ' + formatDateTime(invitation.created)}}</span>
+              <span class="bold">Pass Request Sent</span><span class="smaller"><br>by <var>{{issuerName + ' - ' + formatDateTime(invitation.created)}}</var></span>
             </div>
             <div class="page-2" [attr.data-motion-translate]="true">
-              <span class="bold">Pass Request {{ status }}</span><span class="smaller"><br>by {{studentName + ' - ' + formatDateTime(invitation.last_updated)}}</span>
+              <span class="bold">Pass Request {{ status }}</span><span class="smaller"><br>by <var>{{studentName + ' - ' + formatDateTime(invitation.last_updated)}}</var></span>
             </div>
 
             <div class="page-5" [attr.data-motion-translate]="true">
-              <span class="bold">Pass Request Sent</span><span class="smaller"><br>by {{issuerName + ' - ' + formatDateTime(invitation.created)}}</span>
+              <span class="bold">Pass Request Sent</span><span class="smaller"><br>by <var>{{issuerName + ' - ' + formatDateTime(invitation.created)}}</var></span>
             </div>
             <div class="page-6" [attr.data-motion-translate]="true">
-              <span class="bold">Pass Request {{ status }}</span><span class="smaller"><br>by {{studentName + ' - ' + formatDateTime(invitation.last_updated)}}</span>
+              <span class="bold">Pass Request {{ status }}</span><span class="smaller"><br>by <var>{{studentName + ' - ' + formatDateTime(invitation.last_updated)}}</var></span>
             </div>
           </app-pager>
           <ng-template #pending>
             <div>
-              <span class="bold">Pass Request Sent</span><span class="smaller"><br>by {{issuerName + ' - ' + formatDateTime(invitation.created)}}</span>
+              <span class="bold">Pass Request Sent</span><span class="smaller"><br>by <var>{{issuerName + ' - ' + formatDateTime(invitation.created)}}</var></span>
             </div>
           </ng-template>
         </div>
