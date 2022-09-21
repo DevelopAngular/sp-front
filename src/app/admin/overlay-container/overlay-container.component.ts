@@ -735,6 +735,7 @@ export class OverlayContainerComponent implements OnInit, OnDestroy {
 
   onPublish() {
     this.showPublishSpinner = true;
+    this.isSaveButtonDisabled = true;
 
     if (this.currentPage === Pages.NewRoom) {
        const location = {
@@ -772,6 +773,7 @@ export class OverlayContainerComponent implements OnInit, OnDestroy {
            )
          .subscribe(response => {
            this.toast.openToast({title: 'New room added', type: 'success'});
+           this.isSaveButtonDisabled = false;
            this.dialogRef.close(true);
          });
     }
@@ -791,7 +793,10 @@ export class OverlayContainerComponent implements OnInit, OnDestroy {
             takeUntil(this.destroy$),
             this.catchError(),
           )
-            .subscribe(res => this.dialogRef.close(true));
+            .subscribe(() => {
+              this.isSaveButtonDisabled = false;
+              this.dialogRef.close(true);
+            });
         }
       }
       if (this.folderData.roomsToDelete.length) {
@@ -879,6 +884,7 @@ export class OverlayContainerComponent implements OnInit, OnDestroy {
       )
       .subscribe(() => {
         this.toast.openToast({title: this.currentPage === Pages.NewFolder ? 'New folder added' : 'Folder updated', type: 'success'});
+        this.isSaveButtonDisabled = false;
         this.dialogRef.close(true);
       });
     }
@@ -916,8 +922,9 @@ export class OverlayContainerComponent implements OnInit, OnDestroy {
                     location: loc.id,
                 };
                 return this.hallPassService.updatePinnableRequest(this.pinnable.id, pinnable);
-            })).pipe(take(1), takeUntil(this.destroy$)).subscribe(response => {
+            })).pipe(take(1), takeUntil(this.destroy$)).subscribe(() => {
               this.toast.openToast({title: 'Room updated', type: 'success'});
+              this.isSaveButtonDisabled = false;
               this.dialogRef.close(true);
         });
     }
@@ -934,6 +941,7 @@ export class OverlayContainerComponent implements OnInit, OnDestroy {
 
       zip(...patchRequests$).pipe(takeUntil(this.destroy$)).subscribe(res => {
         this.toast.openToast({title: 'Rooms updated', type: 'success'});
+        this.isSaveButtonDisabled = false;
         this.dialogRef.close(true);
       });
     }
