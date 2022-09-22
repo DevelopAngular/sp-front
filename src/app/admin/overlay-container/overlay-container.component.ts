@@ -4,7 +4,7 @@ import {MAT_DIALOG_DATA, MatDialog, MatDialogRef} from '@angular/material/dialog
 import {DomSanitizer} from '@angular/platform-browser';
 
 import {BehaviorSubject, combineLatest, forkJoin, fromEvent, merge, Observable, of, Subject, zip, throwError} from 'rxjs';
-import {debounceTime, distinctUntilChanged, filter, map, switchMap, take, takeUntil, tap, catchError} from 'rxjs/operators';
+import {debounceTime, distinctUntilChanged, filter, map, switchMap, take, takeUntil, tap, catchError, concatMap} from 'rxjs/operators';
 
 import {bumpIn, NextStep} from '../../animations';
 import {Pinnable} from '../../models/Pinnable';
@@ -190,7 +190,7 @@ export class OverlayContainerComponent implements OnInit, OnDestroy {
   }
 
   // how to use: change it and revert it back to FALSE after you finish
-  private isSaveButtonDisabled: boolean = false;
+  private isSaveButtonDisabled = false;
 
   get isFormIncomplete() {
     if (this.currentPage === Pages.NewRoom || this.currentPage === Pages.EditRoom || this.currentPage === Pages.NewFolder || this.currentPage === Pages.EditFolder) {
@@ -329,6 +329,7 @@ export class OverlayContainerComponent implements OnInit, OnDestroy {
       this.overlayType = this.dialogData['type'];
       if (this.dialogData['pinnable']) {
         this.pinnable = this.dialogData['pinnable'];
+        console.log(this.pinnable);
         // initial visibility
         this.visibility = this.getVisibilityStudents(this.pinnable.location);
       }
@@ -733,6 +734,40 @@ export class OverlayContainerComponent implements OnInit, OnDestroy {
    });
  }
 
+ private createOrUpdateLocation(location, category: string): Observable<any> {
+    const locationData = cloneDeep(location);
+    locationData.category = category;
+   if (location?.visibility_students) {
+     locationData.visibility_students = locationData.visibility_students.map((s: User) => s.id);
+   }
+
+    if (isString(location.id)) {
+      locationData.teachers = location.teachers.map(t => t.id);
+      console.log(locationData);
+      return this.locationService.createLocation(locationData);
+    }
+
+   if (!location.max_passes_to_active && location.enable_queue) {
+     locationData.max_passes_to_active = true;
+   }
+   if (location.teachers) {
+     locationData.teachers = locationData.teachers.map(teacher => +teacher.id);
+   }
+   console.log(locationData);
+
+   return this.locationService.updateLocation(location.id, locationData);
+ }
+
+ private getIconString(): string {
+    return this.selectedIcon?.inactive_icon ?? ((typeof this.selectedIcon === 'string') ? this.selectedIcon : '');
+ }
+
+ private isPinnableChanged(): boolean {
+    return this.folderData.folderName !== this.pinnable.title ||
+      this.color_profile.id !== this.pinnable.color_profile.id ||
+      this.getIconString() !== this.pinnable.icon;
+ }
+
   onPublish() {
     this.showPublishSpinner = true;
     this.isSaveButtonDisabled = true;
@@ -785,6 +820,39 @@ export class OverlayContainerComponent implements OnInit, OnDestroy {
      * - a new category must be created
      * - there can be no rooms to delete in a new folder since the folder did not exist before
      */
+    if (this.currentPage === Pages.NewFolder) {
+      const category = `${this.folderData.folderName} ${this.generateRandomString()}`;
+      const pinnableData = { // data to create the pinnable
+        title: this.folderData.folderName,
+        color_profile: this.color_profile.id,
+        icon: this.getIconString(),
+        category
+      };
+
+      const roomsInFolderUpdateRequests$ = this.folderData.roomsInFolder.map(room => { // data to update rooms
+        return this.createOrUpdateLocation(room, category);
+      });
+
+      zip(...roomsInFolderUpdateRequests$).pipe(
+        switchMap(() => zip(
+          this.hallPassService.pinnables$.pipe(take(1)),
+          this.hallPassService.postPinnableRequest(pinnableData).pipe(filter(res => !!res)),
+        ).pipe(switchMap((result: any[]) => {
+          const arrangedSequence = result[0].map(item => item.id);
+          arrangedSequence.push(result[1].id);
+          return this.hallPassService.createArrangedPinnableRequest( { order: arrangedSequence.join(',')});
+        }))),
+        takeUntil(this.destroy$),
+        this.catchError()
+      ).subscribe({
+        next: () => {
+          this.toast.openToast({title: 'New folder added', type: 'success'});
+          this.isSaveButtonDisabled = false;
+          this.dialogRef.close(true);
+        }
+      });
+    }
+
     /**
      * Editing a folder means:
      * - a pinnable has already been created for this folder, therefore this.pinnable **should** be defined
@@ -797,118 +865,52 @@ export class OverlayContainerComponent implements OnInit, OnDestroy {
      * - the folder may contain at least 0 rooms
      * - the category should not be updated
      */
-    // This is pretty error-prone
-    // TODO: Separate new folder and edit folder cases
-    if (this.currentPage === Pages.NewFolder || this.currentPage === Pages.EditFolder) {
-      const salt = ' ' + this.generateRandomString();
-      const category = !!this.pinnable ? this.pinnable.category : (this.folderData.folderName + salt);
+    if (this.currentPage === Pages.EditFolder) {
+      const pinnableData = { // data to create the pinnable
+        title: this.folderData.folderName,
+        color_profile: this.color_profile.id,
+        icon: this.getIconString()
+      };
 
-      if (!this.folderData.roomsInFolder.length) {
-        const newFolder = {
-          title: this.folderData.folderName,
-          color_profile: this.color_profile.id,
-          // selectedIcon is an object when is to be updated but is kept as a string
-          icon: this.selectedIcon?.inactive_icon ?? (typeof this.selectedIcon === 'string') ? this.selectedIcon : '', // last choice to be a generic icon not just a empty string?
-          category
-        };
-        if (this.pinnable) {
-          this.hallPassService.updatePinnableRequest(this.pinnable.id, newFolder).pipe(
-            takeUntil(this.destroy$),
-            this.catchError(),
-          )
-            .subscribe(() => {
-              this.isSaveButtonDisabled = false;
-              this.dialogRef.close(true);
-            });
-        }
+      if (!this.pinnable) {
+        throw new Error('Pinnable is supposed to exist if editing a folder!');
       }
-      if (this.folderData.roomsToDelete.length) {
-        const deleteRequest$ = this.folderData.roomsToDelete.map(room => {
-          return this.locationService.deleteLocationRequest(room.id).pipe(filter(res => !!res));
+
+      console.log(`Pinnable changed: ${this.isPinnableChanged()}`);
+      const pinnableUpdateRequest$ = this.isPinnableChanged()
+        ? this.hallPassService.updatePinnable(this.pinnable.id, pinnableData).pipe(
+          takeUntil(this.destroy$),
+          this.catchError())
+        : of(null);
+
+      const roomDeletionRequest$ = forkJoin(this.folderData.roomsToDelete.length
+        ? this.folderData.roomsToDelete.map(room => this.locationService.deleteLocationRequest(room.id).pipe(filter(res => !!res)))
+        : [of(null)]).pipe(takeUntil(this.destroy$));
+
+      const existingOrNewRoomRequests$ = this.folderData.roomsInFolder
+        .filter(room => room.isEdit || !room.category)
+        .map(room => {
+          return this.createOrUpdateLocation(room, this.pinnable.category);
         });
 
-        forkJoin(deleteRequest$).pipe(takeUntil(this.destroy$)).subscribe();
-      }
-
-      let locationsToDb$;
-      const touchedRooms = this.folderData.roomsInFolder.filter(room => room.isEdit || !room.category);
-
-      if (touchedRooms.length) {
-        locationsToDb$ = touchedRooms.map(location => {
-          let id;
-          let data;
-
-          if (isString(location.id)) {
-            data = location;
-            data.category = category;
-            data.teachers = location.teachers.map(t => t.id);
-            if (data?.visibility_students) {
-              data.visibility_students = data.visibility_students.map((s: User) => s.id);
-            }
-            return this.locationService.createLocation(data);
-          } else {
-            id = location.id;
-            data = location;
-            data.category = category;
-            if (!data.max_passes_to_active && data.enable_queue) {
-              data.max_passes_to_active = true;
-            }
-            if (data.teachers) {
-              data.teachers = data.teachers.map(teacher => +teacher.id);
-            }
-            if (data?.visibility_students) {
-              data.visibility_students = data.visibility_students.map((s: User) => s.id);
-            }
-
-            return this.locationService.updateLocation(id, data);
-          }
-        });
-      } else {
-        locationsToDb$ = [of(null)];
-      }
-
-      zip(...locationsToDb$).pipe( // after all locations observables emit, emit responses as an array
-        switchMap(locations => { // map each location to a switched observable request
-          const newFolder = {
-            title: this.folderData.folderName,
-            color_profile: this.color_profile.id,
-            // TODO why is this.selectedIcon is a string?
-            icon: this.selectedIcon?.inactive_icon,
-            category: this.folderData.folderName + salt
-          };
-          if (this.currentPage === Pages.EditFolder) {
-            this.hallPassService.updatePinnableRequest(this.pinnable.id, newFolder);
+      forkJoin([pinnableUpdateRequest$, roomDeletionRequest$, ...existingOrNewRoomRequests$]).pipe(
+        concatMap(() => {
+          if (this.pinnableToDeleteIds.length === 0) {
             return of(null);
-          } else {
-            return zip(
-              this.hallPassService.pinnables$.pipe(take(1)),
-              this.hallPassService.postPinnableRequest(newFolder).pipe(filter(res => !!res)),
-            ).pipe(
-              switchMap((result: any[]) => {
-                const arrengedSequence = result[0].map(item => item.id);
-                arrengedSequence.push(result[1].id);
-                return this.hallPassService.createArrangedPinnableRequest( { order: arrengedSequence.join(',')});
-              })
-            );
           }
-      }),
-      switchMap((res) => {
-        if (this.pinnableToDeleteIds.length) {
-          const deleteRequests = this.pinnableToDeleteIds.map(id => {
-            return this.hallPassService.deletePinnableRequest(id, true);
-          });
-          return zip(...deleteRequests);
-        } else {
-          return of(null);
+
+          return zip(
+            ...this.pinnableToDeleteIds.map(id => this.hallPassService.deletePinnableRequest(id, true))
+          );
+        }),
+        takeUntil(this.destroy$),
+        this.catchError(),
+      ).subscribe({
+        next: () => {
+          this.toast.openToast({title: 'Folder updated', type: 'success'});
+          this.isSaveButtonDisabled = false;
+          this.dialogRef.close(true);
         }
-      }),
-      takeUntil(this.destroy$),
-      this.catchError(),
-      )
-      .subscribe(() => {
-        this.toast.openToast({title: this.currentPage === Pages.NewFolder ? 'New folder added' : 'Folder updated', type: 'success'});
-        this.isSaveButtonDisabled = false;
-        this.dialogRef.close(true);
       });
     }
 
