@@ -781,11 +781,17 @@ export class OverlayContainerComponent implements OnInit, OnDestroy {
     if (this.currentPage === Pages.NewFolder || this.currentPage === Pages.EditFolder) {
       const salt = ' ' + this.generateRandomString();
       if (!this.folderData.roomsInFolder.length) {
+        //DANGER: this.selectedIcon is an object when is to be updated but is kept as a string
+        // bad evaluation order, left here for teaching
+        // const icon = this.selectedIcon?.inactive_icon ?? (typeof this.selectedIcon === 'string') ? this.selectedIcon : '';
+        const icon = this.selectedIcon?.inactive_icon ?? (// <- it needs this wrapping paren to make wrapped expression to be evaluated in its entireness,
+          typeof this.selectedIcon === 'string' ? this.selectedIcon : '' // otherwise the js engine will evaluate as a boolean everything till question mark "?"
+        );
+
         const newFolder = {
           title: this.folderData.folderName,
           color_profile: this.color_profile.id,
-          // selectedIcon is an object when is to be updated but is kept as a string
-          icon: this.selectedIcon?.inactive_icon ?? (typeof this.selectedIcon === 'string') ? this.selectedIcon : '', // last choice to be a generic icon not just a empty string?
+          icon,
           category: this.folderData.folderName + salt
         };
         if (this.pinnable) {
