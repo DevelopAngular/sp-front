@@ -489,7 +489,7 @@ export class PassCardComponent implements OnInit, OnDestroy {
             }
             // both teachers and students must see as a room is closed only by an admin
             if (isRoomsClosed) {
-              const roomNames = errorResponse.error.visibility_alerts.filter(r => r.enable).map(r => r?.location_title ?? '');
+              const roomNames = errorResponse.error.visibility_alerts.filter(r => !r.enable).map(r => r?.location_title ?? '');
               this.toastService.openToast({
                 title: 'Room status',
                 subtitle: `Closed: ${roomNames.join(',')}`,
