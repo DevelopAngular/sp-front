@@ -464,9 +464,15 @@ export class PassCardComponent implements OnInit, OnDestroy {
         return errors.pipe(
           tap(errorResponse => {
             const isVisibilityError = ('visibility_alerts' in errorResponse.error);
+            // not our error case? dispatch it to the next retryWhen
+            if (! isVisibilityError) {
+              throw errorResponse;
+            }
+
             // a student has been checked server side and had no room visibility
-            if (!this.forStaff) {
-                const roomNames = isVisibilityError ? errorResponse.error.visibility_alerts.map(r => r?.location_title ?? '') : [''];
+            const isRoomsClosed = 'rooms_closed' in errorResponse.error;
+            if (!this.forStaff && !isRoomsClosed) {
+                const roomNames = errorResponse.error.visibility_alerts.map(r => r?.location_title ?? '');
                 const title = `You don't have access to ${(roomNames.length > 1
                   ? 'Rooms ' + roomNames.join(', ')
                   : roomNames[0] === ''
@@ -479,12 +485,19 @@ export class PassCardComponent implements OnInit, OnDestroy {
                 });
 
                 this.performingAction = false;
-                //this.dialogRef.close();
                 throw 'this student has been subject of room visibility rules';
             }
-            // not our error case? dispatch it to the next retryWhen
-            if (! isVisibilityError) {
-              throw errorResponse;
+            // both teachers and students must see as a room is closed only by an admin
+            if (isRoomsClosed) {
+              const roomNames = errorResponse.error.visibility_alerts.filter(r => r.enable).map(r => r?.location_title ?? '');
+              this.toastService.openToast({
+                title: 'Room status',
+                subtitle: `Closed: ${roomNames.join(',')}`,
+                type: 'error',
+              });
+
+              this.performingAction = false;
+              throw 'room has been closed';
             }
           }),
           concatMap(({error}) => getOverrideFromDialog(error)),
