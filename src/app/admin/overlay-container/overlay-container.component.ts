@@ -778,15 +778,38 @@ export class OverlayContainerComponent implements OnInit, OnDestroy {
          });
     }
 
+    /**
+     * Creating a new folder means:
+     * - there is no pinnable attached to this folder, therefore this.pinnable is undefined
+     * - there are at be at least 0 rooms in this folder
+     * - a new category must be created
+     * - there can be no rooms to delete in a new folder since the folder did not exist before
+     */
+    /**
+     * Editing a folder means:
+     * - a pinnable has already been created for this folder, therefore this.pinnable **should** be defined
+     *   (throw a developer-level error if this.pinnable is somehow undefined, since this should not happen)
+     * - data irrelevant to contained rooms may have changed (title, icon, color profile)
+     * - data relevant to rooms may have changed:
+     *   - added rooms
+     *   - delete rooms
+     *   - edited rooms
+     * - the folder may contain at least 0 rooms
+     * - the category should not be updated
+     */
+    // This is pretty error-prone
+    // TODO: Separate new folder and edit folder cases
     if (this.currentPage === Pages.NewFolder || this.currentPage === Pages.EditFolder) {
       const salt = ' ' + this.generateRandomString();
+      const category = !!this.pinnable ? this.pinnable.category : (this.folderData.folderName + salt);
+
       if (!this.folderData.roomsInFolder.length) {
         const newFolder = {
           title: this.folderData.folderName,
           color_profile: this.color_profile.id,
           // selectedIcon is an object when is to be updated but is kept as a string
           icon: this.selectedIcon?.inactive_icon ?? (typeof this.selectedIcon === 'string') ? this.selectedIcon : '', // last choice to be a generic icon not just a empty string?
-          category: this.folderData.folderName + salt
+          category
         };
         if (this.pinnable) {
           this.hallPassService.updatePinnableRequest(this.pinnable.id, newFolder).pipe(
@@ -814,19 +837,19 @@ export class OverlayContainerComponent implements OnInit, OnDestroy {
         locationsToDb$ = touchedRooms.map(location => {
           let id;
           let data;
+
           if (isString(location.id)) {
             data = location;
-            data.category = this.folderData.folderName + salt;
+            data.category = category;
             data.teachers = location.teachers.map(t => t.id);
             if (data?.visibility_students) {
               data.visibility_students = data.visibility_students.map((s: User) => s.id);
             }
-            //location.visibility_type =
             return this.locationService.createLocation(data);
           } else {
             id = location.id;
             data = location;
-            data.category = this.folderData.folderName + salt;
+            data.category = category;
             if (!data.max_passes_to_active && data.enable_queue) {
               data.max_passes_to_active = true;
             }
