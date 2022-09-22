@@ -157,7 +157,7 @@ export class ToCategoryComponent implements OnInit {
     let text =  'This room is only available to certain students';
     let names = this.selectedStudents.filter(s => skipped.includes(''+s.id)).map(s => s.display_name);
     let title =  'Student does not have permission to go to this room';
-    let denyText =  'Cancel';
+    let denyText =  'Skip';
     if (names.length > 1) {
       text = names?.join(', ') ?? 'This room is only available to certain students'
       title = 'These students do not have permission to go to this room:';
