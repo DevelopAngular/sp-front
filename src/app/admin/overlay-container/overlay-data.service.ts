@@ -103,11 +103,12 @@ export class OverlayDataService {
   public patchData(data) {
     const old = this.pageState.getValue();
     const newdata = cloneDeep({...old.data, ...data});
-    this.pageState.next({
+    const patched = {
       currentPage: old.currentPage,
       previousPage: old.previousPage,
       data: newdata,
-    });
+    };
+    this.pageState.next(patched);
   }
 
   back(data) {

@@ -321,6 +321,8 @@ export class OverlayContainerComponent implements OnInit, OnDestroy {
   }
 
   ngOnInit() {
+//    this.overlayService.patchData({visibility: DEFAULT_VISIBILITY_STUDENTS})
+
     this.pinnablesCollectionIds$ = this.hallPassService.pinnablesCollectionIds$;
     this.overlayService.pageState.pipe(filter(res => !!res)).subscribe(res => {
        this.currentPage = res.currentPage;
@@ -461,6 +463,8 @@ export class OverlayContainerComponent implements OnInit, OnDestroy {
   ngOnDestroy() {
     this.destroy$.next();
     this.destroy$.complete();
+    const afresh = {visibility: DEFAULT_VISIBILITY_STUDENTS};
+    this.overlayService.patchData(afresh)
   }
 
   buildForm() {

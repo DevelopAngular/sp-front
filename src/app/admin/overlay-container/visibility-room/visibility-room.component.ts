@@ -435,8 +435,8 @@ export class VisibilityRoomComponent implements OnInit, AfterViewInit, OnDestroy
       filter( (v: VisibilityMode | null) => !!v && (v !== this.mode)),
       tap((v: VisibilityMode) => {
         
-        // init new mode
-        const visibility: VisibilityOverStudents = DEFAULT_VISIBILITY_STUDENTS;
+        // init new modea
+        const visibility: VisibilityOverStudents = cloneDeep(DEFAULT_VISIBILITY_STUDENTS);
         visibility.over = this.selectedStudents = [];
         visibility.grade = this.selectedGradeLevels = [];
         visibility.mode = this.mode = v;
@@ -480,7 +480,7 @@ export class VisibilityRoomComponent implements OnInit, AfterViewInit, OnDestroy
     this.data = {mode: this.mode, over: [...this.selectedStudents], grade: [...this.selectedGradeLevels]};
     const data = cloneDeep(this.data); 
     // sync with page state
-    this.overlayService.patchData({data});
+    this.overlayService.patchData({visibility: data});
 
     this.visibilityForm.setValue({visibility: data});
     // notify parent of selected option
