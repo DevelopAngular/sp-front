@@ -40,6 +40,8 @@ export class InlinePassCardComponent implements OnInit, OnDestroy {
   selectedTravelType: string;
   subscribers$;
   endPassLoading$: Observable<boolean>;
+  activeRoomCodePin: boolean;
+  activeTeacherPin: boolean;
 
   constructor(
       private http: HttpService,
@@ -106,7 +108,37 @@ export class InlinePassCardComponent implements OnInit, OnDestroy {
   }
 
   endPass() {
-    this.hallPassService.endPassRequest(this.pass.id);
+    console.log("YES STUDENT")
+    this.activeRoomCodePin = true;
+    // this.hallPassService.endPassRequest(this.pass.id);
+  }
+
+  roomCodeResult(event){
+    console.log("event : ", event);
+    let body = {
+      "room_code": event,
+  "destination_id": this.pass.destination.id
+    };
+
+    this.hallPassService.endPassWithCheckIn(this.pass.id, body).subscribe({
+      next: result => {
+        console.log("result : ", result);
+      }
+    })
+  }
+
+  enableTeacherPin(){
+    this.activeRoomCodePin = false;
+    this.activeTeacherPin = true;
+  }
+
+  back(){
+    if (this.activeTeacherPin == true) {
+      this.activeTeacherPin = false;
+      this.activeRoomCodePin = true;
+    }else {
+      this.activeRoomCodePin = false;
+    }
   }
 
   closeDialog() {

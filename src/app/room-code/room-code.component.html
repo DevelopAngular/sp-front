@@ -1,0 +1,17 @@
+<input type="tel" tabindex="1" style="position: absolute; width: 0; height: 0; opacity: 0" autofocus (blur)="blur()" #inp>
+<div class="teacher-pin-view">
+    <div class="content">
+        <div class="teacher-pin">
+            <div class="pin-title">Enter {{roomName}} Room Code</div>
+            <div class="circles" [ngClass]="{incorrect: incorrect}">
+                <form [formGroup]="form">
+                    <div class="ds-flex-center-between">
+                        <div class="form-group-custom" *ngFor="let input of formInput;  index as i">
+                            <input #formRow type="text" formControlName="{{input}}" maxlength="1" (keyup)="keyUpEvent($event, i)" [style.margin]="i == 1 ? '0 15px' : null">
+                        </div>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>

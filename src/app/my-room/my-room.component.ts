@@ -33,6 +33,7 @@ import {UNANIMATED_CONTAINER} from '../consent-menu-overlay';
 import {GoogleLoginService} from '../services/google-login.service';
 import * as moment from 'moment';
 import {CheckForUpdateService} from '../services/check-for-update.service';
+import { RoomCheckinCodeDialogComponent } from './room-checkin-code-dialog/room-checkin-code-dialog.component';
 
 
 @Component({
@@ -391,6 +392,15 @@ export class MyRoomComponent implements OnInit, OnDestroy, AfterViewInit {
       this.router.navigate(['main/kioskMode']);
     });
 
+  }
+
+  openRoomCodeDialog(){
+    console.log("this.selectedLocation : ", this.selectedLocation);
+    const dialogRef = this.dialog.open(RoomCheckinCodeDialogComponent, {
+      panelClass: 'search-pass-card-dialog-container',
+      backdropClass: 'custom-bd',
+      // data: data,
+    });
   }
 
   onSearch(search: string) {
