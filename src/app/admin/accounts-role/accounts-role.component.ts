@@ -99,10 +99,22 @@ export class AccountsRoleComponent implements OnInit, OnDestroy {
         switchMap(() => {
           return this.userService.getAccountsRole(this.role);
         }),
+        /**
+         * Be careful when marking raw JSON responses from the server as TypeScript classes instead of interfaces.
+         * Marking the response from this.userService.getAccountsRole as Observable<User[]> incorrectly tells TypeScript
+         * that the methods on the User class are present on these objects when they are not.
+         *
+         * The following should be converted using User.fromJSON if intending to use methods on that class
+         */
         switchMap((accounts: User[]) => {
           if (accounts.length === 0) {
             return of([]);
           }
+
+          if (this.role !== '_profile_student') {
+            return of(accounts);
+          }
+
           return forkJoin(
             accounts.map(a => this.passLimitsService.getStudentPassLimit(a.id).pipe(map(limit => ({...a, limit}))))
           );
