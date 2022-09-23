@@ -527,8 +527,8 @@ export class OverlayContainerComponent implements OnInit, OnDestroy {
   }
 
   getVisibilityStudents(loc: Location): VisibilityOverStudents {
-    if (!loc) return DEFAULT_VISIBILITY_STUDENTS;
-    return {...DEFAULT_VISIBILITY_STUDENTS, mode: loc.visibility_type, over: loc.visibility_students, grade: loc.visibility_grade};
+    if (!loc) return cloneDeep(DEFAULT_VISIBILITY_STUDENTS);
+    return {...cloneDeep(DEFAULT_VISIBILITY_STUDENTS), mode: loc.visibility_type, over: loc.visibility_students, grade: loc.visibility_grade};
   }
 
   generateAdvOptionsModel(loc: Location) {

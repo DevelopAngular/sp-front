@@ -18,5 +18,3 @@ export const DEFAULT_VISIBILITY_STUDENTS: VisibilityOverStudents  = {
   over: [],
   grade: [],  
 };
-Object.freeze(DEFAULT_VISIBILITY_STUDENTS);
-
