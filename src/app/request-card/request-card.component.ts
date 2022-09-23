@@ -267,9 +267,7 @@ export class RequestCardComponent implements OnInit, OnDestroy {
         }
       } else if (to.request_mode === 'specific_teachers' && this.request.destination.request_teachers.length === 1) {
         this.nowTeachers = to.request_teachers;
-      } else if (to.request_mode === 'specific_teachers') {
-        this.nowTeachers = this.request.teachers;
-      } else if (to.request_mode === 'teacher_in_room' && to.teachers.length === 1) {
+      } else if (to.request_mode === 'specific_teachers' || to.request_mode === 'teacher_in_room') {
         this.nowTeachers = this.request.teachers;
       }
     } else {
@@ -314,6 +312,8 @@ export class RequestCardComponent implements OnInit, OnDestroy {
       'travel_type': this.selectedTravelType,
       'duration': this.selectedDuration * 60,
     };
+    console.log(body);
+    console.log(this.nowTeachers);
 
     if (this.isFutureOrNowTeachers && !this.formState.kioskMode) {
       if (this.forFuture) {
