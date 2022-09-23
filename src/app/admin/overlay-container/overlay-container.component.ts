@@ -1083,7 +1083,7 @@ export class OverlayContainerComponent implements OnInit, OnDestroy {
 
       room.roomName = room.title;
       room.roomNumber = room.room;
-      room.selectedTeachers = room.teachers;
+      room.selectedTeachers = room.teachers.concat(...roomData.selectedTeachers);
       room.max_passes_to_active = roomData.advOptState.toEnabled;
       room.max_passes_to = roomData.advOptState.to;
 
