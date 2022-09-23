@@ -13,6 +13,7 @@ import {StorageService} from '../services/storage.service';
 import {LocationsService} from '../services/locations.service';
 import {TimeService} from '../services/time.service';
 import {MainHallPassFormComponent} from '../create-hallpass-forms/main-hallpass--form/main-hall-pass-form.component';
+import {Title} from '@angular/platform-browser';
 
 declare const window;
 
@@ -58,7 +59,8 @@ export class KioskModeComponent implements OnInit, AfterViewInit, OnDestroy {
       private userService: UserService,
       private passesService: HallPassesService,
       private storage: StorageService,
-      private timeService: TimeService
+      private timeService: TimeService,
+      private titleService: Title
   ) { }
 
   get showProfilePicture() {
@@ -88,6 +90,7 @@ export class KioskModeComponent implements OnInit, AfterViewInit, OnDestroy {
         const jwtHelper = new JwtHelperService();
         this.userData = jwtHelper.decodeToken(kioskJwtToken);
         const kioskLocation = locations.find(loc => +loc.id === this.userData.kiosk_location_id);
+        this.titleService.setTitle(`${kioskLocation.title} | SmartPass`);
         this.liveDataService.getMyRoomActivePassesRequest(
           of({sort: '-created', search_query: ''}),
           {type: 'location', value: [kioskLocation]},

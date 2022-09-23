@@ -16,6 +16,9 @@ export const removeAccount = createAction(`[Accounts] Remove Account`, props<{us
 export const updateAccounts = createAction(`[Accounts] Update Account`, props<{account: User}>());
 
 export const addUserToProfile = createAction(`[Accounts] Add User To Profile`, props<{user: User, role: string}>());
+export const addUserToProfiles = createAction(`[Accounts] Add User To Profiles`, props<{user: User, roles: string[]}>());
+export const addUserToProfilesSuccess = createAction(`[Accounts] Add User To Profiles Success`, props<{updatedUser: User}>());
+export const addUserToProfilesError = createAction(`[Accounts] Add User To Profiles Error`, props<{errorMessage: string}>());
 
 export const updateAccountActivity = createAction(`[Accounts] Update Account Activity`,
   props<{profile: User, active: boolean, role: string}>());

@@ -57,6 +57,7 @@ import { QRBarcodeGeneratorService } from '../services/qrbarcode-generator.servi
 import { IdcardOverlayContainerComponent } from '../idcard-overlay-container/idcard-overlay-container.component';
 import { IDCardService } from '../services/IDCardService';
 import {CheckForUpdateService} from '../services/check-for-update.service';
+import {SmartpassSearchComponent} from '../smartpass-search/smartpass-search.component';
 
 declare const window;
 
@@ -83,6 +84,17 @@ export class NavbarComponent implements AfterViewInit, OnInit, OnDestroy {
   @ViewChild('setButton') settingsButton: ElementRef;
 
   @ViewChild('navButtonsContainerMobile') navButtonsContainerMobile: ElementRef;
+  @ViewChild('smartpassSearch') set spSearch(comp: SmartpassSearchComponent) {
+    if (!comp) {
+      return;
+    }
+    if (!this.user.isTeacher()) {
+      const spSearchContainer = document.querySelector<HTMLDivElement>('app-smartpass-search div.input-container');
+      if (spSearchContainer) {
+        spSearchContainer.style.display = 'none';
+      }
+    }
+  }
   @ViewChildren('tabRefMobile') tabRefsMobile: QueryList<ElementRef>;
 
   @Output() settingsClick: EventEmitter<any> = new EventEmitter<any>();
@@ -94,7 +106,7 @@ export class NavbarComponent implements AfterViewInit, OnInit, OnDestroy {
   user: User;
   representedUsers: RepresentedUser[];
   effectiveUser: RepresentedUser;
-  tab: string = 'passes';
+  tab = 'passes';
   inboxVisibility: boolean = JSON.parse(this.storage.getItem('showInbox'));
   introsData: any;
   kioskModeLocation: any;
@@ -506,18 +518,21 @@ export class NavbarComponent implements AfterViewInit, OnInit, OnDestroy {
         trigger: target.currentTarget,
         heading: 'You can create and manage passes for this teacher.',
         teachers:
-          this.representedUsers.length > 1 ? this.representedUsers : null,
-        selectedTeacher: this.effectiveUser,
+          this.representedUsers.length > 1 ? this.representedUsers.map(u => u.user) : null,
+        selectedTeacher: this.effectiveUser.user,
         mainHeader: `Hi, ${this.user.display_name}`,
+        maxHeight: '200px',
+        isHiddenSearchField: this.representedUsers.length > 4
       },
     });
     representedUsersDialog
       .afterClosed()
       .pipe(filter((res) => !!res))
-      .subscribe((v: RepresentedUser) => {
-        if (v) {
-          this.userService.updateEffectiveUser(v);
-          this.http.effectiveUserId.next(+v.user.id);
+      .subscribe((id) => {
+        if (id) {
+          const efUser = this.representedUsers.find(u => +u.user.id === +id);
+          this.userService.updateEffectiveUser(efUser);
+          this.http.effectiveUserId.next(+efUser.user.id);
         }
       });
   }

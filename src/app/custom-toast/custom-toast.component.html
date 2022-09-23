@@ -27,10 +27,9 @@
               *ngIf="!user.isStudent() && !isKioskMode"
               customToolTip
               [contentTemplate]="tooltip"
-              [position]="'left'"
             >See details</span>
             <ng-template #tooltip>
-              <app-encounter-prevention-tooltip [groups]="data.exclusionGroups"></app-encounter-prevention-tooltip>
+              <app-encounter-prevention-tooltip [user]="user" [groups]="data.exclusionGroups"></app-encounter-prevention-tooltip>
             </ng-template>
           </div>
 <!--          <ng-template #info>-->

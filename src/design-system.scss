@@ -31,6 +31,10 @@ sans-serif;
     color: $color;
 }
 
+@mixin border($size, $color) {
+  border: $size solid $color;
+}
+
 .ds-navy {
     @include textColor($navy);
 }
@@ -76,6 +80,13 @@ sans-serif;
     @include textColor($search-gray);
 }
 
+.ds-orange {
+  @include textColor($orange)
+}
+
+.purple-border {
+  @include border(1px, $soft-blue)
+}
 
 /* === Common Text Options === */
 
@@ -120,6 +131,12 @@ $applyColor: true) {
     @include textSize(17px,
     bold,
     $card-white);
+}
+
+.ds-dialog-title-navy {
+    @include textSize(17px,
+    bold,
+    $navy500);
 }
 
 .ds-dialog-subtitle {
@@ -899,5 +916,25 @@ $side) {
     }
 }
 
+.action-sheet-dialog {
+  padding: 10px;
+  font-size: 14px;
+
+  .option {
+    color: #7F879D;
+    padding: 10px;
+    border-radius: 7px;
+    cursor: pointer;
+
+    &:hover {
+      background-color: rgba(210, 210, 210, 0.3);
+    }
+
+    &.selected {
+      background: #ECF1FF;
+      @extend .ds-navy
+    }
+  }
+}
 
 /* === end === */

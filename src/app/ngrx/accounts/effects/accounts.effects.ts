@@ -196,6 +196,18 @@ export class AccountsEffects {
       );
   });
 
+  addUserToProfiles$ = createEffect(() => {
+    return this.actions$
+      .pipe(
+        ofType(accountsActions.addUserToProfiles),
+        concatMap((action) => this.userService.addUserToProfiles(action.user.id, action.roles)
+          .pipe(
+            map(updatedUser => accountsActions.addUserToProfilesSuccess({updatedUser})),
+            catchError(error => of(accountsActions.addUserToProfilesError({errorMessage: error.message})))
+          ))
+      );
+  });
+
    addUserToProfile$ = createEffect(() => {
      return this.actions$
        .pipe(

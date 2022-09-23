@@ -1,10 +1,10 @@
-import {Component, EventEmitter, forwardRef, Inject, Input, OnInit, Output, ViewChild} from '@angular/core';
+import {ChangeDetectorRef, Component, EventEmitter, forwardRef, Inject, Injector, Input, OnInit, Output, ViewChild} from '@angular/core';
 import {BehaviorSubject, Observable} from 'rxjs';
 import {User} from '../../../models/User';
 import {DataService} from '../../../services/data-service';
 import {Pinnable} from '../../../models/Pinnable';
 import {Util} from '../../../../Util';
-import {FormFactor, Navigation} from '../main-hall-pass-form.component';
+import {FormFactor, MainHallPassFormComponent, Navigation} from '../main-hall-pass-form.component';
 import {CreateFormService} from '../../create-form.service';
 import {NextStep} from '../../../animations';
 import {LocationsService} from '../../../services/locations.service';
@@ -32,7 +32,6 @@ export enum States { from = 1, toWhere = 2, category = 3, restrictedTarget = 4, 
 export class LocationsGroupContainerComponent implements OnInit {
 
   @Input() FORM_STATE: Navigation;
-  @Input() passLimitInfo: PassLimitInfo;
   @Output() nextStepEvent: EventEmitter<any> = new EventEmitter<any>();
 
   @ViewChild(FromWhereComponent) fromWhereComp;
@@ -48,6 +47,7 @@ export class LocationsGroupContainerComponent implements OnInit {
   pinnable: Pinnable;
   data: any = {};
   frameMotion$: BehaviorSubject<any>;
+  parentMainHallPassForm: MainHallPassFormComponent;
 
   constructor(
     @Inject(MAT_DIALOG_DATA) public dialogData: any,
@@ -56,6 +56,8 @@ export class LocationsGroupContainerComponent implements OnInit {
     private locationsService: LocationsService,
     private screenService: ScreenService,
     private visibilityService: LocationVisibilityService,
+    private _injector: Injector,
+    private cdr: ChangeDetectorRef
   ) {
   }
 
@@ -124,6 +126,7 @@ export class LocationsGroupContainerComponent implements OnInit {
   }
 
   ngOnInit() {
+    this.parentMainHallPassForm = this._injector.get<MainHallPassFormComponent>(MainHallPassFormComponent);
     this.frameMotion$ = this.formService.getFrameMotionDirection();
     this.FORM_STATE.quickNavigator = false;
 
@@ -144,30 +147,40 @@ export class LocationsGroupContainerComponent implements OnInit {
       // this.user$ observable may be slover than this.pinnable$
       // may be a chance that we will not have a this.user ready
       // so this ensures we wait (or not) for having a user
+      // this.user$ can be a student or a staff!!!
       withLatestFrom(this.user$),
       map(([pins, user]) => {
+        const student = [''+user.id];
+        // on kioskmode student is found in selectedStudents[0]
+        if (this.isStaff && this.FORM_STATE?.kioskMode) {
+          // TODO when not found case
+          student[0] = ''+this.FORM_STATE.data?.selectedStudents[0].id;
+        }
         pins = pins.filter(p => {
-          if (p.location !== null) {
+          // filtering here based on location and student may return (or not) a pinnable
+          if (p.type === 'location' && p.location !== null) {
             // is a Location
             try {
               const loc = Location.fromJSON(p.location);
-              const student = [''+user.id];
-              // staff is unfiltered
-              if (this.isStaff) return p;
+              // staff is unfiltered but not in kiosk mode
+              if (this.isStaff && !this.FORM_STATE?.kioskMode) return p;
               // filter students here
               if (this.visibilityService.filterByVisibility(loc, student)) return p;
             } catch (e) {
               console.log(e.message)
             }
+          // folder containing pinnables
+          } else if (p.type === 'category') {
+            return p;
           }
-          return p;
         });
 
-        if (!this?.passLimitInfo?.showPasses) {
+        const { passLimitInfo } = this.FORM_STATE;
+        if (!passLimitInfo?.showPasses) {
           return pins;
         }
 
-        if (this.passLimitInfo.current === 0) {
+        if (passLimitInfo.current === 0) {
           pins.forEach(p => {
             if (p.location === null) { // ignore folders
               return p;
@@ -259,6 +272,7 @@ export class LocationsGroupContainerComponent implements OnInit {
       return this.FORM_STATE.state = States.category;
     } else {
       this.data.toLocation = pinnable.location;
+      console.log(this.FORM_STATE.data.direction.from, this.data.toLocation);
       this.FORM_STATE.data.direction.to = pinnable.location;
 
       const restricted = ((this.pinnable.location.restricted && !this.showDate) || (this.pinnable.location.scheduling_restricted && !!this.showDate));
@@ -309,7 +323,8 @@ export class LocationsGroupContainerComponent implements OnInit {
   }
 
   fromCategory(location) {
-    location.restricted = location.restricted || (this.passLimitInfo?.showPasses && this.passLimitInfo?.current === 0);
+    const { passLimitInfo } = this.FORM_STATE;
+    location.restricted = location.restricted || (passLimitInfo?.showPasses && passLimitInfo?.current === 0);
     this.data.toLocation = location;
     this.FORM_STATE.data.direction.to = location;
     if (((location.restricted && !this.FORM_STATE.forLater) || (location.scheduling_restricted && this.FORM_STATE.forLater)) && !this.isStaff) {
@@ -366,6 +381,13 @@ export class LocationsGroupContainerComponent implements OnInit {
   }
 
   back(event) {
+    if (this.FORM_STATE.fromState === 4) {
+      this.parentMainHallPassForm.dialogData = {
+        ...this.parentMainHallPassForm.dialogData,
+        passLimitInfo: undefined
+      };
+      this.cdr.detectChanges();
+    }
     this.FORM_STATE = event;
     this.data.message = null;
     this.FORM_STATE.data.message = null;

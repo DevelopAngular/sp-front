@@ -8,14 +8,16 @@
       <div class="ds-dialog-title-white" style="z-index: 10; margin-left: 12px">Account Link</div>
     </div>
 
-    <div class="save-button" *ngIf="showSave">
+    <div class="save-button" customToolTip
+    [contentTemplate]="tooltip" *ngIf="showSave">
       <app-gradient-button
         [width]="'85px'"
         [minHeight]="'30px'"
         [fontSize]="'14px'"
         [cursor]="'pointer'"
-        [gradient]="'#FFFFFF, #FFFFFF'"
+        [gradient]="'#FFFFFF, #FFFFFF'" 
         [textColor]="'#1976D2'"
+        [disabled]="saveButtonDisable"
         (buttonClick)="save()"
       >
         <span *ngIf="true">Save</span>
@@ -23,6 +25,11 @@
       </app-gradient-button>
     </div>
   </div>
+  <ng-template #tooltip>
+    <div *ngIf="saveButtonDisable" class="ds-tooltip">
+      A previously selected Organizational Unit has been deleted, please remove it to save
+    </div>
+  </ng-template>
 
   <div class="content" [attr.data-motion-translate]="(frameMotion$ | async).direction">
     <div class="block">
@@ -31,6 +38,8 @@
         [chipsMode]="true"
         [searchTarget]="'orgunits'"
         [selectedOptions]="users.students"
+        [orgUnitExistCheck]="orgUnitExistCheck"
+        [orgUnits]="orgUnits"
         (onUpdate)="users.students = $event"
         [placeholder]="'Search G Suite org units'"
       ></app-sp-search>
@@ -40,6 +49,8 @@
       <app-sp-search
         [chipsMode]="true"
         [selectedOptions]="users.teachers"
+        [orgUnitExistCheck]="orgUnitExistCheck"
+        [orgUnits]="orgUnits"
         [searchTarget]="'orgunits'"
         (onUpdate)="users.teachers = $event"
         [placeholder]="'Search G Suite org units'"
@@ -50,6 +61,8 @@
       <app-sp-search
         [chipsMode]="true"
         [selectedOptions]="users.admins"
+        [orgUnitExistCheck]="orgUnitExistCheck"
+        [orgUnits]="orgUnits"
         [searchTarget]="'orgunits'"
         (onUpdate)="users.admins = $event"
         [placeholder]="'Search G Suite org units'"
@@ -60,6 +73,8 @@
       <app-sp-search
         [chipsMode]="true"
         [selectedOptions]="users.assistants"
+        [orgUnitExistCheck]="orgUnitExistCheck"
+        [orgUnits]="orgUnits"
         [searchTarget]="'orgunits'"
         (onUpdate)="users.assistants = $event"
         [placeholder]="'Search G Suite org units'"

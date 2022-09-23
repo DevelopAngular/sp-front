@@ -162,17 +162,18 @@ export class AppComponent implements OnInit, AfterViewInit, OnDestroy {
           const urlBlackList = [
             '/forms',
             '/kioskMode',
-            '/login'
+            // '/login'
           ];
           const isAllowed = urlBlackList.every(route => !this.currentRoute.includes(route));
           if ((!user.isStudent()) && isAllowed) {
             this.registerRefiner(user);
           }
-          if ((!user.isStudent()) && isAllowed && !this.isMobile) {
-            window.Intercom('update', {'hide_default_launcher': false});
+          if (isAllowed && !this.isMobile) {
             this.registerIntercom(user);
           } else {
-            window.Intercom('update', {'hide_default_launcher': true});
+            setTimeout(() => {
+              window.Intercom('update', {'hide_default_launcher': true});
+            }, 1000);
           }
           return this.nextReleaseService
             .getLastReleasedUpdates(DeviceDetection.platform())
@@ -247,21 +248,6 @@ export class AppComponent implements OnInit, AfterViewInit, OnDestroy {
       link.setAttribute('href', './assets/css/custom_scrollbar.css');
       document.head.appendChild(link);
     }
-
-    // this.webConnection.checkConnection().pipe(takeUntil(this.subscriber$),
-    //   filter(res => !res && !this.openConnectionDialog))
-    //   .subscribe(() => {
-    //     this.openConnectionDialog = true;
-    //     const toastDialog = this.dialog.open(ToastConnectionComponent, {
-    //       panelClass: 'toasr',
-    //       hasBackdrop: false,
-    //       disableClose: true
-    //     });
-    //
-    //     toastDialog.afterClosed().subscribe(() => {
-    //       this.openConnectionDialog = false;
-    //     });
-    //   });
 
     this.loginService.isAuthenticated$.pipe(
       takeUntil(this.subscriber$),
@@ -383,24 +369,25 @@ export class AppComponent implements OnInit, AfterViewInit, OnDestroy {
 
   registerIntercom(user: User) {
     setTimeout(() => {
+      const school: School = this.http.getSchool();
       window.intercomSettings = {
         user_id: user.id,
-        name: user.first_name,
+        name: user.display_name,
         email: user.primary_email,
-        created_at: user.created,
-        type: user.isAdmin() ? 'Admin' : (user.isAssistant() ? 'Assistant' : 'Teacher'),
+        created: new Date(user.created),
+        type: user.isAdmin() ? 'Admin' : (user.isAssistant() ? 'Assistant' : user.isStudent() ? 'Student' : 'Teacher'),
         status: user.status,
         account_type: user.sync_types[0] === 'google' ? 'Google' : (user.sync_types[0] === 'clever' ? 'Clever' : 'Standard'),
         first_login_at: user.first_login,
         company: {
-          id: this.http.getSchool().id,
-          name: this.http.getSchool().name,
-          open_in_smartpass: `https://smartpass.app/app?email=smartpass-support@school.smartpass.app&school_id="${this.http.getSchool().id}`,
-          open_in_metabase: `https://metabase.int.smartpass.app/dashboard/6-school-overview?school_id="${this.http.getSchool().id}`
+          id: school.id,
+          name: school.name,
+          'Id Card Access': school.feature_flag_digital_id,
+          'Plus Access': school.feature_flag_encounter_detection
         }
       };
-      window.Intercom('update');
-    }, 1000);
+      window.Intercom('update', {'hide_default_launcher': false});
+    }, 3000);
   }
 
   hubSpotSettings(user) {

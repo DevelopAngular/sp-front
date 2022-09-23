@@ -18,7 +18,10 @@ export class RepresentedUsersEffects {
           return this.userService.getUserRepresented()
             .pipe(
               map((rUsers: RepresentedUser[]) => {
-                const users = rUsers.map(rUser => ({...rUser, user: User.fromJSON(rUser.user)}));
+                const users = rUsers
+                  .map(rUser => ({...rUser, user: User.fromJSON(rUser.user)}))
+                  .sort((a, b) =>
+                    a.user.last_name.toLowerCase().localeCompare(b.user.last_name.toLowerCase()));
                 return rUsersActions.getRUsersSuccess({rUsers: users});
               }),
               catchError(error => of(rUsersActions.getRUsersFailure({errorMessage: error.message})))

@@ -1,11 +1,14 @@
 import {Component, EventEmitter, Input, OnInit, Output} from '@angular/core';
 import {User} from '../../models/User';
 import {School} from '../../models/School';
-import {BehaviorSubject} from 'rxjs';
+import {BehaviorSubject, Subject} from 'rxjs';
 import {CreateFormService} from '../../create-hallpass-forms/create-form.service';
-import {MatDialogRef} from '@angular/material/dialog';
+import {MatDialog, MatDialogRef} from '@angular/material/dialog';
 import {MyProfileDialogComponent} from '../my-profile-dialog.component';
 import {StorageService} from '../../services/storage.service';
+import {EditAvatarComponent} from '../../admin/profile-card-dialog/edit-avatar/edit-avatar.component';
+import {filter, switchMap, tap} from 'rxjs/operators';
+import {UserService} from '../../services/user.service';
 
 @Component({
   selector: 'app-profile-info',
@@ -22,10 +25,15 @@ export class ProfileInfoComponent implements OnInit {
   frameMotion$: BehaviorSubject<any>;
   userAuthType: string;
 
+  isOpenAvatarDialog: boolean;
+  loadingProfilePicture: Subject<boolean> = new Subject<boolean>();
+
   constructor(
     private formService: CreateFormService,
     private storage: StorageService,
     public dialogRef: MatDialogRef<MyProfileDialogComponent>,
+    private matDialog: MatDialog,
+    private userService: UserService
   ) { }
 
   ngOnInit() {
@@ -58,6 +66,39 @@ export class ProfileInfoComponent implements OnInit {
       }
       return [...acc];
     }, []).join(', ');
+  }
+
+  openEditAvatar(event) {
+    this.isOpenAvatarDialog = true;
+    const target = event.currentTarget ? event.currentTarget : event;
+    const ED = this.matDialog.open(EditAvatarComponent, {
+      panelClass: 'consent-dialog-container',
+      backdropClass: 'invis-backdrop',
+      data: { 'trigger': target, user: this.user }
+    });
+
+    ED.afterClosed()
+      .pipe(
+        tap(() => this.isOpenAvatarDialog = false),
+        filter(r => !!r),
+        tap(({action, file}) => {
+          this.loadingProfilePicture.next(true);
+          if (action === 'add') {
+            this.userService.addProfilePictureRequest(this.user, '_profile_teacher',  file);
+          } else if (action === 'edit') {
+            this.userService.addProfilePictureRequest(this.user, '_profile_teacher', file);
+          }
+        }),
+        switchMap(() => {
+          return this.userService.currentUpdatedAccount$['_profile_teacher']
+            .pipe(filter(res => !!res));
+        }),
+        tap((user => {
+          this.user = User.fromJSON(user);
+          this.userService.clearCurrentUpdatedAccounts();
+          this.loadingProfilePicture.next(false);
+        }))
+      ).subscribe();
   }
 
 }

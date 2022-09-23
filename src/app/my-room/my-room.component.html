@@ -31,7 +31,7 @@
 
                 <div [ngClass]="isIOSTablet ? 'ios-date-display-mobile' : 'date-display-mobile'" [style.color]="darkTheme.getColor({white: '#1E194F', dark: '#FFFFFF'})">{{ dateDisplay }}</div>
                 <div class="kioskButton ds-my-10">
-                    <app-gradient-button [disabled]="!showKioskModeButton" [gradient]="'#1F195E, #1F195E'" [leftIcon]="'./assets/Kiosk Mode (White).svg'" [textColor]="'#FFFFFF'" [rightIcon]="'./assets/Redirect (White).svg'" [rightIconWidth]="'12px'" (buttonClick)="setRoomToKioskMode()">Kiosk Mode</app-gradient-button>
+                    <app-gradient-button [disabled]="!showKioskModeButton" [gradient]="'#1F195E, #1F195E'" [leftIcon]="'./assets/Kiosk Mode (White).svg'" [textColor]="'#FFFFFF'" (buttonClick)="setRoomToKioskMode()">Kiosk Mode</app-gradient-button>
                 </div>
             </div>
 
@@ -41,6 +41,7 @@
 
         </div>
     </div>
+
     <div *ngIf="UI" class="my-room-wrapper" #scrollableArea [style.height]="(schoolsLength$ | async) > 1 ? ((isUpdateBar$ | async) ? 'calc(100vh - 153px)' : 'calc(100vh - 114px)') : ((isUpdateBar$ | async) ? 'calc(100vh - 103px)' : 'calc(100vh - 64px)')">
         <div class="my-room-left" *ngIf="!(kioskMode.currentRoom$ | async)">
             <div class="my-room-header" [@headerTrigger]="headerState" *ngIf="screenService.isDesktopWidth">
@@ -54,7 +55,7 @@
                         <app-round-input [minWidth]="'215px'" [width]="'215px'" [type]="'text'" [placeholder]="'Filter passes'" [fieldIconPosition]="'left'" [boxShadow]="false" [closeIcon]="true" [backgroundColor]="'#E2E6EC'" [pending$]="searchPending$" [isSearch]="true" (ontextupdate)="onSearch($event)"></app-round-input>
                     </div>
                 </div>
-                <div class="kioskButton ds-my-10" [style.margin-right]="'10px'">
+                <div class="kioskButton ds-my-10">
                     <app-gradient-button [gradient]="'#07ABC3'" [leftIcon]="'./assets/Lock (White).svg'" [textColor]="'#FFFFFF'" (buttonClick)="openRoomCodeDialog()">Room Code</app-gradient-button>
                 </div>
                 <!--        <div class="calendar-wrapper">-->
@@ -66,8 +67,17 @@
                 </div>
 
                 <div class="kioskButton">
-                    <app-gradient-button style="margin-left: 10px" [disabled]="!showKioskModeButton" [gradient]="'#1F195E, #1F195E'" [leftIcon]="'./assets/Kiosk Mode (White).svg'" [textColor]="'#FFFFFF'" [rightIcon]="'./assets/Redirect (White).svg'" [rightIconWidth]="'12px'"
-                        (buttonClick)="setRoomToKioskMode()">Kiosk Mode</app-gradient-button>
+                    <app-gradient-button style="margin-left: 10px" [disabled]="!showKioskModeButton" [gradient]="'#1F195E, #1F195E'" [leftIcon]="'./assets/Kiosk Mode (White).svg'" [textColor]="'#FFFFFF'" (buttonClick)="setRoomToKioskMode()">Kiosk Mode</app-gradient-button>
+                    <!-- <app-gradient-button
+            style="margin-left: 10px"
+            [disabled]="!showKioskModeButton"
+            [gradient]="'#1F195E, #1F195E'"
+            [leftIcon]="'./assets/Kiosk Mode (White).svg'"
+            [textColor]="'#FFFFFF'"
+            [rightIcon]="'./assets/Redirect (White).svg'"
+            [rightIconWidth]="'12px'"
+            (buttonClick)="setRoomToKioskMode()"
+          >Kiosk Mode</app-gradient-button> -->
                 </div>
 
                 <div class="date-display-mobile" [style.color]="darkTheme.getColor({white: '#1E194F', dark: '#FFFFFF'})">{{ dateDisplay }}</div>
