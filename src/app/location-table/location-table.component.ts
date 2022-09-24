@@ -16,6 +16,7 @@ import {LocationVisibilityService} from '../create-hallpass-forms/main-hallpass-
 import {UserService} from '../services/user.service';
 import {User} from '../models/User';
 import {PassLimitInfo} from '../models/HallPassLimits';
+import {cloneDeep} from 'lodash';
 
 
 export interface Paged<T> {
@@ -292,15 +293,17 @@ export class LocationTableComponent implements OnInit, OnDestroy {
       } else {
         try {
           const l = Location.fromJSON(choice);
-          if (''+l.id === ''+loc.id) return JSON.parse(JSON.stringify(loc));
+          if (''+l.id === ''+loc.id) {
+            return cloneDeep(loc);
+          }   
         } catch(e) {}
-        return JSON.parse(JSON.stringify(choice));
+        return cloneDeep(choice);
       }
     }
   }
 
   // check if modified location exists on choices
-  private isFoundChoice(loc: Location, choices) {
+  private isFoundChoice(loc: Location, choices: Location[]|any[]) {
     for (let i = 0; i < choices.length; i++) {
       if (choices[i] instanceof Location) { 
         if (''+choices[i].id === ''+loc.id) {
@@ -309,7 +312,9 @@ export class LocationTableComponent implements OnInit, OnDestroy {
       } else {
         try {
           const l = Location.fromJSON(choices[i]);
-          if (''+l.id === ''+loc.id) return true;
+          if (''+l.id === ''+loc.id) {
+            return true;
+          }
         } catch(e) {}
       }
     }
@@ -319,7 +324,7 @@ export class LocationTableComponent implements OnInit, OnDestroy {
   private updateOrAddChoices(loc: Location) {
     const mapping = this.choiceFunc(loc);
     if (!this.isFoundChoice(loc, this.choices)) {
-      this.choices = [JSON.parse(JSON.stringify(loc)), ...this.choices];
+      this.choices = [cloneDeep(loc), ...this.choices];
     } else {
       this.choices = this.choices.map(mapping);
     }
@@ -328,7 +333,7 @@ export class LocationTableComponent implements OnInit, OnDestroy {
       return;
     }
     if (!this.isFoundChoice(loc, this.starredChoices)) {
-      this.starredChoices = [JSON.parse(JSON.stringify(loc)), ...this.starredChoices];
+      this.starredChoices = [cloneDeep(loc), ...this.starredChoices];
     } else {
       this.starredChoices = this.starredChoices.map(mapping);
     }
