@@ -3,13 +3,13 @@ import { FormControl, FormGroup } from '@angular/forms';
 import { MatDialogRef, MAT_DIALOG_DATA } from '@angular/material/dialog';
 import { fromEvent, Subject } from 'rxjs';
 import { switchMap, takeUntil } from 'rxjs/operators';
-import { User } from '../../../models/User';
-import { SupportService } from '../../../services/support.service';
+import {User} from '../../../models/User';
+import {SupportService} from '../../../services/support.service';
 
 @Component({
   selector: 'app-upload-logo',
   templateUrl: './upload-logo.component.html',
-  styleUrls: ['./upload-logo.component.scss']
+  styleUrls: ['./upload-logo.component.scss'],
 })
 export class UploadLogoComponent  implements OnInit {
 

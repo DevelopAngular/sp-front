@@ -17,6 +17,8 @@ export class BulkEditRoomsInFolderComponent implements OnInit {
 
   @Input() passLimitForm: FormGroup;
 
+  @Input() visibilityForm?: FormGroup;
+
   @Input() showErrors: boolean;
 
   @Input() isEnableRoomTrigger$: Subject<boolean>;
@@ -46,11 +48,11 @@ export class BulkEditRoomsInFolderComponent implements OnInit {
   constructor(private overlayService: OverlayDataService) { }
 
   get showSave() {
-    return this.roomsValidButtons.getValue().publish;
+    return this.roomsValidButtons.getValue().publish && this.visibilityForm.valid;
   }
 
   get showIncomplete() {
-    return this.roomsValidButtons.getValue().incomplete;
+    return this.roomsValidButtons.getValue().incomplete || this.visibilityForm.invalid;
   }
 
   get showCancel() {
@@ -116,6 +118,9 @@ export class BulkEditRoomsInFolderComponent implements OnInit {
           this.roomsValidButtons.next({publish: true, incomplete: false, cancel: true});
         }
       }
+    }
+    if (this.visibilityForm.invalid) {
+      this.roomsValidButtons.next({publish: false, incomplete: true, cancel: true});
     }
   }
 

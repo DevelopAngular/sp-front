@@ -1,6 +1,7 @@
 import {Injectable} from '@angular/core';
 
 import {BehaviorSubject, Subject} from 'rxjs';
+import {cloneDeep} from 'lodash';
 
 import {User} from '../../models/User';
 import {Pinnable} from '../../models/Pinnable';
@@ -101,12 +102,13 @@ export class OverlayDataService {
 
   public patchData(data) {
     const old = this.pageState.getValue();
-    data = {...old.data, ...data};
-    this.pageState.next({
+    const newdata = cloneDeep({...old.data, ...data});
+    const patched = {
       currentPage: old.currentPage,
       previousPage: old.previousPage,
-      data,
-    });
+      data: newdata,
+    };
+    this.pageState.next(patched);
   }
 
   back(data) {

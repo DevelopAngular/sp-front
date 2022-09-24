@@ -53,7 +53,7 @@
                 [forLater]="!!date"
                 [pinnable]="pinnable"
                 [currentPage]="'to'"
-                [isSameRoom]="(pinnable.location && location ? pinnable.location.id == location.id : false)"
+                [isSameRoom]="(pinnable.location && location ? +pinnable.location.id === +location.id : false)"
                 (onSelectEvent)="pinnableSelected($event)"
               ></app-pinnable>
             </mat-grid-tile>
@@ -82,6 +82,7 @@
       (onSelect)="locationSelected($event)"
       [dummyString]="'No rooms found'"
       [mergedAllRooms]="true"
+      [updatedLocation$]="updatedLocation$"
       [currentPage]="'to'"
     >
     </app-location-table>
@@ -109,7 +110,7 @@
   </div>
 
   <div class="ds-dialog-normal-text ds-mb-10">
-      <p>{{a.text}}</p>
+      <p style="margin: 10px 0px 0px">{{a.text}}</p>
   </div>
   </ng-container>
 </ng-template>

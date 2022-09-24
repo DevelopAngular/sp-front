@@ -3,7 +3,7 @@ import {AbstractControl, FormControl, FormGroup, Validators, ValidationErrors} f
 import {MAT_DIALOG_DATA, MatDialog, MatDialogRef} from '@angular/material/dialog';
 import {DomSanitizer} from '@angular/platform-browser';
 
-import {BehaviorSubject, combineLatest, forkJoin, fromEvent, merge, Observable, of, Subject, zip, throwError} from 'rxjs';
+import {BehaviorSubject, combineLatest, forkJoin, fromEvent, merge, Observable, of, Subject, zip} from 'rxjs';
 import {debounceTime, distinctUntilChanged, filter, map, switchMap, take, takeUntil, tap, catchError} from 'rxjs/operators';
 
 import {bumpIn, NextStep} from '../../animations';
@@ -28,7 +28,6 @@ import {VisibilityOverStudents, DEFAULT_VISIBILITY_STUDENTS} from './visibility-
   templateUrl: './overlay-container.component.html',
   styleUrls: ['./overlay-container.component.scss'],
   animations: [NextStep, bumpIn]
-
 })
 export class OverlayContainerComponent implements OnInit, OnDestroy {
 
@@ -322,6 +321,8 @@ export class OverlayContainerComponent implements OnInit, OnDestroy {
   }
 
   ngOnInit() {
+//    this.overlayService.patchData({visibility: DEFAULT_VISIBILITY_STUDENTS})
+
     this.pinnablesCollectionIds$ = this.hallPassService.pinnablesCollectionIds$;
     this.overlayService.pageState.pipe(filter(res => !!res)).subscribe(res => {
        this.currentPage = res.currentPage;
@@ -371,7 +372,7 @@ export class OverlayContainerComponent implements OnInit, OnDestroy {
       }),
       map(({visibility: v}: {visibility: VisibilityOverStudents}): VisibilityOverStudents => v),
     ).subscribe((v: VisibilityOverStudents) => {
-      this.visibility = v;
+      this.visibility = cloneDeep(v);
     });
 
       if (this.currentPage === Pages.EditFolder || this.currentPage === Pages.EditRoom || this.currentPage === Pages.EditRoomInFolder) {
@@ -405,7 +406,11 @@ export class OverlayContainerComponent implements OnInit, OnDestroy {
               })
           );
       }
-    this.dialogRef.backdropClick()
+    // TODO: strabge bug here!!!
+    // id backdrop is clicked once then it receives the clicks's components inside overlay-container  
+    // left here commented to indicate this elusive bug
+    // as it is unclear why it happens
+    /*this.dialogRef.backdropClick()
       .pipe(
         switchMap(() => {
           return this.roomValidButtons;
@@ -417,7 +422,19 @@ export class OverlayContainerComponent implements OnInit, OnDestroy {
       )
       .subscribe(() => {
       this.dialogRef.close();
-    });
+    });*/
+    /*this.dialogRef.backdropClick()
+      .pipe(
+        switchMap(() => {
+          return this.roomValidButtons;
+        }),
+        filter((rvb: ValidButtons): boolean => {
+          return Object.values(rvb).every(v => !v);
+        }),
+        tap(_ => this.dialogRef.close()),
+        takeUntil(this.destroy$),
+      )
+      .subscribe();*/
 
       fromEvent(this.block.nativeElement, 'scroll').pipe(takeUntil(this.destroy$))
         .subscribe((res: any) => {
@@ -446,6 +463,8 @@ export class OverlayContainerComponent implements OnInit, OnDestroy {
   ngOnDestroy() {
     this.destroy$.next();
     this.destroy$.complete();
+    const afresh = {visibility: DEFAULT_VISIBILITY_STUDENTS};
+    this.overlayService.patchData(afresh)
   }
 
   buildForm() {
@@ -497,8 +516,8 @@ export class OverlayContainerComponent implements OnInit, OnDestroy {
           if (c.value === null) return null;
           // only visible_all_students do not need a group of students
           // ensures non-all modes have a non-empty over array (students)
-          if (c.value.mode !== 'visible_all_students' && c.value.over.length === 0) {
-            return {needover: 'you must select at least 1 student.'};
+          if (c.value.mode !== 'visible_all_students' && c.value.over.length === 0 && c.value.grade.length === 0) {
+            return {needover: 'you must select at least 1 student or a grade.'};
           }
           return null;
         }]
@@ -508,8 +527,8 @@ export class OverlayContainerComponent implements OnInit, OnDestroy {
   }
 
   getVisibilityStudents(loc: Location): VisibilityOverStudents {
-    if (!loc) return DEFAULT_VISIBILITY_STUDENTS;
-    return {mode: loc.visibility_type, over: loc.visibility_students};
+    if (!loc) return cloneDeep(DEFAULT_VISIBILITY_STUDENTS);
+    return {...cloneDeep(DEFAULT_VISIBILITY_STUDENTS), mode: loc.visibility_type, over: loc.visibility_students, grade: loc.visibility_grade};
   }
 
   generateAdvOptionsModel(loc: Location) {
@@ -753,6 +772,7 @@ export class OverlayContainerComponent implements OnInit, OnDestroy {
                 enable: this.isOpenRoom,
                 visibility_type: this.visibility.mode,
                 visibility_students: this.visibility.over.map((el: User) => el.id),
+                visibility_grade: this.visibility.grade,
                 ...this.normalizeAdvOptData()
         };
        this.locationService.createLocationRequest(location)
@@ -818,8 +838,12 @@ export class OverlayContainerComponent implements OnInit, OnDestroy {
             data = location;
             data.category = this.folderData.folderName + salt;
             data.teachers = location.teachers.map(t => t.id);
-            if (data?.visibility_students) {
+            if (this.visibilityForm.dirty && data?.visibility_students) {
               data.visibility_students = data.visibility_students.map((s: User) => s.id);
+            } else if (this.visibilityForm.pristine) {
+              delete data?.visibility_students;
+              delete data?.visibility_type;
+              delete data?.visibility_grade;
             }
             //location.visibility_type =
             return this.locationService.createLocation(data);
@@ -833,8 +857,12 @@ export class OverlayContainerComponent implements OnInit, OnDestroy {
             if (data.teachers) {
               data.teachers = data.teachers.map(teacher => +teacher.id);
             }
-            if (data?.visibility_students) {
+            if (this.visibilityForm.dirty && data?.visibility_students) {
               data.visibility_students = data.visibility_students.map((s: User) => s.id);
+            } else if (this.visibilityForm.pristine) {
+              delete data?.visibility_students;
+              delete data?.visibility_type;
+              delete data?.visibility_grade;
             }
 
             return this.locationService.updateLocation(id, data);
@@ -906,6 +934,7 @@ export class OverlayContainerComponent implements OnInit, OnDestroy {
 
             visibility_type: this.visibility.mode,
             visibility_students: this.visibility.over.map((el: User) => el.id),
+            visibility_grade: this.visibility.grade,
         };
 
         const mergedData = {...location, ...this.normalizeAdvOptData()};
@@ -931,10 +960,26 @@ export class OverlayContainerComponent implements OnInit, OnDestroy {
 
     if (this.currentPage === Pages.BulkEditRooms) {
       const patchRequests$ = (this.bulkEditData.rooms as Location[]).map(room => {
-        const data = {
-          ...room,
-          teachers: room.teachers.map(t => t.id)
+        // ensure we have visibility data
+        const {mode, over, grade} = this.bulkEditData.roomData?.visibility ?? DEFAULT_VISIBILITY_STUDENTS ;
+        const visibilityBulkData = {
+          visibility_type: mode,
+          visibility_students: over.map(s => ''+s.id),
+          visibility_grade: grade,
         };
+        
+        let data = {
+          ...room,
+          teachers: room.teachers.map(t => t.id),
+          ...visibilityBulkData,
+        };
+        // apply bulk visibility only if user wanted it explicitly
+        // otherwise avoid updating existing visibility by deleting concerned request data
+        if (!this.visibilityForm.dirty) {
+          delete data.visibility_students;
+          delete data.visibility_type; 
+          delete data.visibility_grade;
+        }
         return this.locationService.updateLocationRequest(room.id, data).pipe(
           filter(res => !!res));
       });
@@ -979,6 +1024,8 @@ export class OverlayContainerComponent implements OnInit, OnDestroy {
   folderResult({data, buttonState}) {
       this.folderData = data;
       this.roomValidButtons.next(buttonState);
+      this.visibilityForm.setValue({visibility: this.visibility});
+      this.visibilityForm.markAsDirty();
   }
 
   newRoomInFolder(room: RoomData) {
@@ -1096,6 +1143,7 @@ export class OverlayContainerComponent implements OnInit, OnDestroy {
       enable: room.enable,
       visibility_students: room.visibility?.over || DEFAULT_VISIBILITY_STUDENTS.over,
       visibility_type: room.visibility?.mode || DEFAULT_VISIBILITY_STUDENTS.mode,
+      visibility_grade: room.visibility?.grade || DEFAULT_VISIBILITY_STUDENTS.grade,
     };
   }
 

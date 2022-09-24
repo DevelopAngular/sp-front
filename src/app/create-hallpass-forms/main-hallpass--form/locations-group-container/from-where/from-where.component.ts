@@ -1,9 +1,8 @@
 import {Component, ElementRef, EventEmitter, HostListener, Input, OnInit, OnDestroy, Output, Inject, TemplateRef, ViewChild} from '@angular/core';
 import {MAT_DIALOG_DATA, MatDialog, MatDialogRef} from '@angular/material/dialog';
-import {ToastService} from '../../../../services/toast.service';
 import {Navigation} from '../../main-hall-pass-form.component';
 import {CreateFormService} from '../../../create-form.service';
-import {Subject, BehaviorSubject, fromEvent} from 'rxjs';
+import {Subject, BehaviorSubject, fromEvent, Observable} from 'rxjs';
 import {filter, take, takeUntil} from 'rxjs/operators';
 import {ScreenService} from '../../../../services/screen.service';
 import {
@@ -13,6 +12,7 @@ import {
 import {LocationVisibilityService} from '../../location-visibility.service';
 import {UserService} from '../../../../services/user.service';
 import {User} from '../../../../models/User';
+import {Location} from '../../../../models/Location';
 
 @Component({
   selector: 'app-from-where',
@@ -72,6 +72,7 @@ export class FromWhereComponent implements OnInit, OnDestroy {
     }
   }
 
+  updatedLocation$: Observable<Location>;
   destroy$: Subject<any> = new Subject<any>();
 
   // keep unfiltered students before entering (with posible filtering) to pass card view
@@ -82,7 +83,6 @@ export class FromWhereComponent implements OnInit, OnDestroy {
     public dialogRef: MatDialogRef<FromWhereComponent>,
     @Inject(MAT_DIALOG_DATA) public data: any,
     private visibilityService: LocationVisibilityService,
-    private toastService: ToastService,
     private formService: CreateFormService,
     public screenService: ScreenService,
     private userService: UserService,
@@ -113,6 +113,8 @@ export class FromWhereComponent implements OnInit, OnDestroy {
         take(1),
       )
       .subscribe((u: User) => this.student = u);
+
+      this.updatedLocation$ = this.formService.getUpdatedChoice();
   }
 
   private student: User;
@@ -122,36 +124,7 @@ export class FromWhereComponent implements OnInit, OnDestroy {
     this.destroy$.complete();
   }
 
-  /*
-  private forwardAndEmit() {
-    this.formService.setFrameMotionDirection('forward');
-    this.formService.compressableBoxController.next(false);
-
-    setTimeout(() => {
-      this.formState.previousState = 1;
-      this.selectedLocation.emit(location);
-    }, 100);
-  }
- */
-
   locationChosen(location) {
-    // students go forward
-    /*
-    if (!this.isStaff) {
-      this.forwardAndEmit();
-      return;
-    }
-    */
-
-    /*
-    this.visibilityService.howToActOnChooseLocation(
-      this.formState,
-      location,
-      this.confirmDialogVisibility,
-      this.forwardAndEmit.bind(this),
-      this.destroy$,
-    );
-   */
 
     // advance form to next componet
     // emit chosen location
@@ -173,14 +146,10 @@ export class FromWhereComponent implements OnInit, OnDestroy {
 
     // staff only
      const selectedStudents = this.formState.data.selectedStudents;
-     const students = selectedStudents.map(s => ''+s.id);
-     const ruleStudents = location.visibility_students.map(s => ''+s.id);
-     const rule = location.visibility_type;
+    // skipped are students that do not qualify to go forward     
+     let skipped = this.visibilityService.calculateSkipped(selectedStudents, location);
 
-    // skipped are students that do not qualify to go forward
-     let skipped = this.visibilityService.calculateSkipped(students, ruleStudents, rule);
-
-      if (!skipped || skipped.length === 0) {
+      if (skipped.length === 0) {
         forwardAndEmit();
         return;
       }
@@ -198,10 +167,16 @@ export class FromWhereComponent implements OnInit, OnDestroy {
         if (selectedStudents.length > 1) denyText = 'Skip this student';
       }
 
+      const roomStudents = selectedStudents.filter(s => (!skipped.includes(''+s.id)));
+      const noStudentsCase = roomStudents.length === 0;
+      
+      if (noStudentsCase) denyText = 'Cancel';
+
       this.dialog.open(ConfirmationDialogComponent, {
         panelClass: 'overlay-dialog',
         backdropClass: 'custom-backdrop',
         closeOnNavigation: true,
+        width: '450px',
         data: {
           headerText: '',
           body: this.confirmDialogVisibility,
@@ -240,15 +215,7 @@ export class FromWhereComponent implements OnInit, OnDestroy {
           return;
         }
 
-        // filter out the skipped students
-        const roomStudents = selectedStudents.filter(s => (!skipped.includes(''+s.id)));
-        // avoid no students case
-        if (roomStudents.length === 0) {
-          this.toastService.openToast({
-            title: 'Skiping will left no students to operate on',
-            subtitle: 'Last operation did not proceeed',
-            type: 'error',
-          });
+        if (noStudentsCase) {
           return;
         }
 

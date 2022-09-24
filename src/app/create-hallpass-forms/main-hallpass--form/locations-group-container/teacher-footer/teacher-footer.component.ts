@@ -1,7 +1,8 @@
-import {Component, EventEmitter, Input, OnInit, Output} from '@angular/core';
+import {Component, EventEmitter, Input, OnDestroy, OnInit, Output} from '@angular/core';
 import {Navigation} from '../../main-hall-pass-form.component';
 import {CreateFormService} from '../../../create-form.service';
-import {BehaviorSubject} from 'rxjs';
+import {Subject, BehaviorSubject, Observable} from 'rxjs';
+import {takeUntil} from 'rxjs/operators';
 import {ScreenService} from '../../../../services/screen.service';
 import {StorageService} from '../../../../services/storage.service';
 
@@ -10,7 +11,7 @@ import {StorageService} from '../../../../services/storage.service';
   templateUrl: './teacher-footer.component.html',
   styleUrls: ['./teacher-footer.component.scss']
 })
-export class TeacherFooterComponent implements OnInit {
+export class TeacherFooterComponent implements OnInit, OnDestroy {
 
   @Input() date;
 
@@ -34,13 +35,17 @@ export class TeacherFooterComponent implements OnInit {
 
   isGrid: boolean;
 
+  destroy$: Subject<any> = new Subject<any>();
+
   constructor(
     private formService: CreateFormService,
     private screenService: ScreenService,
     private storage: StorageService
   ) { }
 
-  get fromLocationText() {
+  private _fromLocationText$: BehaviorSubject<string>;
+  public fromLocationText$: Observable<string>;
+  fromLocationText() {
     return this.fromLocation ? this.fromLocation.title : 'Origin';
   }
 
@@ -63,6 +68,21 @@ export class TeacherFooterComponent implements OnInit {
   ngOnInit() {
     this.isGrid = JSON.parse(this.storage.getItem('isGrid'));
     this.frameMotion$ = this.formService.getFrameMotionDirection();
+
+    this._fromLocationText$ = new BehaviorSubject(this.fromLocationText());
+    this.fromLocationText$ = this._fromLocationText$.asObservable().pipe(takeUntil(this.destroy$));
+    this.formService.getUpdatedChoice().subscribe(loc => {
+      if(!this.formState.data.direction.to) {
+        this.formState.data.direction.from = loc;
+        this.fromLocation = loc;
+        this._fromLocationText$.next(this.fromLocationText());
+      } 
+    });
+  }
+
+  ngOnDestroy() {
+    this.destroy$.next();
+    this.destroy$.complete();
   }
 
   goToFromWhere(evt: Event) {
