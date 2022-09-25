@@ -1,6 +1,7 @@
 import { Component, Inject, OnInit } from '@angular/core';
 import { MatDialogRef, MAT_DIALOG_DATA } from '@angular/material/dialog';
 import { Location } from '../../models/Location';
+import {generateRoomCode} from './generate-room-code';
 
 @Component({
   selector: 'app-room-checkin-code-dialog',
@@ -9,7 +10,7 @@ import { Location } from '../../models/Location';
 })
 export class RoomCheckinCodeDialogComponent implements OnInit {
 
-  selectedLocationData: Location
+  selectedLocationData: Location;
 
   constructor(
     public dialogRef: MatDialogRef<RoomCheckinCodeDialogComponent>,
@@ -17,31 +18,10 @@ export class RoomCheckinCodeDialogComponent implements OnInit {
   ) { }
 
   ngOnInit(): void {
-    console.log("data : ", this.dialogData)
+    console.log('data : ', this.dialogData);
     this.selectedLocationData = this.dialogData.roomData;
-    // console.log("Code : ", this.generateRoomCode(1, 234))
+    const secondsSinceEpoch = Math.round(Date.now() / 1000);
+    console.log('Code : ', generateRoomCode(secondsSinceEpoch, this.selectedLocationData.id));
   }
-
-  // generateRoomCode(secondsSinceEpoch: number, locationId: number): string {
-  //   const period = secondsSinceEpoch / 30;
-  
-  //   const buffer = new ArrayBuffer(8);
-  //   new DataView(buffer).setBigUint64(0, BigInt(period), false);
-  //   const timeBytes = new BigUint64Array(buffer);
-  
-  //   const buffer2 = new ArrayBuffer(8);
-  //   new DataView(buffer2).setBigUint64(0, BigInt(locationId), false);
-  //   const locationIdBytes = new BigUint64Array(buffer2);
-  
-  //   const crypto = require('crypto');
-  //   const shasum = crypto.createHash('sha1');
-  
-  //   shasum.update(timeBytes);
-  //   shasum.update(locationIdBytes);
-  //   const sumbuffer = shasum.digest();
-  
-  //   const num = sumbuffer.readUint16BE(0);
-  //   return String(num).padStart(3, '0');
-  // }
 
 }
