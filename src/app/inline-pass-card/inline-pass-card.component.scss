@@ -116,6 +116,9 @@
 
 .end-pass-content {
     @extend .button-content;
+    .lock {
+        margin: 0 16px 6px 0;
+    }
 }
 
 .button-icon-right {

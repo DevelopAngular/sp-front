@@ -94,7 +94,8 @@ export class OverlayContainerComponent implements OnInit, OnDestroy {
 
   advOptState: OptionState = {
       now: { state: '', data: { all_teach_assign: null, any_teach_assign: null, selectedTeachers: [] } },
-      future: { state: '', data: { all_teach_assign: null, any_teach_assign: null, selectedTeachers: [] } }
+      future: { state: '', data: { all_teach_assign: null, any_teach_assign: null, selectedTeachers: [] } },
+      needsCheckIn: false
   };
 
   introsData: any;
@@ -743,6 +744,7 @@ export class OverlayContainerComponent implements OnInit, OnDestroy {
                 room: this.roomData.roomNumber,
                 restricted: !!this.roomData.restricted,
                 scheduling_restricted: !!this.roomData.scheduling_restricted,
+                needs_check_in: !!this.roomData.needs_check_in,
                 teachers: this.roomData.selectedTeachers.map(teacher => teacher.id),
                 travel_types: this.roomData.travelType,
                 max_allowed_time: +this.roomData.timeLimit,
@@ -895,6 +897,7 @@ export class OverlayContainerComponent implements OnInit, OnDestroy {
             room: this.roomData.roomNumber,
             restricted: !!this.roomData.restricted,
             scheduling_restricted: !!this.roomData.scheduling_restricted,
+            needs_check_in: !!this.roomData.needs_check_in,
             teachers: this.roomData.selectedTeachers.map(teacher => teacher.id),
             travel_types: this.roomData.travelType,
             max_allowed_time: +this.roomData.timeLimit,
@@ -1055,6 +1058,7 @@ export class OverlayContainerComponent implements OnInit, OnDestroy {
     return rooms.map(room => {
       room.restricted = !!roomData.restricted;
       room.scheduling_restricted = !!roomData.scheduling_restricted;
+      room.needs_check_in = !!roomData.needs_check_in;
       if (roomData.travelType.length) {
         room.travelType = roomData.travelType;
       }
@@ -1086,6 +1090,7 @@ export class OverlayContainerComponent implements OnInit, OnDestroy {
       room: room.roomNumber,
       restricted: !!room.restricted,
       scheduling_restricted: !!room.scheduling_restricted,
+      needs_check_in: !!room.needs_check_in,
       teachers: room.selectedTeachers,
       travel_types: room.travelType,
       max_allowed_time: +room.timeLimit,

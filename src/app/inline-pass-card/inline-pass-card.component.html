@@ -9,21 +9,21 @@
         <div class="header-content">
             <div class="header-info">
                 <img class="pass-card-header-icon" [src]="pass.icon | resolveAsset">
-                <div class="pass-card-header-text">{{ pass.destination.title }}</div>
+                <div class="pass-card-header-text">{{ activeTeacherSelection ? 'Who is Ending?' : pass.destination.title }}</div>
             </div>
-            <app-icon-button *ngIf="activeRoomCodePin || activeTeacherPin" [srcString]="'./assets/Chevron Left (White).svg'" [onDarkShade]="true" [size]="20" (clickEvent)="back()"></app-icon-button>
+            <app-icon-button *ngIf="activeRoomCodePin || activeTeacherPin || activeTeacherSelection" [srcString]="'./assets/Chevron Left (White).svg'" [onDarkShade]="true" [size]="20" (clickEvent)="back()"></app-icon-button>
         </div>
         <mat-divider></mat-divider>
     </div>
 
-    <div class="inline-pass-card-content" *ngIf="!activeRoomCodePin && !activeTeacherPin">
+    <div class="inline-pass-card-content" *ngIf="!activeRoomCodePin && !activeTeacherPin && !activeTeacherSelection">
         <div class="travel">
             <app-travel-view [pass]="pass"></app-travel-view>
         </div>
         <div class="button">
             <app-card-button (onClick)="endPass()" [disabled]="endPassLoading$ | async" [width]="buttonWidth +'px'" [height]="'81px'" [gradientColor]="pass?.color_profile.gradient_color" [overlayWidth]="overlayWidth" [valid]="valid">
                 <div [ngClass]="{'isExpiring': isExpiring}" class="end-pass-content" *ngIf="!(endPassLoading$ | async); else spinner">
-                    {{ timeLeft +(timeLeft===''?'':' -')}} End Pass
+                    <img class="lock" height="30%" *ngIf="pass.needs_check_in" [src]="'./assets/Lock (White).svg' | resolveAsset" alt=""> {{ timeLeft +(timeLeft===''?'':' -')}} End Pass
                 </div>
                 <ng-template #spinner>
                     <div class="end-pass-content">
@@ -40,10 +40,13 @@
             or
             <mat-divider class="bottom-divider" [style.margin]="'9px 0'"></mat-divider>
         </div>
-        <div class="pin-info" (click)="enableTeacherPin()">End Pass with Teacher Pin</div>
+        <div class="pin-info" (click)="selectTeacher()">End Pass with Teacher Pin</div>
+    </div>
+    <div class="inline-request-content" *ngIf="activeTeacherSelection">
+        <app-teacher-selection [pass]="pass" (requestTarget)="requestTarget($event)"></app-teacher-selection>
     </div>
     <div class="inline-request-content" *ngIf="activeTeacherPin">
-        <app-teacher-pin-student (pinResult)="activeTeacherPin = false"></app-teacher-pin-student>
+        <app-teacher-pin-end-pass [pass]="pass" [selectedTeacher]="selectedTeacher" (pinResult)="activeTeacherPin = false"></app-teacher-pin-end-pass>
     </div>
 </div>
 

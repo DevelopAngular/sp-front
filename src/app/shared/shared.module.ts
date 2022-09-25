@@ -104,6 +104,8 @@ import { IdCardGradeLevelsComponent } from '../admin/id-cards/id-card-grade-leve
 import { IdCardIdNumbersComponent } from '../admin/id-cards/id-card-id-numbers/id-card-id-numbers.component';
 import { ClassLinkComponent } from '../admin/accounts/class-link/class-link.component';
 import { RoomCodeComponent } from '../room-code/room-code.component';
+import { TeacherPinEndPassComponent } from '../teacher-pin-end-pass/teacher-pin-end-pass.component';
+import { TeacherSelectionComponent } from '../teacher-selection/teacher-selection.component';
 const DEFAULT_SWIPER_CONFIG: SwiperConfigInterface = {
   direction: 'horizontal',
   slidesPerView: 'auto'
@@ -163,6 +165,7 @@ const DEFAULT_SWIPER_CONFIG: SwiperConfigInterface = {
     SpAppearanceComponent,
     SpLanguageComponent,
     TeacherPinStudentComponent,
+    TeacherPinEndPassComponent,
     RoomCodeComponent,
     MyProfileDialogComponent,
     ProfileInfoComponent,
@@ -215,6 +218,7 @@ const DEFAULT_SWIPER_CONFIG: SwiperConfigInterface = {
     IdCardIdNumbersComponent,
     ConfirmDeleteKioskModeComponent,
     ClassLinkComponent,
+    TeacherSelectionComponent
 
   ],
   exports: [
@@ -262,6 +266,7 @@ const DEFAULT_SWIPER_CONFIG: SwiperConfigInterface = {
     ProfileInfoComponent,
     ChangePasswordComponent,
     TeacherPinStudentComponent,
+    TeacherPinEndPassComponent,
     RoomCodeComponent,
     PassLimitTooltipComponent,
     BigStudentPassCardComponent,
@@ -307,7 +312,8 @@ const DEFAULT_SWIPER_CONFIG: SwiperConfigInterface = {
     IdCardGradeLevelsComponent,
     IdCardIdNumbersComponent,
     ConfirmDeleteKioskModeComponent,
-    ClassLinkComponent
+    ClassLinkComponent,
+    TeacherSelectionComponent
   ],
   providers: [
     {

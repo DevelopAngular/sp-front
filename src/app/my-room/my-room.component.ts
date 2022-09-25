@@ -414,9 +414,9 @@ export class MyRoomComponent implements OnInit, OnDestroy, AfterViewInit {
   openRoomCodeDialog(){
     console.log("this.selectedLocation : ", this.selectedLocation);
     const dialogRef = this.dialog.open(RoomCheckinCodeDialogComponent, {
-      panelClass: 'search-pass-card-dialog-container',
+      panelClass: 'cehckin-room-code-dialog-container',
       backdropClass: 'custom-bd',
-      // data: data,
+      data: {roomData : this.selectedLocation},
     });
   }
 

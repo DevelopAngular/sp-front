@@ -30,6 +30,7 @@ export interface OptionState {
     fromEnabled?: boolean;
     to?: string;
     toEnabled?: boolean;
+    needsCheckIn?: boolean;
 }
 
 export interface ValidButtons {
@@ -60,6 +61,7 @@ export class AdvancedOptionsComponent implements OnInit, OnDestroy {
     @Output() resultOptions: EventEmitter<{options: OptionState, validButtons: ValidButtons}> = new EventEmitter<{options: OptionState, validButtons: ValidButtons}>();
     @Output() nowRestrEmit: EventEmitter<boolean> = new EventEmitter<boolean>();
     @Output() futureRestEmit: EventEmitter<boolean> = new EventEmitter<boolean>();
+    @Output() checkInEmit: EventEmitter<boolean> = new EventEmitter<boolean>();
 
     hideFutureBlock: boolean;
     tooltipText;
@@ -131,10 +133,12 @@ export class AdvancedOptionsComponent implements OnInit, OnDestroy {
 
         this.restrictionForm = new FormGroup({
           forNow: new FormControl(this.roomData.restricted),
-          forFuture: new FormControl(this.roomData.scheduling_restricted)
+          forFuture: new FormControl(this.roomData.scheduling_restricted),
+          checkIn: new FormControl(this.roomData.needs_check_in)
         });
         this.futureRestEmit.emit(this.roomData.scheduling_restricted);
         this.nowRestrEmit.emit(this.roomData.restricted);
+        this.checkInEmit.emit(this.roomData.needs_check_in);
 
         this.change$.pipe(takeUntil(this.destroy$)).subscribe(({value, action}) => {
           this.limitInputsFocus[action] = value;
@@ -266,6 +270,10 @@ export class AdvancedOptionsComponent implements OnInit, OnDestroy {
 
     futureEvent(value) {
       this.futureRestEmit.emit(value);
+    }
+
+    checkInEvent(value){
+      this.checkInEmit.emit(value);
     }
 
     isRestrictionEmpty(restriction) {
