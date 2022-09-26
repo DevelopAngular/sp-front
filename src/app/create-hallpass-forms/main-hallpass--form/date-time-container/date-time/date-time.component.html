@@ -31,8 +31,9 @@
                   <span class="ds-dialog-heading-gray ds-px-10" style="color: #1F195E !important; padding-bottom: 0 !important;">Date & Time</span>
                 </div>
 
-                <div>
+                <div #calendarButtonWrapper>
                   <app-gradient-button
+                    (buttonClick)="openCalendarDialog()"
                     textColor="#7083A0"
                     gradient="#F0F2F5"
                     border="#E2E6EC">
@@ -53,14 +54,14 @@
                 <span class="ds-dialog-heading-gray ds-px-10" style="color: #1F195E !important; padding-bottom: 0 !important;">Repeat</span>
               </div>
 
-              <div>
+              <div #recurrenceButtonWrapper>
                 <app-gradient-button
                   (buttonClick)="openRecurrenceDropdown()"
                   textColor="#7083A0"
                   gradient="#F0F2F5"
                   border="#E2E6EC">
                   <div class="ds-flex-center-center">
-                    <span>{{selectedRecurrenceFrequency}}</span>
+                    <span>{{selectedRecurrenceFrequency.title}}</span>
                     <img class="ds-px-10" style="width: 8px; height: 6px" [src]="'./assets/Rect (Blue-Gray).svg'" alt="Down Arrow">
                   </div>
                 </app-gradient-button>
@@ -98,28 +99,48 @@
                 (onSelectDate)="calendarResult($event)">
               </app-calendar-picker>
             </div>
-            <div  *ngIf="isPortableDevice">
+            <div *ngIf="isPortableDevice">
               <app-ios-calendar (selectedEvent)="calendarResult($event)"></app-ios-calendar>
             </div>
             <!--          <app-date-time-picker [min]="startTime" [_selectedMoment]="requestTime" (onUpdate)="requestTime=$event"></app-date-time-picker>-->
-            <div class="next-button">
-              <app-gradient-button
-                [gradient]="colorProfile ? colorProfile.gradient_color : '#03CF31, #00B476'"
-                [cursor]="'pointer'"
-                [hoverColor]="(colorProfile ? colorProfile.solid_color : '#00B476')"
-                [minWidth]="'101px'"
-                [minHeight]="'40px'"
-                [fontSize]="'14px'"
-                (buttonClick)="next()"
-                [style.margin]="'15px auto'"
-              >{{ (formState.resendRequest ? 'Resend Request' : 'Next') }}</app-gradient-button>
-            </div>
           </div>
         </ng-template>
+
+        <div class="next-button">
+          <app-gradient-button
+            [gradient]="colorProfile ? colorProfile.gradient_color : '#03CF31, #00B476'"
+            [cursor]="'pointer'"
+            [hoverColor]="(colorProfile ? colorProfile.solid_color : '#00B476')"
+            [minWidth]="'101px'"
+            [minHeight]="'40px'"
+            [fontSize]="'14px'"
+            (buttonClick)="next()"
+            [style.margin]="'15px auto'"
+          >{{ (formState.resendRequest ? 'Resend Request' : 'Next') }}</app-gradient-button>
+        </div>
       </div>
     </div>
 </div>
 
-<ng-template #calendarDialog let-isStaff="isStaff">
+<ng-template #calenderPicker>
+  <app-calendar-picker
+    [width]="240"
+    [min]="startTime"
+    [selectedColor]="selectedColor"
+    [selectedDates]="[requestTime]"
+    (onSelectDate)="calendarResult($event)"
+    [showYear]="false">
+  </app-calendar-picker>
 
+  <div style="text-align: center">
+    <app-gradient-button
+      [gradient]="colorProfile ? colorProfile.gradient_color : '#03CF31, #00B476'"
+      [cursor]="'pointer'"
+      [hoverColor]="(colorProfile ? colorProfile.solid_color : '#00B476')"
+      [minWidth]="'101px'"
+      [minHeight]="'40px'"
+      [fontSize]="'14px'"
+      [style.margin]="'15px auto'"
+    >Confirm</app-gradient-button>
+  </div>
 </ng-template>

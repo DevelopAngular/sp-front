@@ -46,7 +46,7 @@ export class CalendarPickerComponent implements OnInit, OnChanges {
     buttonDown: boolean;
     monthButtonHovered: boolean;
 
-    forseUpdate$ = new BehaviorSubject(moment(this.currentDate).add(5, 'minutes'));
+    forseUpdate$: BehaviorSubject<moment.Moment>;
 
     constructor() {}
 
@@ -69,10 +69,13 @@ export class CalendarPickerComponent implements OnInit, OnChanges {
         }
         if (this.min) {
             this.currentDate = this.min;
+            this.forseUpdate$ = new BehaviorSubject(moment(this.currentDate));
         }
         if (this.selectedDates.length && this.selectedDates[0] && !this.range) {
           this.currentDate = this.selectedDates[0];
+          this.forseUpdate$ = new BehaviorSubject(moment(this.currentDate));
         }
+        this.forseUpdate$ = new BehaviorSubject(moment(this.currentDate));
         this.generateCalendar();
     }
 

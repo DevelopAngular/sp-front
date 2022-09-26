@@ -1,14 +1,19 @@
 import {Component, Inject} from '@angular/core';
 import {MAT_DIALOG_DATA, MatDialogRef} from '@angular/material/dialog';
 
+/**
+ * Value should only be left out if the option title can also act as the value
+ * In the case, the DropdownConfig should also have stringsOnly set to true
+ */
 export interface DropdownOptions<T> {
-  text: string;
-  value: T;
+  title: string;
+  value?: T;
 }
 
 export interface DropdownConfig<T> {
-  currentlySelected: T;
+  currentlySelected: DropdownOptions<T>;
   options: DropdownOptions<T>[];
+  stringsOnly?: boolean;
   comparison?(opt1: T, opt2: T): boolean;
 }
 
@@ -32,6 +37,13 @@ export class DropdownSelectionComponent {
     @Inject(MAT_DIALOG_DATA) public data: DropdownConfig<any>,
     private dialogRef: MatDialogRef<DropdownSelectionComponent>
   ) {
+    if (data.stringsOnly) {
+      data.options = data.options.map(o => {
+        o.value = o.title;
+        return o;
+      });
+      data.currentlySelected.value = data.currentlySelected.title;
+    }
     if (!data.comparison) { // if no comparison function is given, default to generic equality
       data.comparison = (opt1, opt2): boolean => opt1.value === opt2.value;
     }

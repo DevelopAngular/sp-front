@@ -1,4 +1,4 @@
-import {Component, EventEmitter, Input, OnDestroy, OnInit, Output} from '@angular/core';
+import {Component, ElementRef, EventEmitter, Input, OnDestroy, OnInit, Output, TemplateRef, ViewChild} from '@angular/core';
 import { FormControl, FormGroup } from '@angular/forms';
 import { TimeService } from '../../../../services/time.service';
 import { Navigation } from '../../main-hall-pass-form.component';
@@ -10,9 +10,13 @@ import {BehaviorSubject, Subject} from 'rxjs';
 import {StorageService} from '../../../../services/storage.service';
 import {ScreenService} from '../../../../services/screen.service';
 import {KeyboardShortcutsService} from '../../../../services/keyboard-shortcuts.service';
-import {pluck, takeUntil} from 'rxjs/operators';
+import {filter, pluck, takeUntil} from 'rxjs/operators';
 import {MatDialog} from '@angular/material/dialog';
-import {DropdownOptions, DropdownSelectionComponent} from '../../../../core/components/dropdown-selection/dropdown-selection.component';
+import {
+  DropdownConfig,
+  DropdownOptions,
+  DropdownSelectionComponent
+} from '../../../../core/components/dropdown-selection/dropdown-selection.component';
 
 @Component({
   selector: 'app-date-time',
@@ -23,11 +27,14 @@ export class DateTimeComponent implements OnInit, OnDestroy {
 
   @Input() mock = null;
   @Input() isStaff: boolean;
-
   @Input() formState: Navigation;
 
   @Output() result: EventEmitter<any> = new EventEmitter<any>();
   @Output() backButton: EventEmitter<Navigation> = new EventEmitter<Navigation>();
+
+  @ViewChild('calenderPicker') calendarPickerTemplate: TemplateRef<HTMLElement>;
+  @ViewChild('calendarButtonWrapper') calendarButtonWrapper: ElementRef<HTMLDivElement>;
+  @ViewChild('recurrenceButtonWrapper') recurrenceButtonWrapper: ElementRef<HTMLDivElement>;
 
   startTime: moment.Moment = moment(this.timeService.nowDate());
   requestTime: moment.Moment = moment(this.timeService.nowDate()).add(5, 'minutes');
@@ -49,13 +56,12 @@ export class DateTimeComponent implements OnInit, OnDestroy {
   };
 
   destroy$: Subject<any> = new Subject<any>();
-  selectedRecurrenceFrequency = 'Does not Repeat';
-  recurrenceOptions: DropdownOptions<number>[] = [
-    { text: 'Does not repeat', value: 0 },
-    { text: 'Daily', value: 1 },
-    { text: `Weekly on ${this.requestTime.format('dddd')}`, value: 2 }
+  selectedRecurrenceFrequency: DropdownOptions<string> = { title: 'Does not repeat' };
+  recurrenceOptions: DropdownOptions<string>[] = [
+    { title: 'Does not repeat' },
+    { title: 'Daily' },
+    { title: `Weekly on ${this.requestTime.format('dddd')}` }
   ];
-
 
   constructor(
     public screenService: ScreenService,
@@ -190,10 +196,42 @@ export class DateTimeComponent implements OnInit, OnDestroy {
   }
 
   openRecurrenceDropdown() {
+    const recurrenceButtonCoords = this.recurrenceButtonWrapper.nativeElement.getBoundingClientRect();
     this.dialog.open(DropdownSelectionComponent, {
+      hasBackdrop: true,
+      backdropClass: 'cdk-overlay-transparent-backdrop',
+      panelClass: ['overlay-dialog', 'show-overlay'],
+      closeOnNavigation: true,
+      width: '220px',
       data: {
+        options: this.recurrenceOptions,
+        currentlySelected: this.selectedRecurrenceFrequency,
+        stringsOnly: true
+      } as DropdownConfig<string>,
+      position: {
+        top: `${recurrenceButtonCoords.bottom + 10}px`,
+        left: `${recurrenceButtonCoords.left}px`
+      }
+    }).afterClosed().pipe(filter(Boolean)).subscribe({
+      next: (option: DropdownOptions<string>) => {
+        this.selectedRecurrenceFrequency = option;
+      }
+    });
+  }
 
-      } as DropdownOptions<string>
-    })
+  openCalendarDialog() {
+    const calendarButtonCoords = this.calendarButtonWrapper.nativeElement.getBoundingClientRect();
+    this.dialog.open(this.calendarPickerTemplate, {
+      hasBackdrop: true,
+      closeOnNavigation: true,
+      backdropClass: ['cdk-overlay-transparent-backdrop'],
+      position: {
+        top: `${calendarButtonCoords.bottom + 10}px`,
+        left: `${calendarButtonCoords.left}px`
+      },
+      data: {
+        requestTime: this.requestTime
+      }
+    });
   }
 }
