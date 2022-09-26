@@ -23,7 +23,7 @@
            [style.background]="gradient"
            (mouseenter)="tooltipDelay(true, 300)"
       >{{ currentPage === 'from' ? passLimit.from_count : passLimit.to_count }}</div>
-      <div>{{value.room}}</div>
+      <div notranslate>{{value.room}}</div>
       <img *ngIf="showLock && hasLocks" class="lock" [src]="'./assets/Locked (Blue-Gray).svg' | resolveAsset">
     </div>
   </div>
