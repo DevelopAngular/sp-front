@@ -781,11 +781,27 @@ export class OverlayContainerComponent implements OnInit, OnDestroy {
     if (this.currentPage === Pages.NewFolder || this.currentPage === Pages.EditFolder) {
       const salt = ' ' + this.generateRandomString();
       if (!this.folderData.roomsInFolder.length) {
+        // DANGER: this.selectedIcon is an object when is to be updated but is kept as a string
+        // bad evaluation order, left here for teaching
+        // const icon = this.selectedIcon?.inactive_icon ?? (typeof this.selectedIcon === 'string') ? this.selectedIcon : '';
+
+        /**
+         * The const `icon` will be:
+         * - this.selectedIcon.inactive_icon if it’s defined and not null
+         * - this.selectedIcon if it’s a string
+         * - '' if this.selectedIcon is not a string
+         *
+         * We need to wrap the right side of the nullish coalescing in parentheses, otherwise the js engine
+         * will evaluate as a boolean everything till question mark "?"
+         */
+        const icon = this.selectedIcon?.inactive_icon ?? (
+          typeof this.selectedIcon === 'string' ? this.selectedIcon : ''
+        );
+
         const newFolder = {
           title: this.folderData.folderName,
           color_profile: this.color_profile.id,
-          // selectedIcon is an object when is to be updated but is kept as a string
-          icon: this.selectedIcon?.inactive_icon ?? (typeof this.selectedIcon === 'string') ? this.selectedIcon : '', // last choice to be a generic icon not just a empty string?
+          icon,
           category: this.folderData.folderName + salt
         };
         if (this.pinnable) {
@@ -1067,7 +1083,7 @@ export class OverlayContainerComponent implements OnInit, OnDestroy {
 
       room.roomName = room.title;
       room.roomNumber = room.room;
-      room.selectedTeachers = room.teachers;
+      room.selectedTeachers = room.teachers.concat(...roomData.selectedTeachers);
       room.max_passes_to_active = roomData.advOptState.toEnabled;
       room.max_passes_to = roomData.advOptState.to;
 
