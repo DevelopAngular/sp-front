@@ -117,8 +117,8 @@ ul.error {
   font-weight: 400;
   &.grade-level {
     font-size: 15px;
-    width: 278px;
-    padding: 7px 0px 0px 7px;
+    width: 271px; // 278 - 7px padding-right
+    padding: 7px;
     li {
       font-weight: 500;
       color: $navy500;
