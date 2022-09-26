@@ -181,6 +181,10 @@ export class DateTimeComponent implements OnInit, OnDestroy {
     }, 100);
   }
 
+  get showTeacherIosCalendar() {
+    return this.isPortableDevice || window.innerWidth <= 940;
+  }
+
   get isPortableDevice() {
     return DeviceDetection.isIOSTablet() || DeviceDetection.isIOSMobile() || DeviceDetection.isAndroid();
   }
@@ -188,7 +192,7 @@ export class DateTimeComponent implements OnInit, OnDestroy {
   openRecurrenceDropdown() {
     this.dialog.open(DropdownSelectionComponent, {
       data: {
-        
+
       } as DropdownOptions<string>
     })
   }
