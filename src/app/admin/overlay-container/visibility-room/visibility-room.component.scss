@@ -1,3 +1,4 @@
+@import '../../../../design-system';
 @import '../../../../sp-colors';
 
 .background {
@@ -48,7 +49,7 @@
     background-color: $gray100;
     border: 1px solid $gray200;
     &.with-triangle > .after {
-      background-image: url('/assets/Rect (Blue-Gray).svg');
+      @include background-image('/assets/Rect (Blue-Gray).svg', '/app');
     }
   }
   &.visibility-allow {
@@ -56,7 +57,7 @@
     background-color: $green100;
     border: 1px solid $green200;
     &.with-triangle > .after {
-      background-image: url('/assets/Rect (Green500).svg');
+      @include background-image('/assets/Rect (Green500).svg', '/app');
     }
   }
   &.visibility-denny {
@@ -64,7 +65,7 @@
     background-color: $red100;
     border: 1px solid $red200;
     &.with-triangle > .after {
-      background-image: url('/assets/Rect (Red500).svg');
+      @include background-image('/assets/Rect (Red500).svg', '/app');
     }
   }
 
@@ -79,7 +80,7 @@
 
 .with-triangle > .after {
   display: inline-flex;
-  background-image: url('/assets/Rect (Blue-Gray).svg');
+  @include background-image('/assets/Rect (Blue-Gray).svg', '/app');
   animation: fadein 0.5s;
   background-size: 8px 6px;
   margin-left: 8px;
@@ -154,7 +155,7 @@ ul.error {
       color: $gray500;
     }
     & > .after {
-      background-image: url('/assets/Check (Navy).svg');
+      @include background-image('/assets/Check (Navy).svg', '/app');
       opacity: 0;
     }
     &.selected, &:hover {
