@@ -22,7 +22,7 @@
           </div>
 
           <ng-template #dialogCalendar>
-            <div class="ds-px-20">
+            <div [ngClass]="smaller ? 'ds-px-10' : 'ds-px-20'">
               <div class="accent-background-section ds-flex-center-between">
                 <div class="ds-flex-row ds-flex-center-between">
                   <div style="background: #00B476; padding: 6px; border-radius: 5px; display: flex">
@@ -47,7 +47,7 @@
             </div>
           </ng-template>
 
-          <div class="ds-px-20">
+          <div [ngClass]="smaller ? 'ds-px-10' : 'ds-px-20'">
             <div class="accent-background-section ds-flex-center-between">
               <div class="ds-flex-row ds-flex-center-between">
                 <img [src]="'./assets/Repeat (Blue-Gray).svg' | resolveAsset" alt="Refresh Icon">
@@ -56,7 +56,10 @@
 
               <div #recurrenceButtonWrapper>
                 <app-gradient-button
+                  [disabled]="form.value.declinable"
                   (buttonClick)="openRecurrenceDropdown()"
+                  [customToolTip]="'To schedule a recurring future pass, turn off Declineable.'"
+                  [showToolTip]="form.value.declinable"
                   textColor="#7083A0"
                   gradient="#F0F2F5"
                   border="#E2E6EC">
@@ -69,7 +72,7 @@
             </div>
           </div>
 
-          <div class="ds-px-20">
+          <div [ngClass]="smaller ? 'ds-px-10' : 'ds-px-20'">
             <div class="accent-background-section ds-flex-center-between">
               <div class="toggle-text">
                 <div class="toggle-title">Declinable</div>
@@ -123,24 +126,14 @@
 </div>
 
 <ng-template #calenderPicker>
-  <app-calendar-picker
-    [width]="240"
-    [min]="startTime"
-    [selectedColor]="selectedColor"
-    [selectedDates]="[requestTime]"
-    (onSelectDate)="calendarResult($event)"
-    [showYear]="false">
-  </app-calendar-picker>
-
-  <div style="text-align: center">
-    <app-gradient-button
-      [gradient]="colorProfile ? colorProfile.gradient_color : '#03CF31, #00B476'"
-      [cursor]="'pointer'"
-      [hoverColor]="(colorProfile ? colorProfile.solid_color : '#00B476')"
-      [minWidth]="'101px'"
-      [minHeight]="'40px'"
-      [fontSize]="'14px'"
-      [style.margin]="'15px auto'"
-    >Confirm</app-gradient-button>
+  <div class="ds-px-20 ds-py-10">
+    <app-calendar-picker
+      [width]="240"
+      [min]="startTime"
+      [selectedColor]="selectedColor"
+      [selectedDates]="[requestTime]"
+      (onSelectDate)="calendarResult($event)"
+      [showYear]="false">
+    </app-calendar-picker>
   </div>
 </ng-template>

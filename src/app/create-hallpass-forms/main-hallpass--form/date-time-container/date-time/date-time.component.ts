@@ -18,6 +18,12 @@ import {
   DropdownSelectionComponent
 } from '../../../../core/components/dropdown-selection/dropdown-selection.component';
 
+export enum RecurringOption {
+  DoesNotRepeat,
+  Daily,
+  Weekly
+}
+
 @Component({
   selector: 'app-date-time',
   templateUrl: './date-time.component.html',
@@ -56,11 +62,11 @@ export class DateTimeComponent implements OnInit, OnDestroy {
   };
 
   destroy$: Subject<any> = new Subject<any>();
-  selectedRecurrenceFrequency: DropdownOptions<string> = { title: 'Does not repeat' };
-  recurrenceOptions: DropdownOptions<string>[] = [
-    { title: 'Does not repeat' },
-    { title: 'Daily' },
-    { title: `Weekly on ${this.requestTime.format('dddd')}` }
+  selectedRecurrenceFrequency: DropdownOptions<number> = { title: 'Does not repeat', value: 0 };
+  recurrenceOptions: DropdownOptions<number>[] = [
+    { title: 'Does not repeat', value: RecurringOption.DoesNotRepeat },
+    { title: 'Daily', value: RecurringOption.Daily },
+    { title: `Weekly on ${this.requestTime.format('dddd')}`, value: RecurringOption.Weekly }
   ];
 
   constructor(
@@ -71,6 +77,10 @@ export class DateTimeComponent implements OnInit, OnDestroy {
     private shortcutsService: KeyboardShortcutsService,
     private dialog: MatDialog
   ) {
+  }
+
+  get smaller(): boolean {
+    return this.screenService.isDeviceLargeExtra;
   }
 
   get formatDate(): string {
@@ -150,6 +160,14 @@ export class DateTimeComponent implements OnInit, OnDestroy {
 
   calendarResult(date: moment.Moment[]) {
     this.requestTime = moment(date[0]);
+    const updatedWeeklyOption = {
+      title: `Weekly on ${this.requestTime.format('dddd')}`,
+      value: 2
+    };
+    this.recurrenceOptions[2] = updatedWeeklyOption;
+    if (this.selectedRecurrenceFrequency.title.includes('Weekly')) {
+      this.selectedRecurrenceFrequency = updatedWeeklyOption;
+    }
   }
 
   next() {
@@ -157,7 +175,8 @@ export class DateTimeComponent implements OnInit, OnDestroy {
     this.formService.setFrameMotionDirection('forward');
     this.formState.data.date = {
       date: this.requestTime.toDate(),
-      declinable: this.form.get('declinable').value
+      declinable: this.form.get('declinable').value,
+      schedule_config: this.selectedRecurrenceFrequency.value
     };
     setTimeout(() => {
       this.result.emit(this.formState);
@@ -206,14 +225,13 @@ export class DateTimeComponent implements OnInit, OnDestroy {
       data: {
         options: this.recurrenceOptions,
         currentlySelected: this.selectedRecurrenceFrequency,
-        stringsOnly: true
-      } as DropdownConfig<string>,
+      } as DropdownConfig<number>,
       position: {
         top: `${recurrenceButtonCoords.bottom + 10}px`,
         left: `${recurrenceButtonCoords.left}px`
       }
     }).afterClosed().pipe(filter(Boolean)).subscribe({
-      next: (option: DropdownOptions<string>) => {
+      next: (option: DropdownOptions<number>) => {
         this.selectedRecurrenceFrequency = option;
       }
     });
@@ -225,6 +243,7 @@ export class DateTimeComponent implements OnInit, OnDestroy {
       hasBackdrop: true,
       closeOnNavigation: true,
       backdropClass: ['cdk-overlay-transparent-backdrop'],
+      panelClass: ['overlay-dialog', 'show-overlay'],
       position: {
         top: `${calendarButtonCoords.bottom + 10}px`,
         left: `${calendarButtonCoords.left}px`

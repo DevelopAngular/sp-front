@@ -30,6 +30,7 @@ import {
 import {PassLimitService} from '../services/pass-limit.service';
 import {LocationsService} from '../services/locations.service';
 import {Location} from '../models/Location';
+import {RecurringOption} from '../create-hallpass-forms/main-hallpass--form/date-time-container/date-time/date-time.component';
 
 @Component({
   selector: 'app-pass-card',
@@ -383,6 +384,15 @@ export class PassCardComponent implements OnInit, OnDestroy {
     if (this.forFuture) {
       body['issuer_message'] = this.pass.issuer_message;
       body['start_time'] = this.pass.start_time.toISOString();
+      if (!this.formState.data.date?.declinable &&
+        this.formState.data?.date?.schedule_config &&
+        this.formState.data?.date?.schedule_config !== RecurringOption.DoesNotRepeat
+      ) {
+        // if the schedule config is present and is repeating, then set the `recurring_scheduled_config` key, otherwise omit the key
+        // from the body.
+        // the backend will ignore if the key is not present
+        body['recurring_scheduled_config'] = this.formState.data.date.schedule_config;
+      }
     }
     if (this.forKioskMode) {
       body['self_issued'] = true;
