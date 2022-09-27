@@ -172,7 +172,6 @@ export class KioskModeComponent implements OnInit, AfterViewInit, OnDestroy {
     if (event.key !== 'Enter') {
       return;
     }
-    console.log(event);
     let id = this.cardReaderValue;
     if (this.cardReaderValue && (this.cardReaderValue[0] === ';' || this.cardReaderValue[0] === '%')) {
       id = id.substring(1);
@@ -207,9 +206,11 @@ export class KioskModeComponent implements OnInit, AfterViewInit, OnDestroy {
 
   onCardReaderBlur() {
     this.inputFocus();
+
   }
 
   showMainForm(forLater: boolean, student?): void {
+    
     this.hideInput = true;
     this.mainFormRef = this.dialog.open(MainHallPassFormComponent, {
         panelClass: 'main-form-dialog-container',
@@ -221,7 +222,7 @@ export class KioskModeComponent implements OnInit, AfterViewInit, OnDestroy {
           'forInput': true,
           'kioskMode': true,
           'kioskModeRoom': this.kioskMode.getCurrentRoom().value,
-          'kioskModeSelectedUser': [student]
+          'kioskModeSelectedUser': student
         }
     });
 

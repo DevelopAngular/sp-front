@@ -34,6 +34,7 @@ import {GoogleLoginService} from '../services/google-login.service';
 import * as moment from 'moment';
 import {CheckForUpdateService} from '../services/check-for-update.service';
 import { KioskModeDialogComponent } from '../kiosk-mode/kiosk-mode-dialog/kiosk-mode-dialog.component';
+import { KioskSettingsDialogComponent } from '../kiosk-settings-dialog/kiosk-settings-dialog.component';
 
 
 @Component({
@@ -386,23 +387,31 @@ export class MyRoomComponent implements OnInit, OnDestroy, AfterViewInit {
         });
     
         dialogRef.afterClosed().subscribe((result) => {
+
           if (result) {
-            let kioskRoom;
-            if (this.roomOptions.length === 1) {
-                kioskRoom = this.roomOptions[0];
-            } else {
-              kioskRoom = Object.assign({}, this.selectedLocation);
-            }
-            this.kioskMode.setCurrentRoom(kioskRoom);
-            this.userService.saveKioskModeLocation(kioskRoom.id).subscribe((res: any) => {
-              // Switch into kiosk mode
-        
-              this.storage.setItem('kioskToken', res.access_token);
-              // this.storage.setItem('refresh_token', res.refresh_token);
-              this.loginService.updateAuth({username: kioskLoginInfo.results.username, password: kioskLoginInfo.results.password, type: 'demo-login', kioskMode: true});
-              this.http.kioskTokenSubject$.next(res);
-              this.router.navigate(['main/kioskMode']);
-            });
+            this.router.navigate(['main/kioskMode/settings']);
+            this.kioskMode.enterKioskMode$.subscribe((res)=>{
+              if(res){
+                let kioskRoom;
+                if (this.roomOptions.length === 1) {
+                    kioskRoom = this.roomOptions[0];
+                } else {
+                  kioskRoom = Object.assign({}, this.selectedLocation);
+                }
+                this.kioskMode.setCurrentRoom(kioskRoom);
+                this.userService.saveKioskModeLocation(kioskRoom.id).subscribe((res: any) => {
+                  // Switch into kiosk mode
+            
+                  this.storage.setItem('kioskToken', res.access_token);
+                  // this.storage.setItem('refresh_token', res.refresh_token);
+                  this.loginService.updateAuth({username: kioskLoginInfo.results.username, password: kioskLoginInfo.results.password, type: 'demo-login', kioskMode: true});
+                  this.http.kioskTokenSubject$.next(res);
+                  this.router.navigate(['main/kioskMode']);
+                });
+              }
+            })
+
+    
           }
         });
       }

@@ -14,7 +14,7 @@ export class KioskSettingsDialogComponent implements OnInit {
   form: FormGroup;
 
   constructor(
-    private dialogRef: MatDialogRef<KioskSettingsDialogComponent>,
+    public dialogRef: MatDialogRef<KioskSettingsDialogComponent>,
     private kioskModeService: KioskModeService,
     private fb: FormBuilder
   ) {}
@@ -27,7 +27,7 @@ export class KioskSettingsDialogComponent implements OnInit {
   }
 
   close() {
-    this.dialogRef.close();
+    this.dialogRef.close(true);
   }
 
   control(id: string): FormGroup {

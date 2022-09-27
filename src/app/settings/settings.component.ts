@@ -172,6 +172,7 @@ export class SettingsComponent implements OnInit, OnDestroy {
         this.sideNavService.sideNavAction$.next('signout');
     }
     this.removeOfflineAuthData();
+    localStorage.removeItem('kioskSettingsData');
     localStorage.removeItem('fcm_sw_registered');
     this.localize.setLanguageUntranslated();
   }

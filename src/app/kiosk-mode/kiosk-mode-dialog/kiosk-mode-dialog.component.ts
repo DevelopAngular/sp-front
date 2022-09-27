@@ -32,7 +32,6 @@ export class KioskModeDialogComponent implements OnInit {
   }
 
   resetPassword(){
-    console.log("Clicked")
     this.kioskMode.resetPassword(this.data.selectedRoom).subscribe({
       next: (result: any) => {
         this.loginInfoForm = new FormGroup({

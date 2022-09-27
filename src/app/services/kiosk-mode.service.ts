@@ -25,6 +25,7 @@ export class KioskModeService {
   private currentRoom$: BehaviorSubject<Location> = new BehaviorSubject(null);
   private loadingStoredKioskRoom = false;
   private currentKioskSettings$: BehaviorSubject<KioskSettings> = new BehaviorSubject<KioskSettings>(this.getKioskModeSettings());
+  public enterKioskMode$:BehaviorSubject<Boolean>=new BehaviorSubject(false);
 
   constructor(
     private storageService: StorageService,
@@ -47,6 +48,10 @@ export class KioskModeService {
 
   getKioskModeSettingsSubject(): Observable<KioskSettings> {
     return this.currentKioskSettings$.asObservable();
+  }
+
+  GetKioskModeEnterSubject():Observable<Boolean>{
+    return this.enterKioskMode$.asObservable()
   }
 
   getKioskModeSettings(): KioskSettings {
@@ -77,5 +82,9 @@ export class KioskModeService {
   getAllKioskLogin(){
     return this.http.get(`v1//kiosk/all_logins`);
   }
+isKisokMode(){
+  return this.storageService.getItem('kioskToken')? true :false
+  
+}
 
 }

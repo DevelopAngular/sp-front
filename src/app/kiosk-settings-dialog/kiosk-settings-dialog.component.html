@@ -1,13 +1,10 @@
 <div class="kiosk-settings-wrapper">
   <div class="kiosk-settings-header">
-    <div style="width:70px;"></div>
     <div class="kiosk-settings-title">
       <div><img [src]="'./assets/Tablet (White).svg' | resolveAsset" alt=""></div>
       <span>Kiosk Mode Options</span>
     </div>
-    <div style="height: 40px">
-      <app-gradient-button size="editable" width="70px" minHeight="40px" fontSize="14px" (click)="close()">Done</app-gradient-button>
-    </div>
+
   </div>
   <div class="kiosk-settings">
     <div class="kiosk-setting-option">
@@ -50,6 +47,9 @@
       <div class="kiosk-settings-toggle">
         <app-toggle-input [form]="this.form" controlName="findByScan" controlSize="small" [delimiter]="false"></app-toggle-input>
       </div>
+    </div>
+    <div >
+      <app-gradient-button size="editable" width="375px" minHeight="40px" fontSize="14px" (click)="close()">Enter kiosk Mode ></app-gradient-button>
     </div>
   </div>
 </div>
