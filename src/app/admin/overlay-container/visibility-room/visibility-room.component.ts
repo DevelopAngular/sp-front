@@ -105,7 +105,6 @@ export class VisibilityRoomComponent implements OnInit, AfterViewInit, OnDestroy
         const isEnabled: boolean = (s as any)?.results?.setup ?? false;
         return isEnabled;
       }),
-      //tap((v: boolean) => this.searchInputFocused = !v),
       takeUntil(this.destroy$),
       shareReplay(1),
     );
@@ -174,6 +173,8 @@ export class VisibilityRoomComponent implements OnInit, AfterViewInit, OnDestroy
       } else if (this.selectedGradeLevels.length > 0) {
         this.searchComponent.inputField = false;
       }
+
+      this.searchComponent.forceFocused$.next(true);
     }
 
     this.unlisten = this.renderer.listen('document', 'click', event => {
@@ -216,6 +217,12 @@ export class VisibilityRoomComponent implements OnInit, AfterViewInit, OnDestroy
   }
 
   private allowOpenGradeLevel: boolean = true;
+
+  triggerInputFieldFocus() {
+    setTimeout(() => {
+      this.searchComponent?.forceFocused$.next(true);
+    }, 0);
+  }
   // the focus of internal input native of app-search
   // triggers this method in order to hide the errors 
   public onSearchComponentFocus() {
@@ -280,11 +287,13 @@ export class VisibilityRoomComponent implements OnInit, AfterViewInit, OnDestroy
       return;
     }
 
+    this.searchComponent?.forceFocused$.next(false);
+
     const conf = {
       id: this.GRADE_LEVEl_DIALOG_ID,
       panelClass: 'consent-dialog-container',
       hasBackdrop: false,
-      autofocus: false,
+      autofocus: true,
     };
     this.gradeLevelDialog = this.dialog.open(this.gradeLevelTpl, conf);
     this.positionGradeLevelDialog();
@@ -298,6 +307,8 @@ export class VisibilityRoomComponent implements OnInit, AfterViewInit, OnDestroy
         }
         // reset previous scroll
         this.panelMaxHeight = null;
+        // restore focus to search component
+        this.triggerInputFieldFocus();
       }),
     )
     .subscribe(() => {
@@ -309,6 +320,8 @@ export class VisibilityRoomComponent implements OnInit, AfterViewInit, OnDestroy
 
       const whenLoadedAdjust$ = this.grades$.pipe(take(1), tap(() => this.adjustGradeDialogScroll()));
       whenLoadedAdjust$.subscribe();
+
+      this.searchComponent?.forceFocused$.next(false);
     });
 
     this.allowOpenGradeLevel = !this.allowOpenGradeLevel;
@@ -499,7 +512,6 @@ export class VisibilityRoomComponent implements OnInit, AfterViewInit, OnDestroy
         if (!this.searchComponent) return;
 
         this.searchComponent.inputField = true;
-        //this.searchComponent.focused = this.searchInputFocused;
 
         this.isGradeEnabled$.pipe(tap((gradesEnabled: boolean) => {
           if (gradesEnabled) setTimeout(this.openGradeLevelDialog.bind(this), 0);
