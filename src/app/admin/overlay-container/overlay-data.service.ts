@@ -52,13 +52,31 @@ export interface RoomData {
     enable: boolean;
 }
 
+/**
+ * FolderData is responsible for describing the data between the OverlayContainerComponent
+ * and its children regarding editing folders
+ */
 export interface FolderData {
-    folderName: string;
-    roomsInFolder: any[];
-    selectedRoomsInFolder: any[];
-    roomsInFolderLoaded: boolean;
-    selectedRoomToEdit: any;
-    roomsToDelete: any[];
+  // folderName: Name of the Room Folder as it appears on the UI (without category name)
+  folderName: string;
+
+  // roomsInFolder: List of rooms associated with the folder. Associated by category
+  // TODO: Properly type this. Remove `any` type
+  roomsInFolder: any[];
+
+  // selectedRoomsInFolder: List of rooms in folder currently selected to be either edited or deleted
+  // TODO: Properly type this. Remove `any` type
+  selectedRoomsInFolder: any[];
+
+  // roomsInFolderLoaded: used as a check to tell when it's safe to pull data from this interface
+  roomsInFolderLoaded: boolean;
+
+  // selectedRoomToEdit: A single room selected to be edited
+  // TODO: Properly type this. Remove `any` type
+  selectedRoomToEdit: any;
+
+  // roomsToDelete: List of rooms to be deleted from a folder. This list is filled
+  roomsToDelete: any[];
 }
 
 @Injectable({
