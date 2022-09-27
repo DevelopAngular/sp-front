@@ -1,6 +1,7 @@
 import {Injectable} from '@angular/core';
 import {Pinnable} from '../models/Pinnable';
-import {BehaviorSubject, of, ReplaySubject, zip} from 'rxjs';
+import {Location} from '../models/Location';
+import {BehaviorSubject, of, ReplaySubject, zip, Subject, Observable} from 'rxjs';
 import {HallPassesService} from '../services/hall-passes.service';
 import {map, switchMap} from 'rxjs/operators';
 import {LocationsService} from '../services/locations.service';
@@ -19,6 +20,9 @@ export class CreateFormService {
   public compressableBoxController = new ReplaySubject<boolean>(1);
   public isSeen$: BehaviorSubject<boolean> = new BehaviorSubject<boolean>(true);
 
+  // send modified Location to child component to update its choices
+  private updatedChoice$: Subject<Location> = new Subject<Location>();
+
   constructor(
     private hallPassService: HallPassesService,
     private locService: LocationsService,
@@ -36,6 +40,16 @@ export class CreateFormService {
     };
     this.frameMotionDirection$ = new BehaviorSubject(this.transition);
   }
+
+  getUpdatedChoice(): Observable<Location> {
+    return (this.updatedChoice$ as Observable<Location>);
+  }
+
+  setUpdatedChoice(loc: Location): void {
+    this.updatedChoice$.next(loc);
+  }
+
+  updatedByWS$ = new BehaviorSubject<boolean>(false);
 
   getPinnable(filter?: boolean) {
     return this.hallPassService.pinnables$

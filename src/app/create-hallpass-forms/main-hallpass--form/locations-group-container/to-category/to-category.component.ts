@@ -145,14 +145,11 @@ export class ToCategoryComponent implements OnInit {
     }
 
    // staff only
-   const students = this.selectedStudents.map(s => ''+s.id);
-   const ruleStudents = location.visibility_students.map(s => ''+s.id);
-   const rule = location.visibility_type;
+   const students = [...this.selectedStudents];
+   // skipped are students that do not qualify to go forward     
+   let skipped = this.visibilityService.calculateSkipped(students, location);
 
-   // skipped are students that do not qualify to go forward
-   let skipped = this.visibilityService.calculateSkipped(students, ruleStudents, rule);
-
-    if (!skipped || skipped.length === 0) {
+    if (skipped.length === 0) {
       forwardAndEmit();
       return;
     }
@@ -160,7 +157,7 @@ export class ToCategoryComponent implements OnInit {
     let text =  'This room is only available to certain students';
     let names = this.selectedStudents.filter(s => skipped.includes(''+s.id)).map(s => s.display_name);
     let title =  'Student does not have permission to go to this room';
-    let denyText =  'Cancel';
+    let denyText =  'Skip';
     if (names.length > 1) {
       text = names?.join(', ') ?? 'This room is only available to certain students'
       title = 'These students do not have permission to go to this room:';
@@ -168,6 +165,11 @@ export class ToCategoryComponent implements OnInit {
     } else {
       title = (names?.join(', ') ?? 'Student') + ' does not have permission to go to this room';
     }
+
+    const roomStudents = this.selectedStudents.filter(s => (!skipped.includes(''+s.id)));
+    const noStudentsCase = roomStudents.length === 0;
+    
+    if (noStudentsCase) denyText = 'Cancel';
 
     this.dialog.open(ConfirmationDialogComponent, {
       panelClass: 'overlay-dialog',
@@ -211,12 +213,7 @@ export class ToCategoryComponent implements OnInit {
       // filter out the skipped students
       const roomStudents = this.selectedStudents.filter(s => (!skipped.includes(''+s.id)));
       // avoid no students case
-      if (roomStudents.length === 0) {
-        this.toastService.openToast({
-          title: 'Skiping will left no students to operate on',
-          subtitle: 'Last operation did not proceeed',
-          type: 'error',
-        });
+      if (noStudentsCase) {
         return;
       }
 

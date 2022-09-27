@@ -95,7 +95,7 @@ import {
 import {getCurrentUpdatedUser, getLoadedUser, getNuxDates, getSelectUserPin, getUserData} from '../ngrx/user/states/user-getters.state';
 import {clearUser, getNuxAction, getUser, getUserPinAction, updateUserAction} from '../ngrx/user/actions';
 import {addRepresentedUserAction, removeRepresentedUserAction} from '../ngrx/accounts/nested-states/assistants/actions';
-import {HttpClient, HttpHeaders} from '@angular/common/http';
+import {HttpClient, HttpHeaders, HttpParams} from '@angular/common/http';
 import {
   getIntros,
   updateIntros, updateIntrosAdminPassLimitsMessage,
@@ -769,6 +769,7 @@ export class UserService implements OnDestroy {
   checkUserEmail(email) {
     const httpOptions = {
       headers: new HttpHeaders({
+
         'Content-Type': 'application/x-www-form-urlencoded',
       })
     };
@@ -958,4 +959,16 @@ export class UserService implements OnDestroy {
       .pipe(catchError(err => of(null)));
   }
 
+  getGradeLevelsByIds(ids: string[]) {
+    const q = ids.map(x => x.trim()).join(',');
+    const opt = !!q ? {params: new HttpParams().set('student_id', q)} : {};
+    return this.http.get('v1/users/grade_level', opt);
+  }
+  
+  listOf(params: Record<string, string[]>) {
+    const headers = new HttpHeaders({
+      'Content-Type': 'application/json', 
+    });
+    return this.http.post('v1/users/listof', {params}, {headers}, false);
+  }
 }

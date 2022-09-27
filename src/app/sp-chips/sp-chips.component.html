@@ -5,6 +5,10 @@
     [style.opacity]="chip.hovered && !buttonDown ? 0.85 : (buttonDown ? 0.7 :  1)"
     [style.background-color]="getBackground(chip)"
     [style.color]="textColor(chip)">
+    <img *ngIf="selectedTarget === 'roles'" width="16" style="margin-right: 5px" [src]="teacher.icon" alt="Icon">
+    <span [style.cursor]="'default'" [style.user-select]="'none'">
+      <span style="font-weight: bold" *ngIf="!!textPrepend">{{textPrepend}}</span> {{selectedTarget === 'users' ? teacher.display_name : selectedTarget === 'roles' ? teacher.role : selectedTarget === 'rooms' ? teacher.title : teacher.as !== undefined ? teacher.as : teacher}}
+    </span>
 
     <ng-container *ngIf="selectedTarget=='orgunits' && orgUnitDeleteCheck(teacher) ;else nonDeleted" >
       <img *ngIf="selectedTarget === 'roles'" width="16" style="margin-right: 5px" [src]="teacher.icon" alt="Icon">
@@ -41,9 +45,9 @@
       </div>
     </ng-template>
 
-
   </div>
   <app-gradient-button class=""
+    *ngIf="!hideAddButton"
     [size]="'editable'"
     [minWidth]="'100px'"
     [minHeight]="'31px'"

@@ -27,7 +27,8 @@ import {ViewProfileComponent} from './profile-card-dialog/view-profile/view-prof
 import {ModelFilterComponent} from '../student-info-card/model-filter/model-filter.component';
 import { PagesDialogComponent } from './explore/pages-dialog/pages-dialog.component';;
 import { VisibilityRoomComponent } from './overlay-container/visibility-room/visibility-room.component'
-
+;
+import { ImportStudentListComponent } from './overlay-container/visibility-room/import-student-list/import-student-list.component'
 @NgModule({
     imports: [
         CommonModule,
@@ -60,7 +61,8 @@ import { VisibilityRoomComponent } from './overlay-container/visibility-room/vis
         ModelFilterComponent,
         PagesDialogComponent
 ,
-        VisibilityRoomComponent    ],
+        VisibilityRoomComponent ,
+        ImportStudentListComponent   ],
     providers: [
         [Location, {provide: LocationStrategy, useClass: PathLocationStrategy}],
     ],

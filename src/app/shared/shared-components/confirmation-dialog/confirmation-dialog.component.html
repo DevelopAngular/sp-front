@@ -3,7 +3,7 @@
     <img *ngIf="data.icon?.name" [src]="'./assets/' + data.icon.name | resolveAsset">
   </div>
   <div class="main-wrapper">
-    <div class="ds-mb-10">
+    <div *ngIf="!!data.headerText" class="ds-mb-10">
       <p class="ds-dialog-title" style="margin: 0">{{data.headerText}}</p>
     </div>
 

@@ -1,0 +1,64 @@
+@import '../../../../../sp-colors.scss';
+@import '../../../../../design-system.scss';
+
+.wrapper {
+  width: 446px;
+  height: 271px;
+  background: white;
+  border-radius: 14px;
+  box-sizing: border-box;
+  padding: 30px 30px 15px;
+}
+
+.bottom-line {
+  @include textSize(14px, normal, $gray500); 
+}
+
+.link-like {
+  text-decoration: underline;
+  cursor: pointer;
+}
+
+.gray {
+  color: $gray500;
+}
+
+.green {
+  color: $green500;
+}
+
+.content {
+  .uploading-area {
+    width: 100%;
+    height: 120px;
+    border: 2px dashed $gray500;
+    border-radius: 10px;
+    position: relative;
+  }
+  .has-no-issues {
+    background-color: $green100;
+  }
+  .has-issues {
+    background-color: $red100;
+  }
+  .wrap-for-scroll {
+    box-sizing: border-box;
+    overflow-y: auto;
+    overflow-x: hidden;
+    width: 100%;
+    padding: 0px 15px;
+    p {
+      text-overflow: ellipsis;
+      overflow: hidden;
+    }
+  }
+
+  .close {
+    position: absolute;
+    top: 0px;
+    right: 0px;
+    width: 12px; 
+    padding: 10px;
+    cursor: pointer;
+  }
+}
