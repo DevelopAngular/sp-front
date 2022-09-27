@@ -375,7 +375,7 @@ export class AppComponent implements OnInit, AfterViewInit, OnDestroy {
         name: user.display_name,
         email: user.primary_email,
         created: new Date(user.created),
-        type: user.isAdmin() ? 'Admin' : (user.isAssistant() ? 'Assistant' : user.isStudent() ? 'Student' : 'Teacher'),
+        type: this.getUserType(user),
         status: user.status,
         account_type: user.sync_types[0] === 'google' ? 'Google' : (user.sync_types[0] === 'clever' ? 'Clever' : 'Standard'),
         first_login_at: user.first_login,
@@ -388,6 +388,19 @@ export class AppComponent implements OnInit, AfterViewInit, OnDestroy {
       };
       window.Intercom('update', {'hide_default_launcher': false});
     }, 3000);
+  }
+
+  getUserType(user: User): string {
+    if (user.isAdmin()) {
+      return 'Admin';
+    } else if (user.isTeacher()) {
+      return 'Teacher';
+    } else if (user.isAssistant()) {
+      return 'Assistant';
+    } else if (user.isStudent()) {
+      return 'Student';
+    }
+    return 'unknown user';
   }
 
   hubSpotSettings(user) {
