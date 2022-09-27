@@ -408,7 +408,7 @@ export class OverlayContainerComponent implements OnInit, OnDestroy {
           );
       }
     // TODO: strabge bug here!!!
-    // id backdrop is clicked once then it receives the clicks's components inside overlay-container  
+    // id backdrop is clicked once then it receives the clicks's components inside overlay-container
     // left here commented to indicate this elusive bug
     // as it is unclear why it happens
     /*this.dialogRef.backdropClick()
@@ -465,7 +465,7 @@ export class OverlayContainerComponent implements OnInit, OnDestroy {
     this.destroy$.next();
     this.destroy$.complete();
     const afresh = {visibility: DEFAULT_VISIBILITY_STUDENTS};
-    this.overlayService.patchData(afresh)
+    this.overlayService.patchData(afresh);
   }
 
   buildForm() {
@@ -756,13 +756,16 @@ export class OverlayContainerComponent implements OnInit, OnDestroy {
  private createOrUpdateLocation(location, category: string): Observable<any> {
     const locationData = cloneDeep(location);
     locationData.category = category;
-   if (location?.visibility_students) {
+   if (this.visibilityForm.dirty && location?.visibility_students) {
      locationData.visibility_students = locationData.visibility_students.map((s: User) => s.id);
+   } else if (this.visibilityForm.pristine) {
+     delete locationData?.visibility_students;
+     delete locationData?.visibility_type;
+     delete locationData?.visibility_grade;
    }
 
     if (isString(location.id)) {
       locationData.teachers = location.teachers.map(t => t.id);
-      console.log(locationData);
       return this.locationService.createLocation(locationData);
     }
 
@@ -772,7 +775,6 @@ export class OverlayContainerComponent implements OnInit, OnDestroy {
    if (location.teachers) {
      locationData.teachers = locationData.teachers.map(teacher => +teacher.id);
    }
-   console.log(locationData);
 
    return this.locationService.updateLocation(location.id, locationData);
  }
@@ -903,41 +905,6 @@ export class OverlayContainerComponent implements OnInit, OnDestroy {
           this.catchError())
         : of(null);
 
-      if (touchedRooms.length) {
-        locationsToDb$ = touchedRooms.map(location => {
-          let id;
-          let data;
-          if (isString(location.id)) {
-            data = location;
-            data.category = this.folderData.folderName + salt;
-            data.teachers = location.teachers.map(t => t.id);
-            if (this.visibilityForm.dirty && data?.visibility_students) {
-              data.visibility_students = data.visibility_students.map((s: User) => s.id);
-            } else if (this.visibilityForm.pristine) {
-              delete data?.visibility_students;
-              delete data?.visibility_type;
-              delete data?.visibility_grade;
-            }
-            //location.visibility_type =
-            return this.locationService.createLocation(data);
-          } else {
-            id = location.id;
-            data = location;
-            data.category = this.folderData.folderName + salt;
-            if (!data.max_passes_to_active && data.enable_queue) {
-              data.max_passes_to_active = true;
-            }
-            if (data.teachers) {
-              data.teachers = data.teachers.map(teacher => +teacher.id);
-            }
-            if (this.visibilityForm.dirty && data?.visibility_students) {
-              data.visibility_students = data.visibility_students.map((s: User) => s.id);
-            } else if (this.visibilityForm.pristine) {
-              delete data?.visibility_students;
-              delete data?.visibility_type;
-              delete data?.visibility_grade;
-            }
-            
       const roomDeletionRequest$ = forkJoin(this.folderData.roomsToDelete.length
         ? this.folderData.roomsToDelete.map(room => this.locationService.deleteLocationRequest(room.id).pipe(filter(res => !!res)))
         : [of(null)]).pipe(takeUntil(this.destroy$));
@@ -1016,11 +983,11 @@ export class OverlayContainerComponent implements OnInit, OnDestroy {
         const {mode, over, grade} = this.bulkEditData.roomData?.visibility ?? DEFAULT_VISIBILITY_STUDENTS ;
         const visibilityBulkData = {
           visibility_type: mode,
-          visibility_students: over.map(s => ''+s.id),
+          visibility_students: over.map(s => '' + s.id),
           visibility_grade: grade,
         };
-        
-        let data = {
+
+        const data = {
           ...room,
           teachers: room.teachers.map(t => t.id),
           ...visibilityBulkData,
@@ -1029,7 +996,7 @@ export class OverlayContainerComponent implements OnInit, OnDestroy {
         // otherwise avoid updating existing visibility by deleting concerned request data
         if (!this.visibilityForm.dirty) {
           delete data.visibility_students;
-          delete data.visibility_type; 
+          delete data.visibility_type;
           delete data.visibility_grade;
         }
         return this.locationService.updateLocationRequest(room.id, data).pipe(
@@ -1200,7 +1167,7 @@ export class OverlayContainerComponent implements OnInit, OnDestroy {
   }
 
   generateRandomString() {
-    let random: string = '';
+    let random = '';
     const characters = 'qwertyu';
     for (let i = 0; i < characters.length; i++) {
       random += characters.charAt(Math.floor(Math.random() * characters.length));
