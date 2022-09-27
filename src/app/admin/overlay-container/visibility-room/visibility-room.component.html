@@ -50,6 +50,7 @@
         (onUpdate)="addFoundStudents($event)"
         (focusEvent)="onSearchComponentFocus()"
         (blurEvent)="onSearchComponentBlur()"
+        (chipsAddEvent)="triggerInputFieldFocus()"
         [formGroup]="visibilityForm"
       >
       </app-sp-search>

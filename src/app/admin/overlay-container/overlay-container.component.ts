@@ -22,12 +22,14 @@ import {User} from '../../models/User';
 import {ToastService} from '../../services/toast.service';
 import {ConsentMenuComponent} from '../../consent-menu/consent-menu.component';
 import {VisibilityOverStudents, DEFAULT_VISIBILITY_STUDENTS} from './visibility-room/visibility-room.type';
+import {BlockScrollService} from './block-scroll.service';
 
 @Component({
   selector: 'app-overlay-container',
   templateUrl: './overlay-container.component.html',
   styleUrls: ['./overlay-container.component.scss'],
-  animations: [NextStep, bumpIn]
+  animations: [NextStep, bumpIn],
+  providers: [BlockScrollService],
 })
 export class OverlayContainerComponent implements OnInit, OnDestroy {
 
@@ -115,6 +117,7 @@ export class OverlayContainerComponent implements OnInit, OnDestroy {
       public overlayService: OverlayDataService,
       private toast: ToastService,
       private dialog: MatDialog,
+      private blockScrollService: BlockScrollService, 
   ) {}
 
   getHeaderData() {
@@ -321,7 +324,6 @@ export class OverlayContainerComponent implements OnInit, OnDestroy {
   }
 
   ngOnInit() {
-//    this.overlayService.patchData({visibility: DEFAULT_VISIBILITY_STUDENTS})
 
     this.pinnablesCollectionIds$ = this.hallPassService.pinnablesCollectionIds$;
     this.overlayService.pageState.pipe(filter(res => !!res)).subscribe(res => {
@@ -444,6 +446,8 @@ export class OverlayContainerComponent implements OnInit, OnDestroy {
         } else {
           this.showBottomShadow = true;
         }
+
+        this.blockScrollService.doesScrolling();
       });
 
     combineLatest(
