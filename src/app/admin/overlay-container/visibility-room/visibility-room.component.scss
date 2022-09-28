@@ -1,5 +1,9 @@
-@import '../../../../design-system';
 @import '../../../../sp-colors';
+
+// climb to assets by a relative path
+// to get an independence of the resolveAsset pipe
+// $climb is how to get from this file to the assets folder
+$climb: '../../../..';
 
 .background {
   display: flex;
@@ -49,7 +53,7 @@
     background-color: $gray100;
     border: 1px solid $gray200;
     &.with-triangle > .after {
-      @include background-image('/assets/Rect (Blue-Gray).svg', '/app');
+      background-image: url($climb + '/assets/Rect (Blue-Gray).svg');
     }
   }
   &.visibility-allow {
@@ -57,7 +61,7 @@
     background-color: $green100;
     border: 1px solid $green200;
     &.with-triangle > .after {
-      @include background-image('/assets/Rect (Green500).svg', '/app');
+      background-image: url($climb + '/assets/Rect (Green500).svg');
     }
   }
   &.visibility-denny {
@@ -65,7 +69,7 @@
     background-color: $red100;
     border: 1px solid $red200;
     &.with-triangle > .after {
-      @include background-image('/assets/Rect (Red500).svg', '/app');
+      background-image: url($climb + '/assets/Rect (Red500).svg');
     }
   }
 
@@ -80,7 +84,7 @@
 
 .with-triangle > .after {
   display: inline-flex;
-  @include background-image('/assets/Rect (Blue-Gray).svg', '/app');
+  background-image: url($climb + '/assets/Rect (Blue-Gray).svg');
   animation: fadein 0.5s;
   background-size: 8px 6px;
   margin-left: 8px;
@@ -155,7 +159,7 @@ ul.error {
       color: $gray500;
     }
     & > .after {
-      @include background-image('/assets/Check (Navy).svg', '/app');
+      background-image: url($climb + '/assets/Check (Navy).svg');
       opacity: 0;
     }
     &.selected, &:hover {
