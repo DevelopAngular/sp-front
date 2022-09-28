@@ -24,7 +24,7 @@ export class KioskSettingsComponent implements OnInit {
   ngOnInit(): void {
     this.userService.getStatusOfIDNumber().subscribe({
       next: (result: any) => {
-        // this.idSetup = result.results?.setup
+        this.idSetup = result.results?.setup
       }
     })
     this.form = this.fb.group(this.kioskModeService.getKioskModeSettings());
