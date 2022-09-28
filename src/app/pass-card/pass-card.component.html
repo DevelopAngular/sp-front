@@ -13,9 +13,12 @@
           <img  class="pass-card-header-icon" [src]="pass.icon | resolveAsset">
           <div class="pass-card-header-text">
             <span>{{ pass.destination.title }}</span>
-            <div class="card-subtitle ds-flex-center-center" *ngIf="fromPast || forFuture">
-              {{ formatDateTime(pass.start_time) }}
-              <img *ngIf="pass['schedule_config_id']" style="width: 17px; height: 17px" class="ds-ml-10" [src]="'./assets/Repeat (White).svg' | resolveAsset" alt="Recurring Future Pass Icon">
+            <div class="card-subtitle ds-flex-center-start" *ngIf="fromPast || forFuture">
+              <span>{{ formatDateTime(pass.start_time) }}</span>
+              <div class="ds-flex-center-center">
+                <img style="width: 17px;" class="ds-ml-10" [src]="'./assets/Repeat (White).svg' | resolveAsset"
+                     alt="Recurring Future Pass Icon">
+              </div>
             </div>
           </div>
         </div>

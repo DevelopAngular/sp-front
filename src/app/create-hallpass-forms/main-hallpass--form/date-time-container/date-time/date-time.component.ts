@@ -185,6 +185,10 @@ export class DateTimeComponent implements OnInit, OnDestroy {
       declinable: this.form.get('declinable').value,
       schedule_config: this.selectedRecurrenceFrequency.value
     };
+
+    if (!this.form.get('declinable').value && this.selectedRecurrenceFrequency.value !== RecurringOption.DoesNotRepeat) {
+      this.formState.data.date.schedule_config = this.selectedRecurrenceFrequency.value;
+    }
     setTimeout(() => {
       this.result.emit(this.formState);
       if (!this.storage.getItem('declinable') && this.isStaff) {

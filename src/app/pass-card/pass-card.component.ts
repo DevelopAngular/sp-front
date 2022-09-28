@@ -362,6 +362,15 @@ export class PassCardComponent implements OnInit, OnDestroy {
     return out;
   }
 
+  get isRecurringFuture(): boolean {
+    if (Number.isInteger(this.pass.schedule_config_id)) {
+      // retrieving a pass from the server with a schedule_config_id
+      return true;
+    }
+
+    return (!!this.formState.data?.date?.schedule_config);
+  }
+
   newPass() {
     this.performingAction = true;
     const body = {
@@ -384,10 +393,7 @@ export class PassCardComponent implements OnInit, OnDestroy {
     if (this.forFuture) {
       body['issuer_message'] = this.pass.issuer_message;
       body['start_time'] = this.pass.start_time.toISOString();
-      if (!this.formState.data.date?.declinable &&
-        this.formState.data?.date?.schedule_config &&
-        this.formState.data?.date?.schedule_config !== RecurringOption.DoesNotRepeat
-      ) {
+      if (this.isRecurringFuture) {
         // if the schedule config is present and is repeating, then set the `recurring_scheduled_config` key, otherwise omit the key
         // from the body.
         // the backend will ignore if the key is not present
