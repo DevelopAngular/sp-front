@@ -146,6 +146,7 @@ export class SPSearchComponent implements OnInit, OnDestroy {
   @Output() blurEvent: EventEmitter<boolean> = new EventEmitter<boolean>();
   @Output() focusEvent: EventEmitter<boolean> = new EventEmitter<boolean>();
   @Output() isOpenedOptions: EventEmitter<boolean> = new EventEmitter<boolean>();
+  @Output() chipsAddEvent: EventEmitter<boolean> = new EventEmitter<boolean>();
 
   @ViewChild('studentInput') input: ElementRef;
   @ViewChild('wrapper') wrapper: ElementRef;
@@ -563,6 +564,11 @@ export class SPSearchComponent implements OnInit, OnDestroy {
     this.isOpenedOptions.emit(false);
     this.onUpdate.emit(this.getEmitedValue());
     this.selectedOptions = [];
+  }
+
+  showInputFieldByChips() {
+    this.inputField = true;
+    this.chipsAddEvent.emit(true);
   }
 
   removeDuplicateStudents(students: User[] | GSuiteSelector[]): User[] | GSuiteSelector[] {

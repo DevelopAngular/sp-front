@@ -937,4 +937,8 @@ $side) {
   }
 }
 
+@mixin background-image($local, $prefix) {
+  background-image: url($local), url($prefix + $local);
+}
+
 /* === end === */

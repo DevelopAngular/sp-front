@@ -8,7 +8,7 @@
         [orgUnitList]="orgUnits"
         [orgUnitExistCheck]="orgUnitExistCheck"
         [isProposed]="isProposed"
-        (add)="inputField = true"
+        (add)="showInputFieldByChips()"
         [textAddButton] = "textAddButton ? textAddButton : null"
         (updateSelectedEvent)="update($event)"
         (addSuggestedTeacher)="addSuggested($event)"

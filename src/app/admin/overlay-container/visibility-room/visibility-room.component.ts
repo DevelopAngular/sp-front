@@ -15,6 +15,7 @@ import {slideOpacity } from '../../../animations';
 import {DataService} from '../../../services/data-service';
 import {ImportStudentListComponent} from './import-student-list/import-student-list.component';
 import {ToastService} from '../../../services/toast.service';
+import {BlockScrollService} from '../block-scroll.service';
 
 @Component({
   selector: 'app-visibility-room',
@@ -79,12 +80,14 @@ export class VisibilityRoomComponent implements OnInit, AfterViewInit, OnDestroy
   }
 
   constructor(
+    private elRef: ElementRef,
     public dialog: MatDialog,
     public overlayService: OverlayDataService,
     private renderer: Renderer2,
     private dataService: DataService,
     private UserService: UserService,
     private toastService: ToastService,
+    private blockScrollService: BlockScrollService,
   ) {
     this.modeView = this.modes[this.mode];
     this.dialogIds = [
@@ -105,7 +108,6 @@ export class VisibilityRoomComponent implements OnInit, AfterViewInit, OnDestroy
         const isEnabled: boolean = (s as any)?.results?.setup ?? false;
         return isEnabled;
       }),
-      //tap((v: boolean) => this.searchInputFocused = !v),
       takeUntil(this.destroy$),
       shareReplay(1),
     );
@@ -152,11 +154,11 @@ export class VisibilityRoomComponent implements OnInit, AfterViewInit, OnDestroy
       const $ul = document.querySelector('.panel.grade-level');
       if (!!$ul) {
         const $x = $ul.getBoundingClientRect();
-      console.log($x.height)
-        const delta = this.bottomSearchComponent + $x.height - window.innerHeight; 
+        const offset = (10 + 10);/*pading of the last li + ul itself*/ 
+        const delta = (this.bottomSearchComponent + $x.height) - (window.innerHeight - offset); 
         if (delta > 0) {
           // deals with a posible too long grades's list
-          this.panelMaxHeight = ($x.height - delta - (10 + 10)/*pading of the last li + ul itself*/) + 'px';
+          this.panelMaxHeight = ($x.height - delta) + 'px';
         } else {
           // reset previous scroll
           this.panelMaxHeight = null;
@@ -174,6 +176,8 @@ export class VisibilityRoomComponent implements OnInit, AfterViewInit, OnDestroy
       } else if (this.selectedGradeLevels.length > 0) {
         this.searchComponent.inputField = false;
       }
+
+      this.searchComponent.forceFocused$.next(true);
     }
 
     this.unlisten = this.renderer.listen('document', 'click', event => {
@@ -212,10 +216,20 @@ export class VisibilityRoomComponent implements OnInit, AfterViewInit, OnDestroy
         console.log('RV.listen', e);
       }
     });
-
+    // calculate limit that stops grade list to follow scrolling room visibility
+    this.bottomLimit = this.elRef.nativeElement.closest('app-overlay-container')?.getBoundingClientRect().bottom;
   }
 
+  // this limit stop scrolling adjusting for grade list
+  bottomLimit: number|null = null;
+
   private allowOpenGradeLevel: boolean = true;
+
+  triggerInputFieldFocus() {
+    setTimeout(() => {
+      this.searchComponent?.forceFocused$.next(true);
+    }, 0);
+  }
   // the focus of internal input native of app-search
   // triggers this method in order to hide the errors 
   public onSearchComponentFocus() {
@@ -263,7 +277,6 @@ export class VisibilityRoomComponent implements OnInit, AfterViewInit, OnDestroy
   // it needs this.searchComponent.input['input']['nativeElement'] to be in DOM
   // call this function wraped in a setTimeot when not sure the input is DOM
   openGradeLevelDialog() {
-
     const panelDialogExists = this.dialog.getDialogById(this.GRADE_LEVEl_DIALOG_ID);
     if (panelDialogExists) return;
 
@@ -280,14 +293,24 @@ export class VisibilityRoomComponent implements OnInit, AfterViewInit, OnDestroy
       return;
     }
 
+    this.searchComponent?.forceFocused$.next(false);
+
     const conf = {
       id: this.GRADE_LEVEl_DIALOG_ID,
       panelClass: 'consent-dialog-container',
       hasBackdrop: false,
-      autofocus: false,
+      autofocus: true,
     };
     this.gradeLevelDialog = this.dialog.open(this.gradeLevelTpl, conf);
     this.positionGradeLevelDialog();
+
+    // start listen block scroll
+    const blockScrollSub = this.blockScrollService.scroll$.subscribe(_ => {
+      // first position is calulated
+      this.positionGradeLevelDialog()
+      // then adjusts for calculated position;
+      this.adjustGradeDialogScroll();
+    });
 
     this.gradeLevelDialog.afterClosed()
     .pipe(
@@ -298,6 +321,10 @@ export class VisibilityRoomComponent implements OnInit, AfterViewInit, OnDestroy
         }
         // reset previous scroll
         this.panelMaxHeight = null;
+        // restore focus to search component
+        this.triggerInputFieldFocus();
+
+        blockScrollSub.unsubscribe();
       }),
     )
     .subscribe(() => {
@@ -309,6 +336,8 @@ export class VisibilityRoomComponent implements OnInit, AfterViewInit, OnDestroy
 
       const whenLoadedAdjust$ = this.grades$.pipe(take(1), tap(() => this.adjustGradeDialogScroll()));
       whenLoadedAdjust$.subscribe();
+
+      this.searchComponent?.forceFocused$.next(false);
     });
 
     this.allowOpenGradeLevel = !this.allowOpenGradeLevel;
@@ -475,7 +504,6 @@ export class VisibilityRoomComponent implements OnInit, AfterViewInit, OnDestroy
   }
 
   public visibilityChange() {
-    console.log('vis')
     // prepare data for external use
     this.data = {mode: this.mode, over: [...this.selectedStudents], grade: [...this.selectedGradeLevels]};
     const data = cloneDeep(this.data); 
@@ -499,7 +527,6 @@ export class VisibilityRoomComponent implements OnInit, AfterViewInit, OnDestroy
         if (!this.searchComponent) return;
 
         this.searchComponent.inputField = true;
-        //this.searchComponent.focused = this.searchInputFocused;
 
         this.isGradeEnabled$.pipe(tap((gradesEnabled: boolean) => {
           if (gradesEnabled) setTimeout(this.openGradeLevelDialog.bind(this), 0);
@@ -576,9 +603,16 @@ export class VisibilityRoomComponent implements OnInit, AfterViewInit, OnDestroy
 
     this.bottomSearchComponent = rect.bottom; // relative to viewport
 
+    let topval = rect.bottom;
+    // do not pass over this.bottomLimit
+    if (this.bottomLimit !== null && rect.bottom > this.bottomLimit) {
+     topval = this.bottomLimit;
+     // this is used in adjustGradeDialogScroll
+     this.bottomSearchComponent = topval;
+    }
     // bottom right related to opener
     const position = {
-      top: (rect.bottom + 7) + 'px', 
+      top: (topval + 7) + 'px', 
       // 270 is taken from CSS not live calculated, also 13 represents padding
       left: rect.left + (rect.width - 270 - 13) + 'px', 
     };
