@@ -452,6 +452,7 @@ export class MyRoomComponent implements OnInit, OnDestroy, AfterViewInit {
           filter(res => !!res)
         )
         .subscribe(data => {
+          console.log("data : ", data)
           this.holdScrollPosition = data.scrollPosition;
           this.selectedLocation = data.selectedRoom === 'all_rooms' ? null : data.selectedRoom;
           this.titleService.setTitle(`${this.selectedLocation.title} | SmartPass`);
@@ -502,6 +503,7 @@ export class MyRoomComponent implements OnInit, OnDestroy, AfterViewInit {
       });
 
       dialogRef.componentInstance.onListItemClick.subscribe((location) => {
+        console.log("location : ", location, this.roomOptions);
         this.selectedLocation = location;
         this.titleService.setTitle(`${this.selectedLocation.title} | SmartPass`);
         this.selectedLocation$.next(this.selectedLocation !== null ? [this.selectedLocation] : this.roomOptions);
