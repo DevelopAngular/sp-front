@@ -48,9 +48,7 @@
                         <div class="teacher-search" style="margin-bottom: 10px">
 
                             <div class="teacher-title">
-                                <span [ngStyle]="{'color': !data?.selectedTeachers.length ? '#7F879D' : ' #1F195E'}">
-            Teachers in Room
-          </span>
+                                <span [ngStyle]="{'color': !data?.selectedTeachers.length ? '#7F879D' : ' #1F195E'}">Teachers in Room</span>
                                 <div class="tooltip-container">
                                     <img [customToolTip]="tooltipText.teachers" class="support-icon" [src]="'./assets/Support (Gray).svg' | resolveAsset">
                                     <div class="arrow-down-container">
@@ -65,6 +63,9 @@
                                 </div>
                             </div>
                         </div>
+                    </div>
+                </div>
+            </div>
         </form>
 
         <div class="advanced-options" #advancedOptionsRef>
@@ -82,5 +83,5 @@
                 Deleting a room will permanently delete the room, but will not delete any active, scheduled, or expired passes to or from this room.
             </div>
         </div>
-        </div>
-        </div>
+    </div>
+</div>
