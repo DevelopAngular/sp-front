@@ -225,13 +225,6 @@ export class SettingsComponent implements OnInit, OnDestroy {
       'title': 'My Profile'
     });
     this.settings.push({
-      'hidden': !this.isKioskMode,
-      'background': '#6651FF',
-      'icon': 'Username',
-      'action': 'kioskSettings',
-      'title': 'Kiosk Settings'
-    });
-    this.settings.push({
       'hidden': false,
       'background': '#134482',
       'icon': 'Glasses',

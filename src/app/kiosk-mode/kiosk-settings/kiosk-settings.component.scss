@@ -100,12 +100,17 @@
   
 .kiosk-setting-main-wrapper{
     background: #fff;
+    min-height: calc(100vh - 65px);
+    
     .kiosk-setting-page{
         max-width: 80vw;
         width: 425px;
         margin: 0 auto;
         box-shadow: none;
         border-radius: 0;
+        @media (max-width:767.9px){
+          max-width: 100%;
+        }
         .kiosk-settings-header{
             box-shadow: none;
             height: auto;
@@ -116,36 +121,52 @@
                 }
             }
         }
+        
     }
 }
-
+.togle_cstm_wrp {
+  display: none !important;
+}
 .ds-tooltip {
   padding: 10px;
-  border-radius: 8px;
-  background-color: #050411;
-  color: #FFFFFF;
-  font-size: 14px;
-  font-weight: 500;
-  max-width: 200px;
-  word-break: break-word;
-  text-align: center;
-  position: relative;
-  right: -55%;
-  padding: 12px;
-  border-radius: 14px;
-  bottom: 90%;
+    border-radius: 8px;
+    background-color: #050411;
+    color: #FFFFFF;
+    font-size: 14px;
+    font-weight: 500;
+    max-width: 230px;
+    word-break: break-word;
+    text-align: left;
+    position: relative;
+    right: -106px;
+    padding: 12px;
+    border-radius: 14px;
+    bottom: 4px;
+    left: initial;
+    padding-left: 15px;
+    @media (max-width:980.9px){
+      right: 106px;
+    }
+    @media (max-width:480.9px){
+      right: 19%;
+    }
    span.tooltip-head {
     display: inline-block;
     background: #fff;
     color: blue;
     padding: 2px;
-
+    
   }
    p{
     margin-bottom: 0;
-    margin-top: 8px;
+    margin-top: 0px;
   }
 }
 
-
-  
+.svg-buttob-wrap {
+  display: flex;
+  align-items: center;
+  svg{
+    margin-left: 6px;
+  }
+}

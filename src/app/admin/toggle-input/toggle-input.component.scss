@@ -126,4 +126,20 @@ $disabled: #D3D6DE;
   }
 }
 
+.disable_togle {
+  position: relative;
+  &:before{
+    content: "";
+    background: #fff;
+    position: absolute;
+    width: 44px;
+    height: 27px;
+    top: -2px;
+    z-index: 9;
+    border-radius: 18px;
+    right: -1px;
+    left: inherit;
+    opacity: 0.5;
+  }
+}
 

@@ -14,10 +14,10 @@
                     <img width="40px" height="40px" [src]="'./assets/Smartpass Logo (Green).svg'" alt="logo">
                 </div>
                 <div class="kiosk-title" *ngIf="isKioskMode">Kiosk</div>
-            </div>
+            </div> 
 
             <ng-template #staffLogo>
-                <div class="search" *ngIf="!isMobile">
+                <div class="search" *ngIf="!isMobile && !isKioskModeSettingsPage()">
                     <app-smartpass-search #smartpassSearch [width]="'242px'"></app-smartpass-search>
                 </div>
             </ng-template>
@@ -50,8 +50,7 @@
                 </div>
 
             </div>
-
-            <div [ngClass]="isIOSTablet ? 'ios-user-info' : 'user-info'" [style.flexDirection]="flexDirection">
+            <div [ngClass]="{'ios-user-info': isIOSTablet, 'user-info' : !isIOSTablet, 'setting-ryt-align':isKioskModeSettingsPage() }"  [style.flexDirection]="flexDirection">
                 <div class="ds-mx-10" style="cursor: pointer; display: flex; align-items: center;" *ngIf="user && user.isAssistant() && !screenService.isDeviceLargeExtra; else notAssistant">
                     <div class="feedback" *ngIf="!user.isStudent() && !isKioskMode && !isMobile">
                         <app-feedback-button></app-feedback-button>
@@ -79,10 +78,10 @@
                 </div>
 
                 <ng-template #notAssistant>
-                    <div class="feedback" *ngIf="isStaff && !isKioskMode && !isMobile">
+                    <div class="feedback" *ngIf="isStaff && !isKioskMode && !isMobile && !isKioskModeSettingsPage()">
                         <app-feedback-button></app-feedback-button>
                     </div>
-                    <div *ngIf="!isMobile" [ngClass]="isIOSTablet ? 'ios-name' : 'name'" [style.color]="darkTheme.getColor({dark: '#FFFFFF', white : '#1F195E'})" [customToolTip]="'A school you referred now has SmartPass. Thank you for helping to grow the SmartPass community!'"
+                    <div *ngIf="!isMobile && !isKioskModeSettingsPage()" [ngClass]="isIOSTablet ? 'ios-name' : 'name'" [style.color]="darkTheme.getColor({dark: '#FFFFFF', white : '#1F195E'})" [customToolTip]="'A school you referred now has SmartPass. Thank you for helping to grow the SmartPass community!'"
                         [showToolTip]="(user && user.badge) && !isKioskMode">
                         <span>
             <div class="profile-image avatar-animate" *ngIf="(isEnabledProfilePictures$ | async) && !isKioskMode">
@@ -92,7 +91,7 @@
               </ng-template>
           </div>
           </span>
-                        <span>
+                        <span >
             {{ isKioskMode ? (kioskModeLocation ? kioskModeLocation.title : '') : (user? user.first_name:'')}}
           </span>
                         <img *ngIf="(user && user.badge) && !isKioskMode" style="margin-left: 8px" width="25" height="25" [src]="'./assets/Badge.png' | resolveAsset">
@@ -123,14 +122,14 @@
                     </div>
                 </div>
 
-                <div class="id-card" (click)="openIDCard()" *ngIf="!user.isAssistant() && IDCardEnabled">
+                <div class="id-card" (click)="openIDCard()" *ngIf="!user.isAssistant() && IDCardEnabled && !isKioskModeSettingsPage() ">
                     <div class="wrapper" [style.background-color]="IDCARDDETAILS.color">
                         <img width="18px" [src]="'./assets/Digital ID Card (White).svg'" alt="">
                         <div class="title">ID</div>
                     </div>
                 </div>
 
-                <div class="options-wrapper" #setButton>
+                <div class="options-wrapper " #setButton>
                     <app-icon-button *ngIf="isStaff && !isKioskMode; else whiteButton" [newIconButton]="true" [srcString]="'Settings'" [color]="'Navy'" [size]="20" (clickEvent)="showOptions($event)" [notificationBadge]="isStaff && introsData.referral_reminder ? (!introsData.referral_reminder.universal.seen_version && showNotificationBadge) : false"
                         [notificationCount]="1"></app-icon-button>
 
