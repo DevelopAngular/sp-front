@@ -47,6 +47,7 @@ export class EditRoomInFolderComponent implements OnInit {
         travelType: [],
         restricted: null,
         scheduling_restricted: null,
+        needs_check_in: null,
         advOptState: {
             now: { state: '', data: { all_teach_assign: null, any_teach_assign: null, selectedTeachers: [] } },
             future: { state: '', data: { all_teach_assign: null, any_teach_assign: null, selectedTeachers: [] } }

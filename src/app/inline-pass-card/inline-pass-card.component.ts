@@ -11,6 +11,9 @@ import {MatDialog} from '@angular/material/dialog';
 import {ScreenService} from '../services/screen.service';
 import {StorageService} from '../services/storage.service';
 import {DeviceDetection} from '../device-detection.helper';
+import { Navigation } from '../create-hallpass-forms/main-hallpass--form/main-hall-pass-form.component';
+import { Pinnable } from '../models/Pinnable';
+import { User } from '../models/User';
 
 @Component({
   selector: 'app-inline-pass-card',
@@ -40,6 +43,13 @@ export class InlinePassCardComponent implements OnInit, OnDestroy {
   selectedTravelType: string;
   subscribers$;
   endPassLoading$: Observable<boolean>;
+  activeRoomCodePin: boolean;
+  activeTeacherPin: boolean;
+  activeTeacherSelection: boolean;
+  selectedTeacher: User;
+
+  public FORM_STATE: Navigation;
+  pinnable: Pinnable;
 
   constructor(
       private http: HttpService,
@@ -98,6 +108,30 @@ export class InlinePassCardComponent implements OnInit, OnDestroy {
           this.endPass();
         }
       });
+
+      this.FORM_STATE = {
+        step: null,
+        previousStep: 0,
+        state: 1,
+        fromState: null,
+        formMode: {
+          role: null,
+          formFactor: null,
+        },
+        data: {
+          selectedGroup: null,
+          selectedStudents: [],
+          direction: {
+            from: null
+          },
+          roomStudents: null,
+        },
+        forInput: false,
+        forLater: false,
+        kioskMode: false
+      };
+
+      this.pinnable = this.FORM_STATE.data.direction ? this.FORM_STATE.data.direction.pinnable : null;
   }
 
   ngOnDestroy() {
@@ -106,7 +140,49 @@ export class InlinePassCardComponent implements OnInit, OnDestroy {
   }
 
   endPass() {
-    this.hallPassService.endPassRequest(this.pass.id);
+    if (this.pass.needs_check_in) {
+      this.activeRoomCodePin = true;
+    }else {
+      this.hallPassService.endPassRequest(this.pass.id);
+    }
+  }
+
+  roomCodeResult(event){
+    console.log("event : ", event);
+    
+  }
+
+  enableTeacherPin(){
+    this.activeRoomCodePin = false;
+    this.activeTeacherPin = true;
+    this.activeTeacherSelection = false;
+  }
+
+  selectTeacher(){
+    this.activeRoomCodePin = false;
+    this.activeTeacherPin = false;
+    this.activeTeacherSelection = true;
+  }
+
+  requestTarget(teacher) {
+    this.enableTeacherPin();
+    this.selectedTeacher = teacher;
+  }
+
+  back(){
+    if (this.activeTeacherPin == true) {
+      this.activeTeacherPin = false;
+      this.activeRoomCodePin = false;
+      this.activeTeacherSelection = true;
+    }else if(this.activeTeacherSelection == true) {
+      this.activeRoomCodePin = true;
+      this.activeTeacherPin = false;
+      this.activeTeacherSelection = false;
+    }else {
+      this.activeRoomCodePin = false;
+      this.activeTeacherPin = false;
+      this.activeTeacherSelection = false;
+    }
   }
 
   closeDialog() {

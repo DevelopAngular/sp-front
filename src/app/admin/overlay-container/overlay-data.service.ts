@@ -47,6 +47,7 @@ export interface RoomData {
     travelType: string[];
     restricted: boolean;
     scheduling_restricted: boolean;
+    needs_check_in: boolean;
     advOptState: OptionState;
     visibility?: VisibilityOverStudents;
     enable: boolean;
@@ -97,7 +98,8 @@ export class OverlayDataService {
       travel: 'Will the room will be available to make only round-trip passes, only one-way passes, or both?',
       timeLimit: 'What is the maximum time limit that a student can make the pass for themselves?',
       restriction: 'Does the pass need digital approval from a teacher to become an active pass?',
-      scheduling_restricted: 'Does the pass need digital approval from a teacher to become a scheduled pass?'
+      scheduling_restricted: 'Does the pass need digital approval from a teacher to become a scheduled pass?',
+      needs_check_in: 'Passes must be ended using the Room Code, Teacher’s Pin, or from a Teacher’s device.'
   };
 
   constructor() {

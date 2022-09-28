@@ -47,6 +47,7 @@ export class InlineRequestCardComponent implements OnInit, OnDestroy {
   hoverDestroyer$: Subject<any>;
 
   activeTeacherPin: boolean;
+  activeRoomCodePin: boolean;
 
   constructor(
       private requestService: RequestsService,

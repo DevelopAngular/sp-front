@@ -33,6 +33,7 @@ import {UNANIMATED_CONTAINER} from '../consent-menu-overlay';
 import {GoogleLoginService} from '../services/google-login.service';
 import * as moment from 'moment';
 import {CheckForUpdateService} from '../services/check-for-update.service';
+import { RoomCheckinCodeDialogComponent } from './room-checkin-code-dialog/room-checkin-code-dialog.component';
 import { KioskModeDialogComponent } from '../kiosk-mode/kiosk-mode-dialog/kiosk-mode-dialog.component';
 
 
@@ -410,6 +411,15 @@ export class MyRoomComponent implements OnInit, OnDestroy, AfterViewInit {
 
   }
 
+  openRoomCodeDialog(){
+    console.log("this.selectedLocation : ", this.selectedLocation);
+    const dialogRef = this.dialog.open(RoomCheckinCodeDialogComponent, {
+      panelClass: 'cehckin-room-code-dialog-container',
+      backdropClass: 'custom-bd',
+      data: {roomData : this.selectedLocation},
+    });
+  }
+
   onSearch(search: string) {
     this.inputValue = search;
     this.searchPending$.next(true);
@@ -442,6 +452,7 @@ export class MyRoomComponent implements OnInit, OnDestroy, AfterViewInit {
           filter(res => !!res)
         )
         .subscribe(data => {
+          console.log("data : ", data)
           this.holdScrollPosition = data.scrollPosition;
           this.selectedLocation = data.selectedRoom === 'all_rooms' ? null : data.selectedRoom;
           this.titleService.setTitle(`${this.selectedLocation.title} | SmartPass`);
@@ -492,6 +503,7 @@ export class MyRoomComponent implements OnInit, OnDestroy, AfterViewInit {
       });
 
       dialogRef.componentInstance.onListItemClick.subscribe((location) => {
+        console.log("location : ", location, this.roomOptions);
         this.selectedLocation = location;
         this.titleService.setTitle(`${this.selectedLocation.title} | SmartPass`);
         this.selectedLocation$.next(this.selectedLocation !== null ? [this.selectedLocation] : this.roomOptions);
