@@ -13,7 +13,7 @@ import {LocationVisibilityService} from '../create-hallpass-forms/main-hallpass-
   selector: 'app-favorite-form',
   templateUrl: './favorite-form.component.html',
   styleUrls: ['./favorite-form.component.scss'],
-  providers: [LocationVisibilityService]
+  providers: [LocationVisibilityService],
 })
 export class FavoriteFormComponent implements OnInit, OnDestroy {
 

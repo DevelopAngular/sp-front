@@ -1,0 +1,63 @@
+<div class="wrapper ds-flex-center-between ds-flex-column ds-p-20">
+
+  <div class="ds-dialog-title ds-navy ds-w-100">
+    <span>Upload a list of student emails</span>
+  </div>
+
+  <div class="content ds-flex-center-center ds-w-100">
+    <ng-container 
+      [ngTemplateOutlet]="tpl"
+      [ngTemplateOutletContext]="{$implicit: tplImplicit}"
+    ></ng-container>
+  </div>
+
+  <div class="ds-w-100 ds-flex-center-between">
+    <p class="bottom-line">Need help? <span class="link-like" (click)="openChat($event)">Chat with us</span></p> 
+    <ng-container *ngIf="(buttonState$ | async) as vm">
+    <app-gradient-button 
+      [disabled]="!vm.active" 
+      [hoverColor]="'#00B476'" 
+      [cursor]="'pointer'"
+      (buttonClick)="addStudents(vm?.students)"
+    ><span>{{vm.text}}</span></app-gradient-button>
+    </ng-container>
+  </div>
+
+</div>
+
+<ng-template #upload let-data>
+    <div #dropArea class="uploading-area ds-flex-center-center"
+      [class.has-no-issues]="data.showClose"
+    >
+      <span class="link-like"
+        [class]="{gray: !data.showClose, green: data.showClose}"
+        (click)="file.click()">{{data.text}}</span>
+
+      <img *ngIf="data.showClose" class="close" [src]="'./assets/Close (Navy).svg'" (click)="goUpload()" alt="Check.svg">
+    </div>
+
+    <input type="file" accept=".xls,.xlsx,.csv" #file style="display: none"/>
+</ng-template>
+
+<ng-template #spinning let-data>
+  <div class="ds-flex-center-center ds-flex-column">
+    <span class="ds-pb-10 gray">{{data.hint}}</span>
+    <div class="loading-theme_blue-gray">
+      <mat-spinner [color]="'accent'" [diameter]="30"></mat-spinner>
+    </div>
+  </div>
+</ng-template>
+
+<ng-template #issues let-data>
+  <div class="uploading-area ds-flex-center-center ds-flex-column has-issues">
+    <div class="ds-dialog-heading ds-pt-10 ds-pb-10">{{data.warning}}</div>
+    <div class="wrap-for-scroll">
+      <p *ngFor="let email of data.fails" class="ds-cell-text-2 ds-pb-10">
+       {{email}}
+     </p>
+    </div>
+
+  <img class="close" [src]="'./assets/Close (Navy).svg'" (click)="goUpload()" alt="Check.svg">
+
+  </div>
+</ng-template>

@@ -4,6 +4,7 @@ import {Pinnable} from '../models/Pinnable';
 import {DomSanitizer} from '@angular/platform-browser';
 import {interval, of, Subject} from 'rxjs';
 import {delay, takeUntil} from 'rxjs/operators';
+import {cloneDeep} from 'lodash';
 import {TooltipDataService} from '../services/tooltip-data.service';
 import {PassLimit} from '../models/PassLimit';
 import {HttpService} from '../services/http-service';
@@ -198,7 +199,7 @@ export class PinnableComponent implements OnInit, OnChanges {
 
   onSelect() {
     if (this.valid && !this.disabled) {
-      this.onSelectEvent.emit(this.pinnable);
+      this.onSelectEvent.emit(cloneDeep(this.pinnable));
     }
   }
 

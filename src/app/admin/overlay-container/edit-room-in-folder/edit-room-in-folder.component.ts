@@ -77,7 +77,7 @@ export class EditRoomInFolderComponent implements OnInit {
   }
 
   saveInFolder() {
-    if (this.roomValidButtons.getValue().incomplete) {
+    if (this.roomValidButtons.getValue().incomplete || this.visibilityForm.invalid) {
       this.errorsEmit.emit();
       return;
     }

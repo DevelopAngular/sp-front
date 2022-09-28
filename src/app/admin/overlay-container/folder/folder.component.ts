@@ -7,6 +7,7 @@ import {BehaviorSubject, combineLatest, interval, merge, Subject, zip} from 'rxj
 
 import {Location} from '../../../models/Location';
 import {Pinnable} from '../../../models/Pinnable';
+import {User} from '../../../models/User';
 import {LocationsService} from '../../../services/locations.service';
 import {OverlayContainerComponent} from '../overlay-container.component';
 import {HallPassesService} from '../../../services/hall-passes.service';
@@ -262,8 +263,18 @@ export class FolderComponent implements OnInit, OnDestroy {
       this.selectedRoomToEdit = room;
       this.generateAdvOptionsModel(room);
       this.change$.next();
+
+      const visibility = {
+        mode: room.visibility_type, 
+        over: room.visibility_students.map(s => {
+          try {
+          return User.fromJSON(s);
+          } catch(e) {}
+        }),
+      }
       this.overlayService.changePage(Pages.EditRoomInFolder, this.currentPage, {
           advancedOptions: this.advOptState,
+          visibility,
           selectedRoomsInFolder: [room]
       });
   }

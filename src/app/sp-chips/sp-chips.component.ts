@@ -22,7 +22,9 @@ export class SpChipsComponent implements OnInit {
   @Input() preventRemovingLast: boolean = false;
   @Input() suggestedTeacher: User;
   @Input() isProposed: boolean;
+  @Input() hideAddButton: boolean;
   @Input() textAddButton: string | null; 
+  @Input() textPrepend: string | null; 
   @Input() selectedTarget: 'users' | 'orgunits' | 'roles' | 'rooms' = 'users';
   @Input() orgUnitList:String[]
   @Input() orgUnitExistCheck:BehaviorSubject<Boolean>
@@ -40,9 +42,15 @@ export class SpChipsComponent implements OnInit {
    }
 
   get results() {
+    if (!this.selectedProfiles?.length) {
+      return [];
+    }
     // here for room visibility feature
     // not having a title...
-    if (this.selectedProfiles.length > 0 && !('title' in this.selectedProfiles[0])) {
+    if (this.selectedProfiles.length > 0 && (
+        (typeof this.selectedProfiles[0] !== 'object') || 
+        !('title' in this.selectedProfiles[0])
+      )) {
       return this.selectedProfiles;
     }
     // this is expected for a teacher instance
@@ -63,9 +71,9 @@ export class SpChipsComponent implements OnInit {
 
   getBackground(item) {
     if (item.hovered) {
-      return '#F7F7F7';
+      return '#E2E6EC';
     } else {
-      return '#F7F7F7';
+      return '#E2E6EC';
     }
   }
   chipHover(chip: any, hover: boolean ) {

@@ -1,5 +1,10 @@
 @import '../../../../sp-colors';
 
+// climb to assets by a relative path
+// to get an independence of the resolveAsset pipe
+// $climb is how to get from this file to the assets folder
+$climb: '../../../..';
+
 .background {
   display: flex;
   flex-wrap: wrap;
@@ -48,7 +53,7 @@
     background-color: $gray100;
     border: 1px solid $gray200;
     &.with-triangle > .after {
-      background-image: url('/assets/Rect (Blue-Gray).svg');
+      background-image: url($climb + '/assets/Rect (Blue-Gray).svg');
     }
   }
   &.visibility-allow {
@@ -56,7 +61,7 @@
     background-color: $green100;
     border: 1px solid $green200;
     &.with-triangle > .after {
-      background-image: url('/assets/Rect (Green500).svg');
+      background-image: url($climb + '/assets/Rect (Green500).svg');
     }
   }
   &.visibility-denny {
@@ -64,14 +69,22 @@
     background-color: $red100;
     border: 1px solid $red200;
     &.with-triangle > .after {
-      background-image: url('/assets/Rect (Red500).svg');
+      background-image: url($climb + '/assets/Rect (Red500).svg');
     }
+  }
+
+  &.grades {
+    justify-content: left;
+    margin: 0;
+    margin-bottom: -7px-10px;// for grades + students to look as being in the same container compensates padding + margin 
+    padding-left: 0;
+    width: 100%;
   }
 }
 
 .with-triangle > .after {
   display: inline-flex;
-  background-image: url('/assets/Rect (Blue-Gray).svg');
+  background-image: url($climb + '/assets/Rect (Blue-Gray).svg');
   animation: fadein 0.5s;
   background-size: 8px 6px;
   margin-left: 8px;
@@ -107,6 +120,32 @@ ul.error {
   color: $gray500;
   font-size: 14px;
   font-weight: 400;
+  &.grade-level {
+    font-size: 15px;
+    width: 271px; // 278 - 7px padding-right
+    padding: 7px;
+    li {
+      font-weight: 500;
+      color: $navy500;
+      &.upload {
+        font-size: 14px;
+        color: $gray500;
+        background-color: $gray050;
+        display: block;
+        text-align: center;
+        width: 100%;
+        box-sizing: border-box;
+        &:hover {
+          background-color: $gray100;
+          &.after {
+            background-image: none !important;
+            width: 0px !important;
+            height: 0px !important;
+          }
+        }
+      }
+    }
+  }
   li {
     cursor: pointer;
     padding: 10px;
@@ -120,7 +159,7 @@ ul.error {
       color: $gray500;
     }
     & > .after {
-      background-image: url('/assets/Check (Navy).svg');
+      background-image: url($climb + '/assets/Check (Navy).svg');
       opacity: 0;
     }
     &.selected, &:hover {

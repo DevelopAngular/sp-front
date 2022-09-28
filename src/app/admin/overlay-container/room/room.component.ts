@@ -162,7 +162,7 @@ export class RoomComponent implements OnInit, OnDestroy {
     if (this.overlayService.pageState.getValue().data) {
           if (this.currentPage === Pages.EditRoom) {
               const pinnable = this.overlayService.pageState.getValue().data.pinnable;
-              const visibility: VisibilityOverStudents = {mode: pinnable.location.visibility_type, over: pinnable.location.visibility_students};
+              const visibility: VisibilityOverStudents = {mode: pinnable.location.visibility_type, over: pinnable.location.visibility_students, grade: pinnable.location.visibility_grade};
               this.overlayService.patchData({visibility});
               this.data = {
                   roomName: pinnable.location.title,
@@ -179,7 +179,8 @@ export class RoomComponent implements OnInit, OnDestroy {
               };
           } else if (this.currentPage === Pages.EditRoomInFolder) {
               const data: Location = this.overlayService.pageState.getValue().data.selectedRoomsInFolder[0];
-              const visibility: VisibilityOverStudents = {mode: data.visibility_type, over: data.visibility_students};
+              const visibility: VisibilityOverStudents = {mode: data.visibility_type, over: data.visibility_students, grade: data.visibility_grade};
+              this.visibilityForm.patchValue({visibility});
               this.overlayService.patchData({visibility});
               this.passLimitForm.patchValue({
                 to: data.max_passes_to,
@@ -228,10 +229,10 @@ export class RoomComponent implements OnInit, OnDestroy {
           this.checkValidRoomOptions();
       });
 
-      this.isEnableRoomTrigger$.subscribe(res => {
+      this.isEnableRoomTrigger$?.subscribe(res => {
         this.data.enable = res;
         this.change$.next();
-      });
+      }) ? null : console.log('isEnableRoomTrigger$ undefined');
   }
 
   ngOnDestroy(): void {

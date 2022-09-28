@@ -11,7 +11,7 @@
       <span class="chip-field"  customToolTip
       [contentTemplate]="tooltip"  [style.cursor]="'default'" [style.user-select]="'none'"   >
         <span class="material-icons" style="color:#f5de82;" >warning</span>
-        <span class="chname">{{selectedTarget === 'users' ? teacher.display_name : selectedTarget === 'roles' ? teacher.role : selectedTarget === 'rooms' ? teacher.title : teacher.as}}</span>
+        <span class="chname"><span style="font-weight: bold" *ngIf="!!textPrepend">{{textPrepend}}</span> {{selectedTarget === 'users' ? teacher.display_name : selectedTarget === 'roles' ? teacher.role : selectedTarget === 'rooms' ? teacher.title : teacher.as !== undefined ? teacher.as : teacher}}</span>
 
       </span>
       <div *ngIf="chip.hovered && !teacher.lockAccount" class="delete">
@@ -21,10 +21,11 @@
           [src]="'./assets/Cancel (Navy).svg' | resolveAsset" width="16" alt="Check.svg">
       </div>
     </ng-container>
+
     <ng-template #nonDeleted >
       <img *ngIf="selectedTarget === 'roles'" width="16" style="margin-right: 5px" [src]="teacher.icon" alt="Icon">
       <span #nonDeleted  [style.cursor]="'default'" [style.user-select]="'none'"  >
-        {{selectedTarget === 'users' ? teacher.display_name : selectedTarget === 'roles' ? teacher.role : selectedTarget === 'rooms' ? teacher.title : teacher.as}}
+      <span style="font-weight: bold" *ngIf="!!textPrepend">{{textPrepend}}</span> {{selectedTarget === 'users' ? teacher.display_name : selectedTarget === 'roles' ? teacher.role : selectedTarget === 'rooms' ? teacher.title : teacher.as !== undefined ? teacher.as : teacher}}
       </span>   
       <div *ngIf="chip.hovered && !teacher.lockAccount" class="delete">
   
@@ -41,9 +42,9 @@
       </div>
     </ng-template>
 
-
   </div>
   <app-gradient-button class=""
+    *ngIf="!hideAddButton"
     [size]="'editable'"
     [minWidth]="'100px'"
     [minHeight]="'31px'"
