@@ -76,6 +76,18 @@ export class ToolTipRendererDirective implements OnInit, OnDestroy, OnChanges {
   }
 
   ngOnChanges(changes: SimpleChanges) {
+    if (changes['showToolTip'].currentValue) {
+      const positionStrategy = this._overlayPositionBuilder
+        .flexibleConnectedTo(this._elementRef)
+        .withPositions([this.positionStrategy ? this.positionStrategy : this.getPosition()]);
+
+      this._overlayRef = this._overlay.create(
+        {
+          positionStrategy,
+          panelClass: 'custom-tooltip',
+        }
+      );
+    }
   }
 
   getPosition(): ConnectedPosition {

@@ -58,7 +58,7 @@
                 <app-gradient-button
                   [disabled]="form.value.declinable"
                   (buttonClick)="openRecurrenceDropdown()"
-                  [customToolTip]="'To schedule a recurring future pass, turn off Declineable.'"
+                  [customToolTip]="'To schedule a recurring future pass, turn off Declinable.'"
                   [showToolTip]="form.value.declinable"
                   textColor="#7083A0"
                   gradient="#F0F2F5"
@@ -77,15 +77,13 @@
               <div class="toggle-text">
                 <div class="toggle-title">Declinable</div>
                 <div class="info-text-1" *ngIf="!isPortableDevice">
-                  <span>{{'The student ' + (form.get('declinable').value ? 'has the option to ' : ' cannot ') + 'decline the pass.' + (!form.get('declinable').value ? ' You\'ll' : '')}}</span><br/>
-                  <span *ngIf="form.get('declinable').value">You won't select where the student is coming from.</span>
-                  <span *ngIf="!form.get('declinable').value">select where the student is coming from.</span>
+                  <span>The student {{form.get('declinable').value ? 'has the option to decline' : 'cannot decline'}} the pass.</span>
                 </div>
               </div>
               <div class="toggle">
                 <app-toggle-input [form]="form" [delimiter]="false" [controlName]="'declinable'" [controlSize]="'small'"></app-toggle-input>
               </div>
-            </div>
+            </div>`
           </div>
 
         </ng-container>

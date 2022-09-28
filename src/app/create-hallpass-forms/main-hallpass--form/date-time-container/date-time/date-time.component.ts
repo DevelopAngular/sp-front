@@ -17,6 +17,7 @@ import {
   DropdownOptions,
   DropdownSelectionComponent
 } from '../../../../core/components/dropdown-selection/dropdown-selection.component';
+import {cloneDeep} from 'lodash';
 
 export enum RecurringOption {
   DoesNotRepeat,
@@ -62,7 +63,7 @@ export class DateTimeComponent implements OnInit, OnDestroy {
   };
 
   destroy$: Subject<any> = new Subject<any>();
-  selectedRecurrenceFrequency: DropdownOptions<number> = { title: 'Does not repeat', value: 0 };
+  selectedRecurrenceFrequency: DropdownOptions<number> = { title: 'Does not repeat', value: RecurringOption.DoesNotRepeat };
   recurrenceOptions: DropdownOptions<number>[] = [
     { title: 'Does not repeat', value: RecurringOption.DoesNotRepeat },
     { title: 'Daily', value: RecurringOption.Daily },
@@ -139,8 +140,14 @@ export class DateTimeComponent implements OnInit, OnDestroy {
           this.headerTransition['from-header_animation-back'] = false;
       }
     });
-    this.form.get('declinable').valueChanges
-      .subscribe(value => this.storage.setItem('declinable', value));
+    this.form.get('declinable').valueChanges.subscribe({
+      next: value => {
+        this.storage.setItem('declinable', value);
+        if (value) {
+          this.selectedRecurrenceFrequency = cloneDeep(this.recurrenceOptions[0]);
+        }
+      }
+    });
 
     this.shortcutsService.onPressKeyEvent$
       .pipe(
