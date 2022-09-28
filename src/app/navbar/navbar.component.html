@@ -66,7 +66,7 @@
               </ng-template>
           </div>
           </span>
-                        <span ignore>
+                        <span notranslate>
             {{ effectiveUser ? effectiveUser.user.first_name : '' }}
           </span>
                         <img *ngIf="(effectiveUser.user && effectiveUser.user.badge)" style="margin-left: 8px" width="25" height="25" [src]="'./assets/Badge.png' | resolveAsset">
@@ -88,7 +88,7 @@
               </ng-template>
           </div>
           </span>
-                        <span ignore>
+                        <span notranslate>
             {{ isKioskMode ? (kioskModeLocation ? kioskModeLocation.title : '') : (user? user.first_name:'')}}
           </span>
                         <img *ngIf="(user && user.badge) && !isKioskMode" style="margin-left: 8px" width="25" height="25" [src]="'./assets/Badge.png' | resolveAsset">
@@ -122,7 +122,7 @@
                 <div class="id-card" (click)="openIDCard()" *ngIf="!user.isAssistant() && IDCardEnabled">
                     <div class="wrapper" [style.background-color]="IDCARDDETAILS.color">
                         <img width="18px" [src]="'./assets/Digital ID Card (White).svg'" alt="">
-                        <div class="title" ignore>ID</div>
+                        <div class="title" notranslate>ID</div>
                     </div>
                 </div>
 

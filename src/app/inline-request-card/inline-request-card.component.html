@@ -41,11 +41,11 @@
                     <div class="page-2-wrapper">
                         <div [ngClass]="isIOSTablet ? 'ios-margin-left' : ''" class="message" [style.height]="(forInput?'70px':'155px')" [style.margin-bottom]="(forInput?'4px':'0px')">
                             <span [style.font-weight]="'bold'">Your message:</span><br>
-                          <span style="user-select: text">{{ (request?.attachment_message===''?'No message':request?.attachment_message) }}</span>
+                          <span [attr.notranslate]="request?.attachment_message!==''?true:null" style="user-select: text">{{ (request?.attachment_message===''?'No message':request?.attachment_message) }}</span>
                             <div *ngIf="request?.status==='declined'">
                                 <br>
-                                <span [style.font-weight]="'bold'" ignore>Message from {{request?.teachers[0]?.last_name || "Teacher"}}:</span><br>
-                              <span style="user-select: text">{{ (request?.declined_message===''?'No message':request?.declined_message) }}</span> <!-- deny_message -->
+                                <span [style.font-weight]="'bold'" >Message from <span [attr.ignore]="!!request?.teachers[0]?.last_name?true:null">{{request?.teachers[0]?.last_name || "Teacher"}}:</span></span><br>
+                              <span [attr.notranslate]="request?.declined_message!==''?true:null" style="user-select: text">{{ (request?.declined_message===''?'No message':request?.declined_message) }}</span> <!-- deny_message -->
                             </div>
                         </div>
                         <app-card-button *ngIf="forInput" class="edit-button" [width]="'130px'" [height]="'px'" [gradientColor]="request?.color_profile.gradient_color">
