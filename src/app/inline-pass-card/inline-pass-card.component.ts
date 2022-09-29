@@ -71,6 +71,10 @@ export class InlinePassCardComponent implements OnInit, OnDestroy {
     return DeviceDetection.isMobile();
   }
 
+  get isRecurringFuture() {
+    return !!this.pass?.schedule_config_id;
+  }
+
   ngOnInit() {
     this.endPassLoading$ = this.hallPassService.startPassLoading$;
     if (JSON.parse(this.storage.getItem('pass_full_screen')) && !this.fullScreen) {

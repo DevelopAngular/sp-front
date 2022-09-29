@@ -20,7 +20,7 @@
           <img  class="pass-card-header-icon" [src]="pass.icon | resolveAsset">
           <div class="pass-card-header-text">
             <span>{{ pass.destination.title }}</span>
-            <div customToolTip [contentTemplate]="recurringConfigTooltip" [width]="'281px'" [showToolTip]="true" *ngIf="isRecurringFuture" style="display: inline-block">
+            <div customToolTip [contentTemplate]="recurringConfigTooltip" [width]="'281px'" [showToolTip]="true" *ngIf="isRecurringFuture && !(fromPast || forFuture)" style="display: inline-block">
               <img style="width: 17px;" class="ds-ml-10" [src]="'./assets/Repeat (White).svg' | resolveAsset"
                    alt="Recurring Future Pass Icon">
             </div>
