@@ -172,6 +172,7 @@ export class SettingsComponent implements OnInit, OnDestroy {
         this.sideNavService.sideNavAction$.next('signout');
     }
     this.removeOfflineAuthData();
+    localStorage.removeItem('kioskSettingsData');
     localStorage.removeItem('fcm_sw_registered');
     this.localize.setLanguageUntranslated();
   }
@@ -253,6 +254,13 @@ export class SettingsComponent implements OnInit, OnDestroy {
       'icon': 'Star',
       'action': 'favorite',
       'title': 'Favorites'
+    });
+    this.settings.push({
+      'hidden': this.isMobile || this.isKioskMode,
+      'background': '#E32C66',
+      'icon': 'Notifications',
+      'action': 'notifications',
+      'title': 'Notifications'
     });
     this.settings.push({
       'hidden': this.isKioskMode || !this.isStaff,

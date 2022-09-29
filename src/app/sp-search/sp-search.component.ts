@@ -1,7 +1,7 @@
 import {Component, ElementRef, EventEmitter, HostListener, Input, OnDestroy, OnInit, Output, Renderer2, ViewChild} from '@angular/core';
 import {MapsAPILoader} from '@agm/core';
 import {User} from '../models/User';
-import {BehaviorSubject, interval, Observable, of, Subject} from 'rxjs';
+import {BehaviorSubject, interval, Observable, of, Subject,combineLatest} from 'rxjs';
 import {UserService} from '../services/user.service';
 import {DomSanitizer} from '@angular/platform-browser';
 import {HttpService} from '../services/http-service';
@@ -248,7 +248,7 @@ export class SPSearchComponent implements OnInit, OnDestroy {
       this.renderer.setStyle(elem.target, 'background-color', '#FFFFFF');
     }
   }
-
+ 
   ngOnInit() {
     this.overlayScrollStrategy = this.overlay.scrollStrategies.close();
     if (this.chipsMode && !this.overrideChipsInputField) {
@@ -339,15 +339,65 @@ export class SPSearchComponent implements OnInit, OnDestroy {
           if (search !== '') {
             this.pending$.next(true);
             if (this.type === 'alternative') {
-              this.students = this.userService.searchProfile(this.role, 50, search)
-                .toPromise()
-                .then((paged: any) => {
+              if(this.kioskMode.isKisokMode()){
+                if(this.kioskMode.getKioskModeSettings().findByName && this.kioskMode.getKioskModeSettings().findById){
+                 of([this.userService.searchProfile(this.role, 50, search),this.userService.possibleProfileByCustomId(search)])
+                 .pipe(switchMap(_ => combineLatest(_))).subscribe((res:any)=>{
+                  let finalResult =[]
+                  if(res[1].results?.user?.length===undefined){
+                   finalResult = [...finalResult,res[1].results.user]
+                  }
+                  finalResult= [...finalResult,...res[0].results]
                   this.pending$.next(false);
-                  //this.showDummy = !paged.results.length;
+                  this.isOpenedOptions.emit(true);
+                  const uu = this.removeDuplicateStudents(finalResult);
+                    this.mayRemoveStudentsByCallback(uu);
+                   this.students = of([]).toPromise().then(()=>{
+                    return this.mayRemoveStudentsByCallback(uu);
+                   });
+                 })
+                }
+               else if(this.kioskMode.getKioskModeSettings().findByName && !this.kioskMode.getKioskModeSettings().findById){
+                this.students = this.userService.searchProfile(this.role, 50, search)
+                .toPromise()
+                .then((paged: any) => { 
+                  this.pending$.next(false);
                   this.isOpenedOptions.emit(true);
                   const uu = this.removeDuplicateStudents(paged.results);
                   return this.mayRemoveStudentsByCallback(uu);
                 });
+               }else{
+                this.students = this.userService.possibleProfileByCustomId(search).toPromise()
+                .then((paged: any) => { 
+                 if(paged.results?.user?.length===undefined){
+                  this.pending$.next(false);
+                  this.isOpenedOptions.emit(true);
+                  const uu = this.removeDuplicateStudents([paged.results.user]);
+                  return this.mayRemoveStudentsByCallback(uu);
+                 }else{
+                  this.pending$.next(false);
+                  this.isOpenedOptions.emit(true);
+                  const uu = this.removeDuplicateStudents([]);
+                  return this.mayRemoveStudentsByCallback(uu);
+                 }
+                }).catch(err=>{return[]})
+               }
+
+                   
+              }else{
+                this.students = this.userService.searchProfile(this.role, 50, search)
+                .toPromise()
+                .then((paged: any) => { 
+                  this.pending$.next(false);
+                  this.isOpenedOptions.emit(true);
+                  const uu = this.removeDuplicateStudents(paged.results);
+                  return this.mayRemoveStudentsByCallback(uu);
+                });
+              }
+              // kioskToken
+     
+
+
             } else if (this.type === 'G Suite' || this.type === 'GG4L') {
               let request$;
               if (this.role !== '_all') {

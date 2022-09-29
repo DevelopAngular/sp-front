@@ -43,3 +43,59 @@
     top: 0;
   }
 }
+
+.app-display-card-container {
+  display: flex;
+  flex-direction: column;
+}
+
+.display-card-divider {
+  width: 100%;
+  height: 60px;
+
+  display: flex;
+  justify-content: space-evenly;
+  align-items: center;
+
+  div {
+    height: 1px;
+    width: 53px;
+    background-color: rgba(183,193,207, 1);
+  }
+
+  span {
+    opacity: 1;
+    color: rgba(183,193,207,1);
+    font-size: 17px;
+    font-weight: 500;
+    font-style: normal;
+    letter-spacing: 0;
+    text-align: left;
+  }
+}
+
+.scanner-display {
+  display: flex;
+  flex-direction: column;
+  border-radius: 15px;
+  background-color: rgba(240,242,245, 1);
+  height: 170px;
+  width: 300px;
+  align-items: center;
+  justify-content: space-evenly;
+
+  img {
+    width: 76px;
+    height: 40px;
+  }
+
+  span {
+    opacity: 1;
+    color: rgba(112,131,160,1);
+    font-size: 17px;
+    font-weight: 500;
+    font-style: normal;
+    letter-spacing: 0;
+    text-align: left;
+  }
+}
