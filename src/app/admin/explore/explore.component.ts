@@ -187,6 +187,8 @@ export class ExploreComponent implements OnInit, OnDestroy {
 
   public accounts$: Observable<TotalAccounts> = this.adminService.countAccounts$;
 
+  today = new Date().toLocaleDateString("en-US", { weekday: 'long', year: 'numeric', month: 'long', day: 'numeric' });
+
   constructor(
     public dialog: MatDialog,
     private hallPassService: HallPassesService,

@@ -13,6 +13,7 @@ import { UserService } from '../../../services/user.service';
 import { XlsxService } from '../../../services/xlsx.service';
 import {DomSanitizer, SafeUrl} from '@angular/platform-browser';
 import { IDCardService } from '../../../services/IDCardService';
+import { HttpErrorResponse } from '@angular/common/http';
 
 @Component({
   selector: 'app-id-numbers',
@@ -157,7 +158,15 @@ var csvFile = new Blob([this.selectedMapFile]);
           this.totalUploadedIDS = result.response.num_of_uploaded;
           let idCardFormData: FormData = new FormData();
           idCardFormData.append("show_custom_ids", 'true');
-          this.idCardService.updateIDCardField(idCardFormData).subscribe();
+          this.idCardService.updateIDCardField(idCardFormData).subscribe({
+            next: () => { console.log('success'); },
+            error: (error: HttpErrorResponse) => {
+              console.log(error);
+              if (error.status === 403) {
+                
+              }
+            }
+          })
         }
       })
       // this.errors = this.findIssues();
