@@ -24,7 +24,7 @@
           </ng-template>
         </div>
       </div>
-      <div [attr.notranslate]="!presentational" class="tile-subtitle">{{ presentational ? 'Linked Pass' : tileContent }}</div>
+      <div [attr.notranslate]="!presentational ? true : null" class="tile-subtitle">{{ presentational ? 'Linked Pass' : tileContent }}</div>
     </div>
     <div *ngIf="isBadgeVisible" class="badge">1</div>
   </div>
