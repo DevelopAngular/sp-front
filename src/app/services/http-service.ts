@@ -17,6 +17,8 @@ import {MatDialog} from '@angular/material/dialog';
 import {SignedOutToastComponent} from '../signed-out-toast/signed-out-toast.component';
 import {Router} from '@angular/router';
 import {APP_BASE_HREF} from '@angular/common';
+// uncomment when app uses formatDate and so on
+//import {APP_BASE_HREF, registerLocaleData} from '@angular/common';
 import {JwtHelperService} from '@auth0/angular-jwt';
 import * as moment from 'moment';
 import {LoginDataService} from './login-data.service';
@@ -840,6 +842,9 @@ export class HttpService implements OnDestroy {
     return this.currentSchoolSubject.getValue();
   }
 
+  // uncomment when app uses formatDate
+  //private esUSRegistered = false;
+
   setLang(lang: string) {
     if (!!lang) {
       this.storage.setItem('codelang', lang);
@@ -847,11 +852,29 @@ export class HttpService implements OnDestroy {
       this.storage.removeItem('codelang');
     }
     this.currentLangSubject.next(lang);
+    // uncomment when app uses formatDate and so on
+    //if (lang === 'es' && !this.esUSRegistered) {
+    //  import(
+        /* webpackInclude: /es-US\.js$/ */
+    //    '@angular/common/locales/es-US'
+    //  ).then(lang => {
+    //    registerLocaleData(lang.default);
+    //    this.esUSRegistered = true;     
+    //  });
+    //}
   }
 
   getLang() {
     return this.currentLangSubject.getValue();
   }
+
+  // bridge between lang code as it is used in app and ISO locale_id
+  // uncomment when app uses formatDate and so on
+  /*private localeIDMap = {'en': 'en-US', 'es': 'es-US'};
+  get LocaleID() {
+    const code = this.getLang();
+    return this.localeIDMap[code] ?? 'en-US';
+  }*/
 
   getEffectiveUserId() {
     return this.effectiveUserId.getValue();

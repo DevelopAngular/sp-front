@@ -186,7 +186,6 @@ export class SpDataTableComponent implements OnInit, OnDestroy, OnChanges {
     '_profile_assistant': ['Name', 'Email/username', 'ID', 'Acting on Behalf Of', 'Last sign-in'],
   };
   attrIgnore(currentPage: string, column: string): true|null {
-    //console.log(currentPage, column)
     const ignore = this.doNotTranslateTheseColumns[currentPage]?.includes(column) ? true : null;
     return ignore;
   }

@@ -76,6 +76,9 @@ import {ToastEffects} from './ngrx/toast/effects';
 import {SmartpassSearchEffects} from './ngrx/smartpass-search/effects';
 import { IdcardOverlayContainerComponent } from './idcard-overlay-container/idcard-overlay-container.component';
 import { EncounterDetectionEffects } from './ngrx/encounter-detection/effects';
+// uncomment when app uses formatDate and so on
+//import {LOCALE_ID} from '@angular/core';
+//import {HttpService} from './services/http-service';
 
 const DEFAULT_SWIPER_CONFIG: SwiperConfigInterface = {
   direction: 'horizontal',
@@ -232,7 +235,13 @@ const appRoutes: Routes = [
     {provide: HTTP_INTERCEPTORS, useClass: AccessTokenInterceptor, multi: true},
     {provide: APP_BASE_HREF, useValue: environment.production ? '/app' : '/'},
     {provide: SWIPER_CONFIG, useValue: DEFAULT_SWIPER_CONFIG},
-    provideErrorHandler()
+    // uncomment when app uses formatDate and so on
+    /*{
+      provide: LOCALE_ID, 
+      deps:[HttpService], 
+      useFactory: (hs: HttpService) => hs.LocaleID,
+    }*/,
+    provideErrorHandler(),
   ],
   bootstrap: [AppComponent]
 })
