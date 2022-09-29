@@ -168,6 +168,7 @@ export class KioskModeComponent implements OnInit, AfterViewInit, OnDestroy {
     }, 50);
   }
 
+
   cardReader(event: KeyboardEvent) {
     if (event.key !== 'Enter') {
       return;
