@@ -348,8 +348,9 @@ div {
 }
 
 .cehckin-room-code-dialog-container {
-    width: 90vw !important;
-    // height: 90vh;
+    width: 100vw !important;
+    max-width: 100vw !important;
+    height: 100vh;
     .mat-dialog-container {
         padding: 0 !important;
     }

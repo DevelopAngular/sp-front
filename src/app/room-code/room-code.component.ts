@@ -49,7 +49,7 @@ export class RoomCodeComponent implements OnInit, OnDestroy {
     this.form = this.toFormGroup(this.formInput);
 
     if (this.pass.travel_type == "round_trip") {
-      this.roomName = this.pass.destination.title;
+      this.roomName = this.pass.origin.title;
     } else {
       this.roomName = '';
     }
@@ -84,15 +84,15 @@ export class RoomCodeComponent implements OnInit, OnDestroy {
         "room_code": ROOM_CODE,
         "destination_id": this.pass.destination.id
       };
-
+      this.resetInput();
       this.hallPassService.endPassWithCheckIn(this.pass.id, body).pipe(
         catchError((errorResponse: HttpErrorResponse) => {
-          if (errorResponse.error.detail == "room code is incorrect") {
-            this.toastService.openToast({
-            title: 'room code is incorrect',
-            type: 'error',
-          });
-        }
+        //   if (errorResponse.error.detail == "room code is incorrect") {
+        //     this.toastService.openToast({
+        //     title: 'room code is incorrect',
+        //     type: 'error',
+        //   });
+        // }
           try {
             console.log("errorResponse : ", errorResponse);
             this.incorrect = true;
@@ -102,7 +102,7 @@ export class RoomCodeComponent implements OnInit, OnDestroy {
           }
         })
       ).subscribe(() => {
-        this.hallPassService.endPassRequest(this.pass.id);
+        // this.hallPassService.endPassRequest(this.pass.id);
       });
     }
 
