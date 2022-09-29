@@ -14,6 +14,7 @@ export class KioskSettingsComponent implements OnInit {
 
   form: FormGroup;
   idSetup:Boolean=false
+  validCheck:Boolean=true
 
   constructor(
     private kioskModeService: KioskModeService,
@@ -28,9 +29,11 @@ export class KioskSettingsComponent implements OnInit {
       }
     })
     this.form = this.fb.group(this.kioskModeService.getKioskModeSettings());
+    this.validCheck = this.kioskModeService.kioskSettingsValidCheck(this.kioskModeService.getKioskModeSettings())
     this.form.valueChanges.subscribe(value => {
       if(this.idSetup){
         this.kioskModeService.setKioskModeSettings(this.form.value);
+        this.validCheck = this.kioskModeService.kioskSettingsValidCheck(this.kioskModeService.getKioskModeSettings())
       }
 
     });
@@ -41,7 +44,8 @@ export class KioskSettingsComponent implements OnInit {
   }
 
   enterKioskMode(){
-    this.kioskModeService.enterKioskMode$.next(true)
+   if(this.kioskModeService.kioskSettingsValidCheck(this.kioskModeService.getKioskModeSettings()))
+   this.kioskModeService.enterKioskMode$.next(true)
   }
 
   control(id: string): FormGroup {

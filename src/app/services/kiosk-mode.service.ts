@@ -87,4 +87,12 @@ isKisokMode(){
   
 }
 
+kioskSettingsValidCheck(obj:KioskSettings){
+  let check = false
+  for (const key in obj) {
+    if(obj[key]==true) check=true
+}
+return check
+}
+
 }

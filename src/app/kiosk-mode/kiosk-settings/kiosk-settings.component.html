@@ -71,7 +71,7 @@
           </ng-template>
           <div >
 
-            <app-gradient-button  size="editable" width="375px" minHeight="56px" fontSize="14px" (click)="enterKioskMode()">
+            <app-gradient-button customToolTip [contentTemplate]="tooltipSubmit" [disabled]="!validCheck" size="editable" width="375px" minHeight="56px" fontSize="14px" (click)="enterKioskMode()">
               <span class="svg-buttob-wrap">
                 Enter Kiosk Mode 
                 <svg xmlns="http://www.w3.org/2000/svg" version="1.1" xmlns:xlink="http://www.w3.org/1999/xlink" xmlns:svgjs="http://svgjs.com/svgjs" width="15" height="15" x="0" y="0" viewBox="0 0 512.002 512.002" style="enable-background:new 0 0 512 512" xml:space="preserve" class=""><g>
@@ -115,6 +115,12 @@
                   </g></svg>
               </span>
             </app-gradient-button>
+            <ng-template #tooltipSubmit>
+              <div *ngIf="!validCheck" class="ds-tooltip">
+                <p>You must turn on one of the options to enter kiosk mode</p>
+                
+              </div>
+            </ng-template>
           </div>
         </div>
       </div>

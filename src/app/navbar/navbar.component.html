@@ -6,7 +6,7 @@
       *ngIf="showNav && !isHallMonitorRoute && showNav && !isMyRoomRoute || showNav && !islargeDeviceWidth"
       [style.border-bottom]="(darkTheme.isEnabled$ | async) && !user.isStudent() ? '1px solid #7083A0' : 'none'"
     >
-        <div class="bar" appNavbarElementSender [ngClass]="{shadow: ((isStaff || isAssistant) && !isKioskMode) || screenService.isDeviceLargeExtra}" [ngStyle]="{
+        <div class="bar" appNavbarElementSender [ngClass]="{shadow: ((isStaff || isAssistant) && !isKioskMode && !isKioskModeSettingsPage()) || screenService.isDeviceLargeExtra}" [ngStyle]="{
     padding: (user && user.isStudent()) || isKioskMode ? '0 16px' : '0 16px 0 0'
    }" #navbar>
             <div class="logo" *ngIf="(user && user.isStudent()) || isKioskMode; else staffLogo">
@@ -122,7 +122,7 @@
                     </div>
                 </div>
 
-                <div class="id-card" (click)="openIDCard()" *ngIf="!user.isAssistant() && IDCardEnabled && !isKioskModeSettingsPage() ">
+                <div class="id-card" (click)="openIDCard()" *ngIf="!user.isAssistant() && IDCardEnabled && !isKioskModeSettingsPage() && !isKioskMode">
                     <div class="wrapper" [style.background-color]="IDCARDDETAILS.color">
                         <img width="18px" [src]="'./assets/Digital ID Card (White).svg'" alt="">
                         <div class="title">ID</div>
