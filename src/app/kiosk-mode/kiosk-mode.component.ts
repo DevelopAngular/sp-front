@@ -178,14 +178,8 @@ export class KioskModeComponent implements OnInit, AfterViewInit, OnDestroy {
       id = id.substring(1);
     }
 
-    this.userService.possibleProfileById(id)
+    this.userService.possibleProfileByCustomId(id)
       .pipe(switchMap(user => {
-        if (user == null) {
-          return this.userService.possibleProfileByCustomId(id);
-        } else {
-          return of(user);
-        }
-      }), switchMap(user => {
         if (user == null) {
           return EMPTY;
         } else {
@@ -211,7 +205,7 @@ export class KioskModeComponent implements OnInit, AfterViewInit, OnDestroy {
   }
 
   showMainForm(forLater: boolean, student?): void {
-    
+
     this.hideInput = true;
     this.mainFormRef = this.dialog.open(MainHallPassFormComponent, {
         panelClass: 'main-form-dialog-container',
