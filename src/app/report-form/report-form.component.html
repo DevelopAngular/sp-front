@@ -59,7 +59,7 @@
       <label for="message-entry">Message</label>
       <div id="message-entry" class="message-entry" [attr.data-motion-translate]="true">
         <div data-grammarly-issue-container class="message-wrapper">
-          <textarea class="message-box" #messageBox placeholder="Ex. Student did not return to class" [(ngModel)]="reportMessage">{{ reportMessage }}</textarea>
+          <textarea notranslate class="message-box" #messageBox placeholder="Ex. Student did not return to class" [(ngModel)]="reportMessage">{{ reportMessage }}</textarea>
         </div>
       </div>
     </div>

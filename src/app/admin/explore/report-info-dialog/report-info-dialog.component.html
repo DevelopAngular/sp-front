@@ -22,7 +22,7 @@
 
     <div class="block">
       <div class="title">Message</div>
-      <div class="subtitle">{{ report.message || 'No report message' }}</div>
+      <div [attr.notranslate]="report.message !== '' ? true : null" class="subtitle">{{ report.message || 'No report message' }}</div>
     </div>
 
     <div class="block"
@@ -45,7 +45,7 @@
       </div>
       <div class="block">
         <div class="title">Date Submitted</div>
-        <div class="subtitle">{{ dateFormat }}</div>
+        <div notranslate class="subtitle">{{ dateFormat }}</div>
       </div>
     </div>
 
