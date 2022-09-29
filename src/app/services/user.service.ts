@@ -6,7 +6,7 @@ import {constructUrl} from '../live-data/helpers';
 import {Logger} from './logger.service';
 import {User} from '../models/User';
 import {PollingService} from './polling-service';
-import {exhaustMap, filter, map, switchMap, take, takeUntil, tap} from 'rxjs/operators';
+import {catchError, exhaustMap, filter, map, switchMap, take, takeUntil, tap} from 'rxjs/operators';
 import {Paged} from '../models';
 import {RepresentedUser} from '../navbar/navbar.component';
 import {Store} from '@ngrx/store';
@@ -555,12 +555,9 @@ export class UserService implements OnDestroy {
     return this.http.get<User>(`v1/users/${id}`);
   }
 
-  searchProfileWithFilter(id) {
-    return this.http.get(`v1/users?id=${id}`);
-  }
-
-  searchUserByCardId(id): Observable<User[]> {
-    return this.http.get(constructUrl('v1/users', {search: id}));
+  possibleProfileById(id: string): Observable<User | null> {
+    return this.http.get<User>(`v1/users/${id}`, {headers: {'X-Ignore-Errors': 'true'}})
+      .pipe(catchError(err => of(null)));
   }
 
   searchProfileAll(search, type: string = 'alternative', excludeProfile?: string, gSuiteRoles?: string[]) {
@@ -921,7 +918,7 @@ export class UserService implements OnDestroy {
     return this.http.get('v1/nux');
   }
 
-  getStatusOfIDNumber(){
+  getStatusOfIDNumber() {
     return this.http.get(`v1/integrations/upload/custom_ids/setup`);
   }
 
@@ -939,7 +936,7 @@ export class UserService implements OnDestroy {
     return this.http.get(`v1/users?has_custom_id=false`);
   }
 
-  getStatusOfGradeLevel(){
+  getStatusOfGradeLevel() {
     return this.http.get(`v1/integrations/upload/grade_levels/setup`);
   }
 
@@ -955,6 +952,11 @@ export class UserService implements OnDestroy {
 
   getMissingGradeLevels() {
     return this.http.get(`v1/users?role=_profile_student&has_grade_level=false`);
+  }
+
+  possibleProfileByCustomId(id: string): Observable<User | null> {
+    return this.http.get(`v1/users/custom_id/${id}`, {headers: {'X-Ignore-Errors': 'true'}})
+      .pipe(catchError(err => of(null)));
   }
 
   getGradeLevelsByIds(ids: string[]) {

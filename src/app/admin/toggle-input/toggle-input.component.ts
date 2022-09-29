@@ -16,6 +16,7 @@ export class ToggleInputComponent implements OnInit {
   @Input() controlLabel: string;
   @Input() controlSize: ToggleInputSize = 'regular';
   @Input() disabled: boolean = false;
+  @Input() customClass: boolean = false;
   @Input() delimiter: boolean = true;
   @Input() defaultLayout: boolean = true;
   @Input() mock: boolean = false;
