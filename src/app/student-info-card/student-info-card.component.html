@@ -44,11 +44,11 @@
                         <div class="student-passes-info" *ngIf="!(loadingPassesStats$ | async); else fakeStats">
                           <div class="card-info" [allowVarTag]="true" [customToolTip]="'The student had ' + '<var>' + (passesStats$ | async)?.past_passes_today + '</var>' + ((passesStats$ | async)?.past_passes_today === 1 ? ' pass' : ' passes') +  ' today.'" [nonDisappearing]="false" [editable]="true">
                                 <div class="title">{{ (passesStats$ | async)?.past_passes_today }}</div>
-                                <div class="subtitle">today</div>
+                                <div isolate class="subtitle">today</div>
                             </div>
                             <div class="card-info" [allowVarTag]="true" [customToolTip]="'The student had ' + '<var>' + (passesStats$ | async)?.past_passes_week + '</var>' + ((passesStats$ | async)?.past_passes_week === 1 ? ' pass' : ' passes') +  ' this week.'" [nonDisappearing]="false" [editable]="true">
                                 <div class="title">{{ (passesStats$ | async)?.past_passes_week }}</div>
-                                <div class="subtitle">this week</div>
+                                <div isolate class="subtitle">this week</div>
                             </div>
                             <div class="card-info" customToolTip [contentTemplate]="tooltip" [nonDisappearing]="false" [editable]="true">
                                 <ng-template #tooltip>
@@ -57,7 +57,7 @@
                                     ></div>
                                 </ng-template>
                                 <div class="title">{{ (passesStats$ | async)?.past_passes_month }}</div>
-                                <div class="subtitle">this month</div>
+                                <div isolate class="subtitle">this month</div>
                             </div>
                         </div>
 
