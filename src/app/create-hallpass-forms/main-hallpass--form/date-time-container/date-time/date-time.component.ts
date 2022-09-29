@@ -18,12 +18,7 @@ import {
   DropdownSelectionComponent
 } from '../../../../core/components/dropdown-selection/dropdown-selection.component';
 import {cloneDeep} from 'lodash';
-
-export enum RecurringOption {
-  DoesNotRepeat,
-  Daily,
-  Weekly
-}
+import {RecurringOption} from '../../../../models/RecurringFutureConfig';
 
 @Component({
   selector: 'app-date-time',
@@ -183,11 +178,11 @@ export class DateTimeComponent implements OnInit, OnDestroy {
     this.formState.data.date = {
       date: this.requestTime.toDate(),
       declinable: this.form.get('declinable').value,
-      schedule_config: this.selectedRecurrenceFrequency.value
+      schedule_config_id: this.selectedRecurrenceFrequency.value
     };
 
     if (!this.form.get('declinable').value && this.selectedRecurrenceFrequency.value !== RecurringOption.DoesNotRepeat) {
-      this.formState.data.date.schedule_config = this.selectedRecurrenceFrequency.value;
+      this.formState.data.date.schedule_config_id = this.selectedRecurrenceFrequency.value;
     }
     setTimeout(() => {
       this.result.emit(this.formState);

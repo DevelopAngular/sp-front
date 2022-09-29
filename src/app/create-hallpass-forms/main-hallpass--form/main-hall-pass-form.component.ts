@@ -17,6 +17,7 @@ import {CreateHallpassFormsComponent, CreatePassDialogData} from '../create-hall
 import {UserService} from '../../services/user.service';
 import {LocationVisibilityService} from './location-visibility.service';
 import {PassLimitInfo} from '../../models/HallPassLimits';
+import {RecurringOption} from '../../models/RecurringFutureConfig';
 
 export enum Role { Teacher = 1, Student = 2 }
 
@@ -36,7 +37,11 @@ export interface Navigation {
   formMode?: FormMode;
   data?: {
     request?: any,
-    date?: any;
+    date?: {
+      date?: Date,
+      declinable?: boolean;
+      schedule_config_id?: RecurringOption
+    };
     selectedStudents?: User[];
     selectedGroup?: StudentList;
     teacherRooms?: Pinnable[];

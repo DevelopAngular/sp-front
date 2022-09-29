@@ -30,7 +30,6 @@ import {
 import {PassLimitService} from '../services/pass-limit.service';
 import {LocationsService} from '../services/locations.service';
 import {Location} from '../models/Location';
-import {RecurringOption} from '../create-hallpass-forms/main-hallpass--form/date-time-container/date-time/date-time.component';
 
 @Component({
   selector: 'app-pass-card',
@@ -211,6 +210,8 @@ export class PassCardComponent implements OnInit, OnDestroy {
       this.selectedStudents = this.students;
     }
 
+    console.log(this.pass);
+
     this.userService.user$
       .pipe(map(user => User.fromJSON(user)), takeUntil(this.destroy$))
       .subscribe(user => {
@@ -368,7 +369,7 @@ export class PassCardComponent implements OnInit, OnDestroy {
       return true;
     }
 
-    return (!!this.formState.data?.date?.schedule_config);
+    return (!!this.formState?.data?.date?.schedule_config_id);
   }
 
   newPass() {
@@ -397,7 +398,7 @@ export class PassCardComponent implements OnInit, OnDestroy {
         // if the schedule config is present and is repeating, then set the `recurring_scheduled_config` key, otherwise omit the key
         // from the body.
         // the backend will ignore if the key is not present
-        body['recurring_scheduled_config'] = this.formState.data.date.schedule_config;
+        body['recurring_scheduled_config'] = this.formState.data.date.schedule_config_id;
       }
     }
     if (this.forKioskMode) {
