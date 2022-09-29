@@ -83,12 +83,12 @@ export class TeacherPinEndPassComponent implements OnInit, OnDestroy {
                 .pipe(
                   mapTo(true),
                   catchError((error: HttpErrorResponse) => {
-                    if (error.error.detail == "teacher pin is incorrect") {
-                        this.toastService.openToast({
-                        title: 'teacher pin is incorrect',
-                        type: 'error',
-                      });
-                    }
+                    // if (error.error.detail == "teacher pin is incorrect") {
+                    //     this.toastService.openToast({
+                    //     title: 'teacher pin is incorrect',
+                    //     type: 'error',
+                    //   });
+                    // }
                     // if ((error.error.detail as string).includes('There are active passes for users in same prevention group')) {
                     //   this.toastService.openToast({
                     //     title: 'Sorry, you can\'t start your pass right now.',
@@ -171,7 +171,7 @@ export class TeacherPinEndPassComponent implements OnInit, OnDestroy {
       .subscribe((data) => {
         console.log("data : ", data);
         if (data) {
-          this.hallPassService.endPassRequest(this.pass.id);
+          // this.hallPassService.endPassRequest(this.pass.id);
           // if (data === 'encounter prevention') {
           //   this.pinResult.emit(data);
           //   return;

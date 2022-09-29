@@ -6,6 +6,7 @@
     background: #F5F6F8 !important;
     padding-top: 1px;
     position: relative;
+    height: -webkit-fill-available;
     .resize-icon {
         position: absolute;
         right: 20px;
@@ -19,6 +20,7 @@
         display: flex;
         justify-content: center;
         align-items: center;
+        z-index: 1;
     }
     .header-wrapper {
         margin: 22px;
@@ -31,49 +33,23 @@
         justify-content: center;
         flex-direction: column;
         align-items: center;
+        margin: auto;
+        position: absolute;
+        top: 0;
+        bottom: 0;
+        left: 0;
+        right: 0;
         h1 {
             margin: 20px 0;
             @include textSize(200px, 500, $color: $gray500);
         }
         .timer {
-            height: 150px;
-            width: 150px;
-            #countdown {
-                position: relative;
-                margin: auto;
-                margin-top: 100px;
-                height: 50px;
-                width: 50px;
-                text-align: center;
-            }
-            #countdown-number {
-                color: $gray500;
-                display: inline-block;
-                line-height: 40px;
-            }
-            svg {
+            position: relative;
+            .back-svg {
                 position: absolute;
-                top: 0;
-                right: 0;
-                width: 50px;
-                height: 50px;
-                transform: rotateY(-180deg) rotateZ(-90deg);
-            }
-            svg circle {
-                stroke-dasharray: 113px;
-                stroke-dashoffset: 0px;
-                stroke-linecap: round;
-                stroke-width: 6px;
-                stroke: $gray500;
-                fill: none;
-                animation: countdown 30s linear infinite forwards;
-            }
-            @keyframes countdown {
-                from {
-                    stroke-dashoffset: 0px;
-                }
-                to {
-                    stroke-dashoffset: 113px;
+                circle {
+                    stroke: #D4D9E2 !important;
+                    fill: transparent;
                 }
             }
         }
@@ -85,8 +61,9 @@
     // stroke: #3fb53f !important;
 }
 
-.timer ::ng-deep .mat-progress-spinner circle,
+.timer ::ng-deep .example-margin.mat-progress-spinner circle,
 .mat-spinner circle {
     stroke: $gray500 !important;
     transition: all 1s linear;
+    // stroke-linecap: round;
 }

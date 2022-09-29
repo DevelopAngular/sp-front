@@ -23,7 +23,7 @@
         <div class="button">
             <app-card-button (onClick)="endPass()" [disabled]="endPassLoading$ | async" [width]="buttonWidth +'px'" [height]="'81px'" [gradientColor]="pass?.color_profile.gradient_color" [overlayWidth]="overlayWidth" [valid]="valid">
                 <div [ngClass]="{'isExpiring': isExpiring}" class="end-pass-content" *ngIf="!(endPassLoading$ | async); else spinner">
-                    <img class="lock" height="30%" *ngIf="pass.needs_check_in" [src]="'./assets/Lock (White).svg' | resolveAsset" alt=""> {{ timeLeft +(timeLeft===''?'':' -')}} End Pass
+                    <img class="lock" height="30%" *ngIf="pass.needs_check_in" [src]="'./assets/Lock dots (White).svg' | resolveAsset" alt=""> {{ timeLeft +(timeLeft===''?'':' -')}} End Pass
                 </div>
                 <ng-template #spinner>
                     <div class="end-pass-content">
