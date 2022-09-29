@@ -1,0 +1,92 @@
+@import '../../../design-system.scss';
+@import '../../../sp-colors.scss';
+.overlay-main-wrapper {
+    // width: 97vw;
+    // height: 94vh;
+    background: #F5F6F8 !important;
+    padding-top: 1px;
+    position: relative;
+    .resize-icon {
+        position: absolute;
+        right: 20px;
+        top: 20px;
+        width: 48px;
+        height: 48px;
+        border-radius: 50%;
+        cursor: pointer;
+        background-color: white;
+        box-shadow: 0 5px 20px rgba(0, 0, 0, 0.1);
+        display: flex;
+        justify-content: center;
+        align-items: center;
+    }
+    .header-wrapper {
+        margin: 22px;
+        p {
+            @include textSize(22px, 700, $color: $gray500);
+        }
+    }
+    .content {
+        display: flex;
+        justify-content: center;
+        flex-direction: column;
+        align-items: center;
+        h1 {
+            margin: 20px 0;
+            @include textSize(200px, 500, $color: $gray500);
+        }
+        .timer {
+            height: 150px;
+            width: 150px;
+            #countdown {
+                position: relative;
+                margin: auto;
+                margin-top: 100px;
+                height: 50px;
+                width: 50px;
+                text-align: center;
+            }
+            #countdown-number {
+                color: $gray500;
+                display: inline-block;
+                line-height: 40px;
+            }
+            svg {
+                position: absolute;
+                top: 0;
+                right: 0;
+                width: 50px;
+                height: 50px;
+                transform: rotateY(-180deg) rotateZ(-90deg);
+            }
+            svg circle {
+                stroke-dasharray: 113px;
+                stroke-dashoffset: 0px;
+                stroke-linecap: round;
+                stroke-width: 6px;
+                stroke: $gray500;
+                fill: none;
+                animation: countdown 30s linear infinite forwards;
+            }
+            @keyframes countdown {
+                from {
+                    stroke-dashoffset: 0px;
+                }
+                to {
+                    stroke-dashoffset: 113px;
+                }
+            }
+        }
+    }
+}
+
+.mat-progress-spinner circle,
+.mat-spinner circle {
+    // stroke: #3fb53f !important;
+}
+
+.timer ::ng-deep .mat-progress-spinner circle,
+.mat-spinner circle {
+    stroke: $gray500 !important;
+    transition: all 1s linear;
+}

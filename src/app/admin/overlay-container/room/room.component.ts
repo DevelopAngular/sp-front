@@ -51,6 +51,7 @@ export class RoomComponent implements OnInit, OnDestroy {
       travelType: [],
       restricted: null,
       scheduling_restricted: null,
+      needs_check_in: null,
       advOptState: {
           now: { state: '', data: { all_teach_assign: null, any_teach_assign: null, selectedTeachers: [] } },
           future: { state: '', data: { all_teach_assign: null, any_teach_assign: null, selectedTeachers: [] } }
@@ -122,6 +123,16 @@ export class RoomComponent implements OnInit, OnDestroy {
       }
   }
 
+  get needCheckIn() {
+    if (!isNull(this.data.needs_check_in)) {
+        if (this.data.needs_check_in) {
+            return 'True';
+        } else {
+            return 'False';
+        }
+    }
+}
+
   get advDisabledOptions() {
    const page = this.currentPage;
    if (!this.data.selectedTeachers.length &&
@@ -160,6 +171,7 @@ export class RoomComponent implements OnInit, OnDestroy {
                   selectedTeachers: pinnable.location.teachers,
                   restricted: !!pinnable.location.restricted,
                   scheduling_restricted: !!pinnable.location.scheduling_restricted,
+                  needs_check_in: !!pinnable.location.needs_check_in,
                   timeLimit: pinnable.location.max_allowed_time,
                   advOptState: this.overlayService.pageState.getValue().data.advancedOptions,
                   visibility: this.overlayService.pageState.getValue().data?.visibility,
@@ -185,6 +197,7 @@ export class RoomComponent implements OnInit, OnDestroy {
                   travelType: data.travel_types,
                   restricted: !!data.restricted,
                   scheduling_restricted: !!data.scheduling_restricted,
+                  needs_check_in: !!data.needs_check_in,
                   advOptState: this.overlayService.pageState.getValue().data.advancedOptions,
                   visibility: this.overlayService.pageState.getValue().data?.visibility,
                   enable: data.enable
@@ -333,6 +346,11 @@ export class RoomComponent implements OnInit, OnDestroy {
   schedulingRestrictedEvent(isRestricted) {
       this.data.scheduling_restricted = isRestricted;
       this.change$.next();
+  }
+
+  checkInEvent(isRestricted) {
+    this.data.needs_check_in = isRestricted;
+    this.change$.next();
   }
 
   advancedOptions({options, validButtons}) {
