@@ -145,47 +145,21 @@ export class IdNumbersComponent implements OnInit {
   nextPage() {
     this.page += 1;
     if (this.page === 3) {
-      let body: FormData = new FormData();
-      var contentType = 'text/csv';
-
-var csvFile = new Blob([this.selectedMapFile]);
-      body.append('csv_file', csvFile)
-      this.userService.uploadIDNumbers(body).subscribe({
-        next: (result: any) => {
-          this.page = 4;
-          this.errors = result.response.errors;
-          this.newUploadedIDS = result.response.new_uploads;
-          this.totalUploadedIDS = result.response.num_of_uploaded;
-          let idCardFormData: FormData = new FormData();
-          idCardFormData.append("show_custom_ids", 'true');
-          this.idCardService.updateIDCardField(idCardFormData).subscribe({
-            next: () => { console.log('success'); },
-            error: (error: HttpErrorResponse) => {
-              console.log(error);
-              if (error.status === 403) {
-                
-              }
-            }
+      const csv_file = this.selectedMapFile;
+      this.userService.uploadIDNumbers({csv_file})
+        .pipe(
+          switchMap((result: any) => {
+            this.errors = result.response.errors;
+            this.newUploadedIDS = result.response.new_uploads;
+            this.totalUploadedIDS = result.response.num_of_uploaded;
+            return this.idCardService.updateIDCardField({show_custom_ids: true});
           })
-        }
-      })
-      // this.errors = this.findIssues();
-      // const userIds = this.filesToDB.map(f => f.user_id);
-      // const files = this.filesToDB.map(f => f.file);
-      // if (userIds.length && files.length) {
-      //   this.userService.postProfilePicturesRequest(
-      //     userIds,
-      //     files
-      //   ).pipe(
-      //     filter(profiles => !!profiles.length)
-      //   ).subscribe(r => {
-      //     this.userService.putProfilePicturesErrorsRequest(this.errors);
-      //   });
-      // } else {
-      //   this.toastService.openToast({title: 'Error', subtitle: 'Please check if the data is correct', type: 'error'});
-      //   this.page -= 1;
-      //   this.clearData();
-      // }
+        )
+        .subscribe({
+          next: (result: any) => {
+              this.page = 4;
+          }
+      });
     } else if (this.page === 5) {
       this.userService.clearUploadedData();
       this.getMissingIDNumbers();
