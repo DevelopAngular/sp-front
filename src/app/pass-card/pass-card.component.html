@@ -9,7 +9,11 @@
 
     <ng-template #recurringConfigTooltip>
       <div class="ds-tooltip" style="text-align: start">
-        <span>Repeats: Daily</span> <br>
+        <ng-container [ngSwitch]="recurringConfig.recurrence_type">
+          <span *ngSwitchCase="1">Repeats Daily</span>
+          <span *ngSwitchCase="2">Repeats Weekly</span>
+        </ng-container>
+        <br>
         <span>To edit, please delete this scheduled pass and create a new one.</span>
       </div>
     </ng-template>
@@ -20,13 +24,14 @@
           <img  class="pass-card-header-icon" [src]="pass.icon | resolveAsset">
           <div class="pass-card-header-text">
             <span>{{ pass.destination.title }}</span>
-            <div customToolTip [contentTemplate]="recurringConfigTooltip" [width]="'281px'" [showToolTip]="true" *ngIf="isRecurringFuture && !(fromPast || forFuture)" style="display: inline-block">
+            <div customToolTip [contentTemplate]="recurringConfigTooltip" [width]="'281px'" [showToolTip]="!!recurringConfig" *ngIf="isRecurringFuture && !(fromPast || forFuture)" style="display:
+            inline-block">
               <img style="width: 17px;" class="ds-ml-10" [src]="'./assets/Repeat (White).svg' | resolveAsset"
                    alt="Recurring Future Pass Icon">
             </div>
             <div class="card-subtitle ds-flex-center-start" *ngIf="fromPast || forFuture">
               <span>{{ formatDateTime(pass.start_time) }}</span>
-              <div customToolTip [contentTemplate]="recurringConfigTooltip" [width]="'281px'" [showToolTip]="true" *ngIf="isRecurringFuture" class="ds-flex-center-center">
+              <div customToolTip [contentTemplate]="recurringConfigTooltip" [width]="'281px'" [showToolTip]="!!recurringConfig" *ngIf="isRecurringFuture" class="ds-flex-center-center">
                 <img style="width: 17px;" class="ds-ml-10" [src]="'./assets/Repeat (White).svg' | resolveAsset"
                      alt="Recurring Future Pass Icon">
               </div>

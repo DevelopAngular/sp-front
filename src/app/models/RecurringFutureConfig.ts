@@ -1,4 +1,4 @@
-interface RecurringConfig {
+export interface RecurringConfig {
   id: number;
   issuer_id: number;
   weekday: number;

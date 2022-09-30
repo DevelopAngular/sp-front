@@ -30,6 +30,8 @@ import {
 import {PassLimitService} from '../services/pass-limit.service';
 import {LocationsService} from '../services/locations.service';
 import {Location} from '../models/Location';
+import {RecurringSchedulePassService} from '../services/recurring-schedule-pass.service';
+import {RecurringConfig} from '../models/RecurringFutureConfig';
 
 @Component({
   selector: 'app-pass-card',
@@ -110,6 +112,7 @@ export class PassCardComponent implements OnInit, OnDestroy {
   frameMotion$: BehaviorSubject<any>;
   currentSchool: School;
   passLimitDialog: MatDialogRef<HTMLElement>;
+  recurringConfig: RecurringConfig;
 
   isEnableProfilePictures$: Observable<boolean>;
 
@@ -134,6 +137,7 @@ export class PassCardComponent implements OnInit, OnDestroy {
     private encounterService: EncounterPreventionService,
     private passLimitService: PassLimitService,
     private locationsService: LocationsService,
+    private recurringConfigService: RecurringSchedulePassService
   ) {
   }
 
@@ -210,7 +214,11 @@ export class PassCardComponent implements OnInit, OnDestroy {
       this.selectedStudents = this.students;
     }
 
-    console.log(this.pass);
+    if (this.pass?.schedule_config_id) {
+      this.recurringConfigService.getRecurringScheduledConfig(this.pass.schedule_config_id).subscribe({
+        next: c => this.recurringConfig = c
+      });
+    }
 
     this.userService.user$
       .pipe(map(user => User.fromJSON(user)), takeUntil(this.destroy$))
