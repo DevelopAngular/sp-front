@@ -10,7 +10,7 @@
         </div>
         <div *ngIf="views[currentView].id === 4" class="update-info-wrapper">
             <p class="info">All Detected Encounters in the past 60 days</p>
-            <p class="day"><img [src]="'./assets/Info (Blue-Gray).svg' | resolveAsset" width="16" height="16" alt=""><span>Updated at {{today}}</span></p>
+            <p class="day"><img [src]="'./assets/Info (Blue-Gray).svg' | resolveAsset" width="16" height="16" alt=""><span>Updated Yesterday, 8 PM</span></p>
         </div>
         <div class="filters" [ngSwitch]="views[currentView].id">
             <div class="filter">
