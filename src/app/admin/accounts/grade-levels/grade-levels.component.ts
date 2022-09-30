@@ -154,6 +154,7 @@ export class GradeLevelsComponent implements OnInit {
             this.errors = result.response.errors;
             this.newUploadedIDS = result.response.new_uploads;
             this.totalUploadedIDS = result.response.num_of_uploaded;
+            this.page = 4;
             return this.idCardService.updateIDCardField({show_grade_levels: true});
           })
         )
