@@ -52,4 +52,5 @@ export class KioskSettingsComponent implements OnInit {
     return this.form.get(id) as FormGroup;
   }
 
+
 }

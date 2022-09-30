@@ -168,7 +168,6 @@ export class KioskModeComponent implements OnInit, AfterViewInit, OnDestroy {
     }, 50);
   }
 
-
   cardReader(event: KeyboardEvent) {
     if (event.key !== 'Enter') {
       return;
@@ -179,20 +178,23 @@ export class KioskModeComponent implements OnInit, AfterViewInit, OnDestroy {
     }
 
     this.userService.possibleProfileByCustomId(id)
-      .pipe(switchMap(user => {
-        if (user == null) {
-          return EMPTY;
-        } else {
-          return of(user);
-        }
+    .pipe(switchMap((user:any) => {
+      if (user.results.user.length===undefined) {
+        return of(user.results.user);
+      } else {
+        return EMPTY;
+      }
       }), mergeMap(user => {
         return combineLatest(of(user), this.passesService.getActivePassesKioskMode(this.kioskMode.getCurrentRoom().value.id));
       }), map(([user, passes]) => {
         const myPass = (passes as HallPass[]).find(pass => pass.issuer.id === user.id);
         if (myPass) {
-          return this.passesService.endPass(myPass.id);
+          this.passesService.endPass(myPass.id).toPromise().then(value=>{
+            this.showMainForm(false, [user]);
+            return of(null)
+          })
         } else {
-          this.showMainForm(false, user);
+          this.showMainForm(false, [user]);
           return of(null);
         }
       })).subscribe();
