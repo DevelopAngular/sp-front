@@ -24,22 +24,34 @@
     (click)="handleOpenClose()"
   >
     {{ modeView.text }}
+    <div class="after"></div>
   </span>
 
+    <div class="chip grades">
+      <app-sp-chips
+        *ngIf="isShowSearch"
+        [preventRemovingLast]="false"
+        [hideAddButton]="true"
+        [selectedProfiles]="visibilityForm.value.visibility.grade"
+        [selectedTarget]="null"
+        [textPrepend]="'Grade:'"
+        (updateSelectedEvent)="updateGradeLevel($event)"
+      ></app-sp-chips>
+    </div>
     <div class="students-search">
       <app-sp-search
         *ngIf="isShowSearch"
         [overrideChipsInputField]="true"
         [chipsMode]="true"
-        [focused]="true"
+        [focused]="searchInputFocused"
         [cancelButton]="false"
-        [textAddButton]="'Add student'"
+        [textAddButton]="'Add student, grade level'"
         [selectedOptions]="selectedStudents"
         (onUpdate)="addFoundStudents($event)"
         (focusEvent)="onSearchComponentFocus()"
-        (blurEvent)="showErrorsVisibility=true;"
-        [form]="visibilityForm"
-        [controlName]="'visibility'"
+        (blurEvent)="onSearchComponentBlur()"
+        (chipsAddEvent)="triggerInputFieldFocus()"
+        [formGroup]="visibilityForm"
       >
       </app-sp-search>
       <ul class="error" 
@@ -63,12 +75,43 @@
         *ngIf="didOpen"
       >
         <li
+            (mouseenter)="onEnter(entry.key)"
+            (mouseleave)="onLeave(entry.key)"
+            [ngClass]="{ 'selected': entry.key === mode ? true : null, 'grayed': hoveredNonSelected }"
             *ngFor="let entry of modes | keyvalue: asIs"
             (click)="handleModeSelected(entry.key)"
         >
           {{entry.value.textmenu}}
+          <div class="after"></div>
         </li>
       </ul>
+    </ng-template>
+
+    <ng-template
+      #gradeLevel
+    >
+        <ul class="panel grade-level"
+          [ngStyle]="{'max-height': panelMaxHeight, 'overflow-y': panelMaxHeight ? 'auto' : 'initial'}"
+        >
+          <li class="title">by grade</li>
+          <ng-container *ngIf="grades$ | async as vm; else loading">
+            <li
+                *ngFor="let grade of vm['grade_level']"
+                (click)="handleGradeLevelSelected(grade)"
+            >
+              {{grade}}
+            </li>
+          <li class="upload"
+            (click)="openStudentListDialog()"
+          >Upload a list of students</li>
+          </ng-container>
+        </ul>
+    </ng-template>
+
+    <ng-template #loading>
+      <li class="selected">
+        <mat-spinner [color]="'accent'" [diameter]="30"></mat-spinner>
+      </li>
     </ng-template>
 
 </div>

@@ -1,10 +1,10 @@
-import {Component, EventEmitter, forwardRef, Inject, Input, OnInit, Output, ViewChild} from '@angular/core';
-import {BehaviorSubject, Observable} from 'rxjs';
+import {ChangeDetectorRef, Component, EventEmitter, forwardRef, Inject, Injector, Input, OnInit, Output, ViewChild, OnDestroy, HostListener, ElementRef} from '@angular/core';
+import {BehaviorSubject, Observable, Subject} from 'rxjs';
 import {User} from '../../../models/User';
 import {DataService} from '../../../services/data-service';
 import {Pinnable} from '../../../models/Pinnable';
 import {Util} from '../../../../Util';
-import {FormFactor, Navigation} from '../main-hall-pass-form.component';
+import {FormFactor, MainHallPassFormComponent, Navigation} from '../main-hall-pass-form.component';
 import {CreateFormService} from '../../create-form.service';
 import {NextStep} from '../../../animations';
 import {LocationsService} from '../../../services/locations.service';
@@ -16,10 +16,25 @@ import {RestrictedMessageComponent} from './restricted-message/restricted-messag
 import {ToWhereComponent} from './to-where/to-where.component';
 import {ScreenService} from '../../../services/screen.service';
 import {DeviceDetection} from '../../../device-detection.helper';
-import {filter, map} from 'rxjs/operators';
+import {filter, map, withLatestFrom} from 'rxjs/operators';
 import {Location} from '../../../models/Location';
 import {PassLimitInfo} from '../../../models/HallPassLimits';
 import {LocationVisibilityService} from '../location-visibility.service';
+
+// when WS notify a change we have to skip functions that change
+// FORM_STATE state and step 
+function skipWhenWS() {
+  return function (target: any, key: string, descriptor: PropertyDescriptor) {
+    const fn = descriptor.value;
+    descriptor.value = function (...args) {
+      const byws = this.formService.updatedByWS$.getValue(); 
+      if (byws) { 
+        return;
+      }
+      return fn.apply(this, args);
+    };
+  };
+}
 
 export enum States { from = 1, toWhere = 2, category = 3, restrictedTarget = 4, message = 5 }
 
@@ -29,10 +44,9 @@ export enum States { from = 1, toWhere = 2, category = 3, restrictedTarget = 4, 
   styleUrls: ['./locations-group-container.component.scss'],
   animations: [NextStep]
 })
-export class LocationsGroupContainerComponent implements OnInit {
+export class LocationsGroupContainerComponent implements OnInit, OnDestroy {
 
   @Input() FORM_STATE: Navigation;
-  @Input() passLimitInfo: PassLimitInfo;
   @Output() nextStepEvent: EventEmitter<any> = new EventEmitter<any>();
 
   @ViewChild(FromWhereComponent) fromWhereComp;
@@ -48,6 +62,24 @@ export class LocationsGroupContainerComponent implements OnInit {
   pinnable: Pinnable;
   data: any = {};
   frameMotion$: BehaviorSubject<any>;
+  
+  @HostListener('document:click', ['$event'])
+  clickHandler(event: PointerEvent) {
+    // click inside component?
+    if(this.elRef.nativeElement.contains(event.target)) {
+      // event.path or event.composedPath ?
+      const names = (event?.composedPath() ?? (event as any).path).map((e: HTMLElement) => {
+        return e.tagName?.toLowerCase();
+      });
+      // those are like buttons and capture the user clicks
+      const clicked = ['app-location-cell', 'app-pinnable'].some(e => names.includes(e));
+      if (clicked) {
+        // change is triggered by user not by WSocket
+        this.formService.updatedByWS$.next(false);
+      }
+    } 
+  }
+  parentMainHallPassForm: MainHallPassFormComponent;
 
   constructor(
     @Inject(MAT_DIALOG_DATA) public dialogData: any,
@@ -56,7 +88,17 @@ export class LocationsGroupContainerComponent implements OnInit {
     private locationsService: LocationsService,
     private screenService: ScreenService,
     private visibilityService: LocationVisibilityService,
+    private elRef: ElementRef,
+    private _injector: Injector,
+    private cdr: ChangeDetectorRef
   ) {
+  }
+
+  private destroy$ = new Subject();
+
+  ngOnDestroy(): void {
+    this.destroy$.next();
+    this.destroy$.complete();
   }
 
   get showDate() {
@@ -77,8 +119,10 @@ export class LocationsGroupContainerComponent implements OnInit {
       } else if (this.FORM_STATE.data.selectedGroup) {
         return this.FORM_STATE.data.selectedGroup.title;
       } else {
-        return this.FORM_STATE.data.selectedStudents[0].display_name +
-          (this.FORM_STATE.data.selectedStudents.length > 1 ? ` (${this.FORM_STATE.data.selectedStudents.length - 1})` : '');
+        const students = this.FORM_STATE.data.direction.from === null 
+        ? this.FORM_STATE.data.selectedStudents
+        : this.FORM_STATE.data?.roomStudents ?? this.FORM_STATE.data.selectedStudents;
+        return students[0].display_name + (students.length > 1 ? ` (${students.length - 1})` : '');
       }
     }
   }
@@ -124,36 +168,61 @@ export class LocationsGroupContainerComponent implements OnInit {
   }
 
   ngOnInit() {
+    this.parentMainHallPassForm = this._injector.get<MainHallPassFormComponent>(MainHallPassFormComponent);
     this.frameMotion$ = this.formService.getFrameMotionDirection();
     this.FORM_STATE.quickNavigator = false;
 
     this.data.fromLocation = this.FORM_STATE.data.direction && this.FORM_STATE.data.direction.from ? this.FORM_STATE.data.direction.from : null;
     this.data.toLocation = this.FORM_STATE.data.direction && this.FORM_STATE.data.direction.to ? this.FORM_STATE.data.direction.to : null;
+
+    this.user$ = this.dataService.currentUser;
+    this.user$.subscribe({
+      next: (user: User) => {
+        this.isStaff = user.isTeacher() || user.isAdmin() || user.isAssistant();
+        this.user = user;
+      },
+    });
+
     this.pinnables = this.formService.getPinnable(!!this.dialogData['kioskModeRoom']).pipe(
       // restrict all rooms, so the teacher request is mandatory
       filter(pins => pins.length > 0),
-      map(pins => {
+      // this.user$ observable may be slover than this.pinnable$
+      // may be a chance that we will not have a this.user ready
+      // so this ensures we wait (or not) for having a user
+      // this.user$ can be a student or a staff!!!
+      withLatestFrom(this.user$),
+      map(([pins, user]) => {
+        const student = [user];
+        // on kioskmode student is found in selectedStudents[0]
+        if (this.isStaff && this.FORM_STATE?.kioskMode) {
+          // TODO when not found case
+          student[0] = this.FORM_STATE.data?.selectedStudents[0];
+        }
         pins = pins.filter(p => {
-          if (p.location !== null) {
+          // filtering here based on location and student may return (or not) a pinnable
+          if (p.type === 'location' && p.location !== null) {
             // is a Location
             try {
               const loc = Location.fromJSON(p.location);
-              // TODO assumed this.user has been emited
-              const student = [''+this.user.id];
+              // staff is unfiltered but not in kiosk mode
+              if (this.isStaff && !this.FORM_STATE?.kioskMode) return p;
+              // filter students here
               if (this.visibilityService.filterByVisibility(loc, student)) return p;
             } catch (e) {
               console.log(e.message)
             }
-          } else if (p.location === null) {
+          // folder containing pinnables
+          } else if (p.type === 'category') {
             return p;
           }
         });
 
-        if (!this?.passLimitInfo?.showPasses) {
+        const { passLimitInfo } = this.FORM_STATE;
+        if (!passLimitInfo?.showPasses) {
           return pins;
         }
 
-        if (this.passLimitInfo.current === 0) {
+        if (passLimitInfo.current === 0) {
           pins.forEach(p => {
             if (p.location === null) { // ignore folders
               return p;
@@ -166,12 +235,8 @@ export class LocationsGroupContainerComponent implements OnInit {
         return pins;
       }),
     );
-    this.user$ = this.dataService.currentUser;
+
     this.pinnable = this.FORM_STATE.data.direction ? this.FORM_STATE.data.direction.pinnable : null;
-    this.user$.subscribe((user: User) => {
-      this.isStaff = user.isTeacher() || user.isAdmin() || user.isAssistant();
-      this.user = user;
-    });
   }
 
   fromWhere(location) {
@@ -236,6 +301,7 @@ export class LocationsGroupContainerComponent implements OnInit {
     return States.message;
   }
 
+  @skipWhenWS()
   toWhere(pinnable) {
     this.pinnable = pinnable;
     this.FORM_STATE.data.direction = {
@@ -249,6 +315,7 @@ export class LocationsGroupContainerComponent implements OnInit {
       return this.FORM_STATE.state = States.category;
     } else {
       this.data.toLocation = pinnable.location;
+      console.log(this.FORM_STATE.data.direction.from, this.data.toLocation);
       this.FORM_STATE.data.direction.to = pinnable.location;
 
       const restricted = ((this.pinnable.location.restricted && !this.showDate) || (this.pinnable.location.scheduling_restricted && !!this.showDate));
@@ -271,6 +338,7 @@ export class LocationsGroupContainerComponent implements OnInit {
     }
   }
 
+  @skipWhenWS()
   toWhereFromLocation(location: Location) {
     this.pinnables.pipe(
       map(pins => {
@@ -298,8 +366,10 @@ export class LocationsGroupContainerComponent implements OnInit {
     });
   }
 
+  @skipWhenWS()
   fromCategory(location) {
-    location.restricted = location.restricted || (this.passLimitInfo?.showPasses && this.passLimitInfo?.current === 0);
+    const { passLimitInfo } = this.FORM_STATE;
+    location.restricted = location.restricted || (passLimitInfo?.showPasses && passLimitInfo?.current === 0);
     this.data.toLocation = location;
     this.FORM_STATE.data.direction.to = location;
     if (((location.restricted && !this.FORM_STATE.forLater) || (location.scheduling_restricted && this.FORM_STATE.forLater)) && !this.isStaff) {
@@ -328,7 +398,7 @@ export class LocationsGroupContainerComponent implements OnInit {
     this.postComposetData(denyMessage, true);
   }
 
-
+  @skipWhenWS()
   private postComposetData(close: boolean = false, isMessage?: boolean) {
     const restricted = ((this.FORM_STATE.data.direction.to.restricted && !this.FORM_STATE.forLater) ||
       (this.FORM_STATE.data.direction.to.scheduling_restricted && !!this.FORM_STATE.forLater));
@@ -348,6 +418,7 @@ export class LocationsGroupContainerComponent implements OnInit {
         this.FORM_STATE.formMode.formFactor = FormFactor.HallPass;
       }
     }
+
     this.FORM_STATE.previousStep = 3;
     setTimeout(() => {
       this.FORM_STATE.step = close ? 0 : 4;
@@ -356,6 +427,13 @@ export class LocationsGroupContainerComponent implements OnInit {
   }
 
   back(event) {
+    if (this.FORM_STATE.fromState === 4) {
+      this.parentMainHallPassForm.dialogData = {
+        ...this.parentMainHallPassForm.dialogData,
+        passLimitInfo: undefined
+      };
+      this.cdr.detectChanges();
+    }
     this.FORM_STATE = event;
     this.data.message = null;
     this.FORM_STATE.data.message = null;

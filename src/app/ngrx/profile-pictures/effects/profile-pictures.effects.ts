@@ -13,6 +13,8 @@ import {ProfilePicturesUploadGroup} from '../../../models/ProfilePicturesUploadG
 import {ProfilePicturesError} from '../../../models/ProfilePicturesError';
 import {deleteAccountPicture} from '../../accounts/actions/accounts.actions';
 import {PollingService} from '../../../services/polling-service';
+import {School} from '../../../models/School';
+import {updateSchoolSuccess} from '../../schools/actions';
 
 @Injectable()
 export class ProfilePicturesEffects {
@@ -157,13 +159,18 @@ export class ProfilePicturesEffects {
                                 const users = action.picturesData.map(d => d.userId);
                                 return this.userService.uploadProfilePictures(pictures, users, uploadedGroup.id)
                                     .pipe(
-                                        switchMap((data) => {
-                                            return [
-                                                profilePicturesActions.changeProfilePictureLoader({percent: 95}),
-                                                profilePicturesActions.uploadProfilePicturesSuccess({users: action.students})
-                                            ];
-                                        }),
-                                        catchError(error => of(profilePicturesActions.uploadProfilePicturesFailure({errorMessage: error.message})))
+                                      switchMap(data => {
+                                        return of(this.userService.getUserSchool());
+                                      }),
+                                      switchMap((school) => {
+                                        const updatedSchool: School = School.fromJSON({...school, profile_pictures_completed: true});
+                                          return [
+                                              profilePicturesActions.changeProfilePictureLoader({percent: 95}),
+                                              updateSchoolSuccess({school: updatedSchool}),
+                                              profilePicturesActions.uploadProfilePicturesSuccess({users: action.students})
+                                          ];
+                                      }),
+                                      catchError(error => of(profilePicturesActions.uploadProfilePicturesFailure({errorMessage: error.message})))
                                     );
                             })
                         );

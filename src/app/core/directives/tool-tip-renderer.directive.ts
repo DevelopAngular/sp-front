@@ -146,7 +146,6 @@ export class ToolTipRendererDirective implements OnInit, OnDestroy, OnChanges {
       this.closeToolTip();
     }
     this.destroyOpen$.next();
-    // this.closeToolTip();
   }
 
   ngOnDestroy() {

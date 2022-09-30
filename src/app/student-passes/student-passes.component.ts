@@ -120,21 +120,6 @@ export class StudentPassesComponent implements OnInit, OnDestroy, AfterViewInit 
     private timeService: TimeService,
     private kioskMode: KioskModeService,
   ) {
-    // knows if the component is used by staff member
-    // TODO may this bit of code belongs to userService 
-    this.userService.user$.pipe(
-      take(1),
-      map(user => {
-        const isStaff = 
-            user.roles.includes('_profile_teacher') ||
-            user.roles.includes('_profile_admin') ||
-            user.roles.includes('_profile_assistant');
-        return isStaff;
-      }),
-    ).subscribe(isStaff => {
-      this.isStaff = isStaff;
-      this.height += this.extraSpace;
-    });
   }
 
   ngAfterViewInit() {
@@ -168,14 +153,29 @@ export class StudentPassesComponent implements OnInit, OnDestroy, AfterViewInit 
         map((s: 'open' | 'close') => {
           const h = s === 'open' ? 475 : 75;
           const args = {
-            value: s, 
+            value: s,
             params: {
               height: this.extraSpace + h
             }
           };
           return args;
         }),
-      ); 
+      );
+
+    this.user$.pipe(
+      take(1),
+      map(user => {
+        const isStaff =
+          user.roles.includes('_profile_teacher') ||
+          user.roles.includes('_profile_admin') ||
+          user.roles.includes('_profile_assistant');
+        return isStaff;
+      }),
+      tap((isStaff) => {
+        this.isStaff = isStaff;
+        this.height += this.extraSpace;
+      })
+    ).subscribe();
   }
 
   ngOnDestroy() {
@@ -276,7 +276,7 @@ export class StudentPassesComponent implements OnInit, OnDestroy, AfterViewInit 
         forStaff,
       };
     }
- 
+
     return data;
   }
 
@@ -285,9 +285,9 @@ export class StudentPassesComponent implements OnInit, OnDestroy, AfterViewInit 
     const passData = this.preparePassData(pass);
     const isHallPass = pass instanceof HallPass;
     const data = {
-      // to skip choosing the students 
+      // to skip choosing the students
       // as the student's pass is to be reported
-      report: this.profile, 
+      report: this.profile,
       isHallPass,
       ...passData,
     };
@@ -301,7 +301,7 @@ export class StudentPassesComponent implements OnInit, OnDestroy, AfterViewInit 
     reportRef.afterOpened().subscribe(() => {
       // back button will close the dialog
       // it usually close the dialog or it goes back one step the report form
-      // report form was/is a 2-step form 
+      // report form was/is a 2-step form
       const c = reportRef.componentInstance;
       c.forceCloseClick = true;
       c.useChipInsteadSearch = true;

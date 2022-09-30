@@ -11,6 +11,7 @@ import {CreateFormService} from '../../../create-hallpass-forms/create-form.serv
 import {NextStep} from '../../../animations';
 import {UserService} from '../../../services/user.service';
 import {filter, takeUntil} from 'rxjs/operators';
+import { ClassLinkInfo } from '../../../models/ClassLinkInfo';
 
 @Component({
   selector: 'app-integrations-dialog',
@@ -20,11 +21,12 @@ import {filter, takeUntil} from 'rxjs/operators';
 })
 export class IntegrationsDialogComponent implements OnInit, OnDestroy {
 
-  gg4lSyncInfo$: Observable<GG4LSync>;
   schoolSyncInfo$: Observable<SchoolSyncInfo>;
   gSuiteOrgs$: Observable<GSuiteOrgs>;
   cleverSyncInfo$: Observable<CleverInfo>;
   cleverSyncLoading$: Observable<boolean>;
+  classlinkSyncLoading$: Observable<boolean>;
+  classlinkSyncInfo$: Observable<ClassLinkInfo>;
   page: number = 1;
   settingsData: {
     action: string,
@@ -33,6 +35,7 @@ export class IntegrationsDialogComponent implements OnInit, OnDestroy {
   isUploadedProfilePictures: boolean;
   isUploadedGradeLevels: boolean;
   isUploadedIDNumbers: boolean;
+  classLinkSyncData:any
 
   frameMotion$: BehaviorSubject<any>;
 
@@ -48,10 +51,11 @@ export class IntegrationsDialogComponent implements OnInit, OnDestroy {
 
   ngOnInit() {
     this.gSuiteOrgs$ = this.adminService.gSuiteInfoData$;
-    this.gg4lSyncInfo$ = this.adminService.gg4lInfo$;
     this.schoolSyncInfo$ = this.adminService.schoolSyncInfo$;
     this.cleverSyncInfo$ = this.adminService.cleverInfoData$;
     this.cleverSyncLoading$ = this.adminService.syncLoading$;
+    this.classlinkSyncLoading$ = this.adminService.syncLoading$;
+    this.classlinkSyncInfo$ = this.adminService.classLinkInfoData$
     this.frameMotion$ = this.formService.getFrameMotionDirection();
     this.userService.getUploadedGroupsRequest();
 

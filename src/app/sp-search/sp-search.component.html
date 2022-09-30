@@ -5,12 +5,15 @@
         [selectedProfiles]="selectedOptions"
         [suggestedTeacher]="suggestedTeacher"
         [selectedTarget]="searchTarget"
+        [orgUnitList]="orgUnits"
+        [orgUnitExistCheck]="orgUnitExistCheck"
         [isProposed]="isProposed"
-        (add)="inputField = true"
+        (add)="showInputFieldByChips()"
         [textAddButton] = "textAddButton ? textAddButton : null"
         (updateSelectedEvent)="update($event)"
         (addSuggestedTeacher)="addSuggested($event)"
       ></app-sp-chips>
+      
     </div>
 </div>
 
@@ -32,6 +35,7 @@
         [forceFocused$]="forceFocused$"
         [selectReset$]="inputValue$"
         [boxShadow]="false"
+        [isSearch]="true"
         [pending$]="pending$"
         (ontextupdate)="onSearch($event); studentInput.valueLength = $event.length"
         (blurEvent)="onBlur($event)"

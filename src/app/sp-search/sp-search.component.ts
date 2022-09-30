@@ -1,7 +1,7 @@
 import {Component, ElementRef, EventEmitter, HostListener, Input, OnDestroy, OnInit, Output, Renderer2, ViewChild} from '@angular/core';
 import {MapsAPILoader} from '@agm/core';
 import {User} from '../models/User';
-import {BehaviorSubject, interval, Observable, of, Subject} from 'rxjs';
+import {BehaviorSubject, interval, Observable, of, Subject,combineLatest} from 'rxjs';
 import {UserService} from '../services/user.service';
 import {DomSanitizer} from '@angular/platform-browser';
 import {HttpService} from '../services/http-service';
@@ -16,6 +16,7 @@ import {DeviceDetection} from '../device-detection.helper';
 import {DomCheckerService} from '../services/dom-checker.service';
 import {Overlay} from '@angular/cdk/overlay';
 import {KioskModeService} from '../services/kiosk-mode.service';
+import {AdminService} from '../services/admin.service';
 
 declare const window;
 
@@ -90,6 +91,9 @@ export class OrgUnit {
     this.selected = selected;
   }
 }
+interface OrgUnits{
+  path:string
+}
 
 
 @Component({
@@ -133,11 +137,16 @@ export class SPSearchComponent implements OnInit, OnDestroy {
 
   @Input() searchingTeachers: User[];
   @Input() searchingRoles: { id: number, role: string, icon: string }[];
+  @Input() orgUnits:String[]=[]
+  @Input() orgUnitExistCheck:BehaviorSubject<Boolean>
+
+  @Input() filteringUsersCallback?: Function;
 
   @Output() onUpdate: EventEmitter<any> = new EventEmitter();
   @Output() blurEvent: EventEmitter<boolean> = new EventEmitter<boolean>();
   @Output() focusEvent: EventEmitter<boolean> = new EventEmitter<boolean>();
   @Output() isOpenedOptions: EventEmitter<boolean> = new EventEmitter<boolean>();
+  @Output() chipsAddEvent: EventEmitter<boolean> = new EventEmitter<boolean>();
 
   @ViewChild('studentInput') input: ElementRef;
   @ViewChild('wrapper') wrapper: ElementRef;
@@ -179,6 +188,8 @@ export class SPSearchComponent implements OnInit, OnDestroy {
   isEnableProfilePictures$: Observable<boolean>;
 
   destroy$: Subject<any> = new Subject<any>();
+  // orgUnits:OrgUnits[]=[]
+
 
   @HostListener('document.scroll', ['$event'])
   scroll() {
@@ -197,8 +208,10 @@ export class SPSearchComponent implements OnInit, OnDestroy {
     private locationService: LocationsService,
     private domCheckerService: DomCheckerService,
     public overlay: Overlay,
-    private kioskMode: KioskModeService
-  ) {}
+    private kioskMode: KioskModeService,
+    private adminService:AdminService
+  ) {
+  }
 
   get isMobile() {
     return DeviceDetection.isMobile();
@@ -235,7 +248,7 @@ export class SPSearchComponent implements OnInit, OnDestroy {
       this.renderer.setStyle(elem.target, 'background-color', '#FFFFFF');
     }
   }
-
+ 
   ngOnInit() {
     this.overlayScrollStrategy = this.overlay.scrollStrategies.close();
     if (this.chipsMode && !this.overrideChipsInputField) {
@@ -310,6 +323,7 @@ export class SPSearchComponent implements OnInit, OnDestroy {
 
     this.user$ = this.userService.user$;
     this.isEnableProfilePictures$ = this.userService.isEnableProfilePictures$;
+    
 
   }
 
@@ -325,14 +339,65 @@ export class SPSearchComponent implements OnInit, OnDestroy {
           if (search !== '') {
             this.pending$.next(true);
             if (this.type === 'alternative') {
-              this.students = this.userService.searchProfile(this.role, 50, search)
-                .toPromise()
-                .then((paged: any) => {
+              if(this.kioskMode.isKisokMode()){
+                if(this.kioskMode.getKioskModeSettings().findByName && this.kioskMode.getKioskModeSettings().findById){
+                 of([this.userService.searchProfile(this.role, 50, search),this.userService.possibleProfileByCustomId(search)])
+                 .pipe(switchMap(_ => combineLatest(_))).subscribe((res:any)=>{
+                  let finalResult =[]
+                  if(res[1].results?.user?.length===undefined){
+                   finalResult = [...finalResult,res[1].results.user]
+                  }
+                  finalResult= [...finalResult,...res[0].results]
                   this.pending$.next(false);
-                  this.showDummy = !paged.results.length;
                   this.isOpenedOptions.emit(true);
-                  return this.removeDuplicateStudents(paged.results);
+                  const uu = this.removeDuplicateStudents(finalResult);
+                    this.mayRemoveStudentsByCallback(uu);
+                   this.students = of([]).toPromise().then(()=>{
+                    return this.mayRemoveStudentsByCallback(uu);
+                   });
+                 })
+                }
+               else if(this.kioskMode.getKioskModeSettings().findByName && !this.kioskMode.getKioskModeSettings().findById){
+                this.students = this.userService.searchProfile(this.role, 50, search)
+                .toPromise()
+                .then((paged: any) => { 
+                  this.pending$.next(false);
+                  this.isOpenedOptions.emit(true);
+                  const uu = this.removeDuplicateStudents(paged.results);
+                  return this.mayRemoveStudentsByCallback(uu);
                 });
+               }else{
+                this.students = this.userService.possibleProfileByCustomId(search).toPromise()
+                .then((paged: any) => { 
+                 if(paged.results?.user?.length===undefined){
+                  this.pending$.next(false);
+                  this.isOpenedOptions.emit(true);
+                  const uu = this.removeDuplicateStudents([paged.results.user]);
+                  return this.mayRemoveStudentsByCallback(uu);
+                 }else{
+                  this.pending$.next(false);
+                  this.isOpenedOptions.emit(true);
+                  const uu = this.removeDuplicateStudents([]);
+                  return this.mayRemoveStudentsByCallback(uu);
+                 }
+                }).catch(err=>{return[]})
+               }
+
+                   
+              }else{
+                this.students = this.userService.searchProfile(this.role, 50, search)
+                .toPromise()
+                .then((paged: any) => { 
+                  this.pending$.next(false);
+                  this.isOpenedOptions.emit(true);
+                  const uu = this.removeDuplicateStudents(paged.results);
+                  return this.mayRemoveStudentsByCallback(uu);
+                });
+              }
+              // kioskToken
+     
+
+
             } else if (this.type === 'G Suite' || this.type === 'GG4L') {
               let request$;
               if (this.role !== '_all') {
@@ -347,8 +412,9 @@ export class SPSearchComponent implements OnInit, OnDestroy {
               this.students = request$
                 .toPromise().then((users: User[]) => {
                   this.pending$.next(false);
-                  this.showDummy = !users.length;
-                  return this.removeDuplicateStudents(users);
+                  //this.showDummy = !users.length;
+                  const uu = this.removeDuplicateStudents(users);
+                  return this.mayRemoveStudentsByCallback(uu);
                 });
             }
           } else {
@@ -500,6 +566,11 @@ export class SPSearchComponent implements OnInit, OnDestroy {
     this.selectedOptions = [];
   }
 
+  showInputFieldByChips() {
+    this.inputField = true;
+    this.chipsAddEvent.emit(true);
+  }
+
   removeDuplicateStudents(students: User[] | GSuiteSelector[]): User[] | GSuiteSelector[] {
     this.searchCount = students.length;
     this.firstSearchItem = students[0];
@@ -536,9 +607,22 @@ export class SPSearchComponent implements OnInit, OnDestroy {
     }
   }
 
+  // safe to call as it checks itself to have a callback to call
+  // otherwise it returns unchanged User[]
+  mayRemoveStudentsByCallback(students: User[] | GSuiteSelector[]) : User[] | GSuiteSelector[] {
+    // if provided an extra filtering use it
+    if (!!this.filteringUsersCallback) {
+      const filtered =  this.filteringUsersCallback(students);
+      this.showDummy = !filtered.length;
+      return filtered;
+    }
+    return students;
+  }
+
   isDisabled(item: any) {
     return this.type === 'G Suite' && item && !item.role_compatible;
   }
+
   cancel(studentInput) {
     studentInput.input.nativeElement.value = '';
     studentInput.input.nativeElement.focus();
@@ -590,5 +674,10 @@ export class SPSearchComponent implements OnInit, OnDestroy {
 
   hasStudentRole(user) {
     return user.roles && User.fromJSON(user).isStudent();
+  }
+
+  reset() {
+    this.selectedOptions = [];
+    this.onUpdate.emit(undefined);
   }
 }

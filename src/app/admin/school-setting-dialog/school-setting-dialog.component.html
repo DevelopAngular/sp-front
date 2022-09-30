@@ -61,7 +61,25 @@
           ></app-toggle-input>
         </div>
       </div>
-    </div>
+
+      <div class="display-room-control" style="margin-top: 15px">
+        <div class="controls-description">
+          <div class="ds-cell-text-2">Allow students to use phones</div>
+          <div class="ds-cell-description-text" style="width: 260px; margin-top: 6px">Allow students to use SmartPass on their mobile devices. 
+          <a href="https://www.smartpass.app/disablephones" target="_blank">Learn more</a>
+          </div>
+        </div>
+        <div class="toggle-control">
+          <app-toggle-input
+            [form]="schoolForm"
+            [hasIcon]="false"
+            [controlSize]="'small'"
+            [delimiter]="false"
+            [controlName]="'student_can_use_mobile'"
+          ></app-toggle-input>
+        </div>
+      </div>
+
 <!--    <div class="bottom-block">-->
 <!--      <div class="ds-dialog-bold-text">Have a feature suggestion?</div>-->
 <!--      <div class="ds-small-link-text">Email us at support@smartpass.app</div>-->

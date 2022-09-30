@@ -1,6 +1,7 @@
 import { Component, Inject, OnInit } from '@angular/core';
 import { FormControl, FormGroup } from '@angular/forms';
 import { MatDialogRef, MAT_DIALOG_DATA } from '@angular/material/dialog';
+import { KioskModeService } from '../../services/kiosk-mode.service';
 
 @Component({
   selector: 'app-kiosk-mode-dialog',
@@ -10,22 +11,35 @@ import { MatDialogRef, MAT_DIALOG_DATA } from '@angular/material/dialog';
 export class KioskModeDialogComponent implements OnInit {
 
   loginInfoForm: FormGroup;
+  kioskData: any;
 
   constructor(
     public dialogRef: MatDialogRef<KioskModeDialogComponent>,
-    @Inject(MAT_DIALOG_DATA) private data: any
+    @Inject(MAT_DIALOG_DATA) private data: any,
+    private kioskMode: KioskModeService,
   ) { }
 
   ngOnInit(): void {
+    this.kioskData = this.data;
     this.loginInfoForm = new FormGroup({
-      username: new FormControl({value: 'library-53283', disabled: true}),
-      password: new FormControl({value: 'wlkjwFwka93', disabled: true})
+      username: new FormControl({value: this.data.loginData.username, disabled: true}),
+      password: new FormControl({value: this.data.loginData.password, disabled: true})
     });
-    console.log("data : ", this.data);
   }
 
   fetchLoginData(){
+    
+  }
 
+  resetPassword(){
+    this.kioskMode.resetPassword(this.data.selectedRoom).subscribe({
+      next: (result: any) => {
+        this.loginInfoForm = new FormGroup({
+          username: new FormControl({value: result.results.username, disabled: true}),
+          password: new FormControl({value: result.results.password, disabled: true})
+        });
+      }
+    })
   }
 
   back() {

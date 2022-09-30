@@ -5,6 +5,7 @@
 @import url("https://fonts.googleapis.com/icon?family=Material+Icons&style=outline");
 @import "~font-awesome/css/font-awesome.min.css";
 @import "design-system";
+@import "pass-limits.scss";
 html {
     background-color: #FCFDFF;
     padding: 0 0;
@@ -106,7 +107,7 @@ div {
             flex-direction: column;
             align-items: stretch;
             padding: 20px;
-            height: 430px;
+            height: 390px;
             overflow: auto;
             .using {
                 //display: flex;
@@ -307,6 +308,10 @@ div {
     padding: 0;
 }
 
+.overlay-dialog.show-overlay .mat-dialog-container {
+    overflow: auto !important;
+}
+
 .overlay-dialog-no-background {
     @extend .overlay-dialog;
     .mat-dialog-container {
@@ -340,6 +345,15 @@ div {
 
 .id-card-overlay-container {
     max-width: 100vw !important;
+}
+
+.cehckin-room-code-dialog-container {
+    width: 100vw !important;
+    max-width: 100vw !important;
+    height: 100vh;
+    .mat-dialog-container {
+        padding: 0 !important;
+    }
 }
 
 .error-toast-dialog-container .mat-dialog-container {

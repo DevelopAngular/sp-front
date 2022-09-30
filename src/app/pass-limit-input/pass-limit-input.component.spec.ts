@@ -1,20 +1,20 @@
 import { ComponentFixture, TestBed } from '@angular/core/testing';
 
-import { PassLimitsDialogComponent } from './pass-limits-dialog.component';
+import { PassLimitInputComponent } from './pass-limit-input.component';
 
-describe('PassLimitsDialogComponent', () => {
-  let component: PassLimitsDialogComponent;
-  let fixture: ComponentFixture<PassLimitsDialogComponent>;
+describe('PassLimitInputComponent', () => {
+  let component: PassLimitInputComponent;
+  let fixture: ComponentFixture<PassLimitInputComponent>;
 
   beforeEach(async () => {
     await TestBed.configureTestingModule({
-      declarations: [ PassLimitsDialogComponent ]
+      declarations: [ PassLimitInputComponent ]
     })
     .compileComponents();
   });
 
   beforeEach(() => {
-    fixture = TestBed.createComponent(PassLimitsDialogComponent);
+    fixture = TestBed.createComponent(PassLimitInputComponent);
     component = fixture.componentInstance;
     fixture.detectChanges();
   });

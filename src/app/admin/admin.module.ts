@@ -29,6 +29,7 @@ import { PagesDialogComponent } from './explore/pages-dialog/pages-dialog.compon
 import { VisibilityRoomComponent } from './overlay-container/visibility-room/visibility-room.component'
 ;
 import { InviteFamiliesDialogComponent } from './invite-families-dialog/invite-families-dialog.component'
+import { ImportStudentListComponent } from './overlay-container/visibility-room/import-student-list/import-student-list.component'
 @NgModule({
     imports: [
         CommonModule,
@@ -62,7 +63,8 @@ import { InviteFamiliesDialogComponent } from './invite-families-dialog/invite-f
         PagesDialogComponent
 ,
         VisibilityRoomComponent ,
-        InviteFamiliesDialogComponent   ],
+        InviteFamiliesDialogComponent,
+        ImportStudentListComponent   ],
     providers: [
         [Location, {provide: LocationStrategy, useClass: PathLocationStrategy}],
     ],

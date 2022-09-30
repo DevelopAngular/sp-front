@@ -37,10 +37,10 @@ export class DropdownComponent implements OnInit {
   isDisabledLang: boolean;
   betaLanguage: string = '';
   countryCodes = COUNTRY_CODES;
-  initialSchools: School[];
+  currentInitialObject;
   selectedSchool: School;
-  teachers: RepresentedUser[];
-  selectedTeacher: RepresentedUser;
+  teachers: User[];
+  selectedTeacher: User;
   _matDialogRef: MatDialogRef<DropdownComponent>;
   triggerElementRef: HTMLElement;
   scrollPosition: number;
@@ -50,6 +50,7 @@ export class DropdownComponent implements OnInit {
   optionsMaxHeight: string;
   mainHeader: string;
   isSearchField: boolean;
+  isHiddenSearchField: boolean;
 
   constructor(
     @Inject(MAT_DIALOG_DATA) public data: any[],
@@ -77,12 +78,24 @@ export class DropdownComponent implements OnInit {
     this.optionsMaxHeight = data['maxHeight'] || '282px';
     this.mainHeader = this.data['mainHeader'];
     this.isSearchField = this.data['isSearchField'];
+    this.isHiddenSearchField = this.data['isHiddenSearchField'];
 
-    this.initialSchools = cloneDeep(this.schools);
+    this.currentInitialObject = cloneDeep(this.schools || this.locations || this.teachers);
   }
 
   get isMobile() {
     return DeviceDetection.isMobile();
+  }
+
+  get searchPlaceholder(): string {
+    if (this.schools) {
+      return 'school';
+    } else if (this.locations) {
+      return 'location';
+    } else if (this.teachers) {
+      return 'teacher';
+    }
+    return '';
   }
 
   ngOnInit() {
@@ -135,11 +148,19 @@ export class DropdownComponent implements OnInit {
     }
   }
 
-  searchSchool(value) {
-    if (!!value) {
-      this.schools = this.initialSchools.filter(school => +school.id === +value || school.name.toLowerCase().includes(value.toLowerCase()));
-    } else {
-      this.schools = this.initialSchools;
+  searchObject(value) {
+    if (this.schools && this.currentInitialObject[0] instanceof School) {
+      if (!!value) {
+        this.schools = this.currentInitialObject.filter(school => +school.id === +value || school.name.toLowerCase().includes(value.toLowerCase()));
+      } else {
+        this.schools = this.currentInitialObject;
+      }
+    } else if (this.teachers && this.currentInitialObject[0] instanceof User) {
+      if (!!value) {
+        this.teachers = this.currentInitialObject.filter(teacher => +teacher.id === +value || teacher.display_name.toLowerCase().includes(value.toLowerCase()));
+      } else {
+        this.teachers = this.currentInitialObject;
+      }
     }
 
   }

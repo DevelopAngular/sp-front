@@ -51,6 +51,7 @@ export class RoomComponent implements OnInit, OnDestroy {
       travelType: [],
       restricted: null,
       scheduling_restricted: null,
+      needs_check_in: null,
       advOptState: {
           now: { state: '', data: { all_teach_assign: null, any_teach_assign: null, selectedTeachers: [] } },
           future: { state: '', data: { all_teach_assign: null, any_teach_assign: null, selectedTeachers: [] } }
@@ -66,7 +67,11 @@ export class RoomComponent implements OnInit, OnDestroy {
   inputFocusNumber: number = 1;
   forceFocus$: Subject<any> = new Subject<any>();
 
-  advOptionsValidButtons: ValidButtons;
+  advOptionsValidButtons: ValidButtons = {
+    publish: false,
+    cancel: false,
+    incomplete: false
+  };
 
   roomValidButtons: ValidButtons;
 
@@ -118,6 +123,16 @@ export class RoomComponent implements OnInit, OnDestroy {
       }
   }
 
+  get needCheckIn() {
+    if (!isNull(this.data.needs_check_in)) {
+        if (this.data.needs_check_in) {
+            return 'True';
+        } else {
+            return 'False';
+        }
+    }
+}
+
   get advDisabledOptions() {
    const page = this.currentPage;
    if (!this.data.selectedTeachers.length &&
@@ -147,7 +162,7 @@ export class RoomComponent implements OnInit, OnDestroy {
     if (this.overlayService.pageState.getValue().data) {
           if (this.currentPage === Pages.EditRoom) {
               const pinnable = this.overlayService.pageState.getValue().data.pinnable;
-              const visibility: VisibilityOverStudents = {mode: pinnable.location.visibility_type, over: pinnable.location.visibility_students};
+              const visibility: VisibilityOverStudents = {mode: pinnable.location.visibility_type, over: pinnable.location.visibility_students, grade: pinnable.location.visibility_grade};
               this.overlayService.patchData({visibility});
               this.data = {
                   roomName: pinnable.location.title,
@@ -156,6 +171,7 @@ export class RoomComponent implements OnInit, OnDestroy {
                   selectedTeachers: pinnable.location.teachers,
                   restricted: !!pinnable.location.restricted,
                   scheduling_restricted: !!pinnable.location.scheduling_restricted,
+                  needs_check_in: !!pinnable.location.needs_check_in,
                   timeLimit: pinnable.location.max_allowed_time,
                   advOptState: this.overlayService.pageState.getValue().data.advancedOptions,
                   visibility: this.overlayService.pageState.getValue().data?.visibility,
@@ -163,7 +179,8 @@ export class RoomComponent implements OnInit, OnDestroy {
               };
           } else if (this.currentPage === Pages.EditRoomInFolder) {
               const data: Location = this.overlayService.pageState.getValue().data.selectedRoomsInFolder[0];
-              const visibility: VisibilityOverStudents = {mode: data.visibility_type, over: data.visibility_students};
+              const visibility: VisibilityOverStudents = {mode: data.visibility_type, over: data.visibility_students, grade: data.visibility_grade};
+              this.visibilityForm.patchValue({visibility});
               this.overlayService.patchData({visibility});
               this.passLimitForm.patchValue({
                 to: data.max_passes_to,
@@ -180,6 +197,7 @@ export class RoomComponent implements OnInit, OnDestroy {
                   travelType: data.travel_types,
                   restricted: !!data.restricted,
                   scheduling_restricted: !!data.scheduling_restricted,
+                  needs_check_in: !!data.needs_check_in,
                   advOptState: this.overlayService.pageState.getValue().data.advancedOptions,
                   visibility: this.overlayService.pageState.getValue().data?.visibility,
                   enable: data.enable
@@ -211,10 +229,10 @@ export class RoomComponent implements OnInit, OnDestroy {
           this.checkValidRoomOptions();
       });
 
-      this.isEnableRoomTrigger$.subscribe(res => {
+      this.isEnableRoomTrigger$?.subscribe(res => {
         this.data.enable = res;
         this.change$.next();
-      });
+      }) ? null : console.log('isEnableRoomTrigger$ undefined');
   }
 
   ngOnDestroy(): void {
@@ -227,6 +245,9 @@ export class RoomComponent implements OnInit, OnDestroy {
 
   checkValidRoomOptions() {
     if (isEqual(omit(this.initialData, 'advOptState'), omit(this.data, 'advOptState'))) {
+      /**
+       * If the initial form and the changed form are equal, execution should be here
+       * */
           if (this.validForm) {
               this.roomValidButtons = {
                   publish: false,
@@ -241,6 +262,7 @@ export class RoomComponent implements OnInit, OnDestroy {
               };
           }
       } else {
+        // If the form has changed
         if (this.validForm && this.data.travelType.length) {
             this.roomValidButtons = {
                 publish: true,
@@ -248,6 +270,8 @@ export class RoomComponent implements OnInit, OnDestroy {
                 cancel: true
             };
         } else {
+          // either form is invalid or there are no travel types for the room
+          // travel types are one way and round trip
             this.roomValidButtons = {
                 publish: false,
                 incomplete: true,
@@ -261,9 +285,13 @@ export class RoomComponent implements OnInit, OnDestroy {
           cancel: false
       };
 
-      if (!this.advOptionsValidButtons) {
+
+      if (!this.advOptionsValidButtons?.publish) {
+          // if there are no changes in advanced options, such as
+          // active pass limits, restriction for now, restriction for future
           buttonsResult = this.roomValidButtons;
       } else {
+        // either pass limits, restriction for now or restriction for future are changed
           if (
             (this.validForm && this.isValidRestrictions && this.data.travelType.length) &&
             this.advOptionsValidButtons.publish || (this.roomValidButtons.publish && !this.advOptionsValidButtons.incomplete)
@@ -318,6 +346,11 @@ export class RoomComponent implements OnInit, OnDestroy {
   schedulingRestrictedEvent(isRestricted) {
       this.data.scheduling_restricted = isRestricted;
       this.change$.next();
+  }
+
+  checkInEvent(isRestricted) {
+    this.data.needs_check_in = isRestricted;
+    this.change$.next();
   }
 
   advancedOptions({options, validButtons}) {

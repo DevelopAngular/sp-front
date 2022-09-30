@@ -2,6 +2,7 @@ import {Component, ElementRef, EventEmitter, HostListener, Inject, Input, OnInit
 
 import {Navigation} from '../../main-hall-pass-form.component';
 import {Pinnable} from '../../../../models/Pinnable';
+import {User} from '../../../../models/User';
 import {CreateFormService} from '../../../create-form.service';
 import {BehaviorSubject, fromEvent, Subject} from 'rxjs';
 import {takeUntil} from 'rxjs/operators';
@@ -95,7 +96,7 @@ export class ToCategoryComponent implements OnInit {
   }
 
   ngOnInit() {
-
+    console.log(this.formState);
     this.frameMotion$ = this.formService.getFrameMotionDirection();
     this.fromLocation = this.formState.data.direction.from;
     this.pinnable = this.formState.data.direction.pinnable;
@@ -121,6 +122,10 @@ export class ToCategoryComponent implements OnInit {
     this.destroy$.complete();
   }
 
+  get selectedStudents(): User[] {
+   return this.formState.data.roomStudents ?? this.formState.data.selectedStudents;
+  }
+
   locationChosen(location) {
     const forwardAndEmit = () => {
       if (this.formState.formMode.role === 1) {
@@ -140,30 +145,31 @@ export class ToCategoryComponent implements OnInit {
     }
 
    // staff only
-   const selectedStudents = this.formState.data.roomStudents ?? this.formState.data.selectedStudents;
-   const students = selectedStudents.map(s => ''+s.id);
-   const ruleStudents = location.visibility_students.map(s => ''+s.id);
-   const rule = location.visibility_type;
-        
+   const students = [...this.selectedStudents];
    // skipped are students that do not qualify to go forward     
-   let skipped = this.visibilityService.calculateSkipped(students, ruleStudents, rule);
+   let skipped = this.visibilityService.calculateSkipped(students, location);
 
-    if (!skipped || skipped.length === 0) {
+    if (skipped.length === 0) {
       forwardAndEmit();
-      return; 
+      return;
     }
 
     let text =  'This room is only available to certain students';
-    let names = selectedStudents.filter(s => skipped.includes(''+s.id)).map(s => s.display_name);
+    let names = this.selectedStudents.filter(s => skipped.includes(''+s.id)).map(s => s.display_name);
     let title =  'Student does not have permission to go to this room';
-    let denyText =  'Cancel';
+    let denyText =  'Skip';
     if (names.length > 1) {
       text = names?.join(', ') ?? 'This room is only available to certain students'
       title = 'These students do not have permission to go to this room:';
       denyText = 'Skip these students';
     } else {
-      title = (names?.join(', ') ?? 'Student') + ' does not have permission to go to this room'; 
+      title = (names?.join(', ') ?? 'Student') + ' does not have permission to go to this room';
     }
+
+    const roomStudents = this.selectedStudents.filter(s => (!skipped.includes(''+s.id)));
+    const noStudentsCase = roomStudents.length === 0;
+    
+    if (noStudentsCase) denyText = 'Cancel';
 
     this.dialog.open(ConfirmationDialogComponent, {
       panelClass: 'overlay-dialog',
@@ -185,40 +191,35 @@ export class ToCategoryComponent implements OnInit {
     }).afterClosed().pipe(
       takeUntil(this.destroy$),
     ).subscribe(override => {
-      this.formState.data.roomOverride = !!override; 
-     
+      this.formState.data.roomOverride = !!override;
+
       if (override === undefined) {
-        return;     
+        return;
       }
-     
+
       // override case
       if (override) {
         forwardAndEmit();
-        return; 
+        return;
       }
 
       // SKIPPING case
       // avoid a certain no students case
-      if (selectedStudents.length === 1) {
+      if (this.selectedStudents.length === 1) {
         this.dialogRef.close();
         return;
       }
 
       // filter out the skipped students
-      const roomStudents = selectedStudents.filter(s => (!skipped.includes(''+s.id)));
+      const roomStudents = this.selectedStudents.filter(s => (!skipped.includes(''+s.id)));
       // avoid no students case
-      if (roomStudents.length === 0) {
-        this.toastService.openToast({
-          title: 'Skiping will left no students to operate on',
-          subtitle: 'Last operation did not proceeed',
-          type: 'error',
-        });
+      if (noStudentsCase) {
         return;
       }
 
-      this.formState.data.roomStudents = roomStudents; 
+      this.formState.data.roomStudents = roomStudents;
       forwardAndEmit();
-    }); 
+    });
   }
 
   back() {

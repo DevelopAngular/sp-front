@@ -20,6 +20,8 @@ export class BulkEditRoomsComponent implements OnInit {
 
   @Input() passLimitForm: FormGroup;
 
+  @Input() visibilityForm?: FormGroup;
+
   @Input() showErrors: boolean;
 
   @Output()
@@ -90,6 +92,10 @@ export class BulkEditRoomsComponent implements OnInit {
       } else {
         this.roomsValidButtons = {publish: true, incomplete: false, cancel: true};
       }
+    }
+
+    if (this.visibilityForm.invalid) {
+      this.roomsValidButtons = {publish: false, incomplete: true, cancel: true};
     }
 
     this.bulkEditResult.emit({

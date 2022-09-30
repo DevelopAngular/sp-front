@@ -5,7 +5,7 @@
         </div>
         <div class="ds-dialog-title-navy ds-flex-center-center">
             <img [src]="'./assets/Kiosk Mode (Blue-White).svg'" width="20" height="20" alt="(White).svg" class="ds-mr-10">
-            <span>Kiosk Mode for {{data.selectedRoom.title}}</span>
+            <span>Kiosk Mode for {{kioskData?.selectedRoom?.title}}</span>
         </div>
     </div>
     <div class="content">
@@ -40,7 +40,7 @@
                         <div class="label">Password</div>
                         <div class="input-wrapper">
                             <input type="text" class="input" [formControl]="loginInfoForm.get('password')">
-                            <img width="15" [src]="'./assets/Refresh (Blue-Gray).svg' | resolveAsset" [customToolTip]="'Reset Password'" />
+                            <img (click)="resetPassword()" width="15" [src]="'./assets/Refresh (Blue-Gray).svg' | resolveAsset" [customToolTip]="'Reset Password'" />
                         </div>
                         <!-- <app-input width="200px" [fieldSpace]="'0px'" [disabled]="true" [input_value]="'wlkjwFwka93'" [formGroup]="loginInfoForm" [controlName]="loginInfoForm.get('password')"></app-input> -->
                     </div>

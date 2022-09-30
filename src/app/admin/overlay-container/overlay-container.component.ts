@@ -4,7 +4,7 @@ import {MAT_DIALOG_DATA, MatDialog, MatDialogRef} from '@angular/material/dialog
 import {DomSanitizer} from '@angular/platform-browser';
 
 import {BehaviorSubject, combineLatest, forkJoin, fromEvent, merge, Observable, of, Subject, zip, throwError} from 'rxjs';
-import {debounceTime, distinctUntilChanged, filter, map, switchMap, take, takeUntil, tap, catchError} from 'rxjs/operators';
+import {debounceTime, distinctUntilChanged, filter, map, switchMap, take, takeUntil, tap, catchError, concatMap} from 'rxjs/operators';
 
 import {bumpIn, NextStep} from '../../animations';
 import {Pinnable} from '../../models/Pinnable';
@@ -22,13 +22,14 @@ import {User} from '../../models/User';
 import {ToastService} from '../../services/toast.service';
 import {ConsentMenuComponent} from '../../consent-menu/consent-menu.component';
 import {VisibilityOverStudents, DEFAULT_VISIBILITY_STUDENTS} from './visibility-room/visibility-room.type';
+import {BlockScrollService} from './block-scroll.service';
 
 @Component({
   selector: 'app-overlay-container',
   templateUrl: './overlay-container.component.html',
   styleUrls: ['./overlay-container.component.scss'],
-  animations: [NextStep, bumpIn]
-
+  animations: [NextStep, bumpIn],
+  providers: [BlockScrollService],
 })
 export class OverlayContainerComponent implements OnInit, OnDestroy {
 
@@ -94,7 +95,8 @@ export class OverlayContainerComponent implements OnInit, OnDestroy {
 
   advOptState: OptionState = {
       now: { state: '', data: { all_teach_assign: null, any_teach_assign: null, selectedTeachers: [] } },
-      future: { state: '', data: { all_teach_assign: null, any_teach_assign: null, selectedTeachers: [] } }
+      future: { state: '', data: { all_teach_assign: null, any_teach_assign: null, selectedTeachers: [] } },
+      needsCheckIn: false
   };
 
   introsData: any;
@@ -116,6 +118,7 @@ export class OverlayContainerComponent implements OnInit, OnDestroy {
       public overlayService: OverlayDataService,
       private toast: ToastService,
       private dialog: MatDialog,
+      private blockScrollService: BlockScrollService, 
   ) {}
 
   getHeaderData() {
@@ -190,7 +193,7 @@ export class OverlayContainerComponent implements OnInit, OnDestroy {
   }
 
   // how to use: change it and revert it back to FALSE after you finish
-  private isSaveButtonDisabled: boolean = false;
+  private isSaveButtonDisabled = false;
 
   get isFormIncomplete() {
     if (this.currentPage === Pages.NewRoom || this.currentPage === Pages.EditRoom || this.currentPage === Pages.NewFolder || this.currentPage === Pages.EditFolder) {
@@ -322,6 +325,7 @@ export class OverlayContainerComponent implements OnInit, OnDestroy {
   }
 
   ngOnInit() {
+
     this.pinnablesCollectionIds$ = this.hallPassService.pinnablesCollectionIds$;
     this.overlayService.pageState.pipe(filter(res => !!res)).subscribe(res => {
        this.currentPage = res.currentPage;
@@ -329,6 +333,7 @@ export class OverlayContainerComponent implements OnInit, OnDestroy {
       this.overlayType = this.dialogData['type'];
       if (this.dialogData['pinnable']) {
         this.pinnable = this.dialogData['pinnable'];
+        console.log(this.pinnable);
         // initial visibility
         this.visibility = this.getVisibilityStudents(this.pinnable.location);
       }
@@ -371,7 +376,7 @@ export class OverlayContainerComponent implements OnInit, OnDestroy {
       }),
       map(({visibility: v}: {visibility: VisibilityOverStudents}): VisibilityOverStudents => v),
     ).subscribe((v: VisibilityOverStudents) => {
-      this.visibility = v;
+      this.visibility = cloneDeep(v);
     });
 
       if (this.currentPage === Pages.EditFolder || this.currentPage === Pages.EditRoom || this.currentPage === Pages.EditRoomInFolder) {
@@ -405,7 +410,11 @@ export class OverlayContainerComponent implements OnInit, OnDestroy {
               })
           );
       }
-    this.dialogRef.backdropClick()
+    // TODO: strabge bug here!!!
+    // id backdrop is clicked once then it receives the clicks's components inside overlay-container
+    // left here commented to indicate this elusive bug
+    // as it is unclear why it happens
+    /*this.dialogRef.backdropClick()
       .pipe(
         switchMap(() => {
           return this.roomValidButtons;
@@ -417,7 +426,19 @@ export class OverlayContainerComponent implements OnInit, OnDestroy {
       )
       .subscribe(() => {
       this.dialogRef.close();
-    });
+    });*/
+    /*this.dialogRef.backdropClick()
+      .pipe(
+        switchMap(() => {
+          return this.roomValidButtons;
+        }),
+        filter((rvb: ValidButtons): boolean => {
+          return Object.values(rvb).every(v => !v);
+        }),
+        tap(_ => this.dialogRef.close()),
+        takeUntil(this.destroy$),
+      )
+      .subscribe();*/
 
       fromEvent(this.block.nativeElement, 'scroll').pipe(takeUntil(this.destroy$))
         .subscribe((res: any) => {
@@ -426,6 +447,8 @@ export class OverlayContainerComponent implements OnInit, OnDestroy {
         } else {
           this.showBottomShadow = true;
         }
+
+        this.blockScrollService.doesScrolling();
       });
 
     combineLatest(
@@ -446,6 +469,8 @@ export class OverlayContainerComponent implements OnInit, OnDestroy {
   ngOnDestroy() {
     this.destroy$.next();
     this.destroy$.complete();
+    const afresh = {visibility: DEFAULT_VISIBILITY_STUDENTS};
+    this.overlayService.patchData(afresh);
   }
 
   buildForm() {
@@ -497,8 +522,8 @@ export class OverlayContainerComponent implements OnInit, OnDestroy {
           if (c.value === null) return null;
           // only visible_all_students do not need a group of students
           // ensures non-all modes have a non-empty over array (students)
-          if (c.value.mode !== 'visible_all_students' && c.value.over.length === 0) {
-            return {needover: 'you must select at least 1 student.'};
+          if (c.value.mode !== 'visible_all_students' && c.value.over.length === 0 && c.value.grade.length === 0) {
+            return {needover: 'you must select at least 1 student or a grade.'};
           }
           return null;
         }]
@@ -508,8 +533,8 @@ export class OverlayContainerComponent implements OnInit, OnDestroy {
   }
 
   getVisibilityStudents(loc: Location): VisibilityOverStudents {
-    if (!loc) return DEFAULT_VISIBILITY_STUDENTS;
-    return {mode: loc.visibility_type, over: loc.visibility_students};
+    if (!loc) return cloneDeep(DEFAULT_VISIBILITY_STUDENTS);
+    return {...cloneDeep(DEFAULT_VISIBILITY_STUDENTS), mode: loc.visibility_type, over: loc.visibility_students, grade: loc.visibility_grade};
   }
 
   generateAdvOptionsModel(loc: Location) {
@@ -733,8 +758,45 @@ export class OverlayContainerComponent implements OnInit, OnDestroy {
    });
  }
 
+ private createOrUpdateLocation(location, category: string): Observable<any> {
+    const locationData = cloneDeep(location);
+    locationData.category = category;
+   if (this.visibilityForm.dirty && location?.visibility_students) {
+     locationData.visibility_students = locationData.visibility_students.map((s: User) => s.id);
+   } else if (this.visibilityForm.pristine) {
+     delete locationData?.visibility_students;
+     delete locationData?.visibility_type;
+     delete locationData?.visibility_grade;
+   }
+
+    if (isString(location.id)) {
+      locationData.teachers = location.teachers.map(t => t.id);
+      return this.locationService.createLocation(locationData);
+    }
+
+   if (!location.max_passes_to_active && location.enable_queue) {
+     locationData.max_passes_to_active = true;
+   }
+   if (location.teachers) {
+     locationData.teachers = locationData.teachers.map(teacher => +teacher.id);
+   }
+
+   return this.locationService.updateLocation(location.id, locationData);
+ }
+
+ private getIconString(): string {
+    return this.selectedIcon?.inactive_icon ?? ((typeof this.selectedIcon === 'string') ? this.selectedIcon : '');
+ }
+
+ private isPinnableChanged(): boolean {
+    return this.folderData.folderName !== this.pinnable.title ||
+      this.color_profile.id !== this.pinnable.color_profile.id ||
+      this.getIconString() !== this.pinnable.icon;
+ }
+
   onPublish() {
     this.showPublishSpinner = true;
+    this.isSaveButtonDisabled = true;
 
     if (this.currentPage === Pages.NewRoom) {
        const location = {
@@ -742,6 +804,7 @@ export class OverlayContainerComponent implements OnInit, OnDestroy {
                 room: this.roomData.roomNumber,
                 restricted: !!this.roomData.restricted,
                 scheduling_restricted: !!this.roomData.scheduling_restricted,
+                needs_check_in: !!this.roomData.needs_check_in,
                 teachers: this.roomData.selectedTeachers.map(teacher => teacher.id),
                 travel_types: this.roomData.travelType,
                 max_allowed_time: +this.roomData.timeLimit,
@@ -752,6 +815,7 @@ export class OverlayContainerComponent implements OnInit, OnDestroy {
                 enable: this.isOpenRoom,
                 visibility_type: this.visibility.mode,
                 visibility_students: this.visibility.over.map((el: User) => el.id),
+                visibility_grade: this.visibility.grade,
                 ...this.normalizeAdvOptData()
         };
        this.locationService.createLocationRequest(location)
@@ -772,114 +836,109 @@ export class OverlayContainerComponent implements OnInit, OnDestroy {
            )
          .subscribe(response => {
            this.toast.openToast({title: 'New room added', type: 'success'});
+           this.isSaveButtonDisabled = false;
            this.dialogRef.close(true);
          });
     }
 
-    if (this.currentPage === Pages.NewFolder || this.currentPage === Pages.EditFolder) {
-      const salt = ' ' + this.generateRandomString();
-      if (!this.folderData.roomsInFolder.length) {
-        const newFolder = {
-          title: this.folderData.folderName,
-          color_profile: this.color_profile.id,
-          // selectedIcon is an object when is to be updated but is kept as a string
-          icon: this.selectedIcon?.inactive_icon ?? (typeof this.selectedIcon === 'string') ? this.selectedIcon : '', // last choice to be a generic icon not just a empty string?
-          category: this.folderData.folderName + salt
-        };
-        if (this.pinnable) {
-          this.hallPassService.updatePinnableRequest(this.pinnable.id, newFolder).pipe(
-            takeUntil(this.destroy$),
-            this.catchError(),
-          )
-            .subscribe(res => this.dialogRef.close(true));
+    /**
+     * Creating a new folder means:
+     * - there is no pinnable attached to this folder, therefore this.pinnable is undefined
+     * - there are at be at least 0 rooms in this folder
+     * - a new category must be created
+     * - there can be no rooms to delete in a new folder since the folder did not exist before
+     */
+    if (this.currentPage === Pages.NewFolder) {
+      const category = `${this.folderData.folderName} ${this.generateRandomString()}`;
+      const pinnableData = { // data to create the pinnable
+        title: this.folderData.folderName,
+        color_profile: this.color_profile.id,
+        icon: this.getIconString(),
+        category
+      };
+
+      const roomsInFolderUpdateRequests$ = this.folderData.roomsInFolder.map(room => { // data to update rooms
+        return this.createOrUpdateLocation(room, category);
+      });
+
+      zip(...roomsInFolderUpdateRequests$).pipe(
+        switchMap(() => zip(
+          this.hallPassService.pinnables$.pipe(take(1)),
+          this.hallPassService.postPinnableRequest(pinnableData).pipe(filter(res => !!res)),
+        ).pipe(switchMap((result: any[]) => {
+          const arrangedSequence = result[0].map(item => item.id);
+          arrangedSequence.push(result[1].id);
+          return this.hallPassService.createArrangedPinnableRequest( { order: arrangedSequence.join(',')});
+        }))),
+        takeUntil(this.destroy$),
+        this.catchError()
+      ).subscribe({
+        next: () => {
+          this.toast.openToast({title: 'New folder added', type: 'success'});
+          this.isSaveButtonDisabled = false;
+          this.dialogRef.close(true);
         }
+      });
+    }
+
+    /**
+     * Editing a folder means:
+     * - a pinnable has already been created for this folder, therefore this.pinnable **should** be defined
+     *   (throw a developer-level error if this.pinnable is somehow undefined, since this should not happen)
+     * - data irrelevant to contained rooms may have changed (title, icon, color profile)
+     * - data relevant to rooms may have changed:
+     *   - added rooms
+     *   - delete rooms
+     *   - edited rooms
+     * - the folder may contain at least 0 rooms
+     * - the category should not be updated
+     */
+    if (this.currentPage === Pages.EditFolder) {
+      const pinnableData = { // data to create the pinnable
+        title: this.folderData.folderName,
+        color_profile: this.color_profile.id,
+        icon: this.getIconString()
+      };
+
+      if (!this.pinnable) {
+        throw new Error('Pinnable is supposed to exist if editing a folder!');
       }
-      if (this.folderData.roomsToDelete.length) {
-        const deleteRequest$ = this.folderData.roomsToDelete.map(room => {
-          return this.locationService.deleteLocationRequest(room.id).pipe(filter(res => !!res));
+
+      console.log(`Pinnable changed: ${this.isPinnableChanged()}`);
+      const pinnableUpdateRequest$ = this.isPinnableChanged()
+        ? this.hallPassService.updatePinnable(this.pinnable.id, pinnableData).pipe(
+          takeUntil(this.destroy$),
+          this.catchError())
+        : of(null);
+
+      const roomDeletionRequest$ = forkJoin(this.folderData.roomsToDelete.length
+        ? this.folderData.roomsToDelete.map(room => this.locationService.deleteLocationRequest(room.id).pipe(filter(res => !!res)))
+        : [of(null)]).pipe(takeUntil(this.destroy$));
+
+      const existingOrNewRoomRequests$ = this.folderData.roomsInFolder
+        .filter(room => room.isEdit || !room.category)
+        .map(room => {
+          return this.createOrUpdateLocation(room, this.pinnable.category);
         });
 
-        forkJoin(deleteRequest$).pipe(takeUntil(this.destroy$)).subscribe();
-      }
-
-      let locationsToDb$;
-      const touchedRooms = this.folderData.roomsInFolder.filter(room => room.isEdit || !room.category);
-
-      if (touchedRooms.length) {
-        locationsToDb$ = touchedRooms.map(location => {
-          let id;
-          let data;
-          if (isString(location.id)) {
-            data = location;
-            data.category = this.folderData.folderName + salt;
-            data.teachers = location.teachers.map(t => t.id);
-            if (data?.visibility_students) {
-              data.visibility_students = data.visibility_students.map((s: User) => s.id);
-            }
-            //location.visibility_type =
-            return this.locationService.createLocation(data);
-          } else {
-            id = location.id;
-            data = location;
-            data.category = this.folderData.folderName + salt;
-            if (!data.max_passes_to_active && data.enable_queue) {
-              data.max_passes_to_active = true;
-            }
-            if (data.teachers) {
-              data.teachers = data.teachers.map(teacher => +teacher.id);
-            }
-            if (data?.visibility_students) {
-              data.visibility_students = data.visibility_students.map((s: User) => s.id);
-            }
-
-            return this.locationService.updateLocation(id, data);
-          }
-        });
-      } else {
-        locationsToDb$ = [of(null)];
-      }
-
-      zip(...locationsToDb$).pipe( // after all locations observables emit, emit responses as an array
-        switchMap(locations => { // map each location to a switched observable request
-          const newFolder = {
-            title: this.folderData.folderName,
-            color_profile: this.color_profile.id,
-            // TODO why is this.selectedIcon is a string?
-            icon: this.selectedIcon?.inactive_icon,
-            category: this.folderData.folderName + salt
-          };
-          if (this.currentPage === Pages.EditFolder) {
-            this.hallPassService.updatePinnableRequest(this.pinnable.id, newFolder);
+      forkJoin([pinnableUpdateRequest$, roomDeletionRequest$, ...existingOrNewRoomRequests$]).pipe(
+        concatMap(() => {
+          if (this.pinnableToDeleteIds.length === 0) {
             return of(null);
-          } else {
-            return zip(
-              this.hallPassService.pinnables$.pipe(take(1)),
-              this.hallPassService.postPinnableRequest(newFolder).pipe(filter(res => !!res)),
-            ).pipe(
-              switchMap((result: any[]) => {
-                const arrengedSequence = result[0].map(item => item.id);
-                arrengedSequence.push(result[1].id);
-                return this.hallPassService.createArrangedPinnableRequest( { order: arrengedSequence.join(',')});
-              })
-            );
           }
-      }),
-      switchMap((res) => {
-        if (this.pinnableToDeleteIds.length) {
-          const deleteRequests = this.pinnableToDeleteIds.map(id => {
-            return this.hallPassService.deletePinnableRequest(id, true);
-          });
-          return zip(...deleteRequests);
-        } else {
-          return of(null);
+
+          return zip(
+            ...this.pinnableToDeleteIds.map(id => this.hallPassService.deletePinnableRequest(id, true))
+          );
+        }),
+        takeUntil(this.destroy$),
+        this.catchError(),
+      ).subscribe({
+        next: () => {
+          this.toast.openToast({title: 'Folder updated', type: 'success'});
+          this.isSaveButtonDisabled = false;
+          this.dialogRef.close(true);
         }
-      }),
-      takeUntil(this.destroy$),
-      this.catchError(),
-      )
-      .subscribe(() => {
-        this.toast.openToast({title: this.currentPage === Pages.NewFolder ? 'New folder added' : 'Folder updated', type: 'success'});
-        this.dialogRef.close(true);
       });
     }
 
@@ -889,6 +948,7 @@ export class OverlayContainerComponent implements OnInit, OnDestroy {
             room: this.roomData.roomNumber,
             restricted: !!this.roomData.restricted,
             scheduling_restricted: !!this.roomData.scheduling_restricted,
+            needs_check_in: !!this.roomData.needs_check_in,
             teachers: this.roomData.selectedTeachers.map(teacher => teacher.id),
             travel_types: this.roomData.travelType,
             max_allowed_time: +this.roomData.timeLimit,
@@ -900,6 +960,7 @@ export class OverlayContainerComponent implements OnInit, OnDestroy {
 
             visibility_type: this.visibility.mode,
             visibility_students: this.visibility.over.map((el: User) => el.id),
+            visibility_grade: this.visibility.grade,
         };
 
         const mergedData = {...location, ...this.normalizeAdvOptData()};
@@ -916,24 +977,42 @@ export class OverlayContainerComponent implements OnInit, OnDestroy {
                     location: loc.id,
                 };
                 return this.hallPassService.updatePinnableRequest(this.pinnable.id, pinnable);
-            })).pipe(take(1), takeUntil(this.destroy$)).subscribe(response => {
+            })).pipe(take(1), takeUntil(this.destroy$)).subscribe(() => {
               this.toast.openToast({title: 'Room updated', type: 'success'});
+              this.isSaveButtonDisabled = false;
               this.dialogRef.close(true);
         });
     }
 
     if (this.currentPage === Pages.BulkEditRooms) {
       const patchRequests$ = (this.bulkEditData.rooms as Location[]).map(room => {
+        // ensure we have visibility data
+        const {mode, over, grade} = this.bulkEditData.roomData?.visibility ?? DEFAULT_VISIBILITY_STUDENTS ;
+        const visibilityBulkData = {
+          visibility_type: mode,
+          visibility_students: over.map(s => '' + s.id),
+          visibility_grade: grade,
+        };
+
         const data = {
           ...room,
-          teachers: room.teachers.map(t => t.id)
+          teachers: room.teachers.map(t => t.id),
+          ...visibilityBulkData,
         };
+        // apply bulk visibility only if user wanted it explicitly
+        // otherwise avoid updating existing visibility by deleting concerned request data
+        if (!this.visibilityForm.dirty) {
+          delete data.visibility_students;
+          delete data.visibility_type;
+          delete data.visibility_grade;
+        }
         return this.locationService.updateLocationRequest(room.id, data).pipe(
           filter(res => !!res));
       });
 
       zip(...patchRequests$).pipe(takeUntil(this.destroy$)).subscribe(res => {
         this.toast.openToast({title: 'Rooms updated', type: 'success'});
+        this.isSaveButtonDisabled = false;
         this.dialogRef.close(true);
       });
     }
@@ -971,6 +1050,8 @@ export class OverlayContainerComponent implements OnInit, OnDestroy {
   folderResult({data, buttonState}) {
       this.folderData = data;
       this.roomValidButtons.next(buttonState);
+      this.visibilityForm.setValue({visibility: this.visibility});
+      this.visibilityForm.markAsDirty();
   }
 
   newRoomInFolder(room: RoomData) {
@@ -1047,6 +1128,7 @@ export class OverlayContainerComponent implements OnInit, OnDestroy {
     return rooms.map(room => {
       room.restricted = !!roomData.restricted;
       room.scheduling_restricted = !!roomData.scheduling_restricted;
+      room.needs_check_in = !!roomData.needs_check_in;
       if (roomData.travelType.length) {
         room.travelType = roomData.travelType;
       }
@@ -1078,6 +1160,7 @@ export class OverlayContainerComponent implements OnInit, OnDestroy {
       room: room.roomNumber,
       restricted: !!room.restricted,
       scheduling_restricted: !!room.scheduling_restricted,
+      needs_check_in: !!room.needs_check_in,
       teachers: room.selectedTeachers,
       travel_types: room.travelType,
       max_allowed_time: +room.timeLimit,
@@ -1088,11 +1171,12 @@ export class OverlayContainerComponent implements OnInit, OnDestroy {
       enable: room.enable,
       visibility_students: room.visibility?.over || DEFAULT_VISIBILITY_STUDENTS.over,
       visibility_type: room.visibility?.mode || DEFAULT_VISIBILITY_STUDENTS.mode,
+      visibility_grade: room.visibility?.grade || DEFAULT_VISIBILITY_STUDENTS.grade,
     };
   }
 
   generateRandomString() {
-    let random: string = '';
+    let random = '';
     const characters = 'qwertyu';
     for (let i = 0; i < characters.length; i++) {
       random += characters.charAt(Math.floor(Math.random() * characters.length));

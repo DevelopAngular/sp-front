@@ -83,7 +83,7 @@ export class SettingsComponent implements OnInit, OnDestroy {
   }
 
   get showNotificationBadge() {
-    return this.user && moment(this.user.created).add(7, 'days').isSameOrBefore(moment());
+    return this.user && moment(this.user.first_login).add(30, 'days').isSameOrBefore(moment());
   }
 
   ngOnInit() {
@@ -172,6 +172,7 @@ export class SettingsComponent implements OnInit, OnDestroy {
         this.sideNavService.sideNavAction$.next('signout');
     }
     this.removeOfflineAuthData();
+    localStorage.removeItem('kioskSettingsData');
     localStorage.removeItem('fcm_sw_registered');
     this.localize.setLanguageUntranslated();
   }
@@ -255,7 +256,7 @@ export class SettingsComponent implements OnInit, OnDestroy {
       'title': 'Favorites'
     });
     this.settings.push({
-      'hidden': this.isMobile,
+      'hidden': this.isMobile || this.isKioskMode,
       'background': '#E32C66',
       'icon': 'Notifications',
       'action': 'notifications',
@@ -266,7 +267,7 @@ export class SettingsComponent implements OnInit, OnDestroy {
       'background': '#EBBB00',
       'icon': 'Referal',
       'action': 'refer',
-      'title': 'Refer a friend',
+      'title': 'Refer a teacher',
       'isNew': this.isStaff && this.intosData.referral_reminder ? (!this.intosData.referral_reminder.universal.seen_version && this.showNotificationBadge) : false
     });
   }

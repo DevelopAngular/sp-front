@@ -1,6 +1,7 @@
 import {Injectable} from '@angular/core';
 
 import {BehaviorSubject, Subject} from 'rxjs';
+import {cloneDeep} from 'lodash';
 
 import {User} from '../../models/User';
 import {Pinnable} from '../../models/Pinnable';
@@ -46,18 +47,37 @@ export interface RoomData {
     travelType: string[];
     restricted: boolean;
     scheduling_restricted: boolean;
+    needs_check_in: boolean;
     advOptState: OptionState;
     visibility?: VisibilityOverStudents;
     enable: boolean;
 }
 
+/**
+ * FolderData is responsible for describing the data between the OverlayContainerComponent
+ * and its children regarding editing folders
+ */
 export interface FolderData {
-    folderName: string;
-    roomsInFolder: any[];
-    selectedRoomsInFolder: any[];
-    roomsInFolderLoaded: boolean;
-    selectedRoomToEdit: any;
-    roomsToDelete: any[];
+  // folderName: Name of the Room Folder as it appears on the UI (without category name)
+  folderName: string;
+
+  // roomsInFolder: List of rooms associated with the folder. Associated by category
+  // TODO: Properly type this. Remove `any` type
+  roomsInFolder: any[];
+
+  // selectedRoomsInFolder: List of rooms in folder currently selected to be either edited or deleted
+  // TODO: Properly type this. Remove `any` type
+  selectedRoomsInFolder: any[];
+
+  // roomsInFolderLoaded: used as a check to tell when it's safe to pull data from this interface
+  roomsInFolderLoaded: boolean;
+
+  // selectedRoomToEdit: A single room selected to be edited
+  // TODO: Properly type this. Remove `any` type
+  selectedRoomToEdit: any;
+
+  // roomsToDelete: List of rooms to be deleted from a folder. This list is filled
+  roomsToDelete: any[];
 }
 
 @Injectable({
@@ -78,7 +98,8 @@ export class OverlayDataService {
       travel: 'Will the room will be available to make only round-trip passes, only one-way passes, or both?',
       timeLimit: 'What is the maximum time limit that a student can make the pass for themselves?',
       restriction: 'Does the pass need digital approval from a teacher to become an active pass?',
-      scheduling_restricted: 'Does the pass need digital approval from a teacher to become a scheduled pass?'
+      scheduling_restricted: 'Does the pass need digital approval from a teacher to become a scheduled pass?',
+      needs_check_in: 'Passes must be ended using the Room Code, Teacher’s Pin, or from a Teacher’s device.'
   };
 
   constructor() {
@@ -101,12 +122,13 @@ export class OverlayDataService {
 
   public patchData(data) {
     const old = this.pageState.getValue();
-    data = {...old.data, ...data};
-    this.pageState.next({
+    const newdata = cloneDeep({...old.data, ...data});
+    const patched = {
       currentPage: old.currentPage,
       previousPage: old.previousPage,
-      data,
-    });
+      data: newdata,
+    };
+    this.pageState.next(patched);
   }
 
   back(data) {

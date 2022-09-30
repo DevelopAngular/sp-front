@@ -19,6 +19,9 @@ export class State<ModelType extends BaseModel> {
     this.pass_lookup = {};
 
     for (const pass of this.passes) {
+      if (!pass) { // ideally, this shouldn't happen
+        continue;
+      }
       this.pass_lookup[pass.id] = pass;
     }
   }

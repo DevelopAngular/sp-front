@@ -147,6 +147,10 @@ export class HallPassesService {
         return this.http.post(`v1/hall_passes/${id}/ended`);
     }
 
+    endPassWithCheckIn(id, data) {
+      return this.http.post(`v1/hall_passes/${id}/ended`, data);
+    }
+
     getPassStatsRequest() {
       this.store.dispatch(getPassStats());
       return this.passStats$;

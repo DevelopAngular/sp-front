@@ -64,6 +64,19 @@
                 margin-right: 13px;
             }
         }
+        .update-info-wrapper {
+            margin: 0 50px;
+            .info {
+                @include textSize(15px, 600, #1F195E);
+            }
+            .day {
+                display: flex;
+                @include textSize(14px, 500, #7083A0);
+                span {
+                    margin-left: 10px;
+                }
+            }
+        }
     }
     .content {
         margin-top: 16px;

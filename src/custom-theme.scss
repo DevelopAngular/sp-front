@@ -1,4 +1,5 @@
 @import '~@angular/material/_theming';
+@import './design-system';
 
 @include mat-core();
 
@@ -17,12 +18,16 @@ $mat-white: (
   )
 );
 
+// See here for font-config https://stackoverflow.com/a/43775432
+$inter-font: mat-typography-config(
+  $font-family: $primaryFont
+);
 $slider-theme-primary: mat-palette($mat-white);
 $slider-theme-accent: mat-palette($mat-white);
 $slider-theme: mat-light-theme($slider-theme-primary, $slider-theme-accent);
 
 @include angular-material-theme($slider-theme);
-
+@include mat-core($inter-font);
 
 
 $mat-dark-green: (
@@ -103,7 +108,6 @@ $loading-theme-white: mat-light-theme($loading-theme-white-accent, $loading-them
 $loading-theme-blue-gray-primary: mat-palette($mat-blue-grey);
 $loading-theme-blue-gray-accent: mat-palette($sp-blue-grey);
 $loading-theme-blue-gray: mat-dark-theme($loading-theme-blue-gray-accent, $loading-theme-blue-gray-primary);
-
 
 .loading-theme {
     @include angular-material-theme($loading-theme);

@@ -1,7 +1,7 @@
 import {Component, ElementRef, EventEmitter, Input, OnDestroy, OnInit, Output, ViewChild} from '@angular/core';
 import {HttpService} from '../services/http-service';
 import {Location} from '../models/Location';
-import {filter, map, pluck, switchMap, takeUntil, take} from 'rxjs/operators';
+import {filter, map, pluck, switchMap, takeUntil, take, skip} from 'rxjs/operators';
 import {LocationsService} from '../services/locations.service';
 import {combineLatest, iif, Observable, of, Subject, zip} from 'rxjs';
 import {filter as _filter, sortBy} from 'lodash';
@@ -15,12 +15,49 @@ import {CdkDragDrop, moveItemInArray} from '@angular/cdk/drag-drop';
 import {LocationVisibilityService} from '../create-hallpass-forms/main-hallpass--form/location-visibility.service';
 import {UserService} from '../services/user.service';
 import {User} from '../models/User';
+import {PassLimitInfo} from '../models/HallPassLimits';
+import {cloneDeep} from 'lodash';
 
 
 export interface Paged<T> {
   results: T[];
   next: string;
   previous: string;
+}
+
+// TODO: it does wipe out any existent get set
+function Visibility(): any {
+  return function (target: any, property: string, descriptor: PropertyDescriptor) {
+    let values: any[];
+
+    return {
+      set: function (vv: any[]) {
+        const student = [this.user];
+        if (this.forStaff && this.forKioskMode) {
+          student[0] = this.selectedStudents[0];
+        }
+        // filtering apply only for a student
+        if (vv.length > 0 && 
+          (!this.forStaff || 
+           (this.forStaff && this.forKioskMode)
+          )
+         ) {
+          // test if we have Location's
+          let v = vv[0];
+          try {
+            v = (v instanceof Location) ? v : Location.fromJSON(v);
+            vv = vv.filter((loc: Location) => this.visibilityService.filterByVisibility(loc, student));
+          }catch (e) {}
+        }
+        values = vv;
+      },
+      get: function() {
+        return values;
+      },
+      enumerable: true,
+      configurable: true
+    };
+  };
 }
 
 @Component({
@@ -32,7 +69,7 @@ export interface Paged<T> {
 export class LocationTableComponent implements OnInit, OnDestroy {
 
   @Input() category: string;
-  @Input() forKioskMode: boolean = false;
+  @Input() forKioskMode = false;
   @Input() placeholder: string;
   @Input() type: string;
   @Input() showStars: boolean;
@@ -57,6 +94,9 @@ export class LocationTableComponent implements OnInit, OnDestroy {
   @Input() originLocation: any;
   @Input() searchTeacherLocations: boolean;
   @Input() currentPage: 'from' | 'to';
+  @Input() updatedLocation$?: Observable<Location> | undefined;
+  @Input() selectedStudents: User[] = [];
+  @Input() passLimitInfo: PassLimitInfo;
 
   @Output() onSelect: EventEmitter<any> = new EventEmitter();
   @Output() onStar: EventEmitter<string> = new EventEmitter();
@@ -64,27 +104,11 @@ export class LocationTableComponent implements OnInit, OnDestroy {
 
   @ViewChild('item') currentItem: ElementRef;
 
-  private _choices: any[] = [];
-  get choices(): any[] {
-    return this._choices;
-  }
-  set choices(values: any[]) {
-    // filtering apply only for a student
-    if (values.length > 0 && !this.forStaff) {
-      // test if we have Location's
-      let v = values[0];
-      try {
-        v = Location.fromJSON(v);
-        const student = [''+ this.user.id];
-        values = values.filter((loc: Location) => this.visibilityService.filterByVisibility(loc, student));
-      }catch (e) {}
-    }
-    // add posible filtered values
-    this._choices = values;
-  };
-
+  @Visibility()
+  choices: any[] = [];
   noChoices:boolean = false;
   mainContentVisibility: boolean = false;
+  @Visibility()
   starredChoices: any[] = [];
   search: string = '';
   favoritesLoaded: boolean;
@@ -93,11 +117,12 @@ export class LocationTableComponent implements OnInit, OnDestroy {
   pinnablesLoaded: boolean;
 
   passLimits: {[id: number]: PassLimit} = {};
-  
+
   private user: User;
 
   showSpinner$: Observable<boolean>;
   loaded$: Observable<boolean>;
+  loading$: Observable<boolean>;
 
   isFocused: boolean;
 
@@ -119,8 +144,9 @@ export class LocationTableComponent implements OnInit, OnDestroy {
   }
 
   ngOnInit() {
-    this.userService.userData
+    this.userService.user$
     .pipe(
+      takeUntil(this.destroy$),
       filter(u => !!u),
       take(1),
     )
@@ -167,6 +193,8 @@ export class LocationTableComponent implements OnInit, OnDestroy {
       (loc, fav) => loc && fav
     );
 
+    this.loading$ = this.locationService.loadingLocations$;
+
     if (!this.locationService.focused.value) {
       this.locationService.focused.next(true);
     }
@@ -195,14 +223,20 @@ export class LocationTableComponent implements OnInit, OnDestroy {
             this.locationService.getLocationsWithConfigRequest(url);
 
           request$.pipe(takeUntil(this.destroy$)).subscribe(res => {
-              this.choices = res.filter(loc => !loc.restricted);
+              this.choices = res.map(loc => {
+                loc.restricted = loc.restricted || this.passLimitInfo?.current === 0;
+                return loc;
+              });
           });
         } else {
           const request$ = this.isFavoriteForm ? this.locationService.getLocationsWithConfigRequest(url).pipe(filter((res) => !!res.length)) :
             this.locationService.getLocationsFromCategory(url, this.category).pipe(filter((res) => !!res.length));
 
                 request$.pipe(takeUntil(this.destroy$)).subscribe(p => {
-                  this.choices = p;
+                  this.choices = p.map(loc => {
+                    loc.restricted = loc.restricted || this.passLimitInfo?.current === 0;
+                    return loc;
+                  });
                   this.noChoices = !this.choices.length;
                   this.pinnablesLoaded = true;
                   this.mainContentVisibility = true;
@@ -216,12 +250,9 @@ export class LocationTableComponent implements OnInit, OnDestroy {
         .pipe(takeUntil(this.destroy$))
         .subscribe((stars: any[]) => {
           this.pinnablesLoaded = true;
-          this.starredChoices = this.kioskModeFilter(stars.map(val => Location.fromJSON(val)));
+          this.starredChoices = stars.map(val => Location.fromJSON(val));
           if (this.isFavoriteForm) {
               this.choices = [...this.starredChoices, ...this.choices].sort((a, b) => a.id - b.id);
-          }
-          if (this.forKioskMode) {
-            this.choices = this.choices.filter(loc => !loc.restricted);
           }
           this.favoritesLoaded = true;
             this.mainContentVisibility = true;
@@ -245,14 +276,67 @@ export class LocationTableComponent implements OnInit, OnDestroy {
         }
       });
 
+      this.updatedLocation$?.pipe(
+        takeUntil(this.destroy$),
+      ).subscribe(res => this.updateOrAddChoices(res));
+
   }
 
-  filterByVisibility(location: Location) {
-    const students = [''+this.user.id];
-    const ruleStudents = location.visibility_students.map(s => ''+s.id);
-    const rule = location.visibility_type;
-    let skipped = this.visibilityService.calculateSkipped(students, ruleStudents, rule);
-    return skipped === undefined;
+  private choiceFunc(loc) {
+    return function(choice) {
+      if (choice instanceof Location) { 
+        if (''+choice.id === ''+loc.id) {
+          return loc;
+        } else {
+          return choice;
+        }
+      } else {
+        try {
+          const l = Location.fromJSON(choice);
+          if (''+l.id === ''+loc.id) {
+            return cloneDeep(loc);
+          }   
+        } catch(e) {}
+        return cloneDeep(choice);
+      }
+    }
+  }
+
+  // check if modified location exists on choices
+  private isFoundChoice(loc: Location, choices: Location[]|any[]) {
+    for (let i = 0; i < choices.length; i++) {
+      if (choices[i] instanceof Location) { 
+        if (''+choices[i].id === ''+loc.id) {
+          return true;
+        } 
+      } else {
+        try {
+          const l = Location.fromJSON(choices[i]);
+          if (''+l.id === ''+loc.id) {
+            return true;
+          }
+        } catch(e) {}
+      }
+    }
+    return false;
+  }
+
+  private updateOrAddChoices(loc: Location) {
+    const mapping = this.choiceFunc(loc);
+    if (!this.isFoundChoice(loc, this.choices)) {
+      this.choices = [cloneDeep(loc), ...this.choices];
+    } else {
+      this.choices = this.choices.map(mapping);
+    }
+
+    if (!loc.starred) {
+      return;
+    }
+    if (!this.isFoundChoice(loc, this.starredChoices)) {
+      this.starredChoices = [cloneDeep(loc), ...this.starredChoices];
+    } else {
+      this.starredChoices = this.starredChoices.map(mapping);
+    }
   }
 
   normalizeLocations(loc) {
@@ -271,7 +355,14 @@ export class LocationTableComponent implements OnInit, OnDestroy {
         }
       }
     }
+
+    // We don't need to restrict the location by pass limit if the location is for later
+    if (this.forLater) {
       return loc;
+    }
+
+    loc.restricted = loc.restricted || this.passLimitInfo?.current === 0;
+    return loc;
   }
 
   ngOnDestroy(): void {
@@ -298,9 +389,6 @@ export class LocationTableComponent implements OnInit, OnDestroy {
 
         this.locationService.searchLocationsRequest(url)
           .pipe(
-            map((locs: any) => {
-              return this.kioskModeFilter(locs);
-            }),
             takeUntil(this.destroy$),
             switchMap(locs => {
               if (this.searchTeacherLocations) {
@@ -333,40 +421,39 @@ export class LocationTableComponent implements OnInit, OnDestroy {
                   return item.title.toLowerCase().includes(this.search);
               }));
 
-            this.choices = (this.searchExceptFavourites && !this.forKioskMode) || !!this.category
+            this.choices = ((this.searchExceptFavourites && !this.forKioskMode) || !!this.category
                             ? [...this.filterResults(p)]
-                            : [...filtFevLoc, ...this.filterResults(p)];
+                            : [...filtFevLoc, ...this.filterResults(p)]).filter(r => {
+                              if (this.category) {
+                                return this.category === r.category;
+                              }
+                              return r;
+            });
             this.noChoices = !this.choices.length;
           });
       } else {
         if (this.staticChoices && this.staticChoices.length) {
           this.choices = this.staticChoices;
         } else {
-          iif(() => !!this.category, this.locationService.locsFromCategory$, this.locationService.locations$)
-            .pipe(
-              takeUntil(this.destroy$),
-              map(locs => {
-                return this.kioskModeFilter(locs);
-            }))
+          iif(() =>
+            !!this.category,
+            this.locationService.locsFromCategory$,
+            this.locationService.locations$
+          )
+            .pipe(takeUntil(this.destroy$))
             .subscribe(res => {
-              this.choices = res;
+              this.choices = res.filter(r => {
+                if (this.category) {
+                  return r.category === this.category;
+                }
+                return r;
+              });
               this.hideFavorites = false;
               this.noChoices = !this.choices.length;
           });
-
         }
       }
-
   }
-
-  kioskModeFilter(locs: Location[]) {
-    if (this.forKioskMode) {
-      return locs.filter(loc => !loc.restricted);
-    } else {
-      return locs;
-    }
-  }
-
 
   isValidLocation(locationId: any) {
     if (this.isFavoriteForm)
@@ -397,7 +484,7 @@ export class LocationTableComponent implements OnInit, OnDestroy {
                 const locs = sortBy([...rooms, ...favorites], (item) => {
                   return item.title.toLowerCase();
                 });
-                return this.kioskModeFilter(locs);
+                return locs;
               } else {
                 return rooms;
               }

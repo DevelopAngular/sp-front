@@ -39,7 +39,7 @@ export class ProfilePictureComponent implements OnInit, OnDestroy {
         .pipe(
           filter(() => fileRef.nativeElement.files.length),
           switchMap((evt: Event) => {
-            const extension = fileRef.nativeElement.files[0].name.toLowerCase().split('.')[fileRef.nativeElement.files[0].name.split('.').length - 1];
+            const extension = fileRef.nativeElement.files[0].name.toLowerCase().split('.')[fileRef.nativeElement.files[0].name.split('.').length - 1].toLowerCase();
             if (extension === 'csv' || extension === 'xlsx') {
               this.selectedMapFile = fileRef.nativeElement.files[0];
               this.uploadingProgress.csv.inProcess = true;
@@ -65,7 +65,7 @@ export class ProfilePictureComponent implements OnInit, OnDestroy {
               if (typeof row[0] === 'string' && row[0].includes('@spnx.local')) {
                 row[0] = row[0].replace('@spnx.local', '');
               }
-                return of({ user_id: typeof row[0] === 'string' ? row[0].toLowerCase() : row[0], file_name: row[1], isUserId: !!row[0], isFileName: !!row[1], usedId: false });
+                return of({ user_id: typeof row[0] === 'string' ? row[0].toLowerCase().trim() : row[0], file_name: row[1].toLowerCase().trim(), isUserId: !!row[0], isFileName: !!row[1], usedId: false });
             });
             return forkJoin(validate$);
           })
@@ -94,7 +94,7 @@ export class ProfilePictureComponent implements OnInit, OnDestroy {
           switchMap((event) => {
             const filesStream = [];
             if (fileRef.nativeElement.files.length === 1) {
-              const extension = fileRef.nativeElement.files[0].name.toLowerCase().split('.')[fileRef.nativeElement.files[0].name.split('.').length - 1];
+              const extension = fileRef.nativeElement.files[0].name.toLowerCase().split('.')[fileRef.nativeElement.files[0].name.split('.').length - 1].toLowerCase();
               if (extension !== 'zip' && extension !== 'jpeg' && extension !== 'jpg' && extension !== 'png') {
                 return of(null);
               }
@@ -102,7 +102,7 @@ export class ProfilePictureComponent implements OnInit, OnDestroy {
             this.uploadingProgress.images.inProcess = true;
             for (let i = 0; i < fileRef.nativeElement.files.length; i++) {
               const file = fileRef.nativeElement.files.item(i);
-              const extension = file.name.toLowerCase().split('.')[file.name.split('.').length - 1];
+              const extension = file.name.toLowerCase().split('.')[file.name.split('.').length - 1].toLowerCase();
               if (extension === 'zip' || extension === 'jpeg' || extension === 'jpg' || extension === 'png') {
                 if (extension === 'zip') {
                   filesStream.push(this.zipService.loadZip(file));
@@ -111,7 +111,7 @@ export class ProfilePictureComponent implements OnInit, OnDestroy {
                   reader.readAsDataURL(file);
                   filesStream.push(fromEvent(reader, 'load').pipe(
                     map((item: any) => {
-                    return { file_name: file.name, file: file };
+                    return { file_name: file.name.toLowerCase().trim(), file: file };
                   })));
                 }
               }
@@ -163,7 +163,6 @@ export class ProfilePictureComponent implements OnInit, OnDestroy {
   school: School;
 
   issues = [];
-  errorUpload: boolean;
   errors = [];
 
   destroy$: Subject<any> = new Subject<any>();
@@ -283,9 +282,13 @@ export class ProfilePictureComponent implements OnInit, OnDestroy {
           this.userService.putProfilePicturesErrorsRequest(this.errors);
         });
       } else {
-        this.toastService.openToast({title: 'Error', subtitle: 'Please check if the data is correct', type: 'error'});
-        this.page -= 1;
-        this.clearData();
+        this.toastService.openToast({title: 'Sorry, no pictures could be mapped', subtitle: 'No pictures were able to be mapped to account email addresses or IDs. Please check the spreadsheet and photos you uploaded to make sure they map with existing accounts.', type: 'error'});
+        this.userService.createPPicturesUploadGroup().pipe(filter(r => !!r))
+          .subscribe((group) => {
+            this.userService.putProfilePicturesErrorsRequest(this.errors);
+            this.page -= 1;
+            this.clearData();
+          });
       }
     } else if (this.page === 5) {
       this.userService.clearUploadedData();

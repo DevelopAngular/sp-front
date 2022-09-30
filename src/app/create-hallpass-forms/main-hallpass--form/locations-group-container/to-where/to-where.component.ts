@@ -26,13 +26,14 @@ import {
 import {LocationVisibilityService} from '../../location-visibility.service';
 import {UserService} from '../../../../services/user.service';
 import {User} from '../../../../models/User';
+import {Location} from '../../../../models/Location';
 
 @Component({
   selector: 'app-to-where',
   templateUrl: './to-where.component.html',
   styleUrls: ['./to-where.component.scss']
 })
-export class ToWhereComponent implements OnInit {
+export class ToWhereComponent implements OnInit, OnDestroy {
   @ViewChild('header', { static: true }) header: ElementRef<HTMLDivElement>;
   @ViewChild('rc', { static: true }) set rc(rc: ElementRef<HTMLDivElement> ) {
     if (rc) {
@@ -81,6 +82,7 @@ export class ToWhereComponent implements OnInit {
     'to-header_animation-back': false
   };
 
+  updatedLocation$: Observable<Location>;
   destroy$: Subject<any> = new Subject<any>();
 
   constructor(
@@ -127,8 +129,9 @@ export class ToWhereComponent implements OnInit {
       this.passLimits = res;
     });
 
-    if (this.formState.data.roomStudentsAfterFromStep)
+    if (this.formState.data.roomStudentsAfterFromStep) {
       this.formState.data.roomStudents = [...this.formState.data.roomStudentsAfterFromStep];
+    }
 
    this.userService.userData
     .pipe(
@@ -136,6 +139,8 @@ export class ToWhereComponent implements OnInit {
       take(1),
     )
     .subscribe((u: User) => this.student = u);
+
+    this.updatedLocation$ = this.formService.getUpdatedChoice();
   }
 
   private student: User;
@@ -146,7 +151,11 @@ export class ToWhereComponent implements OnInit {
   }
 
   isValidPinnable(pinnable: Pinnable) {
-    if (pinnable.location.id === this.location.id)
+    // === and ids are dangerous as ids are numeric strings or numbers
+    // using == will pose its own dangers
+    // if (pinnable.location.id == this.location.id)
+    // as we know ids are numbers we cast them to pure numbers
+    if (+pinnable.location.id === +this.location.id)
       return false;
 
     if (this.isStaff && !this.formState.kioskMode)
@@ -183,6 +192,10 @@ export class ToWhereComponent implements OnInit {
   passLimitPromise(location) {
     return new Promise<boolean>(resolve => {
       const passLimit = this.passLimits[location.id];
+      // passLimits has no location.id
+      if (!passLimit){
+        return resolve(true);
+      }
       const passLimitReached = passLimit.max_passes_to_active && passLimit.max_passes_to < (passLimit.to_count + this.countStudents());
       if (!passLimitReached)
         return resolve(true);
@@ -243,32 +256,12 @@ export class ToWhereComponent implements OnInit {
         return;
       }
 
-      // students go forward
-      /*if (!this.isStaff) {
-        this.formState.data.roomStudents = [this.student];
-        this.forwardAndEmit();
-        return;
-      }*/
-
-     /*
-      this.visibilityService.howToActOnChooseLocation(
-        this.formState,
-        location,
-        this.confirmDialogVisibility,
-        this.forwardAndEmit.bind(this),
-        this.destroy$,
-      );
-     */
      // staff only
      const selectedStudents = this.formState.data.roomStudents ?? this.formState.data.selectedStudents;
-     const students = selectedStudents.map(s => ''+s.id);
-     const ruleStudents = location.visibility_students.map(s => ''+s.id);
-     const rule = location.visibility_type;
-
      // skipped are students that do not qualify to go forward
-     let skipped = this.visibilityService.calculateSkipped(students, ruleStudents, rule);
+     let skipped = this.visibilityService.calculateSkipped(selectedStudents, location);
 
-      if (!skipped || skipped.length === 0) {
+      if (skipped.length === 0) {
         forwardAndEmit();
         return;
       }
@@ -276,7 +269,7 @@ export class ToWhereComponent implements OnInit {
       let text =  'This room is only available to certain students';
       let names = selectedStudents.filter(s => skipped.includes(''+s.id)).map(s => s.display_name);
       let title =  'Student does not have permission to go to this room';
-      let denyText =  'Cancel';
+      let denyText =  'Skip';
       if (names.length > 1) {
         text = names?.join(', ') ?? 'This room is only available to certain students'
         title = 'These students do not have permission to go to this room:';
@@ -284,6 +277,104 @@ export class ToWhereComponent implements OnInit {
       } else {
         title = (names?.join(', ') ?? 'Student') + ' does not have permission to go to this room';
       }
+
+      const roomStudents = selectedStudents.filter(s => (!skipped.includes(''+s.id)));
+      const noStudentsCase = roomStudents.length === 0;
+      
+      if (noStudentsCase) denyText = 'Cancel';
+
+      this.dialog.open(ConfirmationDialogComponent, {
+        panelClass: 'overlay-dialog',
+        backdropClass: 'custom-backdrop',
+        closeOnNavigation: true,
+        width: '450px',
+        data: {
+          headerText: '',
+          body: this.confirmDialogVisibility,
+          buttons: {
+            confirmText: 'Override',
+            denyText,
+          },
+          templateData: {alerts: [{title, text}]},
+          icon: {
+            name: 'Eye (Green-White).svg',
+            background: '',
+          }
+        } as ConfirmationTemplates
+      }).afterClosed().pipe(
+        takeUntil(this.destroy$),
+      ).subscribe(override => {
+        this.formState.data.roomOverride = !!override;
+
+        if (override === undefined) {
+          return;
+        }
+
+        // override case
+        if (override) {
+          forwardAndEmit();
+          return;
+        }
+
+        // SKIPPING case
+        // avoid a certain no students case
+        if (selectedStudents.length === 1) {
+          return;
+        }
+
+        if (noStudentsCase) {
+          return;
+        }
+
+        this.formState.data.roomStudents = roomStudents;
+        forwardAndEmit();
+      });
+    };
+
+    if (pinnable.type !== 'location')
+      return emitSelectedPinnable(true);
+    else
+      this.passLimitPromise(pinnable.location).then(emitSelectedPinnable);
+  }
+
+  locationSelected(location) {
+    const forwardAndEmit = () => {
+      this.formService.setFrameMotionDirection('disable');
+      this.formService.scalableBoxController.next(true);
+      setTimeout(() => {
+        this.selectedLocation.emit(location);
+      }, 100);
+    };
+
+    this.passLimitPromise(location).then((allowed) => {
+      if (!allowed) return;
+
+     // staff only
+     const selectedStudents = this.formState.data.roomStudents ?? this.formState.data.selectedStudents;
+     // skipped are students that do not qualify to go forward
+     let skipped = this.visibilityService.calculateSkipped(selectedStudents, location);
+
+      if (skipped.length === 0) {
+        forwardAndEmit();
+        return;
+      }
+
+      let text =  'This room is only available to certain students';
+      let names = selectedStudents.filter(s => skipped.includes(''+s.id)).map(s => s.display_name);
+      let title =  'Student does not have permission to go to this room';
+      let denyText =  'Skip';
+      if (names.length > 1) {
+        text = names?.join(', ') ?? 'This room is only available to certain students'
+        title = 'These students do not have permission to go to this room:';
+        denyText = 'Skip these students';
+      } else {
+        title = (names?.join(', ') ?? 'Student') + ' does not have permission to go to this room';
+      }
+
+      const roomStudents = selectedStudents.filter(s => (!skipped.includes(''+s.id)));
+      const noStudentsCase = roomStudents.length === 0;
+      
+      if (noStudentsCase) denyText = 'Cancel';
 
       this.dialog.open(ConfirmationDialogComponent, {
         panelClass: 'overlay-dialog',
@@ -320,141 +411,10 @@ export class ToWhereComponent implements OnInit {
         // SKIPPING case
         // avoid a certain no students case
         if (selectedStudents.length === 1) {
-          //this.dialogRef.close();
           return;
         }
 
-        // filter out the skipped students
-        const roomStudents = selectedStudents.filter(s => (!skipped.includes(''+s.id)));
-        // avoid no students case
-        if (roomStudents.length === 0) {
-          this.toastService.openToast({
-            title: 'Skiping will left no students to operate on',
-            subtitle: 'Last operation did not proceeed',
-            type: 'error',
-          });
-          return;
-        }
-
-        this.formState.data.roomStudents = roomStudents;
-        forwardAndEmit();
-      });
-    };
-
-    if (pinnable.type !== 'location')
-      return emitSelectedPinnable(true);
-    else
-      this.passLimitPromise(pinnable.location).then(emitSelectedPinnable);
-  }
-
-  /*
-  private forwardAndEmit() {
-    this.formService.setFrameMotionDirection('disable');
-    this.formService.scalableBoxController.next(true);
-    setTimeout(() => {
-      this.selectedLocation.emit(location);
-    }, 100);
-  }*/
-
-  locationSelected(location) {
-    const forwardAndEmit = () => {
-      this.formService.setFrameMotionDirection('disable');
-      this.formService.scalableBoxController.next(true);
-      setTimeout(() => {
-        this.selectedLocation.emit(location);
-      }, 100);
-    };
-
-    this.passLimitPromise(location).then((allowed) => {
-      if (!allowed) return;
-
-      // students go forward
-      /*if (!this.isStaff) {
-        this.formState.data.roomStudents = [this.student];
-        forwardAndEmit();
-        return;
-      }
-
-      this.visibilityService.howToActOnChooseLocation(
-        this.formState,
-        location,
-        this.confirmDialogVisibility,
-        this.forwardAndEmit.bind(this),
-        this.destroy$,
-      );*/
-
-     // staff only
-     const selectedStudents = this.formState.data.roomStudents ?? this.formState.data.selectedStudents;
-     const students = selectedStudents.map(s => ''+s.id);
-     const ruleStudents = location.visibility_students.map(s => ''+s.id);
-     const rule = location.visibility_type;
-
-     // skipped are students that do not qualify to go forward
-     let skipped = this.visibilityService.calculateSkipped(students, ruleStudents, rule);
-
-      if (!skipped || skipped.length === 0) {
-        forwardAndEmit();
-        return;
-      }
-
-      let text =  'This room is only available to certain students';
-      let names = selectedStudents.filter(s => skipped.includes(''+s.id)).map(s => s.display_name);
-      let title =  'Student does not have permission to go to this room';
-      let denyText =  'Cancel';
-      if (names.length > 1) {
-        text = names?.join(', ') ?? 'This room is only available to certain students'
-        title = 'These students do not have permission to go to this room:';
-        denyText = 'Skip these students';
-      } else {
-        title = (names?.join(', ') ?? 'Student') + ' does not have permission to go to this room';
-      }
-
-      this.dialog.open(ConfirmationDialogComponent, {
-        panelClass: 'overlay-dialog',
-        backdropClass: 'custom-backdrop',
-        closeOnNavigation: true,
-        data: {
-          headerText: '',
-          body: this.confirmDialogVisibility,
-          buttons: {
-            confirmText: 'Override',
-            denyText,
-          },
-          templateData: {alerts: [{title, text}]},
-          icon: {
-            name: 'Eye (Green-White).svg',
-            background: '',
-          }
-        } as ConfirmationTemplates
-      }).afterClosed().pipe(
-        takeUntil(this.destroy$),
-      ).subscribe(override => {
-        this.formState.data.roomOverride = !!override;
-
-        if (override === undefined) {
-          return;
-        }
-
-        // override case
-        if (override) {
-          forwardAndEmit();
-          return;
-        }
-
-        // SKIPPING case
-        // avoid a certain no students case
-        if (selectedStudents.length === 1) return;
-
-        this.formState.data.roomOverride = !!override;
-        // filter out the skipped students
-        const roomStudents = selectedStudents.filter(s => (!skipped.includes(''+s.id)));
-        // avoid no students case
-        if (roomStudents.length === 0) {
-          this.toastService.openToast({
-            title: 'Skiping will left no students to operate on',
-            subtitle: 'Last operation did not proceeed',
-            type: 'error',
-          });
+        if (noStudentsCase) {
           return;
         }
 
