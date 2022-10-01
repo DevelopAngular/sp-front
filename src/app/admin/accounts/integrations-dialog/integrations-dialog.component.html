@@ -16,7 +16,7 @@
                 [learnMoreLink]="'https://www.smartpass.app/gsuite'" (setUp)="openSettings($event,'g_suite')"></app-integration-card>
             <app-integration-card [icon]="'./assets/Folder.svg'" [title]="'Profile Pictures'" [style.padding]="'10px'" [status]="isUploadedProfilePictures ? 'done' : 'disconnect'" [subtitle]="'Bulk add or update profile pictures.'" [learnMoreLink]="'https://www.smartpass.app/profile-pictures'"
                 (setUp)="openSettings($event,'profile_pictures')"></app-integration-card>
-            <app-integration-card [icon]="'./assets/ID Numbers(Navy).svg'" [title]="'ID Numbers'" [style.padding]="'10px'" [status]="isUploadedIDNumbers ? 'done' : 'diconnect'" [subtitle]="'Add ID numbers to your accounts.'" [learnMoreLink]="'https://www.smartpass.app/id-numbers'"
+            <app-integration-card [icon]="'./assets/ID Numbers(Navy).svg'" [title]="'ID Numbers'" [style.padding]="'10px'" [status]="isUploadedIDNumbers ? 'done' : 'disconnect'" [subtitle]="'Add ID numbers to your accounts.'" [learnMoreLink]="'https://www.smartpass.app/id-numbers'"
                 (setUp)="openSettings($event,'id_numbers')"></app-integration-card>
             <app-integration-card [icon]="'./assets/Grade level (Navy).svg'" [title]="'Grade Levels'" [style.padding]="'10px'" [status]="isUploadedGradeLevels ? 'done' : 'disconnect'" [subtitle]="'Add grade levels to your accounts.'" [learnMoreLink]="'https://www.smartpass.app/grade-levels'"
                 (setUp)="openSettings($event,'grade_level')"></app-integration-card>
