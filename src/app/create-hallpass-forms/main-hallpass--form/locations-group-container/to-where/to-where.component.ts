@@ -25,6 +25,7 @@ import {
 } from '../../../../shared/shared-components/confirmation-dialog/confirmation-dialog.component';
 import {LocationVisibilityService} from '../../location-visibility.service';
 import {UserService} from '../../../../services/user.service';
+import {KioskModeService} from '../../../../services/kiosk-mode.service';
 import {User} from '../../../../models/User';
 import {Location} from '../../../../models/Location';
 
@@ -97,6 +98,7 @@ export class ToWhereComponent implements OnInit, OnDestroy {
     private locationsService: LocationsService,
     private dialog: MatDialog,
     private userService: UserService,
+    private kioskService:KioskModeService
   ) {
     this.states = States;
   }
@@ -461,6 +463,9 @@ export class ToWhereComponent implements OnInit, OnDestroy {
           if (this.formState.kioskMode) {
             this.formState.step = 2;
             this.formState.state = 4;
+            if(!this.kioskService.getKioskModeSettings().findByName && !this.kioskService.getKioskModeSettings().findById)
+            this.formState.step=0
+            
           } else {
               this.formState.data.direction.from = null;
               this.formState.state -= 1;

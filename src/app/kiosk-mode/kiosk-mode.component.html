@@ -2,7 +2,7 @@
   <div class="current-pass ds-p-25">
     <app-display-card [title]="'Create Pass'" [hasDivider]="true" [fontSize]="'20px'">
       <div class="app-display-card-container">
-        <div class="pass-buttons" *ngIf="(showButtons | async)">
+        <div class="pass-buttons" *ngIf="(showButtons | async) && !(invalidId | async)?.show">
           <app-create-pass-button
             [title]="'Now'"
             (onClick)="showMainForm(false)"
@@ -17,19 +17,28 @@
             [nonDisappearing]="false"
           ></app-create-pass-button>
         </div>
-        <div class="display-card-divider" *ngIf="(showButtons | async) && (showScanner | async)">
+        <div class="display-card-divider" *ngIf="(showButtons | async) && (showScanner | async) && !(invalidId | async)?.show">
           <div></div>
           <span>or</span>
           <div></div>
         </div>
-        <div class="scanner-display" *ngIf="(showScanner | async)">
+        <div class="scanner-display" *ngIf="((showScanner | async) && !(invalidId | async)?.show)">
           <div></div>
           <div>
             <img [src]="'./assets/Barcode (Blue-Gray).svg' | resolveAsset" alt="">
           </div>
           <span>Scan your ID to create a pass</span>
         </div>
+        <div class="error-field">
+        <div class="scanner-display error-display" *ngIf="((showScanner | async) && (invalidId | async)?.show)">
+          <div></div>
+          <div>
+            <img [src]="'./assets/barcodeScanErrorIcon.svg' | resolveAsset" alt="">
+          </div>
+          <span>No Student found for<br/> ID Number {{(invalidId|async)?.id}}</span>
+        </div>
       </div>
+    </div>
     </app-display-card>
   </div>
   <div class="active-passes">

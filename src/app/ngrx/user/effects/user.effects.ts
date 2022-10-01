@@ -38,21 +38,11 @@ export class UserEffects {
       .pipe(
         ofType(userActions.getUserSuccess),
         switchMap((user:any) => {
-          if (user.user?.extras?.dedicated_kiosk_location) {
+          if (user.user?.extras?.dedicated_kiosk_location){
             let kioskRoom;
             kioskRoom = Object.assign({}, user.user?.extras?.dedicated_kiosk_location);
             this.kioskMode.setCurrentRoom(kioskRoom);
-            return this.userService.saveKioskModeLocation(kioskRoom.id)
-              .pipe(
-                map((res:any) => {
-                  this.storage.setItem('kioskToken', res.access_token);
-                  // this.loginService.updateAuth({username: user.user.primary_email, type: 'demo-login', kioskMode: true});
-                  this.http.kioskTokenSubject$.next(res);
-                  this.router.navigate(['main/kioskMode']);
-                  return userActions.redirectUserToKioskSuccess();
-  
-                })
-              );
+            this.router.navigate(['main/kioskMode/settings']);
           }
           return [userActions.redirectUserToKioskSuccess()];
         })

@@ -75,7 +75,8 @@ export class SettingsComponent implements OnInit, OnDestroy {
   }
 
   get isKioskMode(): boolean {
-    return !!this.kioskMode.getCurrentRoom().value;
+    // return !!this.kioskMode.getCurrentRoom().value;
+   return this.kioskMode.isKisokMode()
   }
 
   get isMobile() {
