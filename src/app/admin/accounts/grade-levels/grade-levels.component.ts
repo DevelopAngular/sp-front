@@ -13,6 +13,7 @@ import { UserService } from '../../../services/user.service';
 import { XlsxService } from '../../../services/xlsx.service';
 import {DomSanitizer, SafeUrl} from '@angular/platform-browser';
 import { IDCardService } from '../../../services/IDCardService';
+import {result} from 'lodash';
 
 @Component({
   selector: 'app-grade-levels',
@@ -146,40 +147,25 @@ export class GradeLevelsComponent implements OnInit {
   nextPage() {
     this.page += 1;
     if (this.page === 3) {
-      let body: FormData = new FormData();
-      body.append('csv_file', this.selectedMapFile)
-      this.userService.uploadGradeLevels(body).subscribe({
-        next: (result: any) => {
-          this.page = 4;
-          this.errors = result.response.errors;
-          this.newUploadedIDS = result.response.new_uploads;
-          this.totalUploadedIDS = result.response.num_of_uploaded;
-          let idCardFormData: FormData = new FormData();
-          idCardFormData.append("show_grade_levels", 'true');
-          this.idCardService.updateIDCardField(idCardFormData).subscribe();
-        }
-      })
-      // this.errors = this.findIssues();
-      // const userIds = this.filesToDB.map(f => f.user_id);
-      // const files = this.filesToDB.map(f => f.file);
-      // if (userIds.length && files.length) {
-      //   this.userService.postProfilePicturesRequest(
-      //     userIds,
-      //     files
-      //   ).pipe(
-      //     filter(profiles => !!profiles.length)
-      //   ).subscribe(r => {
-      //     this.userService.putProfilePicturesErrorsRequest(this.errors);
-      //   });
-      // } else {
-      //   this.toastService.openToast({title: 'Error', subtitle: 'Please check if the data is correct', type: 'error'});
-      //   this.page -= 1;
-      //   this.clearData();
-      // }
+      const csv_file = this.selectedMapFile;
+      this.userService.uploadGradeLevels({csv_file})
+        .pipe(
+          switchMap((result: any) => {
+            this.errors = result.response.errors;
+            this.newUploadedIDS = result.response.new_uploads;
+            this.totalUploadedIDS = result.response.num_of_uploaded;
+            this.page = 4;
+            return this.idCardService.updateIDCardField({show_grade_levels: true});
+          })
+        )
+        .subscribe({
+          next: () => {
+            this.page = 4;
+          }
+      });
     } else if (this.page === 5) {
       this.userService.clearUploadedData();
       this.getMissingGradeLevels();
-      // this.userService.getUploadedGroupsRequest();
     }
   }
 

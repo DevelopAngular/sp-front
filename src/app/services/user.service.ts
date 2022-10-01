@@ -922,14 +922,8 @@ export class UserService implements OnDestroy {
     return this.http.get(`v1/integrations/upload/custom_ids/setup`);
   }
 
-  uploadIDNumbers(body){
-    const httpOptions = {
-      headers: new HttpHeaders({
-        'Content-Type': 'application/x-www-form-urlencoded',
-      })
-    };
-
-    return this.http.post('v1/integrations/upload/custom_ids', body, httpOptions);
+  uploadIDNumbers(body) {
+    return this.http.post('v1/integrations/upload/custom_ids', body);
   }
 
   getMissingIDNumbers() {
@@ -940,14 +934,8 @@ export class UserService implements OnDestroy {
     return this.http.get(`v1/integrations/upload/grade_levels/setup`);
   }
 
-  uploadGradeLevels(body){
-    const httpOptions = {
-      headers: new HttpHeaders({
-        'Content-Type': 'application/x-www-form-urlencoded',
-      })
-    };
-
-    return this.http.post('v1/integrations/upload/grade_levels', body, httpOptions);
+  uploadGradeLevels(body) {
+    return this.http.post('v1/integrations/upload/grade_levels', body);
   }
 
   getMissingGradeLevels() {
