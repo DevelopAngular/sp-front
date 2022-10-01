@@ -377,7 +377,7 @@ export class PassCardComponent implements OnInit, OnDestroy {
       return true;
     }
 
-    return (!!this.formState?.data?.date?.schedule_config_id);
+    return (!!this.formState?.data?.date?.schedule_option);
   }
 
   newPass() {
@@ -406,7 +406,7 @@ export class PassCardComponent implements OnInit, OnDestroy {
         // if the schedule config is present and is repeating, then set the `recurring_scheduled_config` key, otherwise omit the key
         // from the body.
         // the backend will ignore if the key is not present
-        body['recurring_scheduled_config'] = this.formState.data.date.schedule_config_id;
+        body['recurring_scheduled_config'] = this.formState.data.date.schedule_option;
       }
     }
     if (this.forKioskMode) {

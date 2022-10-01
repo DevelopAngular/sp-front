@@ -178,11 +178,11 @@ export class DateTimeComponent implements OnInit, OnDestroy {
     this.formState.data.date = {
       date: this.requestTime.toDate(),
       declinable: this.form.get('declinable').value,
-      schedule_config_id: this.selectedRecurrenceFrequency.value
+      schedule_option: this.selectedRecurrenceFrequency.value
     };
 
     if (!this.form.get('declinable').value && this.selectedRecurrenceFrequency.value !== RecurringOption.DoesNotRepeat) {
-      this.formState.data.date.schedule_config_id = this.selectedRecurrenceFrequency.value;
+      this.formState.data.date.schedule_option = this.selectedRecurrenceFrequency.value;
     }
     setTimeout(() => {
       this.result.emit(this.formState);

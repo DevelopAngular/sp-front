@@ -40,7 +40,7 @@ export interface Navigation {
     date?: {
       date?: Date,
       declinable?: boolean;
-      schedule_config_id?: RecurringOption
+      schedule_option?: RecurringOption
     };
     selectedStudents?: User[];
     selectedGroup?: StudentList;
