@@ -99,3 +99,30 @@
     text-align: left;
   }
 }
+
+.error-field {
+  padding: 0px 20px;
+  max-width: 305px;
+  display: flex;
+  justify-content: center;
+
+.error-display{
+  background-color: #fceaf0;
+  border-radius: 14px;
+  padding: 20px;
+  text-align: center;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  span{
+    color:#e42866;
+    font-size: 17px;
+    font-weight: 500;
+    font-style: normal;
+    line-height: 20px;
+    display: block;
+    text-align: center;
+    margin-top: 10px;
+  }
+}
+}

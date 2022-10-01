@@ -44,6 +44,10 @@ export class KioskModeComponent implements OnInit, AfterViewInit, OnDestroy {
   destroy$: Subject<any> = new Subject<any>();
   showButtons = new BehaviorSubject(true);
   showScanner = new BehaviorSubject(false);
+  invalidId = new BehaviorSubject({
+   id:'',
+   show:false
+  });
 
   mainFormRef: MatDialogRef<MainHallPassFormComponent>;
 
@@ -182,6 +186,7 @@ export class KioskModeComponent implements OnInit, AfterViewInit, OnDestroy {
       if (user.results.user.length===undefined) {
         return of(user.results.user);
       } else {
+        this.notFound(id,true)
         return EMPTY;
       }
       }), mergeMap(user => {
@@ -190,7 +195,7 @@ export class KioskModeComponent implements OnInit, AfterViewInit, OnDestroy {
         const myPass = (passes as HallPass[]).find(pass => pass.issuer.id === user.id);
         if (myPass) {
           this.passesService.endPass(myPass.id).toPromise().then(value=>{
-            this.showMainForm(false, [user]);
+            // this.showMainForm(false, [user]);
             return of(null)
           })
         } else {
@@ -227,6 +232,13 @@ export class KioskModeComponent implements OnInit, AfterViewInit, OnDestroy {
         this.hideInput = false;
         this.inputFocus();
     });
+  }
+
+  notFound(id:string,show:boolean){
+    this.invalidId.next({id,show})
+    setTimeout(()=>{
+      this.invalidId.next({id:'',show:false})
+    },6000)
   }
 
 }
