@@ -1,4 +1,4 @@
-import {ChangeDetectionStrategy, Component, EventEmitter, OnInit, Output} from '@angular/core';
+import {ChangeDetectionStrategy, Component, EventEmitter, Input, OnInit, Output} from '@angular/core';
 import { cloneDeep } from 'lodash';
 import * as moment from 'moment';
 import {Moment} from 'moment';
@@ -14,6 +14,7 @@ import {HttpClient} from '@angular/common/http';
 })
 export class IosCalendarComponent implements OnInit {
 
+  @Input() ignoreWeekends = false;
   @Output() selectedEvent: EventEmitter<Moment[]> = new EventEmitter<Moment[]>();
 
   private _minDate: Moment = moment().add(5, 'minutes');
