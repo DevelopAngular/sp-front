@@ -18,7 +18,7 @@
       <div [attr.data-motion-translate]="(frameMotion$ | async).direction">
         <ng-container *ngIf="isStaff; else studentTemplate">
           <div *ngIf="showTeacherIosCalendar; else dialogCalendar" style="height: 180px">
-            <app-ios-calendar (selectedEvent)="calendarResult($event)"></app-ios-calendar>
+            <app-ios-calendar [ignoreWeekends]="true" (selectedEvent)="calendarResult($event)"></app-ios-calendar>
           </div>
 
           <ng-template #dialogCalendar>
@@ -101,7 +101,7 @@
               </app-calendar-picker>
             </div>
             <div *ngIf="isPortableDevice">
-              <app-ios-calendar (selectedEvent)="calendarResult($event)"></app-ios-calendar>
+              <app-ios-calendar [ignoreWeekends]="true" (selectedEvent)="calendarResult($event)"></app-ios-calendar>
             </div>
             <!--          <app-date-time-picker [min]="startTime" [_selectedMoment]="requestTime" (onUpdate)="requestTime=$event"></app-date-time-picker>-->
           </div>
