@@ -11,13 +11,13 @@
         <div class="using">
             <div class="title">Integrations You’re Using</div>
 
-            <ng-container *ngIf="schoolSyncInfo.is_clever_enabled || schoolSyncInfo.is_gsuite_enabled || isUploadedProfilePictures || isUploadedIDNumbers || isUploadedGradeLevels || (classlinkSyncInfo$ | async)?.is_enabled">
+            <ng-container *ngIf="schoolSyncInfo.is_gg4l_enabled || schoolSyncInfo.is_clever_enabled || schoolSyncInfo.is_gsuite_enabled || isUploadedProfilePictures || isUploadedIDNumbers || isUploadedGradeLevels || (classlinkSyncInfo$ | async)?.is_enabled">
               <ng-container *ngTemplateOutlet="integrations;context:{$implicit: true}"></ng-container>
             </ng-container>
 
             <mat-divider *ngIf="!schoolSyncInfo.is_clever_enabled || !schoolSyncInfo.is_gsuite_enabled || !isUploadedProfilePictures || !isUploadedIDNumbers || !isUploadedGradeLevels || !(classlinkSyncInfo$ | async)?.is_enabled" [style.width]="'100%'"></mat-divider>
 
-            <ng-container *ngIf="!schoolSyncInfo.is_clever_enabled || !schoolSyncInfo.is_gsuite_enabled || !isUploadedProfilePictures || !isUploadedIDNumbers || !isUploadedGradeLevels || !(classlinkSyncInfo$ | async)?.is_enabled">
+            <ng-container *ngIf="!schoolSyncInfo.is_gg4l_enabled || !schoolSyncInfo.is_clever_enabled || !schoolSyncInfo.is_gsuite_enabled || !isUploadedProfilePictures || !isUploadedIDNumbers || !isUploadedGradeLevels || !(classlinkSyncInfo$ | async)?.is_enabled">
               <ng-container *ngTemplateOutlet="integrations;context:{$implicit: false}"></ng-container>
             </ng-container>
 
