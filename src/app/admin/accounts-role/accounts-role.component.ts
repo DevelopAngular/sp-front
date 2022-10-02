@@ -308,7 +308,8 @@ export class AccountsRoleComponent implements OnInit, OnDestroy {
       };
     }
     return {
-      passLimit: `${limit.passLimit} ${limit.passLimit === 1 ? 'pass' : 'passes'}/day`,
+      // adding var tag here works as this text is placed inside a HTML container
+      passLimit: `<var>${limit.passLimit}</var> ${limit.passLimit === 1 ? 'pass' : 'passes'}/day`,
       description
     };
   }

@@ -24,7 +24,7 @@
           </ng-template>
         </div>
       </div>
-      <div class="tile-subtitle">{{ presentational ? 'Linked Pass' : tileContent }}</div>
+      <div [attr.notranslate]="!presentational ? true : null" class="tile-subtitle">{{ presentational ? 'Linked Pass' : tileContent }}</div>
     </div>
     <div *ngIf="isBadgeVisible" class="badge">1</div>
   </div>
@@ -51,7 +51,7 @@
     cdkOverlayOrigin
     #overlayTrigger="cdkOverlayOrigin"
   >
-    <div *ngIf="forStaff" class="names">{{ tileName }}</div>
+    <div *ngIf="forStaff" notranslate class="names">{{ tileName }}</div>
 
     <ng-template
       cdkConnectedOverlay

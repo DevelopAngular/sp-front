@@ -33,6 +33,12 @@ body {
     }
 }
 
+// translation uses "var" tag to isolate dynamic parts of a phrase
+
+var {
+  font-style: inherit;
+}
+
 //@media only screen and (orientation:landscape){
 //  body {
 //    height: 100vw;

@@ -13,7 +13,7 @@
           <img  class="pass-card-header-icon" [src]="pass.icon | resolveAsset">
           <div class="pass-card-header-text">
             {{ pass.destination.title }}
-            <div class="card-subtitle" *ngIf="fromPast || forFuture">
+            <div notranslate class="card-subtitle" *ngIf="fromPast || forFuture">
               {{ formatDateTime(pass.start_time) }}
             </div>
           </div>
@@ -66,8 +66,8 @@
             <div class="page-2" [attr.data-motion-translate]="(frameMotion$ | async).direction">
               <div style="display: flex; justify-content: center">
                 <div class="message">
-                  <span [style.font-weight]="'bold'">{{ (forStaff ? 'Your message:' : 'Message from ' + pass.issuer.display_name) }}</span><br>
-                  <span style="user-select: text">{{ pass.issuer_message ? pass.issuer_message : 'No Message' }}</span>
+                  <span [style.font-weight]="'bold'">{{ forStaff ? 'Your message:' : 'Message from' }}</span><span ignore [style.font-weight]> {{ pass.issuer.display_name }}</span><br>
+                  <span [attr.notranslate]="pass.issuer_message ? true : null" style="user-select: text">{{ pass.issuer_message ? pass.issuer_message : 'No Message' }}</span>
                 </div>
               </div>
             </div>
@@ -86,8 +86,9 @@
             <div class="page-6" [attr.data-motion-translate]="(frameMotion$ | async).direction">
               <div style="display: flex; justify-content: center">
                 <div class="message">
-                  <span [style.font-weight]="'bold'">{{ (forStaff ? 'Your message:' : 'Message from ' + pass.issuer.display_name) }}</span><br>
-                  <span style="user-select: text">{{ pass.issuer_message ? pass.issuer_message : 'No Message' }}</span>
+                  <span [style.font-weight]="'bold'">{{ forStaff ? 'Your message:' : 'Message from' }}</span><span notranslate [style.font-weight]> {{ pass.issuer.display_name }}</span><br>
+                  {{pass.issuer_message|json}}
+                  <span [attr.notranslate]="pass.issuer_message ? true : null" style="user-select: text">{{ pass.issuer_message ? pass.issuer_message : 'No Message' }}</span>
                 </div>
               </div>
             </div>
@@ -108,34 +109,35 @@
           </app-card-button>
         </div>
         <div *ngIf="(fromPast || forFuture && !forInput) && !forStaff">
-          <span style="font-size: 20px; font-weight: bold; color: white">{{ forFuture?'Pass Auto Starts': getDuration() +' - Total Time' }}</span>
+          <span *ngIf="forFuture" style="font-size: 20px; font-weight: bold; color: white">Pass Auto Starts</span>
+          <span *ngIf="!forFuture" style="font-size: 20px; font-weight: bold; color: white"><var>{{ getDuration() }}</var> - Total Time</span>
         </div>
 
         <app-pager [pages]="pagerPages" [page]="pagerPages" *ngIf="forStaff ">
           <div class="page-1 teacher-details" *ngIf="p1Title" [attr.data-motion-translate]="(frameMotion$ | async).direction">
-            <span class="bold">{{ (activePage==1?(timeLeft +(timeLeft===''?'':' - ')):'') +p1Title }}</span><span class="smaller"><br>{{ p1Subtitle }} <span *ngIf="p1Subtitle">-</span> {{ p1Stamp }}</span>
+            <span class="bold">{{ (activePage==1?(timeLeft +(timeLeft===''?'':' - ')):'') +p1Title }}</span><span class="smaller"><br>{{ p1Subtitle }} <span *ngIf="p1Subtitle">-</span> <var>{{ p1Stamp }}</var></span>
           </div>
           <div class="page-2 teacher-details" *ngIf="p2Title" [attr.data-motion-translate]="(frameMotion$ | async).direction">
-            <span class="bold">{{ (activePage==2?((activePassTime$ | async) +(timeLeft===''?'':' - ')):'') +p2Title }}</span><span class="smaller"><br>{{ p2Subtitle +  (p2Subtitle===''?'':' - ') }}  {{ p2Stamp }}</span>
+            <span class="bold">{{ (activePage==2?((activePassTime$ | async) +(timeLeft===''?'':' - ')):'') +p2Title }}</span><span class="smaller"><br>{{ p2Subtitle +  (p2Subtitle===''?'':' - ') }}  <var>{{ p2Stamp }}</var></span>
           </div>
           <div class="page-3 teacher-details" *ngIf="p3Title" [attr.data-motion-translate]="(frameMotion$ | async).direction">
-            <span class="bold">{{ (activePage==3?(timeLeft +(timeLeft===''?'':' - ')):'') +p3Title }}</span><span class="smaller"><br>{{ p3Subtitle }}  {{ p3Stamp }}</span>
+            <span class="bold">{{ (activePage==3?(timeLeft +(timeLeft===''?'':' - ')):'') +p3Title }}</span><span class="smaller"><br>{{ p3Subtitle }}  <var>{{ p3Stamp }}</var></span>
           </div>
           <div class="page-4 teacher-details" *ngIf="p4Title" [attr.data-motion-translate]="(frameMotion$ | async).direction">
-            <span class="bold">{{ (activePage==4?(timeLeft +(timeLeft===''?'':' - ')):'') +p4Title }}</span><span class="smaller"><br>{{ p4Subtitle }}  {{ p4Stamp }}</span>
+            <span class="bold">{{ (activePage==4?(timeLeft +(timeLeft===''?'':' - ')):'') +p4Title }}</span><span class="smaller"><br>{{ p4Subtitle }}  <var>{{ p4Stamp }}</var></span>
           </div>
 
           <div class="page-5 teacher-details" *ngIf="p1Title" [attr.data-motion-translate]="(frameMotion$ | async).direction">
-            <span class="bold">{{ (activePage==1?(timeLeft +(timeLeft===''?'':' - ')):'') +p1Title }}</span><span class="smaller"><br>{{ p1Subtitle }} <span *ngIf="p1Subtitle">-</span> {{ p1Stamp }}</span>
+            <span class="bold">{{ (activePage==1?(timeLeft +(timeLeft===''?'':' - ')):'') +p1Title }}</span><span class="smaller"><br>{{ p1Subtitle }} <span *ngIf="p1Subtitle">-</span> <var>{{ p1Stamp }}</var></span>
           </div>
           <div class="page-6 teacher-details" *ngIf="p2Title" [attr.data-motion-translate]="(frameMotion$ | async).direction">
-            <span class="bold">{{ (activePage==2?(timeLeft +(timeLeft===''?'':' - ')):'') +p2Title }}</span><span class="smaller"><br>{{ p2Subtitle +  (p2Subtitle===''?'':' - ') }}  {{ p2Stamp }}</span>
+            <span class="bold">{{ (activePage==2?(timeLeft +(timeLeft===''?'':' - ')):'') +p2Title }}</span><span class="smaller"><br>{{ p2Subtitle +  (p2Subtitle===''?'':' - ') }}  <var>{{ p2Stamp }}</var></span>
           </div>
           <div class="page-7 teacher-details" *ngIf="p3Title" [attr.data-motion-translate]="(frameMotion$ | async).direction">
-            <span class="bold">{{ (activePage==3?(timeLeft +(timeLeft===''?'':' - ')):'') +p3Title }}</span><span class="smaller"><br>{{ p3Subtitle }}  {{ p3Stamp }}</span>
+            <span class="bold">{{ (activePage==3?(timeLeft +(timeLeft===''?'':' - ')):'') +p3Title }}</span><span class="smaller"><br>{{ p3Subtitle }}  <var>{{ p3Stamp }}</var></span>
           </div>
           <div class="page-8 teacher-details" *ngIf="p4Title" [attr.data-motion-translate]="(frameMotion$ | async).direction">
-            <span class="bold">{{ (activePage==4?(timeLeft +(timeLeft===''?'':' - ')):'') +p4Title }}</span><span class="smaller"><br>{{ p4Subtitle }}  {{ p4Stamp }}</span>
+            <span class="bold">{{ (activePage==4?(timeLeft +(timeLeft===''?'':' - ')):'') +p4Title }}</span><span class="smaller"><br>{{ p4Subtitle }}  <var>{{ p4Stamp }}</var></span>
           </div>
         </app-pager>
       </div>
@@ -181,7 +183,7 @@
 
 <ng-template #confirmDialogBody let-totalStudents="totalStudents" let-limitReachedStudents="limitReachedStudents">
   <div *ngIf="totalStudents > 1" class="ds-dialog-normal-text">
-    <p *ngFor="let s of limitReachedStudents">{{s.displayName}}: {{s.passLimit}}/{{s.passLimit}} passes today</p>
+    <p *ngFor="let s of limitReachedStudents"><var>{{s.displayName}}: {{s.passLimit}}/{{s.passLimit}}</var> passes today</p>
   </div>
 
   <div *ngIf="totalStudents === 1" class="ds-dialog-normal-text">
@@ -196,7 +198,7 @@
   </div>
 
   <div class="ds-dialog-normal-text ds-mb-10">
-      <p>{{a.students}}</p>
+      <p notranslate>{{a.students}}</p>
   </div>
   </ng-container>
 </ng-template>

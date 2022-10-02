@@ -172,9 +172,9 @@
 <!--                <img class="picture" [src]="user.profile_picture | resolveAsset" alt="Avatar">-->
               </div>
               <div class="profile-info">
-                <div class="name">{{ user.display_name }}</div>
-                <div class="info" *ngIf="user.student_number"><span style="font-weight: bold">Student Number: </span><span>{{ user.student_number }}</span></div>
-                <div class="info"><span style="font-weight: bold">Image Filename: </span><span>{{ user.file_name }}</span></div>
+                <div class="name" notranslate>{{ user.display_name }}</div>
+                <div class="info" *ngIf="user.student_number"><span style="font-weight: bold">Student Number: </span><span ignore>{{ user.student_number }}</span></div>
+                <div class="info"><span style="font-weight: bold">Image Filename: </span><span ignore>{{ user.file_name }}</span></div>
               </div>
             </div>
             <mat-divider *ngIf="uploadedProfiles.length > 1"></mat-divider>

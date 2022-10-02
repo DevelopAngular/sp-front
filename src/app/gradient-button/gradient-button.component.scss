@@ -26,6 +26,7 @@
   transition: box-shadow, opacity .25s ease;
   user-select: none;
   position: relative;
+  overflow:hidden;// translated content can be larger
 
   &.disabled {
     opacity: 0.5;

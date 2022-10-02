@@ -14,7 +14,7 @@
           <div class="pass-card-header-text">
             {{ request.destination.title }}
             <div class="card-subtitle" *ngIf="fromPast || forFuture">
-              {{ ((request.request_time && forFuture)?formatDateTime(request.request_time):(forStaff?'Pass for Now':'')) }}
+              {{ ((request.request_time && forFuture)?`<span notranslate>${formatDateTime(request.request_time)}</span>`:(forStaff?'Pass for Now':'')) }}
             </div>
           </div>
         </div>
@@ -68,7 +68,7 @@
                     <span style="user-select: text">{{ (request.attachment_message===''?'No message':request.attachment_message) }}</span>
                     <div *ngIf="request.status==='declined'">
                       <br>
-                      <span [style.font-weight]="'bold'">Message from {{ request.teacher.last_name }}:</span><br>
+                      <span [style.font-weight]="'bold'" ignore>Message from {{ request.teacher.last_name }}:</span><br>
                       <span style="user-select: text">{{ (request.declined_message===''?'No message':request.declined_message) }}</span> <!-- deny_message -->
                     </div>
                   </div>
@@ -93,7 +93,7 @@
                     <span style="user-select: text">{{ (request.attachment_message===''?'No message':request.attachment_message) }}</span>
                     <div *ngIf="request.status==='declined'">
                       <br>
-                      <span [style.font-weight]="'bold'">Message from {{request.teacher.last_name}}:</span><br>
+                      <span [style.font-weight]="'bold'" ignore>Message from {{request.teacher.last_name}}:</span><br>
                       <span style="user-select: text">{{ (request.declined_message===''?'No message':request.declined_message) }}</span> <!-- deny_message -->
                     </div>
                   </div>
@@ -128,7 +128,7 @@
                       <div class="description-title" #desc [style.margin-left]="filteredTeachers.length > 1 ? '0px' : '15px'">
                         Pass Request sent to:
                         <span style="width: 5px"></span>
-                        <span style="font-weight: normal; font-size: 17px" *ngFor="let teacher of filteredTeachers; let i = index">
+                        <span notranslate style="font-weight: normal; font-size: 17px" *ngFor="let teacher of filteredTeachers; let i = index">
                             <span style="margin-right: 3px">{{ teacher.display_name + (i === filteredTeachers.length - 1 ? '' : ', ') }}</span>
                           </span>
                       </div>
@@ -143,16 +143,16 @@
                 <img class="request-description-icon" [src]="'./assets/Lock (White).svg' | resolveAsset">
                 <div class="request-description-text">
                   Pass Request sent to: <br>
-                  <span style="font-weight: normal; font-size: 17px" *ngFor="let teacher of filteredTeachers; let i = index">
+                  <span style="font-weight: normal; font-size: 17px" notranslate *ngFor="let teacher of filteredTeachers; let i = index">
                   {{ teacher.display_name + (i === filteredTeachers.length - 1 ? '' : ', ') }}
-                </span>
+                  </span>
                 </div>
               </div>
             </ng-template>
             <div *ngIf="request.status==='accepted'">
               <div class="request-description">
                 <img class="request-description-icon" [src]="'./assets/Arrow (White).svg' | resolveAsset">
-                <div class="request-description-text">
+                <div class="request-description-text" ignore>
                   Pass Request accepted by {{ request.teacher.last_name }}
                 </div>
               </div>
@@ -194,7 +194,7 @@
                   <span style="user-select: text">{{ (request.attachment_message===''?'No message':request.attachment_message) }}</span>
                   <div *ngIf="request.status==='declined'">
                     <br>
-                    <span [style.font-weight]="'bold'">Message from {{ request.teacher.last_name }}:</span><br>
+                    <span [style.font-weight]="'bold'" ignore>Message from {{ request.teacher.last_name }}:</span><br>
                     <span style="user-select: text">{{ (request.declined_message===''?'No message':request.declined_message) }}</span> <!-- deny_message -->
                   </div>
                 </div>
@@ -218,7 +218,7 @@
                   <span style="user-select: text">{{ (request.attachment_message===''?'No message':request.attachment_message) }}</span>
                   <div *ngIf="request.status==='declined'">
                     <br>
-                    <span [style.font-weight]="'bold'">Message from {{request.teacher.last_name}}:</span><br>
+                    <span [style.font-weight]="'bold'" ignore>Message from {{request.teacher.last_name}}:</span><br>
                     <span style="user-select: text">{{ (request.declined_message===''?'No message':request.declined_message) }}</span> <!-- deny_message -->
                   </div>
                 </div>
@@ -244,7 +244,7 @@
               <div class="resend-button-content">
                 <mat-spinner *ngIf="performingAction" [color]="'accent'" [diameter]="35"></mat-spinner>
                 <div *ngIf="!performingAction" class="resend-button-content-title">Approve Pass Request</div>
-                <div class="resend-button-content-subtitle">{{ (request.duration/60) +' min - Received ' +formatDateTime(request.created, true) }}</div>
+                <div class="resend-button-content-subtitle">{{ '<var>'+(request.duration/60) +' min</var> - Received <var>' +formatDateTime(request.created, true) + '</var>' }}</div>
               </div>
             </app-card-button>
             <ng-template #CDate>
@@ -260,17 +260,17 @@
             <div>
               <app-pager [page]="2">
                 <div class="page-1 teacher-details" [attr.data-motion-translate]="(frameMotion$ | async).direction">
-                  <span class="bold">Pass Request Sent</span><span class="smaller"><br>to {{ studentName }}<br><br>{{ formatDateTime(request.created) }}</span>
+                  <span class="bold">Pass Request Sent</span><span class="smaller"><br>to <var>{{ studentName }}</var><br><br><var>{{ formatDateTime(request.created) }}</var></span>
                 </div>
                 <div class="page-2 teacher-details" [attr.data-motion-translate]="(frameMotion$ | async).direction">
-                  <span class="bold">Pass Request {{ status }}</span><span class="smaller"><br>by {{ teacherName }}<br><br>{{ formatDateTime(request.last_updated) }}</span>
+                  <span class="bold">Pass Request {{ status }}</span><span class="smaller"><br>by <var>{{ teacherName }}</var><br><br><var>{{ formatDateTime(request.last_updated) }}</var></span>
                 </div>
 
                 <div class="page-5 teacher-details" [attr.data-motion-translate]="(frameMotion$ | async).direction">
-                  <span class="bold">Pass Request Sent</span><span class="smaller"><br>to {{studentName}}<br><br>{{formatDateTime(request.created)}}</span>
+                  <span class="bold">Pass Request Sent</span><span class="smaller"><br>to <var>{{studentName}}</var><br><br><var>{{formatDateTime(request.created)}}</var></span>
                 </div>
                 <div class="page-6 teacher-details" [attr.data-motion-translate]="(frameMotion$ | async).direction">
-                  <span class="bold">Pass Request {{ status }}</span><span class="smaller"><br>by {{teacherName}}<br><br>{{formatDateTime(request.last_updated)}}</span>
+                  <span class="bold">Pass Request {{ status }}</span><span class="smaller"><br>by <var>{{teacherName}}</var><br><br><var>{{formatDateTime(request.last_updated)}}</var></span>
                 </div>
               </app-pager>
             </div>
@@ -280,7 +280,7 @@
 
       <div class="request-card-footer" *ngIf="forStaff && !isModal">
         <div class="student-footer"></div>
-        <div class="student-text"> {{ request.student.display_name }} </div>
+        <div class="student-text" notranslate> {{ request.student.display_name }} </div>
       </div>
     </div>
 

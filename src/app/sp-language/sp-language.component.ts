@@ -31,7 +31,6 @@ export class SpLanguageComponent implements OnInit, OnDestroy, AfterViewInit {
     private dialog: MatDialog,
     public dialogRef: MatDialogRef<SpLanguageComponent>,
     private http: HttpService,
-    private navbarService: NavbarDataService,
     private navbarElementsService: NavbarElementsRefsService,
     private localize: LocalizejsService,
     @Inject(MAT_DIALOG_DATA) public data: any

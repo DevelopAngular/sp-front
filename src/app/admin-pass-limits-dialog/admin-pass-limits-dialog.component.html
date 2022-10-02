@@ -147,7 +147,7 @@
         [ngClass]="{ 'no-padding-y': !i.description }"
         (click)="goToIndividualLimitPage(i)">
           <div class="ds-flex-row ds-flex-center-between">
-            <span class="ds-dialog-heading" style="padding-bottom: 0 !important;">{{i.student.display_name}}</span>
+            <span class="ds-dialog-heading" style="padding-bottom: 0 !important;" ignore>{{i.student.display_name}}</span>
             <span>{{i.passLimit === -2 ? 'Unlimited' : i.passLimit}} {{i.passLimit === 1 ? 'pass' : 'passes'}}/day</span>
           </div>
 
@@ -192,7 +192,7 @@
               <img width="23" height="23" [src]="'./assets/Avatar Default.svg' | resolveAsset" alt="">
             </ng-template>
           </div>
-          <div class="name">{{ iLimit.student.display_name }}</div>
+          <div class="name" ignore>{{ iLimit.student.display_name }}</div>
         </div>
       </section>
 
