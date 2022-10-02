@@ -140,7 +140,7 @@ export class LocalizejsService {
       retry(LocalizejsService.RETRY_NUM),
       catchError(this.catchAndClean()),
     ).subscribe(
-      res => {
+      _ => {
         LocalizejsService.isLocalizeAdded = true;
         if(fn !== null) fn();
       },

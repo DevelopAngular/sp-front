@@ -72,7 +72,7 @@
              (mouseleave)="_option.hovered = false; _option.pressed = false"
         >
           <div>
-            <span [style.color]="school.id === selectedSchool.id && school.name === selectedSchool.name ? darkTheme.getColor({dark: '#FFFFFF', white: '#1F195E'}) : darkTheme.getColor({dark: '#FFFFFF', white: '#7f879d'})">{{ school.name }}</span>
+            <span [style.color]="school.id === selectedSchool.id && school.name === selectedSchool.name ? darkTheme.getColor({dark: '#FFFFFF', white: '#1F195E'}) : darkTheme.getColor({dark: '#FFFFFF', white: '#7f879d'})" ignore>{{ school.name }}</span>
           </div>
           <div class="option-data_rightside">
             <div class="marked-room">
@@ -131,8 +131,8 @@
              (mouseover)="_option.hovered = true"
              (mouseleave)="_option.hovered = false; _option.pressed = false"
         >
-          <div class="option-data_leftside">
-            <span [style.color]="teacher.id === selectedTeacher.id ? darkTheme.getColor({dark: '#FFFFFF', white: '#1F195E'}) : darkTheme.getColor({dark: '#FFFFFF', white: '#7f879d'})">{{ teacher.display_name }}</span>
+          <div class="option-data_leftside" notranslate>
+            <span [style.color]="teacher.user.id === selectedTeacher.user.id ? darkTheme.getColor({dark: '#FFFFFF', white: '#1F195E'}) : darkTheme.getColor({dark: '#FFFFFF', white: '#7f879d'})">{{ teacher.user.display_name }}</span>
           </div>
           <div class="option-data_rightside">
             <div class="marked-room">

@@ -11,6 +11,7 @@ import {tooltipAnimation} from '../../../animations';
 export class CustomToolTipComponent implements OnInit {
 
   @Input() text;
+  @Input() allowVarTag: boolean;
 
   @Input() contentTemplate;
   @Input() width: string;
@@ -19,10 +20,9 @@ export class CustomToolTipComponent implements OnInit {
   @Output() overEvent: EventEmitter<boolean> = new EventEmitter<boolean>();
   @Output() closeTooltip: EventEmitter<boolean> = new EventEmitter<boolean>();
 
-  constructor() { }
+  constructor() {}
 
   ngOnInit() {
     // console.log('open');
   }
-
 }

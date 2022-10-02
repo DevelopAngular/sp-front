@@ -62,7 +62,7 @@
                cdkOverlayOrigin
                #trigger="cdkOverlayOrigin"
           >
-            <span>
+            <span notranslate>
               {{student.display_name}}
               {{
               '(' + (student.primary_email ? student.primary_email.slice(0, student.primary_email.indexOf('@')) : student.email ? student.email.slice(0, student.email.indexOf('@')) : '') + ')'
@@ -218,7 +218,7 @@
                (blur)="cell.hovered =false"
                [style.background-color]="cell.hovered ? (cell.pressed ? '#ECEDF1' : '#F1F2F4') : '#FFFFFF'"
           >
-            <span>
+            <span notranslate>
                {{teacher.display_name}} ({{teacher.primary_email ? teacher.primary_email.slice(0, teacher.primary_email.indexOf('@')) : teacher.email ? teacher.email.slice(0, teacher.email.indexOf('@')) : ''}})
             </span>
           </div>
@@ -307,6 +307,7 @@
            (focus)="cell.hovered = true"
            (blur)="cell.hovered =false"
            [style.background-color]="cell.hovered ? (cell.pressed ? '#ECEDF1' : '#F1F2F4') : '#FFFFFF'"
+           [attr.notranslate]="this.searchTarget === 'users' ? 'no' : null"
       >
         <span *ngIf="this.searchTarget === 'users'">
           {{selectedOption.display_name}} ({{selectedOption.primary_email ? selectedOption.primary_email.slice(0, selectedOption.primary_email.indexOf('@')) : selectedOption.email ? selectedOption.email.slice(0, selectedOption.email.indexOf('@')) : ''}})

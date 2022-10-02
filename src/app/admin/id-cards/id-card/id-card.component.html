@@ -6,7 +6,7 @@
                 <div class="top" [ngStyle]="{'background': backgroundColor}">
                     <div class="details-wrapper">
                         <div class="school-name-wrapper">
-                            <p class="school-name">{{schoolName}}</p>
+                            <p class="school-name" ignore>{{schoolName}}</p>
                             <p class="year">2022-23</p>
                         </div>
                         <div>
@@ -22,7 +22,7 @@
                                 </div>
                             </div>
                             <!-- <p class="card-holder-name">{{userDetails.display_name}}</p> -->
-                            <p class="card-holder-name">{{userName}}</p>
+                            <p class="card-holder-name" notranslate>{{userName}}</p>
                             <div class="ds-flex-center-start role-grade">
                                 <p>{{userRole}}
                                     <!-- <span *ngIf="userDetails.isStudent()">Student</span>

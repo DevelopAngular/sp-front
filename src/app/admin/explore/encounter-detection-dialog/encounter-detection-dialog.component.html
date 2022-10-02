@@ -21,7 +21,7 @@
                                 <p class="student-name">{{firstUser.display_name}}</p>
                             </div>
                             <div class="ds-flex-center-start name-wrapper"><img [src]="secondUser.profile_picture ? secondUser.profile_picture : './assets/Avatar Default.svg' | resolveAsset">
-                                <p class="student-name">{{secondUser.display_name}}</p>
+                                <p class="student-name" ignore>{{secondUser.display_name}}</p>
                             </div>
                         </div>
                     </div>

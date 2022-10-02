@@ -3,7 +3,7 @@ import {MatDialog} from '@angular/material/dialog';
 import {BehaviorSubject, combineLatest, forkJoin, Observable, of, Subject} from 'rxjs';
 import {UserService} from '../../services/user.service';
 import {ActivatedRoute, Router} from '@angular/router';
-import {filter, map, skipUntil, switchMap, take, takeUntil, tap} from 'rxjs/operators';
+import {debounceTime, filter, map, skipUntil, switchMap, take, takeUntil, tap} from 'rxjs/operators';
 import {Util} from '../../../Util';
 import {HttpService} from '../../services/http-service';
 import {AdminService} from '../../services/admin.service';
@@ -99,10 +99,22 @@ export class AccountsRoleComponent implements OnInit, OnDestroy {
         switchMap(() => {
           return this.userService.getAccountsRole(this.role);
         }),
+        /**
+         * Be careful when marking raw JSON responses from the server as TypeScript classes instead of interfaces.
+         * Marking the response from this.userService.getAccountsRole as Observable<User[]> incorrectly tells TypeScript
+         * that the methods on the User class are present on these objects when they are not.
+         *
+         * The following should be converted using User.fromJSON if intending to use methods on that class
+         */
         switchMap((accounts: User[]) => {
           if (accounts.length === 0) {
             return of([]);
           }
+
+          if (this.role !== '_profile_student') {
+            return of(accounts);
+          }
+
           return forkJoin(
             accounts.map(a => this.passLimitsService.getStudentPassLimit(a.id).pipe(map(limit => ({...a, limit}))))
           );
@@ -158,10 +170,12 @@ export class AccountsRoleComponent implements OnInit, OnDestroy {
 
     this.adminService.searchAccountEmit$.asObservable()
       .pipe(
+        debounceTime(300),
         takeUntil(this.destroy$),
         tap((value) => this.userService.getAccountsRoles(this.role, value, 1000))
       )
       .subscribe(value => {
+        console.log('emitting stuff');
       this.searchValue = value;
     });
 
@@ -294,7 +308,8 @@ export class AccountsRoleComponent implements OnInit, OnDestroy {
       };
     }
     return {
-      passLimit: `${limit.passLimit} ${limit.passLimit === 1 ? 'pass' : 'passes'}/day`,
+      // adding var tag here works as this text is placed inside a HTML container
+      passLimit: `<var>${limit.passLimit}</var> ${limit.passLimit === 1 ? 'pass' : 'passes'}/day`,
       description
     };
   }

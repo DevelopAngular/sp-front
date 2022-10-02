@@ -26,7 +26,7 @@
             </div>
             <div class="ds-flex-center-center ds-dialog-title" style="z-index: 10" [attr.data-motion-translate]="(frameMotion$ | async).direction">
                 <!--        <img class="role-icon" [ngClass]="{'gsuite': this.layout === 'gSuiteSettings'}"  [src]="headerIcon" alt="header-icon">-->
-                <span>{{user.display_name}}</span>
+                <span notranslate>{{user.display_name}}</span>
 
             </div>
             <div class="status-button" #status>
@@ -45,7 +45,7 @@
             <div class="block">
                 <div class="email-info">
                     <div class="title">Email/username</div>
-                    <div class="subtitle" style="white-space: normal; word-break: break-word; width: 280px">{{ user.primary_email.replace('@spnx.local', '') }}</div>
+                    <div notranslate class="subtitle" style="white-space: normal; word-break: break-word; width: 280px">{{ user.primary_email.replace('@spnx.local', '') }}</div>
                 </div>
                 <div class="avatar-info">
                     <div class="avatar" #avatarContainer (mouseenter)="avatarContainer.hover = true" (mouseleave)="avatarContainer.hover = false">
@@ -179,7 +179,7 @@
                 <div class="descriptions">
                     <div class="info">
                         <div class="title">Last Active</div>
-                        <div class="subtitle">{{ profile['Last sign-in'] }}</div>
+                        <div notranslate class="subtitle">{{ profile['Last sign-in'] }}</div>
                     </div>
                     <div class="info">
                         <div class="title">Type</div>

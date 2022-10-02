@@ -15,7 +15,7 @@
         </app-octagon>
 
         <div class="group-info" *ngSwitchCase="4">
-          <div class="user-photos">
+          <div class="user-photos" notranslate>
             <div *ngFor="let user of state.data.currentGroup.users" [customToolTip]="user.display_name">
               <div *ngIf="user.profile_picture; else avatar" class="photo" [ngStyle]="{'background': 'url(' + user.profile_picture + ') no-repeat left center/cover'}"></div>
               <ng-template #avatar>

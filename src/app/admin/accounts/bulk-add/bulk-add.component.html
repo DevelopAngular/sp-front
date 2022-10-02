@@ -85,7 +85,7 @@
       <div class="issues-container">
         <div class="ds-dialog-heading ds-pt-10 ds-pb-10">Review Issues ({{ invalidAccounts.length }})</div>
         <div *ngFor="let issue of invalidAccounts" class="ds-cell-text-2 ds-pb-15">
-          <div>{{ issue.first_name + ' ' + issue.last_name }}</div>
+          <div ignore>{{ issue.first_name + ' ' + issue.last_name }}</div>
           <div *ngIf="issue.existsEmail">- Email/username already used</div>
           <div *ngIf="issue.invalidType">- Account group not specified (Admin, Teacher, Student)</div>
           <div *ngIf="issue.invalidEmail">- Email/username not specified</div>
