@@ -21,6 +21,7 @@ import {OctagonComponent} from '../admin/accounts/encounter-prevention-dialog/oc
 import {NuxTooltipRendererDirective} from './directives/nux-tooltip-renderer.directive';
 import {SpEmailPipe} from './pipes/sp-email.pipe';
 import { IdCardComponent } from '../admin/id-cards/id-card/id-card.component';
+import { DropdownSelectionComponent } from './components/dropdown-selection/dropdown-selection.component';
 
 @NgModule({
   declarations: [
@@ -43,7 +44,8 @@ import { IdCardComponent } from '../admin/id-cards/id-card/id-card.component';
     EncounterPreventionTooltipComponent,
     NuxTooltipRendererDirective,
     SpEmailPipe,
-    IdCardComponent
+    IdCardComponent,
+    DropdownSelectionComponent
   ],
   imports: [
     CommonModule,
@@ -68,7 +70,8 @@ import { IdCardComponent } from '../admin/id-cards/id-card/id-card.component';
         OctagonComponent,
         EncounterPreventionTooltipComponent,
         NuxTooltipRendererDirective,
-        IdCardComponent
+        IdCardComponent,
+        DropdownSelectionComponent
     ]
 })
 export class CoreModule { }

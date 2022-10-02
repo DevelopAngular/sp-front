@@ -6,7 +6,7 @@ import {constructUrl} from '../live-data/helpers';
 import {Logger} from './logger.service';
 import {User} from '../models/User';
 import {PollingService} from './polling-service';
-import {exhaustMap, filter, map, switchMap, take, takeUntil, tap} from 'rxjs/operators';
+import {catchError, exhaustMap, filter, map, switchMap, take, takeUntil, tap} from 'rxjs/operators';
 import {Paged} from '../models';
 import {RepresentedUser} from '../navbar/navbar.component';
 import {Store} from '@ngrx/store';
@@ -95,7 +95,7 @@ import {
 import {getCurrentUpdatedUser, getLoadedUser, getNuxDates, getSelectUserPin, getUserData} from '../ngrx/user/states/user-getters.state';
 import {clearUser, getNuxAction, getUser, getUserPinAction, updateUserAction} from '../ngrx/user/actions';
 import {addRepresentedUserAction, removeRepresentedUserAction} from '../ngrx/accounts/nested-states/assistants/actions';
-import {HttpClient, HttpHeaders} from '@angular/common/http';
+import {HttpClient, HttpHeaders, HttpParams} from '@angular/common/http';
 import {
   getIntros,
   updateIntros, updateIntrosAdminPassLimitsMessage,
@@ -538,7 +538,7 @@ export class UserService implements OnDestroy {
     this.store.dispatch(getRUsers());
   }
 
-  getUserRepresented() {
+    getUserRepresented() {
     return this.http.get<RepresentedUser[]>('v1/users/@me/represented_users');
   }
 
@@ -555,12 +555,9 @@ export class UserService implements OnDestroy {
     return this.http.get<User>(`v1/users/${id}`);
   }
 
-  searchProfileWithFilter(id) {
-    return this.http.get(`v1/users?id=${id}`);
-  }
-
-  searchUserByCardId(id): Observable<User[]> {
-    return this.http.get(constructUrl('v1/users', {search: id}));
+  possibleProfileById(id: string): Observable<User | null> {
+    return this.http.get<User>(`v1/users/${id}`, {headers: {'X-Ignore-Errors': 'true'}})
+      .pipe(catchError(err => of(null)));
   }
 
   searchProfileAll(search, type: string = 'alternative', excludeProfile?: string, gSuiteRoles?: string[]) {
@@ -772,6 +769,7 @@ export class UserService implements OnDestroy {
   checkUserEmail(email) {
     const httpOptions = {
       headers: new HttpHeaders({
+
         'Content-Type': 'application/x-www-form-urlencoded',
       })
     };
@@ -920,40 +918,45 @@ export class UserService implements OnDestroy {
     return this.http.get('v1/nux');
   }
 
-  getStatusOfIDNumber(){
+  getStatusOfIDNumber() {
     return this.http.get(`v1/integrations/upload/custom_ids/setup`);
   }
 
-  uploadIDNumbers(body){
-    const httpOptions = {
-      headers: new HttpHeaders({
-        'Content-Type': 'application/x-www-form-urlencoded',
-      })
-    };
-
-    return this.http.post('v1/integrations/upload/custom_ids', body, httpOptions);
+  uploadIDNumbers(body) {
+    return this.http.post('v1/integrations/upload/custom_ids', body);
   }
 
   getMissingIDNumbers() {
     return this.http.get(`v1/users?has_custom_id=false`);
   }
 
-  getStatusOfGradeLevel(){
+  getStatusOfGradeLevel() {
     return this.http.get(`v1/integrations/upload/grade_levels/setup`);
   }
 
-  uploadGradeLevels(body){
-    const httpOptions = {
-      headers: new HttpHeaders({
-        'Content-Type': 'application/x-www-form-urlencoded',
-      })
-    };
-
-    return this.http.post('v1/integrations/upload/grade_levels', body, httpOptions);
+  uploadGradeLevels(body) {
+    return this.http.post('v1/integrations/upload/grade_levels', body);
   }
 
   getMissingGradeLevels() {
     return this.http.get(`v1/users?role=_profile_student&has_grade_level=false`);
   }
 
+  possibleProfileByCustomId(id: string): Observable<User | null> {
+    return this.http.get(`v1/users/custom_id/${id}`, {headers: {'X-Ignore-Errors': 'true'}})
+      .pipe(catchError(err => of(null)));
+  }
+
+  getGradeLevelsByIds(ids: string[]) {
+    const q = ids.map(x => x.trim()).join(',');
+    const opt = !!q ? {params: new HttpParams().set('student_id', q)} : {};
+    return this.http.get('v1/users/grade_level', opt);
+  }
+
+  listOf(params: Record<string, string[]>) {
+    const headers = new HttpHeaders({
+      'Content-Type': 'application/json',
+    });
+    return this.http.post('v1/users/listof', {params}, {headers}, false);
+  }
 }

@@ -107,6 +107,8 @@
     white-space: normal;
     display: flex;
     align-items: center;
+    overflow: hidden;
+    text-overflow: ellipsis;
 }
 
 .footer-settings{

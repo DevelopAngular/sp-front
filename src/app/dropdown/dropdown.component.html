@@ -1,6 +1,3 @@
-<!--<div class="pointer-wrapper">-->
-<!--  <div class="pointer"  [style.background-color]="darkTheme.getBackground('low')"></div>-->
-<!--</div>-->
 <div class="consent-wrapper"
      [style.background-color]="darkTheme.getBackground('low')"
      appCheckUserInput
@@ -8,6 +5,9 @@
 >
 
   <div class="heading" *ngIf="!!mainHeader && !!heading">
+    <div class="search-icon" *ngIf="isHiddenSearchField" appCrossPointerEventTarget (pointerClickEvent)="isSearchField = !isSearchField">
+      <img width="20" height="20" [src]="'./assets/Search Normal (Blue-Gray).svg'" alt="search">
+    </div>
     <div class="main">{{ mainHeader }}</div><br/>
     <div>{{ heading }}</div>
   </div>
@@ -17,42 +17,14 @@
 
     <div class="search" *ngIf="isSearchField">
       <app-round-input
-        [placeholder]="'Search school'"
+        [placeholder]="'Search ' + searchPlaceholder"
         [minWidth]="'280px'"
         [focused]="true"
-        (ontextupdate)="searchSchool($event)"
+        (ontextupdate)="searchObject($event)"
       ></app-round-input>
     </div>
 
     <div class="options-wrapper" [style.max-height]="optionsMaxHeight" *ngIf="locations" #optionsWrapper>
-<!--      <div class="option" #_option>-->
-
-<!--        <div class="option-data"-->
-<!--             [ngClass]="{-->
-<!--                'option-wrapper': !darkTheme.isEnabled$.value,-->
-<!--                'option-wrapper__dark': darkTheme.isEnabled$.value-->
-<!--               }"-->
-<!--             [style.background]="_option.pressed ? 'rgba(127, 135, 157, .15)' : (_option.hovered ? 'rgba(127, 135, 157, .1)' : (!selectedLocation ? darkTheme.getColor({dark: '#134482', white: '#ECF1FF'}) : 'transparent'))"-->
-<!--             appCrossPointerEventTarget-->
-<!--             (pointerClickEvent)="closeDropdown('all_rooms');"-->
-<!--             (pointerDownEvent)="_option.pressed = true"-->
-<!--             (pointerCancelEvent)="_option.pressed = false; _option.hovered = false"-->
-<!--             (mouseover)="_option.hovered = true; _option.pressed = false"-->
-<!--             (mouseleave)="_option.pressed = false; _option.hovered = false"-->
-<!--        >-->
-<!--&lt;!&ndash;          <div class="option-data_leftside" style="display: flex; align-items: center">&ndash;&gt;-->
-<!--&lt;!&ndash;            <img width="19" [src]="darkTheme.getIcon({ iconName: 'Room', darkFill: 'White', lightFill: (!selectedLocation ? 'Navy' : 'Blue-Gray') })">&ndash;&gt;-->
-<!--&lt;!&ndash;            <span style="margin-left: 5px" [style.color]="!selectedLocation ? darkTheme.getColor({dark: '#FFFFFF', white: '#1F195E'}) : darkTheme.getColor({dark: '#FFFFFF', white: '#7f879d'})">All Rooms</span>&ndash;&gt;-->
-<!--&lt;!&ndash;          </div>&ndash;&gt;-->
-<!--          <div class="option-data_rightside">-->
-<!--            <div class="marked-room">-->
-<!--              <img *ngIf="!selectedLocation" [style.width]="'20px'" [style.height]="'20px'" [src]="darkTheme.getIcon({iconName: 'Check', lightFill: 'Navy'})" alt="Check (Navy).svg">-->
-<!--            </div>-->
-<!--          </div>-->
-<!--        </div>-->
-
-<!--        &lt;!&ndash;      <div class="option-divider"></div>&ndash;&gt;-->
-<!--      </div>-->
 
       <div class="option" *ngFor="let location of locations" #_option>
         <div class="option-data"
@@ -72,8 +44,6 @@
             <span style="padding: 5px 0" [style.color]="selectedLocation && location.room === selectedLocation.room && location.title === selectedLocation.title ? darkTheme.getColor({dark: '#FFFFFF', white: '#1F195E'}) : darkTheme.getColor({dark: '#FFFFFF', white: '#7f879d'})">{{ location.title + ' (' + location.room + ')' }}</span>
           </div>
           <div class="option-data_rightside">
-            <!--          <div [style.color]="darkTheme.getColor({dark: '#FFFFFF', white: '#7f879d'})"-->
-            <!--          >{{}}</div>-->
             <div class="marked-room">
               <img *ngIf="selectedLocation ? (location.room === selectedLocation.room && location.title === selectedLocation.title) : false"
                    [style.width]="'20px'" [style.height]="'20px'"
@@ -153,9 +123,9 @@
                 'option-wrapper': !darkTheme.isEnabled$.value,
                 'option-wrapper__dark': darkTheme.isEnabled$.value
                }"
-             [style.background]="_option.pressed ? 'rgba(127, 135, 157, .15)' : (_option.hovered ? 'rgba(127, 135, 157, .1)' : (teacher.user.id === selectedTeacher.user.id ? darkTheme.getColor({dark: '#134482', white: '#ECF1FF'}) : 'transparent'))"
+             [style.background]="_option.pressed ? 'rgba(127, 135, 157, .15)' : (_option.hovered ? 'rgba(127, 135, 157, .1)' : (teacher.id === selectedTeacher.id ? darkTheme.getColor({dark: '#134482', white: '#ECF1FF'}) : 'transparent'))"
              appCrossPointerEventTarget
-             (pointerClickEvent)="_matDialogRef.close(teacher);"
+             (pointerClickEvent)="_matDialogRef.close(teacher.id);"
              (pointerDownEvent)="_option.pressed = true;"
              (pointerCancelEvent)="_option.pressed = false; _option.hovered = false"
              (mouseover)="_option.hovered = true"
@@ -166,7 +136,7 @@
           </div>
           <div class="option-data_rightside">
             <div class="marked-room">
-              <img *ngIf="teacher.user.id === selectedTeacher.user.id" [style.width]="'20px'" [style.height]="'20px'"  [src]="darkTheme.getIcon({iconName: 'Check', lightFill: 'Navy'}) | resolveAsset" alt="Check (Navy).svg">
+              <img *ngIf="teacher.id === selectedTeacher.id" [style.width]="'20px'" [style.height]="'20px'"  [src]="darkTheme.getIcon({iconName: 'Check', lightFill: 'Navy'}) | resolveAsset" alt="Check (Navy).svg">
             </div>
           </div>
         </div>

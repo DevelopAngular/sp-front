@@ -18,7 +18,7 @@ export class Location extends BaseModel {
               public scheduling_request_send_destination_teachers: boolean,
               public scheduling_request_send_origin_teachers: boolean,
               public scheduling_request_teachers: User[],
-              public required_attatchments: string[],
+              public required_attachments: string[],
               public travel_types: string[],
               public teachers: User[],
               public max_allowed_time: number,
@@ -27,9 +27,11 @@ export class Location extends BaseModel {
               public max_passes_from_active: boolean,
               public max_passes_to: number,
               public max_passes_to_active: boolean,
+              public needs_check_in: boolean,
               public enable: boolean,
               public visibility_type: VisibilityMode,
               public visibility_students: User[],
+              public visibility_grade: string[],
               public current_active_pass_count_as_destination?: number,
               public current_active_pass_count_as_origin?: number,
               public has_reached_limit_as_destination?: boolean,
@@ -67,6 +69,7 @@ export class Location extends BaseModel {
       max_passes_from_active: boolean = !!JSON['max_passes_from_active'],
       max_passes_to: number = JSON['max_passes_to'],
       max_passes_to_active: boolean = !!JSON['max_passes_to_active'],
+      needs_check_in: boolean = !!JSON['needs_check_in'],
       enable: boolean = !!JSON['enable'],
       current_active_pass_count_as_destination: number = JSON['current_active_pass_count_as_destination'],
       current_active_pass_count_as_origin: number = JSON['current_active_pass_count_as_origin'],
@@ -102,7 +105,8 @@ export class Location extends BaseModel {
     }
 
     const visibility_type: VisibilityMode = JSON['visibility_type'] ?? DEFAULT_VISIBILITY_STUDENTS.mode;
-    const visibility_students: User[] = JSON['visibility_students'] ? JSON['visibility_students'].map(s => User.fromJSON(s)) : DEFAULT_VISIBILITY_STUDENTS.over
+    const visibility_students: User[] = JSON['visibility_students'] ? JSON['visibility_students'].map(s => User.fromJSON(s)) : DEFAULT_VISIBILITY_STUDENTS.over;
+    const visibility_grade: string[] = JSON['visibility_grade'] ?? null;
 
     return new Location(
         id,
@@ -129,9 +133,11 @@ export class Location extends BaseModel {
         max_passes_from_active,
         max_passes_to,
         max_passes_to_active,
+        needs_check_in,
         enable,
         visibility_type,
         visibility_students,
+        visibility_grade,
         current_active_pass_count_as_destination,
         current_active_pass_count_as_origin,
         has_reached_limit_as_destination,

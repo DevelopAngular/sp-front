@@ -90,6 +90,11 @@ function makeConfig(config: Config, school: School, effectiveUserId): Config & {
   // }) as any);
   // console.log("headers : ", headers)
 
+  if (config !== undefined && 'headers' in config) {
+    Object.assign(headers, config.headers);
+    delete config.headers;
+  }
+
   return Object.assign({}, config || {}, {
     headers: headers,
     responseType: 'json',
@@ -283,7 +288,9 @@ export class HttpService implements OnDestroy {
             return;
           }
           if (schools.length > 0) {
-            this.currentSchoolSubject.next(schools[0]);
+            // sort schools alphabetically
+            const sortedSchools = schools.sort((a, b) => a.name.toLowerCase().localeCompare(b.name.toLowerCase()));
+            this.currentSchoolSubject.next(sortedSchools[0]);
             return;
           }
           this.currentSchoolSubject.next(null);
@@ -824,7 +831,7 @@ export class HttpService implements OnDestroy {
     if (!!school && school.id) {
       this.storage.setItem('last_school_id', school.id);
     } else {
-      this.storage.removeItem('last_school_id');
+      // this.storage.removeItem('last_school_id');
     }
     this.currentSchoolSubject.next(school);
   }

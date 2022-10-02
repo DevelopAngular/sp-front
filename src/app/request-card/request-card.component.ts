@@ -29,6 +29,7 @@ import {UserService} from '../services/user.service';
 import {School} from '../models/School';
 import {PassLimit} from '../models/PassLimit';
 import {LocationsService} from '../services/locations.service';
+import {Location} from '../models/Location';
 import {
   PassLimitDialogComponent
 } from '../create-hallpass-forms/main-hallpass--form/locations-group-container/pass-limit-dialog/pass-limit-dialog.component';
@@ -210,6 +211,25 @@ export class RequestCardComponent implements OnInit, OnDestroy {
     this.locationsService.pass_limits_entities$.subscribe(res => {
       this.passLimits = res;
     });
+
+    this.createFormService.getUpdatedChoice().pipe(takeUntil(this.destroy$)).subscribe(loc => {
+      console.log(loc)
+    });
+
+    this.locationsService.listenLocationSocket().pipe(
+      takeUntil(this.destroy$),
+      filter(res => !!res),
+      tap((res) => {
+        try {
+          const loc: Location = Location.fromJSON(res.data);
+          this.locationsService.updateLocationSuccessState(loc);
+          this.request.destination.title = loc.title;
+        } catch (e) {
+          console.log(e);
+        }
+      }),
+    ).subscribe();
+
   }
 
   ngOnDestroy(): void {

@@ -106,12 +106,14 @@
           (bulkEditResult)="bulkEditResult($event)"
           [form]="form"
           [passLimitForm]="passLimitForm"
+          [visibilityForm]="visibilityForm"
           [showErrors]="showErrors"
         ></app-bulk-edit-rooms>
 
         <app-bulk-edit-rooms-in-folder
           *ngIf="currentPage === 10" [form]="form"
           [passLimitForm]="passLimitForm"
+          [visibilityForm]="visibilityForm"
           [showErrors]="showErrors"
           [isEnableRoomTrigger$]="enableRoomTrigger"
           (bulkEditResult)="bulkEditInFolder($event)"

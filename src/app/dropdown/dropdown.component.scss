@@ -56,7 +56,16 @@
   padding: 20px;
   color: $blue-gray;
   font-size: 14px;
-  //text-align: center;
+  position: relative;
+
+  .search-icon {
+    position: absolute;
+    top: 20px;
+    right: 20px;
+    width: 20px;
+    height: 20px;
+    cursor: pointer;
+  }
 }
 
 .options-wrapper{

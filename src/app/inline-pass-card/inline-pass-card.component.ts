@@ -11,6 +11,11 @@ import {MatDialog} from '@angular/material/dialog';
 import {ScreenService} from '../services/screen.service';
 import {StorageService} from '../services/storage.service';
 import {DeviceDetection} from '../device-detection.helper';
+import { Navigation } from '../create-hallpass-forms/main-hallpass--form/main-hall-pass-form.component';
+import { Pinnable } from '../models/Pinnable';
+import { User } from '../models/User';
+import {RecurringSchedulePassService} from '../services/recurring-schedule-pass.service';
+import {RecurringConfig} from '../models/RecurringFutureConfig';
 
 @Component({
   selector: 'app-inline-pass-card',
@@ -35,11 +40,19 @@ export class InlinePassCardComponent implements OnInit, OnDestroy {
   overlayWidth: string = '0px';
   buttonWidth: number = 288;
   isExpiring: boolean;
+  recurringConfig: RecurringConfig;
 
   selectedDuration: number;
   selectedTravelType: string;
   subscribers$;
   endPassLoading$: Observable<boolean>;
+  activeRoomCodePin: boolean;
+  activeTeacherPin: boolean;
+  activeTeacherSelection: boolean;
+  selectedTeacher: User;
+
+  public FORM_STATE: Navigation;
+  pinnable: Pinnable;
 
   constructor(
       private http: HttpService,
@@ -50,7 +63,8 @@ export class InlinePassCardComponent implements OnInit, OnDestroy {
       private dialog: MatDialog,
       private screen: ScreenService,
       private storage: StorageService,
-      private cdr: ChangeDetectorRef
+      private cdr: ChangeDetectorRef,
+      private recurringConfigService: RecurringSchedulePassService
   ) { }
 
   get gradient() {
@@ -59,6 +73,10 @@ export class InlinePassCardComponent implements OnInit, OnDestroy {
 
   get isMobile() {
     return DeviceDetection.isMobile();
+  }
+
+  get isRecurringFuture() {
+    return !!this.pass?.schedule_config_id;
   }
 
   ngOnInit() {
@@ -98,6 +116,36 @@ export class InlinePassCardComponent implements OnInit, OnDestroy {
           this.endPass();
         }
       });
+
+      this.FORM_STATE = {
+        step: null,
+        previousStep: 0,
+        state: 1,
+        fromState: null,
+        formMode: {
+          role: null,
+          formFactor: null,
+        },
+        data: {
+          selectedGroup: null,
+          selectedStudents: [],
+          direction: {
+            from: null
+          },
+          roomStudents: null,
+        },
+        forInput: false,
+        forLater: false,
+        kioskMode: false
+      };
+
+      this.pinnable = this.FORM_STATE.data.direction ? this.FORM_STATE.data.direction.pinnable : null;
+
+    if (this.pass?.schedule_config_id) {
+      this.recurringConfigService.getRecurringScheduledConfig(this.pass.schedule_config_id).subscribe({
+        next: c => this.recurringConfig = c
+      });
+    }
   }
 
   ngOnDestroy() {
@@ -106,7 +154,49 @@ export class InlinePassCardComponent implements OnInit, OnDestroy {
   }
 
   endPass() {
-    this.hallPassService.endPassRequest(this.pass.id);
+    if (this.pass.needs_check_in) {
+      this.activeRoomCodePin = true;
+    }else {
+      this.hallPassService.endPassRequest(this.pass.id);
+    }
+  }
+
+  roomCodeResult(event){
+    console.log("event : ", event);
+
+  }
+
+  enableTeacherPin(){
+    this.activeRoomCodePin = false;
+    this.activeTeacherPin = true;
+    this.activeTeacherSelection = false;
+  }
+
+  selectTeacher(){
+    this.activeRoomCodePin = false;
+    this.activeTeacherPin = false;
+    this.activeTeacherSelection = true;
+  }
+
+  requestTarget(teacher) {
+    this.enableTeacherPin();
+    this.selectedTeacher = teacher;
+  }
+
+  back(){
+    if (this.activeTeacherPin == true) {
+      this.activeTeacherPin = false;
+      this.activeRoomCodePin = false;
+      this.activeTeacherSelection = true;
+    }else if(this.activeTeacherSelection == true) {
+      this.activeRoomCodePin = true;
+      this.activeTeacherPin = false;
+      this.activeTeacherSelection = false;
+    }else {
+      this.activeRoomCodePin = false;
+      this.activeTeacherPin = false;
+      this.activeTeacherSelection = false;
+    }
   }
 
   closeDialog() {

@@ -1,16 +1,21 @@
 import {KeyValue} from '@angular/common';
-import { Component, OnInit, AfterViewInit, OnDestroy, Input, Output, EventEmitter, ViewChild, ElementRef, TemplateRef, Renderer2} from '@angular/core';
+import { Component, OnInit, AfterViewInit, OnDestroy, Input, Output, EventEmitter, ViewChild, ElementRef, TemplateRef, Renderer2, HostListener} from '@angular/core';
 import {FormGroup} from '@angular/forms';
 import {MatDialog, MatDialogRef} from '@angular/material/dialog';
-import {Subject} from 'rxjs';
-import {tap, take, takeUntil, filter, finalize, startWith} from 'rxjs/operators';
-import {cloneDeep} from 'lodash';
+import {Subject, Observable, of} from 'rxjs';
+import {map, tap, take, takeUntil, filter, finalize, startWith, shareReplay, catchError} from 'rxjs/operators';
+import {cloneDeep, isEqual} from 'lodash';
 
+import {UserService} from '../../../services/user.service';
 import {User} from '../../../models/User';
 import {SPSearchComponent} from '../../../sp-search/sp-search.component'; 
 import {VisibilityMode, ModeView, ModeViewMap, VisibilityOverStudents, DEFAULT_VISIBILITY_STUDENTS} from './visibility-room.type';
 import {OverlayDataService} from '../overlay-data.service';
 import {slideOpacity } from '../../../animations';
+import {DataService} from '../../../services/data-service';
+import {ImportStudentListComponent} from './import-student-list/import-student-list.component';
+import {ToastService} from '../../../services/toast.service';
+import {BlockScrollService} from '../block-scroll.service';
 
 @Component({
   selector: 'app-visibility-room',
@@ -26,6 +31,8 @@ export class VisibilityRoomComponent implements OnInit, AfterViewInit, OnDestroy
   @ViewChild('panel') panelRef: TemplateRef<any>;
   // access to search component public methods: cancel, etc
   @ViewChild(SPSearchComponent) searchComponent: SPSearchComponent;
+  // grade level
+  @ViewChild('gradeLevel') gradeLevelTpl: TemplateRef<any>;
   
   @Input() data?: VisibilityOverStudents = DEFAULT_VISIBILITY_STUDENTS; 
 
@@ -40,6 +47,8 @@ export class VisibilityRoomComponent implements OnInit, AfterViewInit, OnDestroy
   // reasons the component exists for
   // 1) the students to be subject of visibility room rule
   selectedStudents: User[] = [];
+  // grade levels
+  selectedGradeLevels: string[] = [];
   // related setting to search component
   showOptions = false;
   // 2) how visibility room rule will operate - value that has meaning for database
@@ -63,32 +72,67 @@ export class VisibilityRoomComponent implements OnInit, AfterViewInit, OnDestroy
   // did open the panel with options 
   didOpen: boolean = false;
 
+  searchInputFocused = false;
+
   // need to show the search UI?
   get isShowSearch(): boolean {
    return this.mode !== 'visible_all_students';
   }
 
   constructor(
+    private elRef: ElementRef,
     public dialog: MatDialog,
     public overlayService: OverlayDataService,
     private renderer: Renderer2,
+    private dataService: DataService,
+    private UserService: UserService,
+    private toastService: ToastService,
+    private blockScrollService: BlockScrollService,
   ) {
     this.modeView = this.modes[this.mode];
+    this.dialogIds = [
+      this.PANEL_ID,
+      this.GRADE_LEVEl_DIALOG_ID,
+      this.STUDENT_LIST_DIALOG_ID,
+    ]; 
   }
 
+  grades$: Observable<string[]> = new Observable<string[]>();
+  isGradeEnabled$: Observable<boolean>;
+
   ngOnInit(): void {
+    this.isGradeEnabled$ = this.UserService.getStatusOfGradeLevel().pipe(
+      filter(v => !!v), 
+      map(s => {
+        // prudently return false if we got a wrong shaped s
+        const isEnabled: boolean = (s as any)?.results?.setup ?? false;
+        return isEnabled;
+      }),
+      takeUntil(this.destroy$),
+      shareReplay(1),
+    );
+    this.isGradeEnabled$.subscribe();
+
+    this.grades$ = this.dataService.getGradesList().pipe(
+      takeUntil(this.destroy$),
+      shareReplay(1),
+    );
+
     if (!this.data) {
       this.data = this.overlayService.pageState.getValue().data?.visibility ?? DEFAULT_VISIBILITY_STUDENTS;
     }
     this.mode = this.data.mode;
     this.modeView = this.modes[this.data.mode];
     this.selectedStudents = this.data.over; 
+    this.selectedGradeLevels = this.data.grade;
+
+    const hasChanged = !this.isEqualPrevData(this.data);
     // keep last non-all data
     this.updatePrevData();
 
     this.dirty.pipe(
       takeUntil(this.destroy$),
-      startWith(false),
+      startWith(hasChanged),
     ).subscribe((v: boolean) => {
       const c = this.visibilityForm.get('visibility');
       if (v) {
@@ -104,14 +148,46 @@ export class VisibilityRoomComponent implements OnInit, AfterViewInit, OnDestroy
     ).subscribe();
   }
 
+  adjustGradeDialogScroll() {
+    // re-calculate scroll adj
+    setTimeout(( ) => {
+      const $ul = document.querySelector('.panel.grade-level');
+      if (!!$ul) {
+        const $x = $ul.getBoundingClientRect();
+        const offset = (10 + 10);/*pading of the last li + ul itself*/ 
+        const delta = (this.bottomSearchComponent + $x.height) - (window.innerHeight - offset); 
+        if (delta > 0) {
+          // deals with a posible too long grades's list
+          this.panelMaxHeight = ($x.height - delta) + 'px';
+        } else {
+          // reset previous scroll
+          this.panelMaxHeight = null;
+        } 
+      }
+    }, 0); 
+  }
+
   unlisten: () => void;
 
   ngAfterViewInit() {
-    if (this.selectedStudents.length > 0) {
-      this.searchComponent.inputField = false;
+    if (this?.searchComponent) {
+      if (this.selectedStudents.length > 0) {
+        this.searchComponent.inputField = false;
+      } else if (this.selectedGradeLevels.length > 0) {
+        this.searchComponent.inputField = false;
+      }
+
+      this.searchComponent.forceFocused$.next(true);
     }
 
     this.unlisten = this.renderer.listen('document', 'click', event => {
+      if (this.dialog.getDialogById(this.STUDENT_LIST_DIALOG_ID)) {
+        return
+      }
+
+     //const atleastOneExists = this.dialogIds.some(did => !!this.dialog.getDialogById(did));
+     //if (atleastOneExists) return;
+
       try {
         let $input = null;
         if (this.searchComponent?.input && ('input' in this.searchComponent.input))  {
@@ -121,30 +197,242 @@ export class VisibilityRoomComponent implements OnInit, AfterViewInit, OnDestroy
         const $opener = this.openerRef.nativeElement; 
         const isInput = $el === $input;
         const isOpener = $el === $opener; 
-        const fromdialog = !!$el.closest('#opener-visibility-options')
+        const fromdialog = !!$el.closest('#opener-visibility-options');
 
         this.showErrorsVisibility = true;
         if (isInput || isOpener || fromdialog) {
           this.showErrorsVisibility = false;
         }
+
+        if (! isInput) this.allowOpenGradeLevel = true;
+
+        // close search panel when clicked outside of the sensitive elements
+        /*const fromSearchInputPanel = $el.closest('.sp-search-wrapper > .input');
+        const fromSearchLinkButton = $el.closest('app-sp-chips app-gradient-button');
+        if (!fromSearchLinkButton && !fromSearchInputPanel && this.searchComponent?.inputField && this.selectedStudents.length > 0) {
+          this.searchComponent.inputField = false;
+        }*/
       } catch (e) {
         console.log('RV.listen', e);
       }
     });
+    // calculate limit that stops grade list to follow scrolling room visibility
+    this.bottomLimit = this.elRef.nativeElement.closest('app-overlay-container')?.getBoundingClientRect().bottom;
+  }
+
+  // this limit stop scrolling adjusting for grade list
+  bottomLimit: number|null = null;
+
+  private allowOpenGradeLevel: boolean = true;
+
+  triggerInputFieldFocus() {
+    setTimeout(() => {
+      this.searchComponent?.forceFocused$.next(true);
+    }, 0);
   }
   // the focus of internal input native of app-search
   // triggers this method in order to hide the errors 
   public onSearchComponentFocus() {
     this.showErrorsVisibility = false;
+    // open grade level options next loop
+    // givint time for searchComponent input native to be in DOM
+    setTimeout(this.openGradeLevelDialog.bind(this), 0);
+  }
+
+  public onSearchComponentBlur() {
+    if (this.dialog.getDialogById(this.GRADE_LEVEl_DIALOG_ID)) {
+      return;
+    }
+    this.showErrorsVisibility = true;
   }
 
   ngOnDestroy(): void {
     this.destroy$.next();
     this.destroy$.complete();
     this.unlisten();
+    this.closeDialogs();
   }
 
-  private panelDialog: MatDialogRef<TemplateRef<any>> | undefined;
+  dialogIds: string[];
+
+  private closeDialogs() {
+    this.dialogIds.forEach(did => {
+      const d = this.dialog.getDialogById(did);
+      if (!!d) d.close();
+    });
+  }
+
+  @HostListener('document:click', ['$event'])
+  clickout(event) {
+    if (this.clickoutFn) {
+      this.clickoutFn(event);
+    }
+  }
+
+  clickoutFn: Function;
+  
+  private gradeLevelDialog: MatDialogRef<TemplateRef<any>> | undefined;
+  private readonly GRADE_LEVEl_DIALOG_ID = 'grade-level-options';
+
+  // it needs this.searchComponent.input['input']['nativeElement'] to be in DOM
+  // call this function wraped in a setTimeot when not sure the input is DOM
+  openGradeLevelDialog() {
+    const panelDialogExists = this.dialog.getDialogById(this.GRADE_LEVEl_DIALOG_ID);
+    if (panelDialogExists) return;
+
+    if (this.searchComponent.inputField) {
+      //TODO check empty field not by DOM
+      //this.searchComponent.inputValue$.pipe(take(1), tap(v => console.log('INPUT'))).subscribe();
+      const $input = this.searchComponent.input['input']['nativeElement'];
+      // non empty field  cancels the dialog opening
+      if ($input.value.length) return;
+    }
+
+    if (!this.allowOpenGradeLevel) {
+      this.allowOpenGradeLevel = !this.allowOpenGradeLevel;
+      return;
+    }
+
+    this.searchComponent?.forceFocused$.next(false);
+
+    const conf = {
+      id: this.GRADE_LEVEl_DIALOG_ID,
+      panelClass: 'consent-dialog-container',
+      hasBackdrop: false,
+      autofocus: true,
+    };
+    this.gradeLevelDialog = this.dialog.open(this.gradeLevelTpl, conf);
+    this.positionGradeLevelDialog();
+
+    // start listen block scroll
+    const blockScrollSub = this.blockScrollService.scroll$.subscribe(_ => {
+      // first position is calulated
+      this.positionGradeLevelDialog()
+      // then adjusts for calculated position;
+      this.adjustGradeDialogScroll();
+    });
+
+    this.gradeLevelDialog.afterClosed()
+    .pipe(
+      take(1),
+      tap(() => {
+        if (!!this.visibilityForm.value.visibility?.grade) {
+          this.selectedGradeLevels = [...this.visibilityForm.value.visibility.grade];
+        }
+        // reset previous scroll
+        this.panelMaxHeight = null;
+        // restore focus to search component
+        this.triggerInputFieldFocus();
+
+        blockScrollSub.unsubscribe();
+      }),
+    )
+    .subscribe(() => {
+      this.clickoutFn = null;
+    });
+
+    this.gradeLevelDialog.afterOpened().subscribe(() => {
+      this.clickoutFn = this.closeGradeLevelDialog;
+
+      const whenLoadedAdjust$ = this.grades$.pipe(take(1), tap(() => this.adjustGradeDialogScroll()));
+      whenLoadedAdjust$.subscribe();
+
+      this.searchComponent?.forceFocused$.next(false);
+    });
+
+    this.allowOpenGradeLevel = !this.allowOpenGradeLevel;
+
+  }
+
+  closeGradeLevelDialog(event: MouseEvent) {
+    const $matContainer = document.getElementById(this.GRADE_LEVEl_DIALOG_ID);
+    if (!$matContainer) {
+      this.gradeLevelDialog?.close();// might be undefined
+      return 
+    }
+
+    const rect = $matContainer.getBoundingClientRect()
+    if (
+      (event.clientX <= rect.left || event.clientX >= rect.right || 
+      event.clientY <= rect.top || event.clientY >= rect.bottom) && 
+      !this.dialog.getDialogById(this.STUDENT_LIST_DIALOG_ID)
+    ) {
+      this.gradeLevelDialog.close();
+    }
+  }
+
+  handleGradeLevelSelected(grade: string) {
+    const visibility = this.visibilityForm.value.visibility;
+    visibility.grade = [...visibility?.grade ?? [], grade].filter((v, i, self) => self.indexOf(v) === i);
+
+    this.mode = visibility.mode;
+    this.selectedStudents = visibility.over;
+    this.selectedGradeLevels = visibility.grade;
+
+    this.change$.next();
+
+    //this.visibilityForm.patchValue({visibility});
+    //this.visibilityForm.markAsDirty();
+
+    this.gradeLevelDialog.close();
+    this.searchComponent.inputField = false;
+    this.allowOpenGradeLevel = true;
+  }
+
+  updateGradeLevel(grades: string[]) {
+    let visibility = this.visibilityForm.value.visibility;
+    visibility.grade = [...grades ?? []].filter((v, i, self) => self.indexOf(v) === i);
+    visibility = cloneDeep(visibility);
+
+    this.mode = visibility.mode;
+    this.selectedStudents = visibility.over;
+    this.selectedGradeLevels = visibility.grade;
+
+    this.change$.next();
+    this.dirty.next();
+  }
+  
+  private studentListDialog: MatDialogRef<ImportStudentListComponent> | undefined;
+  private readonly STUDENT_LIST_DIALOG_ID = 'student-list-upload';
+
+  openStudentListDialog() {
+    const panelDialogExists = this.dialog.getDialogById(this.STUDENT_LIST_DIALOG_ID);
+    if (panelDialogExists) return;
+
+    const conf = {
+      id: this.STUDENT_LIST_DIALOG_ID,
+      panelClass: 'consent-dialog-container',
+      hasBackdrop: true,
+      autofocus: true,
+    };
+    this.studentListDialog = this.dialog.open(ImportStudentListComponent, conf);
+    this.studentListDialog.afterClosed().pipe(
+      filter((v => !!v)),
+      tap((studentList: User[]) => {
+        // add existent users ?
+        let ss: User[] = this.selectedStudents.length > 0 ? [...this.selectedStudents, ...studentList] : [...studentList];
+        // replace existent users
+        //let ss: User[] = [...studentList];
+        // only unique
+        ss = [...new Map(ss.map(x => [x.id, x])).values()];
+        this.addFoundStudents(ss);
+        setTimeout(() => {
+          this.searchComponent.inputField = false;
+          this.gradeLevelDialog.close();
+          // reset flag here
+          this.allowOpenGradeLevel = true;
+        }, 0);
+      }),
+      catchError(err => {
+        this.toastService.openToast({
+          title: 'Error processing the student list',
+          subtitle: err.message,
+          type: 'error',
+        });
+        return of(null);
+      }),
+    ).subscribe();
+  }
 
   private dirty: Subject<boolean> = new Subject<boolean>();
 
@@ -153,14 +441,16 @@ export class VisibilityRoomComponent implements OnInit, AfterViewInit, OnDestroy
     return 0;
   };
 
-  handleOpenClose() {
-    const PANEL_ID = 'opener-visibility-options';
+  private panelDialog: MatDialogRef<TemplateRef<any>> | undefined;
+  private PANEL_ID = 'opener-visibility-options';
 
-    const panelDialogExists = this.dialog.getDialogById(PANEL_ID);
+  handleOpenClose() {
+
+    const panelDialogExists = this.dialog.getDialogById(this.PANEL_ID);
     if (panelDialogExists) return;
 
     const conf = {
-      id: PANEL_ID,
+      id: this.PANEL_ID,
       panelClass: 'consent-dialog-container',
       backdropClass: 'invis-backdrop',
     };
@@ -173,10 +463,20 @@ export class VisibilityRoomComponent implements OnInit, AfterViewInit, OnDestroy
       take(1),
       filter( (v: VisibilityMode | null) => !!v && (v !== this.mode)),
       tap((v: VisibilityMode) => {
-        // init new mode
-        this.selectedStudents = [];
-        this.mode = v;
+        
+        // init new modea
+        const visibility: VisibilityOverStudents = cloneDeep(DEFAULT_VISIBILITY_STUDENTS);
+        visibility.over = this.selectedStudents = [];
+        visibility.grade = this.selectedGradeLevels = [];
+        visibility.mode = this.mode = v;
+        if (v !== 'visible_all_students' && this.prevdata[v]) {
+          visibility.over = this.selectedStudents = this.prevdata[v].over;
+          visibility.grade = this.selectedGradeLevels = this.prevdata[v].grade;
+        }
+        //this.visibilityForm.setValue({visibility});
+        this.change$.next();
         this.modeView = this.modes[v];
+
         if (!this.prevdata[v]) {
           this.resetSearchComponent();
         } else {
@@ -185,9 +485,9 @@ export class VisibilityRoomComponent implements OnInit, AfterViewInit, OnDestroy
       }),
       finalize(() => {
         this.didOpen = false;
-        this.panelDialog = undefined;
+        //this.panelDialog = undefined;
         // component is untouched
-        this.dirty.next(false);
+        //this.dirty.next(false);
       }),
     ).subscribe();
   }
@@ -205,21 +505,33 @@ export class VisibilityRoomComponent implements OnInit, AfterViewInit, OnDestroy
 
   public visibilityChange() {
     // prepare data for external use
-    this.data = {mode: this.mode, over: this.selectedStudents};
-    
+    this.data = {mode: this.mode, over: [...this.selectedStudents], grade: [...this.selectedGradeLevels]};
+    const data = cloneDeep(this.data); 
     // sync with page state
-    this.overlayService.patchData({data: this.data});
+    this.overlayService.patchData({visibility: data});
 
-    this.visibilityForm.setValue({visibility: this.data});
+    this.visibilityForm.setValue({visibility: data});
     // notify parent of selected option
-    this.optionSelectedEvent.emit(this.data);
+    this.optionSelectedEvent.emit(data);
 
     // keep last modification
     this.updatePrevData();
 
+    // force open the dialog no matter what mode is chosen
+    this.allowOpenGradeLevel = true;
     // no data? shows the search input
-    if (this.data.over.length === 0 && !!this.searchComponent) {
-      setTimeout(() => this.searchComponent.inputField = true, 0);
+    if (this.data.over.length === 0 && this.isShowSearch) {
+      // for DOM search input field
+      setTimeout(() => {
+        // check again
+        if (!this.searchComponent) return;
+
+        this.searchComponent.inputField = true;
+
+        this.isGradeEnabled$.pipe(tap((gradesEnabled: boolean) => {
+          if (gradesEnabled) setTimeout(this.openGradeLevelDialog.bind(this), 0);
+        })).subscribe();
+      });
     }
   }
 
@@ -232,9 +544,16 @@ export class VisibilityRoomComponent implements OnInit, AfterViewInit, OnDestroy
       ...this.prevdata,
       [data.mode]: {
         mode: data.mode, 
-        over: cloneDeep(data.over),
+        over: data.over,
+        grade: data.grade,
       }
     };
+    this.prevdata = cloneDeep(this.prevdata);
+  }
+
+  private isEqualPrevData(data: VisibilityOverStudents): boolean {
+    const prev = this.prevdata[data.mode];
+    return isEqual(prev, data);
   }
 
   // call public method cancel of the search component
@@ -248,8 +567,8 @@ export class VisibilityRoomComponent implements OnInit, AfterViewInit, OnDestroy
         // remove students;s chips from UI
         this.searchComponent.removeStudents();
         this.searchComponent.inputField = true;
+        //this.change$.next();
       }
-      this.change$.next();
     }, 0);
   }
 
@@ -257,7 +576,7 @@ export class VisibilityRoomComponent implements OnInit, AfterViewInit, OnDestroy
     setTimeout(() => {
       this.selectedStudents = ss;
       this.searchComponent.inputField = (ss.length === 0);
-      this.change$.next();
+      //this.change$.next();
     }, 0);
   }
 
@@ -267,10 +586,47 @@ export class VisibilityRoomComponent implements OnInit, AfterViewInit, OnDestroy
     const rect = $rect.getBoundingClientRect();
     // bottom right related to opener
     const position = {
-      top: (rect.bottom) + 'px', 
-      // 270 is taken from CSS not live calculated
-      left: rect.left + (rect.width - 270) + 'px', 
+      top: (rect.bottom + 7) + 'px', 
+      // 270 is taken from CSS not live calculated, also 13 represents padding
+      left: rect.left + (rect.width - 270 - 13) + 'px', 
     };
     this.panelDialog.updatePosition(position)
+  }
+
+  public panelMaxHeight: string = 'none';
+  private bottomSearchComponent: number | null = null;
+
+  private positionGradeLevelDialog() {
+    // input search should exists
+    const $rect = this.searchComponent.input['input']['nativeElement'];
+    const rect = $rect.getBoundingClientRect();
+
+    this.bottomSearchComponent = rect.bottom; // relative to viewport
+
+    let topval = rect.bottom;
+    // do not pass over this.bottomLimit
+    if (this.bottomLimit !== null && rect.bottom > this.bottomLimit) {
+     topval = this.bottomLimit;
+     // this is used in adjustGradeDialogScroll
+     this.bottomSearchComponent = topval;
+    }
+    // bottom right related to opener
+    const position = {
+      top: (topval + 7) + 'px', 
+      // 270 is taken from CSS not live calculated, also 13 represents padding
+      left: rect.left + (rect.width - 270 - 13) + 'px', 
+    };
+    this.gradeLevelDialog.updatePosition(position);
+  }
+
+  // UI hover color
+  hoveredNonSelected: boolean | null
+  
+  onEnter(mode: string) {
+    if (mode !== this.mode) this.hoveredNonSelected = true;
+  }
+  
+  onLeave(mode: string) {
+    this.hoveredNonSelected = false;
   }
 }

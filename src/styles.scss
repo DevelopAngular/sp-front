@@ -6,7 +6,6 @@
 @import "~font-awesome/css/font-awesome.min.css";
 @import "design-system";
 @import "pass-limits.scss";
-
 html {
     background-color: #FCFDFF;
     padding: 0 0;
@@ -316,7 +315,7 @@ div {
 }
 
 .overlay-dialog.show-overlay .mat-dialog-container {
-  overflow: auto !important;
+    overflow: auto !important;
 }
 
 .overlay-dialog-no-background {
@@ -352,6 +351,15 @@ div {
 
 .id-card-overlay-container {
     max-width: 100vw !important;
+}
+
+.cehckin-room-code-dialog-container {
+    width: 100vw !important;
+    max-width: 100vw !important;
+    height: 100vh;
+    .mat-dialog-container {
+        padding: 0 !important;
+    }
 }
 
 .error-toast-dialog-container .mat-dialog-container {

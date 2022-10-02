@@ -22,7 +22,7 @@ import {SortMenuComponent} from '../sort-menu/sort-menu.component';
 import {MyRoomAnimations} from './my-room.animations';
 import {KioskModeService} from '../services/kiosk-mode.service';
 import {bumpIn} from '../animations';
-import {DomSanitizer} from '@angular/platform-browser';
+import {DomSanitizer, Title} from '@angular/platform-browser';
 import {Router} from '@angular/router';
 import {StorageService} from '../services/storage.service';
 import {HttpService} from '../services/http-service';
@@ -33,6 +33,9 @@ import {UNANIMATED_CONTAINER} from '../consent-menu-overlay';
 import {GoogleLoginService} from '../services/google-login.service';
 import * as moment from 'moment';
 import {CheckForUpdateService} from '../services/check-for-update.service';
+import { RoomCheckinCodeDialogComponent } from './room-checkin-code-dialog/room-checkin-code-dialog.component';
+import { KioskModeDialogComponent } from '../kiosk-mode/kiosk-mode-dialog/kiosk-mode-dialog.component';
+import { KioskSettingsDialogComponent } from '../kiosk-settings-dialog/kiosk-settings-dialog.component';
 
 
 @Component({
@@ -94,7 +97,6 @@ export class MyRoomComponent implements OnInit, OnDestroy, AfterViewInit {
 
   @ViewChild('calendar') calendar: ElementRef;
 
-  testPasses: PassLikeProvider;
   activePasses: any;
   originPasses: any;
   destinationPasses: any;
@@ -162,10 +164,10 @@ export class MyRoomComponent implements OnInit, OnDestroy, AfterViewInit {
       public screenService: ScreenService,
       public router: Router,
       private scrollPosition: ScrollPositionService,
-      private updateService: CheckForUpdateService
+      private updateService: CheckForUpdateService,
+      private titleService: Title
   ) {
     this.setSearchDate(this.timeService.nowDate());
-    this.testPasses = new BasicPassLikeProvider(testPasses);
 
     const selectedLocationArray$ = this.selectedLocation$
       .pipe(
@@ -273,6 +275,7 @@ export class MyRoomComponent implements OnInit, OnDestroy, AfterViewInit {
           this.selectedLocation = selected;
           this.selectedLocation$.next([selected]);
         }
+        this.titleService.setTitle(`${this.selectedLocation.title} | SmartPass`);
         this.userLoaded = true;
     });
 
@@ -374,23 +377,56 @@ export class MyRoomComponent implements OnInit, OnDestroy, AfterViewInit {
   }
 
   setRoomToKioskMode() {
-    let kioskRoom;
-    if (this.roomOptions.length === 1) {
-        kioskRoom = this.roomOptions[0];
-    } else {
-      kioskRoom = Object.assign({}, this.selectedLocation);
-    }
-    this.kioskMode.setCurrentRoom(kioskRoom);
-    this.userService.saveKioskModeLocation(kioskRoom.id).subscribe((res: any) => {
-      // Switch into kiosk mode
+    this.http.get(`v1//kiosk/${this.selectedLocation.id}/login`).subscribe({
+      next:(kioskLoginInfo:any)  => {
+        const dialogRef = this.dialog.open(KioskModeDialogComponent, {
+          panelClass: 'accounts-profiles-dialog',
+          backdropClass: 'custom-bd',
+          width: '425px',
+          height: '480px',
+          data: {selectedRoom: this.selectedLocation, loginData: kioskLoginInfo.results}
+        });
+    
+        dialogRef.afterClosed().subscribe((result) => {
 
-      this.storage.setItem('kioskToken', res.access_token);
-      // this.storage.setItem('refresh_token', res.refresh_token);
-      this.loginService.updateAuth({username: this.user.primary_email, type: 'demo-login', kioskMode: true});
-      this.http.kioskTokenSubject$.next(res);
-      this.router.navigate(['main/kioskMode']);
+          if (result) {
+            this.router.navigate(['main/kioskMode/settings']);
+            this.kioskMode.enterKioskMode$.subscribe((res)=>{
+              if(res){
+                let kioskRoom;
+                if (this.roomOptions.length === 1) {
+                    kioskRoom = this.roomOptions[0];
+                } else {
+                  kioskRoom = Object.assign({}, this.selectedLocation);
+                }
+                this.kioskMode.setCurrentRoom(kioskRoom);
+                this.userService.saveKioskModeLocation(kioskRoom.id).subscribe((res: any) => {
+                  // Switch into kiosk mode
+            
+                  this.storage.setItem('kioskToken', res.access_token);
+                  // this.storage.setItem('refresh_token', res.refresh_token);
+                  this.loginService.updateAuth({username: kioskLoginInfo.results.username, password: kioskLoginInfo.results.password, type: 'demo-login', kioskMode: true});
+                  this.http.kioskTokenSubject$.next(res);
+                  this.router.navigate(['main/kioskMode']);
+                });
+              }
+            })
+
+    
+          }
+        });
+      }
+    })
+
+  }
+
+  openRoomCodeDialog(){
+    console.log("this.selectedLocation : ", this.selectedLocation);
+    const dialogRef = this.dialog.open(RoomCheckinCodeDialogComponent, {
+      panelClass: 'cehckin-room-code-dialog-container',
+      backdropClass: 'custom-bd',
+      data: {roomData : this.selectedLocation},
     });
-
   }
 
   onSearch(search: string) {
@@ -425,8 +461,10 @@ export class MyRoomComponent implements OnInit, OnDestroy, AfterViewInit {
           filter(res => !!res)
         )
         .subscribe(data => {
+          console.log("data : ", data)
           this.holdScrollPosition = data.scrollPosition;
           this.selectedLocation = data.selectedRoom === 'all_rooms' ? null : data.selectedRoom;
+          this.titleService.setTitle(`${this.selectedLocation.title} | SmartPass`);
           this.selectedLocation$.next(data.selectedRoom !== 'all_rooms' ? [data.selectedRoom] : this.roomOptions);
         });
     }
@@ -474,7 +512,9 @@ export class MyRoomComponent implements OnInit, OnDestroy, AfterViewInit {
       });
 
       dialogRef.componentInstance.onListItemClick.subscribe((location) => {
+        console.log("location : ", location, this.roomOptions);
         this.selectedLocation = location;
+        this.titleService.setTitle(`${this.selectedLocation.title} | SmartPass`);
         this.selectedLocation$.next(this.selectedLocation !== null ? [this.selectedLocation] : this.roomOptions);
       });
   }

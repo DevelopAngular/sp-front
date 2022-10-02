@@ -242,11 +242,18 @@ export class AdminService {
   getGSuiteOrgsRequest() {
     this.store.dispatch(getGSuiteSyncInfo());
     return this.gSuiteInfoData$;
+
   }
 
   getGSuiteOrgs(): Observable<GSuiteOrgs> {
     return this.http.get(`v1/schools/${this.http.getSchool().id}/syncing/gsuite/status`);
   }
+
+  getGSuiteOrgsUnits(): Observable<any> {
+    return this.http.get(`v1/schools/${this.http.getSchool().id}/gsuite/org_units`)
+  }
+
+ 
 
   getCleverInfoRequest() {
     this.store.dispatch(getCleverInfo());

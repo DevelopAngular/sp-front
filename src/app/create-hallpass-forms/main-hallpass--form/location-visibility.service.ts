@@ -1,144 +1,59 @@
-import {Injectable, TemplateRef} from '@angular/core';
-import {MatDialog} from '@angular/material/dialog';
-import {Subject} from 'rxjs';
-import {takeUntil} from 'rxjs/operators';
-import {Navigation} from './main-hall-pass-form.component';
+import {Injectable} from '@angular/core';
 import {Location} from '../../models/Location';
-import {
-  ConfirmationDialogComponent,
-  ConfirmationTemplates
-} from '../../shared/shared-components/confirmation-dialog/confirmation-dialog.component';
-import {ToastService} from '../../services/toast.service';
-import {VisibilityMode} from '../../admin/overlay-container/visibility-room/visibility-room.type';
-import {CreateFormService} from '../create-form.service';
+import {User} from '../../models/User';
 
-@Injectable({
-  providedIn: 'root'
-})
+@Injectable()
 export class LocationVisibilityService {
 
-  constructor(
-    private dialog: MatDialog,
-    private toastService: ToastService,
-    private formService: CreateFormService,
-  ) { }
+  constructor() { }
 
-  // mimic server visibility skipped  calculation
-  calculateSkipped(students: string[], ruleStudents: string[], rule: VisibilityMode): string[] | undefined {
+  getIdOrThrow(s: User): string {
+    if (s?.id) {
+      return ''+s.id;
+    }
+    throw new Error('no appropriate id');
+  };
 
-     let skipped;
-
-     if (rule ===  "visible_certain_students") {
-       if (ruleStudents.length === 0) {
-         skipped = students;
-       } else {
-          const delta: string[] = students.filter(s => (!ruleStudents.includes(s)));
-         if (delta.length > 0) {
-           skipped = delta;
-         }
-       }
-     } else if (rule === "hidden_certain_students") {
-      if (ruleStudents.length > 0) {
-        const delta: string[] = students.filter(s => ruleStudents.includes(s));
-        if (delta.length > 0) {
-          skipped = delta;
-        }
-      }
+  // mimic server visibility byid  calculation
+  calculateSkipped(users: User[], location: Location): string[] {
+    const rule = location.visibility_type;
+    if (rule === 'visible_all_students'){
+      return [];
     }
 
-    return skipped;
-  }
+    const students = users.map((s:User) => this.getIdOrThrow(s));
+    const ruleStudents = location.visibility_students.map((s: User) => this.getIdOrThrow(s));
+                 
+    let byid: string[] = [];
 
-  filterByVisibility(location: Location, students: string[]) {
-    const ruleStudents = location.visibility_students.map(s => ''+s.id);
-    const rule = location.visibility_type;
-    let skipped = this.calculateSkipped(students, ruleStudents, rule);
-    return skipped === undefined;
-  }
+    // when we have just grades this visibility_students is empty
+    if (ruleStudents.length > 0) {
+      // filter by ids
+      byid = students.filter(s => ruleStudents.includes(s));
+    }
 
-  /*
-  // TODO: replaced with copy paste as this method seems to exhaust pinnable observable
-  howToActOnChooseLocation(
-    formState: Navigation,
-    location: Location,
-    confirmDialogVisibility: TemplateRef<HTMLElement>,
-    forwardAndEmit: () => void,
-    destroy$: Subject<any>,
-    checkForRoomStudents: boolean = false,
-  ): void {
-      // staff only
-     let selectedStudents = formState.data.selectedStudents;
-     if (checkForRoomStudents)
-       selectedStudents = formState.data.roomStudents ?? formState.data.selectedStudents;
-     const students = selectedStudents.map(s => ''+s.id);
-     const ruleStudents = location.visibility_students.map(s => ''+s.id);
-     const rule = location.visibility_type;
-
-    // skipped are students that do not qualify to go forward
-     let skipped = this.calculateSkipped(students, ruleStudents, rule);
-
-      if (!skipped || skipped.length === 0) {
-        forwardAndEmit();
-        return;
+    // filter by grade
+    const ruleGrades = location?.visibility_grade ?? [];
+    const _bygrade: User[] = users.filter((s: User) => {
+      // without grade don't put it in
+      if (!s?.grade_level) {
+        return false;
       }
+      const toSkip = ruleGrades.includes(s.grade_level)
+      return toSkip;
+    });
+    const bygrade: string[] = _bygrade.map((s: User) => ''+s.id);
 
-      let text =  'This room is only available to certain students';
-      let title =  'Student does not have permission to come from this room';
-      let denyText =  'Cancel';
-      if (selectedStudents.length > 1) {
-        text = selectedStudents.filter(s => skipped.includes(''+s.id)).map(s => s.display_name)?.join(', ') ?? 'This room is only available to certain students'
-        title = 'These students do not have permission to come from this room';
-        denyText = 'Skip these students';
-      }
+    const accepted: string[] = [...byid, ...bygrade]
+      // keep only unique values
+      .filter((uid: string, i: number, arr: string[]) => arr.indexOf(uid) === i);
+    const skipped = users.filter((u: User) => !accepted.includes(''+u.id)).map((u: User) => this.getIdOrThrow(u));
 
-      this.dialog.open(ConfirmationDialogComponent, {
-        panelClass: 'overlay-dialog',
-        backdropClass: 'custom-backdrop',
-        closeOnNavigation: true,
-        data: {
-          body: confirmDialogVisibility,
-          buttons: {
-            confirmText: 'Override',
-            denyText,
-          },
-          templateData: {alerts: [{title, text}]},
-          icon: './assets/Eye (Green-White).svg'
-        } as ConfirmationTemplates
-      }).afterClosed().pipe(
-        takeUntil(destroy$),
-      ).subscribe(override => {
-        formState.data.roomOverride = !!override;
-
-        if (override === undefined) {
-          return;
-        }
-
-        // override case
-        if (override) {
-          forwardAndEmit();
-          return;
-        }
-
-        // SKIPPING case
-        // avoid a certain no students case
-        if (selectedStudents.length === 1) return;
-
-        // filter out the skipped students
-        const roomStudents = selectedStudents.filter(s => (!skipped.includes(''+s.id)));
-        // avoid no students case
-        if (roomStudents.length === 0) {
-          this.toastService.openToast({
-            title: 'Skiping will left no students to operate on',
-            subtitle: 'Last operation did not proceeed',
-            type: 'error',
-          });
-          return;
-        }
-
-        formState.data.roomStudents = roomStudents;
-        forwardAndEmit();
-      });
+    return rule === 'visible_certain_students' ? skipped : accepted;
   }
-  */
 
+  filterByVisibility(location: Location, students: User[]): boolean {
+    let skipped = this.calculateSkipped(students, location);
+    return skipped.length === 0;
+  }
 }

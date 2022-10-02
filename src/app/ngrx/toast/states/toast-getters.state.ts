@@ -7,6 +7,7 @@ export const toastState = (state: AppState) => state.toast;
 
 export const getToastsCollection = adapter.getSelectors(toastState).selectAll;
 export const getOpenedToastsEntities = adapter.getSelectors(toastState).selectEntities;
+export const getOpenedToastsIds = adapter.getSelectors(toastState).selectIds;
 
 export const getOpenedToasts = createSelector(
   getToastsCollection,

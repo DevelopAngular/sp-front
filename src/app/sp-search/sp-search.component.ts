@@ -1,7 +1,7 @@
 import {Component, ElementRef, EventEmitter, HostListener, Input, OnDestroy, OnInit, Output, Renderer2, ViewChild} from '@angular/core';
 import {MapsAPILoader} from '@agm/core';
 import {User} from '../models/User';
-import {BehaviorSubject, interval, Observable, of, Subject} from 'rxjs';
+import {BehaviorSubject, interval, Observable, of, Subject,combineLatest} from 'rxjs';
 import {UserService} from '../services/user.service';
 import {DomSanitizer} from '@angular/platform-browser';
 import {HttpService} from '../services/http-service';
@@ -16,6 +16,7 @@ import {DeviceDetection} from '../device-detection.helper';
 import {DomCheckerService} from '../services/dom-checker.service';
 import {Overlay} from '@angular/cdk/overlay';
 import {KioskModeService} from '../services/kiosk-mode.service';
+import {AdminService} from '../services/admin.service';
 
 declare const window;
 
@@ -90,6 +91,9 @@ export class OrgUnit {
     this.selected = selected;
   }
 }
+interface OrgUnits{
+  path:string
+}
 
 
 @Component({
@@ -133,6 +137,8 @@ export class SPSearchComponent implements OnInit, OnDestroy {
 
   @Input() searchingTeachers: User[];
   @Input() searchingRoles: { id: number, role: string, icon: string }[];
+  @Input() orgUnits:String[]=[]
+  @Input() orgUnitExistCheck:BehaviorSubject<Boolean>
 
   @Input() filteringUsersCallback?: Function;
 
@@ -140,6 +146,7 @@ export class SPSearchComponent implements OnInit, OnDestroy {
   @Output() blurEvent: EventEmitter<boolean> = new EventEmitter<boolean>();
   @Output() focusEvent: EventEmitter<boolean> = new EventEmitter<boolean>();
   @Output() isOpenedOptions: EventEmitter<boolean> = new EventEmitter<boolean>();
+  @Output() chipsAddEvent: EventEmitter<boolean> = new EventEmitter<boolean>();
 
   @ViewChild('studentInput') input: ElementRef;
   @ViewChild('wrapper') wrapper: ElementRef;
@@ -181,6 +188,8 @@ export class SPSearchComponent implements OnInit, OnDestroy {
   isEnableProfilePictures$: Observable<boolean>;
 
   destroy$: Subject<any> = new Subject<any>();
+  // orgUnits:OrgUnits[]=[]
+
 
   @HostListener('document.scroll', ['$event'])
   scroll() {
@@ -199,7 +208,8 @@ export class SPSearchComponent implements OnInit, OnDestroy {
     private locationService: LocationsService,
     private domCheckerService: DomCheckerService,
     public overlay: Overlay,
-    private kioskMode: KioskModeService
+    private kioskMode: KioskModeService,
+    private adminService:AdminService
   ) {
   }
 
@@ -238,7 +248,7 @@ export class SPSearchComponent implements OnInit, OnDestroy {
       this.renderer.setStyle(elem.target, 'background-color', '#FFFFFF');
     }
   }
-
+ 
   ngOnInit() {
     this.overlayScrollStrategy = this.overlay.scrollStrategies.close();
     if (this.chipsMode && !this.overrideChipsInputField) {
@@ -313,6 +323,7 @@ export class SPSearchComponent implements OnInit, OnDestroy {
 
     this.user$ = this.userService.user$;
     this.isEnableProfilePictures$ = this.userService.isEnableProfilePictures$;
+    
 
   }
 
@@ -328,15 +339,65 @@ export class SPSearchComponent implements OnInit, OnDestroy {
           if (search !== '') {
             this.pending$.next(true);
             if (this.type === 'alternative') {
-              this.students = this.userService.searchProfile(this.role, 50, search)
-                .toPromise()
-                .then((paged: any) => {
+              if(this.kioskMode.isKisokMode()){
+                if(this.kioskMode.getKioskModeSettings().findByName && this.kioskMode.getKioskModeSettings().findById){
+                 of([this.userService.searchProfile(this.role, 50, search),this.userService.possibleProfileByCustomId(search)])
+                 .pipe(switchMap(_ => combineLatest(_))).subscribe((res:any)=>{
+                  let finalResult =[]
+                  if(res[1].results?.user?.length===undefined){
+                   finalResult = [...finalResult,res[1].results.user]
+                  }
+                  finalResult= [...finalResult,...res[0].results]
                   this.pending$.next(false);
-                  //this.showDummy = !paged.results.length;
+                  this.isOpenedOptions.emit(true);
+                  const uu = this.removeDuplicateStudents(finalResult);
+                    this.mayRemoveStudentsByCallback(uu);
+                   this.students = of([]).toPromise().then(()=>{
+                    return this.mayRemoveStudentsByCallback(uu);
+                   });
+                 })
+                }
+               else if(this.kioskMode.getKioskModeSettings().findByName && !this.kioskMode.getKioskModeSettings().findById){
+                this.students = this.userService.searchProfile(this.role, 50, search)
+                .toPromise()
+                .then((paged: any) => { 
+                  this.pending$.next(false);
                   this.isOpenedOptions.emit(true);
                   const uu = this.removeDuplicateStudents(paged.results);
                   return this.mayRemoveStudentsByCallback(uu);
                 });
+               }else{
+                this.students = this.userService.possibleProfileByCustomId(search).toPromise()
+                .then((paged: any) => { 
+                 if(paged.results?.user?.length===undefined){
+                  this.pending$.next(false);
+                  this.isOpenedOptions.emit(true);
+                  const uu = this.removeDuplicateStudents([paged.results.user]);
+                  return this.mayRemoveStudentsByCallback(uu);
+                 }else{
+                  this.pending$.next(false);
+                  this.isOpenedOptions.emit(true);
+                  const uu = this.removeDuplicateStudents([]);
+                  return this.mayRemoveStudentsByCallback(uu);
+                 }
+                }).catch(err=>{return[]})
+               }
+
+                   
+              }else{
+                this.students = this.userService.searchProfile(this.role, 50, search)
+                .toPromise()
+                .then((paged: any) => { 
+                  this.pending$.next(false);
+                  this.isOpenedOptions.emit(true);
+                  const uu = this.removeDuplicateStudents(paged.results);
+                  return this.mayRemoveStudentsByCallback(uu);
+                });
+              }
+              // kioskToken
+     
+
+
             } else if (this.type === 'G Suite' || this.type === 'GG4L') {
               let request$;
               if (this.role !== '_all') {
@@ -503,6 +564,11 @@ export class SPSearchComponent implements OnInit, OnDestroy {
     this.isOpenedOptions.emit(false);
     this.onUpdate.emit(this.getEmitedValue());
     this.selectedOptions = [];
+  }
+
+  showInputFieldByChips() {
+    this.inputField = true;
+    this.chipsAddEvent.emit(true);
   }
 
   removeDuplicateStudents(students: User[] | GSuiteSelector[]): User[] | GSuiteSelector[] {

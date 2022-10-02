@@ -133,6 +133,12 @@ $applyColor: true) {
     $card-white);
 }
 
+.ds-dialog-title-navy {
+    @include textSize(17px,
+    bold,
+    $navy500);
+}
+
 .ds-dialog-subtitle {
     @include textSize(16px,
     bold);

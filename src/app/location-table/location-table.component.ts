@@ -16,12 +16,48 @@ import {LocationVisibilityService} from '../create-hallpass-forms/main-hallpass-
 import {UserService} from '../services/user.service';
 import {User} from '../models/User';
 import {PassLimitInfo} from '../models/HallPassLimits';
+import {cloneDeep} from 'lodash';
 
 
 export interface Paged<T> {
   results: T[];
   next: string;
   previous: string;
+}
+
+// TODO: it does wipe out any existent get set
+function Visibility(): any {
+  return function (target: any, property: string, descriptor: PropertyDescriptor) {
+    let values: any[];
+
+    return {
+      set: function (vv: any[]) {
+        const student = [this.user];
+        if (this.forStaff && this.forKioskMode) {
+          student[0] = this.selectedStudents[0];
+        }
+        // filtering apply only for a student
+        if (vv.length > 0 && 
+          (!this.forStaff || 
+           (this.forStaff && this.forKioskMode)
+          )
+         ) {
+          // test if we have Location's
+          let v = vv[0];
+          try {
+            v = (v instanceof Location) ? v : Location.fromJSON(v);
+            vv = vv.filter((loc: Location) => this.visibilityService.filterByVisibility(loc, student));
+          }catch (e) {}
+        }
+        values = vv;
+      },
+      get: function() {
+        return values;
+      },
+      enumerable: true,
+      configurable: true
+    };
+  };
 }
 
 @Component({
@@ -58,6 +94,7 @@ export class LocationTableComponent implements OnInit, OnDestroy {
   @Input() originLocation: any;
   @Input() searchTeacherLocations: boolean;
   @Input() currentPage: 'from' | 'to';
+  @Input() updatedLocation$?: Observable<Location> | undefined;
   @Input() selectedStudents: User[] = [];
   @Input() passLimitInfo: PassLimitInfo;
 
@@ -67,62 +104,13 @@ export class LocationTableComponent implements OnInit, OnDestroy {
 
   @ViewChild('item') currentItem: ElementRef;
 
-  // TODO make it @decorator
-  private _choices: any[] = [];
-  get choices(): any[] {
-    return this._choices;
-  }
-  set choices(values: any[]) {
-    const student = [''+ this.user.id];
-    if (this.forStaff && this.forKioskMode) {
-      student[0] = ''+this.selectedStudents[0].id;
-    }
-    // filtering apply only for a student
-    if (values.length > 0 &&
-        (!this.forStaff ||
-         (this.forStaff && this.forKioskMode)
-        )
-       ) {
-      let v = values[0];
-      try {
-        v = (v instanceof Location) ? v : Location.fromJSON(v);
-        values = values.filter((loc: Location) => this.visibilityService.filterByVisibility(loc, student));
-      }catch (e) {}
-    }
-    // add posible filtered values
-    this._choices = values;
-  }
-
-  noChoices = false;
-  mainContentVisibility = false;
-  //starredChoices: any[] = [];
-  private _starredChoices: any[] = [];
-  get starredChoices(): any[] {
-    return this._starredChoices;
-  }
-  set starredChoices(values: any[]) {
-    const student = ['' + this.user.id];
-    if (this.forStaff && this.forKioskMode) {
-      student[0] = '' + this.selectedStudents[0].id;
-    }
-    // filtering apply only for a student
-    if (values.length > 0 &&
-        (!this.forStaff ||
-         (this.forStaff && this.forKioskMode)
-        )
-       ) {
-      let v = values[0];
-      try {
-        v = (v instanceof Location) ? v : Location.fromJSON(v);
-        values = values.filter((loc: Location) => this.visibilityService.filterByVisibility(loc, student));
-      } catch (e) {
-        throw e;
-      }
-    }
-    // add posible filtered values
-    this._starredChoices = values;
-  }
-  search = '';
+  @Visibility()
+  choices: any[] = [];
+  noChoices:boolean = false;
+  mainContentVisibility: boolean = false;
+  @Visibility()
+  starredChoices: any[] = [];
+  search: string = '';
   favoritesLoaded: boolean;
   hideFavorites: boolean;
   pinnables;
@@ -288,6 +276,67 @@ export class LocationTableComponent implements OnInit, OnDestroy {
         }
       });
 
+      this.updatedLocation$?.pipe(
+        takeUntil(this.destroy$),
+      ).subscribe(res => this.updateOrAddChoices(res));
+
+  }
+
+  private choiceFunc(loc) {
+    return function(choice) {
+      if (choice instanceof Location) { 
+        if (''+choice.id === ''+loc.id) {
+          return loc;
+        } else {
+          return choice;
+        }
+      } else {
+        try {
+          const l = Location.fromJSON(choice);
+          if (''+l.id === ''+loc.id) {
+            return cloneDeep(loc);
+          }   
+        } catch(e) {}
+        return cloneDeep(choice);
+      }
+    }
+  }
+
+  // check if modified location exists on choices
+  private isFoundChoice(loc: Location, choices: Location[]|any[]) {
+    for (let i = 0; i < choices.length; i++) {
+      if (choices[i] instanceof Location) { 
+        if (''+choices[i].id === ''+loc.id) {
+          return true;
+        } 
+      } else {
+        try {
+          const l = Location.fromJSON(choices[i]);
+          if (''+l.id === ''+loc.id) {
+            return true;
+          }
+        } catch(e) {}
+      }
+    }
+    return false;
+  }
+
+  private updateOrAddChoices(loc: Location) {
+    const mapping = this.choiceFunc(loc);
+    if (!this.isFoundChoice(loc, this.choices)) {
+      this.choices = [cloneDeep(loc), ...this.choices];
+    } else {
+      this.choices = this.choices.map(mapping);
+    }
+
+    if (!loc.starred) {
+      return;
+    }
+    if (!this.isFoundChoice(loc, this.starredChoices)) {
+      this.starredChoices = [cloneDeep(loc), ...this.starredChoices];
+    } else {
+      this.starredChoices = this.starredChoices.map(mapping);
+    }
   }
 
   normalizeLocations(loc) {

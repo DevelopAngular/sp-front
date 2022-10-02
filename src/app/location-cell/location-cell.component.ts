@@ -69,7 +69,7 @@ export class LocationCellComponent implements OnInit, OnDestroy {
   }
 
   get tooltipDescription(): string {
-    if (!this.value.enable && this.currentPage === 'to') {
+    if (!this.value.enable && (this.currentPage === 'to' || this.currentPage === 'from')) {
       return 'This room has been closed by an admin.';
     }
     if (this.passLimit && this.currentPage !== 'from') {
@@ -96,7 +96,7 @@ export class LocationCellComponent implements OnInit, OnDestroy {
           (this.currentPage === 'to' && this.passLimit.max_passes_to_active && this.passLimit.to_count === this.passLimit.max_passes_to)
         );
     }
-    if (!this.value.enable && this.currentPage === 'to') {
+    if (!this.value.enable && (this.currentPage === 'to' || this.currentPage === 'from') ) {
       return true;
     }
   }
@@ -141,7 +141,7 @@ export class LocationCellComponent implements OnInit, OnDestroy {
   ngOnInit() {
     this.value.starred = this.starred;
     this.isKioskMode = this.http.checkIfTokenIsKiosk();
-    if (!this.value.enable && this.currentPage === 'to') {
+    if (!this.value.enable && (this.currentPage === 'to' || this.currentPage === 'from')) {
       this.valid = false;
     }
     this.shortcutsService.onPressKeyEvent$

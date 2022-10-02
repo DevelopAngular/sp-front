@@ -8,6 +8,7 @@ import {BehaviorSubject, forkJoin} from 'rxjs';
 import {User} from '../../../../models/User';
 import {GSuiteSelector} from '../../../../sp-search/sp-search.component';
 import {PassLimitService} from '../../../../services/pass-limit.service';
+import {KioskModeService} from '../../../../services/kiosk-mode.service';
 
 @Component({
   selector: 'app-who-you-are',
@@ -20,6 +21,7 @@ export class WhoYouAreComponent implements OnInit {
   @Output() stateChangeEvent: EventEmitter<Navigation> = new EventEmitter();
 
   frameMotion$: BehaviorSubject<any>;
+  placeholder:string="Search students"
 
   constructor(
     private dialogRef: MatDialogRef<WhoYouAreComponent>,
@@ -29,21 +31,23 @@ export class WhoYouAreComponent implements OnInit {
     private _injector: Injector,
     private cdr: ChangeDetectorRef,
     private visibilityService: LocationVisibilityService,
-  ) { }
+    private kioskService : KioskModeService
+  ) { 
+
+  }
 
   ngOnInit() {
     this.frameMotion$ = this.formService.getFrameMotionDirection();
+     this.setPlaceHolder()
   }
-
+ 
   // used for filtering users found with sp-search component
   getFilteringStudents(): (users: User[] | GSuiteSelector[]) => User[] | GSuiteSelector[] {
     return ((uu) => {
-      const students = uu.map(u => '' + u.id);
+      const students = [...uu];
       const loc = this.formState.data.direction.from;
-      const ruleStudents = loc.visibility_students.map((v: User) => '' + v.id);
-      const rule = loc.visibility_type;
-      const skipped = this.visibilityService.calculateSkipped(students, ruleStudents, rule) ?? [];
-      const result = !skipped.length ? uu : uu.filter(u => !skipped.includes('' + u.id));
+      const skipped = this.visibilityService.calculateSkipped(students, loc) ?? [];
+      const result = !skipped.length ? uu : uu.filter(u => !skipped.includes(''+u.id));
       return result;
     }).bind(this);
   }
@@ -94,4 +98,18 @@ export class WhoYouAreComponent implements OnInit {
   back() {
     this.dialogRef.close();
   }
+
+  setPlaceHolder(){
+    if(this.kioskService.isKisokMode){
+      if(this.kioskService.getKioskModeSettings().findByName && this.kioskService.getKioskModeSettings().findById){
+        this.placeholder= "Type name, email, or ID number"
+      }else if(this.kioskService.getKioskModeSettings().findByName){
+        this.placeholder= "Type name or email"
+      }else{
+        this.placeholder= "Type ID number"
+        
+      }
+    }
+  }
+
 }

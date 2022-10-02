@@ -14,50 +14,51 @@ import {
   Renderer2,
   ViewChild,
   ViewChildren,
-} from '@angular/core';
-import { Location } from '@angular/common';
-import { MatDialog } from '@angular/material/dialog';
-import { ActivatedRoute, NavigationEnd, Router } from '@angular/router';
+} from "@angular/core";
+import { Location } from "@angular/common";
+import { MatDialog } from "@angular/material/dialog";
+import { ActivatedRoute, NavigationEnd, Router } from "@angular/router";
 
-import { combineLatest, Observable, ReplaySubject, Subject } from 'rxjs';
-import { filter, map, pluck, switchMap, takeUntil } from 'rxjs/operators';
+import { combineLatest, Observable, ReplaySubject, Subject } from "rxjs";
+import { filter, map, pluck, switchMap, takeUntil } from "rxjs/operators";
 
-import { DataService } from '../services/data-service';
-import { GoogleLoginService } from '../services/google-login.service';
-import { LoadingService } from '../services/loading.service';
-import { NavbarDataService } from '../main/navbar-data.service';
-import { User } from '../models/User';
-import { UserService } from '../services/user.service';
-import { SettingsComponent } from '../settings/settings.component';
-import { FavoriteFormComponent } from '../favorite-form/favorite-form.component';
-import { NotificationFormComponent } from '../notification-form/notification-form.component';
-import { LocationsService } from '../services/locations.service';
-import { DarkThemeSwitch } from '../dark-theme-switch';
-import { NotificationService } from '../services/notification-service';
-import { DropdownComponent } from '../dropdown/dropdown.component';
-import { HttpService } from '../services/http-service';
-import { IntroDialogComponent } from '../intro-dialog/intro-dialog.component';
-import { ScreenService } from '../services/screen.service';
-import { NavbarAnimations } from './navbar.animations';
-import { StorageService } from '../services/storage.service';
-import { KioskModeService } from '../services/kiosk-mode.service';
-import { SideNavService } from '../services/side-nav.service';
-import { UNANIMATED_CONTAINER } from '../consent-menu-overlay';
-import { DeviceDetection } from '../device-detection.helper';
-import { TeacherPinComponent } from '../teacher-pin/teacher-pin.component';
-import { NavbarElementsRefsService } from '../services/navbar-elements-refs.service';
-import { KeyboardShortcutsService } from '../services/keyboard-shortcuts.service';
-import { filter as _filter } from 'lodash';
-import { SpAppearanceComponent } from '../sp-appearance/sp-appearance.component';
-import { MyProfileDialogComponent } from '../my-profile-dialog/my-profile-dialog.component';
-import { SpLanguageComponent } from '../sp-language/sp-language.component';
-import * as moment from 'moment';
-import { IDCard } from '../admin/id-cards/id-card-editor/id-card-editor.component';
-import { QRBarcodeGeneratorService } from '../services/qrbarcode-generator.service';
-import { IdcardOverlayContainerComponent } from '../idcard-overlay-container/idcard-overlay-container.component';
-import { IDCardService } from '../services/IDCardService';
-import {CheckForUpdateService} from '../services/check-for-update.service';
-import {SmartpassSearchComponent} from '../smartpass-search/smartpass-search.component';
+import { DataService } from "../services/data-service";
+import { GoogleLoginService } from "../services/google-login.service";
+import { LoadingService } from "../services/loading.service";
+import { NavbarDataService } from "../main/navbar-data.service";
+import { User } from "../models/User";
+import { UserService } from "../services/user.service";
+import { SettingsComponent } from "../settings/settings.component";
+import { FavoriteFormComponent } from "../favorite-form/favorite-form.component";
+import { NotificationFormComponent } from "../notification-form/notification-form.component";
+import { LocationsService } from "../services/locations.service";
+import { DarkThemeSwitch } from "../dark-theme-switch";
+import { NotificationService } from "../services/notification-service";
+import { DropdownComponent } from "../dropdown/dropdown.component";
+import { HttpService } from "../services/http-service";
+import { IntroDialogComponent } from "../intro-dialog/intro-dialog.component";
+import { ScreenService } from "../services/screen.service";
+import { NavbarAnimations } from "./navbar.animations";
+import { StorageService } from "../services/storage.service";
+import { KioskModeService } from "../services/kiosk-mode.service";
+import { SideNavService } from "../services/side-nav.service";
+import { UNANIMATED_CONTAINER } from "../consent-menu-overlay";
+import { DeviceDetection } from "../device-detection.helper";
+import { TeacherPinComponent } from "../teacher-pin/teacher-pin.component";
+import { NavbarElementsRefsService } from "../services/navbar-elements-refs.service";
+import { KeyboardShortcutsService } from "../services/keyboard-shortcuts.service";
+import { filter as _filter } from "lodash";
+import { SpAppearanceComponent } from "../sp-appearance/sp-appearance.component";
+import { MyProfileDialogComponent } from "../my-profile-dialog/my-profile-dialog.component";
+import { SpLanguageComponent } from "../sp-language/sp-language.component";
+import * as moment from "moment";
+import { IDCard } from "../admin/id-cards/id-card-editor/id-card-editor.component";
+import { QRBarcodeGeneratorService } from "../services/qrbarcode-generator.service";
+import { IdcardOverlayContainerComponent } from "../idcard-overlay-container/idcard-overlay-container.component";
+import { IDCardService } from "../services/IDCardService";
+import { CheckForUpdateService } from "../services/check-for-update.service";
+import { KioskSettingsDialogComponent } from "../kiosk-settings-dialog/kiosk-settings-dialog.component";
+import { SmartpassSearchComponent } from "../smartpass-search/smartpass-search.component";
 
 declare const window;
 
@@ -67,9 +68,9 @@ export interface RepresentedUser {
 }
 
 @Component({
-  selector: 'app-navbar',
-  templateUrl: './navbar.component.html',
-  styleUrls: ['./navbar.component.scss'],
+  selector: "app-navbar",
+  templateUrl: "./navbar.component.html",
+  styleUrls: ["./navbar.component.scss"],
   animations: [
     NavbarAnimations.inboxAppearance,
     NavbarAnimations.arrowAppearance,
@@ -77,25 +78,27 @@ export interface RepresentedUser {
 })
 export class NavbarComponent implements AfterViewInit, OnInit, OnDestroy {
   @Input() hasNav = true;
-  @ViewChild('tabPointer') tabPointer: ElementRef;
-  @ViewChild('navButtonsContainer') navButtonsContainer: ElementRef;
-  @ViewChildren('tabRef') tabRefs: QueryList<ElementRef>;
-  @ViewChild('navbar') navbar: ElementRef;
-  @ViewChild('setButton') settingsButton: ElementRef;
+  @ViewChild("tabPointer") tabPointer: ElementRef;
+  @ViewChild("navButtonsContainer") navButtonsContainer: ElementRef;
+  @ViewChildren("tabRef") tabRefs: QueryList<ElementRef>;
+  @ViewChild("navbar") navbar: ElementRef;
+  @ViewChild("setButton") settingsButton: ElementRef;
 
-  @ViewChild('navButtonsContainerMobile') navButtonsContainerMobile: ElementRef;
-  @ViewChild('smartpassSearch') set spSearch(comp: SmartpassSearchComponent) {
+  @ViewChild("navButtonsContainerMobile") navButtonsContainerMobile: ElementRef;
+  @ViewChild("smartpassSearch") set spSearch(comp: SmartpassSearchComponent) {
     if (!comp) {
       return;
     }
     if (!this.user.isTeacher()) {
-      const spSearchContainer = document.querySelector<HTMLDivElement>('app-smartpass-search div.input-container');
+      const spSearchContainer = document.querySelector<HTMLDivElement>(
+        "app-smartpass-search div.input-container"
+      );
       if (spSearchContainer) {
-        spSearchContainer.style.display = 'none';
+        spSearchContainer.style.display = "none";
       }
     }
   }
-  @ViewChildren('tabRefMobile') tabRefsMobile: QueryList<ElementRef>;
+  @ViewChildren("tabRefMobile") tabRefsMobile: QueryList<ElementRef>;
 
   @Output() settingsClick: EventEmitter<any> = new EventEmitter<any>();
 
@@ -106,8 +109,8 @@ export class NavbarComponent implements AfterViewInit, OnInit, OnDestroy {
   user: User;
   representedUsers: RepresentedUser[];
   effectiveUser: RepresentedUser;
-  tab = 'passes';
-  inboxVisibility: boolean = JSON.parse(this.storage.getItem('showInbox'));
+  tab = "passes";
+  inboxVisibility: boolean = JSON.parse(this.storage.getItem("showInbox"));
   introsData: any;
   kioskModeLocation: any;
 
@@ -126,24 +129,24 @@ export class NavbarComponent implements AfterViewInit, OnInit, OnDestroy {
 
   buttonHash = {
     passes: {
-      title: 'Home',
-      route: 'passes',
-      imgUrl: 'School',
-      requiredRoles: ['_profile_teacher', 'access_passes'],
+      title: "Home",
+      route: "passes",
+      imgUrl: "School",
+      requiredRoles: ["_profile_teacher", "access_passes"],
       hidden: false,
     },
     hallMonitor: {
-      title: 'Hall Monitor',
-      route: 'hallmonitor',
-      imgUrl: 'New Hall Monitor',
-      requiredRoles: ['_profile_teacher', 'access_hall_monitor'],
+      title: "Hall Monitor",
+      route: "hallmonitor",
+      imgUrl: "New Hall Monitor",
+      requiredRoles: ["_profile_teacher", "access_hall_monitor"],
       hidden: false,
     },
     myRoom: {
-      title: 'My Room',
-      route: 'myroom',
-      imgUrl: 'Room',
-      requiredRoles: ['_profile_teacher', 'access_teacher_room'],
+      title: "My Room",
+      route: "myroom",
+      imgUrl: "Room",
+      requiredRoles: ["_profile_teacher", "access_teacher_room"],
       hidden: false,
     },
   };
@@ -166,9 +169,9 @@ export class NavbarComponent implements AfterViewInit, OnInit, OnDestroy {
 
   IDCARDDETAILS: any;
 
-  isUpdateBar$: ReplaySubject<{active: boolean, color: any}>
+  isUpdateBar$: ReplaySubject<{ active: boolean; color: any }>;
 
-  @HostListener('window:resize')
+  @HostListener("window:resize")
   checkDeviceWidth() {
     this.islargeDeviceWidth = this.screenService.isDeviceLargeExtra;
 
@@ -213,7 +216,7 @@ export class NavbarComponent implements AfterViewInit, OnInit, OnDestroy {
   ) {}
 
   get optionsOpen() {
-    return this.tab === 'settings';
+    return this.tab === "settings";
   }
 
   get isMobile() {
@@ -221,7 +224,7 @@ export class NavbarComponent implements AfterViewInit, OnInit, OnDestroy {
   }
 
   get showNav() {
-    return this.tab !== 'intro' && this.hasNav;
+    return this.tab !== "intro" && this.hasNav;
   }
 
   get isIOSTablet() {
@@ -237,10 +240,10 @@ export class NavbarComponent implements AfterViewInit, OnInit, OnDestroy {
   }
 
   get flexDirection() {
-    let direction = 'row';
-    if (this.screenService.isDeviceLargeExtra) direction = 'row-reverse';
+    let direction = "row";
+    if (this.screenService.isDeviceLargeExtra) direction = "row-reverse";
     if (this.isKioskMode && this.screenService.isDeviceLargeExtra)
-      direction = 'row';
+      direction = "row";
     return direction;
   }
 
@@ -251,7 +254,7 @@ export class NavbarComponent implements AfterViewInit, OnInit, OnDestroy {
   get showNotificationBadge() {
     return (
       this.user &&
-      moment(this.user.created).add(7, 'days').isSameOrBefore(moment())
+      moment(this.user.created).add(7, "days").isSameOrBefore(moment())
     );
   }
 
@@ -261,24 +264,24 @@ export class NavbarComponent implements AfterViewInit, OnInit, OnDestroy {
     this.shortcutsService.onPressKeyEvent$
       .pipe(
         filter(() => !this.isMobile),
-        pluck('key'),
+        pluck("key"),
         takeUntil(this.destroyer$)
       )
       .subscribe((key) => {
-        if (key[0] === ',') {
+        if (key[0] === ",") {
           const settingButton = this.settingsButton.nativeElement.querySelector(
-            '.icon-button-container'
+            ".icon-button-container"
           );
           (settingButton as HTMLElement).click();
         } else if (
-          ((key[0] === '1' || key[0] === '2' || key[0] === '3') &&
+          ((key[0] === "1" || key[0] === "2" || key[0] === "3") &&
             !this.dialog.openDialogs) ||
-          (!this.dialog.openDialogs.length && key[0] !== 'r')
+          (!this.dialog.openDialogs.length && key[0] !== "r")
         ) {
           const route = {
-            '1': 'passes',
-            '2': 'hallmonitor',
-            '3': 'myroom',
+            "1": "passes",
+            "2": "hallmonitor",
+            "3": "myroom",
           };
           const currentButton = this.buttons.find(
             (button) => button.route === route[key[0]]
@@ -288,24 +291,24 @@ export class NavbarComponent implements AfterViewInit, OnInit, OnDestroy {
           }
         }
       });
-    this.hideButtons = this.router.url.includes('kioskMode');
-    const  urlSplit: string[] = location.pathname.split('/');
+    this.hideButtons = this.router.url.includes("kioskMode");
+    const urlSplit: string[] = location.pathname.split("/");
     this.tab = urlSplit[urlSplit.length - 1];
 
-    this.isHallMonitorRoute = this.router.url === '/main/hallmonitor';
-    this.isMyRoomRoute = this.router.url === '/main/myroom';
-    this.isAdminRoute = this.router.url.includes('/admin');
+    this.isHallMonitorRoute = this.router.url === "/main/hallmonitor";
+    this.isMyRoomRoute = this.router.url === "/main/myroom";
+    this.isAdminRoute = this.router.url.includes("/admin");
     this.router.events.subscribe((value) => {
       if (value instanceof NavigationEnd) {
-        this.hideButtons = this.router.url.includes('kioskMode');
-        let urlSplit: string[] = value.url.split('/');
+        this.hideButtons = this.router.url.includes("kioskMode");
+        let urlSplit: string[] = value.url.split("/");
         this.tab = urlSplit[urlSplit.length - 1];
-        this.tab = this.tab === '' || this.tab === 'main' ? 'passes' : this.tab;
-        this.inboxVisibility = this.tab !== 'settings';
+        this.tab = this.tab === "" || this.tab === "main" ? "passes" : this.tab;
+        this.inboxVisibility = this.tab !== "settings";
         this.dataService.updateInbox(this.inboxVisibility);
-        this.isHallMonitorRoute = value.url === '/main/hallmonitor';
-        this.isMyRoomRoute = value.url === '/main/myroom';
-        this.isAdminRoute = value.url.includes('/admin');
+        this.isHallMonitorRoute = value.url === "/main/hallmonitor";
+        this.isMyRoomRoute = value.url === "/main/myroom";
+        this.isAdminRoute = value.url.includes("/admin");
       }
     });
 
@@ -342,17 +345,17 @@ export class NavbarComponent implements AfterViewInit, OnInit, OnDestroy {
                   }
                   this.IDCARDDETAILS = result.results.digital_id_card;
                   switch (this.IDCARDDETAILS.visible_to_who) {
-                    case 'Staff only':
+                    case "Staff only":
                       this.user.isTeacher() || this.user.isAdmin()
                         ? (this.IDCardEnabled = true)
                         : (this.IDCardEnabled = false);
                       break;
-                    case 'Students only':
+                    case "Students only":
                       this.user.isStudent()
                         ? (this.IDCardEnabled = true)
                         : (this.IDCardEnabled = false);
                       break;
-                    case 'Students and Staff':
+                    case "Students and Staff":
                       this.IDCardEnabled = true;
                       break;
                     default:
@@ -437,8 +440,6 @@ export class NavbarComponent implements AfterViewInit, OnInit, OnDestroy {
       .subscribe((data) => {
         this.introsData = data;
       });
-
-
   }
 
   ngAfterViewInit(): void {
@@ -484,8 +485,8 @@ export class NavbarComponent implements AfterViewInit, OnInit, OnDestroy {
         this.isOpenSettings = true;
         UNANIMATED_CONTAINER.next(true);
         const settingRef = this.dialog.open(SettingsComponent, {
-          panelClass: ['calendar-dialog-container', 'animation'],
-          backdropClass: 'invis-backdrop',
+          panelClass: ["calendar-dialog-container", "animation"],
+          backdropClass: "invis-backdrop",
           data: { trigger: target, isSwitch: this.showSwitchButton },
         });
 
@@ -506,62 +507,67 @@ export class NavbarComponent implements AfterViewInit, OnInit, OnDestroy {
         isSwitch: this.showSwitchButton,
       });
 
-      this.sideNavService.sideNavType$.next('left');
+      this.sideNavService.sideNavType$.next("left");
     }
   }
 
   showTeaches(target) {
     const representedUsersDialog = this.dialog.open(DropdownComponent, {
-      panelClass: 'consent-dialog-container',
-      backdropClass: 'invis-backdrop',
+      panelClass: "consent-dialog-container",
+      backdropClass: "invis-backdrop",
       data: {
         trigger: target.currentTarget,
-        heading: 'You can create and manage passes for this teacher.',
+        heading: "You can create and manage passes for this teacher.",
         teachers:
-          this.representedUsers.length > 1 ? this.representedUsers : null,
-        selectedTeacher: this.effectiveUser,
+          this.representedUsers.length > 1
+            ? this.representedUsers.map((u) => u.user)
+            : null,
+        selectedTeacher: this.effectiveUser.user,
         mainHeader: `Hi, ${this.user.display_name}`,
+        maxHeight: "200px",
+        isHiddenSearchField: this.representedUsers.length > 4,
       },
     });
     representedUsersDialog
       .afterClosed()
       .pipe(filter((res) => !!res))
-      .subscribe((v: RepresentedUser) => {
-        if (v) {
-          this.userService.updateEffectiveUser(v);
-          this.http.effectiveUserId.next(+v.user.id);
+      .subscribe((id) => {
+        if (id) {
+          const efUser = this.representedUsers.find((u) => +u.user.id === +id);
+          this.userService.updateEffectiveUser(efUser);
+          this.http.effectiveUserId.next(+efUser.user.id);
         }
       });
   }
 
   settingsAction(action: string) {
-    if (action === 'signout') {
-      this.router.navigate(['sign-out']);
-    } else if (action === 'myPin') {
+    if (action === "signout") {
+      this.router.navigate(["sign-out"]);
+    } else if (action === "myPin") {
       const teachPinDialog = this.dialog.open(TeacherPinComponent, {
-        panelClass: 'sp-form-dialog',
-        backdropClass: 'custom-backdrop',
+        panelClass: "sp-form-dialog",
+        backdropClass: "custom-backdrop",
       });
-    } else if (action === 'profile') {
+    } else if (action === "profile") {
       this.dialog.open(MyProfileDialogComponent, {
-        panelClass: 'sp-form-dialog',
-        width: '425px',
-        height: '500px',
+        panelClass: "sp-form-dialog",
+        width: "425px",
+        height: "500px",
       });
-    } else if (action === 'language') {
+    } else if (action === "language") {
       this.dialog.open(SpLanguageComponent, {
-        panelClass: 'sp-form-dialog',
+        panelClass: "sp-form-dialog",
       });
-    } else if (action === 'favorite') {
+    } else if (action === "favorite") {
       const favRef = this.dialog.open(FavoriteFormComponent, {
-        panelClass: 'form-dialog-container',
-        backdropClass: 'custom-backdrop',
+        panelClass: "form-dialog-container",
+        backdropClass: "custom-backdrop",
       });
 
       favRef.afterClosed().subscribe((data) => {
         this.locationService.updateFavoriteLocationsRequest(data);
       });
-    } else if (action === 'notifications') {
+    } else if (action === "notifications") {
       if (!this.isSafari) {
         Notification.requestPermission();
       }
@@ -573,78 +579,77 @@ export class NavbarComponent implements AfterViewInit, OnInit, OnDestroy {
         !this.isSafari
       ) {
         this.notifService.initNotifications(true).then((hasPerm) => {
-
           notifRef = this.dialog.open(NotificationFormComponent, {
-            panelClass: 'form-dialog-container',
-            backdropClass: 'custom-backdrop',
-            width: '462px',
-            height: '600px',
+            panelClass: "form-dialog-container",
+            backdropClass: "custom-backdrop",
+            width: "462px",
+            height: "600px",
           });
         });
       } else {
         notifRef = this.dialog.open(NotificationFormComponent, {
-          panelClass: 'form-dialog-container',
-          backdropClass: 'custom-backdrop',
-          width: '462px',
-          height: '600px',
+          panelClass: "form-dialog-container",
+          backdropClass: "custom-backdrop",
+          width: "462px",
+          height: "600px",
         });
       }
-    } else if (action === 'intro') {
+    } else if (action === "intro") {
       this.dialog.open(IntroDialogComponent, {
-        width: '100vw',
-        height: '100vh',
-        maxWidth: 'none',
-        panelClass: 'intro-dialog-container',
-        backdropClass: 'intro-backdrop-container',
+        width: "100vw",
+        height: "100vh",
+        maxWidth: "none",
+        panelClass: "intro-dialog-container",
+        backdropClass: "intro-backdrop-container",
         data: {
           entry: true,
         },
       });
-    } else if (action === 'appearance') {
+    } else if (action === "appearance") {
       this.dialog.open(SpAppearanceComponent, {
-        panelClass: 'sp-form-dialog',
+        panelClass: "sp-form-dialog",
       });
-    } else if (action === 'switch') {
-      this.router.navigate(['admin']);
-    } else if (action === 'team') {
-      window.open('https://smartpass.app/team.html');
-    } else if (action === 'support') {
+    } else if (action === "switch") {
+      this.router.navigate(["admin"]);
+    } else if (action === "team") {
+      window.open("https://smartpass.app/team.html");
+    } else if (action === "support") {
       if (this.isStaff) {
-        window.open('https://smartpass.app/support');
+        window.open("https://smartpass.app/support");
       } else {
-        window.open('https://smartpass.app/studentdocs');
+        window.open("https://smartpass.app/studentdocs");
       }
-    } else if (action === 'bug') {
-      window.open('https://www.smartpass.app/bugreport');
-    } else if (action === 'wishlist') {
-      window.open('https://wishlist.smartpass.app');
-    } else if (action === 'privacy') {
-      window.open('https://www.smartpass.app/privacy?new=true');
-    } else if (action === 'terms') {
-      window.open('https://www.smartpass.app/terms');
-    } else if (action === 'refer') {
+    } else if (action === "bug") {
+      window.open("https://www.smartpass.app/bugreport");
+    } else if (action === "wishlist") {
+      window.open("https://wishlist.smartpass.app");
+    } else if (action === "privacy") {
+      window.open("https://www.smartpass.app/privacy?new=true");
+    } else if (action === "terms") {
+      window.open("https://www.smartpass.app/terms");
+    } else if (action === "refer") {
       if (
         this.introsData.referral_reminder.universal &&
         !this.introsData.referral_reminder.universal.seen_version
       ) {
-        this.userService.updateIntrosRequest(this.introsData, 'universal', '1');
+        this.userService.updateIntrosRequest(this.introsData, "universal", "1");
       }
-      window.open('https://www.smartpass.app/referrals');
+      window.open("https://www.smartpass.app/referrals");
     }
   }
 
   updateTab(route: string) {
     this.tab = route;
     // console.log('[updateTab()]: ', this.tab);
-    this.router.navigateByUrl('/main/' + this.tab);
+    this.router.navigateByUrl("/main/" + this.tab);
   }
 
   inboxClick() {
     this.inboxVisibility = !this.inboxVisibility;
-    this.storage.setItem('showInbox', this.inboxVisibility);
+    this.storage.setItem("showInbox", this.inboxVisibility);
     this.dataService.updateInbox(this.inboxVisibility);
-    if (this.tab !== 'passes') {
-      this.updateTab('passes');
+    if (this.tab !== "passes") {
+      this.updateTab("passes");
     }
 
     this.navbarData.inboxClick$.next(
@@ -663,42 +668,51 @@ export class NavbarComponent implements AfterViewInit, OnInit, OnDestroy {
 
   changeTabOpacity(clickedTab: HTMLElement, pressed: boolean) {
     if (DeviceDetection.isIOSMobile() || DeviceDetection.isIOSMobile()) {
-      this.rendered.setStyle(clickedTab, 'opacity', 0.8);
+      this.rendered.setStyle(clickedTab, "opacity", 0.8);
       setTimeout(() => {
-        this.rendered.setStyle(clickedTab, 'opacity', 1);
+        this.rendered.setStyle(clickedTab, "opacity", 1);
       }, 200);
     } else {
-      this.rendered.setStyle(clickedTab, 'opacity', pressed ? 0.8 : 1);
+      this.rendered.setStyle(clickedTab, "opacity", pressed ? 0.8 : 1);
     }
   }
 
   async openIDCard() {
-    const  idCardData: IDCard = {
+    const idCardData: IDCard = {
       backgroundColor: this.IDCARDDETAILS.color,
-      greadLevel: this.IDCARDDETAILS.show_grade_levels ? '10' : null,
+      greadLevel: this.IDCARDDETAILS.show_grade_levels ? "10" : null,
       idNumberData: {
-        idNumber: '21158',
+        idNumber: "21158",
         barcodeURL: await this.qrBarcodeGenerator.selectBarcodeType(
           this.IDCARDDETAILS.barcode_type,
-          '123456'
+          "123456"
         ),
       },
       barcodeType: this.IDCARDDETAILS.barcode_type,
       backsideText: this.IDCARDDETAILS.backside_text,
       logoURL: this.IDCARDDETAILS.signed_url,
-      profilePicture: '',
-      schoolName: 'Demo School',
-      userName: 'Demo User',
-      userRole: 'Student',
-      showCustomID: this.IDCARDDETAILS.show_custom_ids
+      profilePicture: "",
+      schoolName: "Demo School",
+      userName: "Demo User",
+      userRole: "Student",
+      showCustomID: this.IDCARDDETAILS.show_custom_ids,
     };
 
     // idCardData.idNumberData.barcodeURL = await this.qrBarcodeGenerator.selectBarcodeType('code39', 123456);
 
     const dialogRef = this.dialog.open(IdcardOverlayContainerComponent, {
-      panelClass: 'id-card-overlay-container',
-      backdropClass: 'custom-bd',
-      data: {idCardData: idCardData, isLoggedIn: true }
+      panelClass: "id-card-overlay-container",
+      backdropClass: "custom-bd",
+      data: { idCardData: idCardData, isLoggedIn: true },
     });
+  }
+
+  isKioskModeSettingsPage() {
+    if (
+      (this.activeRoute.snapshot as any)._routerState.url ===
+      `/main/kioskMode/settings`
+    )
+      return true;
+      return false
   }
 }

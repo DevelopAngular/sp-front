@@ -24,6 +24,7 @@ import {DomCheckerService} from '../services/dom-checker.service';
 import {scalePassCards} from '../animations';
 import {UserService} from '../services/user.service';
 import {HallPassesService} from '../services/hall-passes.service';
+import {LocationsService} from '../services/locations.service';
 
 @Component({
   selector: 'app-invitation-card',
@@ -83,7 +84,8 @@ export class InvitationCardComponent implements OnInit, OnDestroy {
       private navbarData: NavbarDataService,
       private domCheckerService: DomCheckerService,
       private userService: UserService,
-      private passesService: HallPassesService
+      private passesService: HallPassesService,
+      private locationsService: LocationsService,
   ) {}
 
   get isMobile() {
@@ -156,6 +158,21 @@ export class InvitationCardComponent implements OnInit, OnDestroy {
     });
 
   this.isEnableProfilePictures$ = this.userService.isEnableProfilePictures$;
+
+  this.locationsService.listenLocationSocket().pipe(
+    takeUntil(this.destroy$),
+    filter(res => !!res),
+    tap((res) => {
+      try {
+        const loc: Location = Location.fromJSON(res.data);
+        this.locationsService.updateLocationSuccessState(loc);
+        this.invitation.destination.title = loc.title;
+      } catch (e) {
+        console.log(e);
+      }
+    }),
+  ).subscribe();
+
   }
 
   ngOnDestroy() {

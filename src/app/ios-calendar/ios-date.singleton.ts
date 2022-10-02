@@ -17,7 +17,7 @@ export class IosDateSingleton {
   public minDate: BehaviorSubject<Moment> = new BehaviorSubject<Moment>(moment().add(5, 'minutes'));
   public dateSubject: BehaviorSubject<Moment> = new BehaviorSubject<Moment>(moment());
 
-  constructor() { }
+  constructor() {}
 
   getDate(): Observable<Moment> {
     return this.dateSubject.asObservable();

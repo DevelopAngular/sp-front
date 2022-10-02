@@ -1,6 +1,6 @@
 import {Injectable, Injector} from '@angular/core';
 import {HttpEvent, HttpHandler, HttpInterceptor, HttpRequest} from '@angular/common/http';
-import {Observable, throwError} from 'rxjs';
+import {Observable, throwError, of} from 'rxjs';
 import {catchError} from 'rxjs/operators';
 import {Router} from '@angular/router';
 import {HttpService} from './services/http-service';
@@ -20,6 +20,10 @@ export class ProgressInterceptor implements HttpInterceptor {
         return next.handle(req)
                     .pipe(
                       catchError((error: any) => {
+                        if (req.headers.has('x-ignore-errors')) {
+                          return of(null);
+                        }
+
                         const exeptedUrls = [
                           'onboard/schools/check_school',
                           'discovery/find',
@@ -34,11 +38,12 @@ export class ProgressInterceptor implements HttpInterceptor {
                         ].every(_url => error.url.search(_url) < 0);
 
                         if ( (error.status >= 400 && error.status !== 403 && error.status < 600 && exeptedUrls) ) {
-                          this.toast.openToast({title: 'Oh no! Something went wrong', subtitle: `Please try refreshing the page. If the issue keeps occuring, contact us at support@smartpass.app. (${error.status})`, type: 'error'});
-                          // http.errorToast$.next({
-                          //   header: 'Something went wrong.',
-                          //   message: `Please try refreshing the page. If the issue keeps occurring, contact us below. Error status code:${error.status}`
-                          // });
+                          this.toast.openToast(
+                            {
+                              title: 'Oh no! Something went wrong',
+                              subtitle: `Please try refreshing the page. If the issue keeps occuring, contact us at support@smartpass.app. (${error.status})`,
+                              type: 'error'
+                            }, error.status);
                         }
                         return throwError(error);
                       })

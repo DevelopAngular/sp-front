@@ -7,7 +7,7 @@ import {StudentList} from '../../models/StudentList';
 import {NextStep} from '../../animations';
 import {BehaviorSubject, combineLatest, Subject} from 'rxjs';
 import {CreateFormService} from '../create-form.service';
-import {filter, map, takeUntil} from 'rxjs/operators';
+import {filter, map, takeUntil, tap} from 'rxjs/operators';
 import {cloneDeep, find} from 'lodash';
 import {LocationsService} from '../../services/locations.service';
 import {ScreenService} from '../../services/screen.service';
@@ -17,6 +17,7 @@ import {CreateHallpassFormsComponent, CreatePassDialogData} from '../create-hall
 import {UserService} from '../../services/user.service';
 import {LocationVisibilityService} from './location-visibility.service';
 import {PassLimitInfo} from '../../models/HallPassLimits';
+import {RecurringOption} from '../../models/RecurringFutureConfig';
 
 export enum Role { Teacher = 1, Student = 2 }
 
@@ -36,7 +37,11 @@ export interface Navigation {
   formMode?: FormMode;
   data?: {
     request?: any,
-    date?: any;
+    date?: {
+      date?: Date,
+      declinable?: boolean;
+      schedule_option?: RecurringOption
+    };
     selectedStudents?: User[];
     selectedGroup?: StudentList;
     teacherRooms?: Pinnable[];
@@ -260,9 +265,40 @@ export class MainHallPassFormComponent implements OnInit, OnDestroy {
       .subscribe(rooms => {
         this.FORM_STATE.data.teacherRooms = rooms;
       });
-    this.locationsService.listenPassLimitSocket().subscribe(res => {
-      this.locationsService.updatePassLimitRequest(res);
+    this.locationsService.listenPassLimitSocket().subscribe(loc => {
+      this.locationsService.updatePassLimitRequest(loc);
     });
+
+    // usually a location is patched through a pinnable so those cases are handled in listenPinnableSocket
+    // but for cases as an admin adding texhers to a room or anything that modify a room
+    // this code listening to location only, separate of pinnable, is usefull
+    this.locationsService.listenLocationSocket().pipe(
+      takeUntil(this.destroy$),
+      filter(res => !!res),
+      tap((res) => {
+        try {
+          const loc: Location = Location.fromJSON(res.data);
+          this.locationsService.updateLocationSuccessState(loc);
+          this.formService.setUpdatedChoice(loc);
+          this.formService.updatedByWS$.next(true);
+        } catch (e) {
+          console.log(e);
+        }
+      }),
+    ).subscribe();
+
+    this.locationsService.listenPinnableSocket().pipe(
+      takeUntil(this.destroy$),
+      filter(res => !!res),
+      tap((res) => {
+        this.locationsService.updatePinnableSuccessState(res.data);
+
+        // update interface using filtering
+        // try catch here?
+        //const loc: Location = Location.fromJSON(res.data.location);
+        //this.formService.setUpdatedChoice(loc);
+      }),
+    ).subscribe();
 
     this.dialogRef
       .backdropClick()
