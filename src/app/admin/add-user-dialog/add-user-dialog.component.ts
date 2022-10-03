@@ -17,6 +17,15 @@ import {AdminService} from '../../services/admin.service';
 import {KeyboardShortcutsService} from '../../services/keyboard-shortcuts.service';
 import {ToastService} from '../../services/toast.service';
 
+export interface AddUserDialogData {
+  role: string;
+  title: string;
+  icon: string;
+  type: string;
+  syncInfo: SchoolSyncInfo;
+  permissions: Record<string, string>;
+}
+
 @Component({
   selector: 'app-add-user-dialog',
   templateUrl: './add-user-dialog.component.html',
@@ -45,7 +54,7 @@ export class AddUserDialogComponent implements OnInit, OnDestroy {
   public newAlternativeAccount: FormGroup;
   public selectedUsers: User[] = [];
   public permissionsForm: FormGroup;
-  public permissionsFormEditState: boolean = false;
+  public permissionsFormEditState = false;
   public assistantLike: {
     user: User,
     behalfOf: User[]
@@ -70,14 +79,14 @@ export class AddUserDialogComponent implements OnInit, OnDestroy {
   public selectedUserErrors: boolean;
   private pendingSubject = new BehaviorSubject(false);
   public pending$ = this.pendingSubject.asObservable();
-  public inputFocusNumber: number = 1;
+  public inputFocusNumber = 1;
   public forceFocus$ = new Subject();
 
   private destroy$ = new Subject();
 
 
   constructor(
-    @Inject(MAT_DIALOG_DATA) public data: any,
+    @Inject(MAT_DIALOG_DATA) public data: AddUserDialogData,
     private dialogRef: MatDialogRef<AddUserDialogComponent>,
     private pdfService: PdfGeneratorService,
     private userService: UserService,
@@ -128,8 +137,7 @@ export class AddUserDialogComponent implements OnInit, OnDestroy {
     if (
       this.userRoles.find(role => role.role === 'Admin') &&
       this.userRoles.find(role => role.role === 'Teacher') ||
-      this.userRoles.find(role => role.role === 'Student'))
-    {
+      this.userRoles.find(role => role.role === 'Student')) {
       return false;
     }
     return true;
