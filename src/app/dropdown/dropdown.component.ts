@@ -149,13 +149,13 @@ export class DropdownComponent implements OnInit {
   }
 
   searchObject(value) {
-    if (this.schools && this.currentInitialObject[0] instanceof School) {
+    if (this.schools && School.fromJSON(this.currentInitialObject[0]) instanceof School) {
       if (!!value) {
         this.schools = this.currentInitialObject.filter(school => +school.id === +value || school.name.toLowerCase().includes(value.toLowerCase()));
       } else {
         this.schools = this.currentInitialObject;
       }
-    } else if (this.teachers && this.currentInitialObject[0] instanceof User) {
+    } else if (this.teachers && School.fromJSON(this.currentInitialObject[0]) instanceof User) {
       if (!!value) {
         this.teachers = this.currentInitialObject.filter(teacher => +teacher.id === +value || teacher.display_name.toLowerCase().includes(value.toLowerCase()));
       } else {
