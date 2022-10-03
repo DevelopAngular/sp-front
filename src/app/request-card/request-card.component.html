@@ -14,7 +14,12 @@
           <div class="pass-card-header-text">
             {{ request.destination.title }}
             <div class="card-subtitle" *ngIf="fromPast || forFuture">
-              {{ ((request.request_time && forFuture)?`<span notranslate>${formatDateTime(request.request_time)}</span>`:(forStaff?'Pass for Now':'')) }}
+              <span notranslate *ngIf="request.request_time && forFuture; else forNow">
+                {{ formatDateTime(request.request_time) }}
+              </span>
+              <span #forNow>
+                {{ forStaff ? 'Pass For Now' : '' }}
+              </span>
             </div>
           </div>
         </div>
@@ -244,7 +249,11 @@
               <div class="resend-button-content">
                 <mat-spinner *ngIf="performingAction" [color]="'accent'" [diameter]="35"></mat-spinner>
                 <div *ngIf="!performingAction" class="resend-button-content-title">Approve Pass Request</div>
-                <div class="resend-button-content-subtitle">{{ '<var>'+(request.duration/60) +' min</var> - Received <var>' +formatDateTime(request.created, true) + '</var>' }}</div>
+                <div class="resend-button-content-subtitle">
+                  <span notranslate>{{ request.duration / 60 }}</span>
+                  <span> min - Received </span>
+                  <span notranslate>{{ formatDateTime(request.created, true) }}</span>
+                </div>
               </div>
             </app-card-button>
             <ng-template #CDate>
