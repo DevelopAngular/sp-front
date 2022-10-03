@@ -28,14 +28,14 @@ export class DropdownComponent implements OnInit {
   @ViewChildren('_option') locationsList: QueryList<Location>;
 
   user: User;
-  heading: string = '';
+  heading = '';
   locations: Location[];
   selectedLocation: Location;
   schools: School[];
   langs: string[];
   selectedLang: string;
   isDisabledLang: boolean;
-  betaLanguage: string = '';
+  betaLanguage = '';
   countryCodes = COUNTRY_CODES;
   currentInitialObject;
   selectedSchool: School;
