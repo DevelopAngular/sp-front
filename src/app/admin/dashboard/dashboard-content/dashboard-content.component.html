@@ -10,6 +10,7 @@
                 <div [style.font-size]="'4em'"
                      [style.font-weight]="'900'"
                      [style.color]="darkTheme.getColor({white: '#7F879D', dark: '#F9F9F9'})"
+                     data-cy-active-passes
                 >{{ numActivePasses >= 0 ? numActivePasses : ''}}</div>
                 <div *ngIf="numActivePasses === -1" class="loading-theme spinner ds-flex-center-center">
                   <mat-spinner [color]="'accent'" [diameter]="35"></mat-spinner>
@@ -72,7 +73,7 @@
               <div *ngIf="!averagePassTime" class="loading-theme spinner ds-flex-center-left">
                 <mat-spinner [color]="'accent'" [diameter]="35"></mat-spinner>
               </div>
-              <span *ngIf="averagePassTime"  [style.color]="darkTheme.getColor({white: '#7F879D', dark: '#F9F9F9'})">{{averagePassTime}}</span>
+              <span data-cy-average-time *ngIf="averagePassTime"  [style.color]="darkTheme.getColor({white: '#7F879D', dark: '#F9F9F9'})">{{averagePassTime}}</span>
             </div>
 
           </div>
@@ -117,10 +118,8 @@
         <div class="card card__role ds-flex-center-between ds-ml-10 ds-mb-10">
           <span class="label-icon" [style.color]="darkTheme.getColor({white: '#1E194F', dark: '#FFFFFF'})">ALL TIME</span>
           <div class="ds-w-100">
-            <div class="card_header" [style.color]="cardHeaderColor">
-              Most Frequent Room <br> Destinations
-            </div>
-            <div *ngIf="passStatistic && passStatistic.length"
+            <div class="card_header" [style.color]="cardHeaderColor">Most Frequent Room <br> Destinations</div>
+            <div data-cy-frequent-destinations *ngIf="passStatistic && passStatistic.length"
                  class="ds-flex-start-between ds-flex-column ds-flex-wrap ds-w-100 ds-pt-10 card_title"
                  [style.max-height]="'50px'">
               <div *ngFor="let place of passStatistic; let n = index;" [style.color]="darkTheme.getColor({white: '#7F879D', dark: '#F9F9F9'})">
