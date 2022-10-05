@@ -52,7 +52,7 @@ describe('Admin - UI and Actions', () => {
 
         return Promise.resolve();
       }).then(() => {
-        chooseDemoSchool();
+        cy.switchSchool();
         getNavAction('Rooms').click();
 
         cy.intercept({
@@ -126,15 +126,11 @@ describe('Admin - UI and Actions', () => {
       return titleRoom;
   };*/
 
-  const chooseDemoSchool = (name: 'Cypress Testing School 1' | 'Cypress Testing School 2' = 'Cypress Testing School 1') => {
-    cy.switchSchool(name);
-  };
-
   before(() => {
     // @ts-ignore
     cy.login(Cypress.env('adminUsername'), Cypress.env('adminPassword'));
     // login();
-    chooseDemoSchool();
+    cy.switchSchool();
     getNavAction('Rooms').click();
   });
 
@@ -143,16 +139,7 @@ describe('Admin - UI and Actions', () => {
   });
 
   describe('Rooms', () => {
-    it('should change to the demo school', () => {
-      // move to "Cypress Testing School 1"
-      chooseDemoSchool();
-    });
-
-    // if this test succeeded we can subsequently access needed UI elements to perform the room related actions
-    // has a testing value?
     it('should have the expected UI elements and overlay', () => {
-      // move to "Cypress Testing School 1"
-      chooseDemoSchool();
       getNavAction('Rooms').click();
       getRoomAction('Add').click();
       getConsentAction('New Room').click();
@@ -346,7 +333,7 @@ describe('Admin - UI and Actions', () => {
           cy.logoutAdmin();
           // @ts-ignore
           cy.login(Cypress.env('student1Username'), Cypress.env('student1Password'));
-          chooseDemoSchool();
+          cy.switchSchool();
 
           cy.log('testing Pass Now type');
           PassFunctions.openCreatePassDialog('now');
@@ -376,7 +363,7 @@ describe('Admin - UI and Actions', () => {
           before(function () {
             // @ts-ignore
             cy.login(Cypress.env('adminUsername'), Cypress.env('adminPassword'));
-            chooseDemoSchool();
+            cy.switchSchool();
             getNavAction('Rooms').click();
 
             // modify title
@@ -427,7 +414,7 @@ describe('Admin - UI and Actions', () => {
             cy.log('logging as student');
             // @ts-ignore
             cy.login(Cypress.env('student1Username'), Cypress.env('student1Password'));
-            chooseDemoSchool();
+            cy.switchSchool();
             cy.log('testing Pass Now type');
             PassFunctions.openCreatePassDialog('now');
 
@@ -484,7 +471,7 @@ describe('Admin - UI and Actions', () => {
             cy.log('logging as student');
             // @ts-ignore
             cy.login(Cypress.env('student1Username'), Cypress.env('student1Password'));
-            chooseDemoSchool();
+            cy.switchSchool();
             cy.log('testing Pass Now type');
             PassFunctions.openCreatePassDialog('now');
 
@@ -533,7 +520,7 @@ describe('Admin - UI and Actions', () => {
           it('should delete last added room', function () {
             // @ts-ignore
             cy.login(Cypress.env('adminUsername'), Cypress.env('adminPassword'));
-            chooseDemoSchool();
+            cy.switchSchool();
             getNavAction('Rooms').click();
 
             cy.get('app-pinnable div.title-bar > div.title').each(element => {
@@ -564,7 +551,7 @@ describe('Admin - UI and Actions', () => {
       describe('Enable/Disable a room', () => {
         before(() => {
           cy.login(Cypress.env('adminUsername'), Cypress.env('adminPassword'));
-          chooseDemoSchool();
+          cy.switchSchool();
           getNavAction('Rooms').click();
         });
 
@@ -604,7 +591,7 @@ describe('Admin - UI and Actions', () => {
 
           // cy.logoutAdmin()
           // cy.login(Cypress.env('student1Username'), Cypress.env('student1Password'))
-          // chooseDemoSchool()
+          // cy.switchSchool()
 
           // PassFunctions.openCreatePassDialog('now');
           // PassFunctions.selectCurrentRoom('Nurse');
@@ -630,7 +617,7 @@ describe('Admin - UI and Actions', () => {
           }).as('updatePinnable');
 
           // cy.login(Cypress.env('adminUsername'), Cypress.env('adminPassword'));
-          // chooseDemoSchool();
+          // cy.switchSchool();
           // getNavAction('Rooms').click();
 
           cy
@@ -658,7 +645,7 @@ describe('Admin - UI and Actions', () => {
 
           // cy.logoutAdmin()
           // cy.login(Cypress.env('student1Username'), Cypress.env('student1Password'))
-          // chooseDemoSchool()
+          // cy.switchSchool()
 
           // PassFunctions.openCreatePassDialog('now');
           // PassFunctions.selectCurrentRoom('Nurse');
