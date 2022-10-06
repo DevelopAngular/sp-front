@@ -1,4 +1,4 @@
-import {closeModal, waitForElement} from '../../support/functions/general';
+import {waitForElement} from '../../support/functions/general';
 import * as PassFunctions from '../../support/functions/passes';
 
 const defaultRoomNames = ['Bathroom', 'Water Fountain', 'Nurse', 'Guidance', 'Main Office', 'Library'];
@@ -20,6 +20,10 @@ const MODIFIED_TRAVEL_TYPE = 'Round-trip';
 
 const PASSES_LIMIT = '10';
 const MODIFIED_PASSES_LIMIT = '5';
+
+const closeOverlayContainer = () => {
+  cy.get('div.header > div.left-button').click();
+};
 
 describe('Admin - UI and Actions', () => {
   afterEach(function () {
@@ -148,8 +152,8 @@ describe('Admin - UI and Actions', () => {
     });
 
     // testing value?
-    it('should the overlay being clicked the Room Add disappears', () => {
-      closeModal();
+    it('should close the modal and remove the overlay', () => {
+      closeOverlayContainer();
       cy.get('mat-dialog-container > app-overlay-container > form').should('not.exist');
     });
 
@@ -164,7 +168,7 @@ describe('Admin - UI and Actions', () => {
       });
 
       after(() => {
-        closeModal();
+        closeOverlayContainer();
       });
 
       // may not be of real value
@@ -231,7 +235,7 @@ describe('Admin - UI and Actions', () => {
           cy.logoutAdmin();
         });
 
-        // no need here for closeModal - the action itself closes the backdrop
+        // no need here for closeOverlayContainer - the action itself closes the backdrop
         it('should create/add a room', function () {
           // order must mimic order of input elements as they appear in html
           const mockRoom = [ROOM_TITLE, ROOM_NUM, ROOM_TIME];
@@ -345,7 +349,7 @@ describe('Admin - UI and Actions', () => {
           randomIndexElement(fromcells).click({force: true});
           const tocells = 'app-create-hallpass-forms app-main-hallpass-form app-to-where app-pinnable div.title';
           // cy.get(tocells).should('have.length', numberOfRooms).then(($ee) => expectEqualRoomList($ee));
-          closeModal();
+          closeOverlayContainer();
           cy.get(tocells).should('not.exist');
 
           cy.log('testing Pass Future type');
@@ -354,7 +358,7 @@ describe('Admin - UI and Actions', () => {
           // cy.get(fromcells).should('have.length', numberOfRooms).then(($ee) => expectEqualRoomList($ee));
           randomIndexElement(fromcells).click({force: true});
           // cy.get(tocells).should('have.length', numberOfRooms).then(($ee) => expectEqualRoomList($ee));
-          closeModal();
+          closeOverlayContainer();
 
           cy.logoutStudent();
         });
@@ -405,7 +409,7 @@ describe('Admin - UI and Actions', () => {
             cy.log(`room should have title "${MODIFIED_TITLE}"`);
             cy.contains('app-pinnable-collection app-pinnable div.title', MODIFIED_TITLE, {timeout})
               .then(() => cy.log(`room has title modified "${MODIFIED_TITLE}"`));
-            closeModal();
+            closeOverlayContainer();
 
             cy.logoutAdmin();
           });
@@ -429,7 +433,7 @@ describe('Admin - UI and Actions', () => {
 
             const tocells = 'app-to-where app-pinnable';
             cy.contains(tocells, MODIFIED_TITLE).should('not.exist');
-            closeModal();
+            closeOverlayContainer();
 
             cy.log('testing Pass Future type');
             PassFunctions.openCreatePassDialog('future');
@@ -442,7 +446,7 @@ describe('Admin - UI and Actions', () => {
             cy.log(`future from testing "${MODIFIED_TITLE}"`);
             cy.contains(fromcellsTitle, MODIFIED_TITLE).should('have.length', 1).click({force: true});
             cy.contains(fromcellsTitle).should('not.exist');
-            closeModal();
+            closeOverlayContainer();
 
             // cy.log(`future to testing "${MODIFIED_TITLE}"`);
             // cy.wait(1000);
@@ -465,7 +469,7 @@ describe('Admin - UI and Actions', () => {
                   cy.get('app-traveltype-picker div.option').contains(MODIFIED_TRAVEL_TYPE);
                   cy.get('app-duration-picker div.large').contains(MODIFIED_ROOM_TIME);
                 });
-              closeModal();
+              closeOverlayContainer();
             };
 
             cy.log('logging as student');
@@ -506,7 +510,7 @@ describe('Admin - UI and Actions', () => {
             cy.log(`future from testing "${MODIFIED_TITLE}"`);
             cy.contains(fromcellsTitle, MODIFIED_TITLE).should('have.length', 1).click({force: true});
             cy.contains(fromcellsTitle).should('not.exist');
-            closeModal();
+            closeOverlayContainer();
 
             // cy.log(`future to testing "${MODIFIED_TITLE}"`);
             // cy.contains(tocells, MODIFIED_TITLE).should('have.length', 1).should('be.visible').click();
@@ -516,7 +520,7 @@ describe('Admin - UI and Actions', () => {
             cy.logoutStudent();
           });
 
-          // no need here for closeModal - the action itself closes the backdrop
+          // no need here for closeOverlayContainer - the action itself closes the backdrop
           it('should delete last added room', function () {
             // @ts-ignore
             cy.login(Cypress.env('adminUsername'), Cypress.env('adminPassword'));
@@ -601,7 +605,7 @@ describe('Admin - UI and Actions', () => {
           //   .parent().parent().parent().find('div:first-child')
           //   .should('have.class', 'disabled');
 
-          // closeModal()
+          // closeOverlayContainer()
           // cy.logoutStudent()
         });
 
@@ -655,7 +659,7 @@ describe('Admin - UI and Actions', () => {
           //   .parent().parent().parent().find('div:first-child')
           //   .should('not.have.class', 'disabled');
 
-          // closeModal()
+          // closeOverlayContainer()
           // cy.logoutStudent()
 
         });

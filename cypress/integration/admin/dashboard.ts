@@ -9,6 +9,7 @@
 
 import {Http} from '../../support/utils';
 import {testPasses} from '../../../src/app/models/mock_data';
+import {interceptDashboardData, interceptEventReports, interceptHallPassStats} from '../../support/admin-interceptors';
 
 /**
  * Ideally, specs should be able to change data without to refresh the page.
@@ -34,155 +35,16 @@ describe('Admin Dashboard', () => {
       }
     ).as('mockActivePasses');
 
-    /**
-     * This request usually returns other objects with names 'Active Pass Count'
-     * and 'Average passes per student', but the UI doesn't display this information
-     * on the dashboard, so the mock doesn't need to have this data.
-     */
-    cy.intercept(
-      'https://smartpass.app/api/prod-us-central/v1/hall_passes/stats',
-      { method: Http.GET },
-      [
-        {
-          'name': 'Most Visited Locations',
-          'rows': [
-            {
-              'name': 'Main Office',
-              'type': 'single',
-              'value': '172 passes'
-            },
-            {
-              'name': 'Science Lab',
-              'type': 'single',
-              'value': '126 passes'
-            },
-            {
-              'name': 'Guidance',
-              'type': 'single',
-              'value': '109 passes'
-            },
-            {
-              'name': 'Nurse',
-              'type': 'single',
-              'value': '100 passes'
-            },
-            {
-              'name': 'Sree\'s Room',
-              'type': 'single',
-              'value': '90 passes'
-            }
-          ],
-          'type': 'list'
-        },
-        {
-          'name': 'Average pass time',
-          'type': 'single',
-          'value': '10 minutes'
-        }
-      ]
-    ).as('mockStats');
-
-    cy.intercept(
-      'https://smartpass.app/api/prod-us-central/v1/event_reports?created_before=2022-10-05T03:59:59.999Z&created_after=2022-10-04T04:00:00.000Z',
-      { method: Http.GET },
-      []
-    ).as('mockEventReports');
-
-    cy.intercept(
-      'https://smartpass.app/api/prod-us-central/v1/admin/dashboard',
-      { method: Http.GET },
-      {
-        'frequent_flyers': [
-          {
-            'student_id': 9524,
-            'display_name': 'student2 two',
-            'count': 1
-          },
-          {
-            'student_id': 13884,
-            'display_name': 'nstudent',
-            'count': 1
-          },
-          {
-            'student_id': 14893,
-            'display_name': 'QarunQB Staging',
-            'count': 1
-          },
-          {
-            'student_id': 14896,
-            'display_name': 'Dhruv String',
-            'count': 4
-          }
-        ],
-        'hall_pass_stats': [
-          {
-            'name': 'Most Visited Locations',
-            'rows': [
-              {
-                'name': 'multiple-teach',
-                'type': 'single',
-                'value': '1 passes'
-              },
-              {
-                'name': 'Guidance',
-                'type': 'single',
-                'value': '1 passes'
-              }
-            ],
-            'type': 'list'
-          },
-          {
-            'name': 'Average pass time',
-            'type': 'single',
-            'value': '5.1 minutes'
-          },
-          {
-            'name': 'Active Pass Count',
-            'type': 'single',
-            'value': 0
-          },
-          {
-            'name': 'Average passes per student',
-            'type': 'single',
-            'value': 1
-          }
-        ],
-        'hall_pass_usage': [
-          0,
-          0,
-          0,
-          0,
-          0,
-          0,
-          0,
-          0,
-          0,
-          0,
-          1,
-          0,
-          0,
-          0,
-          0,
-          0,
-          0,
-          0,
-          0,
-          0,
-          0,
-          0,
-          1,
-          0
-        ]
-      }
-
-    ).as('mockDashboard');
-
+    const statsWaitToken = interceptHallPassStats();
+    const eventReportsToken = interceptEventReports();
+    const dashboardStatsToken = interceptDashboardData();
 
     cy.login(Cypress.env('adminUsername'), Cypress.env('adminPassword'));
+
     cy.wait('@mockActivePasses');
-    cy.wait('@mockStats');
-    cy.wait('@mockEventReports');
-    cy.wait('@mockDashboard');
+    cy.wait(statsWaitToken);
+    cy.wait(eventReportsToken);
+    cy.wait(dashboardStatsToken);
   });
 
   it('should navigate to the Admin Dashboard', () => {
