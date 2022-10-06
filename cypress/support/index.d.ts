@@ -7,6 +7,7 @@ declare namespace Cypress {
     login(username: string, password: string): Chainable;
     logoutStudent(): Chainable;
     logoutTeacher(): Chainable;
-    logoutAdmin(): Chainable
+    logoutAdmin(): Chainable;
+    switchSchool(name?: string): Chainable;
   }
 }
