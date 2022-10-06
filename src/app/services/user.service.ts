@@ -947,10 +947,10 @@ export class UserService implements OnDestroy {
     return this.http.get('v1/users/grade_level', opt);
   }
 
-  listOf(params: Record<string, string[]>) {
-    const headers = new HttpHeaders({
+  listOf(params: {email: string[]}) {
+    const headers = {
       'Content-Type': 'application/json',
-    });
+    };
     return this.http.post('v1/users/listof', {params}, {headers}, false);
   }
 }
