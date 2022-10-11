@@ -8,7 +8,7 @@ import {FormFactor, MainHallPassFormComponent, Navigation} from '../main-hall-pa
 import {CreateFormService} from '../../create-form.service';
 import {NextStep} from '../../../animations';
 import {LocationsService} from '../../../services/locations.service';
-import {MAT_DIALOG_DATA} from '@angular/material/dialog';
+import {MAT_DIALOG_DATA, MatDialog} from '@angular/material/dialog';
 import {FromWhereComponent} from './from-where/from-where.component';
 import {ToCategoryComponent} from './to-category/to-category.component';
 import {RestrictedTargetComponent} from './restricted-target/restricted-target.component';
@@ -20,15 +20,16 @@ import {filter, map, withLatestFrom} from 'rxjs/operators';
 import {Location} from '../../../models/Location';
 import {PassLimitInfo} from '../../../models/HallPassLimits';
 import {LocationVisibilityService} from '../location-visibility.service';
+import {PassLimitDialogComponent} from './pass-limit-dialog/pass-limit-dialog.component';
 
 // when WS notify a change we have to skip functions that change
-// FORM_STATE state and step 
+// FORM_STATE state and step
 function skipWhenWS() {
   return function (target: any, key: string, descriptor: PropertyDescriptor) {
     const fn = descriptor.value;
     descriptor.value = function (...args) {
-      const byws = this.formService.updatedByWS$.getValue(); 
-      if (byws) { 
+      const byws = this.formService.updatedByWS$.getValue();
+      if (byws) {
         return;
       }
       return fn.apply(this, args);
@@ -62,7 +63,7 @@ export class LocationsGroupContainerComponent implements OnInit, OnDestroy {
   pinnable: Pinnable;
   data: any = {};
   frameMotion$: BehaviorSubject<any>;
-  
+
   @HostListener('document:click', ['$event'])
   clickHandler(event: PointerEvent) {
     // click inside component?
@@ -77,7 +78,7 @@ export class LocationsGroupContainerComponent implements OnInit, OnDestroy {
         // change is triggered by user not by WSocket
         this.formService.updatedByWS$.next(false);
       }
-    } 
+    }
   }
   parentMainHallPassForm: MainHallPassFormComponent;
 
@@ -90,7 +91,8 @@ export class LocationsGroupContainerComponent implements OnInit, OnDestroy {
     private visibilityService: LocationVisibilityService,
     private elRef: ElementRef,
     private _injector: Injector,
-    private cdr: ChangeDetectorRef
+    private cdr: ChangeDetectorRef,
+    private dialog: MatDialog
   ) {
   }
 
@@ -119,7 +121,7 @@ export class LocationsGroupContainerComponent implements OnInit, OnDestroy {
       } else if (this.FORM_STATE.data.selectedGroup) {
         return this.FORM_STATE.data.selectedGroup.title;
       } else {
-        const students = this.FORM_STATE.data.direction.from === null 
+        const students = this.FORM_STATE.data.direction.from === null
         ? this.FORM_STATE.data.selectedStudents
         : this.FORM_STATE.data?.roomStudents ?? this.FORM_STATE.data.selectedStudents;
         return students[0].display_name + (students.length > 1 ? ` (${students.length - 1})` : '');
@@ -366,8 +368,48 @@ export class LocationsGroupContainerComponent implements OnInit, OnDestroy {
     });
   }
 
+  showDestinationLimitReachedFromCategory(passLimit: number, studentCount: number, currentCount: number) {
+    return new Promise<boolean>(resolve => {
+      const dialogRef = this.dialog.open(PassLimitDialogComponent, {
+        panelClass: 'overlay-dialog',
+        backdropClass: 'custom-backdrop',
+        width: '450px',
+        height: '215px',
+        disableClose: true,
+        data: {
+          passLimit,
+          studentCount,
+          currentCount,
+        }
+      });
+      dialogRef.afterClosed().subscribe(result => {
+        if (!result.override) {
+          return resolve(false);
+        }
+        setTimeout(() => {
+          return resolve(true);
+        }, 200);
+      });
+    });
+  }
+
   @skipWhenWS()
-  fromCategory(location) {
+  async fromCategory(location: Location & { numberOfStudentsInRoom?: number }) {
+    const { numberOfStudentsInRoom } = location;
+    if (numberOfStudentsInRoom !== undefined) {
+      const totalStudents = numberOfStudentsInRoom + this.FORM_STATE.data.selectedStudents.length;
+      if (location.max_passes_to_active && (location.max_passes_to < totalStudents)) {
+        const overrideRoomLimit = await this.showDestinationLimitReachedFromCategory(
+          location.max_passes_to,
+          this.FORM_STATE.data.selectedStudents.length,
+          numberOfStudentsInRoom);
+
+        if (!overrideRoomLimit) {
+          return;
+        }
+      }
+    }
+
     const { passLimitInfo } = this.FORM_STATE;
     location.restricted = location.restricted || (passLimitInfo?.showPasses && passLimitInfo?.current === 0);
     this.data.toLocation = location;
