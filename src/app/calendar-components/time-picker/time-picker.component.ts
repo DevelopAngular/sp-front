@@ -164,18 +164,20 @@ export class TimePickerComponent implements OnInit, OnDestroy {
   }
 
   changeFormat() {
-      if (!this.isDisabledSwitchHourButton && !this.isDisabledSwitchFormat) {
-          const addTime = moment(this._currentDate).add(12, 'hour');
-          const removeTime = moment(this._currentDate).subtract(12, 'hour');
-          if (this._currentDate.isSame(addTime, 'day')) {
-              this._currentDate = addTime;
-          } else {
-              this._currentDate = removeTime;
-          }
-          this.buildFrom();
-          this.timeResult.emit(this._currentDate);
-      } else {
-          console.log('this invalid Time ====>>>', this._currentDate.format('DD hh:mm A'));
-      }
+    const today = this._currentDate.clone().startOf('day');
+    const hoursInDaySoFar = this._currentDate.diff(today, 'hour');
+    const cloneDate = this._currentDate.clone();
+    const newDate = hoursInDaySoFar >= 12
+      ? cloneDate.subtract(12, 'hour')
+      : cloneDate.add(12, 'hour');
+
+    // switching the format will cause the date to be invalid, so don't change it
+    if (newDate.isBefore(moment().add(5, 'minutes'))) {
+      return;
+    }
+
+    this._currentDate = newDate;
+    this.buildFrom();
+    this.timeResult.emit(this._currentDate);
   }
 }

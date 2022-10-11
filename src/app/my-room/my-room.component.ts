@@ -386,7 +386,7 @@ export class MyRoomComponent implements OnInit, OnDestroy, AfterViewInit {
           height: '480px',
           data: {selectedRoom: this.selectedLocation, loginData: kioskLoginInfo.results}
         });
-    
+
         dialogRef.afterClosed().subscribe((result) => {
 
           if (result) {
@@ -402,7 +402,7 @@ export class MyRoomComponent implements OnInit, OnDestroy, AfterViewInit {
                 this.kioskMode.setCurrentRoom(kioskRoom);
                 this.userService.saveKioskModeLocation(kioskRoom.id).subscribe((res: any) => {
                   // Switch into kiosk mode
-            
+
                   this.storage.setItem('kioskToken', res.access_token);
                   // this.storage.setItem('refresh_token', res.refresh_token);
                   this.loginService.updateAuth({username: kioskLoginInfo.results.username, password: kioskLoginInfo.results.password, type: 'demo-login', kioskMode: true});
@@ -412,7 +412,7 @@ export class MyRoomComponent implements OnInit, OnDestroy, AfterViewInit {
               }
             })
 
-    
+
           }
         });
       }
@@ -421,10 +421,13 @@ export class MyRoomComponent implements OnInit, OnDestroy, AfterViewInit {
   }
 
   openRoomCodeDialog(){
-    console.log("this.selectedLocation : ", this.selectedLocation);
     const dialogRef = this.dialog.open(RoomCheckinCodeDialogComponent, {
-      panelClass: 'cehckin-room-code-dialog-container',
+      panelClass: 'checkin-room-code-dialog-container',
       backdropClass: 'custom-bd',
+      maxWidth: '100vw',
+      maxHeight: '100vh',
+      height: '100vh',
+      width: '100vw',
       data: {roomData : this.selectedLocation},
     });
   }
