@@ -1,64 +1,61 @@
 @import '../../../design-system.scss';
 @import '../../../sp-colors.scss';
-.overlay-main-wrapper {
-    // width: 97vw;
-    // height: 94vh;
-    background: #F5F6F8 !important;
+
+div.header {
+  padding: 30px 0;
+  position: absolute;
+  left: 30px;
+  right: 30px;
+  width: calc(100vw - 60px);
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+
+  span {
+      @include textSize(22px, 700, $color: $gray500);
+  }
+
+  div.resize-icon {
+    width: 48px;
+    height: 48px;
+    border-radius: 50%;
+    cursor: pointer;
+    background-color: white;
+    box-shadow: 0 5px 20px rgba(0, 0, 0, 0.1);
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    z-index: 1;
+  }
+}
+
+div.wrapper {
+  height: 100vh;
+  display: grid;
+  place-content: center;
+
+  h1 {
+      margin: 20px 0;
+      @include textSize(200px, 500, $color: $gray500);
+  }
+
+  .timer {
     position: relative;
-    height: 100vh;
-    .resize-icon {
-        position: absolute;
-        right: 30px;
-        top: 30px;
-        width: 48px;
-        height: 48px;
-        border-radius: 50%;
-        cursor: pointer;
-        background-color: white;
-        box-shadow: 0 5px 20px rgba(0, 0, 0, 0.1);
-        display: flex;
-        justify-content: center;
-        align-items: center;
-        z-index: 1;
-    }
-    .header-wrapper {
-        padding: 22px;
-        p {
-            @include textSize(22px, 700, $color: $gray500);
-        }
-    }
-    .content {
-        height: 65vh;
-        display: flex;
-        justify-content: center;
-        flex-direction: column;
-        align-items: center;
-        margin: auto;
-        h1 {
-            margin: 20px 0;
-            @include textSize(200px, 500, $color: $gray500);
-        }
-        .timer {
-            position: relative;
-            .back-svg {
-                position: absolute;
-                circle {
-                    stroke: #D4D9E2 !important;
-                    fill: transparent;
-                }
-            }
-        }
-    }
-}
+    display: flex;
+    justify-content: center;
 
-.mat-progress-spinner circle,
-.mat-spinner circle {
-    // stroke: #3fb53f !important;
-}
+    .back-svg {
+      position: absolute;
+      circle {
+          stroke: #D4D9E2 !important;
+          fill: transparent;
+      }
+    }
 
-.timer ::ng-deep .example-margin.mat-progress-spinner circle,
-.mat-spinner circle {
-    stroke: $gray500 !important;
-    transition: all 1s linear;
-    // stroke-linecap: round;
+    ::ng-deep .example-margin.mat-progress-spinner circle,
+    .mat-spinner circle {
+      stroke: $gray500 !important;
+      transition: all 1s linear;
+    }
+  }
 }
