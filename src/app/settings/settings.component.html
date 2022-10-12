@@ -5,7 +5,7 @@
     <img *ngIf="user.badge" style="margin-left: 15px" width="12" height="17" [src]="'./assets/Referal Badge (Yellow).svg' | resolveAsset">
   </div>
   <div class="settings-content">
-    <div class="profile-switch" *ngIf="kioskMode.currentRoom$ | async">
+    <div class="profile-switch" *ngIf="false && (kioskMode.currentRoom$ | async)">
       <div class="option"
            #kiosk
            (mouseenter)="hoveredMasterOption = true"
