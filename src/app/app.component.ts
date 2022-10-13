@@ -165,7 +165,7 @@ export class AppComponent implements OnInit, AfterViewInit, OnDestroy {
             // '/login'
           ];
           const isAllowed = urlBlackList.every(route => !this.currentRoute.includes(route));
-          if ((!user.isStudent()) && isAllowed) {
+          if ((!user.isStudent()) && !this.currentRoute.includes('/forms')) {
             this.registerRefiner(user);
           }
           if (isAllowed && !this.isMobile) {
@@ -357,7 +357,7 @@ export class AppComponent implements OnInit, AfterViewInit, OnDestroy {
       last_name: user.last_name,
       type: user.isAdmin() ? 'admin' : 'teacher',
       status: user.status,
-      sync_types: user.sync_types,
+      sync_types: !user.sync_types.length ? 'password' : user.sync_types.length === 1 ? user.sync_types[0] : user.sync_types,
       name: user.display_name,
       account: {
         id: this.http.getSchool().id, // <- School Id
