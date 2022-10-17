@@ -14,7 +14,7 @@ export class ContactTraceEffects {
       .pipe(
         ofType(contactTraceActions.getContacts),
         concatMap((action: any) => {
-          return this.contactTraceService.getContacts(action.studentsIds, action.start_time)
+          return this.contactTraceService.getContacts(action.studentsIds, action.start_time, action.end_time)
             .pipe(
               map(({results}: {results: ContactTrace[]}) => {
                 return contactTraceActions.getContactsSuccess({contacts_trace: results});
