@@ -1,7 +1,7 @@
 import {Injectable} from '@angular/core';
 import {Actions, createEffect, ofType} from '@ngrx/effects';
 import {ContactTraceService} from '../../../services/contact-trace.service';
-import {catchError, concatMap, map} from 'rxjs/operators';
+import {catchError, switchMap, map} from 'rxjs/operators';
 import {ContactTrace} from '../../../models/ContactTrace';
 import * as contactTraceActions from '../actions';
 import {of} from 'rxjs';
@@ -13,7 +13,7 @@ export class ContactTraceEffects {
     return this.actions$
       .pipe(
         ofType(contactTraceActions.getContacts),
-        concatMap((action: any) => {
+        switchMap((action: any) => {
           return this.contactTraceService.getContacts(action.studentsIds, action.start_time, action.end_time)
             .pipe(
               map(({results}: {results: ContactTrace[]}) => {
