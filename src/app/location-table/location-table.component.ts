@@ -1,4 +1,4 @@
-import {Component, ElementRef, EventEmitter, Input, OnDestroy, OnInit, Output, ViewChild} from '@angular/core';
+import {Component, ElementRef, EventEmitter, Input, OnDestroy, OnInit, Output, ViewChild, Injector} from '@angular/core';
 import {HttpService} from '../services/http-service';
 import {Location} from '../models/Location';
 import {filter, map, pluck, switchMap, takeUntil, take, skip} from 'rxjs/operators';
@@ -17,6 +17,7 @@ import {UserService} from '../services/user.service';
 import {User} from '../models/User';
 import {PassLimitInfo} from '../models/HallPassLimits';
 import {cloneDeep} from 'lodash';
+import {MainHallPassFormComponent} from '../create-hallpass-forms/main-hallpass--form/main-hall-pass-form.component';
 
 
 export interface Paged<T> {
@@ -32,13 +33,22 @@ function Visibility(): any {
 
     return {
       set: function (vv: any[]) {
+        // accessing mainParent component indicates that FORM_STATE should be a service
+        // usually we get FORM_STATE in a cascading fashion 
+        // from parent to child more then 1 level deep 
+        const mainParent = this._injector.get(MainHallPassFormComponent);
+        const stateData = mainParent.FORM_STATE.data;
+
+        const isDedicatedUser = this.forKioskMode && (
+          (!!this.user?.roles.includes('_profile_kiosk') ||
+          stateData?.kioskModeStudent instanceof User)
+        );
 
         // kiosk mode can be enterd in 2 ways: 
         // by a teacher - isStaff
         // by a dedicated user - isDedicatedUser
-        const isStaffUser = this.forStaff && this.forKioskMode;
-        const isDedicatedUser = this.user?.roles.includes('_profile_kiosk') && this.forKioskMode;
-        const isChooseSelectedStudent = isStaffUser || isDedicatedUser;
+        const isStaffUser = (!!this.forStaff && this.forKioskMode);
+        const isChooseSelectedStudent = (isStaffUser || isDedicatedUser);
 
         // usually the real student is represented by this.user
         // but for the kiosk mode case this.user represents the account that started the kiosk mode
@@ -46,7 +56,7 @@ function Visibility(): any {
         // so we need to take the student from this.selectedStudents
         const student = [this.user];
         if (isChooseSelectedStudent) { 
-          student[0] = this.selectedStudents[0];
+          student[0] = this.selectedStudents[0] ?? stateData.kioskModeStudent;
         }
         // filtering apply only for a student
         if (vv.length > 0 &&
@@ -151,6 +161,7 @@ export class LocationTableComponent implements OnInit, OnDestroy {
       public tooltipService: TooltipDataService,
       private userService: UserService,
       private visibilityService: LocationVisibilityService,
+      private _injector: Injector,
   ) {}
 
   get isMobile() {
