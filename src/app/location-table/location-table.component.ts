@@ -32,14 +32,28 @@ function Visibility(): any {
 
     return {
       set: function (vv: any[]) {
+
+        // kiosk mode can be enterd in 2 ways: 
+        // by a teacher - isStaff
+        // by a dedicated user - isDedicatedUser
+        const isStaffUser = this.forStaff && this.forKioskMode;
+        const isDedicatedUser = this.user?.roles.includes('_profile_kiosk') && this.forKioskMode;
+        const isChooseSelectedStudent = isStaffUser || isDedicatedUser;
+
+        // usually the real student is represented by this.user
+        // but for the kiosk mode case this.user represents the account that started the kiosk mode
+        // a teacher or a dedicated user
+        // so we need to take the student from this.selectedStudents
         const student = [this.user];
-        if (this.forStaff && this.forKioskMode) {
+        if (isChooseSelectedStudent) { 
           student[0] = this.selectedStudents[0];
         }
         // filtering apply only for a student
         if (vv.length > 0 &&
-          (!this.forStaff ||
-           (this.forStaff && this.forKioskMode)
+          ( // is student
+            !this.forStaff || 
+            // is staff
+            isStaffUser
           )
          ) {
           // test if we have Location's
@@ -47,7 +61,7 @@ function Visibility(): any {
           try {
             v = (v instanceof Location) ? v : Location.fromJSON(v);
             vv = vv.filter((loc: Location) => this.visibilityService.filterByVisibility(loc, student));
-          }catch (e) {}
+          } catch (e) {}
         }
         values = vv;
       },
