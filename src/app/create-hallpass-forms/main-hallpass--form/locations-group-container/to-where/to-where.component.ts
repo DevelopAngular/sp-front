@@ -12,7 +12,7 @@ import {ToWhereGridRestrictionSm} from '../../../../models/to-where-grid-restric
 import {ToWhereGridRestrictionMd} from '../../../../models/to-where-grid-restrictions/ToWhereGridRestrictionMd';
 import {MAT_DIALOG_DATA, MatDialog} from '@angular/material/dialog';
 import {Subject, BehaviorSubject, fromEvent, Observable} from 'rxjs';
-import {filter, take, takeUntil} from 'rxjs/operators';
+import {filter, take, takeUntil, map} from 'rxjs/operators';
 import {DeviceDetection} from '../../../../device-detection.helper';
 import {StorageService} from '../../../../services/storage.service';
 import {TooltipDataService} from '../../../../services/tooltip-data.service';
@@ -140,12 +140,45 @@ export class ToWhereComponent implements OnInit, OnDestroy {
       filter(u => !!u),
       take(1),
     )
-    .subscribe((u: User) => this.student = u);
+    .subscribe({next: (u: User) => {
+      
+      this.user = u;
+      
+      const stateData = this.formState.data;
+      const isDedicatedUser = this.formState.kioskMode && (
+        (!!this.user?.roles.includes('_profile_kiosk') ||
+        stateData?.kioskModeStudent instanceof User)
+      );
+      const isStaffUser = ((!this.user.isStudent) && this.formState.kioskMode);
+      const isChooseSelectedStudent = (isStaffUser || isDedicatedUser);
+      const student = [this.user];
+      if (isChooseSelectedStudent) { 
+        student[0] = stateData.kioskModeStudent;
+      }
+      if (this.user.isStudent || isStaffUser) {
+        this.pinnables = this.pinnables.pipe(
+          map((vv: Pinnable[]) => {
+            try {
+              vv = vv.filter((pinn: Pinnable) => {
+                const loc = pinn.location;
+                if (loc === null && pinn.type === 'category') {
+                  return true;
+                }
+                const keep = this.visibilityService.filterByVisibility(loc, student);
+                return keep;
+              });
+              return vv;
+            } catch (e) {}
+          }),
+        ) 
+      }
+    }
+  });
 
     this.updatedLocation$ = this.formService.getUpdatedChoice();
   }
 
-  private student: User;
+  private user: User;
 
   ngOnDestroy() {
     this.destroy$.next();
