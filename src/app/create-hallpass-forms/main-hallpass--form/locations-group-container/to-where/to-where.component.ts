@@ -63,9 +63,7 @@ export class ToWhereComponent implements OnInit, OnDestroy, AfterViewInit {
   @ViewChildren('ngForPinnables') checkPinnables: QueryList<any>;
   ngAfterViewInit(): void {
     this.checkPinnables.changes
-    .pipe(startWith(undefined))
     .subscribe((change) => {
-      console.log(change) 
       if (change?.length > 0) {
         this.loading = false;
       }
@@ -159,7 +157,7 @@ export class ToWhereComponent implements OnInit, OnDestroy, AfterViewInit {
       
       const stateData = this.formState.data;
       const isDedicatedUser = this.formState.kioskMode && (
-        (!!this.user?.isKioskDedicatedUser() ||
+        (!!this.user?.roles.includes('_profile_kiosk') ||
         stateData?.kioskModeStudent instanceof User)
       );
       const isStaffUser = ((!this.user.isStudent()) && this.formState.kioskMode);

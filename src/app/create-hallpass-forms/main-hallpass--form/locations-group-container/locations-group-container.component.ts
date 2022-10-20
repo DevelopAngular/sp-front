@@ -197,7 +197,7 @@ export class LocationsGroupContainerComponent implements OnInit, OnDestroy {
         const student = [user];
         const stateData = this.FORM_STATE.data;
         const isDedicatedUser = this.FORM_STATE.kioskMode && (
-        (!!user?.isKioskDedicatedUser() ||
+        (!!user?.roles.includes('_profile_kiosk') ||
         stateData?.kioskModeStudent instanceof User)
       );
       const isStaffUser = ((!this.user.isStudent()) && this.FORM_STATE.kioskMode);
