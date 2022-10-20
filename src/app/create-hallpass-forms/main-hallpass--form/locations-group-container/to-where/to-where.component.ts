@@ -146,7 +146,7 @@ export class ToWhereComponent implements OnInit, OnDestroy {
       
       const stateData = this.formState.data;
       const isDedicatedUser = this.formState.kioskMode && (
-        (!!this.user?.roles.includes('_profile_kiosk') ||
+        (!!this.user?.isKioskDedicatedUser() ||
         stateData?.kioskModeStudent instanceof User)
       );
       const isStaffUser = ((!this.user.isStudent()) && this.formState.kioskMode);

@@ -40,7 +40,7 @@ function Visibility(): any {
         const stateData = mainParent.FORM_STATE.data;
 
         const isDedicatedUser = this.forKioskMode && (
-          (!!this.user?.roles.includes('_profile_kiosk') ||
+          (!!this.user?.isKioskDedicatedUser() ||
           stateData?.kioskModeStudent instanceof User)
         );
 
