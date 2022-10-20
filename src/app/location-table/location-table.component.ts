@@ -40,7 +40,7 @@ function Visibility(): any {
         const stateData = mainParent.FORM_STATE.data;
 
         const isDedicatedUser = this.forKioskMode && (
-          (!!this.user?.isKioskDedicatedUser() ||
+          (!!this.user?.roles.includes('_profile_kiosk') ||
           stateData?.kioskModeStudent instanceof User)
         );
 
@@ -172,10 +172,12 @@ export class LocationTableComponent implements OnInit, OnDestroy {
     this.userService.user$
     .pipe(
       takeUntil(this.destroy$),
-      filter(u => !!u),
+      filter(Boolean),
       take(1),
     )
-    .subscribe((u: User) => this.user = u);
+    .subscribe((u: User) => {
+      this.user = u;
+    });
 
     this.pinnableService.loadedPinnables$.pipe(
       filter(res => res && !this.isFavoriteForm),
