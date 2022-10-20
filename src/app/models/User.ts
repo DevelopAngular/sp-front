@@ -94,6 +94,7 @@ export class User extends BaseModel {
   isHead() {
     return this.roles.includes('_profile_admin') &&  this.roles.includes('manage_school');
   }
+
   isAdmin() {
     return this.roles.includes('_profile_admin');
   }
@@ -108,6 +109,10 @@ export class User extends BaseModel {
 
   isAssistant() {
     return this.roles.includes('_profile_assistant') && this.roles.includes('represent_users');
+  }
+
+  isKioskDedicatedUser() {
+    return this.roles.includes('_profile_kiosk');
   }
 
   userRoles() {

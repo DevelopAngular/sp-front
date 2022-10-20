@@ -149,13 +149,13 @@ export class ToWhereComponent implements OnInit, OnDestroy {
         (!!this.user?.roles.includes('_profile_kiosk') ||
         stateData?.kioskModeStudent instanceof User)
       );
-      const isStaffUser = ((!this.user.isStudent) && this.formState.kioskMode);
+      const isStaffUser = ((!this.user.isStudent()) && this.formState.kioskMode);
       const isChooseSelectedStudent = (isStaffUser || isDedicatedUser);
       const student = [this.user];
       if (isChooseSelectedStudent) { 
         student[0] = stateData.kioskModeStudent;
       }
-      if (this.user.isStudent || isStaffUser) {
+      if (this.user.isStudent() || isStaffUser) {
         this.pinnables = this.pinnables.pipe(
           map((vv: Pinnable[]) => {
             try {
