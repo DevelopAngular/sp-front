@@ -8,6 +8,7 @@
       </div>
     </div>
     <div class="wya-content ds-mt-25" [attr.data-motion-translate]="(frameMotion$ | async).direction">
+    <ng-container *ngIf="showSearchElseLoading; else loading">
       <app-sp-search
         [focused]="true"
         [width]="'280px'"
@@ -18,6 +19,14 @@
         [filteringUsersCallback]="getFilteringStudents()"
         (onUpdate)="setSelectedStudents($event)"
       ></app-sp-search>
+    </ng-container>   
+
+    <ng-template #loading>
+      <mat-spinner [color]="'accent'" [diameter]="30"></mat-spinner>
+    </ng-template>
+
+
+
     </div>
   </div>
   <img *ngIf="formState.state === 4" class="back-button-bottom" [src]="'./assets/Back Button (Blue-White).svg' | resolveAsset" (click)="back()">

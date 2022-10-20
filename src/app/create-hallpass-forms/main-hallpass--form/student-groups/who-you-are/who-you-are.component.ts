@@ -52,7 +52,11 @@ export class WhoYouAreComponent implements OnInit {
     }).bind(this);
   }
 
+  showSearchElseLoading = true;
+
   setSelectedStudents(evt) {
+    this.showSearchElseLoading = false;
+
     this.formService.setFrameMotionDirection('forward');
     this.formService.compressableBoxController.next(false);
 
@@ -62,6 +66,8 @@ export class WhoYouAreComponent implements OnInit {
         this.formState.fromState = 1;
         this.formState.data.selectedStudents = evt;
         this.stateChangeEvent.emit(this.formState);
+
+        this.showSearchElseLoading = true;
       }, 100);
       return;
     }
