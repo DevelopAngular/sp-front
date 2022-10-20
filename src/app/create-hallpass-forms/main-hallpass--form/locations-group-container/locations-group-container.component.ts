@@ -195,48 +195,59 @@ export class LocationsGroupContainerComponent implements OnInit, OnDestroy {
       withLatestFrom(this.user$),
       map(([pins, user]) => {
         const student = [user];
-        // on kioskmode student is found in selectedStudents[0]
-        if (this.isStaff && this.FORM_STATE?.kioskMode) {
-          // TODO when not found case
-          student[0] = this.FORM_STATE.data?.selectedStudents[0];
-        }
-        pins = pins.filter(p => {
-          // filtering here based on location and student may return (or not) a pinnable
-          if (p.type === 'location' && p.location !== null) {
-            // is a Location
-            try {
-              const loc = Location.fromJSON(p.location);
-              // staff is unfiltered but not in kiosk mode
-              if (this.isStaff && !this.FORM_STATE?.kioskMode) return p;
-              // filter students here
-              if (this.visibilityService.filterByVisibility(loc, student)) return p;
-            } catch (e) {
-              console.log(e.message)
-            }
-          // folder containing pinnables
-          } else if (p.type === 'category') {
-            return p;
-          }
-        });
-
-        const { passLimitInfo } = this.FORM_STATE;
-        if (!passLimitInfo?.showPasses) {
-          return pins;
-        }
-
-        if (passLimitInfo.current === 0) {
-          pins.forEach(p => {
-            if (p.location === null) { // ignore folders
+        const stateData = this.FORM_STATE.data;
+        const isDedicatedUser = this.FORM_STATE.kioskMode && (
+        (!!user?.isKioskDedicatedUser() ||
+        stateData?.kioskModeStudent instanceof User)
+      );
+      const isStaffUser = ((!this.user.isStudent()) && this.FORM_STATE.kioskMode);
+      const isChooseSelectedStudent = (isStaffUser || isDedicatedUser);
+      // on kioskmode student is found in selectedStudents[0]
+      if (isChooseSelectedStudent) {
+        // TODO when not found case
+        student[0] = stateData.kioskModeStudent;
+      }
+      pins = pins.filter(p => {
+        // filtering here based on location and student may return (or not) a pinnable
+        if (p.type === 'location' && p.location !== null) {
+          // is a Location
+          try {
+            const loc = Location.fromJSON(p.location);
+            // staff is unfiltered but not in kiosk mode
+            if (this.isStaff && !this.FORM_STATE?.kioskMode) {
               return p;
             }
-            if (!p?.location?.restricted) {
-              p.location.restricted = true;
+            // filter students here
+            if (this.visibilityService.filterByVisibility(loc, student)) {
+              return p;
             }
-          });
+          } catch (e) {
+            console.log(e.message)
+          }
+        // folder containing pinnables
+        } else if (p.type === 'category') {
+          return p;
         }
+      });
+
+      const { passLimitInfo } = this.FORM_STATE;
+      if (!passLimitInfo?.showPasses) {
         return pins;
-      }),
-    );
+      }
+
+      if (passLimitInfo.current === 0) {
+        pins.forEach(p => {
+          if (p.location === null) { // ignore folders
+            return p;
+          }
+          if (!p?.location?.restricted) {
+            p.location.restricted = true;
+          }
+        });
+      }
+      return pins;
+    }),
+  );
 
     this.pinnable = this.FORM_STATE.data.direction ? this.FORM_STATE.data.direction.pinnable : null;
   }
