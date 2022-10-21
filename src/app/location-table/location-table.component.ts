@@ -1,7 +1,7 @@
 import {Component, ElementRef, EventEmitter, Input, OnDestroy, OnInit, Output, ViewChild, Injector} from '@angular/core';
 import {HttpService} from '../services/http-service';
 import {Location} from '../models/Location';
-import {filter, map, pluck, switchMap, takeUntil, take, skip} from 'rxjs/operators';
+import {filter, map, pluck, switchMap, takeUntil, take} from 'rxjs/operators';
 import {LocationsService} from '../services/locations.service';
 import {combineLatest, iif, Observable, of, Subject, zip} from 'rxjs';
 import {filter as _filter, sortBy} from 'lodash';

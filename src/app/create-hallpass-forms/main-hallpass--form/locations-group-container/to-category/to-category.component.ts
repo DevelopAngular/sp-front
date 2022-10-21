@@ -3,17 +3,20 @@ import {Component, ElementRef, EventEmitter, HostListener, Inject, Input, OnInit
 import {Navigation} from '../../main-hall-pass-form.component';
 import {Pinnable} from '../../../../models/Pinnable';
 import {User} from '../../../../models/User';
+import {Location} from '../../../../models/Location';
 import {CreateFormService} from '../../../create-form.service';
 import {BehaviorSubject, fromEvent, Subject} from 'rxjs';
-import {takeUntil} from 'rxjs/operators';
+import {filter, tap, takeUntil} from 'rxjs/operators';
 import {MatDialog, MatDialogRef, MAT_DIALOG_DATA} from '@angular/material/dialog';
 import {DeviceDetection} from '../../../../device-detection.helper';
 import {LocationVisibilityService} from '../../location-visibility.service';
 import {ToastService} from '../../../../services/toast.service';
+import {LocationsService} from '../../../../services/locations.service';
 import {
   ConfirmationDialogComponent,
   ConfirmationTemplates
 } from '../../../../shared/shared-components/confirmation-dialog/confirmation-dialog.component';
+import {LocationTableComponent} from '../../../../location-table/location-table.component';
 
 @Component({
   selector: 'app-to-category',
@@ -39,6 +42,7 @@ export class ToCategoryComponent implements OnInit {
       });
     }
   }
+  @ViewChild('locationTable') locTableRef: LocationTableComponent;
   @Input() formState: Navigation;
 
   @Input() isStaff: boolean;
@@ -88,6 +92,7 @@ export class ToCategoryComponent implements OnInit {
     @Inject(MAT_DIALOG_DATA) public dialogData: any,
     private visibilityService: LocationVisibilityService,
     private toastService: ToastService,
+    private locationsService: LocationsService,
   ) { }
 
   get headerGradient() {
@@ -115,6 +120,56 @@ export class ToCategoryComponent implements OnInit {
           this.headerTransition['category-header_animation-back'] = false;
       }
     });
+
+    this.locationsService.listenLocationSocket().pipe(
+      takeUntil(this.destroy$),
+      filter(Boolean),
+      tap((res: any) => {
+        if (!('data' in res)) return;
+
+        try {
+          // updated location sent via WS
+          const loc: Location = Location.fromJSON(res.data);
+
+          // check for a proper category pinnable
+          const isCategory = (this.pinnable.type === 'category' && this.pinnable.location === null);
+          if (!isCategory) return;
+          // check for locations of a category pinnable 
+          const pinn = <any>this.pinnable;
+          if (!('myLocations' in pinn)) return;
+
+          // is the location loc owned by pinnable?
+          const found = pinn.myLocations.some((a: Location) => {
+            return +a.id === +loc.id
+          });
+          // but belongs to category pinnable?
+          const belongs = loc.category === pinn.category;
+          if (!found && !belongs) return;
+          
+          // update choices
+          let choices = pinn.myLocations;
+          const updated = choices.map((x: Location) => {
+            if (+x.id === +loc.id) {
+              return loc;
+            }
+            return x;
+          });
+
+          // is a freshly added location
+          if (!found && belongs) {
+            updated.push(loc);
+          }
+
+          // update pinn
+          pinn.myLocations = updated;
+          // trigger RV filtering here
+          this.locTableRef.choices = updated;
+
+        } catch (e) {
+          console.log(e);
+        }
+      }),
+    ).subscribe();
   }
 
   ngOnDestroy() {
@@ -236,5 +291,4 @@ export class ToCategoryComponent implements OnInit {
   get isIOSTablet() {
     return DeviceDetection.isIOSTablet();
   }
-
 }
