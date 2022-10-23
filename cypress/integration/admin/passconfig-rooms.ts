@@ -1,4 +1,4 @@
-import {closeModal, waitForElement} from '../../support/functions/general';
+import {waitForElement} from '../../support/functions/general';
 import * as PassFunctions from '../../support/functions/passes';
 
 const defaultRoomNames = ['Bathroom', 'Water Fountain', 'Nurse', 'Guidance', 'Main Office', 'Library'];
@@ -20,6 +20,10 @@ const MODIFIED_TRAVEL_TYPE = 'Round-trip';
 
 const PASSES_LIMIT = '10';
 const MODIFIED_PASSES_LIMIT = '5';
+
+const closeOverlayContainer = () => {
+  cy.get('div.header > div.left-button').click();
+};
 
 describe('Admin - UI and Actions', () => {
   afterEach(function () {
@@ -52,7 +56,7 @@ describe('Admin - UI and Actions', () => {
 
         return Promise.resolve();
       }).then(() => {
-        chooseDemoSchool();
+        cy.switchSchool();
         getNavAction('Rooms').click();
 
         cy.intercept({
@@ -126,15 +130,11 @@ describe('Admin - UI and Actions', () => {
       return titleRoom;
   };*/
 
-  const chooseDemoSchool = (name: 'Cypress Testing School 1' | 'Cypress Testing School 2' = 'Cypress Testing School 1') => {
-    cy.switchSchool(name);
-  };
-
   before(() => {
     // @ts-ignore
     cy.login(Cypress.env('adminUsername'), Cypress.env('adminPassword'));
     // login();
-    chooseDemoSchool();
+    cy.switchSchool();
     getNavAction('Rooms').click();
   });
 
@@ -143,16 +143,7 @@ describe('Admin - UI and Actions', () => {
   });
 
   describe('Rooms', () => {
-    it('should change to the demo school', () => {
-      // move to "Cypress Testing School 1"
-      chooseDemoSchool();
-    });
-
-    // if this test succeeded we can subsequently access needed UI elements to perform the room related actions
-    // has a testing value?
     it('should have the expected UI elements and overlay', () => {
-      // move to "Cypress Testing School 1"
-      chooseDemoSchool();
       getNavAction('Rooms').click();
       getRoomAction('Add').click();
       getConsentAction('New Room').click();
@@ -161,8 +152,8 @@ describe('Admin - UI and Actions', () => {
     });
 
     // testing value?
-    it('should the overlay being clicked the Room Add disappears', () => {
-      closeModal();
+    it('should close the modal and remove the overlay', () => {
+      closeOverlayContainer();
       cy.get('mat-dialog-container > app-overlay-container > form').should('not.exist');
     });
 
@@ -177,7 +168,7 @@ describe('Admin - UI and Actions', () => {
       });
 
       after(() => {
-        closeModal();
+        closeOverlayContainer();
       });
 
       // may not be of real value
@@ -244,7 +235,7 @@ describe('Admin - UI and Actions', () => {
           cy.logoutAdmin();
         });
 
-        // no need here for closeModal - the action itself closes the backdrop
+        // no need here for closeOverlayContainer - the action itself closes the backdrop
         it('should create/add a room', function () {
           // order must mimic order of input elements as they appear in html
           const mockRoom = [ROOM_TITLE, ROOM_NUM, ROOM_TIME];
@@ -346,7 +337,7 @@ describe('Admin - UI and Actions', () => {
           cy.logoutAdmin();
           // @ts-ignore
           cy.login(Cypress.env('student1Username'), Cypress.env('student1Password'));
-          chooseDemoSchool();
+          cy.switchSchool();
 
           cy.log('testing Pass Now type');
           PassFunctions.openCreatePassDialog('now');
@@ -358,7 +349,7 @@ describe('Admin - UI and Actions', () => {
           randomIndexElement(fromcells).click({force: true});
           const tocells = 'app-create-hallpass-forms app-main-hallpass-form app-to-where app-pinnable div.title';
           // cy.get(tocells).should('have.length', numberOfRooms).then(($ee) => expectEqualRoomList($ee));
-          closeModal();
+          closeOverlayContainer();
           cy.get(tocells).should('not.exist');
 
           cy.log('testing Pass Future type');
@@ -367,7 +358,7 @@ describe('Admin - UI and Actions', () => {
           // cy.get(fromcells).should('have.length', numberOfRooms).then(($ee) => expectEqualRoomList($ee));
           randomIndexElement(fromcells).click({force: true});
           // cy.get(tocells).should('have.length', numberOfRooms).then(($ee) => expectEqualRoomList($ee));
-          closeModal();
+          closeOverlayContainer();
 
           cy.logoutStudent();
         });
@@ -376,7 +367,7 @@ describe('Admin - UI and Actions', () => {
           before(function () {
             // @ts-ignore
             cy.login(Cypress.env('adminUsername'), Cypress.env('adminPassword'));
-            chooseDemoSchool();
+            cy.switchSchool();
             getNavAction('Rooms').click();
 
             // modify title
@@ -418,7 +409,7 @@ describe('Admin - UI and Actions', () => {
             cy.log(`room should have title "${MODIFIED_TITLE}"`);
             cy.contains('app-pinnable-collection app-pinnable div.title', MODIFIED_TITLE, {timeout})
               .then(() => cy.log(`room has title modified "${MODIFIED_TITLE}"`));
-            closeModal();
+            closeOverlayContainer();
 
             cy.logoutAdmin();
           });
@@ -427,7 +418,7 @@ describe('Admin - UI and Actions', () => {
             cy.log('logging as student');
             // @ts-ignore
             cy.login(Cypress.env('student1Username'), Cypress.env('student1Password'));
-            chooseDemoSchool();
+            cy.switchSchool();
             cy.log('testing Pass Now type');
             PassFunctions.openCreatePassDialog('now');
 
@@ -442,7 +433,7 @@ describe('Admin - UI and Actions', () => {
 
             const tocells = 'app-to-where app-pinnable';
             cy.contains(tocells, MODIFIED_TITLE).should('not.exist');
-            closeModal();
+            closeOverlayContainer();
 
             cy.log('testing Pass Future type');
             PassFunctions.openCreatePassDialog('future');
@@ -455,7 +446,7 @@ describe('Admin - UI and Actions', () => {
             cy.log(`future from testing "${MODIFIED_TITLE}"`);
             cy.contains(fromcellsTitle, MODIFIED_TITLE).should('have.length', 1).click({force: true});
             cy.contains(fromcellsTitle).should('not.exist');
-            closeModal();
+            closeOverlayContainer();
 
             // cy.log(`future to testing "${MODIFIED_TITLE}"`);
             // cy.wait(1000);
@@ -478,13 +469,13 @@ describe('Admin - UI and Actions', () => {
                   cy.get('app-traveltype-picker div.option').contains(MODIFIED_TRAVEL_TYPE);
                   cy.get('app-duration-picker div.large').contains(MODIFIED_ROOM_TIME);
                 });
-              closeModal();
+              closeOverlayContainer();
             };
 
             cy.log('logging as student');
             // @ts-ignore
             cy.login(Cypress.env('student1Username'), Cypress.env('student1Password'));
-            chooseDemoSchool();
+            cy.switchSchool();
             cy.log('testing Pass Now type');
             PassFunctions.openCreatePassDialog('now');
 
@@ -519,7 +510,7 @@ describe('Admin - UI and Actions', () => {
             cy.log(`future from testing "${MODIFIED_TITLE}"`);
             cy.contains(fromcellsTitle, MODIFIED_TITLE).should('have.length', 1).click({force: true});
             cy.contains(fromcellsTitle).should('not.exist');
-            closeModal();
+            closeOverlayContainer();
 
             // cy.log(`future to testing "${MODIFIED_TITLE}"`);
             // cy.contains(tocells, MODIFIED_TITLE).should('have.length', 1).should('be.visible').click();
@@ -529,11 +520,11 @@ describe('Admin - UI and Actions', () => {
             cy.logoutStudent();
           });
 
-          // no need here for closeModal - the action itself closes the backdrop
+          // no need here for closeOverlayContainer - the action itself closes the backdrop
           it('should delete last added room', function () {
             // @ts-ignore
             cy.login(Cypress.env('adminUsername'), Cypress.env('adminPassword'));
-            chooseDemoSchool();
+            cy.switchSchool();
             getNavAction('Rooms').click();
 
             cy.get('app-pinnable div.title-bar > div.title').each(element => {
@@ -564,7 +555,7 @@ describe('Admin - UI and Actions', () => {
       describe('Enable/Disable a room', () => {
         before(() => {
           cy.login(Cypress.env('adminUsername'), Cypress.env('adminPassword'));
-          chooseDemoSchool();
+          cy.switchSchool();
           getNavAction('Rooms').click();
         });
 
@@ -604,7 +595,7 @@ describe('Admin - UI and Actions', () => {
 
           // cy.logoutAdmin()
           // cy.login(Cypress.env('student1Username'), Cypress.env('student1Password'))
-          // chooseDemoSchool()
+          // cy.switchSchool()
 
           // PassFunctions.openCreatePassDialog('now');
           // PassFunctions.selectCurrentRoom('Nurse');
@@ -614,7 +605,7 @@ describe('Admin - UI and Actions', () => {
           //   .parent().parent().parent().find('div:first-child')
           //   .should('have.class', 'disabled');
 
-          // closeModal()
+          // closeOverlayContainer()
           // cy.logoutStudent()
         });
 
@@ -630,7 +621,7 @@ describe('Admin - UI and Actions', () => {
           }).as('updatePinnable');
 
           // cy.login(Cypress.env('adminUsername'), Cypress.env('adminPassword'));
-          // chooseDemoSchool();
+          // cy.switchSchool();
           // getNavAction('Rooms').click();
 
           cy
@@ -658,7 +649,7 @@ describe('Admin - UI and Actions', () => {
 
           // cy.logoutAdmin()
           // cy.login(Cypress.env('student1Username'), Cypress.env('student1Password'))
-          // chooseDemoSchool()
+          // cy.switchSchool()
 
           // PassFunctions.openCreatePassDialog('now');
           // PassFunctions.selectCurrentRoom('Nurse');
@@ -668,7 +659,7 @@ describe('Admin - UI and Actions', () => {
           //   .parent().parent().parent().find('div:first-child')
           //   .should('not.have.class', 'disabled');
 
-          // closeModal()
+          // closeOverlayContainer()
           // cy.logoutStudent()
 
         });
