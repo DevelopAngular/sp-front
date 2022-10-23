@@ -193,7 +193,6 @@ export class NavbarComponent implements AfterViewInit, OnInit, OnDestroy {
     public dialog: MatDialog,
     public router: Router,
     private location: Location,
-    public loadingService: LoadingService,
     public loginService: GoogleLoginService,
     private locationService: LocationsService,
     private _zone: NgZone,
@@ -463,10 +462,11 @@ export class NavbarComponent implements AfterViewInit, OnInit, OnDestroy {
   }
 
   hasRoles(roles: string[]) {
-    const userRoles = roles.reduce((acc, curr, index) => {
-      return { ...acc, [curr]: index };
-    }, {});
-    return this.user.roles.find((role) => userRoles[role]);
+    let access;
+    roles.forEach(role => {
+      access = this.user.roles.includes(role)
+    });
+    return access;
   }
 
   buttonVisibility(button) {

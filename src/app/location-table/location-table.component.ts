@@ -32,14 +32,28 @@ function Visibility(): any {
 
     return {
       set: function (vv: any[]) {
+
+        // kiosk mode can be enterd in 2 ways: 
+        // by a teacher - isStaff
+        // by a dedicated user - isDedicatedUser
+        const isStaffUser = this.forStaff && this.forKioskMode;
+        const isDedicatedUser = this.user?.roles.includes('_profile_kiosk') && this.forKioskMode;
+        const isChooseSelectedStudent = isStaffUser || isDedicatedUser;
+
+        // usually the real student is represented by this.user
+        // but for the kiosk mode case this.user represents the account that started the kiosk mode
+        // a teacher or a dedicated user
+        // so we need to take the student from this.selectedStudents
         const student = [this.user];
-        if (this.forStaff && this.forKioskMode) {
+        if (isChooseSelectedStudent) { 
           student[0] = this.selectedStudents[0];
         }
         // filtering apply only for a student
-        if (vv.length > 0 && 
-          (!this.forStaff || 
-           (this.forStaff && this.forKioskMode)
+        if (vv.length > 0 &&
+          ( // is student
+            !this.forStaff || 
+            // is staff
+            isStaffUser
           )
          ) {
           // test if we have Location's
@@ -47,7 +61,7 @@ function Visibility(): any {
           try {
             v = (v instanceof Location) ? v : Location.fromJSON(v);
             vv = vv.filter((loc: Location) => this.visibilityService.filterByVisibility(loc, student));
-          }catch (e) {}
+          } catch (e) {}
         }
         values = vv;
       },
@@ -284,7 +298,7 @@ export class LocationTableComponent implements OnInit, OnDestroy {
 
   private choiceFunc(loc) {
     return function(choice) {
-      if (choice instanceof Location) { 
+      if (choice instanceof Location) {
         if (''+choice.id === ''+loc.id) {
           return loc;
         } else {
@@ -295,7 +309,7 @@ export class LocationTableComponent implements OnInit, OnDestroy {
           const l = Location.fromJSON(choice);
           if (''+l.id === ''+loc.id) {
             return cloneDeep(loc);
-          }   
+          }
         } catch(e) {}
         return cloneDeep(choice);
       }
@@ -305,10 +319,10 @@ export class LocationTableComponent implements OnInit, OnDestroy {
   // check if modified location exists on choices
   private isFoundChoice(loc: Location, choices: Location[]|any[]) {
     for (let i = 0; i < choices.length; i++) {
-      if (choices[i] instanceof Location) { 
+      if (choices[i] instanceof Location) {
         if (''+choices[i].id === ''+loc.id) {
           return true;
-        } 
+        }
       } else {
         try {
           const l = Location.fromJSON(choices[i]);
@@ -500,6 +514,9 @@ export class LocationTableComponent implements OnInit, OnDestroy {
   }
 
   choiceSelected(choice: any) {
+    if (choice.id in this.passLimits) {
+      choice['numberOfStudentsInRoom'] = this.passLimits[choice.id].to_count;
+    }
     this.locationService.focused.next(false);
     this.onSelect.emit(choice);
   }
