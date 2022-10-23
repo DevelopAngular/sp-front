@@ -36,12 +36,17 @@ export class ProgressInterceptor implements HttpInterceptor {
                         ].every(_url => error.url.search(_url) < 0);
 
                         if ( (error.status >= 400 && error.status !== 403 && error.status < 600 && exeptedUrls) ) {
-                          this.toast.openToast(
-                            {
-                              title: 'Oh no! Something went wrong',
-                              subtitle: `Please try refreshing the page. If the issue keeps occuring, contact us at support@smartpass.app. (${error.status})`,
-                              type: 'error'
-                            }, error.status);
+                          if (req.url.includes('recurring_scheduled_config') && error.status === 404) {
+                            // TODO: Find a better way to show expired recurring passes
+                            console.log('ignoring missing recurring scheduled config');
+                          } else {
+                            this.toast.openToast(
+                              {
+                                title: 'Oh no! Something went wrong',
+                                subtitle: `Please try refreshing the page. If the issue keeps occuring, contact us at support@smartpass.app. (${error.status})`,
+                                type: 'error'
+                              }, error.status);
+                          }
                         }
                         return throwError(error);
                       })
