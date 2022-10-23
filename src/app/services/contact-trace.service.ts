@@ -22,12 +22,12 @@ export class ContactTraceService {
     private store: Store<AppState>
   ) { }
 
-  getContacts(studentIds: number[] | string[], start_time) {
-    return this.http.post('v1/stats/contact_tracing', {students: studentIds, start_time});
+  getContacts(studentIds: number[] | string[], start_time: string, end_time: string) {
+    return this.http.post('v1/stats/contact_tracing', {students: studentIds, start_time, end_time});
   }
 
-  getContactsRequest(studentsIds, start_time) {
-    this.store.dispatch(getContacts({studentsIds, start_time}));
+  getContactsRequest(studentsIds: string[], start_time: string, end_time: string) {
+    this.store.dispatch(getContacts({studentsIds, start_time, end_time}));
   }
 
   clearContactTraceDataRequest() {

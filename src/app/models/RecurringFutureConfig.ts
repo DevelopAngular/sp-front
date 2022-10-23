@@ -9,5 +9,6 @@ export interface RecurringConfig {
 export enum RecurringOption {
   DoesNotRepeat,
   Daily,
-  Weekly
+  Weekly,
+  Minutely // Do not remove. Valid option
 }

@@ -1,5 +1,5 @@
 :host {
- 
+
   .assigned-teachers {
     display: flex;
     flex-wrap: wrap;
@@ -14,6 +14,7 @@
       margin-bottom: 10px;
       color: #1F194E;
       position: relative;
+      word-break: break-word;
       .chip-field{
         display: flex;
         align-items: center;
