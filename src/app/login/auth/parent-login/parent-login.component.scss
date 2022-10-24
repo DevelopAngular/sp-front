@@ -1,5 +1,4 @@
-@import "../../sp-colors";
-@import "../../design-system.scss";
+@import "../../../../sp-colors";
 :host {
     height: 100%;
 }
@@ -52,18 +51,12 @@
     }
     .login-form {
         width: 325px;
-        // background: #FFFFFF;
-        // box-shadow: 0 5px 20px rgba(0, 0, 0, 0.0616259);
-        // border-radius: 12px;
+        background: #FFFFFF;
+        box-shadow: 0 5px 20px rgba(0, 0, 0, 0.0616259);
+        border-radius: 12px;
         z-index: 10;
         box-sizing: border-box;
         transition: margin-top .3s ease-in;
-    }
-    .bottom-text {
-        text-align: center;
-        width: 70%;
-        margin: 15px auto;
-        @include textSize(14px, 400, $color: $gray500);
     }
     .spinner {
         position: absolute;
@@ -204,58 +197,40 @@ input {
     display: flex;
     flex-direction: column;
     align-items: center;
-    background: #FFFFFF;
-    box-shadow: 0 5px 20px rgba(0, 0, 0, 0.0616259);
-    border-radius: 12px;
-}
-
-.login-form {
-    display: flex;
-    flex-direction: column;
-    justify-content: center;
-    align-items: center;
-    .title {
-        // display: flex;
-        text-align: center;
+    .login-form {
+        display: flex;
+        flex-direction: column;
+        justify-content: center;
         align-items: center;
-        color: $navy;
-        font-size: 21px;
-        font-weight: bold;
-        .school-signin_sub-title {
-            @include textSize(14px, 400, $color: $gray500);
-            margin-top: 8px;
-            .sn-link {
-                color: $green500;
-                cursor: pointer;
-                font-size: 14px;
-                font-weight: 700;
-                &:hover {
-                    text-decoration: underline;
-                }
-            }
-        }
-    }
-    .content {
-        margin-top: 20px;
-        .input-password {
-            z-index: 10;
-            margin-top: 12px;
-            transition: opacity .25s ease;
-        }
-        .button {
+        .title {
             display: flex;
-            justify-content: center;
-            width: 100%;
+            align-items: center;
+            color: $navy;
+            font-size: 24px;
+            font-weight: bold;
         }
-        .error {
-            color: red;
-            font-size: 13px;
-            margin-top: 10px;
-            //position: absolute;
-        }
-        .already-message {
-            @extend .error;
-            color: $jade;
+        .content {
+            margin-top: 30px;
+            .input-password {
+                z-index: 10;
+                margin-top: 12px;
+                transition: opacity .25s ease;
+            }
+            .button {
+                display: flex;
+                justify-content: center;
+                width: 100%;
+            }
+            .error {
+                color: red;
+                font-size: 13px;
+                margin-top: 10px;
+                //position: absolute;
+            }
+            .already-message {
+                @extend .error;
+                color: $jade;
+            }
         }
     }
 }

@@ -76,9 +76,7 @@ import {ToastEffects} from './ngrx/toast/effects';
 import {SmartpassSearchEffects} from './ngrx/smartpass-search/effects';
 import { IdcardOverlayContainerComponent } from './idcard-overlay-container/idcard-overlay-container.component';
 import { EncounterDetectionEffects } from './ngrx/encounter-detection/effects';
-import { ParentSignUpComponent } from './parent-sign-up/parent-sign-up.component';
 import { SharedModule } from './shared/shared.module';
-import { ParentInviteCodeDialogComponent } from './parent-invite-code-dialog/parent-invite-code-dialog.component';
 
 const DEFAULT_SWIPER_CONFIG: SwiperConfigInterface = {
   direction: 'horizontal',
@@ -128,6 +126,16 @@ const appRoutes: Routes = [
     }
   },
   {
+    path: 'parent',
+    // canActivate: [NotSeenIntroGuard, AuthenticatedGuard, IsAdminGuard],
+    loadChildren: () => import('app/parent/parent.module').then(m => m.ParentModule),
+    data: {
+      hideSchoolToggleBar: true,
+      hubspot: false,
+      authFree: true
+    }
+  },
+  {
     path: 'sign-out',
     loadChildren: () => import('app/sign-out/sign-out.module').then(m => m.SignOutModule)
   },
@@ -155,8 +163,6 @@ const appRoutes: Routes = [
     SupportButtonComponent,
     CustomToastComponent,
     IdcardOverlayContainerComponent,
-    ParentSignUpComponent,
-    ParentInviteCodeDialogComponent,
   ],
     imports: [
         BrowserModule,

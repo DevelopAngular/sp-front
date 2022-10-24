@@ -1,6 +1,7 @@
 import { Component, Inject, OnInit } from '@angular/core';
 import { FormControl, FormGroup } from '@angular/forms';
 import { MatDialogRef, MAT_DIALOG_DATA } from '@angular/material/dialog';
+import { ParentAccountService } from '../../services/parent-account.service';
 
 @Component({
   selector: 'app-parent-invite-code-dialog',
@@ -10,15 +11,28 @@ import { MatDialogRef, MAT_DIALOG_DATA } from '@angular/material/dialog';
 export class ParentInviteCodeDialogComponent implements OnInit {
 
   inviteCodeForm = new FormGroup({
-    inviteCode: new FormControl()
+    student_code: new FormControl()
   });
 
   constructor(
     public dialogRef: MatDialogRef<ParentInviteCodeDialogComponent>,
-    @Inject(MAT_DIALOG_DATA) public data: any
+    @Inject(MAT_DIALOG_DATA) public data: any,
+    private parentService: ParentAccountService
   ) { }
 
   ngOnInit(): void {
+  }
+
+  addStudent(){
+    this.parentService.addStudent({...this.inviteCodeForm.value}).subscribe({
+      next: (result: any) => {
+        console.log("result : ", result);
+    }
+  })
+  }
+
+  openLink(link) {
+    window.open(link);
   }
 
 }

@@ -1,0 +1,14 @@
+<mat-sidenav-container>
+
+    <mat-sidenav-content>
+        <div class="sticky" [style.height]="navbarHeight" *ngIf="!hideNavbar">
+            <app-navbar (settingsClick)="onSettingClick($event)" [isParent]="true"></app-navbar>
+        </div>
+
+        <ng-container>
+            <router-outlet></router-outlet>
+        </ng-container>
+    </mat-sidenav-content>
+
+</mat-sidenav-container>
+<app-offline-bar></app-offline-bar>

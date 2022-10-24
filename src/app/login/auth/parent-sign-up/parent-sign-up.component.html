@@ -38,11 +38,16 @@
                         <div class="error" [style.position]="passwordError ? 'static' : 'absolute'" *ngIf="error$ | async as errorMessage"> {{ errorMessage }}</div>
                         <div class="already-message" *ngIf="schoolAlreadyText$ | async as alreadyText">{{ alreadyText }}</div>
                         <div class="ds-w-100 ds-flex-center-center ds-mt-20 ds-pt-10">
-                            <app-gradient-button [size]="'editable'" [minWidth]="'265px'" [fontSize]="'15px'" [fontWeight]="'normal'" [minHeight]="'50px'" [gradient]="'#FFFFFF, #00B476'" [disabled]="signUpForm.invalid" (buttonClick)="createSchool()">
+                            <app-gradient-button [size]="'editable'" [minWidth]="'265px'" [fontSize]="'15px'" [fontWeight]="'normal'" [minHeight]="'50px'" [gradient]="'#FFFFFF, #00B476'" [disabled]="signUpForm.invalid" (buttonClick)="registerParent()">
                                 <span style="font-weight: normal;">
                             Sign up
                           </span>
                             </app-gradient-button>
+                            <!-- <app-gradient-button [size]="'editable'" [minWidth]="'265px'" [fontSize]="'15px'" [fontWeight]="'normal'" [minHeight]="'50px'" [gradient]="'#FFFFFF, #00B476'" (buttonClick)="goToDashboard()">
+                                <span style="font-weight: normal;">
+                            Sign up
+                          </span>
+                            </app-gradient-button> -->
                         </div>
                     </div>
 
@@ -50,7 +55,8 @@
             </div>
             <div>
                 <p class="bottom-text">
-                    By signing up, you agree to our Terms and Privacy Policy.
+                    By signing up, you agree to our <a class="link" appCrossPointerEventTarget (pointerClickEvent)="openLink('https://www.smartpass.app/terms')">Terms</a> and
+                    <a class="link" appCrossPointerEventTarget (pointerClickEvent)="openLink('https://www.smartpass.app/privacy')">Privacy Policy</a>.
                 </p>
             </div>
         </div>

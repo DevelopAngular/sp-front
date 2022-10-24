@@ -1,5 +1,5 @@
-@import "../../design-system.scss";
-@import "../../sp-colors.scss";
+@import "../../../design-system.scss";
+@import "../../../sp-colors.scss";
 .dialog-wrapper {
     height: 200px;
     width: 350px;
@@ -11,6 +11,13 @@
     .instruction {
         @include textSize(14px, normal, $gray500);
         margin-top: 14px;
+        span {
+            color: #00B476;
+            &:hover {
+                text-decoration: underline;
+                cursor: pointer;
+            }
+        }
     }
     .input-wrapper {
         margin: 0 auto 20px;

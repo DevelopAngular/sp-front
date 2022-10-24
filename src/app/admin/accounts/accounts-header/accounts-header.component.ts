@@ -39,8 +39,6 @@ import {ProfilePictureComponent} from '../profile-picture/profile-picture.compon
 import * as moment from 'moment';
 import {AdminPassLimitDialogComponent} from '../../../admin-pass-limits-dialog/admin-pass-limits-dialog.component';
 import {ConnectedPosition} from '@angular/cdk/overlay';
-import { InviteFamiliesDialogComponent } from '../../invite-families-dialog/invite-families-dialog.component';
-import { ParentInviteCodeDialogComponent } from '../../../parent-invite-code-dialog/parent-invite-code-dialog.component';
 import {PassLimitBulkEditComponent} from '../../../pass-limit-bulk-edit/pass-limit-bulk-edit.component';
 import {RecommendedDialogConfig} from '../../../shared/shared-components/confirmation-dialog/confirmation-dialog.component';
 import {PassLimitService} from '../../../services/pass-limit.service';
@@ -201,19 +199,6 @@ export class AccountsHeaderComponent implements OnInit, AfterViewInit, OnDestroy
   ngOnDestroy() {
     this.destroy$.next();
     this.destroy$.complete();
-  }
-
-  openInviteFamiliesDialog(){
-    const dialogRef = this.matDialog.open(ParentInviteCodeDialogComponent, {
-      panelClass: "search-pass-card-dialog-container",
-      backdropClass: "custom-bd",
-    });
-    // const dialogRef = this.matDialog.open(InviteFamiliesDialogComponent, {
-    //   panelClass: 'accounts-profiles-dialog',
-    //   backdropClass: 'custom-bd',
-    //   width: '425px',
-    //   height: '480px',
-    // });
   }
 
   getCurrentTab() {
