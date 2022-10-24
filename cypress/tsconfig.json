@@ -2,6 +2,8 @@
   "extends": "../tsconfig.json",
   "include": ["**/*.ts"],
   "compilerOptions": {
+    "resolveJsonModule": true,
+    "allowSyntheticDefaultImports": true,
     "sourceMap": false,
     "types": ["cypress", "./support"],
     "lib": [

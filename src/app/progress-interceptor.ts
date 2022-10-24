@@ -3,7 +3,6 @@ import {HttpEvent, HttpHandler, HttpInterceptor, HttpRequest} from '@angular/com
 import {Observable, throwError, of} from 'rxjs';
 import {catchError} from 'rxjs/operators';
 import {Router} from '@angular/router';
-import {HttpService} from './services/http-service';
 import {ToastService} from './services/toast.service';
 
 @Injectable()
@@ -16,7 +15,6 @@ export class ProgressInterceptor implements HttpInterceptor {
   ) {}
 
     intercept(req: HttpRequest<any>, next: HttpHandler): Observable<HttpEvent<any>> {
-      const http = this.inj.get(HttpService);
         return next.handle(req)
                     .pipe(
                       catchError((error: any) => {

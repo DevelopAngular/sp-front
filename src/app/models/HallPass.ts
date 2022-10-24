@@ -22,7 +22,8 @@ export class HallPass extends BaseModel {
               public flow_start: Date,
               public parent_invitation: string,
               public parent_request: string,
-              public cancelled?: string,
+              public schedule_config_id?: number,
+              public cancelled?: boolean,
               public issuer_message?: string,
               public cancellable_by_student: boolean = true,
               public needs_check_in?: boolean
@@ -54,8 +55,9 @@ export class HallPass extends BaseModel {
       flow_start: Date = new Date(JSON['flow_start']),
       parent_invitation: string = JSON['parent_invitation'],
       parent_request: string = JSON['parent_request'],
-      cancelled: string = JSON['cancelled'],
+      cancelled: boolean = JSON['cancelled'],
       cancellable_by_student: boolean = !!JSON['cancellable_by_student'],
+      schedule_config_id: number = JSON['schedule_config_id'],
       needs_check_in: boolean = !!JSON['needs_check_in'],
       issuer_message: string = JSON['issuer_message'];
 
@@ -63,7 +65,7 @@ export class HallPass extends BaseModel {
       created, last_updated, start_time, expiration_time,
       end_time, origin, destination, travel_type,
       gradient_color, icon, color_profile, flow_start,
-      parent_invitation, parent_request, cancelled, issuer_message, cancellable_by_student, needs_check_in);
+      parent_invitation, parent_request, schedule_config_id, cancelled, issuer_message, cancellable_by_student, needs_check_in);
 
     if (JSON['school_id']) {
       (pass as any).school_id = JSON['school_id'];

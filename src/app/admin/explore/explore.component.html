@@ -14,10 +14,10 @@
         </div>
         <div class="filters" [ngSwitch]="views[currentView].id">
             <div class="filter">
-                <app-filter-button *ngSwitchCase="1" (buttonClick)="openFilter($event, 'students')" [title]="(!passSearchData.selectedStudents || passSearchData.selectedStudents.length > 1 ? 'Students' + (passSearchData.selectedStudents && passSearchData.selectedStudents.length ? ' (' + passSearchData.selectedStudents.length + ')' : '') : passSearchData.selectedStudents[0].display_name)"
+              <app-filter-button *ngSwitchCase="1" (buttonClick)="openFilter($event, 'students')" [title]="(!passSearchData.selectedStudents || passSearchData.selectedStudents.length > 1 ? 'Students' + (passSearchData.selectedStudents && passSearchData.selectedStudents.length ? ' <var>(' + passSearchData.selectedStudents.length + ')</var>' : '') : passSearchData.selectedStudents[0].display_name)"
                     [filter]="passSearchData.selectedStudents && !!passSearchData.selectedStudents.length" (clearData)="passSearchData.selectedStudents = null; checkQueryParams(); autoSearch()" [openedFilter]="!!dialog.getDialogById('students_filter')">
                 </app-filter-button>
-                <app-filter-button *ngSwitchCase="2" (buttonClick)="openFilter($event, 'students')" [title]="(!reportSearchData.selectedStudents || reportSearchData.selectedStudents.length > 1 ? 'Students' + (reportSearchData.selectedStudents && reportSearchData.selectedStudents.length ? ' (' + reportSearchData.selectedStudents.length + ')' : '') : reportSearchData.selectedStudents[0].display_name)"
+                <app-filter-button *ngSwitchCase="2" (buttonClick)="openFilter($event, 'students')" [title]="(!reportSearchData.selectedStudents || reportSearchData.selectedStudents.length > 1 ? 'Students' + (reportSearchData.selectedStudents && reportSearchData.selectedStudents.length ? ' <var>(' + reportSearchData.selectedStudents.length + ')</var>' : '') : reportSearchData.selectedStudents[0].display_name)"
                     [filter]="reportSearchData.selectedStudents && !!reportSearchData.selectedStudents.length" (clearData)="reportSearchData.selectedStudents = null; autoSearch()" [openedFilter]="!!dialog.getDialogById('students_filter')">
                 </app-filter-button>
                 <app-filter-button *ngSwitchCase="3" (buttonClick)="openFilter($event, 'students')" [title]="contactTraceData.selectedStudents ? contactTraceData.selectedStudents[0].display_name : 'Student'" [filter]="contactTraceData.selectedStudents && !!contactTraceData.selectedStudents.length"
@@ -38,26 +38,26 @@
             </div>
 
             <div class="filter" *ngSwitchCase="2">
-                <app-filter-button (buttonClick)="openFilter($event, 'teachers')" [title]="(!reportSearchData.selectedTeachers || reportSearchData.selectedTeachers.length > 1 ? 'Submitted by' + (reportSearchData.selectedTeachers && reportSearchData.selectedTeachers.length ? ' (' + reportSearchData.selectedTeachers.length + ')' : '') : reportSearchData.selectedTeachers[0].display_name)"
+              <app-filter-button (buttonClick)="openFilter($event, 'teachers')" [title]="(!reportSearchData.selectedTeachers || reportSearchData.selectedTeachers.length > 1 ? 'Submitted by' + (reportSearchData.selectedTeachers && reportSearchData.selectedTeachers.length ? ' <var>(' + reportSearchData.selectedTeachers.length + '</var>)' : '') : reportSearchData.selectedTeachers[0].display_name)"
                     [filter]="reportSearchData.selectedTeachers && !!reportSearchData.selectedTeachers.length" (clearData)="reportSearchData.selectedTeachers = null; autoSearch()" [openedFilter]="!!dialog.getDialogById('teachers_filter')">
                 </app-filter-button>
             </div>
             <div class="filter" *ngSwitchCase="1">
-                <app-filter-button (buttonClick)="openFilter($event, 'origin')" [title]="'Origin' + (passSearchData.selectedOriginRooms && passSearchData.selectedOriginRooms.length ? ' (' + passSearchData.selectedOriginRooms.length + ')' : '')" [filter]="passSearchData.selectedOriginRooms && !!passSearchData.selectedOriginRooms.length"
+              <app-filter-button (buttonClick)="openFilter($event, 'origin')" [title]="'Origin' + (passSearchData.selectedOriginRooms && passSearchData.selectedOriginRooms.length ? ' <var>(' + passSearchData.selectedOriginRooms.length + '</var>)' : '')" [filter]="passSearchData.selectedOriginRooms && !!passSearchData.selectedOriginRooms.length"
                     (clearData)="passSearchData.selectedOriginRooms = null; checkQueryParams(); autoSearch()" [openedFilter]="!!dialog.getDialogById('origin_filter')"></app-filter-button>
             </div>
             <div class="filter" *ngSwitchCase="1">
-                <app-filter-button (buttonClick)="openFilter($event, 'destination')" [title]="'Destination' + (passSearchData.selectedDestinationRooms && passSearchData.selectedDestinationRooms.length ? ' (' + passSearchData.selectedDestinationRooms.length + ')' : '')"
+              <app-filter-button (buttonClick)="openFilter($event, 'destination')" [title]="'Destination' + (passSearchData.selectedDestinationRooms && passSearchData.selectedDestinationRooms.length ? ' <var>(' + passSearchData.selectedDestinationRooms.length + '</var>)' : '')"
                     [filter]="passSearchData.selectedDestinationRooms && !!passSearchData.selectedDestinationRooms.length" (clearData)="passSearchData.selectedDestinationRooms = null; checkQueryParams(); autoSearch()" [openedFilter]="!!dialog.getDialogById('destination_filter')"></app-filter-button>
             </div>
             <div class="filter">
-                <app-filter-button *ngSwitchCase="1" [title]="passSearchData.selectedDate ? dateText(passSearchData.selectedDate) : 'Pass start time'" (buttonClick)="openFilter($event, 'calendar')" [filter]="!!passSearchData.selectedDate" (clearData)="passSearchData.selectedDate = null; checkQueryParams(); adminCalendarOptions = null; autoSearch()"
+                <app-filter-button *ngSwitchCase="1" [attr.notranslate]="!!passSearchData.selectedDate ? true : null" [title]="passSearchData.selectedDate ? dateText(passSearchData.selectedDate) : 'Pass start time'" (buttonClick)="openFilter($event, 'calendar')" [filter]="!!passSearchData.selectedDate" (clearData)="passSearchData.selectedDate = null; checkQueryParams(); adminCalendarOptions = null; autoSearch()"
                     [openedFilter]="!!dialog.getDialogById('calendar_filter')">
                 </app-filter-button>
-                <app-filter-button *ngSwitchCase="2" [title]="reportSearchData.selectedDate ? dateText(reportSearchData.selectedDate) : 'Date submitted'" (buttonClick)="openFilter($event, 'calendar')" [filter]="!!reportSearchData.selectedDate" (clearData)="reportSearchData.selectedDate = null; adminCalendarOptions = null; autoSearch()"
+                <app-filter-button *ngSwitchCase="2" [attr.notranslate]="!!reportSearchData.selectedDate ? true : null" [title]="reportSearchData.selectedDate ? dateText(reportSearchData.selectedDate) : 'Date submitted'" (buttonClick)="openFilter($event, 'calendar')" [filter]="!!reportSearchData.selectedDate" (clearData)="reportSearchData.selectedDate = null; adminCalendarOptions = null; autoSearch()"
                     [showClearIcon]="true" [openedFilter]="!!dialog.getDialogById('calendar_filter')">
                 </app-filter-button>
-                <app-filter-button *ngSwitchCase="3" [title]="contactTraceData.selectedDate ? dateText(contactTraceData.selectedDate) : 'Time range'" (buttonClick)="openFilter($event, 'calendar')" [filter]="!!contactTraceData.selectedDate" (clearData)="contactTraceData.selectedDate = null; adminCalendarOptions = null;"
+                <app-filter-button *ngSwitchCase="3" [attr.notranslate]="!!contactTraceData.selectedDate ? true : null" [title]="contactTraceData.selectedDate ? dateText(contactTraceData.selectedDate) : 'Time range'" (buttonClick)="openFilter($event, 'calendar')" [filter]="!!contactTraceData.selectedDate" (clearData)="contactTraceData.selectedDate = null; adminCalendarOptions = null;"
                     [showClearIcon]="false" [forceButtonClick$]="buttonForceTrigger$" (forceButtonClickEvent)="$event.action === 'calendar' ? openFilter($event.event, $event.action) : null" [openedFilter]="!!dialog.getDialogById('calendar_filter')">
                 </app-filter-button>
                 <!-- <app-filter-button *ngSwitchCase="4" [title]="encounterDetectedData.selectedDate ? dateText(encounterDetectedData.selectedDate) : 'Time range'" (buttonClick)="openFilter($event, 'calendar')" [filter]="!!encounterDetectedData.selectedDate" (clearData)="encounterDetectedData.selectedDate = null; adminCalendarOptions = null;"
@@ -69,10 +69,10 @@
         <div class="search-button not-alone" *ngIf="views[currentView].id === 1 && passSearchState.countPasses$ | async as countPasses">
             <app-round-button *ngIf="!!selectedRows.length" [size]="'small'" [icon]="'Dots'" [borderRadius]="'15%'" (buttonClick)="openConsentDeletePasses($event)">
             </app-round-button>
-            <app-filter-button *ngIf="!selectedRows.length; else selected" [title]="(numberWithCommas(countPasses) + ' pass' + (countPasses > 1 ? 'es' : ''))" [isDownloadButton]="true" [customToolTip]="'Click to export passes'" (buttonClick)="downloadPasses(countPasses)">
+            <app-filter-button *ngIf="!selectedRows.length; else selected" [title]="'<var>'+(numberWithCommas(countPasses) + '</var> pass' + (countPasses > 1 ? 'es' : ''))" [isDownloadButton]="true" [customToolTip]="'Click to export passes'" (buttonClick)="downloadPasses(countPasses)">
             </app-filter-button>
             <ng-template #selected>
-                <app-filter-button [filter]="true" [title]="((passSearchState.isAllSelected$ | async) ? numberWithCommas(countPasses) : numberWithCommas(selectedRows.length)) + '/' + numberWithCommas(countPasses) + ' selected'" [isDownloadButton]="true" [customToolTip]="'Click to export passes'"
+              <app-filter-button [filter]="true" [title]="'<var>' + ((passSearchState.isAllSelected$ | async) ? numberWithCommas(countPasses) : numberWithCommas(selectedRows.length)) + '/' + numberWithCommas(countPasses) + '</var> selected'" [isDownloadButton]="true" [customToolTip]="'Click to export passes'"
                     (buttonClick)="downloadPasses(countPasses)">
                 </app-filter-button>
             </ng-template>

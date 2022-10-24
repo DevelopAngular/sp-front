@@ -1,0 +1,83 @@
+{
+  "frequent_flyers": [
+    {
+      "student_id": 9524,
+      "display_name": "student2 two",
+      "count": 1
+    },
+    {
+      "student_id": 13884,
+      "display_name": "nstudent",
+      "count": 1
+    },
+    {
+      "student_id": 14893,
+      "display_name": "QarunQB Staging",
+      "count": 1
+    },
+    {
+      "student_id": 14896,
+      "display_name": "Dhruv String",
+      "count": 4
+    }
+  ],
+  "hall_pass_stats": [
+    {
+      "name": "Most Visited Locations",
+      "rows": [
+        {
+          "name": "multiple-teach",
+          "type": "single",
+          "value": "1 passes"
+        },
+        {
+          "name": "Guidance",
+          "type": "single",
+          "value": "1 passes"
+        }
+      ],
+      "type": "list"
+    },
+    {
+      "name": "Average pass time",
+      "type": "single",
+      "value": "5.1 minutes"
+    },
+    {
+      "name": "Active Pass Count",
+      "type": "single",
+      "value": 0
+    },
+    {
+      "name": "Average passes per student",
+      "type": "single",
+      "value": 1
+    }
+  ],
+  "hall_pass_usage": [
+    0,
+    0,
+    0,
+    0,
+    0,
+    0,
+    0,
+    0,
+    0,
+    0,
+    1,
+    0,
+    0,
+    0,
+    0,
+    0,
+    0,
+    0,
+    0,
+    0,
+    0,
+    0,
+    1,
+    0
+  ]
+}

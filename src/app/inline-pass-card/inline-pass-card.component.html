@@ -5,11 +5,24 @@
     </svg>
     </div>
 
+  <ng-template #recurringConfigTooltip>
+    <div class="ds-tooltip" style="text-align: start">
+      <ng-container [ngSwitch]="recurringConfig.recurrence_type">
+        <span *ngSwitchCase="1">Repeats Daily</span>
+        <span *ngSwitchCase="2">Repeats Weekly</span>
+      </ng-container>
+    </div>
+  </ng-template>
+
     <div class="pass-card-header">
         <div class="header-content">
             <div class="header-info">
-                <img class="pass-card-header-icon" [src]="pass.icon | resolveAsset">
+                <img  class="pass-card-header-icon" [src]="pass.icon | resolveAsset">
                 <div class="pass-card-header-text">{{ activeTeacherSelection ? 'Who is Ending?' : pass.destination.title }}</div>
+                <div customToolTip [contentTemplate]="recurringConfigTooltip" [width]="'281px'" *ngIf="isRecurringFuture" [showToolTip]="true" class="ds-flex-center-center">
+                  <img style="width: 20px;" class="ds-ml-10" [src]="'./assets/Repeat (White).svg' | resolveAsset"
+                       alt="Recurring Future Pass Icon">
+                </div>
             </div>
             <app-icon-button *ngIf="activeRoomCodePin || activeTeacherPin || activeTeacherSelection" [srcString]="'./assets/Chevron Left (White).svg'" [onDarkShade]="true" [size]="20" (clickEvent)="back()"></app-icon-button>
         </div>

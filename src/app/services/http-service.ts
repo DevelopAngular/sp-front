@@ -7,11 +7,9 @@ import {catchError, delay, exhaustMap, filter, map, mapTo, mergeMap, switchMap, 
 import {BUILD_DATE, RELEASE_NAME} from '../../build-info';
 import {environment} from '../../environments/environment';
 import {School} from '../models/School';
-import {Report} from '../models/Report';
 import {AppState} from '../ngrx/app-state/app-state';
 import {clearSchools, getSchools} from '../ngrx/schools/actions';
 import {getCurrentSchool, getLoadedSchools, getSchoolsCollection, getSchoolsLength} from '../ngrx/schools/states';
-import {getCurrentReportId} from '../ngrx/reports/states';
 import {GoogleLoginService, isClassLinkLogin, isCleverLogin, isDemoLogin} from './google-login.service';
 import {StorageService} from './storage.service';
 import {SafeHtml} from '@angular/platform-browser';
@@ -19,12 +17,14 @@ import {MatDialog} from '@angular/material/dialog';
 import {SignedOutToastComponent} from '../signed-out-toast/signed-out-toast.component';
 import {Router} from '@angular/router';
 import {APP_BASE_HREF} from '@angular/common';
+// uncomment when app uses formatDate and so on
+//import {APP_BASE_HREF, registerLocaleData} from '@angular/common';
 import {JwtHelperService} from '@auth0/angular-jwt';
 import * as moment from 'moment';
 import {LoginDataService} from './login-data.service';
 import {clearUser} from '../ngrx/user/actions';
 
-declare const window;
+declare const window: Window;
 
 export interface Config {
   [key: string]: any;
@@ -325,6 +325,10 @@ export class HttpService implements OnDestroy {
           this.currentLangSubject.next(null);
           return;
         });
+
+        this.setLang('en');
+        // HACK!
+        this.storage.setItem('ljs-lang', 'en');
 
     this.kioskTokenSubject$.pipe(
         takeUntil(this.destroyed$),
@@ -845,6 +849,9 @@ export class HttpService implements OnDestroy {
     return this.currentSchoolSubject.getValue();
   }
 
+  // uncomment when app uses formatDate
+  //private esUSRegistered = false;
+
   setLang(lang: string) {
     if (!!lang) {
       this.storage.setItem('codelang', lang);
@@ -852,11 +859,29 @@ export class HttpService implements OnDestroy {
       this.storage.removeItem('codelang');
     }
     this.currentLangSubject.next(lang);
+    // uncomment when app uses formatDate and so on
+    //if (lang === 'es' && !this.esUSRegistered) {
+    //  import(
+        /* webpackInclude: /es-US\.js$/ */
+    //    '@angular/common/locales/es-US'
+    //  ).then(lang => {
+    //    registerLocaleData(lang.default);
+    //    this.esUSRegistered = true;     
+    //  });
+    //}
   }
 
   getLang() {
     return this.currentLangSubject.getValue();
   }
+
+  // bridge between lang code as it is used in app and ISO locale_id
+  // uncomment when app uses formatDate and so on
+  /*private localeIDMap = {'en': 'en-US', 'es': 'es-US'};
+  get LocaleID() {
+    const code = this.getLang();
+    return this.localeIDMap[code] ?? 'en-US';
+  }*/
 
   getEffectiveUserId() {
     return this.effectiveUserId.getValue();

@@ -28,7 +28,7 @@
           <img style="width: 15px" [src]="'./assets/Chevron Left (Blue-Gray).svg' |resolveAsset">
       </div>
 
-      <span class="ds-dialog-subtitle">{{ currentDate.format('MMMM YYYY') }}</span>
+      <span class="ds-dialog-subtitle">{{ currentDate.format('MMMM') }} <var>{{ currentDate.format('YYYY') }}</var></span>
       <div
         class="switch-month __right"
         (click)="nextMonth()"

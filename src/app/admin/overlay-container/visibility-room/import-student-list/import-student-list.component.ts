@@ -107,8 +107,11 @@ export class ImportStudentListComponent implements OnInit, OnDestroy {
               .map(v => v.trim());
           }),
           switchMap((emailsUnverified: string[])=>{
-            return this.userService.listOf({email: emailsUnverified}).pipe(
-              map((uu: User[]) => [emailsUnverified, uu])
+            const list$ = this.userService.listOf({email: emailsUnverified});
+            return list$.pipe(
+              map((uu: User[]) => {
+                return [emailsUnverified, uu];
+              })
             );
           }),
           tap(([emailsUnverified, usersVerified]) => {

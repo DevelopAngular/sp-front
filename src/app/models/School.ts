@@ -20,6 +20,7 @@ export class School extends BaseModel {
         public profile_pictures_enabled: boolean,
         public feature_flag_digital_id: boolean,
         public feature_flag_encounter_detection: boolean,
+        public timezone: string,
     ) {
         super();
     }
@@ -47,7 +48,8 @@ export class School extends BaseModel {
             profile_pictures_completed: boolean = !!JSON['profile_pictures_completed'],
             profile_pictures_enabled: boolean = !!JSON['profile_pictures_enabled'],
             feature_flag_digital_id: boolean = !!JSON['feature_flag_digital_id'],
-            feature_flag_encounter_detection: boolean = !!JSON['feature_flag_encounter_detection'];
+            feature_flag_encounter_detection: boolean = !!JSON['feature_flag_encounter_detection'],
+            timezone: string = JSON['timezone'];
 
         return new School(
             display_card_room,
@@ -65,7 +67,8 @@ export class School extends BaseModel {
             profile_pictures_completed,
             profile_pictures_enabled,
             feature_flag_digital_id,
-            feature_flag_encounter_detection
+            feature_flag_encounter_detection,
+            timezone
         );
     }
 }

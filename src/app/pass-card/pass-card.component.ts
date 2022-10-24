@@ -30,6 +30,8 @@ import {
 import {PassLimitService} from '../services/pass-limit.service';
 import {LocationsService} from '../services/locations.service';
 import {Location} from '../models/Location';
+import {RecurringSchedulePassService} from '../services/recurring-schedule-pass.service';
+import {RecurringConfig} from '../models/RecurringFutureConfig';
 
 @Component({
   selector: 'app-pass-card',
@@ -110,6 +112,7 @@ export class PassCardComponent implements OnInit, OnDestroy {
   frameMotion$: BehaviorSubject<any>;
   currentSchool: School;
   passLimitDialog: MatDialogRef<HTMLElement>;
+  recurringConfig: RecurringConfig;
 
   isEnableProfilePictures$: Observable<boolean>;
 
@@ -134,6 +137,7 @@ export class PassCardComponent implements OnInit, OnDestroy {
     private encounterService: EncounterPreventionService,
     private passLimitService: PassLimitService,
     private locationsService: LocationsService,
+    private recurringConfigService: RecurringSchedulePassService
   ) {
   }
 
@@ -208,6 +212,12 @@ export class PassCardComponent implements OnInit, OnDestroy {
       this.hideButton = this.data['hasDeleteButton'];
     } else {
       this.selectedStudents = this.students;
+    }
+
+    if (this.pass?.schedule_config_id) {
+      this.recurringConfigService.getRecurringScheduledConfig(this.pass.schedule_config_id).subscribe({
+        next: c => this.recurringConfig = c
+      });
     }
 
     this.userService.user$
@@ -361,6 +371,15 @@ export class PassCardComponent implements OnInit, OnDestroy {
     return out;
   }
 
+  get isRecurringFuture(): boolean {
+    if (Number.isInteger(this.pass.schedule_config_id)) {
+      // retrieving a pass from the server with a schedule_config_id
+      return true;
+    }
+
+    return (!!this.formState?.data?.date?.schedule_option);
+  }
+
   newPass() {
     this.performingAction = true;
     const body = {
@@ -383,6 +402,12 @@ export class PassCardComponent implements OnInit, OnDestroy {
     if (this.forFuture) {
       body['issuer_message'] = this.pass.issuer_message;
       body['start_time'] = this.pass.start_time.toISOString();
+      if (this.isRecurringFuture) {
+        // if the schedule config is present and is repeating, then set the `recurring_scheduled_config` key, otherwise omit the key
+        // from the body.
+        // the backend will ignore if the key is not present
+        body['recurring_scheduled_config'] = this.formState.data.date.schedule_option;
+      }
     }
     if (this.forKioskMode) {
       body['self_issued'] = true;

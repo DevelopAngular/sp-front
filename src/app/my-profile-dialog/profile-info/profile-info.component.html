@@ -26,7 +26,7 @@
                 <img width="88" height="88" [src]="'./assets/Avatar Default.svg' | resolveAsset" alt="Avatar">
               </ng-template>
               <div *ngIf="avatarContainer.hover" class="hover-backdrop" (click)="!user.profile_picture ? editWindow($event) : null" [style.cursor]="!user.profile_picture ? 'pointer' : 'normal'"></div>
-              <div class="buttons" *ngIf="!(loadingProfilePicture | async)">
+              <div class="buttons" *ngIf="!(loadingProfilePicture | async) && isStaff">
                 <img #editIcon (click)="openEditAvatar($event)" *ngIf="avatarContainer.hover || isOpenAvatarDialog" class="add-avatar" [style.top]="'15px'" [src]="'./assets/' + (user.profile_picture ? 'Edit' : 'Add') + ' Avatar (White).svg' | resolveAsset"
                      alt="add">
               </div>
@@ -35,24 +35,24 @@
           </div>
             <div class="block-item">
                 <div class="label">Name</div>
-                <div class="item-content" ignore>{{ user.display_name }}</div>
+                <div class="item-content" notranslate>{{ user.display_name }}</div>
             </div>
             <div class="block-item">
                 <div class="label">Email/username</div>
-                <div class="item-content" ignore>{{ user.primary_email }}</div>
+                <div class="item-content" notranslate>{{ user.primary_email }}</div>
             </div>
             <div class="block-item">
                 <div class="label">Grade</div>
-                <div class="item-content" ignore>{{ user.grade_level || '-' }}</div>
+                <div class="item-content" notranslate>{{ user.grade_level || '-' }}</div>
             </div>
             <div class="block-item">
                 <div class="label">ID</div>
-                <div class="item-content" ignore>{{ user.custom_id || '-' }}</div>
+                <div class="item-content" notranslate>{{ user.custom_id || '-' }}</div>
             </div>
             <div class="block-item">
                 <div class="label">School</div>
                 <div class="item-content" *ngFor="let school of schools" style="white-space: pre">
-                    <span ignore>{{ school.name }}</span> {{ '(' + checkUserRoles(school.my_roles) + ')' }}
+                    <span notranslate>{{ school.name }}</span> {{ '(' + checkUserRoles(school.my_roles) + ')' }}
                 </div>
             </div>
             <div class="block-item" style="margin-bottom: 15px">

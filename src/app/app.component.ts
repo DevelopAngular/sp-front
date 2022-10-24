@@ -165,7 +165,7 @@ export class AppComponent implements OnInit, AfterViewInit, OnDestroy {
             // '/login'
           ];
           const isAllowed = urlBlackList.every(route => !this.currentRoute.includes(route));
-          if ((!user.isStudent()) && isAllowed) {
+          if ((!user.isStudent()) && !this.currentRoute.includes('/forms')) {
             this.registerRefiner(user);
           }
           if (isAllowed && !this.isMobile) {
@@ -357,7 +357,7 @@ export class AppComponent implements OnInit, AfterViewInit, OnDestroy {
       last_name: user.last_name,
       type: user.isAdmin() ? 'admin' : 'teacher',
       status: user.status,
-      sync_types: user.sync_types,
+      sync_types: !user.sync_types.length ? 'password' : user.sync_types.length === 1 ? user.sync_types[0] : user.sync_types,
       name: user.display_name,
       account: {
         id: this.http.getSchool().id, // <- School Id
@@ -375,7 +375,7 @@ export class AppComponent implements OnInit, AfterViewInit, OnDestroy {
         name: user.display_name,
         email: user.primary_email,
         created: new Date(user.created),
-        type: user.isAdmin() ? 'Admin' : (user.isAssistant() ? 'Assistant' : user.isStudent() ? 'Student' : 'Teacher'),
+        type: this.getUserType(user),
         status: user.status,
         account_type: user.sync_types[0] === 'google' ? 'Google' : (user.sync_types[0] === 'clever' ? 'Clever' : 'Standard'),
         first_login_at: user.first_login,
@@ -388,6 +388,19 @@ export class AppComponent implements OnInit, AfterViewInit, OnDestroy {
       };
       window.Intercom('update', {'hide_default_launcher': false});
     }, 3000);
+  }
+
+  getUserType(user: User): string {
+    if (user.isAdmin()) {
+      return 'Admin';
+    } else if (user.isTeacher()) {
+      return 'Teacher';
+    } else if (user.isAssistant()) {
+      return 'Assistant';
+    } else if (user.isStudent()) {
+      return 'Student';
+    }
+    return 'unknown user';
   }
 
   hubSpotSettings(user) {

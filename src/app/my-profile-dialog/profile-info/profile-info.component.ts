@@ -22,6 +22,8 @@ export class ProfileInfoComponent implements OnInit {
 
   @Output() nextPage: EventEmitter<any> = new EventEmitter<any>();
 
+  isStaff: boolean;
+
   frameMotion$: BehaviorSubject<any>;
   userAuthType: string;
 
@@ -37,6 +39,7 @@ export class ProfileInfoComponent implements OnInit {
   ) { }
 
   ngOnInit() {
+    this.isStaff = !User.fromJSON(this.user).isStudent();
     this.frameMotion$ = this.formService.getFrameMotionDirection();
     this.userAuthType = this.storage.getItem('authType');
   }

@@ -9,7 +9,7 @@
      [style.background-color]="background((button.hover || openedFilter), button.pressed)"
 >
   <div class="content-button">
-    <div class="title" [style.color]="filter ? '#1F195E' : '#7f879d'">{{ title }}</div>
+    <div [innerHTML]="title" class="title" [style.color]="filter ? '#1F195E' : '#7f879d'">{{ title }}</div>
     <ng-container *ngIf="!isDownloadButton; else downloadButton">
       <img width="8" height="6" [src]="'./assets/Rect (' + (filter ? 'Navy' : 'Blue-Gray') + ').svg' | resolveAsset" alt="Rect">
       <img *ngIf="filter && showClearIcon" appCrossPointerEventTarget (pointerClickEvent)="clear($event)" class="close-button" [src]="'./assets/Close.svg' | resolveAsset" alt="Close">

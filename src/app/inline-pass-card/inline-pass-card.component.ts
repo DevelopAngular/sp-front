@@ -14,6 +14,8 @@ import {DeviceDetection} from '../device-detection.helper';
 import { Navigation } from '../create-hallpass-forms/main-hallpass--form/main-hall-pass-form.component';
 import { Pinnable } from '../models/Pinnable';
 import { User } from '../models/User';
+import {RecurringSchedulePassService} from '../services/recurring-schedule-pass.service';
+import {RecurringConfig} from '../models/RecurringFutureConfig';
 
 @Component({
   selector: 'app-inline-pass-card',
@@ -38,6 +40,7 @@ export class InlinePassCardComponent implements OnInit, OnDestroy {
   overlayWidth: string = '0px';
   buttonWidth: number = 288;
   isExpiring: boolean;
+  recurringConfig: RecurringConfig;
 
   selectedDuration: number;
   selectedTravelType: string;
@@ -60,7 +63,8 @@ export class InlinePassCardComponent implements OnInit, OnDestroy {
       private dialog: MatDialog,
       private screen: ScreenService,
       private storage: StorageService,
-      private cdr: ChangeDetectorRef
+      private cdr: ChangeDetectorRef,
+      private recurringConfigService: RecurringSchedulePassService
   ) { }
 
   get gradient() {
@@ -69,6 +73,10 @@ export class InlinePassCardComponent implements OnInit, OnDestroy {
 
   get isMobile() {
     return DeviceDetection.isMobile();
+  }
+
+  get isRecurringFuture() {
+    return !!this.pass?.schedule_config_id;
   }
 
   ngOnInit() {
@@ -132,6 +140,12 @@ export class InlinePassCardComponent implements OnInit, OnDestroy {
       };
 
       this.pinnable = this.FORM_STATE.data.direction ? this.FORM_STATE.data.direction.pinnable : null;
+
+    if (this.pass?.schedule_config_id) {
+      this.recurringConfigService.getRecurringScheduledConfig(this.pass.schedule_config_id).subscribe({
+        next: c => this.recurringConfig = c
+      });
+    }
   }
 
   ngOnDestroy() {
@@ -149,7 +163,7 @@ export class InlinePassCardComponent implements OnInit, OnDestroy {
 
   roomCodeResult(event){
     console.log("event : ", event);
-    
+
   }
 
   enableTeacherPin(){

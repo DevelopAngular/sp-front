@@ -8,6 +8,8 @@ import {AdminSharedModule} from '../shared/admin-shared.module';
 import {SchoolSettingsComponent} from './school-settings/school-settings.component';
 import {DateChipComponent} from './date-chip/date-chip.component';
 import {LinkCardComponent} from './link-card/link-card.component';
+import { TimeZoneService } from '../../services/time-zone.service';
+import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 
 @NgModule({
   declarations: [
@@ -20,8 +22,13 @@ import {LinkCardComponent} from './link-card/link-card.component';
   imports: [
     CommonModule,
     MySchoolRoutingModule,
-    AdminSharedModule
+    AdminSharedModule,
+    ReactiveFormsModule,
+    FormsModule
   ],
-  entryComponents: [SchoolSettingsComponent]
+  entryComponents: [SchoolSettingsComponent],
+  providers : [
+    {provide: 'TimeZoneService', useClass: TimeZoneService }
+]
 })
 export class MySchoolModule { }

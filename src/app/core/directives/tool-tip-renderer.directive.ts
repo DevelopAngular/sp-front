@@ -34,6 +34,7 @@ export class ToolTipRendererDirective implements OnInit, OnDestroy, OnChanges {
   @Input() editable: boolean = false;
   @Input() positionStrategy: ConnectedPosition;
   @Input() width: string = 'auto';
+  @Input() allowVarTag: boolean = false;
 
   // If this is specified then specified text will be showin in the tooltip
   @Input(`customToolTip`) text: string;
@@ -52,7 +53,7 @@ export class ToolTipRendererDirective implements OnInit, OnDestroy, OnChanges {
   constructor(
     private _overlay: Overlay,
     private _overlayPositionBuilder: OverlayPositionBuilder,
-    private _elementRef: ElementRef
+    private _elementRef: ElementRef,
   ) { }
 
   ngOnInit() {
@@ -76,6 +77,18 @@ export class ToolTipRendererDirective implements OnInit, OnDestroy, OnChanges {
   }
 
   ngOnChanges(changes: SimpleChanges) {
+    if (changes?.['showToolTip']?.currentValue) {
+      const positionStrategy = this._overlayPositionBuilder
+        .flexibleConnectedTo(this._elementRef)
+        .withPositions([this.positionStrategy ? this.positionStrategy : this.getPosition()]);
+
+      this._overlayRef = this._overlay.create(
+        {
+          positionStrategy,
+          panelClass: 'custom-tooltip',
+        }
+      );
+    }
   }
 
   getPosition(): ConnectedPosition {
@@ -129,6 +142,7 @@ export class ToolTipRendererDirective implements OnInit, OnDestroy, OnChanges {
             this.tooltipRef.instance.width = this.width;
             this.tooltipRef.instance.nonDisappearing = this.nonDisappearing;
             this.isOpen.emit(true);
+            this.tooltipRef.instance.allowVarTag = this.allowVarTag;
 
             return this.tooltipRef.instance.closeTooltip;
           }

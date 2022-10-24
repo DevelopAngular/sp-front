@@ -71,7 +71,7 @@ Cypress.Commands.add('logoutAdmin', () => {
   cy.wait(2500);
 });
 
-Cypress.Commands.add('switchSchool', (name: string) => {
+Cypress.Commands.add('switchSchool', (name: string = 'Cypress Testing School 1') => {
   cy.get('app-school-toggle-bar div.selected-school').click();
   cy.get('app-dropdown').should('be.visible');
   cy.get('app-dropdown div.option-data').should('have.length.at.least', 2);

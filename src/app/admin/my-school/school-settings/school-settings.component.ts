@@ -1,4 +1,4 @@
-import {Component, OnDestroy, OnInit} from '@angular/core';
+import {Component, Inject, OnDestroy, OnInit} from '@angular/core';
 import {FormControl, FormGroup} from '@angular/forms';
 import {HttpService} from '../../../services/http-service';
 import * as moment from 'moment';
@@ -7,6 +7,7 @@ import {Subject} from 'rxjs';
 import {filter, switchMap, takeUntil} from 'rxjs/operators';
 import {MatDialogRef} from '@angular/material/dialog';
 import {AdminService} from '../../../services/admin.service';
+import { TimeZoneService } from '../../../services/time-zone.service';
 
 @Component({
   selector: 'app-school-settings',
@@ -23,13 +24,21 @@ export class SchoolSettingsComponent implements OnInit, OnDestroy {
 
   changeSettings$: Subject<any> = new Subject<any>();
 
+  public tzNames: string[];
+
+  public userTz: string;
+  public selectedTz: string;
+
   destroy$ = new Subject();
 
   constructor(
     private http: HttpService,
     private dialogRef: MatDialogRef<SchoolSettingsComponent>,
-    private adminService: AdminService
-  ) { }
+    private adminService: AdminService,
+    @Inject('TimeZoneService') private timeZoneService: TimeZoneService
+  ) {
+    this.tzNames = moment.tz.names();
+   }
 
   ngOnInit() {
     this.http.currentSchool$
@@ -40,14 +49,17 @@ export class SchoolSettingsComponent implements OnInit, OnDestroy {
           name: school.name,
           created: moment(school.created).format('MMMM DD, YYYY')
         };
+        // this.timeZoneChanged(this.school.timezone)
+        this.selectedTz = this.school.timezone;
         this.schoolForm = new FormGroup({
           name: new FormControl(school.name),
-          display_username: new FormControl(school.display_username)
+          display_username: new FormControl(school.display_username),
+          timezone: new FormControl(school.timezone)
         });
     });
 
     this.schoolForm.valueChanges.pipe(takeUntil(this.destroy$)).subscribe(res => {
-      this.changeForm = (res.name !== this.school.name) || (res.display_username !== this.school.display_username);
+      this.changeForm = (res.name !== this.school.name) || (res.display_username !== this.school.display_username) || (res.timezone !== this.school.timezone);
     });
 
     this.changeSettings$.pipe(
@@ -81,6 +93,11 @@ export class SchoolSettingsComponent implements OnInit, OnDestroy {
   save()  {
     this.showSpinner = true;
     this.changeSettings$.next();
+  }
+
+  timeZoneChanged(timeZone: string): void {
+    this.selectedTz = timeZone;
+    this.schoolForm.controls['timezone'].setValue(timeZone);
   }
 
 }

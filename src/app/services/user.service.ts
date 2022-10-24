@@ -767,13 +767,7 @@ export class UserService implements OnDestroy {
   }
 
   checkUserEmail(email) {
-    const httpOptions = {
-      headers: new HttpHeaders({
-
-        'Content-Type': 'application/x-www-form-urlencoded',
-      })
-    };
-    return this.http.post('v1/check-email', {email}, httpOptions);
+    return this.http.post('v1/check-email', {email});
   }
 
   addBulkAccountsRequest(accounts) {
@@ -953,10 +947,10 @@ export class UserService implements OnDestroy {
     return this.http.get('v1/users/grade_level', opt);
   }
 
-  listOf(params: Record<string, string[]>) {
-    const headers = new HttpHeaders({
+  listOf(params: {email: string[]}) {
+    const headers = {
       'Content-Type': 'application/json',
-    });
+    };
     return this.http.post('v1/users/listof', {params}, {headers}, false);
   }
 }

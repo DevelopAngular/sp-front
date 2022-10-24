@@ -16,13 +16,13 @@
         ></app-status-chip>
       </div>
       <div class="title">Student</div>
-      <div class="subtitle">{{ report.student.display_name }}</div>
-      <div class="subtitle">{{ report.student.primary_email }}</div>
+      <div class="subtitle" notranslate>{{ report.student.display_name }}</div>
+      <div class="subtitle" notranslate>{{ report.student.primary_email }}</div>
     </div>
 
     <div class="block">
       <div class="title">Message</div>
-      <div class="subtitle">{{ report.message || 'No report message' }}</div>
+      <div [attr.notranslate]="report.message !== '' ? true : null" class="subtitle">{{ report.message || 'No report message' }}</div>
     </div>
 
     <div class="block"
@@ -41,11 +41,11 @@
     <div class="container">
       <div class="block">
         <div class="title">Submitted by</div>
-        <div class="subtitle">{{ report.issuer.display_name }}</div>
+        <div class="subtitle" ignore>{{ report.issuer.display_name }}</div>
       </div>
       <div class="block">
         <div class="title">Date Submitted</div>
-        <div class="subtitle">{{ dateFormat }}</div>
+        <div notranslate class="subtitle">{{ dateFormat }}</div>
       </div>
     </div>
 

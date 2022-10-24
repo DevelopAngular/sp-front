@@ -1,21 +1,21 @@
 <div class="assigned-teachers">
   <div *ngFor="let teacher of results; let i = index" #chip class="teacher"
-    (mouseenter)="chipHover(chip, true)"
-    (mouseleave)="chipHover(chip, false)"
-    [style.opacity]="chip.hovered && !buttonDown ? 0.85 : (buttonDown ? 0.7 :  1)"
-    [style.background-color]="getBackground(chip)"
-    [style.color]="textColor(chip)">
+       (mouseenter)="chipHover(chip, true)"
+       (mouseleave)="chipHover(chip, false)"
+       [style.opacity]="chip.hovered && !buttonDown ? 0.85 : (buttonDown ? 0.7 :  1)"
+       [style.background-color]="getBackground(chip)"
+       [style.color]="textColor(chip)">
 
     <ng-container *ngIf="selectedTarget=='orgunits' && orgUnitDeleteCheck(teacher) ;else nonDeleted" >
       <img *ngIf="selectedTarget === 'roles'" width="16" style="margin-right: 5px" [src]="teacher.icon" alt="Icon">
       <span class="chip-field"  customToolTip
-      [contentTemplate]="tooltip"  [style.cursor]="'default'" [style.user-select]="'none'"   >
+            [contentTemplate]="tooltip"  [style.cursor]="'default'" [style.user-select]="'none'"   >
         <span class="material-icons" style="color:#f5de82;" >warning</span>
         <span class="chname"><span style="font-weight: bold" *ngIf="!!textPrepend">{{textPrepend}}</span> {{selectedTarget === 'users' ? teacher.display_name : selectedTarget === 'roles' ? teacher.role : selectedTarget === 'rooms' ? teacher.title : teacher.as !== undefined ? teacher.as : teacher}}</span>
 
       </span>
       <div *ngIf="chip.hovered && !teacher.lockAccount" class="delete">
-  
+
         <img
           (click)="selectedProfiles.splice(i, 1); removeSelectedProfile(); updateSelectedEvent.emit(this.selectedProfiles)"
           [src]="'./assets/Cancel (Navy).svg' | resolveAsset" width="16" alt="Check.svg">
@@ -26,16 +26,16 @@
       <img *ngIf="selectedTarget === 'roles'" width="16" style="margin-right: 5px" [src]="teacher.icon" alt="Icon">
       <span #nonDeleted  [style.cursor]="'default'" [style.user-select]="'none'"  >
       <span style="font-weight: bold" *ngIf="!!textPrepend">{{textPrepend}}</span> {{selectedTarget === 'users' ? teacher.display_name : selectedTarget === 'roles' ? teacher.role : selectedTarget === 'rooms' ? teacher.title : teacher.as !== undefined ? teacher.as : teacher}}
-      </span>   
+      </span>
       <div *ngIf="chip.hovered && !teacher.lockAccount" class="delete">
-  
+
         <img
           (click)="selectedProfiles.splice(i, 1); updateSelectedEvent.emit(this.selectedProfiles)"
           [src]="'./assets/Cancel (Navy).svg' | resolveAsset" width="16" alt="Check.svg">
       </div>
     </ng-template>
 
-    
+
     <ng-template #tooltip>
       <div class="ds-tooltip">
         This Organizational unit or group has been deleted in Google
@@ -44,7 +44,24 @@
 
   </div>
   <app-gradient-button class=""
-    *ngIf="!hideAddButton"
+                       *ngIf="!hideAddButton"
+                       [size]="'editable'"
+                       [minWidth]="'100px'"
+                       [minHeight]="'31px'"
+                       [textColor]="'#7F879D'"
+                       [gradient]="'#F4F4F4, #F4F4F4'"
+                       [hoverColor]="'#F4F4F4'"
+                       [leftIcon]="'./assets/Plus (Blue-Gray).svg' | resolveAsset"
+                       [leftImageWidth]="'16px'"
+                       [leftImageHeight]="'16px'"
+                       [withShadow]="false"
+                       [fontSize]="'14px'"
+                       (buttonClick)="add.emit(true)"
+  >{{textAddButton}}</app-gradient-button>
+
+  <app-gradient-button
+    *ngIf="!!suggestedTeacher && isProposed"
+    [style.margin-left]="'10px'"
     [size]="'editable'"
     [minWidth]="'100px'"
     [minHeight]="'31px'"
@@ -56,23 +73,6 @@
     [leftImageHeight]="'16px'"
     [withShadow]="false"
     [fontSize]="'14px'"
-    (buttonClick)="add.emit(true)"
- >{{textAddButton}}</app-gradient-button>
-
-  <app-gradient-button
-   *ngIf="!!suggestedTeacher && isProposed"
-   [style.margin-left]="'10px'"
-   [size]="'editable'"
-   [minWidth]="'100px'"
-   [minHeight]="'31px'"
-   [textColor]="'#7F879D'"
-   [gradient]="'#F4F4F4, #F4F4F4'"
-   [hoverColor]="'#F4F4F4'"
-   [leftIcon]="'./assets/Plus (Blue-Gray).svg' | resolveAsset"
-   [leftImageWidth]="'16px'"
-   [leftImageHeight]="'16px'"
-   [withShadow]="false"
-   [fontSize]="'14px'"
-   (buttonClick)="addSuggestedTeacher.emit(suggestedTeacher)"
-  >Suggested: {{ suggestedTeacher.display_name }}</app-gradient-button>
+    (buttonClick)="addSuggestedTeacher.emit(suggestedTeacher)"
+  >Suggested: <span notranslate>{{ suggestedTeacher.display_name }}</span></app-gradient-button>
 </div>
