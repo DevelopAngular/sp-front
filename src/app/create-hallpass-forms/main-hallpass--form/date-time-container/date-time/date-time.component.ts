@@ -62,7 +62,9 @@ export class DateTimeComponent implements OnInit, OnDestroy {
   recurrenceOptions: DropdownOptions<number>[] = [
     { title: 'Does not repeat', value: RecurringOption.DoesNotRepeat },
     { title: 'Daily', value: RecurringOption.Daily },
-    { title: `Weekly on ${this.requestTime.format('dddd')}`, value: RecurringOption.Weekly }
+    { title: `Weekly on ${this.requestTime.format('dddd')}`, value: RecurringOption.Weekly },
+    // Only used for development / testing
+    // { title: `Every Minute`, value: RecurringOption.Minutely},
   ];
 
   constructor(

@@ -1,0 +1,38 @@
+[
+  {
+    "name": "Most Visited Locations",
+    "rows": [
+      {
+        "name": "Main Office",
+        "type": "single",
+        "value": "172 passes"
+      },
+      {
+        "name": "Science Lab",
+        "type": "single",
+        "value": "126 passes"
+      },
+      {
+        "name": "Guidance",
+        "type": "single",
+        "value": "109 passes"
+      },
+      {
+        "name": "Nurse",
+        "type": "single",
+        "value": "100 passes"
+      },
+      {
+        "name": "Sree's Room",
+        "type": "single",
+        "value": "90 passes"
+      }
+    ],
+    "type": "list"
+  },
+  {
+    "name": "Average pass time",
+    "type": "single",
+    "value": "10 minutes"
+  }
+]

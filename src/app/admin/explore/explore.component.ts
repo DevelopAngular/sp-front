@@ -1180,7 +1180,8 @@ export class ExploreComponent implements OnInit, OnDestroy {
     this.showContactTraceTable = true;
     this.contactTraceService.getContactsRequest(
       this.contactTraceData.selectedStudents.map(s => s.id),
-      this.contactTraceData.selectedDate['start'].toISOString()
+      this.contactTraceData.selectedDate['start'].toISOString(),
+      this.contactTraceData.selectedDate['end']?.toISOString() ?? (new Date()).toISOString(),
     );
   }
 
