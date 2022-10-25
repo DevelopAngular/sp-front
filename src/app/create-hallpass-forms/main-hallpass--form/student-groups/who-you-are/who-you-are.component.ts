@@ -1,14 +1,18 @@
-import {ChangeDetectorRef, Component, EventEmitter, Injector, Input, OnInit, Output} from '@angular/core';
+import {ChangeDetectorRef, Component, EventEmitter, Injector, Input, OnInit, Output, ViewChild} from '@angular/core';
 import {CreateFormService} from '../../../create-form.service';
 import {MatDialogRef} from '@angular/material/dialog';
 import {MainHallPassFormComponent, Navigation} from '../../main-hall-pass-form.component';
 import {ScreenService} from '../../../../services/screen.service';
 import {LocationVisibilityService} from '../../location-visibility.service';
-import {BehaviorSubject, forkJoin} from 'rxjs';
+import {BehaviorSubject, forkJoin, Subject} from 'rxjs';
+import {filter, takeUntil, tap} from 'rxjs/operators';
 import {User} from '../../../../models/User';
-import {GSuiteSelector} from '../../../../sp-search/sp-search.component';
+import {GSuiteSelector, SPSearchComponent} from '../../../../sp-search/sp-search.component';
 import {PassLimitService} from '../../../../services/pass-limit.service';
 import {KioskModeService} from '../../../../services/kiosk-mode.service';
+import {LocationsService} from '../../../../services/locations.service';
+import {Pinnable} from '../../../../models/Pinnable';
+import {Location} from '../../../../models/Location';
 
 @Component({
   selector: 'app-who-you-are',
@@ -19,6 +23,8 @@ export class WhoYouAreComponent implements OnInit {
 
   @Input() formState: Navigation;
   @Output() stateChangeEvent: EventEmitter<Navigation> = new EventEmitter();
+
+  @ViewChild(SPSearchComponent) searchCmp: SPSearchComponent;
 
   frameMotion$: BehaviorSubject<any>;
   placeholder:string="Search students"
@@ -31,14 +37,42 @@ export class WhoYouAreComponent implements OnInit {
     private _injector: Injector,
     private cdr: ChangeDetectorRef,
     private visibilityService: LocationVisibilityService,
-    private kioskService : KioskModeService
+    private kioskService : KioskModeService,
+    private locationsService: LocationsService,
   ) { 
 
   }
 
+  private destroy$ = new Subject();
+
   ngOnInit() {
     this.frameMotion$ = this.formService.getFrameMotionDirection();
-     this.setPlaceHolder()
+    this.setPlaceHolder();
+
+    this.locationsService.listenLocationSocket().pipe(
+      takeUntil(this.destroy$),
+      filter(Boolean),
+      tap((res: unknown & {data: any}) => {
+        try {
+          const loc: Location = Location.fromJSON(res.data);
+          this.locationsService.updateLocationSuccessState(loc);
+          this.formState.data.direction.from = loc;
+          // refresh search
+          // as if the user was searching again
+          // posible annoying behavior but pretty improbable
+          // for an admin to change a location while a teacher like role searches 
+          const val = this.searchCmp.lastSearchText;
+          this.searchCmp.onSearch(val);
+        } catch(e) {
+          console.log(e);
+        }
+      }),
+    ).subscribe();
+  }
+
+  ngOnDestroy(): void {
+    this.destroy$.next();
+    this.destroy$.complete();
   }
  
   // used for filtering users found with sp-search component
