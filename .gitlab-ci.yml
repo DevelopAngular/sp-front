@@ -185,19 +185,7 @@ deploy_production:
   script:
     - 'echo "@old http://dl-3.alpinelinux.org/alpine/v3.10/main/" >> /etc/apk/repositories'
     - 'echo "@old http://dl-3.alpinelinux.org/alpine/v3.10/community/" >> /etc/apk/repositories'
-    - apk add --no-cache bash tree git python make g++ libstdc++ coreutils yarn
-    - wget -qO- https://raw.githubusercontent.com/nvm-sh/nvm/v0.39.1/install.sh | bash
-    - export NVM_DIR="$HOME/.nvm" && . "$NVM_DIR/nvm.sh" --no-use
-    - mkdir ~/.nvm/versions
-    - echo "export NVM_NODEJS_ORG_MIRROR=https://unofficial-builds.nodejs.org/download/release" >> ~/.profile
-    - echo "nvm_get_arch() { nvm_echo \"x64-musl\"; }" >> ~/.profile
-    - source ~/.profile
-    - bash
-    - nvm -v
-    - "mkdir ~/.nvm/.cache && mkdir ~/.nvm/.cache/bin && mkdir ~/.nvm/.cache/bin/node-v$(cat .nvmrc)-linux-x64-musl"
-    - "wget -P ~/.nvm/.cache/bin/node-v$(cat .nvmrc)-linux-x64-musl https://unofficial-builds.nodejs.org/download/release/v$(cat .nvmrc)/node-v$(cat .nvmrc)-linux-x64-musl.tar.xz"
-    - nvm install $(cat .nvmrc)
-    - nvm use
+    - apk add --no-cache bash tree git python make g++ libstdc++ coreutils
     - source scripts/auto_devops.sh
     # build is not specified here. The IMAGE_TAG_SUFFIX will be used to match to the build with the same commit sha.
     - install_dependencies
