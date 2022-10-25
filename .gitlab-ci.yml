@@ -15,7 +15,6 @@ variables:
 
 stages:
   - build
-  - test
   - deploy
 
 testing_build:
@@ -56,7 +55,7 @@ testing_build:
     - "docker-passthrough"
 
 testing_e2e:
-  stage: test
+  stage: build
   image: cypress/browsers:node12.19.0-chrome86-ff82
   script:
     - npm cache verify
