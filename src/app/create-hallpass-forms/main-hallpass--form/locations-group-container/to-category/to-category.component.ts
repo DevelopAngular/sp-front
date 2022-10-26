@@ -6,7 +6,7 @@ import {User} from '../../../../models/User';
 import {Location} from '../../../../models/Location';
 import {CreateFormService} from '../../../create-form.service';
 import {Observable, BehaviorSubject, fromEvent, Subject, of} from 'rxjs';
-import {filter, tap, takeUntil, withLatestFrom, map} from 'rxjs/operators';
+import {filter, tap, takeUntil, withLatestFrom, map, shareReplay} from 'rxjs/operators';
 import {MatDialog, MatDialogRef, MAT_DIALOG_DATA} from '@angular/material/dialog';
 import {DeviceDetection} from '../../../../device-detection.helper';
 import {LocationVisibilityService} from '../../location-visibility.service';
@@ -120,23 +120,31 @@ export class ToCategoryComponent implements OnInit, AfterViewInit {
       }
     });
     
+    if (this.listenLocation$ !== null) {
+      return;
+    } 
     this.listenLocation$ = this.locationsService.listenLocationSocket().pipe(
       takeUntil(this.destroy$),
-      filter((res: any | unknown & {data: any}) => (!!res && !('data' in res))),
+      filter((res: any | unknown & {data: any}) => (!!res && ('data' in res))),
       map(({data}) => data),
+      shareReplay(1),
     );
     this.listenLocation$.subscribe();
   }
 
-  listenLocation$: Observable<PollingEvent>;
+  listenLocation$: Observable<PollingEvent> = null;
 
   ngAfterViewInit() {
-    // initialised here to make sure this.locTableRef is populated
-    of(this.locTableRef).pipe(
+    const locTable$ = of(this.locTableRef).pipe(
       filter(Boolean),
       takeUntil(this.destroy$),
-      withLatestFrom(this.listenLocation$),
-      tap(([_, data]) => {
+    );
+    locTable$.subscribe();
+    // initialised here to make sure this.locTableRef is populated
+    this.listenLocation$.pipe(
+      takeUntil(this.destroy$),
+      withLatestFrom(locTable$),
+      tap(([data, _]) => {
         try {
           // updated location sent via WS
           const loc: Location = Location.fromJSON(data);

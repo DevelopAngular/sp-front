@@ -1,17 +1,17 @@
-import {ChangeDetectorRef, Component, EventEmitter, Injector, Input, OnInit, Output, ViewChild} from '@angular/core';
+import {ChangeDetectorRef, Component, EventEmitter, Injector, Input, OnInit, Output, ViewChild, AfterViewInit} from '@angular/core';
 import {CreateFormService} from '../../../create-form.service';
 import {MatDialogRef} from '@angular/material/dialog';
 import {MainHallPassFormComponent, Navigation} from '../../main-hall-pass-form.component';
 import {ScreenService} from '../../../../services/screen.service';
 import {LocationVisibilityService} from '../../location-visibility.service';
-import {BehaviorSubject, forkJoin, Subject} from 'rxjs';
-import {filter, takeUntil, tap} from 'rxjs/operators';
+import {BehaviorSubject, forkJoin, Subject, of, Observable} from 'rxjs';
+import {filter, takeUntil, tap, map, withLatestFrom, shareReplay} from 'rxjs/operators';
 import {User} from '../../../../models/User';
 import {GSuiteSelector, SPSearchComponent} from '../../../../sp-search/sp-search.component';
 import {PassLimitService} from '../../../../services/pass-limit.service';
 import {KioskModeService} from '../../../../services/kiosk-mode.service';
 import {LocationsService} from '../../../../services/locations.service';
-import {Pinnable} from '../../../../models/Pinnable';
+import {PollingEvent} from '../../../../services/polling-service';
 import {Location} from '../../../../models/Location';
 
 @Component({
@@ -19,7 +19,7 @@ import {Location} from '../../../../models/Location';
   templateUrl: './who-you-are.component.html',
   styleUrls: ['./who-you-are.component.scss']
 })
-export class WhoYouAreComponent implements OnInit {
+export class WhoYouAreComponent implements OnInit, AfterViewInit {
 
   @Input() formState: Navigation;
   @Output() stateChangeEvent: EventEmitter<Navigation> = new EventEmitter();
@@ -48,13 +48,34 @@ export class WhoYouAreComponent implements OnInit {
   ngOnInit() {
     this.frameMotion$ = this.formService.getFrameMotionDirection();
     this.setPlaceHolder();
-
-    this.locationsService.listenLocationSocket().pipe(
+    
+    if (this.listenLocation$ !== null) {
+      return;
+    } 
+    this.listenLocation$ = this.locationsService.listenLocationSocket().pipe(
       takeUntil(this.destroy$),
+      filter((res: any | unknown & {data: any}) => (!!res && ('data' in res))),
+      map(({data}) => data),
+      shareReplay(1),
+    );
+    this.listenLocation$.subscribe();
+  }
+
+  listenLocation$: Observable<PollingEvent> = null;
+
+  ngAfterViewInit() {
+    const searchCmp$ = of(this.searchCmp).pipe(
       filter(Boolean),
-      tap((res: unknown & {data: any}) => {
+      takeUntil(this.destroy$),
+    );
+    searchCmp$.subscribe();
+
+    this.listenLocation$.pipe(
+      takeUntil(this.destroy$),
+      withLatestFrom(searchCmp$),
+      tap(([data, _]) => {
         try {
-          const loc: Location = Location.fromJSON(res.data);
+          const loc: Location = Location.fromJSON(data);
           this.locationsService.updateLocationSuccessState(loc);
           this.formState.data.direction.from = loc;
           // refresh search
