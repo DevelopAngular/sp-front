@@ -42,19 +42,19 @@
 
                     <div class="content">
                         <div class="student-passes-info" *ngIf="!(loadingPassesStats$ | async); else fakeStats">
-                          <div class="card-info" [allowVarTag]="true" [customToolTip]="'The student had ' + '<var>' + (passesStats$ | async)?.past_passes_today + '</var>' + ((passesStats$ | async)?.past_passes_today === 1 ? ' pass' : ' passes') +  ' today.'" [nonDisappearing]="false" [editable]="true">
+                            <div class="card-info" [allowVarTag]="true" [customToolTip]="'The student had ' + '<var>' + (passesStats$ | async)?.past_passes_today + '</var>' + ((passesStats$ | async)?.past_passes_today === 1 ? ' pass' : ' passes') +  ' today.'" [nonDisappearing]="false"
+                                [editable]="true">
                                 <div class="title">{{ (passesStats$ | async)?.past_passes_today }}</div>
                                 <div isolate class="subtitle">today</div>
                             </div>
-                            <div class="card-info" [allowVarTag]="true" [customToolTip]="'The student had ' + '<var>' + (passesStats$ | async)?.past_passes_week + '</var>' + ((passesStats$ | async)?.past_passes_week === 1 ? ' pass' : ' passes') +  ' this week.'" [nonDisappearing]="false" [editable]="true">
+                            <div class="card-info" [allowVarTag]="true" [customToolTip]="'The student had ' + '<var>' + (passesStats$ | async)?.past_passes_week + '</var>' + ((passesStats$ | async)?.past_passes_week === 1 ? ' pass' : ' passes') +  ' this week.'" [nonDisappearing]="false"
+                                [editable]="true">
                                 <div class="title">{{ (passesStats$ | async)?.past_passes_week }}</div>
                                 <div isolate class="subtitle">this week</div>
                             </div>
                             <div class="card-info" customToolTip [contentTemplate]="tooltip" [nonDisappearing]="false" [editable]="true">
                                 <ng-template #tooltip>
-                                    <div class="ds-tooltip" style="max-width: 265px"
-                                      [innerHTML]="'The student had ' + '<var>' + (passesStats$ | async)?.past_passes_month + '</var>' + ((passesStats$ | async)?.past_passes_month === 1 ? ' pass' : ' passes') + ' this month.'"
-                                    ></div>
+                                    <div class="ds-tooltip" style="max-width: 265px" [innerHTML]="'The student had ' + '<var>' + (passesStats$ | async)?.past_passes_month + '</var>' + ((passesStats$ | async)?.past_passes_month === 1 ? ' pass' : ' passes') + ' this month.'"></div>
                                 </ng-template>
                                 <div class="title">{{ (passesStats$ | async)?.past_passes_month }}</div>
                                 <div isolate class="subtitle">this month</div>
@@ -109,13 +109,13 @@
                             </ng-template>
 
                             <div class="form pass-limit-card" style="flex-direction: column; cursor: pointer" [ngClass]="{ 'pass-limit-enabled': !studentPassLimit?.isUnlimited }" (click)="openPassLimitsDialog()">
-                              <div class="card ds-flex-center-between">
-                                <div class="label" [style.align-items]="!!studentPassLimit?.description ? 'flex-start !important' : 'center'">
-                                  <div class="icon" style="background-color: #5E4FED">
-                                    <img style="position: absolute; z-index: 10;" height="14px" [src]="'./assets/Pass Limit (White).svg' | resolveAsset" alt="">
-                                  </div>
-                                  <div class="ds-ml-10" style="display: flex; flex-direction: column">
-                                    <span class="ds-dialog-heading" style="display: flex; padding-bottom: 0; font-weight: 600 !important;">
+                                <div class="card ds-flex-center-between">
+                                    <div class="label" [style.align-items]="!!studentPassLimit?.description ? 'flex-start !important' : 'center'">
+                                        <div class="icon" style="background-color: #5E4FED">
+                                            <img style="position: absolute; z-index: 10;" height="14px" [src]="'./assets/Pass Limit (White).svg' | resolveAsset" alt="">
+                                        </div>
+                                        <div class="ds-ml-10" style="display: flex; flex-direction: column">
+                                            <span class="ds-dialog-heading" style="display: flex; padding-bottom: 0; font-weight: 600 !important;">
                                       Pass Limit
                                       <div style="display: inline" customToolTip [contentTemplate]="passLimitLearnMore">
                                         <img
@@ -130,36 +130,23 @@
                                             <a href="https://www.smartpass.app/passlimits" target="_blank" style="color: white"> Learn more</a>
                                           </span>
                                         </div>
-                                      </ng-template>
-                                    </span>
-                                    <div *ngIf="studentPassLimit?.passLimit" class="ds-flex-column" style="display: flex; gap: 3px; margin-top: 3px;">
-                                      <span
-                                        style="font-size: 14px !important; font-weight: 500 !important;"
-                                        [ngClass]="{ 'pass-limit-counter': true, 'individual-limit': studentPassLimit.isIndividual, 'school-limit': !studentPassLimit.isIndividual }"
-                                        [innerHTML]="studentPassLimit.passLimit === -2 ? 'Unlimited' : '<var>' + studentPassLimit.passLimit + '</var> ' + (studentPassLimit.passLimit === 1 ? 'pass' : 'passes') + '/day'"
-                                      >
+                                        </ng-template>
+                                        </span>
+                                        <div *ngIf="studentPassLimit?.passLimit" class="ds-flex-column" style="display: flex; gap: 3px; margin-top: 3px;">
+                                            <span style="font-size: 14px !important; font-weight: 500 !important;" [ngClass]="{ 'pass-limit-counter': true, 'individual-limit': studentPassLimit.isIndividual, 'school-limit': !studentPassLimit.isIndividual }" [innerHTML]="studentPassLimit.passLimit === -2 ? 'Unlimited' : '<var>' + studentPassLimit.passLimit + '</var> ' + (studentPassLimit.passLimit === 1 ? 'pass' : 'passes') + '/day'">
                                       </span>
-                                      <span class="ds-dialog-normal-text" style="font-weight: 400 !important;" *ngIf="studentPassLimit.description && studentPassLimit.isIndividual">{{studentPassLimit.description}}</span>
+                                            <span class="ds-dialog-normal-text" style="font-weight: 400 !important;" *ngIf="studentPassLimit.description && studentPassLimit.isIndividual">{{studentPassLimit.description}}</span>
+                                        </div>
                                     </div>
-                                  </div>
                                 </div>
-                                <app-gradient-button
-                                  *ngIf="!studentPassLimit?.passLimit"
-                                  size="tiny"
-                                  gradient="#6651F1"
-                                  textColor="#FFFFFF"
-                                >
-                                  Set up
+                                <app-gradient-button *ngIf="!studentPassLimit?.passLimit" size="tiny" gradient="#6651F1" textColor="#FFFFFF">
+                                    Set up
                                 </app-gradient-button>
-                                <img *ngIf="studentPassLimit?.passLimit"
-                                     style="width: 16px; height: 16px"
-                                     [src]="'./assets/Chevron Right (Gray).svg' | resolveAsset" alt=""
-                                     nuxTooltip [contentTemplate]="passLimitNuxTemplate" [showToolTip$]="showPassLimitNux"
-                                     [position]="passLimitNuxWrapperPosition">
-                          </div>
+                                <img *ngIf="studentPassLimit?.passLimit" style="width: 16px; height: 16px" [src]="'./assets/Chevron Right (Gray).svg' | resolveAsset" alt="" nuxTooltip [contentTemplate]="passLimitNuxTemplate" [showToolTip$]="showPassLimitNux" [position]="passLimitNuxWrapperPosition">
+                            </div>
                         </div>
                         <ng-template #fakeForm>
-                          <div class="form fake-animate"></div>
+                            <div class="form fake-animate"></div>
                         </ng-template>
 
                         <div class="form">
@@ -179,7 +166,7 @@
                                     </div>
                                 </div>
                                 <div class="form-content">
-                                    <div class="title">Last Active
+                                    <div class="title">Last Logged In
                                         <span class="support-icon" customToolTip="The last time a student was signed in and active on desktop or mobile."><img width="13px" [src]="'./assets/Support (Gray-200).svg' | resolveAsset"></span>
                                     </div>
                                     <div class="value">{{ profile?.last_login ? getLastActiveDate(profile?.last_login) : 'Hasn\'t signed in' }}</div>
@@ -265,25 +252,17 @@
                                         <span class="support-icon" (mouseenter)="created.destroyClose = true" *ngIf="created.hovered || created.destroyClose" (leave)="created.destroyClose = false" customToolTip [contentTemplate]="createdTemplate" [editable]="true" [nonDisappearing]="false">
                         <img width="13px" [src]="'./assets/Support (Gray-200).svg' | resolveAsset">
                       </span>
-                      <ng-template #createdTemplate>
-                        <div class="ds-tooltip" style="max-width: 270px">
-                          Number of passes the student has had, including passes teachers have created.
-                        </div>
-                      </ng-template>
-                    </div>
-                    <div class="value" [innerHTML]="'<var>' + (studentStats$ | async)?.total_created_passes + '</var>' + ( (studentStats$ | async)?.total_created_passes === 1 ? ' pass' : ' passes')"></div>
-                  </div>
-                  <div class="info-card" #outOfClass (mouseenter)="outOfClass.hovered = true" (mouseleave)="outOfClass.hovered = false">
-                    <div class="title">TIME SPENT OUT OF CLASS
-                      <span class="support-icon"
-                            (mouseenter)="outOfClass.destroyClose = true"
-                            *ngIf="outOfClass.hovered || outOfClass.destroyClose"
-                            (leave)="outOfClass.destroyClose = false"
-                            customToolTip
-                            [contentTemplate]="outOfClassTemplate"
-                            [editable]="true"
-                            [nonDisappearing]="false"
-                      >
+                                        <ng-template #createdTemplate>
+                                            <div class="ds-tooltip" style="max-width: 270px">
+                                                Number of passes the student has had, including passes teachers have created.
+                                            </div>
+                                        </ng-template>
+                                    </div>
+                                    <div class="value" [innerHTML]="'<var>' + (studentStats$ | async)?.total_created_passes + '</var>' + ( (studentStats$ | async)?.total_created_passes === 1 ? ' pass' : ' passes')"></div>
+                                </div>
+                                <div class="info-card" #outOfClass (mouseenter)="outOfClass.hovered = true" (mouseleave)="outOfClass.hovered = false">
+                                    <div class="title">TIME SPENT OUT OF CLASS
+                                        <span class="support-icon" (mouseenter)="outOfClass.destroyClose = true" *ngIf="outOfClass.hovered || outOfClass.destroyClose" (leave)="outOfClass.destroyClose = false" customToolTip [contentTemplate]="outOfClassTemplate" [editable]="true" [nonDisappearing]="false">
                         <img width="13px" [src]="'./assets/Support (Gray-200).svg' | resolveAsset">
                       </span>
                                         <ng-template #outOfClassTemplate>
@@ -358,8 +337,8 @@
                                     </div>
                                 </ng-template>
                                 <div class="button">
-                                    <app-gradient-button [style.margin-top]="'20px'" *ngIf="(studentStats$ | async) && (studentStats$ | async)?.expired_passes.length > 6 && !(studentsStatsLoading$ | async)" [gradient]="'#FFFFFF, #FFFFFF'" [leftIcon]="isFullScreenPasses ? './assets/Chevron Up (Blue-Gray).svg' : './assets/Chevron Down (Blue-Gray).svg'"
-                                        [textColor]="'#7f879d'" (buttonClick)="isFullScreenPasses = !isFullScreenPasses">{{ isFullScreenPasses ? 'Collapse' : 'See all ' + (studentStats$ | async)?.expired_passes.length + ' passes' }}
+                                    <app-gradient-button [style.margin-top]="'20px'" *ngIf="(studentStats$ | async) && (studentStats$ | async)?.total_created_passes > 6 && !(studentsStatsLoading$ | async)" [gradient]="'#FFFFFF, #FFFFFF'" [leftIcon]="isFullScreenPasses ? './assets/Chevron Up (Blue-Gray).svg' : './assets/Chevron Down (Blue-Gray).svg'"
+                                        [textColor]="'#7f879d'" (buttonClick)="isFullScreenPasses = !isFullScreenPasses">{{ isFullScreenPasses ? 'Collapse' : 'See all ' + (studentStats$ | async)?.total_created_passes + ' passes' }}
                                     </app-gradient-button>
                                 </div>
                             </div>
