@@ -1,29 +1,29 @@
-import {Component, ElementRef, EventEmitter, HostListener, Inject, Input, OnInit, Output, ViewChild, TemplateRef} from '@angular/core';
+import {Component, ElementRef, EventEmitter, HostListener, Inject, Input, OnInit, AfterViewInit, Output, ViewChild, TemplateRef} from '@angular/core';
 
 import {Navigation} from '../../main-hall-pass-form.component';
 import {Pinnable} from '../../../../models/Pinnable';
 import {User} from '../../../../models/User';
 import {Location} from '../../../../models/Location';
 import {CreateFormService} from '../../../create-form.service';
-import {BehaviorSubject, fromEvent, Subject} from 'rxjs';
-import {filter, tap, takeUntil} from 'rxjs/operators';
+import {Observable, BehaviorSubject, fromEvent, Subject, of} from 'rxjs';
+import {filter, tap, takeUntil, withLatestFrom, map} from 'rxjs/operators';
 import {MatDialog, MatDialogRef, MAT_DIALOG_DATA} from '@angular/material/dialog';
 import {DeviceDetection} from '../../../../device-detection.helper';
 import {LocationVisibilityService} from '../../location-visibility.service';
-import {ToastService} from '../../../../services/toast.service';
 import {LocationsService} from '../../../../services/locations.service';
 import {
   ConfirmationDialogComponent,
   ConfirmationTemplates
 } from '../../../../shared/shared-components/confirmation-dialog/confirmation-dialog.component';
 import {LocationTableComponent} from '../../../../location-table/location-table.component';
+import {PollingEvent} from '../../../../services/polling-service';
 
 @Component({
   selector: 'app-to-category',
   templateUrl: './to-category.component.html',
   styleUrls: ['./to-category.component.scss'],
 })
-export class ToCategoryComponent implements OnInit {
+export class ToCategoryComponent implements OnInit, AfterViewInit {
   @ViewChild('header', { static: true }) header: ElementRef<HTMLDivElement>;
   @ViewChild('rc', { static: true }) set rc(rc: ElementRef<HTMLDivElement> ) {
     if (rc) {
@@ -91,7 +91,6 @@ export class ToCategoryComponent implements OnInit {
     private dialog: MatDialog,
     @Inject(MAT_DIALOG_DATA) public dialogData: any,
     private visibilityService: LocationVisibilityService,
-    private toastService: ToastService,
     private locationsService: LocationsService,
   ) { }
 
@@ -120,23 +119,38 @@ export class ToCategoryComponent implements OnInit {
           this.headerTransition['category-header_animation-back'] = false;
       }
     });
-
-    this.locationsService.listenLocationSocket().pipe(
+    
+    this.listenLocation$ = this.locationsService.listenLocationSocket().pipe(
       takeUntil(this.destroy$),
-      filter(Boolean),
-      tap((res: any) => {
-        if (!('data' in res)) return;
+      filter((res: any | unknown & {data: any}) => (!!res && !('data' in res))),
+      map(({data}) => data),
+    );
+    this.listenLocation$.subscribe();
+  }
 
+  listenLocation$: Observable<PollingEvent>;
+
+  ngAfterViewInit() {
+    // initialised here to make sure this.locTableRef is populated
+    of(this.locTableRef).pipe(
+      filter(Boolean),
+      takeUntil(this.destroy$),
+      withLatestFrom(this.listenLocation$),
+      tap(([_, data]) => {
         try {
           // updated location sent via WS
-          const loc: Location = Location.fromJSON(res.data);
+          const loc: Location = Location.fromJSON(data);
 
           // check for a proper category pinnable
           const isCategory = (this.pinnable.type === 'category' && this.pinnable.location === null);
-          if (!isCategory) return;
+          if (!isCategory) {
+            return;
+          }
           // check for locations of a category pinnable 
-          const pinn = <any>this.pinnable;
-          if (!('myLocations' in pinn)) return;
+          const pinn = <Pinnable | Pinnable & {myLocations: Location[]}>this.pinnable;
+          if (!('myLocations' in pinn)) {
+            return;
+          }
 
           // is the location loc owned by pinnable?
           const found = pinn.myLocations.some((a: Location) => {
@@ -144,7 +158,9 @@ export class ToCategoryComponent implements OnInit {
           });
           // but belongs to category pinnable?
           const belongs = loc.category === pinn.category;
-          if (!found && !belongs) return;
+          if (!found && !belongs) {
+            return;
+          }
           
           // update choices
           let choices = pinn.myLocations;
@@ -170,7 +186,7 @@ export class ToCategoryComponent implements OnInit {
         }
       }),
     ).subscribe();
-  }
+}
 
   ngOnDestroy() {
     this.destroy$.next();
