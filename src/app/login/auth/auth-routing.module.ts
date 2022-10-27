@@ -5,7 +5,7 @@ import { ParentSignUpComponent } from './parent-sign-up/parent-sign-up.component
 
 const routes: Routes = [
   {path: '', component: ParentLoginComponent },
-  {path: 'signup', component: ParentSignUpComponent },
+  {path: 'parent/signup', component: ParentSignUpComponent },
 ];
 
 @NgModule({
