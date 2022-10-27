@@ -1,4 +1,4 @@
-import {Component, ElementRef, EventEmitter, HostListener, Inject, Input, OnInit, AfterViewInit, Output, ViewChild, TemplateRef} from '@angular/core';
+import {Component, ElementRef, EventEmitter, HostListener, Inject, Input, OnInit, Output, ViewChild, TemplateRef} from '@angular/core';
 
 import {Navigation} from '../../main-hall-pass-form.component';
 import {Pinnable} from '../../../../models/Pinnable';
@@ -23,7 +23,7 @@ import {PollingEvent} from '../../../../services/polling-service';
   templateUrl: './to-category.component.html',
   styleUrls: ['./to-category.component.scss'],
 })
-export class ToCategoryComponent implements OnInit, AfterViewInit {
+export class ToCategoryComponent implements OnInit {
   @ViewChild('header', { static: true }) header: ElementRef<HTMLDivElement>;
   @ViewChild('rc', { static: true }) set rc(rc: ElementRef<HTMLDivElement> ) {
     if (rc) {
@@ -136,7 +136,7 @@ export class ToCategoryComponent implements OnInit, AfterViewInit {
       takeUntil(this.destroy$),
     );
     this.locTable$.subscribe();
-    this.subscribeCombo();
+    this.subscribeWSUpdate();
   }
 
   // it announces when locTable enters on DOM
@@ -153,7 +153,7 @@ export class ToCategoryComponent implements OnInit, AfterViewInit {
     return this._locTable;
   }
 
-  subscribeCombo() {
+  subscribeWSUpdate() {
     const myLocations$ = (this.pinnable.type === 'category') ? this.locationsService.getLocationsWithCategory(this.pinnable.category) : of([]);
     myLocations$.subscribe();
 

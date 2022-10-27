@@ -1,11 +1,11 @@
-import {ChangeDetectorRef, Component, EventEmitter, Injector, Input, OnInit, Output, ViewChild, AfterViewInit} from '@angular/core';
+import {ChangeDetectorRef, Component, EventEmitter, Injector, Input, OnInit, Output, ViewChild} from '@angular/core';
 import {CreateFormService} from '../../../create-form.service';
 import {MatDialogRef} from '@angular/material/dialog';
 import {MainHallPassFormComponent, Navigation} from '../../main-hall-pass-form.component';
 import {ScreenService} from '../../../../services/screen.service';
 import {LocationVisibilityService} from '../../location-visibility.service';
-import {BehaviorSubject, forkJoin, Subject, of, Observable} from 'rxjs';
-import {filter, takeUntil, tap, map, withLatestFrom, shareReplay} from 'rxjs/operators';
+import {BehaviorSubject, forkJoin, Subject, combineLatest, Observable} from 'rxjs';
+import {filter, takeUntil, tap, map, shareReplay} from 'rxjs/operators';
 import {User} from '../../../../models/User';
 import {GSuiteSelector, SPSearchComponent} from '../../../../sp-search/sp-search.component';
 import {PassLimitService} from '../../../../services/pass-limit.service';
@@ -19,12 +19,10 @@ import {Location} from '../../../../models/Location';
   templateUrl: './who-you-are.component.html',
   styleUrls: ['./who-you-are.component.scss']
 })
-export class WhoYouAreComponent implements OnInit, AfterViewInit {
+export class WhoYouAreComponent implements OnInit {
 
   @Input() formState: Navigation;
   @Output() stateChangeEvent: EventEmitter<Navigation> = new EventEmitter();
-
-  @ViewChild(SPSearchComponent) searchCmp: SPSearchComponent;
 
   frameMotion$: BehaviorSubject<any>;
   placeholder:string="Search students"
@@ -59,20 +57,31 @@ export class WhoYouAreComponent implements OnInit, AfterViewInit {
       shareReplay(1),
     );
     this.listenLocation$.subscribe();
+
+    this.searchCmp$.pipe(
+      filter(Boolean),
+      takeUntil(this.destroy$),
+    );
+    this.searchCmp$.subscribe();
+    this.subscribeWSUpdate();
   }
 
   listenLocation$: Observable<PollingEvent> = null;
 
-  ngAfterViewInit() {
-    const searchCmp$ = of(this.searchCmp).pipe(
-      filter(Boolean),
-      takeUntil(this.destroy$),
-    );
-    searchCmp$.subscribe();
+  searchCmp$: Subject<boolean> = new Subject();
+  private _searchCmp: SPSearchComponent;
+  @ViewChild(SPSearchComponent) set searchCmp(v: SPSearchComponent) {
+    this.searchCmp$.next(true);
+    this._searchCmp = v;
+  }
+  get searchCmp(): SPSearchComponent {
+    return this._searchCmp;
+  }
 
-    this.listenLocation$.pipe(
+  subscribeWSUpdate() {
+    combineLatest(this.listenLocation$, this.searchCmp$)
+    .pipe(
       takeUntil(this.destroy$),
-      withLatestFrom(searchCmp$),
       tap(([data, _]) => {
         try {
           const loc: Location = Location.fromJSON(data);
