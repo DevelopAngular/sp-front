@@ -4,9 +4,8 @@ import { FormControl, FormGroup } from '@angular/forms';
 import { MatDialog } from '@angular/material/dialog';
 import { DomSanitizer, Meta, SafeUrl, Title } from '@angular/platform-browser';
 import { ActivatedRoute, Router } from '@angular/router';
-// import { KeyboardShortcutsService } from 'ng-keyboard-shortcuts/lib/ng-keyboard-shortcuts.service';
 import { BehaviorSubject, Observable, of, Subject } from 'rxjs';
-import { filter, finalize, pluck, takeUntil } from 'rxjs/operators';
+import {filter, finalize, pluck, takeUntil} from 'rxjs/operators';
 import { environment } from '../../../../environments/environment';
 import { DeviceDetection } from '../../../device-detection.helper';
 import { LoginMethod } from '../../../google-signin/google-signin.component';
@@ -27,8 +26,7 @@ export class ParentLoginComponent implements OnInit {
   public showSpinner = false;
   public loggedWith: number;
   public loginForm: FormGroup;
-  public trustedBackgroundUrl: SafeUrl;
-  public formPosition: string = '20px';
+  public formPosition = '20px';
   public loginData = {
     demoLoginEnabled: false,
     demoUsername: '',
@@ -36,10 +34,6 @@ export class ParentLoginComponent implements OnInit {
     authType: '',
   };
 
-  public isGoogleLogin: boolean;
-  public isStandardLogin: boolean;
-  public isClever: boolean;
-  public isClasslink: boolean;
   public auth_providers: any;
 
   public inputFocusNumber = 1;
@@ -47,7 +41,6 @@ export class ParentLoginComponent implements OnInit {
 
   public error$: BehaviorSubject<string> = new BehaviorSubject<string>(null);
   public disabledButton = true;
-  public showError: boolean;
   public schoolAlreadyText$: Observable<string>;
   public passwordError: boolean;
 
@@ -101,6 +94,9 @@ export class ParentLoginComponent implements OnInit {
   }
 
   ngOnInit(): void {
+
+    // @ts-ignore
+    window.appLoaded();
     this.loginForm = new FormGroup({
       username: new FormControl(),
       password: new FormControl()
@@ -128,6 +124,23 @@ export class ParentLoginComponent implements OnInit {
           }
         }
       });
+
+    this.storage.showError$.pipe(takeUntil(this.destroy$)).subscribe(res => {
+      this.toast.openToast({title: 'Cookies are blocked', subtitle: 'Please un-block your cookies so you can sign into SmartPass.', type: 'error'});
+    });
+
+    this.loginDataService.loginDataQueryParams.pipe(
+      filter((data) => !!data),
+      takeUntil(this.destroy$)
+    ).subscribe(res => {
+      if (res.email) {
+        this.loginForm.get('username').setValue(res.email);
+        this.loginData.demoUsername = res.email;
+      }
+      if (res.instant_login) {
+        this.signIn();
+      }
+    });
   }
 
   updateDemoUsername(event) {
@@ -135,7 +148,6 @@ export class ParentLoginComponent implements OnInit {
     if (!event) {
       this.loginData.demoLoginEnabled = false;
       this.loginData.demoUsername = '';
-      this.isGoogleLogin = false;
       this.disabledButton = true;
       return false;
     }
@@ -162,8 +174,6 @@ export class ParentLoginComponent implements OnInit {
         if (!auth_types.length) {
           this.error$.next(`Couldn't find that username or email`);
           this.showSpinner = false;
-          // this.isGoogleLogin = false;
-          // this.isStandardLogin = false;
           this.loginData.demoLoginEnabled = false;
           return;
         } else {
@@ -172,32 +182,6 @@ export class ParentLoginComponent implements OnInit {
         this.loginData.authType = auth_types[auth_types.length - 1];
         this.auth_providers = auth_providers[0];
         const auth = auth_types[auth_types.length - 1];
-        if (auth.indexOf('google') !== -1) {
-          this.loginData.demoLoginEnabled = false;
-          this.isStandardLogin = false;
-          this.isClasslink = false;
-          this.isGoogleLogin = true;
-          this.isClever = false;
-        } else if (auth.indexOf('clever') !== -1) {
-          this.loginData.demoLoginEnabled = false;
-          this.isStandardLogin = false;
-          this.isClasslink = false;
-          this.isGoogleLogin = false;
-          this.isClever = true;
-        } else if (auth.indexOf('classlink') !== -1) {
-          this.loginData.demoLoginEnabled = false;
-          this.isStandardLogin = false;
-          this.isGoogleLogin = false;
-          this.isClever = false;
-          this.isClasslink = true;
-        } else if (auth.indexOf('password') !== -1) {
-          this.isGoogleLogin = false;
-          this.isStandardLogin = true;
-          this.isClever = false;
-          this.isClasslink = false;
-        } else {
-          this.loginData.demoLoginEnabled = false;
-        }
         this.disabledButton = false;
         this.signIn();
         this.cdr.detectChanges();
@@ -210,34 +194,10 @@ export class ParentLoginComponent implements OnInit {
   signIn() {
     this.storage.removeItem('authType');
     this.httpService.schoolSignInRegisterText$.next(null);
-    if (this.isGoogleLogin) {
-      this.storage.setItem('authType', this.loginData.authType);
-      this.initLogin();
-    } else if (this.isClever) {
-      this.showSpinner = true;
-      this.storage.setItem('authType', this.loginData.authType);
-      const district = this.auth_providers && this.auth_providers.provider === 'clever' ? this.auth_providers.sourceId : null;
-      const redirect = this.httpService.getEncodedRedirectUrl();
-      if (district) {
-        window.location.href = `https://clever.com/oauth/authorize?response_type=code&redirect_uri=${redirect}&client_id=f4260ade643c042482a3&district_id=${district}`;
-      } else {
-        window.location.href = `https://clever.com/oauth/authorize?response_type=code&redirect_uri=${redirect}&client_id=f4260ade643c042482a3`;
-      }
-    } else if (this.isClasslink) {
-      this.showSpinner = true;
-      this.storage.setItem('authType', this.loginData.authType);
-      const redirect = this.httpService.getEncodedRedirectUrl() + 'classlink_oauth';
-      window.location.href = `https://launchpad.classlink.com/oauth2/v2/auth?scope=oneroster,profile,full&client_id=c1655133410502391e3e32b3fb24cefb8535bd9994d4&response_type=code&redirect_uri=${redirect}`;
-    } else if (this.isStandardLogin) {
-      this.storage.setItem('authType', this.loginData.authType);
-      this.inputFocusNumber = 2;
-      this.forceFocus$.next();
-      this.loginData.demoLoginEnabled = true;
-    }
-    this.isGoogleLogin = false;
-    this.isClasslink = false;
-    this.isStandardLogin = false;
-    this.isClever = false;
+    this.storage.setItem('authType', this.loginData.authType);
+    this.inputFocusNumber = 2;
+    this.forceFocus$.next();
+    this.loginData.demoLoginEnabled = true;
   }
 
   demoLogin() {
