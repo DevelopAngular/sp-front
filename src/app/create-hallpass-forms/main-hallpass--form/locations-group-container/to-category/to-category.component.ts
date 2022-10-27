@@ -6,7 +6,7 @@ import {User} from '../../../../models/User';
 import {Location} from '../../../../models/Location';
 import {CreateFormService} from '../../../create-form.service';
 import {Observable, BehaviorSubject, fromEvent, Subject, of, combineLatest} from 'rxjs';
-import {filter, tap, takeUntil, withLatestFrom, map, shareReplay} from 'rxjs/operators';
+import {filter, tap, takeUntil, map, shareReplay} from 'rxjs/operators';
 import {MatDialog, MatDialogRef, MAT_DIALOG_DATA} from '@angular/material/dialog';
 import {DeviceDetection} from '../../../../device-detection.helper';
 import {LocationVisibilityService} from '../../location-visibility.service';
@@ -42,7 +42,6 @@ export class ToCategoryComponent implements OnInit, AfterViewInit {
       });
     }
   }
-  @ViewChild('locationTable') locTableRef: LocationTableComponent;
   @Input() formState: Navigation;
 
   @Input() isStaff: boolean;
@@ -130,21 +129,35 @@ export class ToCategoryComponent implements OnInit, AfterViewInit {
       shareReplay(1),
     );
     this.listenLocation$.subscribe();
-  }
 
-  listenLocation$: Observable<PollingEvent> = null;
-
-  ngAfterViewInit() {
-    const locTable$ = of(this.locTableRef).pipe(
+    // watch for LocationTableComponent component
+    this.locTable$.pipe(
       filter(Boolean),
       takeUntil(this.destroy$),
     );
-    locTable$.subscribe();
+    this.locTable$.subscribe();
+    this.subscribeCombo();
+  }
 
+  // it announces when locTable enters on DOM
+  locTable$: Subject<boolean> = new Subject();
+
+  listenLocation$: Observable<PollingEvent> = null;
+
+  private _locTable: LocationTableComponent;
+  @ViewChild('locationTable') set locTableRef(v: LocationTableComponent) {
+    this.locTable$.next(true);
+    this._locTable = v;
+  };
+  get locTableRef(): LocationTableComponent {
+    return this._locTable;
+  }
+
+  subscribeCombo() {
     const myLocations$ = (this.pinnable.type === 'category') ? this.locationsService.getLocationsWithCategory(this.pinnable.category) : of([]);
     myLocations$.subscribe();
-    // initialised here to make sure this.locTableRef is populated
-    combineLatest(this.listenLocation$, locTable$, myLocations$)
+
+    combineLatest(this.listenLocation$, this.locTable$, myLocations$)
     .pipe(
       takeUntil(this.destroy$),
       tap(([data, _, myLocations]) => {

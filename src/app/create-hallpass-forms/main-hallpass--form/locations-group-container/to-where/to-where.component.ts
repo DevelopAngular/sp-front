@@ -12,7 +12,7 @@ import {ToWhereGridRestrictionSm} from '../../../../models/to-where-grid-restric
 import {ToWhereGridRestrictionMd} from '../../../../models/to-where-grid-restrictions/ToWhereGridRestrictionMd';
 import {MAT_DIALOG_DATA, MatDialog} from '@angular/material/dialog';
 import {Subject, BehaviorSubject, fromEvent, Observable} from 'rxjs';
-import {filter, take, takeUntil, map, startWith} from 'rxjs/operators';
+import {filter, take, takeUntil, map} from 'rxjs/operators';
 import {DeviceDetection} from '../../../../device-detection.helper';
 import {StorageService} from '../../../../services/storage.service';
 import {TooltipDataService} from '../../../../services/tooltip-data.service';
@@ -62,6 +62,7 @@ export class ToWhereComponent implements OnInit, OnDestroy, AfterViewInit {
 
   @ViewChildren('ngForPinnables') checkPinnables: QueryList<any>;
   ngAfterViewInit(): void {
+    this.loading = true;
     this.checkPinnables.changes
     .subscribe((change) => {
       if (change?.length > 0) {
@@ -69,7 +70,7 @@ export class ToWhereComponent implements OnInit, OnDestroy, AfterViewInit {
       }
     });
   }
-  loading = true;
+  loading = false;
 
   @Output() selectedPinnable: EventEmitter<any> = new EventEmitter<any>();
   @Output() selectedLocation: EventEmitter<any> = new EventEmitter<any>();
