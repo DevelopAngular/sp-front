@@ -76,6 +76,7 @@ import {ToastEffects} from './ngrx/toast/effects';
 import {SmartpassSearchEffects} from './ngrx/smartpass-search/effects';
 import { IdcardOverlayContainerComponent } from './idcard-overlay-container/idcard-overlay-container.component';
 import { EncounterDetectionEffects } from './ngrx/encounter-detection/effects';
+import { SharedModule } from './shared/shared.module';
 // uncomment when app uses formatDate and so on
 //import {LOCALE_ID} from '@angular/core';
 //import {HttpService} from './services/http-service';
