@@ -6,10 +6,11 @@ import { ParentPageComponent } from './parent-page/parent-page.component';
 import { SharedModule } from '../shared/shared.module';
 import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { ParentInviteCodeDialogComponent } from './parent-invite-code-dialog/parent-invite-code-dialog.component';
+import { ParentNavbarComponent } from './parent-navbar/parent-navbar.component';
 
 
 @NgModule({
-  declarations: [ParentPageComponent, ParentInviteCodeDialogComponent],
+  declarations: [ParentPageComponent, ParentInviteCodeDialogComponent, ParentNavbarComponent],
   imports: [
     CommonModule,
     ParentRoutingModule,
