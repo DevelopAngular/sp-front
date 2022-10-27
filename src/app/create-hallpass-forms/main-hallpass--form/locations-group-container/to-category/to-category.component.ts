@@ -5,7 +5,7 @@ import {Pinnable} from '../../../../models/Pinnable';
 import {User} from '../../../../models/User';
 import {Location} from '../../../../models/Location';
 import {CreateFormService} from '../../../create-form.service';
-import {Observable, BehaviorSubject, fromEvent, Subject, of} from 'rxjs';
+import {Observable, BehaviorSubject, fromEvent, Subject, of, combineLatest} from 'rxjs';
 import {filter, tap, takeUntil, withLatestFrom, map, shareReplay} from 'rxjs/operators';
 import {MatDialog, MatDialogRef, MAT_DIALOG_DATA} from '@angular/material/dialog';
 import {DeviceDetection} from '../../../../device-detection.helper';
@@ -140,11 +140,14 @@ export class ToCategoryComponent implements OnInit, AfterViewInit {
       takeUntil(this.destroy$),
     );
     locTable$.subscribe();
+
+    const myLocations$ = (this.pinnable.type === 'category') ? this.locationsService.getLocationsWithCategory(this.pinnable.category) : of([]);
+    myLocations$.subscribe();
     // initialised here to make sure this.locTableRef is populated
-    this.listenLocation$.pipe(
+    combineLatest(this.listenLocation$, locTable$, myLocations$)
+    .pipe(
       takeUntil(this.destroy$),
-      withLatestFrom(locTable$),
-      tap(([data, _]) => {
+      tap(([data, _, myLocations]) => {
         try {
           // updated location sent via WS
           const loc: Location = Location.fromJSON(data);
@@ -156,12 +159,12 @@ export class ToCategoryComponent implements OnInit, AfterViewInit {
           }
           // check for locations of a category pinnable 
           const pinn = <Pinnable | Pinnable & {myLocations: Location[]}>this.pinnable;
-          if (!('myLocations' in pinn)) {
-            return;
+          if ('myLocations' in pinn) {
+            myLocations = pinn.myLocations;
           }
 
           // is the location loc owned by pinnable?
-          const found = pinn.myLocations.some((a: Location) => {
+          const found = (Array.isArray(myLocations) ? myLocations : []).some((a: Location) => {
             return +a.id === +loc.id
           });
           // but belongs to category pinnable?
@@ -171,12 +174,16 @@ export class ToCategoryComponent implements OnInit, AfterViewInit {
           }
           
           // update choices
-          let choices = pinn.myLocations;
+          let choices = myLocations as Location[];
           const updated = choices.map((x: Location) => {
-            if (+x.id === +loc.id) {
+            if (''+x.id === ''+loc.id) {
               return loc;
             }
-            return x;
+            try {
+              return Location.fromJSON(x);
+            } catch (e) {
+              console.log(e);
+            }
           });
 
           // is a freshly added location
@@ -185,7 +192,9 @@ export class ToCategoryComponent implements OnInit, AfterViewInit {
           }
 
           // update pinn
-          pinn.myLocations = updated;
+          if ('myLocations' in pinn) {
+            pinn.myLocations = updated;
+          }
           // trigger RV filtering here
           this.locTableRef.choices = updated;
 
