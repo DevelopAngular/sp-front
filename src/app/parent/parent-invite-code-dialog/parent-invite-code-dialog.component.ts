@@ -27,6 +27,7 @@ export class ParentInviteCodeDialogComponent implements OnInit {
     this.parentService.addStudent({...this.inviteCodeForm.value}).subscribe({
       next: (result: any) => {
         console.log("result : ", result);
+        this.dialogRef.close();
     }
   })
   }

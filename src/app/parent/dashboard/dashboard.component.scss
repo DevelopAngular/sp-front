@@ -8,6 +8,7 @@
         .heading {
             display: flex;
             align-items: center;
+            justify-content: space-between;
             .title {
                 @include textSize(28px, bold, $color: $navy500);
                 flex: 0 0 50%;

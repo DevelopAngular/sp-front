@@ -139,8 +139,8 @@ export class ParentSignUpComponent implements OnInit {
     window.open(link);
   }
 
-  goHome() {
-    this.router.navigate(['parent/auth/']);
+  goLogin() {
+    this.router.navigate(['auth']);
   }
 
   registerParent(){

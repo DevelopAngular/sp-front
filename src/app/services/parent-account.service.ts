@@ -26,7 +26,16 @@ export class ParentAccountService {
     return this.http.get('v1/parent/get_students');
   }
 
+  getParentInfo() {
+    return this.http.get('v1/parent/@me');
+  }
+
   addStudent(body){
-    return this.http.get('v1/parent/add_student', body);
+    console.log("body : ", body)
+    return this.http.post('v1/parent/add_student', body);
+  }
+
+  getStudentInviteCode(){
+    return this.http.get('v1/schools/467/student_invite_codes');
   }
 }

@@ -1,4 +1,6 @@
 import { Component, OnInit } from '@angular/core';
+import { ScreenService } from '../../services/screen.service';
+import { SideNavService } from '../../services/side-nav.service';
 
 declare const window;
 
@@ -11,8 +13,12 @@ export class ParentPageComponent implements OnInit {
 
   navbarHeight: string = '64px';
   hideNavbar: boolean;
+  data: any;
 
-  constructor() { }
+  constructor(
+    public screenService: ScreenService,
+    private sideNavService: SideNavService,
+  ) { }
 
   ngOnInit(): void {
     setTimeout(() => {
@@ -23,6 +29,13 @@ export class ParentPageComponent implements OnInit {
       this.hideNavbar = true;
     }else {
       this.hideNavbar = false;
+    }
+  }
+
+  onSettingClick($event) {
+    if (this.screenService.isDeviceLargeExtra) {
+      this.data = $event;
+      this.sideNavService.toggle$.next(true);
     }
   }
 

@@ -10,6 +10,7 @@ const routes: Routes = [
       // {path: 'auth', loadChildren: () => import('app/parent/auth/auth.module').then(m => m.AuthModule)},
       {path: '', redirectTo: 'dashboard', pathMatch: 'full'},
       {path: 'dashboard', loadChildren: () => import('./dashboard/dashboard.module').then(m => m.DashboardModule)},
+      {path: 'student/:id', loadChildren: () => import('./student-info/student-info.module').then(m => m.StudentInfoModule) },
       {path: '**', redirectTo: '', pathMatch: 'full'},
     ]
   },
