@@ -101,7 +101,9 @@ export class ImportStudentListComponent implements OnInit, OnDestroy {
             return mm
               // retain only strings that looks like an email
               .filter(m => m.indexOf('@') !== -1)
-              // unique
+              // emails are case insensitive
+              .map(v => v.toLowerCase())
+              // unique lowercased values
               .filter((v, i, me) => me.indexOf(v) === i)
               // posible white space
               .map(v => v.trim());
