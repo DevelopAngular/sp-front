@@ -1,6 +1,7 @@
 import { NgModule } from '@angular/core';
 import { Routes, RouterModule } from '@angular/router';
 import { ParentPageComponent } from './parent-page/parent-page.component';
+import {DashboardComponent} from './dashboard/dashboard.component';
 
 const routes: Routes = [
   {
@@ -9,7 +10,7 @@ const routes: Routes = [
     children: [
       // {path: 'auth', loadChildren: () => import('app/parent/auth/auth.module').then(m => m.AuthModule)},
       {path: '', redirectTo: 'dashboard', pathMatch: 'full'},
-      {path: 'dashboard', loadChildren: () => import('./dashboard/dashboard.module').then(m => m.DashboardModule)},
+      {path: 'dashboard', component: DashboardComponent, pathMatch: 'full'},
       {path: 'student/:id', loadChildren: () => import('./student-info/student-info.module').then(m => m.StudentInfoModule) },
       {path: '**', redirectTo: '', pathMatch: 'full'},
     ]
