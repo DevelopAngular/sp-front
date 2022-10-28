@@ -1,4 +1,5 @@
 <div [ngClass]="{ 'to-wrapper-to-date': formState.forLater && formState.formMode.role === 1, 'to-wrapper': !formState.forLater || formState.formMode.role !== 1}">
+  
   <div [ngClass]="headerTransition" #header>
     <div class="header-background"
          [attr.data-motion-opacity]="(frameMotion$ | async).direction"
@@ -11,6 +12,9 @@
       <div class="text ds-dialog-title">To where?</div>
     </div>
   </div>
+
+  <mat-spinner *ngIf="loading" [color]="'accent'" [diameter]="30"></mat-spinner>
+
   <div class="content-background"
        [attr.data-motion-opacity]="(frameMotion$ | async).direction"></div>
   <div class="to-content" [attr.data-motion-translate]="(frameMotion$ | async).direction">
@@ -38,11 +42,12 @@
           </mat-grid-list>
         </div>
       </div>
+
       <div class="all-rooms" *ngIf="!(isLocationList$ | async)">
         <div  [ngClass]="isIOSTablet ? 'ios-rooms-title' : 'rooms-title'" class="ds-dialog-subtitle" *ngIf="isStaff && teacherRooms.length && !dialogData.kioskModeRoom">All Rooms</div>
         <div class="pin-collection">
           <mat-grid-list class="grid center" [cols]="gridRestrictions.colsAmount" rowHeight="75px" [gutterSize]="gridRestrictions.gutterSize" [style.width]="gridRestrictions.gridWidth">
-            <mat-grid-tile *ngFor="let pinnable of pinnables | async">
+            <mat-grid-tile #ngForPinnables *ngFor="let pinnable of pinnables | async">
               <app-pinnable
                 [width]="gridRestrictions.pileWidth"
                 [height]="gridRestrictions.pileHeight"
@@ -60,6 +65,7 @@
           </mat-grid-list>
         </div>
       </div>
+
     </div>
 
     <app-location-table *ngIf="isLocationList$ | async"
@@ -96,6 +102,7 @@
         <img [src]="'./assets/Close.svg' | resolveAsset" width="11" height="11" (click)="removeBanner()">
       </div>
     </div>
+
   </div>
   <ng-container *ngIf="!displayFooters">
     <app-student-footer *ngIf="!isStaff" (locsViewEvent)="switchView($event)" [formState]="formState" [state]="'to'" [date]="date"></app-student-footer>

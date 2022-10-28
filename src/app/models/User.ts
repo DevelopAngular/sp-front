@@ -94,6 +94,7 @@ export class User extends BaseModel {
   isHead() {
     return this.roles.includes('_profile_admin') &&  this.roles.includes('manage_school');
   }
+
   isAdmin() {
     return this.roles.includes('_profile_admin');
   }

@@ -333,7 +333,11 @@ export class SPSearchComponent implements OnInit, OnDestroy {
     this.destroy$.complete();
   }
 
+  lastSearchText = '';
+
   onSearch(search: string) {
+    this.lastSearchText = search;
+
     switch (this.searchTarget) {
       case 'users':
           if (search !== '') {
