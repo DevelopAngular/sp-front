@@ -35,8 +35,8 @@
                             <app-input [input_type]="'password'" [autocomplete]="'new-password'" [width]="'250px'" [fieldSpace]="'0px'" [formGroup]="signUpForm" [forcedFocus]="inputIndex === 3" [controlName]="signUpForm.get('password')" [input_value]="signUpForm.get('password').value"
                                 [input_label]="'Password'" [showPasswordButton]="true" [placeholder]="'8+ characters'"></app-input>
                         </div>
-                        <div class="error" [style.position]="passwordError ? 'static' : 'absolute'" *ngIf="error$ | async as errorMessage"> {{ errorMessage }}</div>
-                        <div class="already-message" *ngIf="schoolAlreadyText$ | async as alreadyText">{{ alreadyText }}</div>
+                        <!-- <div class="error" [style.position]="passwordError ? 'static' : 'absolute'" *ngIf="error$ | async as errorMessage"> {{ errorMessage }}</div> -->
+                        <!-- <div class="already-message" *ngIf="schoolAlreadyText$ | async as alreadyText">{{ alreadyText }}</div> -->
                         <div class="ds-w-100 ds-flex-center-center ds-mt-20 ds-pt-10">
                             <app-gradient-button [size]="'editable'" [minWidth]="'265px'" [fontSize]="'15px'" [fontWeight]="'normal'" [minHeight]="'50px'" [gradient]="'#FFFFFF, #00B476'" [disabled]="signUpForm.invalid" (buttonClick)="registerParent()">
                                 <span style="font-weight: normal;">
