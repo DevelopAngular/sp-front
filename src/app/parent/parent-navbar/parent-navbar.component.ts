@@ -52,7 +52,7 @@ export class ParentNavbarComponent implements OnInit {
   ngOnInit(): void {
     this.parentService.getParentInfo().subscribe({
       next: (result: any) => {
-        this.effectiveUser = result;
+        this.user = result;
       },
       error: (error: any) => {
         console.log("Error : ", error)
