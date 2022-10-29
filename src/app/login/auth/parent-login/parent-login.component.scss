@@ -51,9 +51,9 @@
     }
     .login-form {
         width: 325px;
-        background: #FFFFFF;
-        box-shadow: 0 5px 20px rgba(0, 0, 0, 0.0616259);
-        border-radius: 12px;
+        // background: #FFFFFF;
+        // box-shadow: 0 5px 20px rgba(0, 0, 0, 0.0616259);
+        // border-radius: 12px;
         z-index: 10;
         box-sizing: border-box;
         transition: margin-top .3s ease-in;
@@ -197,40 +197,46 @@ input {
     display: flex;
     flex-direction: column;
     align-items: center;
-    .login-form {
+    background: #FFFFFF;
+    box-shadow: 0 5px 20px rgba(0, 0, 0, 0.0616259);
+    border-radius: 12px;
+}
+
+.login-form {
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    .title {
         display: flex;
-        flex-direction: column;
-        justify-content: center;
         align-items: center;
-        .title {
-            display: flex;
-            align-items: center;
-            color: $navy;
-            font-size: 24px;
-            font-weight: bold;
+        color: $navy;
+        font-size: 24px;
+        font-weight: bold;
+        width: 126px;
+        margin: auto;
+    }
+    .content {
+        margin-top: 30px;
+        .input-password {
+            z-index: 10;
+            margin-top: 12px;
+            transition: opacity .25s ease;
         }
-        .content {
-            margin-top: 30px;
-            .input-password {
-                z-index: 10;
-                margin-top: 12px;
-                transition: opacity .25s ease;
-            }
-            .button {
-                display: flex;
-                justify-content: center;
-                width: 100%;
-            }
-            .error {
-                color: red;
-                font-size: 13px;
-                margin-top: 10px;
-                //position: absolute;
-            }
-            .already-message {
-                @extend .error;
-                color: $jade;
-            }
+        .button {
+            display: flex;
+            justify-content: center;
+            width: 100%;
+        }
+        .error {
+            color: red;
+            font-size: 13px;
+            margin-top: 10px;
+            //position: absolute;
+        }
+        .already-message {
+            @extend .error;
+            color: $jade;
         }
     }
 }

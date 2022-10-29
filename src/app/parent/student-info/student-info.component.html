@@ -19,6 +19,10 @@
                             </div>
                             <div notranslate class="student-name" [style.font-size]="isScrollable ? '13px' : isLongName ? '18px' : '28px'">{{ profile?.display_name }}</div>
                         </div>
+                        <div class="top-buttons">
+                            <!--      <app-round-button [icon]="'Notifications'" (buttonClick)="openNotification()"></app-round-button>-->
+                            <app-round-button style="margin-left: 13px" [icon]="'Dots'" (buttonClick)="openStudentSettings($event)"></app-round-button>
+                        </div>
                     </div>
 
                     <div class="content">
@@ -48,26 +52,17 @@
                             </div>
                         </ng-template>
 
-                        <div class="forms">
-                            <ng-template #passLimitNuxTemplate>
-                                <app-nux-universal description="Limit the number of passes students can have per day" (gotItEvent)="dismissPassLimitNux()"></app-nux-universal>
-                            </ng-template>
-                        </div>
-                        <ng-template #fakeForm>
-                            <div class="form fake-animate"></div>
-                        </ng-template>
-
                         <div class="form">
                             <div class="form-content-container">
                                 <div class="form-content">
                                     <div class="title">Status</div>
-                                    <div class="status-value" [style.opacity]="!user.isAdmin() ? '0.5' : '1'" [showToolTip]="!user.isAdmin()" customToolTip [contentTemplate]="tooltip" style="cursor: pointer; text-transform: capitalize" [style.color]="profile && profile?.status === 'active' ? '#00B476' : (profile && profile?.status === 'disabled' ? '#7f879d' : '#6651F1')">{{ profile?.status }}
-                                        <ng-template #tooltip>
+                                    <div class="status-value" [style.opacity]="'1'" style="cursor: pointer; text-transform: capitalize" [style.color]="profile && profile?.status === 'active' ? '#00B476' : (profile && profile?.status === 'disabled' ? '#7f879d' : '#6651F1')">{{ profile?.status }}
+                                        <!-- <ng-template #tooltip>
                                             <div class="ds-tooltip" style="text-align: left">
                                                 <div class="only-admin">ADMIN ONLY</div>
                                                 Only admins are able to change the account status.
                                             </div>
-                                        </ng-template>
+                                        </ng-template> -->
                                     </div>
                                 </div>
                                 <div class="form-content">
@@ -226,44 +221,6 @@
                                     <div class="button">
                                         <app-gradient-button [style.margin-top]="'20px'" *ngIf="(studentStats$ | async) && (studentStats$ | async)?.total_created_passes > 6 && !(studentsStatsLoading$ | async)" [gradient]="'#FFFFFF, #FFFFFF'" [leftIcon]="isFullScreenPasses ? './assets/Chevron Up (Blue-Gray).svg' : './assets/Chevron Down (Blue-Gray).svg'"
                                             [textColor]="'#7f879d'" (buttonClick)="isFullScreenPasses = !isFullScreenPasses">{{ isFullScreenPasses ? 'Collapse' : 'See all ' + (studentStats$ | async)?.total_created_passes + ' passes' }}
-                                        </app-gradient-button>
-                                    </div>
-                                </div>
-                            </app-overview-container>
-                        </div>
-                        <div class="block" [style.margin-top]="'40px'">
-                            <app-overview-container [title]="'Reports'" [icon]="'./assets/Report (Navy).svg'" (clickFilter)="openFilter($event)">
-                                <div class="block-container">
-                                    <div class="info-cards" *ngIf="!(studentsStatsLoading$ | async); else fakeReports">
-                                        <ng-container *ngIf="(studentStats$ | async) && (studentStats$ | async).reports.length; else emptyReportState">
-                                            <ng-container *ngFor="let report of (studentStats$ | async)?.reports; let i = index">
-                                                <div class="report" *ngIf="i <= 5" appCrossPointerEventTarget (pointerClickEvent)="openReportInfo(report)">
-                                                    <div class="date">{{ getLastActiveDate(report.created) }}</div>
-                                                    <div class="description">{{ report.message }}</div>
-                                                </div>
-                                                <div class="report" *ngIf="i > 5 && isFullScreenReports" appCrossPointerEventTarget (pointerClickEvent)="openReportInfo(report)">
-                                                    <div class="date">{{ getLastActiveDate(report.created) }}</div>
-                                                    <div class="description">{{ report.message }}</div>
-                                                </div>
-                                            </ng-container>
-                                        </ng-container>
-
-                                        <ng-template #emptyReportState>
-                                            <div class="empty-state">
-                                                <div class="icon"><img width="78px" [src]="'./assets/Report (Gray-400).svg' | resolveAsset"></div>
-                                                <div class="title">Once a teacher reports a student, it’ll show up here.</div>
-                                            </div>
-                                        </ng-template>
-                                    </div>
-
-                                    <ng-template #fakeReports>
-                                        <div class="info-cards">
-                                            <div class="fake-report fake-animate" *ngFor="let report of [1, 1, 1, 1]"></div>
-                                        </div>
-                                    </ng-template>
-                                    <div class="button">
-                                        <app-gradient-button [style.margin-top]="'20px'" *ngIf="(studentStats$ | async) && (studentStats$ | async)?.reports.length > 6 && !(studentsStatsLoading$ | async)" [gradient]="'#FFFFFF, #FFFFFF'" [leftIcon]="isFullScreenReports ? './assets/Chevron Up (Blue-Gray).svg' : './assets/Chevron Down (Blue-Gray).svg'"
-                                            [textColor]="'#7f879d'" (buttonClick)="isFullScreenReports = !isFullScreenReports">{{ isFullScreenReports ? 'Collapse' : 'See all ' + (studentStats$ | async)?.reports.length + ' reports' }}
                                         </app-gradient-button>
                                     </div>
                                 </div>

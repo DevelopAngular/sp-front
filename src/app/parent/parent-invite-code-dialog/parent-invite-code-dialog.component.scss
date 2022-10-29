@@ -11,7 +11,7 @@
     .instruction {
         @include textSize(14px, normal, $gray500);
         margin-top: 14px;
-        span {
+        a {
             color: #00B476;
             &:hover {
                 text-decoration: underline;

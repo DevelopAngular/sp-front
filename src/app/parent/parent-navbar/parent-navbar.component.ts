@@ -12,6 +12,7 @@ import { ParentAccountService } from '../../services/parent-account.service';
 import { ScreenService } from '../../services/screen.service';
 import { SideNavService } from '../../services/side-nav.service';
 import { SettingsComponent } from '../../settings/settings.component';
+import { ParentSettingComponent } from '../parent-setting/parent-setting.component';
 
 @Component({
   selector: 'app-parent-navbar',
@@ -51,11 +52,7 @@ export class ParentNavbarComponent implements OnInit {
   ngOnInit(): void {
     this.parentService.getParentInfo().subscribe({
       next: (result: any) => {
-        console.log("result : ", result);
         this.effectiveUser = result;
-        // if (result?.results) {
-        //   this.studentsList = result?.results;
-        // }
       },
       error: (error: any) => {
         console.log("Error : ", error)

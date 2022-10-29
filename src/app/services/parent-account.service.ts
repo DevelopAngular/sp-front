@@ -30,9 +30,12 @@ export class ParentAccountService {
     return this.http.get('v1/parent/@me');
   }
 
-  addStudent(body){
-    console.log("body : ", body)
+  addStudent(body) {
     return this.http.post('v1/parent/add_student', body);
+  }
+
+  removeStudent(id) {
+    return this.http.delete(`v1/parent/remove_student/${id}`);
   }
 
   getStudentInviteCode(){

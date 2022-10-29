@@ -35,34 +35,11 @@ export class DashboardComponent implements OnInit, AfterViewInit {
   ngOnInit(): void {
     // this.getStudentCodes()
     this.getStudents();
+    this.getParentInfo();
     if (localStorage.getItem("open-invite-student")) {
       this.openInviteFamiliesDialog();
       localStorage.removeItem("open-invite-student");
     }
-
-    this.userService.user$.pipe(
-      map((user) => {
-        this.user = User.fromJSON(user);
-        console.log("user : ", this.user);
-      })
-    );
-
-    this.http.globalReload$
-      .pipe(
-        switchMap(() => {
-          return combineLatest([
-            this.userService.effectiveUser,
-            this.userService.user$.pipe(filter((u) => !!u)),
-          ]);
-        }),
-        takeUntil(this.destroyer$),
-        switchMap(([eu, user]: [RepresentedUser, User]) => {
-          this.user = User.fromJSON(user);
-          console.log("User : ", this.user);
-          return this.dataService.getLocationsWithTeacher(user);
-        })
-      )
-      .subscribe((locs): void => {});
   }
 
   ngAfterViewInit() {}
@@ -84,6 +61,18 @@ export class DashboardComponent implements OnInit, AfterViewInit {
     //   width: '425px',
     //   height: '480px',
     // });
+  }
+
+  getParentInfo() {
+    this.parentService.getParentInfo().subscribe({
+      next: (result: any) => {
+        this.user = result;
+      },
+      error: (error: any) => {
+        console.log("Error : ", error)
+
+      }
+    });
   }
 
   getStudents() {

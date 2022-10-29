@@ -13,6 +13,7 @@
             .title {
                 @include textSize(28px, bold, $color: $navy500);
                 flex: 0 0 50%;
+                text-transform: capitalize;
             }
         }
         .student-cards-wrapper {
@@ -24,26 +25,30 @@
                     flex: 0 0 50%;
                     cursor: pointer;
                     position: relative;
+                    &.add-stud {
+                        border-radius: 12px;
+                        padding: 10px;
+                        margin: 0 10px;
+                        background-color: white;
+                        display: flex;
+                        flex: 0 0 40%;
+                        img {
+                            width: 80px;
+                            margin-left: 10px;
+                        }
+                        p {
+                            width: 100%;
+                            text-align: center;
+                            padding-left: 10px;
+                            @include textSize(28px, bold, $color: $green500);
+                        }
+                    }
                     .wrapper {
                         border-radius: 12px;
                         padding: 10px;
                         margin: 0 10px;
                         background-color: white;
                         @include flexLayout(center, flex-start);
-                        &.add-stud {
-                            display: flex;
-                            flex: 0 0 40%;
-                            img {
-                                width: 80px;
-                                margin-left: 10px;
-                            }
-                            p {
-                                width: 100%;
-                                text-align: center;
-                                padding-left: 20px;
-                                @include textSize(28px, bold, $color: $green500);
-                            }
-                        }
                         .avatar-info {
                             .avatar {
                                 width: 88px;

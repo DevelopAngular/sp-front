@@ -1,8 +1,8 @@
 <div class="main-wrapper">
     <div class="content-wrapper">
         <div class="heading">
-            <p class="title">Good morning, {{ user?.first_name}}</p>
-            <div>
+            <p class="title">Good morning, {{ user?.display_name}}</p>
+            <div *ngIf="studentsList.length != 0">
                 <app-gradient-button [hoverColor]="'#00B476'" [withShadow]="true" [gradient]="'#00B476'" [cursor]="'pointer'" leftIcon="assets/Plus (White).svg" (buttonClick)="openInviteFamiliesDialog()">
                     Add a student
                 </app-gradient-button>
@@ -10,9 +10,9 @@
         </div>
         <div class="student-cards-wrapper">
             <div class="cards">
-                <div *ngIf="studentsList.length == 0" class="card add-stud">
+                <div (click)="openInviteFamiliesDialog()" *ngIf="studentsList.length == 0" class="card add-stud">
                     <img [src]="'./assets/Add Button (Green).svg' | resolveAsset" alt="">
-                    <p (click)="openInviteFamiliesDialog()">Add a student</p>
+                    <p>Add a student</p>
                 </div>
                 <div class="card" *ngFor="let stucent of studentsList" (click)="goToStudent(stucent)">
                     <div class="wrapper">

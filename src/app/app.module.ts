@@ -130,7 +130,7 @@ const appRoutes: Routes = [
   },
   {
     path: 'parent',
-    // canActivate: [NotSeenIntroGuard, AuthenticatedGuard, IsAdminGuard],
+    canActivate: [AuthenticatedGuard],
     loadChildren: () => import('app/parent/parent.module').then(m => m.ParentModule),
     data: {
       hideSchoolToggleBar: true,

@@ -106,6 +106,9 @@ import { ClassLinkComponent } from '../admin/accounts/class-link/class-link.comp
 import { RoomCodeComponent } from '../room-code/room-code.component';
 import { TeacherPinEndPassComponent } from '../teacher-pin-end-pass/teacher-pin-end-pass.component';
 import { TeacherSelectionComponent } from '../teacher-selection/teacher-selection.component';
+import { DateButtonComponent } from '../student-info-card/date-button/date-button.component';
+import { OverviewContainerComponent } from '../student-info-card/student-passes-overwiew/overview-container.component';
+import { SettingsComponent } from '../settings/settings.component';
 const DEFAULT_SWIPER_CONFIG: SwiperConfigInterface = {
   direction: 'horizontal',
   slidesPerView: 'auto'
@@ -218,7 +221,10 @@ const DEFAULT_SWIPER_CONFIG: SwiperConfigInterface = {
     IdCardIdNumbersComponent,
     ConfirmDeleteKioskModeComponent,
     ClassLinkComponent,
-    TeacherSelectionComponent
+    TeacherSelectionComponent,
+    DateButtonComponent,
+    OverviewContainerComponent,
+    SettingsComponent
 
   ],
   exports: [
@@ -313,7 +319,10 @@ const DEFAULT_SWIPER_CONFIG: SwiperConfigInterface = {
     IdCardIdNumbersComponent,
     ConfirmDeleteKioskModeComponent,
     ClassLinkComponent,
-    TeacherSelectionComponent
+    TeacherSelectionComponent,
+    DateButtonComponent,
+    OverviewContainerComponent,
+    SettingsComponent
   ],
   providers: [
     {

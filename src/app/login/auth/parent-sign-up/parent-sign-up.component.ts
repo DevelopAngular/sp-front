@@ -70,8 +70,6 @@ export class ParentSignUpComponent implements OnInit {
       (fc: FormControl) => {
         return  fc.value.indexOf('@') >= 0 && INVALID_DOMAINS.includes(fc.value.slice(fc.value.indexOf('@') + 1).toLowerCase()) ? {invalid_email: true}  : null;
       }
-    ], [
-        this.checkEmailValidatorAsync.bind(this)
     ]),
       password: new FormControl('',
       [

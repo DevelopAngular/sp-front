@@ -25,11 +25,15 @@ import { EncounterPreventionService } from '../../services/encounter-prevention.
 import { HallPassesService } from '../../services/hall-passes.service';
 import { HttpService } from '../../services/http-service';
 import { IDCardService } from '../../services/IDCardService';
+import { ParentAccountService } from '../../services/parent-account.service';
 import { PassLimitService } from '../../services/pass-limit.service';
 import { QRBarcodeGeneratorService } from '../../services/qrbarcode-generator.service';
 import { ToastService } from '../../services/toast.service';
 import { UserService } from '../../services/user.service';
+import { SettingsDescriptionPopupComponent } from '../../settings-description-popup/settings-description-popup.component';
+import { ConfirmationComponent } from '../../shared/shared-components/confirmation/confirmation.component';
 import { ModelFilterComponent } from '../../student-info-card/model-filter/model-filter.component';
+import { RemoveStudentComponent } from '../remove-student/remove-student.component';
 
 @Component({
   selector: 'app-student-info',
@@ -52,8 +56,8 @@ export class StudentInfoComponent implements OnInit, AfterViewInit, OnDestroy  {
   studentStats$: Observable<UserStats>;
   lastStudentPasses$: Observable<HallPass[]>;
 
-  exclusionGroups$: Observable<ExclusionGroup[]>;
-  exclusionGroupsLoading$: Observable<boolean>;
+  // exclusionGroups$: Observable<ExclusionGroup[]>;
+  // exclusionGroupsLoading$: Observable<boolean>;
   user: User;
 
   school: School;
@@ -82,18 +86,10 @@ export class StudentInfoComponent implements OnInit, AfterViewInit, OnDestroy  {
   destroy$: Subject<any> = new Subject<any>();
   introsData: IntroData;
   introSubs: Subscription;
-  passLimitNuxWrapperPosition: ConnectedPosition = {
-    originX: 'center',
-    originY: 'bottom',
-    overlayX: 'start',
-    overlayY: 'center',
-    offsetY: 30,
-    offsetX: 50
-  };
-  showPassLimitNux = new Subject<boolean>();
-  passLimitStudentInfoRef: MatDialogRef<PassLimitStudentInfoComponent>;
-  IDCardEnabled = false;
-  IDCARDDETAILS: any;
+  // showPassLimitNux = new Subject<boolean>();
+  // passLimitStudentInfoRef: MatDialogRef<PassLimitStudentInfoComponent>;
+  // IDCardEnabled = false;
+  // IDCARDDETAILS: any;
 
   constructor(
     private dialog: MatDialog,
@@ -108,7 +104,8 @@ export class StudentInfoComponent implements OnInit, AfterViewInit, OnDestroy  {
     private darkTheme: DarkThemeSwitch,
     private passLimitsService: PassLimitService,
     private qrBarcodeGenerator: QRBarcodeGeneratorService,
-    private idCardService: IDCardService
+    private idCardService: IDCardService,
+    private parentService: ParentAccountService,
   ) { }
 
   @HostListener('document.scroll', ['$event'])
@@ -154,6 +151,7 @@ export class StudentInfoComponent implements OnInit, AfterViewInit, OnDestroy  {
     )
       .subscribe(user => {
         this.user = user;
+        console.log("User : ", this.user)
       });
 
     this.route.params.pipe(
@@ -163,38 +161,39 @@ export class StudentInfoComponent implements OnInit, AfterViewInit, OnDestroy  {
     ).subscribe({
       next: user => {
         this.profile = user;
+        console.log("profile : ", this.profile)
         this.school = this.userService.getUserSchool();
         this.passesService.getQuickPreviewPassesRequest(this.profile.id, true);
         this.getUserStats();
-        this.studentStats$ = this.userService.studentsStats$.pipe(map(stats => stats[this.profile.id]));
-        this.encounterPreventionService.getExclusionGroupsRequest({student: this.profile.id});
+        // this.studentStats$ = this.userService.studentsStats$.pipe(map(stats => stats[this.profile.id]));
+        // this.encounterPreventionService.getExclusionGroupsRequest({student: this.profile.id});
 
-        if (this.studentPassLimitSubs) {
-          this.studentPassLimitSubs.unsubscribe();
-        }
+        // if (this.studentPassLimitSubs) {
+        //   this.studentPassLimitSubs.unsubscribe();
+        // }
 
-        this.studentPassLimitSubs = merge(
-          this.passLimitsService.watchPassLimits(),
-          this.passLimitsService.watchIndividualPassLimit(this.profile.id)
-        )
-          .pipe(concatMap(() => this.passLimitsService.getStudentPassLimit(this.profile.id)))
-          .subscribe(res => {
-            this.studentPassLimit = res;
-            this.cdr.detectChanges();
-          });
+        // this.studentPassLimitSubs = merge(
+        //   this.passLimitsService.watchPassLimits(),
+        //   this.passLimitsService.watchIndividualPassLimit(this.profile.id)
+        // )
+        //   .pipe(concatMap(() => this.passLimitsService.getStudentPassLimit(this.profile.id)))
+        //   .subscribe(res => {
+        //     this.studentPassLimit = res;
+        //     this.cdr.detectChanges();
+        //   });
       }
     });
 
-    this.exclusionGroups$ = this.encounterPreventionService.exclusionGroups$;
-    this.exclusionGroupsLoading$ = this.encounterPreventionService.exclusionGroupsLoading$;
+    // this.exclusionGroups$ = this.encounterPreventionService.exclusionGroups$;
+    // this.exclusionGroupsLoading$ = this.encounterPreventionService.exclusionGroupsLoading$;
     this.lastStudentPasses$ = this.passesService.quickPreviewPasses$.pipe(map(passes => passes.map(pass => HallPass.fromJSON(pass))));
     this.loadingPassesStats$ = this.passesService.quickPreviewPassesLoading$;
-    this.passesStats$ = this.passesService.quickPreviewPassesStats$;
+    // this.passesStats$ = this.passesService.quickPreviewPassesStats$;
     this.studentsStatsLoading$ = this.userService.studentsStatsLoading$;
 
-    this.passesService.createPassEvent$.pipe(take(1)).subscribe(res => {
-      this.router.navigate(['/main/passes']);
-    });
+    // this.passesService.createPassEvent$.pipe(take(1)).subscribe(res => {
+    //   this.router.navigate(['/main/passes']);
+    // });
 
     this.userService.currentUpdatedAccount$._profile_student.pipe(filter(r => !!r))
       .subscribe(user => {
@@ -209,7 +208,7 @@ export class StudentInfoComponent implements OnInit, AfterViewInit, OnDestroy  {
       this.introSubs = this.userService.introsData$.pipe(filter(i => !!i)).subscribe({
         next: intros => {
           this.introsData = intros;
-          this.showPassLimitNux.next(!intros?.student_pass_limit?.universal?.seen_version);
+          // this.showPassLimitNux.next(!intros?.student_pass_limit?.universal?.seen_version);
         }
       });
     }, 3000);
@@ -268,6 +267,63 @@ export class StudentInfoComponent implements OnInit, AfterViewInit, OnDestroy  {
 
   back() {
     window.history.back();
+  }
+
+  openStudentSettings(elem) {
+    const settings: any = [
+      {
+        label: 'Remove student',
+        icon: './assets/icons/minus-icon (Red).svg',
+        textColor: '#E32C66',
+        backgroundColor: '#F4F4F4',
+        action: 'remove_student',
+        // tooltip: 'Copy a private link to this student and send it to another staff member at your school.'
+      },
+    ];
+    UNANIMATED_CONTAINER.next(true);
+    const st = this.dialog.open(SettingsDescriptionPopupComponent, {
+      panelClass: 'consent-dialog-container',
+      backdropClass: 'invis-backdrop',
+      data: {trigger: elem.currentTarget, settings, profile: this.profile}
+    });
+
+    st.afterClosed().pipe(tap(() => UNANIMATED_CONTAINER.next(false)))
+      .subscribe(async (action) => {
+        if (action === 'remove_student') {
+          let data = {
+            title: `Remove ${this.profile?.display_name}`,
+            message: "When you remove a student, they will be unliked from your parent account. The student's account will not be deleted.",
+            okButtonText: "Remove",
+          };
+          this.openConfirmationDialog(data).then((res) => {
+            if (res) {
+              this.parentService.removeStudent(this.profile.id).subscribe({
+                next: (result: any) => {
+                  this.back();
+                },
+                error: (error: any) => {
+                  console.log("Error : ", error);
+                },
+              });
+            }
+          });
+        }
+      });
+  }
+
+  openConfirmationDialog(data) {
+    return new Promise((resolve) => {
+      const dialogRef = this.dialog.open(ConfirmationComponent, {
+        panelClass: "search-pass-card-dialog-container",
+        backdropClass: "custom-bd",
+        disableClose: true,
+        data: data,
+      });
+
+      dialogRef.afterClosed().subscribe((result) => {
+        return resolve(result);
+      });
+    });
   }
 
   openDateFilter(event) {
@@ -379,13 +435,13 @@ export class StudentInfoComponent implements OnInit, AfterViewInit, OnDestroy  {
     });
   }
 
-  openReportInfo(report) {
-    this.dialog.open(ReportInfoDialogComponent, {
-      panelClass: 'overlay-dialog',
-      backdropClass: 'custom-bd',
-      data: {report: report}
-    });
-  }
+  // openReportInfo(report) {
+  //   this.dialog.open(ReportInfoDialogComponent, {
+  //     panelClass: 'overlay-dialog',
+  //     backdropClass: 'custom-bd',
+  //     data: {report: report}
+  //   });
+  // }
 
   dateText({start, end}): string {
     if (start.isSame(moment().subtract(3, 'days'), 'day')) {
@@ -408,9 +464,9 @@ export class StudentInfoComponent implements OnInit, AfterViewInit, OnDestroy  {
     }
   }
   
-  dismissPassLimitNux() {
-    this.showPassLimitNux.next(false);
-    this.userService.updateIntrosStudentPassLimitRequest(this.introsData, 'universal', '1');
-  }
+  // dismissPassLimitNux() {
+  //   this.showPassLimitNux.next(false);
+  //   this.userService.updateIntrosStudentPassLimitRequest(this.introsData, 'universal', '1');
+  // }
 
 }
