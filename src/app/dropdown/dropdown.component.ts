@@ -155,7 +155,7 @@ export class DropdownComponent implements OnInit {
       } else {
         this.schools = this.currentInitialObject;
       }
-    } else if (this.teachers && School.fromJSON(this.currentInitialObject[0]) instanceof User) {
+    } else if (this.teachers && User.fromJSON(this.currentInitialObject[0]) instanceof User) {
       if (!!value) {
         this.teachers = this.currentInitialObject.filter(teacher => +teacher.id === +value || teacher.display_name.toLowerCase().includes(value.toLowerCase()));
       } else {

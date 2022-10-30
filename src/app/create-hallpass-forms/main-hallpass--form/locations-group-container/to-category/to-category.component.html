@@ -20,6 +20,7 @@
      [attr.data-motion-translate]="(frameMotion$ | async).direction"
      [style.height]="date ? '74%' : '78%'" (scroll)="tableScroll($event)" #rc>
       <app-location-table
+        #locationTable
         class="center"
         (onSelect)="locationChosen($event)"
         [forStaff]="isStaff"

@@ -166,8 +166,10 @@
                                     </div>
                                 </div>
                                 <div class="form-content">
-                                    <div class="title">Last Active
-                                        <span class="support-icon" customToolTip="The last time a student was signed in and active on desktop or mobile."><img width="13px" [src]="'./assets/Support (Gray-200).svg' | resolveAsset"></span>
+                                    <div class="title">Last sign-in
+                                        <span class="support-icon" customToolTip="The last time the student signed into SmartPass." [width]="'200px'">
+                                          <img width="13px" [src]="'./assets/Support (Gray-200).svg' | resolveAsset">
+                                        </span>
                                     </div>
                                     <div class="value">{{ profile?.last_login ? getLastActiveDate(profile?.last_login) : 'Hasn\'t signed in' }}</div>
                                 </div>
@@ -181,8 +183,9 @@
                             </div>
                             <div class="form-content" [style.margin]="'20px 0'">
                                 <div class="title">Grade</div>
-                                <div class="value" *ngIf="!user.isAdmin()">{{ profile.grade_level || '-' }}</div>
-                                <div class="value" *ngIf="user.isAdmin()">
+                                <div class="value" *ngIf="profile.grade_level">{{ profile.grade_level}}</div>
+                                <div class="value" *ngIf="!profile.grade_level && !user.isAdmin()">-</div>
+                                <div class="value" *ngIf="user.isAdmin() && !profile.grade_level">
                                     <app-gradient-button (buttonClick)="openGradeLevel()" [size]="'small'" [rightIconWidth]="'16px'" [gradient]="'#00B476, #00B476'" [rightIcon]="'./assets/External Link (White).svg'">
                                         Add Grade Level
                                     </app-gradient-button>
@@ -190,8 +193,9 @@
                             </div>
                             <div class="form-content">
                                 <div class="title">ID</div>
-                                <div class="value" *ngIf="!user.isAdmin()">{{ profile.custom_id || '-' }}</div>
-                                <div class="value" *ngIf="user.isAdmin()">
+                                <div class="value">{{ profile.custom_id}}</div>
+                              <div class="value" *ngIf="!profile.custom_id && !user.isAdmin()">-</div>
+                                <div class="value" *ngIf="user.isAdmin() && !profile.custom_id">
                                     <app-gradient-button (buttonClick)="openIDNumber()" [size]="'small'" [rightIconWidth]="'16px'" [gradient]="'#00B476, #00B476'" [rightIcon]="'./assets/External Link (White).svg'">
                                         Add ID Number
                                     </app-gradient-button>
