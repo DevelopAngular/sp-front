@@ -20,8 +20,9 @@ export class EncounterDetectionEffects {
             concatMap(action => {
                 return this.EDService.getEncounterDetectionFunction(action.url)
                     .pipe(
-                        map(({results}) => {
-                            return encounterDetectionActions.getEncounterDetectionSuccess({ encounterDetection: results });
+                        map(({results, created_at}) => {
+                            return encounterDetectionActions.getEncounterDetectionSuccess(
+                              { encounterDetection: results, createdAt: created_at});
                         }),
                         catchError(error => {
                           console.log(error);

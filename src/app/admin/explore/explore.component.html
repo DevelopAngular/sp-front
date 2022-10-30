@@ -9,8 +9,8 @@
             </div>
         </div>
         <div *ngIf="views[currentView].id === 4" class="update-info-wrapper">
-            <p class="info">All Detected Encounters in the past 60 days</p>
-            <p class="day"><img [src]="'./assets/Info (Blue-Gray).svg' | resolveAsset" width="16" height="16" alt=""><span>Updated Yesterday, 8 PM</span></p>
+            <p class="info">Detected Encounters from Last Week (Mon - Fri)</p>
+            <p class="day"><img [src]="'./assets/Info (Blue-Gray).svg' | resolveAsset" width="16" height="16" alt=""><span *ngIf="(encounterDetectionCreatedAt$ | async) as date">Updated {{ date }}</span></p>
         </div>
         <div class="filters" [ngSwitch]="views[currentView].id">
             <div class="filter">
@@ -122,7 +122,7 @@
 
         <div class="encounter-detection" *ngIf="views[currentView].id === 4">
             <div *ngIf="encounterDetectedState.errored$ | async; else success">
-                <app-sp-data-table [isCheckbox]="false" [loading$]="false" [showEmptyState]="true" [emptyIcon]="'./assets/Encounter Detection (Blue-Gray).svg' | resolveAsset" [emptyText]="'You must have at-least 15 days of pass history before seeing results from Detected Encounters. Stay tuned!'"
+                <app-sp-data-table [isCheckbox]="false" [loading$]="false" [showEmptyState]="true" [emptyIcon]="'./assets/Encounter Detection (Blue-Gray).svg' | resolveAsset" [emptyText]="'You must have at-least one week of pass history before seeing results from Detected Encounters. Check back next Sunday!'"
                     [currentPage]="'encounter_detection'" [height]="(schools$ | async).length > 1 ? 'calc(100vh - 200px)' : 'calc(100vh - 150px)'" [disabledInfinityScroll]="true" [showPrintButtons]="false"></app-sp-data-table>
             </div>
             <app-sp-data-table #success [isCheckbox]="isCheckbox$" [data$]="encounterDetectionData$" [loading$]="encounterDetectedState.loading$" [showEmptyState]="encounterDetectedState.isEmpty && !(encounterDetectedState.loading$ | async)" [emptyIcon]="'./assets/Encounter Detection (Blue-Gray).svg' | resolveAsset"

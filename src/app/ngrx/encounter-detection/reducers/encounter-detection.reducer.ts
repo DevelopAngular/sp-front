@@ -9,7 +9,8 @@ export const adapter: EntityAdapter<EncounterDetection> = createEntityAdapter<En
 const encounterDetectionInitialState: EncounterDetectionState = {
     loading: true,
     error: false,
-    encounterDetection: []
+    encounterDetection: [],
+    createdAt: null
 };
 
 const reducer = createReducer(
@@ -17,8 +18,8 @@ const reducer = createReducer(
     on(encounterDetectionActions.getEncounterDetection,
         state => ({ ...state, loading: true, error: false})),
 
-    on(encounterDetectionActions.getEncounterDetectionSuccess, (state, { encounterDetection }) => {
-        return { ...state, loading: false, error: false, encounterDetection };
+    on(encounterDetectionActions.getEncounterDetectionSuccess, (state, { encounterDetection, createdAt }) => {
+        return { ...state, loading: false, error: false, encounterDetection, createdAt };
     }),
 
     on(encounterDetectionActions.getEncounterDetectionFailure, (state, {}) => {
