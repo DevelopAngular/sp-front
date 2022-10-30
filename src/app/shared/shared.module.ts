@@ -109,6 +109,7 @@ import { TeacherSelectionComponent } from '../teacher-selection/teacher-selectio
 import { DateButtonComponent } from '../student-info-card/date-button/date-button.component';
 import { OverviewContainerComponent } from '../student-info-card/student-passes-overwiew/overview-container.component';
 import { SettingsComponent } from '../settings/settings.component';
+import { InviteFamiliesDialogComponent } from '../admin/invite-families-dialog/invite-families-dialog.component';
 const DEFAULT_SWIPER_CONFIG: SwiperConfigInterface = {
   direction: 'horizontal',
   slidesPerView: 'auto'
@@ -224,7 +225,8 @@ const DEFAULT_SWIPER_CONFIG: SwiperConfigInterface = {
     TeacherSelectionComponent,
     DateButtonComponent,
     OverviewContainerComponent,
-    SettingsComponent
+    SettingsComponent,
+    InviteFamiliesDialogComponent
 
   ],
   exports: [
@@ -322,7 +324,8 @@ const DEFAULT_SWIPER_CONFIG: SwiperConfigInterface = {
     TeacherSelectionComponent,
     DateButtonComponent,
     OverviewContainerComponent,
-    SettingsComponent
+    SettingsComponent,
+    InviteFamiliesDialogComponent
   ],
   providers: [
     {

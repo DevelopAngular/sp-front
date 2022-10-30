@@ -5,6 +5,7 @@ import {teachersReducer} from '../nested-states/teachers/reducers';
 import {assistantsReducer} from '../nested-states/assistants/reducers';
 import {studentsReducer} from '../nested-states/students/reducers';
 import {countAccountsReducer} from '../nested-states/count-accounts/reducers';
+import { parentsReducer } from '../nested-states/parents/reducers';
 
 
 
@@ -18,6 +19,7 @@ export function accountsReducer(
     teachersAccounts: teachersReducer(state.teachersAccounts, action),
     assistantsAccounts: assistantsReducer(state.assistantsAccounts, action),
     studentsAccounts: studentsReducer(state.studentsAccounts, action),
+    parentsAccounts: parentsReducer(state.parentsAccounts, action),
     countAccounts: countAccountsReducer(state.countAccounts, action)
   };
 }

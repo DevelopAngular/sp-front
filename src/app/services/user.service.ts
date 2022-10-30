@@ -138,6 +138,7 @@ import {GoogleLoginService} from './google-login.service';
 import {School} from '../models/School';
 import {UserStats} from '../models/UserStats';
 import {getStudentStats} from '../ngrx/accounts/nested-states/students/actions';
+import { getAddedParent, getCountParents, getCurrentUpdatedParent, getLastAddedParents, getLoadedParents, getLoadingParents, getNextRequestParents, getParentsAccountsCollection, getParentsAccountsEntities, getParentSort } from '../ngrx/accounts/nested-states/parents/states';
 
 @Injectable({
   providedIn: 'root'
@@ -160,7 +161,8 @@ export class UserService implements OnDestroy {
     adminAccounts: this.store.select(getAdminsCollections),
     teacherAccounts: this.store.select(getTeacherAccountsCollection),
     assistantAccounts: this.store.select(getAssistantsAccountsCollection),
-    studentAccounts: this.store.select(getStudentsAccountsCollection)
+    studentAccounts: this.store.select(getStudentsAccountsCollection),
+    parentAccounts: this.store.select(getParentsAccountsCollection)
   };
 
   countAccounts$ = {
@@ -168,7 +170,8 @@ export class UserService implements OnDestroy {
     _profile_admin: this.store.select(getCountAdmins),
     _profile_student: this.store.select(getCountStudents),
     _profile_teacher: this.store.select(getCountTeachers),
-    _profile_assistant: this.store.select(getCountAssistants)
+    _profile_assistant: this.store.select(getCountAssistants),
+    _profile_parent: this.store.select(getCountParents)
   };
 
   accountsEntities = {
@@ -176,7 +179,8 @@ export class UserService implements OnDestroy {
     _profile_admin: this.store.select(getAdminsAccountsEntities),
     _profile_teacher: this.store.select(getTeachersAccountsEntities),
     _profile_student: this.store.select(getStudentsAccountsEntities),
-    _profile_assistant: this.store.select(getAssistantsAccountsEntities)
+    _profile_assistant: this.store.select(getAssistantsAccountsEntities),
+    _profile_parent: this.store.select(getParentsAccountsEntities)
   };
 
   isLoadedAccounts$ = {
@@ -184,7 +188,8 @@ export class UserService implements OnDestroy {
     admin: this.store.select(getLoadedAdminsAccounts),
     teacher: this.store.select(getLoadedTeachers),
     student: this.store.select(getLoadedStudents),
-    assistant: this.store.select(getLoadedAssistants)
+    assistant: this.store.select(getLoadedAssistants),
+    parent: this.store.select(getLoadedParents)
   };
 
   isLoadingAccounts$ = {
@@ -192,7 +197,8 @@ export class UserService implements OnDestroy {
     admin: this.store.select(getLoadingAdminsAccounts),
     teacher: this.store.select(getLoadingTeachers),
     student: this.store.select(getLoadingStudents),
-    assistant: this.store.select(getLoadingAssistants)
+    assistant: this.store.select(getLoadingAssistants),
+    parent: this.store.select(getLoadingParents)
   };
 
   lastAddedAccounts$ = {
@@ -200,7 +206,8 @@ export class UserService implements OnDestroy {
     _profile_student: this.store.select(getLastAddedStudents),
     _profile_teacher: this.store.select(getLastAddedTeachers),
     _profile_admin: this.store.select(getLastAddedAdminsAccounts),
-    _profile_assistant: this.store.select(getLastAddedAssistants)
+    _profile_assistant: this.store.select(getLastAddedAssistants),
+    _profile_parent: this.store.select(getLastAddedParents)
   };
 
   nextRequests$ = {
@@ -208,28 +215,32 @@ export class UserService implements OnDestroy {
     _profile_student: this.store.select(getNextRequestStudents),
     _profile_teacher: this.store.select(getNextRequestTeachers),
     _profile_admin: this.store.select(getNextRequestAdminsAccounts),
-    _profile_assistant: this.store.select(getNextRequestAssistants)
+    _profile_assistant: this.store.select(getNextRequestAssistants),
+    _profile_parent: this.store.select(getNextRequestParents)
   };
 
   accountSort$ = {
     _profile_admin: this.store.select(getAdminSort),
     _profile_teacher: this.store.select(getTeacherSort),
     _profile_student: this.store.select(getStudentSort),
-    _profile_assistant: this.store.select(getAssistantSort)
+    _profile_assistant: this.store.select(getAssistantSort),
+    _profile_parent: this.store.select(getParentSort)
   };
 
   addedAccount$ = {
     _profile_admin: this.store.select(getAddedAdmin),
     _profile_teacher: this.store.select(getAddedTeacher),
     _profile_student: this.store.select(getAddedStudent),
-    _profile_assistant: this.store.select(getAddedAssistant)
+    _profile_assistant: this.store.select(getAddedAssistant),
+    _profile_parent: this.store.select(getAddedParent)
   };
 
   currentUpdatedAccount$ = {
     _profile_admin: this.store.select(getCurrentUpdatedAdmin),
     _profile_teacher: this.store.select(getCurrentUpdatedTeacher),
     _profile_student: this.store.select(getCurrentUpdatedStudent),
-    _profile_assistant: this.store.select(getCurrentUpdatedAssistant)
+    _profile_assistant: this.store.select(getCurrentUpdatedAssistant),
+    _profile_parent: this.store.select(getCurrentUpdatedParent)
   };
 
   /**
@@ -392,6 +403,8 @@ export class UserService implements OnDestroy {
       return {loading: this.isLoadingAccounts$.student, loaded: this.isLoadedAccounts$.student};
     } else if (role === '_profile_assistant') {
       return {loading: this.isLoadingAccounts$.assistant, loaded: this.isLoadedAccounts$.assistant};
+    } else if (role === '_profile_parent') {
+      return {loading: this.isLoadingAccounts$.parent, loaded: this.isLoadedAccounts$.parent};
     }
   }
 
@@ -406,6 +419,8 @@ export class UserService implements OnDestroy {
       return this.accounts.studentAccounts;
     } else if (role === '_profile_assistant') {
       return this.accounts.assistantAccounts;
+    } else if (role === '_profile_parent') {
+      return this.accounts.parentAccounts;
     }
   }
 

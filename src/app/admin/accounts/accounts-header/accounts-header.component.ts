@@ -42,6 +42,7 @@ import {ConnectedPosition} from '@angular/cdk/overlay';
 import {PassLimitBulkEditComponent} from '../../../pass-limit-bulk-edit/pass-limit-bulk-edit.component';
 import {RecommendedDialogConfig} from '../../../shared/shared-components/confirmation-dialog/confirmation-dialog.component';
 import {PassLimitService} from '../../../services/pass-limit.service';
+import { InviteFamiliesDialogComponent } from '../../invite-families-dialog/invite-families-dialog.component';
 
 @Component({
   selector: 'app-accounts-header',
@@ -216,6 +217,8 @@ export class AccountsHeaderComponent implements OnInit, AfterViewInit, OnDestroy
       return count.student_count + ' students';
     } else if (this.currentTab === '_profile_assistant') {
       return count.assistant_count + ' assistants';
+    } else if (this.currentTab === '_profile_parent') {
+      return count.parent_count + ' parents';
     }
   }
 
@@ -431,6 +434,15 @@ export class AccountsHeaderComponent implements OnInit, AfterViewInit, OnDestroy
       next: () => {
         this.tableService.activeFilters$.next(this.tableService.activeFilters$.getValue());
       }
+    });
+  }
+
+  inviteFamilies() {
+    const dialogRef = this.matDialog.open(InviteFamiliesDialogComponent, {
+      panelClass: 'accounts-profiles-dialog',
+      backdropClass: 'custom-bd',
+      width: '425px',
+      height: '480px',
     });
   }
 

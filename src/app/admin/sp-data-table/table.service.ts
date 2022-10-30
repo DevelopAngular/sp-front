@@ -5,7 +5,7 @@ import {BehaviorSubject, Subject} from 'rxjs';
 export interface TableFilterOption {
   text: string;
   label: string;
-  roles: Array<'_profile_student' | '_profile_teacher' | '_profile_admin' | '_profile_assistant'>;
+  roles: Array<'_profile_student' | '_profile_teacher' | '_profile_admin' | '_profile_assistant' | '_profile_parent'>;
   filterCallback(account: any): boolean;
 }
 

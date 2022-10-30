@@ -102,6 +102,10 @@ export class User extends BaseModel {
     return this.roles.includes('_profile_student');
   }
 
+  isParent() {
+    return this.roles.includes('_profile_parent');
+  }
+
   isTeacher() {
     return this.roles.includes('_profile_teacher');
   }
@@ -111,7 +115,7 @@ export class User extends BaseModel {
   }
 
   userRoles() {
-    return this.roles.filter(role => role === '_profile_admin' || role === '_profile_teacher' || role === '_profile_student' || role === '_profile_assistant');
+    return this.roles.filter(role => role === '_profile_admin' || role === '_profile_teacher' || role === '_profile_student' || role === '_profile_assistant' || role === '_profile_parent');
   }
 
   toString() {

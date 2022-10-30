@@ -39,6 +39,15 @@ export class ParentAccountService {
   }
 
   getStudentInviteCode(){
-    return this.http.get('v1/schools/467/student_invite_codes');
+    return this.http.get(`v1/schools/${this.http.getSchool().id}/student_invite_codes`);
   }
+
+  getParentsMetrics() {
+    return this.http.get('v1/parent/metrics');
+  }
+
+  getUnconnectedStudents() {
+    return this.http.get('v1/parent/unconnected_students');
+  }
+
 }

@@ -1,18 +1,17 @@
 <div class="wrapper">
-    <div class="heading" #header>
-        <div class="back-button">
-            <img (click)="back()" [src]="'./assets/Back Button (Gray-White).svg'" alt="Back Button (Blue-White).svg">
-        </div>
-        <div class="ds-dialog-title-navy ds-flex-center-center">
-            <img [src]="'./assets/Invite Families (Green).svg'" width="24" height="24" alt="(White).svg" class="ds-mr-10">
-            <span>Invite Families</span>
+    <div class="header" #header>
+        <div class="background-header"></div>
+        <img class="back-button" (click)="back()" [src]="'./assets/Back Button (Blue-White).svg' | resolveAsset">
+        <div class="title-header" style="z-index: 10; display: flex" [attr.data-motion-translate]="(frameMotion$ | async).direction">
+            <img width="21" height="21" [src]="'./assets/Invite Families (Green).svg' | resolveAsset" alt="Options">
+            <div class="ds-dialog-title" [style.margin-left]="'12px'">Invite Families</div>
         </div>
     </div>
-    <div class="content">
+    <div class="content" [attr.data-motion-translate]="(frameMotion$ | async).direction">
         <div class="page">
             <div class="block" style="margin-top: 15px;">
                 <div class="inner">
-                    <div class="title"><span>85% </span> 1398 of 1645 families connected</div>
+                    <div class="title"><span>{{parentsMetrics.percent_connected}}% </span> {{parentsMetrics.connected}} of {{parentsMetrics.total}} families connected</div>
                 </div>
                 <mat-divider></mat-divider>
                 <div class="inner" style="display: flex;">
@@ -20,9 +19,9 @@
                         <img [src]="'./assets/Warning (Orange).svg'" alt="">
                     </div>
                     <!-- <div style="display: flex; align-items: center"> -->
-                    <div class="info">247 students that don’t have a family contact.</div>
+                    <div class="info">{{parentsMetrics.unconnected}} students that don’t have a family contact.</div>
                     <div class="info-icon">
-                        <app-icon-button (clickEvent)="generateStudentsCsv(accountMissingGradeLevels$)" [size]="24" [srcString]="'Circle Download'"></app-icon-button>
+                        <app-icon-button (clickEvent)="getUnconnectedStudents()" [size]="24" [srcString]="'Circle Download'"></app-icon-button>
                     </div>
                     <!-- </div> -->
                 </div>
@@ -34,7 +33,7 @@
                             Auto Invite Parents
                         </div>
                         <div class="toggle-control">
-                            <app-toggle-input [form]="schoolForm" [controlSize]="'small'" [delimiter]="false" [controlName]="'display_card_room'"></app-toggle-input>
+                            <app-toggle-input [form]="inviteForm" [controlSize]="'small'" [delimiter]="false" [controlName]="'auto_invite'"></app-toggle-input>
                         </div>
                     </div>
                     <div class="info" style="padding: 14px 0;width: 80%;">Any parent who is not invited will automatically receive invites.</div>
@@ -53,7 +52,7 @@
                         </div>
                     </div>
                     <div class="downlod-btn">
-                        <app-gradient-button [size]="'small'" [gradient]="'#7083A0'" [leftIcon]="'/assets/Download Parent (White).svg'" [leftImageWidth]="'16px'" [leftImageHeight]="'21px'" [cursor]="'pointer'">Download Parent Invite Codes
+                        <app-gradient-button [size]="'small'" [gradient]="'#7083A0'" [leftIcon]="'/assets/Download Parent (White).svg'" [leftImageWidth]="'16px'" [leftImageHeight]="'21px'" [cursor]="'pointer'" (buttonClick)="getInviteCodes()">Download Parent Invite Codes
                         </app-gradient-button>
                     </div>
                 </div>

@@ -16,7 +16,8 @@ export const countAccountsinitialState: CountAccountsState = {
     profile_count: '-',
     student_count: '-',
     teacher_count: '-',
-    total_count: '-'
+    total_count: '-',
+    parent_count: '-'
   },
   loading: false,
   loaded: false
