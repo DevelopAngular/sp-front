@@ -40,6 +40,7 @@ export class ParentSignUpComponent implements OnInit {
   private pending: BehaviorSubject<boolean> = new BehaviorSubject<boolean>(false);
   private jwt: JwtHelperService;
   private destroy$ = new Subject<any>();
+  public inputIndex = 0;
 
   constructor(
     private sanitizer: DomSanitizer,
