@@ -6,7 +6,7 @@
         </app-input>
     </div>
     <div class="buttons">
-        <app-gradient-button [size]="'editable'" [fontSize]="'12px'" [fontWeight]="'normal'" [width]="'50px'" textColor="#7083A0" [gradient]="'#FFFFFF'" [hoverColor]="'#00B476'" [cursor]="'pointer'" (buttonClick)="dialogRef.close(text)">
+        <app-gradient-button [size]="'editable'" [fontSize]="'12px'" [fontWeight]="'normal'" [width]="'50px'" textColor="#7083A0" [gradient]="'#FFFFFF'" [hoverColor]="'#00B476'" [cursor]="'pointer'" (buttonClick)="dialogRef.close()">
             Skip
         </app-gradient-button>
         <app-gradient-button [disabled]="!inviteCodeForm.get('student_code')" [hoverColor]="'#00B476'" [gradient]="'#00B476'" [cursor]="'pointer'" (buttonClick)="addStudent()">

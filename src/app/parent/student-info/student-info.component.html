@@ -51,58 +51,59 @@
                                 <div class="fake-card-stats fake-animate" *ngFor="let card of [1, 1, 1]"></div>
                             </div>
                         </ng-template>
-
-                        <div class="form">
-                            <div class="form-content-container">
-                                <div class="form-content">
-                                    <div class="title">Status</div>
-                                    <div class="status-value" [style.opacity]="'1'" style="cursor: pointer; text-transform: capitalize" [style.color]="profile && profile?.status === 'active' ? '#00B476' : (profile && profile?.status === 'disabled' ? '#7f879d' : '#6651F1')">{{ profile?.status }}
-                                        <!-- <ng-template #tooltip>
+                        <div class="forms">
+                            <div class="form">
+                                <div class="form-content-container">
+                                    <div class="form-content">
+                                        <div class="title">Status</div>
+                                        <div class="status-value" [style.opacity]="'1'" style="cursor: pointer; text-transform: capitalize" [style.color]="profile && profile?.status === 'active' ? '#00B476' : (profile && profile?.status === 'disabled' ? '#7f879d' : '#6651F1')">{{ profile?.status }}
+                                            <!-- <ng-template #tooltip>
                                             <div class="ds-tooltip" style="text-align: left">
                                                 <div class="only-admin">ADMIN ONLY</div>
                                                 Only admins are able to change the account status.
                                             </div>
                                         </ng-template> -->
+                                        </div>
                                     </div>
+                                    <div class="form-content">
+                                        <div class="title">Last Active
+                                            <span class="support-icon" customToolTip="The last time a student was signed in and active on desktop or mobile."><img width="13px" [src]="'./assets/Support (Gray-200).svg' | resolveAsset"></span>
+                                        </div>
+                                        <div class="value">{{ profile?.last_login ? getLastActiveDate(profile?.last_login) : 'Hasn\'t signed in' }}</div>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <div class="form" style="flex-direction: column; align-items: flex-start">
+                                <div class="form-content">
+                                    <div [attr.nostranslate]="(getEmailOrUsername().toLowerCase() === 'email') ? null : true" class="title">{{ getEmailOrUsername() }}</div>
+                                    <div notranslate class="value">{{ profileEmail }}</div>
+                                </div>
+                                <div class="form-content" [style.margin]="'20px 0'">
+                                    <div class="title">Grade</div>
+                                    <div class="value">{{ profile.grade_level || '-' }}</div>
                                 </div>
                                 <div class="form-content">
-                                    <div class="title">Last Active
-                                        <span class="support-icon" customToolTip="The last time a student was signed in and active on desktop or mobile."><img width="13px" [src]="'./assets/Support (Gray-200).svg' | resolveAsset"></span>
-                                    </div>
-                                    <div class="value">{{ profile?.last_login ? getLastActiveDate(profile?.last_login) : 'Hasn\'t signed in' }}</div>
+                                    <div class="title">ID</div>
+                                    <div class="value">{{ profile.custom_id || '-' }}</div>
                                 </div>
-                            </div>
-                        </div>
+                                <div class="form-content" [style.margin]="'20px 0'">
+                                    <div class="title">Account Type <span class="support-icon" customToolTip [contentTemplate]="text"><img width="13px" [src]="'./assets/Support (Gray-200).svg' | resolveAsset"></span></div>
+                                    <ng-template #text>
+                                        <div class="ds-tooltip" style="max-width: 290px">If an account signs in with a third-party such as Google or Clever, or is a Standard account and signs in with a dedicated SmartPass password.</div>
+                                    </ng-template>
+                                    <div class="value">{{ accountType }}</div>
+                                    <!--                <app-select-role-->
+                                    <!--                  [selectedRoles]="[{id: 1, role: 'Student', icon: './assets/Student (Navy).svg'}]"-->
+                                    <!--                  [isAccessAdd]="false"-->
+                                    <!--                  [cardsBackground]="'#FFFFFF'"-->
+                                    <!--                ></app-select-role>-->
+                                </div>
 
-                        <div class="form" style="flex-direction: column; align-items: flex-start">
-                            <div class="form-content">
-                                <div [attr.nostranslate]="(getEmailOrUsername().toLowerCase() === 'email') ? null : true" class="title">{{ getEmailOrUsername() }}</div>
-                                <div notranslate class="value">{{ profileEmail }}</div>
-                            </div>
-                            <div class="form-content" [style.margin]="'20px 0'">
-                                <div class="title">Grade</div>
-                                <div class="value">{{ profile.grade_level || '-' }}</div>
-                            </div>
-                            <div class="form-content">
-                                <div class="title">ID</div>
-                                <div class="value">{{ profile.custom_id || '-' }}</div>
-                            </div>
-                            <div class="form-content" [style.margin]="'20px 0'">
-                                <div class="title">Account Type <span class="support-icon" customToolTip [contentTemplate]="text"><img width="13px" [src]="'./assets/Support (Gray-200).svg' | resolveAsset"></span></div>
-                                <ng-template #text>
-                                    <div class="ds-tooltip" style="max-width: 290px">If an account signs in with a third-party such as Google or Clever, or is a Standard account and signs in with a dedicated SmartPass password.</div>
-                                </ng-template>
-                                <div class="value">{{ accountType }}</div>
-                                <!--                <app-select-role-->
-                                <!--                  [selectedRoles]="[{id: 1, role: 'Student', icon: './assets/Student (Navy).svg'}]"-->
-                                <!--                  [isAccessAdd]="false"-->
-                                <!--                  [cardsBackground]="'#FFFFFF'"-->
-                                <!--                ></app-select-role>-->
-                            </div>
-
-                            <div class="form-content">
-                                <div class="title">School</div>
-                                <div class="value" ignore>{{ school?.name }}</div>
+                                <div class="form-content">
+                                    <div class="title">School</div>
+                                    <div class="value" ignore>{{ school?.name }}</div>
+                                </div>
                             </div>
                         </div>
                     </div>

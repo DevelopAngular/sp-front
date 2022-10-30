@@ -1,5 +1,5 @@
 import { ConnectedPosition } from '@angular/cdk/overlay';
-import { AfterViewInit, ChangeDetectorRef, Component, ElementRef, HostListener, OnDestroy, OnInit, ViewChild } from '@angular/core';
+import { AfterViewInit, ChangeDetectionStrategy, ChangeDetectorRef, Component, ElementRef, HostListener, OnDestroy, OnInit, ViewChild } from '@angular/core';
 import { MatDialog, MatDialogRef } from '@angular/material/dialog';
 import { ActivatedRoute, Router } from '@angular/router';
 import * as moment from 'moment';
@@ -9,6 +9,7 @@ import { Util } from '../../../Util';
 import { DateTimeFilterComponent } from '../../admin/explore/date-time-filter/date-time-filter.component';
 import { ReportInfoDialogComponent } from '../../admin/explore/report-info-dialog/report-info-dialog.component';
 import { StatusPopupComponent } from '../../admin/profile-card-dialog/status-popup/status-popup.component';
+import { ResizeProfileImage } from '../../animations';
 import { UNANIMATED_CONTAINER } from '../../consent-menu-overlay';
 import { DarkThemeSwitch } from '../../dark-theme-switch';
 import { ExclusionGroup } from '../../models/ExclusionGroup';
@@ -38,7 +39,9 @@ import { RemoveStudentComponent } from '../remove-student/remove-student.compone
 @Component({
   selector: 'app-student-info',
   templateUrl: './student-info.component.html',
-  styleUrls: ['./student-info.component.scss']
+  styleUrls: ['./student-info.component.scss'],
+  // animations: [ResizeProfileImage],
+  // changeDetection: ChangeDetectionStrategy.OnPush
 })
 export class StudentInfoComponent implements OnInit, AfterViewInit, OnDestroy  {
 
@@ -188,7 +191,7 @@ export class StudentInfoComponent implements OnInit, AfterViewInit, OnDestroy  {
     // this.exclusionGroupsLoading$ = this.encounterPreventionService.exclusionGroupsLoading$;
     this.lastStudentPasses$ = this.passesService.quickPreviewPasses$.pipe(map(passes => passes.map(pass => HallPass.fromJSON(pass))));
     this.loadingPassesStats$ = this.passesService.quickPreviewPassesLoading$;
-    // this.passesStats$ = this.passesService.quickPreviewPassesStats$;
+    this.passesStats$ = this.passesService.quickPreviewPassesStats$;
     this.studentsStatsLoading$ = this.userService.studentsStatsLoading$;
 
     // this.passesService.createPassEvent$.pipe(take(1)).subscribe(res => {
