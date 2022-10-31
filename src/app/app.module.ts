@@ -77,6 +77,7 @@ import {SmartpassSearchEffects} from './ngrx/smartpass-search/effects';
 import { IdcardOverlayContainerComponent } from './idcard-overlay-container/idcard-overlay-container.component';
 import { EncounterDetectionEffects } from './ngrx/encounter-detection/effects';
 import { SharedModule } from './shared/shared.module';
+import {ParentsEffects} from './ngrx/accounts/nested-states/parents/effects';
 // uncomment when app uses formatDate and so on
 //import {LOCALE_ID} from '@angular/core';
 //import {HttpService} from './services/http-service';
@@ -152,9 +153,9 @@ const appRoutes: Routes = [
     loadChildren: () => import('app/weblinks/weblinks.module').then(m => m.WeblinksModule),
     data: {hideSchoolToggleBar: true, hubspot: false, authFree: true, hideScroll: false},
   },
-  { 
-    path: 'mobile-restriction', 
-    loadChildren: () => import('app/mobile-restriction/mobile-restriction.module').then(m => m.MobileRestrictionModule), 
+  {
+    path: 'mobile-restriction',
+    loadChildren: () => import('app/mobile-restriction/mobile-restriction.module').then(m => m.MobileRestrictionModule),
   },
   {path: '**', redirectTo: 'main/passes', pathMatch: 'full'},
 ];
@@ -234,7 +235,8 @@ const appRoutes: Routes = [
             ExclusionGroupsEffects,
             ToastEffects,
             SmartpassSearchEffects,
-            EncounterDetectionEffects
+            EncounterDetectionEffects,
+            ParentsEffects
         ]),
         StoreDevtoolsModule.instrument({}),
         HammerModule,
@@ -249,8 +251,8 @@ const appRoutes: Routes = [
     {provide: SWIPER_CONFIG, useValue: DEFAULT_SWIPER_CONFIG},
     // uncomment when app uses formatDate and so on
     /*{
-      provide: LOCALE_ID, 
-      deps:[HttpService], 
+      provide: LOCALE_ID,
+      deps:[HttpService],
       useFactory: (hs: HttpService) => hs.LocaleID,
     }*/,
     provideErrorHandler(),
