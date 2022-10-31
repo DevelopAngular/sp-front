@@ -52,7 +52,7 @@ export class InviteFamiliesDialogComponent implements OnInit {
   getUnconnectedStudents() {
     this.parentService.getUnconnectedStudents().subscribe({
       next: (result: any) => {
-        // this.parentsMetrics = result.results;
+        console.log("result : ", result)
       },
       error: (error: any) => {
         console.log("Error : ", error)
