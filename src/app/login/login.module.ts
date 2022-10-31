@@ -6,10 +6,14 @@ import { LoginComponent } from './login.component';
 import { SharedModule } from '../shared/shared.module';
 import {CoreModule} from '../core/core.module';
 import {AllowMobileService} from '../services/allow-mobile.service';
+import { ParentSignUpComponent } from './parent-sign-up/parent-sign-up.component';
+import { ParentLoginComponent } from './parent-login/parent-login.component';
 
 @NgModule({
   declarations: [
-    LoginComponent
+    LoginComponent,
+    ParentSignUpComponent,
+    ParentLoginComponent
   ],
   imports: [
     CommonModule,

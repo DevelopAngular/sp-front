@@ -78,6 +78,7 @@ import { IdcardOverlayContainerComponent } from './idcard-overlay-container/idca
 import { EncounterDetectionEffects } from './ngrx/encounter-detection/effects';
 import { SharedModule } from './shared/shared.module';
 import {ParentsEffects} from './ngrx/accounts/nested-states/parents/effects';
+import { IsParentGuard } from './guards/is-parent.guard'
 // uncomment when app uses formatDate and so on
 //import {LOCALE_ID} from '@angular/core';
 //import {HttpService} from './services/http-service';
@@ -131,7 +132,7 @@ const appRoutes: Routes = [
   },
   {
     path: 'parent',
-    canActivate: [AuthenticatedGuard],
+    canActivate: [AuthenticatedGuard, IsParentGuard],
     loadChildren: () => import('app/parent/parent.module').then(m => m.ParentModule),
     data: {
       hideSchoolToggleBar: true,

@@ -1,14 +1,11 @@
 import { NgModule } from '@angular/core';
 import { Routes, RouterModule } from '@angular/router';
-import { ParentLoginComponent } from './auth/parent-login/parent-login.component';
-import { ParentSignUpComponent } from './auth/parent-sign-up/parent-sign-up.component';
 import { LoginComponent } from './login.component';
+import { ParentSignUpComponent } from './parent-sign-up/parent-sign-up.component';
 
 const routes: Routes = [
+  { path: 'parent-sign-up', component: ParentSignUpComponent, pathMatch: 'full' },
   { path: '', component: LoginComponent },
-  {path: 'auth', loadChildren: () => import('app/login/auth/auth.module').then(m => m.AuthModule)},
-  // { path: 'auth/parent/signup', component: ParentSignUpComponent },
-  // { path: 'auth/parent/login', component: ParentLoginComponent },
 ];
 
 @NgModule({

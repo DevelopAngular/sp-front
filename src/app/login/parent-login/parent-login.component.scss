@@ -1,5 +1,4 @@
-@import "../../../../sp-colors";
-@import "../../../../design-system.scss";
+@import "../../../sp-colors";
 :host {
     height: 100%;
 }
@@ -58,21 +57,6 @@
         z-index: 10;
         box-sizing: border-box;
         transition: margin-top .3s ease-in;
-    }
-    .bottom-text {
-        text-align: center;
-        width: 70%;
-        margin: 15px auto;
-        @include textSize(14px, 300, $color: $gray500);
-        .link {
-            text-decoration: underline;
-            // font-weight: bold;
-            color: inherit;
-            cursor: pointer;
-            &:hover {
-                text-decoration: underline;
-            }
-        }
     }
     .spinner {
         position: absolute;
@@ -224,28 +208,16 @@ input {
     justify-content: center;
     align-items: center;
     .title {
-        // display: flex;
-        text-align: center;
+        display: flex;
         align-items: center;
         color: $navy;
-        font-size: 21px;
+        font-size: 24px;
         font-weight: bold;
-        .school-signin_sub-title {
-            @include textSize(14px, 400, $color: $gray500);
-            margin-top: 8px;
-            .sn-link {
-                color: $green500;
-                cursor: pointer;
-                font-size: 14px;
-                font-weight: 700;
-                &:hover {
-                    text-decoration: underline;
-                }
-            }
-        }
+        width: 126px;
+        margin: auto;
     }
     .content {
-        margin-top: 20px;
+        margin-top: 30px;
         .input-password {
             z-index: 10;
             margin-top: 12px;
