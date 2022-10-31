@@ -74,42 +74,65 @@ export class ParentNavbarComponent implements OnInit {
       .subscribe((res) => this.showOptions(this.settingsButton));
   }
 
+  // TODO: Re-enable sidenav logic
   showOptions(event) {
     if (!this.isOpenSettings) {
-      if (this.screenService.isDeviceLargeExtra) {
-        this.sideNavService.toggle$.next(true);
-        this.sideNavService.toggleLeft$.next(true);
-      }
-
       const target = new ElementRef(event.currentTarget);
-      if (!this.screenService.isDeviceLargeExtra) {
-        this.isOpenSettings = true;
-        UNANIMATED_CONTAINER.next(true);
-        const settingRef = this.dialog.open(SettingsComponent, {
-          panelClass: ["calendar-dialog-container", "animation"],
-          backdropClass: "invis-backdrop",
-          data: { trigger: target, isSwitch: this.showSwitchButton },
-        });
+      this.isOpenSettings = true;
+      UNANIMATED_CONTAINER.next(true);
+      const settingRef = this.dialog.open(SettingsComponent, {
+        panelClass: ['calendar-dialog-container', 'animation'],
+        backdropClass: 'invis-backdrop',
+        data: { trigger: target, isSwitch: this.showSwitchButton },
+      });
 
-        settingRef.afterClosed().subscribe((action) => {
-          UNANIMATED_CONTAINER.next(false);
-          this.isOpenSettings = false;
-          this.settingsAction(action);
-        });
-      }
+      settingRef.afterClosed().subscribe((action) => {
+        UNANIMATED_CONTAINER.next(false);
+        this.isOpenSettings = false;
+        this.settingsAction(action);
+      });
 
       this.settingsClick.emit({
         trigger: target,
         isSwitch: this.showSwitchButton,
       });
-
-      this.sideNavService.sideNavData$.next({
-        trigger: target,
-        isSwitch: this.showSwitchButton,
-      });
-
-      this.sideNavService.sideNavType$.next("left");
     }
+
+    // if (!this.isOpenSettings) {
+    //   if (this.screenService.isDeviceLargeExtra) {
+    //     this.sideNavService.toggle$.next(true);
+    //     this.sideNavService.toggleLeft$.next(true);
+    //   }
+    //
+    //   const target = new ElementRef(event.currentTarget);
+    //   if (!this.screenService.isDeviceLargeExtra) {
+    //     this.isOpenSettings = true;
+    //     UNANIMATED_CONTAINER.next(true);
+    //     const settingRef = this.dialog.open(SettingsComponent, {
+    //       panelClass: ["calendar-dialog-container", "animation"],
+    //       backdropClass: "invis-backdrop",
+    //       data: { trigger: target, isSwitch: this.showSwitchButton },
+    //     });
+    //
+    //     settingRef.afterClosed().subscribe((action) => {
+    //       UNANIMATED_CONTAINER.next(false);
+    //       this.isOpenSettings = false;
+    //       this.settingsAction(action);
+    //     });
+    //   }
+    //
+    //   this.settingsClick.emit({
+    //     trigger: target,
+    //     isSwitch: this.showSwitchButton,
+    //   });
+    //
+    //   this.sideNavService.sideNavData$.next({
+    //     trigger: target,
+    //     isSwitch: this.showSwitchButton,
+    //   });
+    //
+    //   this.sideNavService.sideNavType$.next("left");
+    // }
   }
 
   settingsAction(action: string) {

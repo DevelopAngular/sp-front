@@ -6,15 +6,15 @@ import { DomSanitizer, Meta, SafeUrl, Title } from '@angular/platform-browser';
 import { ActivatedRoute, Router } from '@angular/router';
 import { BehaviorSubject, Observable, of, Subject } from 'rxjs';
 import {filter, finalize, pluck, takeUntil} from 'rxjs/operators';
-import { environment } from '../../../../environments/environment';
-import { DeviceDetection } from '../../../device-detection.helper';
-import { LoginMethod } from '../../../google-signin/google-signin.component';
-import { GoogleLoginService } from '../../../services/google-login.service';
-import { HttpService } from '../../../services/http-service';
-import { KeyboardShortcutsService } from '../../../services/keyboard-shortcuts.service';
-import { LoginDataService } from '../../../services/login-data.service';
-import { StorageService } from '../../../services/storage.service';
-import { ToastService } from '../../../services/toast.service';
+import { environment } from '../../../environments/environment';
+import { DeviceDetection } from '../../device-detection.helper';
+import { LoginMethod } from '../../google-signin/google-signin.component';
+import { GoogleLoginService } from '../../services/google-login.service';
+import { HttpService } from '../../services/http-service';
+import { KeyboardShortcutsService } from '../../services/keyboard-shortcuts.service';
+import { LoginDataService } from '../../services/login-data.service';
+import { StorageService } from '../../services/storage.service';
+import { ToastService } from '../../services/toast.service';
 
 @Component({
   selector: 'app-parent-login',

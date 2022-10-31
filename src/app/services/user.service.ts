@@ -6,7 +6,7 @@ import {constructUrl} from '../live-data/helpers';
 import {Logger} from './logger.service';
 import {User} from '../models/User';
 import {PollingService} from './polling-service';
-import {catchError, exhaustMap, filter, map, switchMap, take, takeUntil, tap} from 'rxjs/operators';
+import { catchError, concatMap, exhaustMap, filter, map, switchMap, take, takeUntil, tap } from 'rxjs/operators'
 import {Paged} from '../models';
 import {RepresentedUser} from '../navbar/navbar.component';
 import {Store} from '@ngrx/store';
@@ -290,6 +290,7 @@ export class UserService implements OnDestroy {
   schools$: Observable<School[]>;
 
   destroy$: Subject<any> = new Subject<any>();
+  destroyGlobalReload: Subject<any> = new Subject<any>();
 
   constructor(
     private http: HttpService,
@@ -301,9 +302,26 @@ export class UserService implements OnDestroy {
     private loginService: GoogleLoginService,
     private loginDataService: LoginDataService
   ) {
+
+    this.loginService.isAuthenticated$.pipe(
+      filter(Boolean),
+      concatMap(() => this.http.get<User>('v1/parent/@me')),
+      map(account => {
+        account['sync_types'] = [];
+        return User.fromJSON(account);
+      })
+    ).subscribe({
+      next: parentAccount => {
+        this.destroyGlobalReload.next();
+        this.http.effectiveUserId.next(parseInt(parentAccount.id, 10));
+        this.userData.next(parentAccount);
+      }
+    });
+
     this.schools$ = this.http.schools$;
     this.http.globalReload$
       .pipe(
+        takeUntil(this.destroyGlobalReload),
         tap(() => {
           this.http.effectiveUserId.next(null);
           this.clearRepresentedUsers();

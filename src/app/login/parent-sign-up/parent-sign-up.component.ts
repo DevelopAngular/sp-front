@@ -6,11 +6,11 @@ import { ActivatedRoute, Router } from '@angular/router';
 import { JwtHelperService } from '@auth0/angular-jwt';
 import { BehaviorSubject, Subject, throwError } from 'rxjs';
 import { catchError, debounceTime, delay, distinctUntilChanged, map, switchMap, take } from 'rxjs/operators';
-import { environment } from '../../../../environments/environment';
-import { DeviceDetection } from '../../../device-detection.helper';
-import { constructUrl, QueryParams } from '../../../live-data/helpers';
-import { GoogleLoginService } from '../../../services/google-login.service';
-import { ParentAccountService } from '../../../services/parent-account.service';
+import { environment } from '../../../environments/environment';
+import { DeviceDetection } from '../../device-detection.helper';
+import { constructUrl, QueryParams } from '../../live-data/helpers';
+import { GoogleLoginService } from '../../services/google-login.service';
+import { ParentAccountService } from '../../services/parent-account.service';
 
 const INVALID_DOMAINS = [
   /* Default domains included */
