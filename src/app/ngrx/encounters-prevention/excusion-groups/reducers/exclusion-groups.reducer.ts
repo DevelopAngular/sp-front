@@ -17,6 +17,7 @@ const reducer = createReducer(
   exclusionGroupsInitialState,
   on(exclusionGroupsActions.getExclusionGroups,
     exclusionGroupsActions.getExclusionGroupsForStudent,
+      exclusionGroupsActions.updateExclusionGroup,
       state => ({ ...state, loading: true, loaded: false })
   ),
   on(exclusionGroupsActions.getExclusionGroupsSuccess, (state, {groups}) => {
@@ -26,7 +27,7 @@ const reducer = createReducer(
     return adapter.addOne(group, { ...state, loading: false, loaded: true, currentExclusionGroupId: group.id });
   }),
   on(exclusionGroupsActions.updateExclusionGroupSuccess, (state, {group}) => {
-    return adapter.upsertOne(group, {...state, currentExclusionGroupId: group.id});
+    return adapter.upsertOne(group, {...state, currentExclusionGroupId: group.id, loaded: true, loading: false});
   }),
   on(exclusionGroupsActions.removeExclusionGroupSuccess, (state, {group}) => {
     return adapter.removeOne(group.id, { ...state, loading: false, loaded: true});
