@@ -258,7 +258,7 @@ export class AppComponent implements OnInit, AfterViewInit, OnDestroy {
         this.isAuthenticated = isAuth;
         const path = window.location.pathname;
 
-        if (isAuth && path.includes('auth')) {
+        if (isAuth && path.includes('parent-sign-up')) {
           this.router.navigateByUrl('/parent');
         } else if (!isAuth && (path.includes('admin') ||  path.includes('main'))) {
           if (path.includes('main/student')) {
