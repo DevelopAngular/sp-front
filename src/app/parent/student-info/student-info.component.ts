@@ -1,18 +1,14 @@
-import { ConnectedPosition } from '@angular/cdk/overlay';
-import { AfterViewInit, ChangeDetectionStrategy, ChangeDetectorRef, Component, ElementRef, HostListener, OnDestroy, OnInit, ViewChild } from '@angular/core';
-import { MatDialog, MatDialogRef } from '@angular/material/dialog';
+import { AfterViewInit, ChangeDetectorRef, Component, ElementRef, HostListener, OnDestroy, OnInit, ViewChild } from '@angular/core';
+import { MatDialog } from '@angular/material/dialog';
 import { ActivatedRoute, Router } from '@angular/router';
 import * as moment from 'moment';
-import { merge, Observable, Subject, Subscription } from 'rxjs';
-import { concatMap, filter, map, switchMap, take, takeUntil, tap } from 'rxjs/operators';
+import { Observable, Subject, Subscription } from 'rxjs';
+import { filter, map, switchMap, takeUntil, tap } from 'rxjs/operators';
 import { Util } from '../../../Util';
 import { DateTimeFilterComponent } from '../../admin/explore/date-time-filter/date-time-filter.component';
-import { ReportInfoDialogComponent } from '../../admin/explore/report-info-dialog/report-info-dialog.component';
 import { StatusPopupComponent } from '../../admin/profile-card-dialog/status-popup/status-popup.component';
-import { ResizeProfileImage } from '../../animations';
 import { UNANIMATED_CONTAINER } from '../../consent-menu-overlay';
 import { DarkThemeSwitch } from '../../dark-theme-switch';
-import { ExclusionGroup } from '../../models/ExclusionGroup';
 import { HallPass } from '../../models/HallPass';
 import { StudentPassLimit } from '../../models/HallPassLimits';
 import { QuickPreviewPasses } from '../../models/QuickPreviewPasses';
@@ -21,7 +17,6 @@ import { User } from '../../models/User';
 import { UserStats } from '../../models/UserStats';
 import { IntroData } from '../../ngrx/intros';
 import { PassCardComponent } from '../../pass-card/pass-card.component';
-import { PassLimitStudentInfoComponent } from '../../pass-limit-student-info/pass-limit-student-info.component';
 import { EncounterPreventionService } from '../../services/encounter-prevention.service';
 import { HallPassesService } from '../../services/hall-passes.service';
 import { HttpService } from '../../services/http-service';
@@ -34,7 +29,6 @@ import { UserService } from '../../services/user.service';
 import { SettingsDescriptionPopupComponent } from '../../settings-description-popup/settings-description-popup.component';
 import { ConfirmationComponent } from '../../shared/shared-components/confirmation/confirmation.component';
 import { ModelFilterComponent } from '../../student-info-card/model-filter/model-filter.component';
-import { RemoveStudentComponent } from '../remove-student/remove-student.component';
 
 @Component({
   selector: 'app-student-info',
@@ -168,7 +162,7 @@ export class StudentInfoComponent implements OnInit, AfterViewInit, OnDestroy  {
         this.school = this.userService.getUserSchool();
         this.passesService.getQuickPreviewPassesRequest(this.profile.id, true);
         this.getUserStats();
-        // this.studentStats$ = this.userService.studentsStats$.pipe(map(stats => stats[this.profile.id]));
+        this.studentStats$ = this.userService.studentsStats$.pipe(map(stats => stats[this.profile.id]));
         // this.encounterPreventionService.getExclusionGroupsRequest({student: this.profile.id});
 
         // if (this.studentPassLimitSubs) {
@@ -466,7 +460,7 @@ export class StudentInfoComponent implements OnInit, AfterViewInit, OnDestroy  {
       return start.isSame(end, 'day') ? start.format('MMM D') : start.format('MMM D') + ' to ' + end.format('MMM D');
     }
   }
-  
+
   // dismissPassLimitNux() {
   //   this.showPassLimitNux.next(false);
   //   this.userService.updateIntrosStudentPassLimitRequest(this.introsData, 'universal', '1');
