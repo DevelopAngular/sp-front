@@ -321,7 +321,6 @@ export class AccountsRoleComponent implements OnInit, OnDestroy {
   }
 
   buildDataForRole(account) {
-    console.log("account : ", account);
     const permissionsRef = this.profilePermissions;
     const permissions = (function() {
       const tabs = Object.values(permissionsRef).map((tab: any) => {

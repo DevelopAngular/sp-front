@@ -463,6 +463,10 @@ export class UserService implements OnDestroy {
     return this.getUserSchool().feature_flag_encounter_detection
   }
 
+  getFeatureFlagParentAccount(): boolean {
+    return this.getUserSchool().feature_flag_parent_accounts
+  }
+
   getCurrentUpdatedSchool$(): Observable<School> {
     return this.http.currentUpdateSchool$;
   }

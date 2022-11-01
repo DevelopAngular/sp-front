@@ -54,7 +54,7 @@
                         <app-nux-encounter-prevention (close)="closeNuxToolTip()"></app-nux-encounter-prevention>
                     </ng-template>
 
-                    <app-gradient-button gradient="#72CC1B" [style.margin-left]="'15px'" leftIcon="./assets/Invite Families (White).svg" cursor="pointer" (buttonClick)="inviteFamilies()">Invite Families</app-gradient-button>
+                    <app-gradient-button *ngIf="parentAccountAccess" gradient="#72CC1B" [style.margin-left]="'15px'" leftIcon="./assets/Invite Families (White).svg" cursor="pointer" (buttonClick)="inviteFamilies()">Invite Families</app-gradient-button>
 
                     <app-gradient-button [style.margin-left]="'15px'" [hoverColor]="'#00B476'" [cursor]="'pointer'" [leftIcon]="'./assets/Plus (White).svg'" (buttonClick)="addUser($event)">
                         Add
@@ -84,7 +84,7 @@
                             <app-nux-encounter-prevention (close)="closeNuxToolTip()"></app-nux-encounter-prevention>
                         </ng-template>
 
-                        <app-square-button (buttonClick)="inviteFamilies()" [backgroundColor]="'#72CC1B'">
+                        <app-square-button *ngIf="parentAccountAccess" (buttonClick)="inviteFamilies()" [backgroundColor]="'#72CC1B'">
                             <img width="20" [src]="'./assets/Invite Families (White).svg' | resolveAsset">
                         </app-square-button>
 

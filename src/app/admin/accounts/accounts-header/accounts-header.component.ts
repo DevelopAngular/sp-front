@@ -96,7 +96,7 @@ export class AccountsHeaderComponent implements OnInit, AfterViewInit, OnDestroy
     {title: 'Teachers', param: '_profile_teacher', icon_id: '#Teacher', role: 'teacher_count'},
     {title: 'Admins', param: '_profile_admin', icon_id: '#Admin', role: 'admin_count'},
     {title: 'Assistants', param: '_profile_assistant', icon_id: '#Assistant', role: 'assistant_count'},
-    {title: 'Parents', param: '_profile_parent', icon_id: '#Parent', role: 'parent_count'}
+    // {title: 'Parents', param: '_profile_parent', icon_id: '#Parent', role: 'parent_count'}
   ];
 
   filterOptions: TableFilterOption[] = [
@@ -136,7 +136,14 @@ export class AccountsHeaderComponent implements OnInit, AfterViewInit, OnDestroy
     return this.user$.pipe(filter(u => !!u), map(user => user.roles.includes('admin_manage_integration')));
   }
 
+  get parentAccountAccess(): boolean {
+    return this.userService.getFeatureFlagParentAccount();
+  }
+
   ngOnInit() {
+    if (this.userService.getFeatureFlagParentAccount()) {
+      this.accountsButtons.push({title: 'Parents', param: '_profile_parent', icon_id: '#Parent', role: 'parent_count'});
+    }
     this.activeFilters$ = this.tableService.activeFilters$;
     this.getCurrentTab();
     this.user$ = this.userService.user$;
