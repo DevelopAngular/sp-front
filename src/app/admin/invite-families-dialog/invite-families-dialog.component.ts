@@ -50,27 +50,11 @@ export class InviteFamiliesDialogComponent implements OnInit {
   }
 
   getUnconnectedStudents() {
-    this.parentService.getUnconnectedStudents().subscribe({
-      next: (result: any) => {
-        console.log("result : ", result)
-      },
-      error: (error: any) => {
-        console.log("Error : ", error)
-
-      }
-    });
+    this.parentService.getUnconnectedStudents()
   }
 
   getInviteCodes() {
-    this.parentService.getStudentInviteCode().subscribe({
-      next: (result: any) => {
-        // this.parentsMetrics = result.results;
-      },
-      error: (error: any) => {
-        console.log("Error : ", error)
-
-      }
-    });
+    this.parentService.getStudentInviteCode();
   }
 
 }
