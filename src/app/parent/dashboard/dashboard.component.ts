@@ -33,7 +33,6 @@ export class DashboardComponent implements OnInit, AfterViewInit {
   ) {}
 
   ngOnInit(): void {
-    // this.getStudentCodes()
     this.getStudents();
     this.getParentInfo();
     if (localStorage.getItem("open-invite-student")) {
@@ -82,17 +81,6 @@ export class DashboardComponent implements OnInit, AfterViewInit {
         if (result?.results) {
           this.studentsList = result?.results;
         }
-      },
-      error: (error: any) => {
-        console.log("Error : ", error);
-      },
-    });
-  }
-
-  getStudentCodes(){
-    this.parentService.getStudentInviteCode().subscribe({
-      next: (result: any) => {
-        console.log("result : ", result);
       },
       error: (error: any) => {
         console.log("Error : ", error);

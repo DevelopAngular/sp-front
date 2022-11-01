@@ -46,7 +46,7 @@ export class ParentAccountService {
           binaryData.push(response);
           let downloadLink = document.createElement('a');
           downloadLink.href = window.URL.createObjectURL(new Blob(binaryData, {type: dataType}));
-          downloadLink.setAttribute('download', 'Student invite codes');
+          downloadLink.setAttribute('download', 'student_invite_codes');
           document.body.appendChild(downloadLink);
           downloadLink.click();
       }
@@ -65,7 +65,7 @@ export class ParentAccountService {
           binaryData.push(response);
           let downloadLink = document.createElement('a');
           downloadLink.href = window.URL.createObjectURL(new Blob(binaryData, {type: dataType}));
-          downloadLink.setAttribute('download', 'Unconnected Students');
+          downloadLink.setAttribute('download', 'unconnected_students');
           document.body.appendChild(downloadLink);
           downloadLink.click();
       }
