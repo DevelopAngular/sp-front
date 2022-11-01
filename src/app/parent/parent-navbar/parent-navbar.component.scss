@@ -1,5 +1,15 @@
 @import "../../../design-system.scss";
 @import "../../../sp-colors.scss";
+
+::ng-deep app-settings div.settings-wrapper {
+  height: 160px !important;
+  padding-top: 0 !important;
+
+  .title {
+    padding: 20px 0 5px 25px !important;
+  }
+}
+
 .sticky {
     width: 100%;
     .host {

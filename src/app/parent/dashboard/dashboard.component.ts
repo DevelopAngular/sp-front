@@ -1,8 +1,8 @@
 import { AfterViewInit, Component, OnInit } from "@angular/core";
 import { MatDialog } from "@angular/material/dialog";
 import { Router } from "@angular/router";
-import { combineLatest, Subject } from "rxjs";
-import { filter, map, switchMap, takeUntil } from "rxjs/operators";
+import { combineLatest, forkJoin, Subject } from 'rxjs'
+import { filter, map, switchMap, takeUntil, tap } from 'rxjs/operators'
 import { User } from "../../models/User";
 import { RepresentedUser } from "../../navbar/navbar.component";
 import { DataService } from "../../services/data-service";
@@ -22,6 +22,7 @@ export class DashboardComponent implements OnInit, AfterViewInit {
   user: User;
   private destroyer$ = new Subject<any>();
   studentsList: User[] = [];
+  loading = true;
 
   constructor(
     private matDialog: MatDialog,
@@ -33,8 +34,24 @@ export class DashboardComponent implements OnInit, AfterViewInit {
   ) {}
 
   ngOnInit(): void {
-    this.getStudents();
-    this.getParentInfo();
+    forkJoin([
+      this.parentService.getParentInfo().pipe(
+        tap(parent => this.user = parent as User)
+      ),
+      this.parentService.getStudents().pipe(
+        tap((result: any) => {
+          if (result?.results) {
+            this.studentsList = result?.results;
+          }
+        })
+      )
+    ]).subscribe({
+      next: () => {
+        this.loading = false;
+      }
+    });
+
+
     if (localStorage.getItem("open-invite-student")) {
       this.openInviteFamiliesDialog();
       localStorage.removeItem("open-invite-student");

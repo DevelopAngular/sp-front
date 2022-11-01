@@ -82,21 +82,22 @@ export class ParentNavbarComponent implements OnInit {
       }
 
       const target = new ElementRef(event.currentTarget);
-      if (!this.screenService.isDeviceLargeExtra) {
-        this.isOpenSettings = true;
-        UNANIMATED_CONTAINER.next(true);
-        const settingRef = this.dialog.open(SettingsComponent, {
-          panelClass: ["calendar-dialog-container", "animation"],
-          backdropClass: "invis-backdrop",
-          data: { trigger: target, isSwitch: this.showSwitchButton },
-        });
+      this.isOpenSettings = true;
+      UNANIMATED_CONTAINER.next(true);
+      const settingRef = this.dialog.open(SettingsComponent, {
+        panelClass: ["calendar-dialog-container", "animation"],
+        backdropClass: "invis-backdrop",
+        data: { trigger: target, isSwitch: this.showSwitchButton },
+      });
 
-        settingRef.afterClosed().subscribe((action) => {
-          UNANIMATED_CONTAINER.next(false);
-          this.isOpenSettings = false;
-          this.settingsAction(action);
-        });
-      }
+      settingRef.afterClosed().subscribe((action) => {
+        UNANIMATED_CONTAINER.next(false);
+        this.isOpenSettings = false;
+        this.settingsAction(action);
+      });
+      // if (!this.screenService.isDeviceLargeExtra) {
+      //
+      // }
 
       this.settingsClick.emit({
         trigger: target,

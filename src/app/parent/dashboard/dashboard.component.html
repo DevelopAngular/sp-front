@@ -1,4 +1,8 @@
-<div class="main-wrapper">
+<div class="loading-wrapper" *ngIf="loading">
+  <mat-spinner [diameter]="80"></mat-spinner>
+</div>
+
+<div *ngIf="!loading" class="main-wrapper">
     <div class="content-wrapper">
         <div class="heading">
             <p class="title">Good morning, {{ user?.display_name}}</p>

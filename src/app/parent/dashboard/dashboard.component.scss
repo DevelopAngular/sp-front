@@ -1,5 +1,18 @@
 @import "../../../sp-colors.scss";
 @import "../../../design-system.scss";
+
+:host ::ng-deep .mat-progress-spinner circle, .mat-spinner circle {
+  stroke: $jade;
+}
+
+.loading-wrapper {
+  height: calc(100vh - 64px);
+  width: 100vw;
+  display: grid;
+  place-content: center;
+  place-items: center
+}
+
 .main-wrapper {
     padding: 5px 50px;
     height: calc(100vh - 65px);
