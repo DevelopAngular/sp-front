@@ -73,16 +73,30 @@
                     <div class="feedback" *ngIf="isStaff && !isKioskMode && !isParent && !isMobile && !isKioskModeSettingsPage()">
                         <app-feedback-button></app-feedback-button>
                     </div>
-                    <div *ngIf="!isMobile && !isKioskModeSettingsPage()" [ngClass]="isIOSTablet ? 'ios-name' : 'name'" [style.color]="darkTheme.getColor({dark: '#FFFFFF', white : '#1F195E'})" [customToolTip]="'A school you referred now has SmartPass. Thank you for helping to grow the SmartPass community!'"
-                        [showToolTip]="(user && user.badge) && !isKioskMode && !isParent">
-                        <span *ngIf="!isParent">
-            <div class="profile-image avatar-animate" *ngIf="(isEnabledProfilePictures$ | async) && !isKioskMode">
-              <div *ngIf="user && user.profile_picture; else d" [ngStyle]="{'background': 'url(' + user.profile_picture + ') no-repeat left center/cover', width: '34px', height: '34px'}"></div>
-              <ng-template #d>
-                <img width="32" height="32" [src]="'./assets/Avatar Default.svg' | resolveAsset" alt="Avatar">
-              </ng-template>
-          </div>
-          </span>
+                  <ng-template #referSuccess>
+                    <div class="ds-tooltip">
+                      <span>
+                        Thank you for referring a school to SmartPass! If you want to refer another school,
+                        <a style="color: white" href="https://www.smartpass.app/referrals">click here</a>.
+                      </span>
+                    </div>
+                  </ng-template>
+
+                    <div
+                      *ngIf="!isMobile && !isKioskModeSettingsPage()"
+                      [ngClass]="isIOSTablet ? 'ios-name' : 'name'"
+                      [style.color]="darkTheme.getColor({dark: '#FFFFFF', white : '#1F195E'})"
+                      customToolTip
+                      [contentTemplate]="referSuccess"
+                      [showToolTip]="(user && user.badge) && !isKioskMode && !isParent">
+                      <span *ngIf="!isParent">
+                        <div class="profile-image avatar-animate" *ngIf="(isEnabledProfilePictures$ | async) && !isKioskMode">
+                          <div *ngIf="user && user.profile_picture; else d" [ngStyle]="{'background': 'url(' + user.profile_picture + ') no-repeat left center/cover', width: '34px', height: '34px'}"></div>
+                          <ng-template #d>
+                            <img width="32" height="32" [src]="'./assets/Avatar Default.svg' | resolveAsset" alt="Avatar">
+                          </ng-template>
+                        </div>
+                      </span>
                         <span notranslate>
             {{ isKioskMode ? (kioskModeLocation ? kioskModeLocation.title : '') : (user? user.first_name:'')}}
           </span>

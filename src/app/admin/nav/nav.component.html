@@ -28,8 +28,16 @@
         </div>
     </div>
     <div class="nav-footer">
-        <div class="footer-text" [style.color]="darkTheme.getColor({white: '#7F879D', dark: '#FFFFFF'})" [showToolTip]="!!user && !!user.badge" [customToolTip]="'A school you referred now has SmartPass. Thank you for helping to grow the SmartPass community!'"
-            [position]="'top'">
+        <ng-template #referSuccess>
+          <div class="ds-tooltip">
+            <span>
+              Thank you for referring a school to SmartPass! If you want to refer another school,
+              <a style="color: white" href="https://www.smartpass.app/referrals">click here</a>.
+            </span>
+          </div>
+        </ng-template>
+
+        <div class="footer-text" [style.color]="darkTheme.getColor({white: '#7F879D', dark: '#FFFFFF'})" [showToolTip]="!!user && !!user.badge" customToolTip [contentTemplate]="referSuccess" [position]="'top'">
           <span notranslate>{{(user?user.display_name : '')}}</span>
             <img *ngIf="user && user.badge" style="margin-left: 8px" width="25" height="25" [src]="'./assets/Badge.png' | resolveAsset">
         </div>
