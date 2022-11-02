@@ -1,0 +1,95 @@
+@import "../../../sp-colors.scss";
+@import "../../../design-system.scss";
+
+:host ::ng-deep .mat-progress-spinner circle, .mat-spinner circle {
+  stroke: $jade;
+}
+
+.loading-wrapper {
+  height: calc(100vh - 64px);
+  width: 100vw;
+  display: grid;
+  place-content: center;
+  place-items: center
+}
+
+.main-wrapper {
+    padding: 5px 50px;
+    height: calc(100vh - 65px);
+    .content-wrapper {
+        width: 70%;
+        margin: auto;
+        .heading {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            .title {
+                @include textSize(28px, bold, $color: $navy500);
+                flex: 0 0 50%;
+                text-transform: capitalize;
+            }
+        }
+        .student-cards-wrapper {
+            .cards {
+                @include flexLayout(flex-start, flex-start);
+                flex-wrap: wrap;
+                .card {
+                    margin: 10px 0;
+                    flex: 0 0 50%;
+                    cursor: pointer;
+                    position: relative;
+                    &.add-stud {
+                        border-radius: 12px;
+                        padding: 10px;
+                        margin: 0 10px;
+                        background-color: white;
+                        display: flex;
+                        flex: 0 0 40%;
+                        img {
+                            width: 80px;
+                            margin-left: 10px;
+                        }
+                        p {
+                            width: 100%;
+                            text-align: center;
+                            padding-left: 10px;
+                            @include textSize(28px, bold, $color: $green500);
+                        }
+                    }
+                    .wrapper {
+                        border-radius: 12px;
+                        padding: 10px;
+                        margin: 0 10px;
+                        background-color: white;
+                        @include flexLayout(center, flex-start);
+                        .avatar-info {
+                            .avatar {
+                                width: 88px;
+                                height: 88px;
+                                background-size: cover;
+                                overflow: hidden;
+                                border-radius: 50%;
+                                position: relative;
+                                display: flex;
+                                align-items: center;
+                                justify-content: center;
+                            }
+                        }
+                        .student-info {
+                            margin-left: 30px;
+                            .name {
+                                margin: 0;
+                                @include textSize(28px, bold, $color: $navy500);
+                            }
+                            .school-name {
+                                margin-bottom: 0;
+                                margin-top: 6px;
+                                @include textSize(15px, 400, $color: $gray500);
+                            }
+                        }
+                    }
+                }
+            }
+        }
+    }
+}

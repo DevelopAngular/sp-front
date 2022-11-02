@@ -286,6 +286,12 @@ export class AccountsRoleComponent implements OnInit, OnDestroy {
         'Type': null,
         'Permissions': null
       }];
+    } else if (this.role === '_profile_parent') {
+      return getColumns ? [columns] : [{
+        'Name': null,
+        'Email': null,
+        'Students': null,
+      }];
     }
   }
 
@@ -335,7 +341,7 @@ export class AccountsRoleComponent implements OnInit, OnDestroy {
     const roleObject = {
       'Name': this.sanitizer.bypassSecurityTrustHtml(`<div class="no-wrap" style="width: 150px !important;">` + account.display_name + '</div>'),
       'Email/username': `<div class="no-wrap">` + account.primary_email.split('@spnx.local')[0] + '</div>',
-      'ID': account.custom_id ? this.sanitizer.bypassSecurityTrustHtml(`<span class="id-number">${account.custom_id}</span>`) : "-"
+      // 'ID': account.custom_id ? this.sanitizer.bypassSecurityTrustHtml(`<span class="id-number">${account.custom_id}</span>`) : "-"
     };
     let objectToTable;
     if (this.role === '_profile_student') {
@@ -350,6 +356,7 @@ export class AccountsRoleComponent implements OnInit, OnDestroy {
         classList += 'school-limit';
       }
       objectToTable = {...roleObject, ...{
+        'ID': account.custom_id ? this.sanitizer.bypassSecurityTrustHtml(`<span class="id-number">${account.custom_id}</span>`) : "-",
         'Grade': account.grade_level ? this.sanitizer.bypassSecurityTrustHtml(`<span class="grade-level">${account.grade_level}</span>`) : "-",
         'Status': this.sanitizer.bypassSecurityTrustHtml(`<span class="status">${account.status}</span>`),
         'Last sign-in': account.last_login && account.last_login !== new Date() ? Util.formatDateTime(new Date(account.last_login)) : 'Never signed in',
@@ -360,6 +367,7 @@ export class AccountsRoleComponent implements OnInit, OnDestroy {
         }};
     } else if (this.role === '_profile_admin') {
       objectToTable = {...roleObject, ...{
+        'ID': account.custom_id ? this.sanitizer.bypassSecurityTrustHtml(`<span class="id-number">${account.custom_id}</span>`) : "-",
         'Status': this.sanitizer.bypassSecurityTrustHtml(`<span class="status">${account.status}</span>`),
         'Last sign-in': account.last_login && account.last_login !== new Date() ? Util.formatDateTime(new Date(account.last_login)) : 'Never signed in',
         'Type': account.demo_account ? 'Demo' : account.sync_types[0] === 'google' ? 'G Suite' : (account.sync_types[0] === 'gg4l' ? 'GG4L' : account.sync_types[0] === 'clever' ? 'Clever' : 'Standard'),
@@ -367,6 +375,7 @@ export class AccountsRoleComponent implements OnInit, OnDestroy {
       }};
     } else if (this.role === '_profile_teacher') {
       objectToTable = {...roleObject, ...{
+        'ID': account.custom_id ? this.sanitizer.bypassSecurityTrustHtml(`<span class="id-number">${account.custom_id}</span>`) : "-",
           'rooms': this.sanitizer.bypassSecurityTrustHtml(`<div class="no-wrap">` + (account.assignedTo && account.assignedTo.length ? uniqBy(account.assignedTo, 'id').map((room: any) => room.title).join(', ') : 'No rooms assigned') + `</div>`),
           'Status': this.sanitizer.bypassSecurityTrustHtml(`<span class="status">${account.status}</span>`),
           'Last sign-in': account.last_login ? Util.formatDateTime(new Date(account.last_login)) : 'Never signed in',
@@ -375,6 +384,7 @@ export class AccountsRoleComponent implements OnInit, OnDestroy {
       }};
     } else if (this.role === '_profile_assistant') {
       objectToTable = {...roleObject, ...{
+        'ID': account.custom_id ? this.sanitizer.bypassSecurityTrustHtml(`<span class="id-number">${account.custom_id}</span>`) : "-",
           'Acting on Behalf Of': this.sanitizer.bypassSecurityTrustHtml(`<div class="no-wrap">` + (account.canActingOnBehalfOf && account.canActingOnBehalfOf.length ? account.canActingOnBehalfOf.map((u: RepresentedUser) => {
             return `${u.user.display_name} (${u.user.primary_email.slice(0, u.user.primary_email.indexOf('@'))})`;
           }).join(', ') : 'No Teachers') + `</div>`),
@@ -382,6 +392,10 @@ export class AccountsRoleComponent implements OnInit, OnDestroy {
           'Last sign-in': account.last_login && account.last_login !== new Date() ? Util.formatDateTime(new Date(account.last_login)) : 'Never signed in',
           'Type': account.demo_account ? 'Demo' : account.sync_types[0] === 'google' ? 'G Suite' : (account.sync_types[0] === 'gg4l' ? 'GG4L' : account.sync_types[0] === 'clever' ? 'Clever' :account.sync_types[0] === 'classlink' ? 'Classlink ': 'Standard'),
           'Permissions': `<div class="no-wrap">` + permissions + `</div>`
+      }};
+    } else if (this.role === '_profile_parent') {
+      objectToTable = {...roleObject, ...{
+        'Students': 'Demo'
       }};
     }
     const currentObj = {};
@@ -407,6 +421,8 @@ export class AccountsRoleComponent implements OnInit, OnDestroy {
       return +count.student_count;
     } else if (this.role === '_profile_assistant') {
       return +count.assistant_count;
+    } else if (this.role === '_profile_parent') {
+      return +count.parent_count;
     }
   }
 
@@ -415,7 +431,8 @@ export class AccountsRoleComponent implements OnInit, OnDestroy {
       this.role === '_profile_admin' ? 'administrator' :
         this.role === '_profile_teacher' ? 'teacher' :
           this.role === '_profile_student' ? 'student' :
-          this.role === '_profile_assistant' ? 'student' : 'assistant';
+          this.role === '_profile_assistant' ? 'student' :
+          this.role === '_profile_parent' ? 'parents' : 'assistant';          
     const data = {
       profile: evt,
       profileTitle: profileTitle,

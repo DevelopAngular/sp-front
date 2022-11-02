@@ -8,4 +8,5 @@ export interface TotalAccounts {
   student_count: number | string;
   teacher_count: number | string;
   total_count: number | string;
+  parent_count: number | string;
 }

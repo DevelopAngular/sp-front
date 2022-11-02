@@ -1,15 +1,11 @@
 <ng-container *ngIf="user">
-    <div class="host"
-      [style.background]="darkTheme.getColor({dark: '#0F171E', white: ((isStaff || isAssistant) && !isKioskMode ? '#FFFFFF' : 'transparent' )})"
-      [style.position]="(isStaff || user.isAdmin() || isAssistant) || screenService.isDeviceLargeExtra ? 'fixed' : 'static'"
-      [style.top]="(countSchools$ | async) > 1 && !hideButtons ? ((isUpdateBar$ | async) ? '89px' : '50px') : ((isUpdateBar$ | async) ? '39px' : '0px')"
-      *ngIf="showNav && !isHallMonitorRoute && showNav && !isMyRoomRoute || showNav && !islargeDeviceWidth"
-      [style.border-bottom]="(darkTheme.isEnabled$ | async) && !user.isStudent() ? '1px solid #7083A0' : 'none'"
-    >
+    <div class="host" [style.background]="darkTheme.getColor({dark: '#0F171E', white: ((isStaff || isAssistant) && !isKioskMode ? '#FFFFFF' : 'transparent' )})" [style.position]="(isStaff || user.isAdmin() || isAssistant) || screenService.isDeviceLargeExtra ? 'fixed' : 'static'"
+        [style.top]="(countSchools$ | async) > 1 && !hideButtons && !isParent ? ((isUpdateBar$ | async) ? '89px' : '50px') : ((isUpdateBar$ | async) ? '39px' : '0px')" *ngIf="showNav && !isHallMonitorRoute && showNav && !isMyRoomRoute || showNav && !islargeDeviceWidth"
+        [style.border-bottom]="(darkTheme.isEnabled$ | async) && !user.isStudent() ? '1px solid #7083A0' : 'none'">
         <div class="bar" appNavbarElementSender [ngClass]="{shadow: ((isStaff || isAssistant) && !isKioskMode && !isKioskModeSettingsPage()) || screenService.isDeviceLargeExtra}" [ngStyle]="{
     padding: (user && user.isStudent()) || isKioskMode ? '0 16px' : '0 16px 0 0'
    }" #navbar>
-            <div class="logo" *ngIf="(user && user.isStudent()) || isKioskMode; else staffLogo">
+            <div class="logo" *ngIf="(user && user.isStudent()) || isKioskMode || isParent; else staffLogo">
                 <div class="logo-icon" appCrossPointerEventTarget (pointerClickEvent)="updateTab('passes')">
                     <img width="40px" height="40px" [src]="'./assets/Smartpass Logo (Green).svg'" alt="logo">
                 </div>
@@ -50,16 +46,12 @@
                 </div>
 
             </div>
-            <div [ngClass]="{'ios-user-info': isIOSTablet, 'user-info' : !isIOSTablet, 'setting-ryt-align':isKioskModeSettingsPage() }"  [style.flexDirection]="flexDirection">
+            <div [ngClass]="{'ios-user-info': isIOSTablet, 'user-info' : !isIOSTablet, 'setting-ryt-align':isKioskModeSettingsPage() }" [style.flexDirection]="flexDirection">
                 <div class="ds-mx-10" style="cursor: pointer; display: flex; align-items: center;" *ngIf="user && user.isAssistant() && !screenService.isDeviceLargeExtra; else notAssistant">
-                    <div class="feedback" *ngIf="!user.isStudent() && !isKioskMode && !isMobile">
+                    <div class="feedback" *ngIf="!user.isStudent() && !isKioskMode && !isMobile && !isParent">
                         <app-feedback-button></app-feedback-button>
                     </div>
-                    <div [ngClass]="isIOSTablet ? 'ios-name' : 'name'"
-                         [style.color]="darkTheme.getColor({dark: '#FFFFFF', white : '#1F195E'})"
-                         *ngIf="effectiveUser" appCrossPointerEventTarget
-                         (pointerClickEvent)="showTeaches($event)"
-                    >
+                    <div [ngClass]="isIOSTablet ? 'ios-name' : 'name'" [style.color]="darkTheme.getColor({dark: '#FFFFFF', white : '#1F195E'})" *ngIf="effectiveUser" appCrossPointerEventTarget (pointerClickEvent)="showTeaches($event)">
                         <span style="font-size: 13px; font-weight: 400; color: #B7C1CF; margin-right: 7px">Acting on <br/>behalf of</span>
                         <span>
             <div class="profile-image avatar-animate" *ngIf="(isEnabledProfilePictures$ | async) && !isKioskMode">
@@ -78,7 +70,7 @@
                 </div>
 
                 <ng-template #notAssistant>
-                    <div class="feedback" *ngIf="isStaff && !isKioskMode && !isMobile && !isKioskModeSettingsPage()">
+                    <div class="feedback" *ngIf="isStaff && !isKioskMode && !isParent && !isMobile && !isKioskModeSettingsPage()">
                         <app-feedback-button></app-feedback-button>
                     </div>
                   <ng-template #referSuccess>
@@ -96,8 +88,8 @@
                       [style.color]="darkTheme.getColor({dark: '#FFFFFF', white : '#1F195E'})"
                       customToolTip
                       [contentTemplate]="referSuccess"
-                      [showToolTip]="(user && user.badge) && !isKioskMode">
-                      <span>
+                      [showToolTip]="(user && user.badge) && !isKioskMode && !isParent">
+                      <span *ngIf="!isParent">
                         <div class="profile-image avatar-animate" *ngIf="(isEnabledProfilePictures$ | async) && !isKioskMode">
                           <div *ngIf="user && user.profile_picture; else d" [ngStyle]="{'background': 'url(' + user.profile_picture + ') no-repeat left center/cover', width: '34px', height: '34px'}"></div>
                           <ng-template #d>
@@ -112,8 +104,8 @@
                     </div>
                 </ng-template>
 
-                <div class="inbox-wrapper" *ngIf="user && islargeDeviceWidth && !isKioskMode" [style.background-color]="(inboxVisibility && !islargeDeviceWidth ? darkTheme.isEnabled$.value && !islargeDeviceWidth ? '#134482' : '#E4EBFF' : 'transparent')" appCrossPointerEventTarget
-                    (pointerClickEvent)="inboxClick()">
+                <div class="inbox-wrapper" *ngIf="user && islargeDeviceWidth && !isKioskMode && !isParent" [style.background-color]="(inboxVisibility && !islargeDeviceWidth ? darkTheme.isEnabled$.value && !islargeDeviceWidth ? '#134482' : '#E4EBFF' : 'transparent')"
+                    appCrossPointerEventTarget (pointerClickEvent)="inboxClick()">
                     <app-icon-button [eventBubbling]="true" [srcString]="'Notifications'" [size]="20"></app-icon-button>
                     <div class="inbox-modifiers" *ngIf="(notificationBadge$ | async) > 0">
                         <!--          <img class="inbox-badge" [src]="'./assets/Inbox Notification (Red).svg' | resolveAsset">-->
@@ -122,7 +114,7 @@
                     </div>
                 </div>
 
-                <div *ngIf="user && !isStaff && !isKioskMode || islargeDeviceWidth && !isKioskMode" class="inbox-wrapper-sm" appCrossPointerEventTarget (pointerClickEvent)="inboxClick()">
+                <div *ngIf="user && !isStaff && !isKioskMode && !isParent || islargeDeviceWidth && !isKioskMode" class="inbox-wrapper-sm" appCrossPointerEventTarget (pointerClickEvent)="inboxClick()">
                     <!--        <img [@inboxAppearance] *ngIf="!isInboxClicked" class="inbox-icon" [src]="darkTheme.getIcon({iconName: 'Inbox', darkFill: 'White', lightFill: 'Blue-Gray'}) | resolveAsset">-->
                     <app-icon-button [@inboxAppearance] [eventBubbling]="true" *ngIf="!isInboxClicked" [srcString]="'Notifications'" [size]="20"></app-icon-button>
                     <div class="inbox-icon inbox-icon-arrow" [@inboxAppearance] *ngIf="isInboxClicked">
@@ -136,7 +128,7 @@
                     </div>
                 </div>
 
-                <div class="id-card" (click)="openIDCard()" *ngIf="!user.isAssistant() && IDCardEnabled && !isKioskModeSettingsPage() && !isKioskMode">
+                <div class="id-card" (click)="openIDCard()" *ngIf="!user.isAssistant() && IDCardEnabled && !isKioskModeSettingsPage() && !isKioskMode && !isParent">
                     <div class="wrapper" [style.background-color]="IDCARDDETAILS.color">
                         <img width="18px" [src]="'./assets/Digital ID Card (White).svg'" alt="">
                         <div class="title" notranslate>ID</div>
@@ -144,7 +136,7 @@
                 </div>
 
                 <div class="options-wrapper " #setButton>
-                    <app-icon-button *ngIf="isStaff && !isKioskMode; else whiteButton" [newIconButton]="true" [srcString]="'Settings'" [color]="'Navy'" [size]="20" (clickEvent)="showOptions($event)" [notificationBadge]="isStaff && introsData.referral_reminder ? (!introsData.referral_reminder.universal.seen_version && showNotificationBadge) : false"
+                    <app-icon-button *ngIf="isStaff && !isKioskMode; else whiteButton" [newIconButton]="true" [srcString]="'Settings'" [color]="'Navy'" [size]="20" (clickEvent)="showOptions($event)" [notificationBadge]="isStaff && introsData?.referral_reminder ? (!introsData?.referral_reminder.universal.seen_version && showNotificationBadge) : false"
                         [notificationCount]="1"></app-icon-button>
 
                     <ng-template #whiteButton>

@@ -78,6 +78,7 @@ export interface RepresentedUser {
 })
 export class NavbarComponent implements AfterViewInit, OnInit, OnDestroy {
   @Input() hasNav = true;
+  @Input() isParent: boolean = false;
   @ViewChild("tabPointer") tabPointer: ElementRef;
   @ViewChild("navButtonsContainer") navButtonsContainer: ElementRef;
   @ViewChildren("tabRef") tabRefs: QueryList<ElementRef>;
@@ -291,6 +292,7 @@ export class NavbarComponent implements AfterViewInit, OnInit, OnDestroy {
         }
       });
     this.hideButtons = this.router.url.includes("kioskMode");
+    this.hideButtons = this.router.url.includes("parent");
     const urlSplit: string[] = location.pathname.split("/");
     this.tab = urlSplit[urlSplit.length - 1];
 
@@ -300,6 +302,7 @@ export class NavbarComponent implements AfterViewInit, OnInit, OnDestroy {
     this.router.events.subscribe((value) => {
       if (value instanceof NavigationEnd) {
         this.hideButtons = this.router.url.includes("kioskMode");
+        this.hideButtons = this.router.url.includes("parent");
         let urlSplit: string[] = value.url.split("/");
         this.tab = urlSplit[urlSplit.length - 1];
         this.tab = this.tab === "" || this.tab === "main" ? "passes" : this.tab;
@@ -629,8 +632,8 @@ export class NavbarComponent implements AfterViewInit, OnInit, OnDestroy {
       window.open("https://www.smartpass.app/terms");
     } else if (action === "refer") {
       if (
-        this.introsData.referral_reminder.universal &&
-        !this.introsData.referral_reminder.universal.seen_version
+        this.introsData?.referral_reminder.universal &&
+        !this.introsData?.referral_reminder.universal.seen_version
       ) {
         this.userService.updateIntrosRequest(this.introsData, "universal", "1");
       }

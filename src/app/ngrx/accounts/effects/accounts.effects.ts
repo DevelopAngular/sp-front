@@ -31,6 +31,8 @@ export class AccountsEffects {
             return roleActions.getAssistants({role: action.role, search: action.search, limit: action.limit});
           } else if (action.role === '_profile_student') {
             return roleActions.getStudents({role: action.role, search: action.search, limit: action.limit});
+          } else if (action.role === '_profile_parent') {
+            return roleActions.getParents({role: action.role, search: action.search, limit: action.limit});
           }
           return action;
         })
@@ -52,6 +54,8 @@ export class AccountsEffects {
             return roleActions.getMoreAssistants();
           } else if (action.role === '_profile_student') {
             return roleActions.getMoreStudents({role: action.role});
+          } else if (action.role === '_profile_parent') {
+            return roleActions.getMoreParents({role: action.role});
           }
           return action;
         })
@@ -82,6 +86,9 @@ export class AccountsEffects {
           } else if (action.role === '_profile_assistant') {
             props = {...props, behalf: action.behalf};
             return roleActions.postAssistant(props);
+          } else if (action.role === '_profile_parent') {
+            props = {...props, behalf: action.behalf};
+            return roleActions.postParent(props);
           }
 
           return action;
@@ -153,6 +160,8 @@ export class AccountsEffects {
             return roleActions.removeStudent({id: action.user.id});
           } else if (action.role === '_profile_assistant') {
             return roleActions.removeAssistant({id: action.user.id});
+          } else if (action.role === '_profile_parent') {
+            return roleActions.removeParent({id: action.user.id});
           }
 
           return action;
@@ -173,6 +182,8 @@ export class AccountsEffects {
             return roleActions.updateAssistantActivity({profile: action.profile, active: action.active});
           } else if (action.role === '_profile_admin') {
             return roleActions.updateAdminActivity({profile: action.profile, active: action.active});
+          } else if (action.role === '_profile_parent') {
+            return roleActions.updateParentActivity({profile: action.profile, active: action.active});
           }
 
           return action;
@@ -316,7 +327,9 @@ export class AccountsEffects {
              return nestedStates.sortStudentAccounts({students: users, next: nextUrl, sortValue});
            } else if (role === '_profile_assistant') {
              return nestedStates.sortAssistantAccounts({assistants: users, next: nextUrl, sortValue});
-           }
+           } else if (role === '_profile_parent') {
+            return nestedStates.sortParentAccounts({parents: users, next: nextUrl, sortValue});
+          }
          })
        );
    });
@@ -350,6 +363,8 @@ export class AccountsEffects {
                     return nestedStates.updateStudentAccount({profile: user});
                   } else if (role === '_profile_assistant') {
                     return nestedStates.updateAssistantAccount({profile: user});
+                  } else if (role === '_profile_parent') {
+                    return nestedStates.updateParentAccount({profile: user});
                   }
                 }),
                 catchError(error => of(accountsActions.updateAccountPictureFailure({errorMessage: error.message})))
@@ -371,7 +386,9 @@ export class AccountsEffects {
              return nestedStates.updateStudentAccount({profile: user});
            } else if (role === '_profile_assistant') {
              return nestedStates.updateAssistantAccount({profile: user});
-           }
+           } else if (role === '_profile_parent') {
+            return nestedStates.updateParentAccount({profile: user});
+          }
          })
        );
    });
