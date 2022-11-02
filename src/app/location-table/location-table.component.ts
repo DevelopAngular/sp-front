@@ -34,8 +34,8 @@ function Visibility(): any {
     return {
       set: function (vv: any[]) {
         // accessing mainParent component indicates that FORM_STATE should be a service
-        // usually we get FORM_STATE in a cascading fashion 
-        // from parent to child more then 1 level deep 
+        // usually we get FORM_STATE in a cascading fashion
+        // from parent to child more then 1 level deep
         const mainParent = this._injector.get(MainHallPassFormComponent);
         const stateData = mainParent.FORM_STATE.data;
 
@@ -44,7 +44,7 @@ function Visibility(): any {
           stateData?.kioskModeStudent instanceof User)
         );
 
-        // kiosk mode can be enterd in 2 ways: 
+        // kiosk mode can be enterd in 2 ways:
         // by a teacher - isStaff
         // by a dedicated user - isDedicatedUser
         const isStaffUser = (!!this.forStaff && this.forKioskMode);
@@ -55,13 +55,13 @@ function Visibility(): any {
         // a teacher or a dedicated user
         // so we need to take the student from this.selectedStudents
         const student = [this.user];
-        if (isChooseSelectedStudent) { 
+        if (isChooseSelectedStudent) {
           student[0] = this.selectedStudents[0] ?? stateData.kioskModeStudent;
         }
         // filtering apply only for a student
         if (vv.length > 0 &&
           ( // is student
-            !this.forStaff || 
+            !this.forStaff ||
             // is staff
             isStaffUser
           )
@@ -246,7 +246,7 @@ export class LocationTableComponent implements OnInit, OnDestroy {
 
                 });
         } else if (this.forKioskMode) {
-          const request$ = !!this.category ? this.locationService.getLocationsFromCategory(url, this.category) :
+          const request$ = !!this.category ? this.locationService.getLocationsFromCategory(this.category) :
             this.locationService.getLocationsWithConfigRequest(url);
 
           request$.pipe(takeUntil(this.destroy$)).subscribe(res => {
@@ -257,7 +257,7 @@ export class LocationTableComponent implements OnInit, OnDestroy {
           });
         } else {
           const request$ = this.isFavoriteForm ? this.locationService.getLocationsWithConfigRequest(url).pipe(filter((res) => !!res.length)) :
-            this.locationService.getLocationsFromCategory(url, this.category).pipe(filter((res) => !!res.length));
+            this.locationService.getLocationsFromCategory(this.category).pipe(filter((res) => !!res.length), take(1));
 
                 request$.pipe(takeUntil(this.destroy$)).subscribe(p => {
                   this.choices = p.map(loc => {
@@ -498,7 +498,7 @@ export class LocationTableComponent implements OnInit, OnDestroy {
   }
 
   mergeLocations(url, withStars: boolean, category: string) {
-    const locsRequest$ = !!category ? this.locationService.getLocationsFromCategory(url, category) :
+    const locsRequest$ = !!category ? this.locationService.getLocationsFromCategory(category) :
       this.locationService.getLocationsWithConfigRequest(url);
     return zip(
      locsRequest$,

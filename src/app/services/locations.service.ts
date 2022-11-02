@@ -142,9 +142,8 @@ export class LocationsService {
       return this.foundLocations$;
     }
 
-    getLocationsFromCategory(url, category) {
-      url += `category=${category}`;
-      this.store.dispatch(getLocationsFromCategory({url}));
+    getLocationsFromCategory(category) {
+      this.store.dispatch(getLocationsFromCategory({category}));
       return this.locsFromCategory$;
     }
 

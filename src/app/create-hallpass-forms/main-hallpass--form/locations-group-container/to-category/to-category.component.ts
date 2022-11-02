@@ -99,7 +99,6 @@ export class ToCategoryComponent implements OnInit {
   }
 
   ngOnInit() {
-    console.log(this.formState);
     this.frameMotion$ = this.formService.getFrameMotionDirection();
     this.fromLocation = this.formState.data.direction.from;
     this.pinnable = this.formState.data.direction.pinnable;
@@ -118,10 +117,10 @@ export class ToCategoryComponent implements OnInit {
           this.headerTransition['category-header_animation-back'] = false;
       }
     });
-    
+
     if (this.listenLocation$ !== null) {
       return;
-    } 
+    }
     this.listenLocation$ = this.locationsService.listenLocationSocket().pipe(
       takeUntil(this.destroy$),
       filter((res: any | unknown & {data: any}) => (!!res && ('data' in res))),
@@ -170,7 +169,7 @@ export class ToCategoryComponent implements OnInit {
           if (!isCategory) {
             return;
           }
-          // check for locations of a category pinnable 
+          // check for locations of a category pinnable
           const pinn = <Pinnable | Pinnable & {myLocations: Location[]}>this.pinnable;
           if ('myLocations' in pinn) {
             myLocations = pinn.myLocations;
@@ -185,7 +184,7 @@ export class ToCategoryComponent implements OnInit {
           if (!found && !belongs) {
             return;
           }
-          
+
           // update choices
           let choices = myLocations as Location[];
           const updated = choices.map((x: Location) => {
@@ -247,7 +246,7 @@ export class ToCategoryComponent implements OnInit {
 
    // staff only
    const students = [...this.selectedStudents];
-   // skipped are students that do not qualify to go forward     
+   // skipped are students that do not qualify to go forward
    let skipped = this.visibilityService.calculateSkipped(students, location);
 
     if (skipped.length === 0) {
@@ -269,7 +268,7 @@ export class ToCategoryComponent implements OnInit {
 
     const roomStudents = this.selectedStudents.filter(s => (!skipped.includes(''+s.id)));
     const noStudentsCase = roomStudents.length === 0;
-    
+
     if (noStudentsCase) denyText = 'Cancel';
 
     this.dialog.open(ConfirmationDialogComponent, {

@@ -32,10 +32,10 @@ export class LocationsEffects {
     return this.actions$.pipe(
       ofType(locationsActions.getLocationsFromCategory),
       concatMap((action: any) => {
-        return this.locService.getLocationsWithConfig(action.url)
+        return this.locService.getLocationsWithCategory(action.category)
           .pipe(
             map((locations: any) => {
-              return locationsActions.getLocationsFromCategorySuccess({locations: locations.results});
+              return locationsActions.getLocationsFromCategorySuccess({locations});
             }),
             catchError(error => of(locationsActions.getLocationsFromCategoryFailure({errorMessage: error.message})))
           );
