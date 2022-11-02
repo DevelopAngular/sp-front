@@ -38,7 +38,7 @@ export class InviteFamiliesDialogComponent implements OnInit {
         this.parentsMetrics = result.results;
       },
       error: (error: any) => {
-        console.log("Error : ", error)
+        console.log("Error : ", error);
 
       }
     });
@@ -50,7 +50,7 @@ export class InviteFamiliesDialogComponent implements OnInit {
   }
 
   getUnconnectedStudents() {
-    this.parentService.getUnconnectedStudents()
+    this.parentService.getUnconnectedStudents();
   }
 
   getInviteCodes() {
