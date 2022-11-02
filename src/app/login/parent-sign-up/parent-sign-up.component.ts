@@ -85,7 +85,8 @@ export class ParentSignUpComponent implements OnInit, OnDestroy {
       filter(Boolean)
     ).subscribe({
       next: () => {
-        this.router.navigate(['parent']);
+        console.log('parent-sign-up routing!!!!!');
+        this.router.navigate(['']);
       }
     });
   }
@@ -101,7 +102,7 @@ export class ParentSignUpComponent implements OnInit, OnDestroy {
             .pipe(
               take(1),
               map(({exists}: {exists: boolean}) => {
-                return (exists ? { uniqEmail: true } : null);
+                return (!exists ? { uniqEmail: true } : null);
               })
             );
         })
@@ -130,6 +131,7 @@ export class ParentSignUpComponent implements OnInit, OnDestroy {
       next: () => {
         const { email, password } = this.signUpForm.value;
         this.loginService.signInDemoMode(email, password);
+        // this.router.navigate(['']);
       },
       error: err => {
         if (err && err.error !== 'popup_closed_by_user') {
