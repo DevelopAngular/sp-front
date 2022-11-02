@@ -38,19 +38,15 @@ export class ParentAccountService {
     return this.http.delete(`v1/parent/remove_student/${id}`);
   }
 
-  getStudentInviteCode(){
-    return this.http.get(`v1/schools/${this.http.getSchool().id}/student_invite_codes`, {responseType: 'blob' as 'json'}).subscribe(
-      (response: any) =>{
-          let dataType = response.type;
-          let binaryData = [];
-          binaryData.push(response);
-          let downloadLink = document.createElement('a');
-          downloadLink.href = window.URL.createObjectURL(new Blob(binaryData, {type: dataType}));
-          downloadLink.setAttribute('download', `${this.http.getSchool().name} - Parent Invite Codes`);
+  getStudentInviteCode() {
+    return this.http.get(`v1/schools/${this.http.getSchool().id}/student_invite_codes`).subscribe(
+      (response: any) => {
+          const downloadLink = document.createElement('a');
+          downloadLink.href = response.download_url;
           document.body.appendChild(downloadLink);
           downloadLink.click();
       }
-  )
+    );
   }
 
   getParentsMetrics() {
