@@ -51,6 +51,7 @@ export class ParentSignUpComponent implements OnInit, OnDestroy {
 
   ngOnInit(): void {
     window.appLoaded();
+    console.log(environment);
 
     this.signUpForm = new FormGroup({
       name: new FormControl('', Validators.required),
@@ -102,7 +103,7 @@ export class ParentSignUpComponent implements OnInit, OnDestroy {
             .pipe(
               take(1),
               map(({exists}: {exists: boolean}) => {
-                return (!exists ? { uniqEmail: true } : null);
+                return (exists ? { uniqEmail: true } : null);
               })
             );
         })
