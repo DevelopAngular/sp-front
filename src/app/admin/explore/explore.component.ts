@@ -72,6 +72,8 @@ export interface SearchData {
   selectedOriginRooms?: any[];
   selectedTeachers?: User[];
   selectedStatus?: Status;
+  // used to restrain the search only to the ended passes 
+  onlyEnded?: boolean;
 }
 
 export interface PassRemovedResponse {
@@ -142,6 +144,7 @@ export class ExploreComponent implements OnInit, OnDestroy {
     selectedOriginRooms: null,
     selectedDestinationRooms: null,
     selectedDate: null,
+    onlyEnded: true, 
   };
   contactTraceData: SearchData = {
     selectedStudents: null,
@@ -316,6 +319,7 @@ export class ExploreComponent implements OnInit, OnDestroy {
               start: moment('1/8/2022', 'DD/MM/YYYY'),
               end: moment(moment(), 'DD/MM/YYYY')
             },
+            onlyEnded: true,
           };
           this.search(300);
           return this.hallPassService.passesLoaded$;
@@ -1055,6 +1059,9 @@ export class ExploreComponent implements OnInit, OnDestroy {
     }
     if (this.passSearchData.selectedStudents) {
       queryParams['student'] = this.passSearchData.selectedStudents.map(s => s['id']);
+    }
+    if (this.passSearchData?.onlyEnded) {
+      queryParams['only_ended'] = this.passSearchData.onlyEnded;
     }
 
     if (this.passSearchData.selectedDate) {
