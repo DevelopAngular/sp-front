@@ -1,0 +1,41 @@
+<div class="loading-wrapper" *ngIf="loading">
+  <mat-spinner [diameter]="80"></mat-spinner>
+</div>
+
+<div *ngIf="!loading" class="main-wrapper">
+    <div class="content-wrapper">
+        <div class="heading">
+            <p class="title">Good morning, {{ user?.display_name}}</p>
+            <div *ngIf="studentsList.length != 0">
+                <app-gradient-button [hoverColor]="'#00B476'" [withShadow]="true" [gradient]="'#00B476'" [cursor]="'pointer'" leftIcon="assets/Plus (White).svg" (buttonClick)="openInviteFamiliesDialog()">
+                    Add a student
+                </app-gradient-button>
+            </div>
+        </div>
+        <div class="student-cards-wrapper">
+            <div class="cards">
+                <div (click)="openInviteFamiliesDialog()" *ngIf="studentsList.length == 0" class="card add-stud">
+                    <img [src]="'./assets/Add Button (Green).svg' | resolveAsset" alt="">
+                    <p>Add a student</p>
+                </div>
+                <div class="card" *ngFor="let student of studentsList" (click)="goToStudent(student)">
+                    <div class="wrapper">
+                        <div class="avatar-info">
+                            <div class="avatar" #avatarContainer>
+                                <div *ngIf="student?.profile_picture; else d" [ngStyle]="{'background': 'url(' + student?.profile_picture + ') no-repeat left center/cover', width: '88px', height: '88px'}"></div>
+                                <ng-template #d>
+                                    <img width="88" height="88" [src]="'./assets/Avatar Default.svg' | resolveAsset" alt="Avatar">
+                                </ng-template>
+
+                            </div>
+                        </div>
+                        <div class="student-info">
+                            <p class="name">{{student?.display_name}}</p>
+                            <p class="school-name">{{student?.school_name}}</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>

@@ -64,12 +64,12 @@
                         </div>
 
                     </div>
-                    <div class="status" [customToolTip]="statusDescriptions[profileStatusActive] || null" (click)="openStatusPopup()" [style.color]="profileStatusActive === 'active' ? '#00B476' : profileStatusActive === 'suspended' ? '#6651F1' : '#7f879d'">
+                    <div class="status" *ngIf="!user.isParent()" [customToolTip]="statusDescriptions[profileStatusActive] || null" (click)="openStatusPopup()" [style.color]="profileStatusActive === 'active' ? '#00B476' : profileStatusActive === 'suspended' ? '#6651F1' : '#7f879d'">
                         {{ profileStatusActive }}
                         <span><img width="9px" [src]="'./assets/Chevron Down (' + (profileStatusActive === 'active' ? 'Jade' : (profileStatusActive === 'disabled' ? 'Blue-Gray' : 'Soft-Blue')) + ').svg' | resolveAsset" alt=""></span>
                     </div>
                 </div>
-                <div class="role-info">
+                <div *ngIf="!user.isParent()" class="role-info">
                     <app-select-role [selectedRoles]="userRoles" [isAccessAdd]="isAccessAdd" (onSelect)="userRoles = $event"></app-select-role>
                 </div>
 

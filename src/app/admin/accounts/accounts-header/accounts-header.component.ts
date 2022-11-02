@@ -42,6 +42,7 @@ import {ConnectedPosition} from '@angular/cdk/overlay';
 import {PassLimitBulkEditComponent} from '../../../pass-limit-bulk-edit/pass-limit-bulk-edit.component';
 import {RecommendedDialogConfig} from '../../../shared/shared-components/confirmation-dialog/confirmation-dialog.component';
 import {PassLimitService} from '../../../services/pass-limit.service';
+import { InviteFamiliesDialogComponent } from '../../invite-families-dialog/invite-families-dialog.component';
 
 @Component({
   selector: 'app-accounts-header',
@@ -94,7 +95,8 @@ export class AccountsHeaderComponent implements OnInit, AfterViewInit, OnDestroy
     {title: 'Students', param: '_profile_student', icon_id: '#Student', role: 'student_count'},
     {title: 'Teachers', param: '_profile_teacher', icon_id: '#Teacher', role: 'teacher_count'},
     {title: 'Admins', param: '_profile_admin', icon_id: '#Admin', role: 'admin_count'},
-    {title: 'Assistants', param: '_profile_assistant', icon_id: '#Assistant', role: 'assistant_count'}
+    {title: 'Assistants', param: '_profile_assistant', icon_id: '#Assistant', role: 'assistant_count'},
+    // {title: 'Parents', param: '_profile_parent', icon_id: '#Parent', role: 'parent_count'}
   ];
 
   filterOptions: TableFilterOption[] = [
@@ -134,7 +136,14 @@ export class AccountsHeaderComponent implements OnInit, AfterViewInit, OnDestroy
     return this.user$.pipe(filter(u => !!u), map(user => user.roles.includes('admin_manage_integration')));
   }
 
+  get parentAccountAccess(): boolean {
+    return this.userService.getFeatureFlagParentAccount();
+  }
+
   ngOnInit() {
+    if (this.userService.getFeatureFlagParentAccount()) {
+      this.accountsButtons.push({title: 'Parents', param: '_profile_parent', icon_id: '#Parent', role: 'parent_count'});
+    }
     this.activeFilters$ = this.tableService.activeFilters$;
     this.getCurrentTab();
     this.user$ = this.userService.user$;
@@ -215,6 +224,8 @@ export class AccountsHeaderComponent implements OnInit, AfterViewInit, OnDestroy
       return count.student_count + ' students';
     } else if (this.currentTab === '_profile_assistant') {
       return count.assistant_count + ' assistants';
+    } else if (this.currentTab === '_profile_parent') {
+      return count.parent_count + ' parents';
     }
   }
 
@@ -430,6 +441,15 @@ export class AccountsHeaderComponent implements OnInit, AfterViewInit, OnDestroy
       next: () => {
         this.tableService.activeFilters$.next(this.tableService.activeFilters$.getValue());
       }
+    });
+  }
+
+  inviteFamilies() {
+    const dialogRef = this.matDialog.open(InviteFamiliesDialogComponent, {
+      panelClass: 'accounts-profiles-dialog',
+      backdropClass: 'custom-bd',
+      width: '425px',
+      height: '480px',
     });
   }
 

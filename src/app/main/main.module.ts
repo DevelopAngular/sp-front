@@ -56,7 +56,7 @@ import { KioskModeModule } from '../kiosk-mode/kiosk-mode.module';
       KioskModeModule
     ],
     declarations: [
-      SettingsComponent,
+      // SettingsComponent,
       FavoriteFormComponent,
       MainPageComponent,
       AnimatedHeaderDirective,

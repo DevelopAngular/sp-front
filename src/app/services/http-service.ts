@@ -97,7 +97,7 @@ function makeConfig(config: Config, school: School, effectiveUserId): Config & {
 
   return Object.assign({}, config || {}, {
     headers: headers,
-    responseType: 'json',
+    responseType: config?.responseType == 'blob' ? 'blob' as 'json' : 'json',
   }) as any;
 }
 

@@ -66,6 +66,8 @@ export class ProfileInfoComponent implements OnInit {
         return [...acc, 'Student'];
       } else if (currRole === '_profile_assistant') {
         return [...acc, 'Assistant'];
+      } else if (currRole === '_profile_parent') {
+        return [...acc, 'Parent'];
       }
       return [...acc];
     }, []).join(', ');

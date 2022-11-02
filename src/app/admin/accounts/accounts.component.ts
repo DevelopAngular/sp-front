@@ -176,7 +176,8 @@ export class AccountsComponent implements OnInit, OnDestroy {
           (this.prevRoute === `/admin/accounts/_profile_student` ||
             this.prevRoute === `/admin/accounts/_profile_teacher` ||
             this.prevRoute === `/admin/accounts/_profile_admin` ||
-            this.prevRoute === `/admin/accounts/_profile_assistant`)) {
+            this.prevRoute === `/admin/accounts/_profile_assistant` || 
+            this.prevRoute === `/admin/accounts/_profile_parent`)) {
           this.router.navigate([this.prevRoute]);
         } else {
           this.prevRoute = event.url;

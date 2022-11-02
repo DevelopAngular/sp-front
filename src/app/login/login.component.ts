@@ -90,11 +90,12 @@ export class LoginComponent implements OnInit, OnDestroy {
       }
 
       const callbackUrl: string = window.history.state.callbackUrl;
-
-      if (callbackUrl != null) {
+      if (callbackUrl != null || callbackUrl !== undefined) {
         this.router.navigate([callbackUrl]);
       } else if (this.isMobileDevice && currentUser.isAdmin() && currentUser.isTeacher()) {
         this.router.navigate(['main']);
+      } else if (currentUser.isParent()) {
+        this.router.navigate(['parent']);
       } else {
         const loadView = currentUser.isAdmin() ? 'admin' : 'main';
         this.router.navigate([loadView]);
@@ -129,7 +130,7 @@ export class LoginComponent implements OnInit, OnDestroy {
     this.destroyer$.next(null);
     this.destroyer$.complete();
   }
- 
+
 
   formMobileUpdatePosition() {
     if (this.isMobileDevice) {

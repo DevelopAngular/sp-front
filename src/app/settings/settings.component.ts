@@ -58,7 +58,7 @@ export class SettingsComponent implements OnInit, OnDestroy {
 
   constructor(
       public dialog: MatDialog,
-      @Optional() @Inject(MAT_DIALOG_DATA) public data: any,
+      @Optional() @Inject(MAT_DIALOG_DATA) public data: { trigger: ElementRef, isSwitch: boolean },
       @Optional() public dialogRef: MatDialogRef<SettingsComponent>,
       private dataService: DataService,
       private _zone: NgZone,

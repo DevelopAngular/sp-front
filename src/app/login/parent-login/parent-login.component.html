@@ -1,0 +1,72 @@
+<div class="container " (touchmove)="preventTouch($event)">
+
+    <div class="ds-w-100 ds-h-100 ds-flex-center-between ds-flex-column login">
+
+        <div class="background"></div>
+        <div style="flex-grow: 0.5;"></div>
+
+        <div class="brand">
+            <app-smartpass-logo [logoAsset]="'./assets/Logo (White).svg'"></app-smartpass-logo>
+        </div>
+
+        <div class="moving-tiles">
+            <div class="shadow"><span style="width: 1px; background-color: white"></span></div>
+            <app-mooving-tiles></app-mooving-tiles>
+            <div class="right-shadow"><span style="width: 1px; background-color: white"></span></div>
+        </div>
+
+        <div class="login-form" [style.margin-top]="formPosition">
+            <div class="wrapper">
+                <div>
+                    <div class="title">
+                        <img [src]="'./assets/Username (Navy).svg' | resolveAsset" width="34" height="34" alt="username" style="margin-right: 12px">
+                        <div>Sign in</div>
+                    </div>
+                    <div class="content">
+                        <app-input [formGroup]="loginForm" [autocomplete]="'username'" [controlName]="loginForm.get('username')" [input_label]="'Username or email'" [input_value]="loginForm.get('username').value" [isFocus]="true" [input_type]="isMobile ? 'email' : 'text'" [width]="'250px'"
+                            (onUpdate)="updateDemoUsername($event)"></app-input>
+                        <div class="input-password" [style.opacity]="loginData.demoLoginEnabled ? 1 : 0" [style.position]="loginData.demoLoginEnabled ? 'static' : 'absolute'">
+                            <app-input [autocomplete]="'password'" [formGroup]="loginForm" [isFocus]="inputFocusNumber === 2" [forceFocus$]="forceFocus$" [controlName]="loginForm.get('password')" [input_label]="'Password'" [input_type]="'password'" [width]="loginData.demoLoginEnabled ? '250px' : '0'"
+                                (onUpdate)="updateDemoPassword($event)"></app-input>
+                        </div>
+                        <div class="error" [style.position]="passwordError ? 'static' : 'absolute'" *ngIf="error$ | async as errorMessage"> {{ errorMessage }}</div>
+                        <!-- <div class="already-message" *ngIf="schoolAlreadyText$ | async as alreadyText">{{ alreadyText }}</div> -->
+                        <div class="button" style="margin-top: 97px;" *ngIf="!loginData.demoLoginEnabled">
+                            <app-gradient-button [disabled]="disabledButton" [size]="'medium'" [rightIcon]="!showSpinner ?'./assets/Chevron Right (White).svg' : ''" [cursor]="'pointer'" [hoverColor]="'#FFFFFF'" [minWidth]="'90px'" [minHeight]="'30px'" [fontSize]="'14px'" (buttonClick)="!showSpinner ? nextButtonTapped() : null"
+                                [style.width]="'90px'">
+                                <div *ngIf="!showSpinner">
+                                    <span>Next</span>
+                                </div>
+                                <div *ngIf="showSpinner" class="loading-theme_white">
+                                    <mat-spinner [diameter]="25"></mat-spinner>
+                                </div>
+                            </app-gradient-button>
+                        </div>
+                        <div class="button" style="margin-top: 21px;" *ngIf="loginData.demoLoginEnabled">
+                            <app-gradient-button [disabled]="!loginData.demoUsername || !this.loginForm.get('password').value || !!(error$ | async)" [size]="'medium'" [cursor]="'pointer'" [hoverColor]="'#FFFFFF'" [minWidth]="'90px'" [minHeight]="'30px'" [fontSize]="'14px'" (buttonClick)="demoLogin()"
+                                [style.width]="'90px'">
+                                <div *ngIf="!showSpinner">
+                                    <span>Sign in</span>
+                                </div>
+                                <div *ngIf="showSpinner" class="loading-theme_white">
+                                    <mat-spinner [diameter]="25"></mat-spinner>
+                                </div>
+                            </app-gradient-button>
+                        </div>
+                    </div>
+
+                </div>
+            </div>
+            <!-- <div>
+                <p class="bottom-text">
+                    By signing up, you agree to our <a class="link" appCrossPointerEventTarget (pointerClickEvent)="openLink('https://www.smartpass.app/terms')">Terms</a> and
+                    <a class="link" appCrossPointerEventTarget (pointerClickEvent)="openLink('https://www.smartpass.app/privacy')">Privacy Policy</a>.
+                </p>
+            </div> -->
+        </div>
+
+        <div class="grow"></div>
+        <div style="flex-grow: 0.5;"></div>
+    </div>
+
+</div>

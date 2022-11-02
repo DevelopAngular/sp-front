@@ -41,7 +41,12 @@ export class SignOutComponent implements AfterContentInit {
       // this.router.navigate(['']);
 
       // window.location.href = '/';
-      window.location.href = environment.production ? '/app' : '/';
+      const path = window.location.pathname;
+      if (path.includes('parent')) {
+        window.location.href = environment.production ? '/app/auth' : '/auth';
+      } else {
+        window.location.href = environment.production ? '/app' : '/';
+      }
     }, 500);
   }
 
