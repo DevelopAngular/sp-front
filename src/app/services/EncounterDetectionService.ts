@@ -9,7 +9,7 @@ import { HttpService } from './http-service';
 import { HttpHeaders } from '@angular/common/http';
 import {
   getEncounterDetection,
-  getEncounterDetectionCollection,
+  getEncounterDetectionCollection, getEncounterDetectionDate,
   getEncounterDetectionErrored,
   getEncounterDetectionLoading
 } from '../ngrx/encounter-detection';
@@ -20,6 +20,7 @@ import {
 export class EncounterDetectionService {
 
   encounteDetection$: Observable<EncounterDetection[]> = this.store.select(getEncounterDetectionCollection);
+  encounterCreatedAt$: Observable<Date> = this.store.select(getEncounterDetectionDate);
   encounterLoading$: Observable<boolean> = this.store.select(getEncounterDetectionLoading);
   encounterErrored$: Observable<boolean> = this.store.select(getEncounterDetectionErrored);
 

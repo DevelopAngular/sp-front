@@ -18,3 +18,8 @@ export const getEncounterDetectionCollection = createSelector(
     getEncounterdetectionState,
     (state: EncounterDetectionState) => state.encounterDetection
 );
+
+export const getEncounterDetectionDate = createSelector(
+  getEncounterdetectionState,
+  (state: EncounterDetectionState) => state.createdAt
+);

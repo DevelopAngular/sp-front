@@ -1,14 +1,18 @@
-import {ChangeDetectorRef, Component, EventEmitter, Injector, Input, OnInit, Output} from '@angular/core';
+import {ChangeDetectorRef, Component, EventEmitter, Injector, Input, OnInit, Output, ViewChild} from '@angular/core';
 import {CreateFormService} from '../../../create-form.service';
 import {MatDialogRef} from '@angular/material/dialog';
 import {MainHallPassFormComponent, Navigation} from '../../main-hall-pass-form.component';
 import {ScreenService} from '../../../../services/screen.service';
 import {LocationVisibilityService} from '../../location-visibility.service';
-import {BehaviorSubject, forkJoin} from 'rxjs';
+import {BehaviorSubject, forkJoin, Subject, combineLatest, Observable} from 'rxjs';
+import {filter, takeUntil, tap, map, shareReplay} from 'rxjs/operators';
 import {User} from '../../../../models/User';
-import {GSuiteSelector} from '../../../../sp-search/sp-search.component';
+import {GSuiteSelector, SPSearchComponent} from '../../../../sp-search/sp-search.component';
 import {PassLimitService} from '../../../../services/pass-limit.service';
 import {KioskModeService} from '../../../../services/kiosk-mode.service';
+import {LocationsService} from '../../../../services/locations.service';
+import {PollingEvent} from '../../../../services/polling-service';
+import {Location} from '../../../../models/Location';
 
 @Component({
   selector: 'app-who-you-are',
@@ -31,14 +35,74 @@ export class WhoYouAreComponent implements OnInit {
     private _injector: Injector,
     private cdr: ChangeDetectorRef,
     private visibilityService: LocationVisibilityService,
-    private kioskService : KioskModeService
+    private kioskService : KioskModeService,
+    private locationsService: LocationsService,
   ) { 
 
   }
 
+  private destroy$ = new Subject();
+
   ngOnInit() {
     this.frameMotion$ = this.formService.getFrameMotionDirection();
-     this.setPlaceHolder()
+    this.setPlaceHolder();
+    
+    if (this.listenLocation$ !== null) {
+      return;
+    } 
+    this.listenLocation$ = this.locationsService.listenLocationSocket().pipe(
+      takeUntil(this.destroy$),
+      filter((res: any | unknown & {data: any}) => (!!res && ('data' in res))),
+      map(({data}) => data),
+      shareReplay(1),
+    );
+    this.listenLocation$.subscribe();
+
+    this.searchCmp$.pipe(
+      filter(Boolean),
+      takeUntil(this.destroy$),
+    );
+    this.searchCmp$.subscribe();
+    this.subscribeWSUpdate();
+  }
+
+  listenLocation$: Observable<PollingEvent> = null;
+
+  searchCmp$: Subject<boolean> = new Subject();
+  private _searchCmp: SPSearchComponent;
+  @ViewChild(SPSearchComponent) set searchCmp(v: SPSearchComponent) {
+    this.searchCmp$.next(true);
+    this._searchCmp = v;
+  }
+  get searchCmp(): SPSearchComponent {
+    return this._searchCmp;
+  }
+
+  subscribeWSUpdate() {
+    combineLatest(this.listenLocation$, this.searchCmp$)
+    .pipe(
+      takeUntil(this.destroy$),
+      tap(([data, _]) => {
+        try {
+          const loc: Location = Location.fromJSON(data);
+          this.locationsService.updateLocationSuccessState(loc);
+          this.formState.data.direction.from = loc;
+          // refresh search
+          // as if the user was searching again
+          // posible annoying behavior but pretty improbable
+          // for an admin to change a location while a teacher like role searches 
+          const val = this.searchCmp.lastSearchText;
+          this.searchCmp.onSearch(val);
+        } catch(e) {
+          console.log(e);
+        }
+      }),
+    ).subscribe();
+  }
+
+  ngOnDestroy(): void {
+    this.destroy$.next();
+    this.destroy$.complete();
   }
  
   // used for filtering users found with sp-search component
@@ -52,7 +116,11 @@ export class WhoYouAreComponent implements OnInit {
     }).bind(this);
   }
 
+  showSearchElseLoading = true;
+
   setSelectedStudents(evt) {
+    this.showSearchElseLoading = false;
+
     this.formService.setFrameMotionDirection('forward');
     this.formService.compressableBoxController.next(false);
 
@@ -62,6 +130,8 @@ export class WhoYouAreComponent implements OnInit {
         this.formState.fromState = 1;
         this.formState.data.selectedStudents = evt;
         this.stateChangeEvent.emit(this.formState);
+
+        this.showSearchElseLoading = true;
       }, 100);
       return;
     }

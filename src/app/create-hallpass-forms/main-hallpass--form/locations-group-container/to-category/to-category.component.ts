@@ -3,17 +3,20 @@ import {Component, ElementRef, EventEmitter, HostListener, Inject, Input, OnInit
 import {Navigation} from '../../main-hall-pass-form.component';
 import {Pinnable} from '../../../../models/Pinnable';
 import {User} from '../../../../models/User';
+import {Location} from '../../../../models/Location';
 import {CreateFormService} from '../../../create-form.service';
-import {BehaviorSubject, fromEvent, Subject} from 'rxjs';
-import {takeUntil} from 'rxjs/operators';
+import {Observable, BehaviorSubject, fromEvent, Subject, of, combineLatest} from 'rxjs';
+import {filter, tap, takeUntil, map, shareReplay} from 'rxjs/operators';
 import {MatDialog, MatDialogRef, MAT_DIALOG_DATA} from '@angular/material/dialog';
 import {DeviceDetection} from '../../../../device-detection.helper';
 import {LocationVisibilityService} from '../../location-visibility.service';
-import {ToastService} from '../../../../services/toast.service';
+import {LocationsService} from '../../../../services/locations.service';
 import {
   ConfirmationDialogComponent,
   ConfirmationTemplates
 } from '../../../../shared/shared-components/confirmation-dialog/confirmation-dialog.component';
+import {LocationTableComponent} from '../../../../location-table/location-table.component';
+import {PollingEvent} from '../../../../services/polling-service';
 
 @Component({
   selector: 'app-to-category',
@@ -87,7 +90,7 @@ export class ToCategoryComponent implements OnInit {
     private dialog: MatDialog,
     @Inject(MAT_DIALOG_DATA) public dialogData: any,
     private visibilityService: LocationVisibilityService,
-    private toastService: ToastService,
+    private locationsService: LocationsService,
   ) { }
 
   get headerGradient() {
@@ -115,7 +118,105 @@ export class ToCategoryComponent implements OnInit {
           this.headerTransition['category-header_animation-back'] = false;
       }
     });
+    
+    if (this.listenLocation$ !== null) {
+      return;
+    } 
+    this.listenLocation$ = this.locationsService.listenLocationSocket().pipe(
+      takeUntil(this.destroy$),
+      filter((res: any | unknown & {data: any}) => (!!res && ('data' in res))),
+      map(({data}) => data),
+      shareReplay(1),
+    );
+    this.listenLocation$.subscribe();
+
+    // watch for LocationTableComponent component
+    this.locTable$.pipe(
+      filter(Boolean),
+      takeUntil(this.destroy$),
+    );
+    this.locTable$.subscribe();
+    this.subscribeWSUpdate();
   }
+
+  // it announces when locTable enters on DOM
+  locTable$: Subject<boolean> = new Subject();
+
+  listenLocation$: Observable<PollingEvent> = null;
+
+  private _locTable: LocationTableComponent;
+  @ViewChild('locationTable') set locTableRef(v: LocationTableComponent) {
+    this.locTable$.next(true);
+    this._locTable = v;
+  };
+  get locTableRef(): LocationTableComponent {
+    return this._locTable;
+  }
+
+  subscribeWSUpdate() {
+    const myLocations$ = (this.pinnable.type === 'category') ? this.locationsService.getLocationsWithCategory(this.pinnable.category) : of([]);
+    myLocations$.subscribe();
+
+    combineLatest(this.listenLocation$, this.locTable$, myLocations$)
+    .pipe(
+      takeUntil(this.destroy$),
+      tap(([data, _, myLocations]) => {
+        try {
+          // updated location sent via WS
+          const loc: Location = Location.fromJSON(data);
+
+          // check for a proper category pinnable
+          const isCategory = (this.pinnable.type === 'category' && this.pinnable.location === null);
+          if (!isCategory) {
+            return;
+          }
+          // check for locations of a category pinnable 
+          const pinn = <Pinnable | Pinnable & {myLocations: Location[]}>this.pinnable;
+          if ('myLocations' in pinn) {
+            myLocations = pinn.myLocations;
+          }
+
+          // is the location loc owned by pinnable?
+          const found = (Array.isArray(myLocations) ? myLocations : []).some((a: Location) => {
+            return +a.id === +loc.id
+          });
+          // but belongs to category pinnable?
+          const belongs = loc.category === pinn.category;
+          if (!found && !belongs) {
+            return;
+          }
+          
+          // update choices
+          let choices = myLocations as Location[];
+          const updated = choices.map((x: Location) => {
+            if (''+x.id === ''+loc.id) {
+              return loc;
+            }
+            try {
+              return Location.fromJSON(x);
+            } catch (e) {
+              console.log(e);
+            }
+          });
+
+          // is a freshly added location
+          if (!found && belongs) {
+            updated.push(loc);
+          }
+
+          // update pinn
+          if ('myLocations' in pinn) {
+            pinn.myLocations = updated;
+          }
+          // trigger RV filtering here
+          this.locTableRef.choices = updated;
+
+        } catch (e) {
+          console.log(e);
+        }
+      }),
+    ).subscribe();
+}
 
   ngOnDestroy() {
     this.destroy$.next();
@@ -236,5 +337,4 @@ export class ToCategoryComponent implements OnInit {
   get isIOSTablet() {
     return DeviceDetection.isIOSTablet();
   }
-
 }

@@ -4,4 +4,5 @@ export interface EncounterDetectionState {
     loading: boolean;
     error: boolean;
     encounterDetection: EncounterDetection[];
+    createdAt: Date;
   }

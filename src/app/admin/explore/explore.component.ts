@@ -166,6 +166,7 @@ export class ExploreComponent implements OnInit, OnDestroy {
   contactTraceData$: Observable<any[]>;
   reportsSearchData$: Observable<any[]>;
   encounterDetectionData$: Observable<any[]>;
+  encounterDetectionCreatedAt$: Observable<String>;
   queryParams: any;
 
   adminCalendarOptions;
@@ -502,6 +503,16 @@ export class ExploreComponent implements OnInit, OnDestroy {
         })
       );
 
+    this.encounterDetectionCreatedAt$ = this.encounterDetectionService.encounterCreatedAt$
+      .pipe(
+        filter((res: any) => this.currentView$.getValue() === 'encounter_detection'),
+        map((createdAt: Date | null) => {
+          if (!createdAt) {
+            return '';
+          }
+          return moment(createdAt).calendar();
+        })
+      );
 
     this.contactTraceData$ = this.contactTraceService.contactTraceData$
       .pipe(
