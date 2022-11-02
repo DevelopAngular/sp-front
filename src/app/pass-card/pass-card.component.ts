@@ -382,6 +382,7 @@ export class PassCardComponent implements OnInit, OnDestroy {
 
   newPass() {
     this.performingAction = true;
+    this.encounterService.getExclusionGroupsForStudentRequest(this.selectedStudents[0].id)
     const body = {
       'duration': this.selectedDuration * 60,
       'origin': this.pass.origin.id,
@@ -418,7 +419,9 @@ export class PassCardComponent implements OnInit, OnDestroy {
     }
 
     of(body).pipe(
-      concatMap(b => this.forStaff ? this.hallPassService.bulkCreatePass(b) : this.hallPassService.createPass(b)),
+      concatMap(b => this.forStaff ? this.hallPassService.bulkCreatePass(b)
+        : this.hallPassService.createPass(b)
+      ),
       takeUntil(this.destroy$),
       switchMap(({conflict_student_ids, passes}) => {
         if (conflict_student_ids) {
@@ -440,18 +443,20 @@ export class PassCardComponent implements OnInit, OnDestroy {
                   take(1),
                   tap((groups) => {
                     const exclusionGroups = groups[+id];
-                    this.toastService.openToast({
-                      title: 'This pass can\'t start now to prevent encounter.',
-                      subtitle: 'These students can\'t have a pass at the same time.',
-                      type: 'error',
-                      encounterPrevention: true,
-                      exclusionPass: {
-                        ...this.pass,
-                        travel_type: this.selectedTravelType,
-                        student: this.selectedStudents.find(user => +user.id === +id)
-                      },
-                      exclusionGroups
-                    });
+                    if (exclusionGroups[0].enabled) {
+                      this.toastService.openToast({
+                        title: 'This pass can\'t start now to prevent encounter.',
+                        subtitle: 'These students can\'t have a pass at the same time.',
+                        type: 'error',
+                        encounterPrevention: true,
+                        exclusionPass: {
+                          ...this.pass,
+                          travel_type: this.selectedTravelType,
+                          student: this.selectedStudents.find(user => +user.id === +id)
+                        },
+                        exclusionGroups
+                      });
+                    }
                   }));
             }));
           }
