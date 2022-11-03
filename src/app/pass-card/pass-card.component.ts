@@ -382,7 +382,6 @@ export class PassCardComponent implements OnInit, OnDestroy {
 
   newPass() {
     this.performingAction = true;
-    this.encounterService.getExclusionGroupsForStudentRequest(this.selectedStudents[0].id)
     const body = {
       'duration': this.selectedDuration * 60,
       'origin': this.pass.origin.id,
