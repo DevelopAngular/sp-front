@@ -565,6 +565,7 @@ export class NavbarComponent implements AfterViewInit, OnInit, OnDestroy {
       const favRef = this.dialog.open(FavoriteFormComponent, {
         panelClass: "form-dialog-container",
         backdropClass: "custom-backdrop",
+        data: {isStaff: this.isStaff},
       });
 
       favRef.afterClosed().subscribe((data) => {
