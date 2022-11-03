@@ -28,7 +28,7 @@ export class FavoriteFormComponent implements OnInit, OnDestroy {
       private locationService: LocationsService,
       private dragulaService: DragulaService,
       public screen: ScreenService,
-      @Optional() @Inject(MAT_DIALOG_DATA) private data: {isStaff: boolean}
+      @Optional() @Inject(MAT_DIALOG_DATA) public data: {isStaff: boolean}
   ) { }
 
   ngOnInit() {
