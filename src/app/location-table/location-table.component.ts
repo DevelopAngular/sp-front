@@ -163,7 +163,7 @@ export class LocationTableComponent implements OnInit, OnDestroy {
       // used only when in context of a MainHallPassFormComponent to get access to FORM_STATE,
       // for the others cases this is null
       // this soft coupling between location and mainform component should not exists in an ideal world
-      @Optional() private mainHallPassFormComponent: MainHallPassFormComponent, 
+      @Optional() private mainHallPassFormComponent: MainHallPassFormComponent,
   ) {}
 
   get isMobile() {
