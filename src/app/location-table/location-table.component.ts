@@ -1,4 +1,4 @@
-import {Component, ElementRef, EventEmitter, Input, OnDestroy, OnInit, Output, ViewChild, Injector} from '@angular/core';
+import {Component, ElementRef, EventEmitter, Input, OnDestroy, OnInit, Output, ViewChild, Optional} from '@angular/core';
 import {HttpService} from '../services/http-service';
 import {Location} from '../models/Location';
 import {filter, map, pluck, switchMap, takeUntil, take} from 'rxjs/operators';
@@ -36,8 +36,7 @@ function Visibility(): any {
         // accessing mainParent component indicates that FORM_STATE should be a service
         // usually we get FORM_STATE in a cascading fashion
         // from parent to child more then 1 level deep
-        const mainParent = this._injector.get(MainHallPassFormComponent);
-        const stateData = mainParent.FORM_STATE.data;
+        const stateData = this.mainHallPassFormComponent ? this.mainHallPassFormComponent.FORM_STATE.data : null;
 
         const isDedicatedUser = this.forKioskMode && (
           (!!this.user?.roles.includes('_profile_kiosk') ||
@@ -161,7 +160,10 @@ export class LocationTableComponent implements OnInit, OnDestroy {
       public tooltipService: TooltipDataService,
       private userService: UserService,
       private visibilityService: LocationVisibilityService,
-      private _injector: Injector,
+      // used only when in context of a MainHallPassFormComponent to get access to FORM_STATE,
+      // for the others cases this is null
+      // this soft coupling between location and mainform component should not exists in an ideal world
+      @Optional() private mainHallPassFormComponent: MainHallPassFormComponent, 
   ) {}
 
   get isMobile() {
