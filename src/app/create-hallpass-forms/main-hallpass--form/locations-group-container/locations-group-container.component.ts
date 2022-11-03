@@ -357,7 +357,7 @@ export class LocationsGroupContainerComponent implements OnInit, OnDestroy {
       map(pins => {
         return pins.find(pinnable => {
           if (pinnable.type === 'category' && location.category) {
-            return pinnable.title === location.category.substring(0, location.category.length - 8) || pinnable.title === location.category;
+            return pinnable.category === location.category || pinnable.title === location.category;
           } else if (pinnable.type === 'location') {
             return (pinnable.location.id + '') === (location.id + '');
           }
