@@ -118,22 +118,7 @@ export class AccountsRoleComponent implements OnInit, OnDestroy {
           }
 
           return this.parentService.getConnectedParents().pipe(
-            map(connectedResponse => connectedResponse.results),
-            map(parents => {
-              accounts.forEach(a => {
-                parents.forEach(p => {
-                  // if the fetched account from /v1/users and /parent/all is the same, then add the student
-                  // object to the account object
-                  const sameId = p.id.toString() === a.id.toString();
-                  if (!sameId) {
-                    return;
-                  }
-                  a['students'] = p.students;
-                });
-              });
-
-              return accounts;
-            })
+            map(connectedResponse => connectedResponse.results)
           );
         }),
         switchMap((accounts: User[]) => {
@@ -368,9 +353,10 @@ export class AccountsRoleComponent implements OnInit, OnDestroy {
         }
       }
     }());
+    const email = account.primary_email ?? account.email;
     const roleObject = {
       'Name': this.sanitizer.bypassSecurityTrustHtml(`<div class="no-wrap" style="width: 150px !important;">` + account.display_name + '</div>'),
-      'Email/username': `<div class="no-wrap">` + account.primary_email.split('@spnx.local')[0] + '</div>',
+      'Email/username': `<div class="no-wrap">` + email.split('@spnx.local')[0] + '</div>',
       // 'ID': account.custom_id ? this.sanitizer.bypassSecurityTrustHtml(`<span class="id-number">${account.custom_id}</span>`) : "-"
     };
     let objectToTable;
