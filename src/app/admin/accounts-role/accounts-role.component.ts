@@ -21,6 +21,7 @@ import {StorageService} from '../../services/storage.service';
 import {ToastService} from '../../services/toast.service';
 import {PassLimitService} from '../../services/pass-limit.service';
 import {StudentPassLimit} from '../../models/HallPassLimits';
+import { ParentAccountService, StudentResponse } from '../../services/parent-account.service'
 
 export const TABLE_RELOADING_TRIGGER =  new Subject<any>();
 
@@ -72,7 +73,8 @@ export class AccountsRoleComponent implements OnInit, OnDestroy {
     private sanitizer: DomSanitizer,
     private storage: StorageService,
     private toast: ToastService,
-    private passLimitsService: PassLimitService
+    private passLimitsService: PassLimitService,
+    private parentService: ParentAccountService
   ) {}
 
   ngOnInit() {
@@ -106,6 +108,34 @@ export class AccountsRoleComponent implements OnInit, OnDestroy {
          *
          * The following should be converted using User.fromJSON if intending to use methods on that class
          */
+        switchMap((accounts: User[]) => {
+          if (accounts.length === 0) {
+            return of([]);
+          }
+
+          if (this.role !== '_profile_parent') {
+            return of(accounts);
+          }
+
+          return this.parentService.getConnectedParents().pipe(
+            map(connectedResponse => connectedResponse.results),
+            map(parents => {
+              accounts.forEach(a => {
+                parents.forEach(p => {
+                  // if the fetched account from /v1/users and /parent/all is the same, then add the student
+                  // object to the account object
+                  const sameId = p.id.toString() === a.id.toString();
+                  if (!sameId) {
+                    return;
+                  }
+                  a['students'] = p.students;
+                });
+              });
+
+              return accounts;
+            })
+          );
+        }),
         switchMap((accounts: User[]) => {
           if (accounts.length === 0) {
             return of([]);
@@ -394,8 +424,16 @@ export class AccountsRoleComponent implements OnInit, OnDestroy {
           'Permissions': `<div class="no-wrap">` + permissions + `</div>`
       }};
     } else if (this.role === '_profile_parent') {
+      const studentsTemplate = (account['students'] as StudentResponse[]).map(s => `
+        <div class="student">
+            <div style='background: url("${s.profile_picture}") left center / cover no-repeat; height: 23px; width: 23px'></div>
+            <span class="ds-mx-10">${s.display_name}</span>
+        </div>
+      `).join('');
+      const studentWrapper = `<div class="ds-flex-center-around">${studentsTemplate}</div>`
+
       objectToTable = {...roleObject, ...{
-        'Students': 'Demo'
+        'Students': this.sanitizer.bypassSecurityTrustHtml(studentWrapper)
       }};
     }
     const currentObj = {};
@@ -432,7 +470,7 @@ export class AccountsRoleComponent implements OnInit, OnDestroy {
         this.role === '_profile_teacher' ? 'teacher' :
           this.role === '_profile_student' ? 'student' :
           this.role === '_profile_assistant' ? 'student' :
-          this.role === '_profile_parent' ? 'parents' : 'assistant';          
+          this.role === '_profile_parent' ? 'parents' : 'assistant';
     const data = {
       profile: evt,
       profileTitle: profileTitle,

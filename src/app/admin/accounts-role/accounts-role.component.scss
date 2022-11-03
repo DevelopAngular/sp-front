@@ -6,6 +6,19 @@
   overflow: hidden;
 }
 
+::ng-deep app-sp-data-table .student {
+  background-color: #F7F7F7;
+  border-radius: 8px;
+  height: 31px;
+  display: flex;
+  align-items: center;
+  justify-content: space-around;
+  margin: 5px;
+  color: #1F194E;
+  white-space: nowrap;
+  position: relative;
+}
+
 .host {
   padding: 0 25px;
 }

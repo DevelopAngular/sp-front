@@ -1,6 +1,50 @@
 import { Injectable } from '@angular/core';
 import { HttpService } from './http-service';
 
+export interface StudentResponse {
+  id: number;
+  first_name: string;
+  last_name: string;
+  display_name: string;
+  created: string; // return as timestamp Date string
+  first_login: string; // return as timestamp Date string
+  last_login: string; // return as timestamp Date string
+  last_updated: string; // return as timestamp Date string
+  active: boolean;
+  badge: string;
+  custom_id: string;
+  demo_account: boolean;
+  extras: Record<string, any>;
+  passes_restricted: string;
+  primary_email: string;
+  profile_picture: string;
+  roles: string[];
+  school_id: number;
+  school_name: string;
+  show_expired_passes: boolean;
+  show_profile_pictures: string;
+  specific_approvers: any[];
+  status: string;
+  sync_types: any[];
+  username: string;
+}
+
+interface ParentResponse {
+  id: number;
+  roles: string[];
+  first_name: string;
+  last_name: string;
+  username: string;
+  display_name: string;
+  email: string;
+  is_active: boolean;
+  created: string; // return as timestamp Date string
+  first_login: string; // return as timestamp Date string
+  last_login: string; // return as timestamp Date string
+  last_updated: string; // return as timestamp Date string
+  students: StudentResponse[];
+}
+
 @Injectable({
   providedIn: 'root'
 })
@@ -51,6 +95,10 @@ export class ParentAccountService {
 
   getParentsMetrics() {
     return this.http.get('v1/parent/metrics');
+  }
+
+  getConnectedParents() {
+    return this.http.get<{results: ParentResponse[]}>('v1/parent/all');
   }
 
   getUnconnectedStudents() {
