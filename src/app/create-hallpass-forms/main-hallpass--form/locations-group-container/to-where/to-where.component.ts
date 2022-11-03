@@ -62,7 +62,7 @@ export class ToWhereComponent implements OnInit, OnDestroy, AfterViewInit {
 
   @ViewChildren('ngForPinnables') checkPinnables: QueryList<any>;
   ngAfterViewInit(): void {
-    this.loading = true;
+    this.loading = !!this.checkPinnables.length;
     this.checkPinnables.changes
     .subscribe((change) => {
       if (change?.length > 0) {
