@@ -1,4 +1,4 @@
-import {Component, OnDestroy, OnInit} from '@angular/core';
+import {Component, OnDestroy, OnInit, Optional, Inject} from '@angular/core';
 import {Location} from '../models/Location';
 import {MatDialogRef} from '@angular/material/dialog';
 import {LocationsService} from '../services/locations.service';
@@ -8,6 +8,8 @@ import {merge, Observable, of} from 'rxjs';
 import {mapTo, publish, refCount} from 'rxjs/operators';
 import {ScreenService} from '../services/screen.service';
 import {LocationVisibilityService} from '../create-hallpass-forms/main-hallpass--form/location-visibility.service';
+import {MAT_DIALOG_DATA} from '@angular/material/dialog';
+
 
 @Component({
   selector: 'app-favorite-form',
@@ -26,6 +28,7 @@ export class FavoriteFormComponent implements OnInit, OnDestroy {
       private locationService: LocationsService,
       private dragulaService: DragulaService,
       public screen: ScreenService,
+      @Optional() @Inject(MAT_DIALOG_DATA) public data: {isStaff: boolean}
   ) { }
 
   ngOnInit() {

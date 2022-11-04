@@ -21,6 +21,7 @@
           [isFavoriteForm]="true"
           [searchExceptFavourites]="true"
           [showStars]="true"
+          [forStaff]="data['isStaff'] ? data.isStaff : null"
           (onUpdate)="this.starChanges = $event"
         >
         </app-location-table>
