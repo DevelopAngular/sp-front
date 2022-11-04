@@ -6,7 +6,17 @@ import {constructUrl} from '../live-data/helpers';
 import {Logger} from './logger.service';
 import {User} from '../models/User';
 import {PollingService} from './polling-service';
-import { catchError, concatMap, exhaustMap, filter, map, switchMap, take, takeUntil, tap } from 'rxjs/operators'
+import {
+  catchError,
+  concatMap,
+  exhaustMap,
+  filter,
+  map, skip,
+  switchMap,
+  take,
+  takeUntil,
+  tap
+} from 'rxjs/operators';
 import {Paged} from '../models';
 import {RepresentedUser} from '../navbar/navbar.component';
 import {Store} from '@ngrx/store';
@@ -290,7 +300,23 @@ export class UserService implements OnDestroy {
   schools$: Observable<School[]>;
 
   destroy$: Subject<any> = new Subject<any>();
+
+  /**
+   * destroyGlobalReload is responsible for destroying HttpService.globalReload$ subscription.
+   * We destroy this when a parent account has logged in because globalReload$ is only triggered when
+   * a school has loaded.
+   * Therefore, when a parent account has logged in, a school will never load and the globalReload$ Subject
+   * will hang forever. This is why we destroy the observable
+   */
   destroyGlobalReload: Subject<any> = new Subject<any>();
+
+  /**
+   * inhibitParentRequest$ is responsible for not calling `/parent/@me when a user that's not a parent account
+   * has logged in.
+   * The BehaviorSubject has a value of true, which means we hold off on calling the parent user info route.
+   * Only when this value receives false, then we call `/parent/@me`.
+   */
+  inhibitParentRequest$: BehaviorSubject<boolean> = new BehaviorSubject<boolean>(true);
 
   constructor(
     private http: HttpService,
@@ -303,8 +329,45 @@ export class UserService implements OnDestroy {
     private loginDataService: LoginDataService
   ) {
 
+    /**
+     * /v1/schools is always called no matter the type of user that signs in.
+     * As long as the user is authenticated, /v1/schools is called.
+     *
+     * We listen to HttpService.schoolsCollection, this is the NgRx collection of schools.
+     * The first result is always [] since this is the default value while /v1/schools request
+     * is in progress, so we skip this first value
+     *
+     * If the second value that comes in is also an empty array, it means the user that just logged
+     * in is a parent account, since those accounts are not associated with schools.
+     */
     this.loginService.isAuthenticated$.pipe(
       filter(Boolean),
+      concatMap(() => this.http.schoolsCollection$.pipe(skip(1), take(1)))
+    ).subscribe({
+      next: schools => {
+        if (schools.length === 0) {
+          // logged in user has no associated schools, it must be a parent account.
+          // destroy the global reload observable and allow the parent request to continue
+          this.destroyGlobalReload.next();
+          this.inhibitParentRequest$.next(false);
+        } else {
+          // logged in user has associated schools, do not call `/parent/@me`
+          this.inhibitParentRequest$.next(true);
+        }
+      }
+    });
+
+    /**
+     * This observable is responsible for listening to both the auth status and whether the
+     * parent route is being inhibited.
+     */
+    combineLatest([
+      this.loginService.isAuthenticated$,
+      this.inhibitParentRequest$.asObservable()
+    ]).pipe(
+      filter(([isAuth, inhibitParents]) => {
+        return !(!isAuth || inhibitParents);
+      }),
       concatMap(() => this.http.get<User>('v1/parent/@me')),
       map(account => {
         account['sync_types'] = [];
@@ -312,7 +375,6 @@ export class UserService implements OnDestroy {
       })
     ).subscribe({
       next: parentAccount => {
-        this.destroyGlobalReload.next();
         this.http.effectiveUserId.next(parseInt(parentAccount.id, 10));
         this.userData.next(parentAccount);
       }
