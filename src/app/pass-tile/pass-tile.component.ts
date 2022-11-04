@@ -11,7 +11,7 @@ import {
   SimpleChanges,
   ViewChild
 } from '@angular/core';
-import {BehaviorSubject, interval, Observable, Subject} from 'rxjs';
+import { BehaviorSubject, fromEvent, interval, Observable, Subject } from 'rxjs'
 import {bumpIn, studentPassFadeInOut} from '../animations';
 import {PassLike} from '../models';
 import {TimeService} from '../services/time.service';
@@ -140,6 +140,14 @@ export class PassTileComponent implements OnInit, OnDestroy, OnChanges {
   }
 
   ngOnInit() {
+    fromEvent(document, 'click').pipe(
+      takeUntil(this.destroy$),
+    ).subscribe((event: PointerEvent) => {
+      if (!(event['path'] as HTMLElement[]).map(e => e?.tagName?.toLowerCase()).filter(Boolean).includes('app-student-passes')) {
+        this.studentNameLeave();
+      }
+    });
+
     this.valid = this.isActive;
     this.scrollStrategy = this.overlay.scrollStrategies.block();
     if (this.timerEvent) {
