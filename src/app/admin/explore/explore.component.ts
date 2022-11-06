@@ -1296,7 +1296,7 @@ export class ExploreComponent implements OnInit, OnDestroy {
     return Util.numberWithCommas(x);
   }
 
-  downloadPasses(countAllData) {
+  downloadPasses(countAllData: number) {
     if ((this.selectedRows.length > 300 || ((!this.selectedRows.length && countAllData > 300) || (this.tableService.isAllSelected$.getValue() && countAllData > 300)))) {
       this.exportPasses();
     } else {
@@ -1334,10 +1334,18 @@ export class ExploreComponent implements OnInit, OnDestroy {
     const exceptPass = rows.map(row => {
       if (row['Contact connection']) {
         const str = row['Contact connection'].changingThisBreaksApplicationSecurity;
-        row['Contact connection'] = str.replace(/(<[^>]+>)+/g, ``);
+        row['Contact connection'] = str.replace(/(<[^>]+>)+/g, '');
       } else {
         row['Email'] = row.email;
         row['Duration'] = row['Duration'].replace(' min', '');
+      }
+      // selected rows are not having changingThisBreaksApplicationSecurity
+      // all rows have changingThisBreaksApplicationSecurity 
+      if (row?.Grade?.changingThisBreaksApplicationSecurity) {
+        row.Grade = row.Grade.changingThisBreaksApplicationSecurity.replace(/(<[^>]+>)+/g, '');
+      } 
+      if (row?.ID?.changingThisBreaksApplicationSecurity) {
+        row.ID = row.ID.changingThisBreaksApplicationSecurity.replace(/(<[^>]+>)+/g, '');
       }
       return omit(row, ['Pass', 'Passes']);
     });
