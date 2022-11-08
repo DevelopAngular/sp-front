@@ -1,5 +1,5 @@
 <div class="wrapper"
-     [ngClass]="{disabled: disabled}"
+     [ngClass]="{'disabled': disabled}"
      #button
      (mouseenter)="!disabled && button.hover = true"
      (mouseleave)="!disabled && button.hover = false; !disabled && button.pressed = false"
