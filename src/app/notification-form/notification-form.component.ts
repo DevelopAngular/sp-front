@@ -47,7 +47,6 @@ export class NotificationFormComponent implements OnInit, OnDestroy {
         });
     }
 
-
     const settings$: Subject<any> = new Subject();
     this.user$.pipe(switchMap(user => this.notificationService.getUserNotification(user)))
       .subscribe((settings: UserNotificationSettings) => {
