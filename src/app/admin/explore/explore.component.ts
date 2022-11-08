@@ -1278,8 +1278,20 @@ export class ExploreComponent implements OnInit, OnDestroy {
   }
 
   exportPasses() {
-    this.adminService.exportCsvPasses(this.queryParams)
-      .pipe(switchMap(res => combineLatest(this.user$, this.passSearchState.countPasses$)))
+    // Why unsubscribe manually:
+    // -------------------------
+    // this method is fired up by button click(s)
+    //
+    // calling this method once by UI click makes
+    // every single UI filter change to trigger a download (creates XLSX file and sends email)
+    // worst
+    // calling this method repeatedly by UI clicks
+    // creates a subscribtion every time
+    // and MULTIPLY the unwanted download associated with a single click
+    const unsubscriber = this.adminService.exportCsvPasses(this.queryParams)
+      .pipe(
+        switchMap(_ => combineLatest(this.user$, this.passSearchState.countPasses$))
+      )
       .subscribe(([user, count]) => {
         this.toastService.openToast(
           {
@@ -1289,6 +1301,7 @@ export class ExploreComponent implements OnInit, OnDestroy {
             showButton: false
           }
         );
+        unsubscriber.unsubscribe();
       });
   }
 
