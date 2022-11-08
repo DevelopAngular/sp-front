@@ -1,11 +1,12 @@
 <div class="wrapper"
+     [ngClass]="{disabled: disabled}"
      #button
-     (mouseenter)="button.hover = true"
-     (mouseleave)="button.hover = false; button.pressed = false"
+     (mouseenter)="!disabled && button.hover = true"
+     (mouseleave)="!disabled && button.hover = false; !disabled && button.pressed = false"
      appCrossPointerEventTarget
-     (pointerDownEvent)="button.pressed = true"
-     (pointerCancelEvent)="button.pressed = false"
-     (pointerClickEvent)="buttonClick.emit(button); button.pressed = false"
+     (pointerDownEvent)="!disabled && button.pressed = true"
+     (pointerCancelEvent)="!disabled && button.pressed = false"
+     (pointerClickEvent)="!disabled && buttonClick.emit(button); !disabled && button.pressed = false"
      [style.background-color]="background((button.hover || openedFilter), button.pressed)"
 >
   <div class="content-button">

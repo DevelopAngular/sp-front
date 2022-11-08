@@ -72,7 +72,7 @@
             <app-filter-button *ngIf="!selectedRows.length; else selected" [title]="'<var>'+(numberWithCommas(countPasses) + '</var> pass' + (countPasses > 1 ? 'es' : ''))" [isDownloadButton]="true" [customToolTip]="'Click to export passes'" (buttonClick)="downloadPasses(countPasses)">
             </app-filter-button>
             <ng-template #selected>
-              <app-filter-button [filter]="true" [title]="'<var>' + ((passSearchState.isAllSelected$ | async) ? numberWithCommas(countPasses) : numberWithCommas(selectedRows.length)) + '/' + numberWithCommas(countPasses) + '</var> selected'" [isDownloadButton]="true" [customToolTip]="'Click to export passes'"
+              <app-filter-button [disabled]="disabled" [filter]="true" [title]="'<var>' + ((passSearchState.isAllSelected$ | async) ? numberWithCommas(countPasses) : numberWithCommas(selectedRows.length)) + '/' + numberWithCommas(countPasses) + '</var> selected'" [isDownloadButton]="true" [customToolTip]="'Click to export passes'"
                     (buttonClick)="downloadPasses(countPasses)">
                 </app-filter-button>
             </ng-template>

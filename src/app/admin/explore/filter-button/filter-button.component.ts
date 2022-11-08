@@ -15,6 +15,7 @@ export class FilterButtonComponent implements OnInit {
   @Input() forceButtonClick$: Subject<any>;
   @Input() openedFilter: boolean;
   @Input() isDownloadButton: boolean;
+  @Input() disabled: boolean;
 
   @Output() buttonClick: EventEmitter<any> = new EventEmitter<any>();
   @Output() forceButtonClickEvent: EventEmitter<{event: any, action: string}> = new EventEmitter<{event: any, action: string}>();
@@ -33,6 +34,10 @@ export class FilterButtonComponent implements OnInit {
   }
 
   background(hover, pressed) {
+    if (this.disabled) {
+      return;
+    }
+
     if (hover) {
       if (this.filter) {
         return this.domSanitizer.bypassSecurityTrustStyle('rgba(223, 230, 250)');

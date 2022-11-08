@@ -9,6 +9,11 @@
   cursor: pointer;
   position: relative;
 
+  &.disabled {
+    pointer-events: none;
+    cursor: not-allowed;
+  }
+
   .content-button {
     display: flex;
     align-items: center;

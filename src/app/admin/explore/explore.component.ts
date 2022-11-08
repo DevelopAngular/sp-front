@@ -1277,6 +1277,8 @@ export class ExploreComponent implements OnInit, OnDestroy {
     }
   }
 
+  disabled: boolean = false;
+
   exportPasses() {
     // Why unsubscribe manually:
     // -------------------------
@@ -1288,6 +1290,9 @@ export class ExploreComponent implements OnInit, OnDestroy {
     // calling this method repeatedly by UI clicks
     // creates a subscribtion every time
     // and MULTIPLY the unwanted download associated with a single click
+
+    this.disabled = true;
+
     const unsubscriber = this.adminService.exportCsvPasses(this.queryParams)
       .pipe(
         switchMap(_ => combineLatest(this.user$, this.passSearchState.countPasses$))
@@ -1301,7 +1306,9 @@ export class ExploreComponent implements OnInit, OnDestroy {
             showButton: false
           }
         );
+        
         unsubscriber.unsubscribe();
+        this.disabled = false;
       });
   }
 
