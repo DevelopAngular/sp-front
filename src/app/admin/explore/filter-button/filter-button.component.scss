@@ -10,8 +10,10 @@
   position: relative;
 
   &.disabled {
-    pointer-events: none;
-    cursor: not-allowed;
+    cursor: progress;
+    .content-button {
+      pointer-events: none;
+    }
   }
 
   .content-button {

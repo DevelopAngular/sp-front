@@ -1295,6 +1295,7 @@ export class ExploreComponent implements OnInit, OnDestroy {
 
     const unsubscriber = this.adminService.exportCsvPasses(this.queryParams)
       .pipe(
+        delay(5000),
         switchMap(_ => combineLatest(this.user$, this.passSearchState.countPasses$))
       )
       .subscribe(([user, count]) => {
