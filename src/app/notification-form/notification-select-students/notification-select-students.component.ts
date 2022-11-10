@@ -6,8 +6,9 @@ import {
   NotificationSelectStudentsDialogComponent
 } from '../notification-select-students-dialog/notification-select-students-dialog.component';
 import {FormArray, FormControl} from '@angular/forms';
-import {forkJoin, throwError} from 'rxjs';
-import {filter, map} from 'rxjs/operators';
+import {forkJoin, of, throwError} from 'rxjs';
+import {catchError, filter, map, tap} from 'rxjs/operators';
+import {HttpErrorResponse} from '@angular/common/http';
 
 interface StudentDisplay {
   id: string;
@@ -45,17 +46,27 @@ export class NotificationSelectStudentsComponent implements OnInit {
           }
         }),
         filter(Boolean),
+        // protect outer forkjoin to unsubscribe on an error of any of its inner observables
+        catchError(err => of(err)),
       );
     };
     const requests = this.ids.value.map((id: string|number) => getUser(id));
-    requests.push(throwError('error'))
-    forkJoin(requests).subscribe({
-      next: (uu: User[]) => {
-        this.students = [...uu];
-        this.doDisplayedStudents(this.students);
-      },
-      error: err => {throw err;},
-    });
+    requests.push(throwError(new Error('error')).pipe(catchError(err => of(err))));
+    // in case of error foprkjoin will cancel all inner observables
+    forkJoin(requests)
+    .pipe(
+      tap({
+        next: (uu: (User|Error)[]) => {
+          this.students = [...uu.filter(u => (u instanceof User))] as User[];
+          this.doDisplayedStudents(this.students);
+
+          const errs = uu.filter(u  => (u instanceof Error)) as Error[];
+          if (errs.length > 0) {
+            throw new HttpErrorResponse({error: new Error('many errors'), status: 500});
+          }
+        },
+      }),
+    ).subscribe();
   }
 
   // represents this.students inside template
