@@ -6,8 +6,8 @@ import {
   NotificationSelectStudentsDialogComponent
 } from '../notification-select-students-dialog/notification-select-students-dialog.component';
 import {FormArray, FormControl} from '@angular/forms';
-import {forkJoin} from 'rxjs';
-import {filter, map, take} from 'rxjs/operators';
+import {forkJoin, throwError} from 'rxjs';
+import {filter, map} from 'rxjs/operators';
 
 interface StudentDisplay {
   id: string;
@@ -47,12 +47,15 @@ export class NotificationSelectStudentsComponent implements OnInit {
         filter(Boolean),
       );
     };
-
-    forkJoin(this.ids.value.map((id: string|number) => getUser(id))).pipe(take(1)).subscribe(
-      (uu: User[]) => {
+    const requests = this.ids.value.map((id: string|number) => getUser(id));
+    requests.push(throwError('error'))
+    forkJoin(requests).subscribe({
+      next: (uu: User[]) => {
         this.students = [...uu];
         this.doDisplayedStudents(this.students);
-      });
+      },
+      error: err => {throw err;},
+    });
   }
 
   // represents this.students inside template
