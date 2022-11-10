@@ -32,10 +32,10 @@ export class NotificationSelectStudentsComponent implements OnInit {
   ) {}
 
   ngOnInit(): void {
-    const getUser = id => { 
+    const getUser = (id: string|number) => {
       return this.userService.searchProfileById(id)
       .pipe(
-        filter(Boolean), 
+        filter(Boolean),
         map(user => {
           try {
             const u: User = User.fromJSON(user);
@@ -43,23 +43,32 @@ export class NotificationSelectStudentsComponent implements OnInit {
           } catch (e) {
             return false;
           }
-        }), 
+        }),
         filter(Boolean),
       );
     };
 
-    forkJoin(this.ids.value.map(id => getUser(id))).pipe(take(1)).subscribe(
+    forkJoin(this.ids.value.map((id: string|number) => getUser(id))).pipe(take(1)).subscribe(
       (uu: User[]) => {
         this.students = [...uu];
+        this.doDisplayedStudents(this.students);
       });
   }
 
-  displayedStudents(): StudentDisplay[] {
-    if (this.students.length === 0) {
+  // represents this.students inside template
+  // it is this.students twin that lives only for template
+  // every change to this.students in order to have effect on template
+  // MUST be paired with a call to this.doDisplayedStudents
+  displayedStudents: StudentDisplay[] = [];
+
+  // formatting data for template
+  doDisplayedStudents(students: User[]): void {
+    if (students.length === 0) {
+      this.displayedStudents = [];
       return;
     }
 
-    const ss = this.students.map<StudentDisplay>(student => {
+    const ss = students.map<StudentDisplay>(student => {
       return {
         id: student.id,
         name: student.display_name,
@@ -67,11 +76,12 @@ export class NotificationSelectStudentsComponent implements OnInit {
       };
     });
 
-    return ss;
+    this.displayedStudents = ss;
   }
 
-  removeStudent(studentIndex) {
+  removeStudent(studentIndex: number) {
     this.students.splice(studentIndex, 1);
+    this.doDisplayedStudents(this.students);
     this.ids.removeAt(studentIndex);
   }
 
@@ -93,6 +103,7 @@ export class NotificationSelectStudentsComponent implements OnInit {
       }
 
       this.students.push(newStudent[0]);
+      this.doDisplayedStudents(this.students);
       this.ids.push(new FormControl(newStudent[0].id));
       console.log(this.students, this.ids);
     });
