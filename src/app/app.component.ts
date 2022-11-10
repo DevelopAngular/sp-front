@@ -176,7 +176,7 @@ export class AppComponent implements OnInit, AfterViewInit, OnDestroy {
           } else {
             setTimeout(() => {
               window.Intercom('update', {'hide_default_launcher': true});
-            }, 1000);
+            }, 3000);
           }
           return this.nextReleaseService
             .getLastReleasedUpdates(DeviceDetection.platform())
