@@ -13,6 +13,7 @@ import {UserService} from '../../../services/user.service';
 import {GSuiteOrgs} from '../../../models/GSuiteOrgs';
 import {CleverInfo} from '../../../models/CleverInfo';
 import {ClassLinkInfo} from '../../../models/ClassLinkInfo';
+import {DeviceDetection} from '../../../device-detection.helper';
 
 declare const window;
 
@@ -27,6 +28,9 @@ export class SchoolsEffects {
           .pipe(
             map((schools: School[]) => {
               window.waitForAppLoaded(true);
+              if (DeviceDetection.isMobile()) {
+                window.Intercom('update', {'hide_default_launcher': true});
+              }
               return schoolsActions.getSchoolsSuccess({schools});
             }),
             catchError(error => {
