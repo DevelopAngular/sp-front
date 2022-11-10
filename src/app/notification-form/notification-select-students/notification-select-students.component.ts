@@ -10,6 +10,8 @@ import {forkJoin, of, throwError} from 'rxjs';
 import {catchError, filter, map, tap} from 'rxjs/operators';
 import {HttpErrorResponse} from '@angular/common/http';
 
+import {ToastService} from '../../services/toast.service';
+
 interface StudentDisplay {
   id: string;
   name: string;
@@ -30,6 +32,7 @@ export class NotificationSelectStudentsComponent implements OnInit {
   constructor(
     private userService: UserService,
     private dialog: MatDialog,
+    private toastService: ToastService,
   ) {}
 
   ngOnInit(): void {
@@ -50,9 +53,9 @@ export class NotificationSelectStudentsComponent implements OnInit {
         catchError(err => of(err)),
       );
     };
+
     const requests = this.ids.value.map((id: string|number) => getUser(id));
-    requests.push(throwError(new Error('error')).pipe(catchError(err => of(err))));
-    // in case of error foprkjoin will cancel all inner observables
+    // in case of error forkjoin will cancel all inner observables
     forkJoin(requests)
     .pipe(
       tap({
@@ -60,9 +63,27 @@ export class NotificationSelectStudentsComponent implements OnInit {
           this.students = [...uu.filter(u => (u instanceof User))] as User[];
           this.doDisplayedStudents(this.students);
 
-          const errs = uu.filter(u  => (u instanceof Error)) as Error[];
+          const httperrors = uu.filter(u => (u instanceof HttpErrorResponse)) as HttpErrorResponse[];
+          const errs = uu.filter(u  => (!(u instanceof HttpErrorResponse) && u instanceof Error)) as Error[];
+          if (httperrors.length > 0) {
+            // trigger tooltip
+            const multiple = httperrors.map(err => err.error instanceof Error ? err.error.message : ''+err.error).join("\n");
+            if (multiple.length > 0) {
+              this.toastService.openToast(
+                {
+                  title: `Student profiles`,
+                  subtitle: `There were errors for ${httperrors.length} profiles.`,
+                  type: 'error',
+                  showButton: false,
+                }
+              );
+            }
+          }
           if (errs.length > 0) {
-            throw new HttpErrorResponse({error: new Error('many errors'), status: 500});
+            const multiple = errs.map(err => err.message).join("\n");
+            if (multiple.length > 0) {
+              throw new Error(multiple);
+            }
           }
         },
       }),

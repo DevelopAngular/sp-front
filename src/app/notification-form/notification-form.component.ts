@@ -89,6 +89,11 @@ export class NotificationFormComponent implements OnInit, OnDestroy {
   }
 
   ngOnDestroy(): void {
+    // innaccurate way to tell the form has changed
+    if (this.form.pristine) {
+      return;
+    }
+
     this.user$.subscribe(user => {
       this.notificationService.updateUserNotification(user, this.form.getRawValue()).subscribe(res => {
       });
