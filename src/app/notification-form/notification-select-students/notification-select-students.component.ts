@@ -1,13 +1,13 @@
-import {Component, EventEmitter, Input, OnInit, Output} from '@angular/core';
+import {Component, Input, OnInit} from '@angular/core';
 import {User} from '../../models/User';
 import {UserService} from '../../services/user.service';
-import {NotificationRoomFormComponent} from '../notification-room-form/notification-room-form.component';
 import {MatDialog} from '@angular/material/dialog';
 import {
   NotificationSelectStudentsDialogComponent
 } from '../notification-select-students-dialog/notification-select-students-dialog.component';
-import {Subject} from 'rxjs';
 import {FormArray, FormControl} from '@angular/forms';
+import {forkJoin} from 'rxjs';
+import {filter, map, take} from 'rxjs/operators';
 
 interface StudentDisplay {
   id: string;
@@ -32,21 +32,42 @@ export class NotificationSelectStudentsComponent implements OnInit {
   ) {}
 
   ngOnInit(): void {
-    this.ids.value.forEach(id => {
-      this.userService.searchProfileById(id).subscribe(user => {
-        this.students.push(user);
+    const getUser = id => { 
+      return this.userService.searchProfileById(id)
+      .pipe(
+        filter(Boolean), 
+        map(user => {
+          try {
+            const u: User = User.fromJSON(user);
+            return u;
+          } catch (e) {
+            return false;
+          }
+        }), 
+        filter(Boolean),
+      );
+    };
+
+    forkJoin(this.ids.value.map(id => getUser(id))).pipe(take(1)).subscribe(
+      (uu: User[]) => {
+        this.students = [...uu];
       });
-    });
   }
 
   displayedStudents(): StudentDisplay[] {
-    return this.students.map<StudentDisplay>(student => {
+    if (this.students.length === 0) {
+      return;
+    }
+
+    const ss = this.students.map<StudentDisplay>(student => {
       return {
         id: student.id,
         name: student.display_name,
         icon: student.profile_picture === null ? './assets/Avatar Default.svg' : student.profile_picture,
       };
     });
+
+    return ss;
   }
 
   removeStudent(studentIndex) {

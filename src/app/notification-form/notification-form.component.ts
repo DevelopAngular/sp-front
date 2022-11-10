@@ -298,6 +298,11 @@ export class NotificationFormComponent implements OnInit, OnDestroy {
       return new FormGroup({});
     }
 
+    let students = [];
+    if (((settings as any)['students'] ?? []).length > 0) {
+      students = settings['students'].map((s: any) => s?.id).filter(Boolean);
+    }
+
     const result = this.fb.group({
       passRequestsPush: [settings.passRequestsPush],
       passRequestsEmail: [settings.passRequestsEmail],
@@ -307,7 +312,7 @@ export class NotificationFormComponent implements OnInit, OnDestroy {
       myRooms: this.fb.group({}),
       studentPassesPush: [settings.studentPassesPush],
       studentPassesEmail: [settings.studentPassesEmail],
-      studentIds: this.fb.array([]),
+      studentIds: this.fb.array(students),
       settingsVersion: [settings.settingsVersion],
     });
 
