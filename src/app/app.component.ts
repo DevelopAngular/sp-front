@@ -121,7 +121,10 @@ export class AppComponent implements OnInit, AfterViewInit, OnDestroy {
     this.user$ = this.userService.user$.pipe(map(user => User.fromJSON(user)));
     this.hasCustomBackdrop$ = this.screen.customBackdropEvent$.asObservable();
     this.customBackdropStyle$ = this.screen.customBackdropStyle$;
-    this.router.events.pipe(filter(() => DeviceDetection.isAndroid() || DeviceDetection.isIOSMobile())).subscribe(event => {
+
+    this.router.events.pipe(
+      filter(() => DeviceDetection.isAndroid() || DeviceDetection.isIOSMobile())
+    ).subscribe(event => {
       if (event instanceof NavigationEnd) {
         window.history.pushState({}, '');
       }
@@ -173,7 +176,7 @@ export class AppComponent implements OnInit, AfterViewInit, OnDestroy {
           } else {
             setTimeout(() => {
               window.Intercom('update', {'hide_default_launcher': true});
-            }, 1000);
+            }, 3000);
           }
           return this.nextReleaseService
             .getLastReleasedUpdates(DeviceDetection.platform())

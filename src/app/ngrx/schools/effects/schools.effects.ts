@@ -13,6 +13,7 @@ import {UserService} from '../../../services/user.service';
 import {GSuiteOrgs} from '../../../models/GSuiteOrgs';
 import {CleverInfo} from '../../../models/CleverInfo';
 import {ClassLinkInfo} from '../../../models/ClassLinkInfo';
+import {DeviceDetection} from '../../../device-detection.helper';
 
 declare const window;
 
