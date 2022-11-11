@@ -4,6 +4,7 @@ import {FormArray, FormBuilder, FormControl, FormGroup, Validators} from '@angul
 
 import {Observable, of, forkJoin, Subject, BehaviorSubject} from 'rxjs';
 import {take, map, flatMap, switchMap, filter, combineLatest} from 'rxjs/operators';
+import {isEqual} from 'lodash';
 
 import {User} from '../models/User';
 import {LocationsService} from '../services/locations.service';
@@ -36,6 +37,8 @@ export class NotificationFormComponent implements OnInit, OnDestroy {
     @Inject(MAT_DIALOG_DATA) private data: any
   ) {
   }
+
+  originalFormValue: object;
 
   ngOnInit() {
     if (this.data && this.data['profile']) {
@@ -85,12 +88,15 @@ export class NotificationFormComponent implements OnInit, OnDestroy {
         roomsToRemove.forEach(roomId => {
           delete settings.myRooms[roomId];
         });
+
+        // only here the form is fully initialized
+        this.originalFormValue = this.form.value;
       });
   }
 
   ngOnDestroy(): void {
-    // innaccurate way to tell the form has changed
-    if (this.form.pristine) {
+    // accurate way to tell the form has changed
+    if (isEqual(this.form.value, this.originalFormValue)) {
       return;
     }
 

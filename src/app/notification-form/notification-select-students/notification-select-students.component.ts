@@ -81,6 +81,8 @@ export class NotificationSelectStudentsComponent implements OnInit {
         next: (uu: (User|Error)[]) => {
           this.students = [...uu.filter(u => (u instanceof User))] as User[];
           this.doDisplayedStudents(this.students);
+          // show add button no matter what
+          this.showAddStudent = true;
 
           const httperrors = uu.filter(u => (u instanceof HttpErrorResponse)) as HttpErrorResponse[];
           const errs = uu.filter(u  => (!(u instanceof HttpErrorResponse) && u instanceof Error)) as Error[];
@@ -88,7 +90,7 @@ export class NotificationSelectStudentsComponent implements OnInit {
           // as throwing error cut the flow to the next check - regular errors
           if (httperrors.length > 0) {
             // trigger tooltip
-            const multiple = httperrors.map(err => err.error instanceof Error ? err.error.message : ''+err.error).join("\n");
+            const multiple = httperrors.map((err: HttpErrorResponse) => err.message).join("\n");
             if (multiple.length > 0) {
               this.toastService.openToast(
                 {
@@ -113,6 +115,8 @@ export class NotificationSelectStudentsComponent implements OnInit {
       }),
     ).subscribe();
   }
+
+  showAddStudent: boolean = false;
 
   // represents this.students inside template
   // it is this.students twin that lives only for template
