@@ -6,8 +6,8 @@ import {
   NotificationSelectStudentsDialogComponent
 } from '../notification-select-students-dialog/notification-select-students-dialog.component';
 import {FormArray, FormControl} from '@angular/forms';
-import {forkJoin, of, throwError} from 'rxjs';
-import {catchError, filter, map, tap} from 'rxjs/operators';
+import {Observable, forkJoin, of, throwError, timer} from 'rxjs';
+import {catchError, filter, map, retryWhen, tap, mergeMap} from 'rxjs/operators';
 import {HttpErrorResponse} from '@angular/common/http';
 
 import {ToastService} from '../../services/toast.service';
@@ -36,6 +36,20 @@ export class NotificationSelectStudentsComponent implements OnInit {
   ) {}
 
   ngOnInit(): void {
+    const retryingStrategy = (peak: number = 1, delay: number = 1000) => (errors: Observable<any>) => {
+      return errors.pipe(
+        mergeMap((error, i) => {
+          if (i >= peak || !(error instanceof HttpErrorResponse)) {
+            return throwError(error);
+          }
+          console.log(`notifications: retrying #${i}`);
+          return timer(delay);
+        })
+      )
+    };
+
+    const retrying = retryWhen(retryingStrategy(2, 1000));
+
     const getUser = (id: string|number) => {
       return this.userService.searchProfileById(id)
       .pipe(
@@ -48,6 +62,7 @@ export class NotificationSelectStudentsComponent implements OnInit {
             return false;
           }
         }),
+        retrying,
         filter(Boolean),
         // protect outer forkjoin to unsubscribe on an error of any of its inner observables
         catchError(err => of(err)),
@@ -55,6 +70,10 @@ export class NotificationSelectStudentsComponent implements OnInit {
     };
 
     const requests = this.ids.value.map((id: string|number) => getUser(id));
+    // TODO delete fake requests
+    //requests.push(throwError(new Error('fake error')).pipe(retrying,catchError(err => of(err))))
+    //requests.push(throwError(new HttpErrorResponse({error: 'http fake error', status: 501})).pipe(retrying,catchError(err => of(err))))
+    //requests.push(throwError(new HttpErrorResponse({error: 'http other fake error', status: 500})).pipe(retrying,catchError(err => of(err))))
     // in case of error forkjoin will cancel all inner observables
     forkJoin(requests)
     .pipe(
@@ -65,6 +84,8 @@ export class NotificationSelectStudentsComponent implements OnInit {
 
           const httperrors = uu.filter(u => (u instanceof HttpErrorResponse)) as HttpErrorResponse[];
           const errs = uu.filter(u  => (!(u instanceof HttpErrorResponse) && u instanceof Error)) as Error[];
+          // first we deal with http errors considered more important
+          // as throwing error cut the flow to the next check - regular errors
           if (httperrors.length > 0) {
             // trigger tooltip
             const multiple = httperrors.map(err => err.error instanceof Error ? err.error.message : ''+err.error).join("\n");
@@ -77,8 +98,11 @@ export class NotificationSelectStudentsComponent implements OnInit {
                   showButton: false,
                 }
               );
+              throw new Error(multiple);
             }
           }
+          // regular errors
+          // taken into account only if were no http errors
           if (errs.length > 0) {
             const multiple = errs.map(err => err.message).join("\n");
             if (multiple.length > 0) {
