@@ -291,8 +291,7 @@ export class NavbarComponent implements AfterViewInit, OnInit, OnDestroy {
           }
         }
       });
-    this.hideButtons = this.router.url.includes("kioskMode");
-    this.hideButtons = this.router.url.includes("parent");
+    this.hideButtons = (this.router.url.includes("kioskMode") || this.router.url.includes("parent"));
     const urlSplit: string[] = location.pathname.split("/");
     this.tab = urlSplit[urlSplit.length - 1];
 
