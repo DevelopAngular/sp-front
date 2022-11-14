@@ -168,6 +168,9 @@ export class AppComponent implements OnInit, AfterViewInit, OnDestroy {
             // '/login'
           ];
           const isAllowed = urlBlackList.every(route => !this.currentRoute.includes(route));
+          if (this.isMobile) {
+            window.Intercom('update', {'hide_default_launcher': true});
+          }
           if ((!user.isStudent()) && !this.currentRoute.includes('/forms')) {
             this.registerRefiner(user);
           }
