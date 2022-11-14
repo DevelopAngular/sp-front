@@ -1,5 +1,4 @@
 import {Component, ElementRef, EventEmitter, Inject, Input, OnDestroy, OnInit, Output, TemplateRef, ViewChild} from '@angular/core';
-import {HttpErrorResponse} from '@angular/common/http';
 import {Request} from '../models/Request';
 import {User} from '../models/User';
 import {Util} from '../../Util';
@@ -9,7 +8,7 @@ import {Navigation} from '../create-hallpass-forms/main-hallpass--form/main-hall
 import {getInnerPassName} from '../pass-tile/pass-display-util';
 import {DataService} from '../services/data-service';
 import {LoadingService} from '../services/loading.service';
-import {catchError, concatMap, filter, map, pluck, switchMap, takeUntil, tap} from 'rxjs/operators';
+import {concatMap, filter, finalize, map, pluck, switchMap, take, takeUntil, tap } from 'rxjs/operators';
 import {CreateHallpassFormsComponent} from '../create-hallpass-forms/create-hallpass-forms.component';
 import {CreateFormService} from '../create-hallpass-forms/create-form.service';
 import {RequestsService} from '../services/requests.service';
@@ -27,7 +26,6 @@ import {NavbarDataService} from '../main/navbar-data.service';
 import {DomCheckerService} from '../services/dom-checker.service';
 import {UserService} from '../services/user.service';
 import {School} from '../models/School';
-import {PassLimit} from '../models/PassLimit';
 import {LocationsService} from '../services/locations.service';
 import {Location} from '../models/Location';
 import {
@@ -98,8 +96,6 @@ export class RequestCardComponent implements OnInit, OnDestroy {
   removeShadow: boolean;
   leftTextShadow: boolean;
   kioskModeRestricted: boolean;
-
-  passLimits: { [id: number]: PassLimit };
 
   school: School;
   isEnableProfilePictures$: Observable<boolean>;
@@ -208,12 +204,8 @@ export class RequestCardComponent implements OnInit, OnDestroy {
     }
 
     this.locationsService.getPassLimitRequest();
-    this.locationsService.pass_limits_entities$.subscribe(res => {
-      this.passLimits = res;
-    });
-
     this.createFormService.getUpdatedChoice().pipe(takeUntil(this.destroy$)).subscribe(loc => {
-      console.log(loc)
+      console.log(loc);
     });
 
     this.locationsService.listenLocationSocket().pipe(
@@ -362,7 +354,7 @@ export class RequestCardComponent implements OnInit, OnDestroy {
         takeUntil(this.destroy$),
         switchMap(() => {
           return this.requestService.cancelRequest(this.request.id);
-        })).subscribe(res => {
+        })).subscribe(() => {
         this.performingAction = true;
         this.dialogRef.close();
       });
@@ -609,8 +601,15 @@ export class RequestCardComponent implements OnInit, OnDestroy {
   }
 
   async passLimitPromise(): Promise<boolean> {
-    const passLimit = this.passLimits[this.request.destination.id]; // room pass limit
-    const passLimitReached = passLimit.max_passes_to_active && passLimit.max_passes_to < (passLimit.to_count + 1);
+    const passLimit = await (this.locationsService.pass_limits$.pipe(
+      filter(pl => pl.length > 0),
+      map((pl) => pl.find(p => p.id.toString() === this.request.destination.id.toString())),
+      take(1)
+    ).toPromise());
+
+    const passLimitReached = !!passLimit
+      ? passLimit?.max_passes_to_active && passLimit?.max_passes_to <= passLimit?.to_count
+      : false;
 
     let studentPassLimitReached = false;
     const studentPassLimit = (await this.passLimitsService.getStudentPassLimit(this.request.student.id).toPromise());
@@ -686,29 +685,26 @@ export class RequestCardComponent implements OnInit, OnDestroy {
 
   approveRequest() {
     this.performingAction = true;
-    this.requestService.acceptRequest(this.request.id, {}).pipe(
-      catchError((errorResponse: HttpErrorResponse) => {
-        try {
-          if (errorResponse?.error?.errors?.[0] !== 'Override confirmation needed') {
-            return throwError(errorResponse);
-          }
-        } catch {
-          return throwError(errorResponse);
+    from(this.passLimitPromise()).pipe(
+      concatMap(proceed => {
+        if (!proceed) {
+          return throwError(new Error('override cancelled'));
         }
 
-        return from(this.passLimitPromise()).pipe(
-          concatMap(overrideResponse => {
-            if (overrideResponse) {
-              return this.requestService.acceptRequest(this.request.id, {override: true});
-            }
-
-            return of(null);
-          })
-        );
+        return this.requestService.acceptRequest(this.request.id, {});
       })
-    ).subscribe(() => {
-      this.performingAction = false;
-      this.dialogRef.close();
+    )
+      .pipe(finalize(() => { this.performingAction = false; }))
+      .subscribe({
+      next: () => { this.dialogRef.close(); },
+      error: (err: Error) => {
+        if (err.message === 'override cancelled') {
+          console.log(err.message);
+        } else {
+          // something unexpected happened, please panic here
+          console.error(err);
+        }
+      }
     });
   }
 
@@ -763,8 +759,8 @@ export class RequestCardComponent implements OnInit, OnDestroy {
   }
 
   goToPin() {
-    this.passLimitPromise().then(approved => {
-      this.activeTeacherPin = true;
+    this.passLimitPromise().then(overrodeLimits => {
+      this.activeTeacherPin = overrodeLimits;
     });
   }
 
