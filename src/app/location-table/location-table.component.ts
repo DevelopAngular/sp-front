@@ -258,18 +258,19 @@ export class LocationTableComponent implements OnInit, OnDestroy {
               });
           });
         } else {
-          const request$ = this.isFavoriteForm ? this.locationService.getLocationsWithConfigRequest(url).pipe(filter((res) => !!res.length)) :
+          const request$ = this.isFavoriteForm ? 
+            this.locationService.getLocationsWithConfigRequest(url).pipe(filter((res) => !!res.length)) :
             this.locationService.getLocationsFromCategory(this.category).pipe(filter((res) => !!res.length), take(1));
 
-                request$.pipe(takeUntil(this.destroy$)).subscribe(p => {
-                  this.choices = p.map(loc => {
-                    loc.restricted = loc.restricted || this.passLimitInfo?.current === 0;
-                    return loc;
-                  });
-                  this.noChoices = !this.choices.length;
-                  this.pinnablesLoaded = true;
-                  this.mainContentVisibility = true;
+          request$.pipe(takeUntil(this.destroy$)).subscribe(p => {
+            this.choices = p.map(loc => {
+              loc.restricted = loc.restricted || this.passLimitInfo?.current === 0;
+              return loc;
             });
+            this.noChoices = !this.choices.length;
+            this.pinnablesLoaded = true;
+            this.mainContentVisibility = true;
+          });
         }
 
         this.isFocused = !this.isFavoriteForm && !DeviceDetection.isMobile();
