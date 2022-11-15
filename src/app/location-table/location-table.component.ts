@@ -260,7 +260,7 @@ export class LocationTableComponent implements OnInit, OnDestroy {
         } else {
           const request$ = this.isFavoriteForm ? 
             this.locationService.getLocationsWithConfigRequest(url).pipe(filter((res) => !!res.length)) :
-            this.locationService.getLocationsFromCategory(this.category).pipe(filter((res) => !!res.length), take(1));
+            this.locationService.getLocationsFromCategory(this.category).pipe(filter((res) => !!res.length));
 
           request$.pipe(takeUntil(this.destroy$)).subscribe(p => {
             this.choices = p.map(loc => {
