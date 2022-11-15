@@ -600,112 +600,26 @@ export class RequestCardComponent implements OnInit, OnDestroy {
     return {display, color, action, icon, hoverBackground, clickBackground};
   }
 
-  async passLimitPromise(): Promise<boolean> {
-    const passLimit = await (this.locationsService.pass_limits$.pipe(
-      filter(pl => pl.length > 0),
-      map((pl) => pl.find(p => p.id.toString() === this.request.destination.id.toString())),
-      take(1)
-    ).toPromise());
-
-    const passLimitReached = !!passLimit
-      ? passLimit?.max_passes_to_active && passLimit?.max_passes_to <= passLimit?.to_count
-      : false;
-
-    let studentPassLimitReached = false;
-    const studentPassLimit = (await this.passLimitsService.getStudentPassLimit(this.request.student.id).toPromise());
-    if (!studentPassLimit.noLimitsSet) {
-      const remainingPasses = (
-        await this.passLimitsService.getRemainingLimits({studentId: this.request.student.id}).toPromise()
-      ).remainingPasses;
-      studentPassLimitReached = remainingPasses === 0;
-    }
-
-    // If neither pass limits are reached, then immediately allow accepting the request
-    if (!passLimitReached && !studentPassLimitReached) {
-      return true;
-    }
-
-    // expresses opening the room pass limit override dialog and getting the result as a function
-    const openRoomPassLimitDialog = (): Observable<boolean> => this.dialog.open(PassLimitDialogComponent, {
-      panelClass: 'overlay-dialog',
-      backdropClass: 'custom-backdrop',
-      width: '450px',
-      height: '215px',
-      disableClose: true,
-      data: {
-        passLimit: passLimit.max_passes_to,
-        studentCount: 1,
-        currentCount: passLimit.to_count,
-      }
-    }).afterClosed().pipe(map(result => result.override));
-
-    // expresses opening the student pass limit override dialog and getting the result as a function
-    const openStudentPassLimitDialog = (): Observable<boolean> => this.dialog.open(ConfirmationDialogComponent, {
-      ...RecommendedDialogConfig,
-      width: '450px',
-      data: {
-        headerText: `Student's Pass limit reached: ${this.request.student.display_name} has had ${studentPassLimit.passLimit}/${studentPassLimit.passLimit} passes today`,
-        buttons: {
-          confirmText: 'Override limit',
-          denyText: 'Cancel'
-        },
-        body: this.overriderBody,
-        templateData: {},
-        icon: {
-          name: 'Pass Limit (White).svg',
-          background: '#6651F1'
-        }
-      } as ConfirmationTemplates
-    }).afterClosed();
-
-    // Since both pass limits must be checked, chaining together the dialog Observable results is a clean way to perform this
-    // if the room pass limit is reached, then open the room pass limit dialog, else continue as normal
-    // add a 200ms sleep to cater for the dialog closing and the other one opening
-    let flow = (passLimitReached
-      ? openRoomPassLimitDialog()
-      : of(true)).pipe(concatMap(overrideRoomPassLimit => from(sleep(200)).pipe(map(() => overrideRoomPassLimit))));
-
-    flow = flow.pipe(
-      concatMap((overrideRoomPassLimit) => {
-        // Wait until the previous dialog is closed to perform these checks
-        // If the room pass limit override is denied, then immediately return false and deny the pass request
-        if (!overrideRoomPassLimit) {
-          return of(false);
-        }
-
-        // If the room pass limit is allowed and the student pass limit is reached then
-        // open the student pass limit dialog and check its result,
-        // else, allow the creation of the result
-        return studentPassLimitReached ? openStudentPassLimitDialog() : of(true);
-      })
-    );
-
-    return await flow.toPromise();
-  }
-
   approveRequest() {
     this.performingAction = true;
-    from(this.passLimitPromise()).pipe(
-      concatMap(proceed => {
-        if (!proceed) {
-          return throwError(new Error('override cancelled'));
-        }
-
-        return this.requestService.acceptRequest(this.request.id, {});
-      })
-    )
-      .pipe(finalize(() => { this.performingAction = false; }))
+    this.requestService.checkLimits({}, this.request, this.overriderBody)
+      .pipe(
+        concatMap(httpBody => {
+          return this.requestService.acceptRequest(this.request.id, httpBody);
+        }),
+        finalize(() => this.performingAction = false)
+      )
       .subscribe({
-      next: () => { this.dialogRef.close(); },
-      error: (err: Error) => {
-        if (err.message === 'override cancelled') {
-          console.log(err.message);
-        } else {
-          // something unexpected happened, please panic here
-          console.error(err);
+        next: () => this.dialogRef.close(),
+        error: (err: Error) => {
+          if (err.message === 'override cancelled') {
+            console.log(err.message);
+          } else {
+            // something unexpected happened, please panic here
+            console.error(err);
+          }
         }
-      }
-    });
+      });
   }
 
   cancelClick() {
@@ -759,9 +673,7 @@ export class RequestCardComponent implements OnInit, OnDestroy {
   }
 
   goToPin() {
-    this.passLimitPromise().then(overrodeLimits => {
-      this.activeTeacherPin = overrodeLimits;
-    });
+    this.activeTeacherPin = true;
   }
 
   openBigPassCard() {
