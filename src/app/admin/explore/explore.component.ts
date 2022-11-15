@@ -72,7 +72,7 @@ export interface SearchData {
   selectedOriginRooms?: any[];
   selectedTeachers?: User[];
   selectedStatus?: Status;
-  // used to restrain the search only to the ended passes 
+  // used to restrain the search only to the ended passes
   onlyEnded?: boolean;
 }
 
@@ -144,7 +144,7 @@ export class ExploreComponent implements OnInit, OnDestroy {
     selectedOriginRooms: null,
     selectedDestinationRooms: null,
     selectedDate: null,
-    onlyEnded: true, 
+    onlyEnded: true,
   };
   contactTraceData: SearchData = {
     selectedStudents: null,
@@ -1339,6 +1339,12 @@ export class ExploreComponent implements OnInit, OnDestroy {
         row['Email'] = row.email;
         row['Duration'] = row['Duration'].replace(' min', '');
       }
+      if (row.Grade) {
+        const span = document.createElement('span');
+        span.innerHTML = row.Grade.changingThisBreaksApplicationSecurity;
+        row.Grade = span.innerText;
+      }
+
       return omit(row, ['Pass', 'Passes']);
     });
     const fileName = this.currentView$.getValue() === 'pass_search' ?
