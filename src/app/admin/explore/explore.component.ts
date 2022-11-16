@@ -443,6 +443,11 @@ export class ExploreComponent implements OnInit, OnDestroy {
 
             return rawObj;
           });
+
+          // every search disable UI downloading button
+          // here we enable it back
+          this.disabled = false;
+
           this.allData = response;
           return response;
         })
@@ -863,7 +868,8 @@ export class ExploreComponent implements OnInit, OnDestroy {
     });
   }
 
-  openFilter(event, action) {
+  openFilter(event: HTMLElement, action: string) {
+
     UNANIMATED_CONTAINER.next(true);
     if (action === 'students' || action === 'destination' || action === 'origin') {
       const studentFilter = this.dialog.open(StudentFilterComponent, {
@@ -965,9 +971,10 @@ export class ExploreComponent implements OnInit, OnDestroy {
       calendar.afterClosed()
         .pipe(
           tap(() => UNANIMATED_CONTAINER.next(false)),
-          filter(res => res)
+          filter(res => res),
         )
         .subscribe(({ date, options }) => {
+
           this.adminCalendarOptions = options;
           if (this.currentView$.getValue() === 'pass_search') {
             if (!date.start) {
@@ -1049,6 +1056,9 @@ export class ExploreComponent implements OnInit, OnDestroy {
   }
 
   search(limit: number = 300) {
+    // prevent CSV file downloading while data to be downloaded is not yet here
+    this.disabled = true;
+
     const queryParams: any = {};
 
     if (this.passSearchData.selectedDestinationRooms) {

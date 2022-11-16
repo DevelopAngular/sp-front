@@ -79,9 +79,14 @@
             >
             </app-filter-button>
             <ng-template #selected>
-              <app-filter-button [disabled]="disabled" [filter]="true" [title]="'<var>' + ((passSearchState.isAllSelected$ | async) ? numberWithCommas(countPasses) : numberWithCommas(selectedRows.length)) + '/' + numberWithCommas(countPasses) + '</var> selected'" [isDownloadButton]="true" [customToolTip]="disabled ? null : 'Click to export passes'"
-                    (buttonClick)="downloadPasses(countPasses)">
-                </app-filter-button>
+              <app-filter-button
+                [disabled]="disabled"
+                [filter]="true"
+                [title]="'<var>' + ((passSearchState.isAllSelected$ | async) ? numberWithCommas(countPasses) : numberWithCommas(selectedRows.length)) + '/' + numberWithCommas(countPasses) + '</var> selected'"
+                [isDownloadButton]="true"
+                [customToolTip]="disabled ? null : 'Click to export passes'"
+                (buttonClick)="downloadPasses(countPasses)">
+              </app-filter-button>
             </ng-template>
         </div>
 
