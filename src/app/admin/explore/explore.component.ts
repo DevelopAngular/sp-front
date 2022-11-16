@@ -72,7 +72,7 @@ export interface SearchData {
   selectedOriginRooms?: any[];
   selectedTeachers?: User[];
   selectedStatus?: Status;
-  // used to restrain the search only to the ended passes 
+  // used to restrain the search only to the ended passes
   onlyEnded?: boolean;
 }
 
@@ -144,7 +144,7 @@ export class ExploreComponent implements OnInit, OnDestroy {
     selectedOriginRooms: null,
     selectedDestinationRooms: null,
     selectedDate: null,
-    onlyEnded: true, 
+    onlyEnded: true,
   };
   contactTraceData: SearchData = {
     selectedStudents: null,
@@ -1360,14 +1360,23 @@ export class ExploreComponent implements OnInit, OnDestroy {
         row['Email'] = row.email;
         row['Duration'] = row['Duration'].replace(' min', '');
       }
-      // selected rows are not having changingThisBreaksApplicationSecurity
-      // all rows have changingThisBreaksApplicationSecurity 
-      if (row?.Grade?.changingThisBreaksApplicationSecurity) {
-        row.Grade = row.Grade.changingThisBreaksApplicationSecurity.replace(/(<[^>]+>)+/g, '');
-      } 
-      if (row?.ID?.changingThisBreaksApplicationSecurity) {
-        row.ID = row.ID.changingThisBreaksApplicationSecurity.replace(/(<[^>]+>)+/g, '');
+
+      const $span = document.createElement('span');
+      // when we select rows they are not having changingThisBreaksApplicationSecurity
+      // but without a selection, mean all rows case, they have changingThisBreaksApplicationSecurity 
+      // so, we need to test existence of changingThisBreaksApplicationSecurity
+      // before to get the value wrapped inside changingThisBreaksApplicationSecurity
+      // which we know is in a HTML string, hence the $span trick
+      // to let the browser do the work to get a tag-less value of changingThisBreaksApplicationSecurity
+      if (row.Grade?.changingThisBreaksApplicationSecurity) {
+        $span.innerHTML = row.Grade.changingThisBreaksApplicationSecurity;
+        row.Grade = $span.innerText;
       }
+      if (row.ID?.changingThisBreaksApplicationSecurity) {
+        $span.innerHTML = row.ID.changingThisBreaksApplicationSecurity;
+        row.ID = $span.innerText;
+      }
+
       return omit(row, ['Pass', 'Passes']);
     });
     const fileName = this.currentView$.getValue() === 'pass_search' ?

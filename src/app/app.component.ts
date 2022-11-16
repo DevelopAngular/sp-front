@@ -174,9 +174,7 @@ export class AppComponent implements OnInit, AfterViewInit, OnDestroy {
           if (isAllowed && !this.isMobile) {
             this.registerIntercom(user);
           } else {
-            setTimeout(() => {
-              window.Intercom('update', {'hide_default_launcher': true});
-            }, 3000);
+            window.Intercom('update', {'hide_default_launcher': true});
           }
           return this.nextReleaseService
             .getLastReleasedUpdates(DeviceDetection.platform())
@@ -390,9 +388,10 @@ export class AppComponent implements OnInit, AfterViewInit, OnDestroy {
           name: school.name,
           'Id Card Access': school.feature_flag_digital_id,
           'Plus Access': school.feature_flag_encounter_detection
-        }
+        },
+        hide_default_launcher: false
       };
-      window.Intercom('update', {'hide_default_launcher': false});
+      window.Intercom('update');
     }, 3000);
   }
 

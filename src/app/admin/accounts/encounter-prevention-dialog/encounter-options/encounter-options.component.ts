@@ -1,17 +1,18 @@
-import {Component, Inject, OnInit} from '@angular/core';
+import {Component, Inject, OnDestroy, OnInit} from '@angular/core';
 import {FormControl, FormGroup} from '@angular/forms';
 import {MAT_DIALOG_DATA, MatDialogConfig, MatDialogRef} from '@angular/material/dialog';
 import {ExclusionGroup} from '../../../../models/ExclusionGroup';
 import {EncounterPreventionService} from '../../../../services/encounter-prevention.service';
 import {ToastService} from '../../../../services/toast.service';
-import {filter, map, switchMap, take, tap} from 'rxjs/operators';
+import {filter, map, switchMap, take, takeUntil, tap} from 'rxjs/operators';
+import {Subject} from 'rxjs';
 
 @Component({
   selector: 'app-encounter-options',
   templateUrl: './encounter-options.component.html',
   styleUrls: ['./encounter-options.component.scss']
 })
-export class EncounterOptionsComponent implements OnInit {
+export class EncounterOptionsComponent implements OnInit, OnDestroy {
 
   triggerElementRef: HTMLElement;
   hoverOption;
@@ -19,6 +20,8 @@ export class EncounterOptionsComponent implements OnInit {
   options: {label: string, textColor: string, hoverColor: string, pressedColor: string, icon: string, action: string, description?: string}[];
   preventionStatusForm: FormGroup;
   group: ExclusionGroup;
+
+  destroy$: Subject<void> = new Subject<void>();
 
   constructor(
     @Inject(MAT_DIALOG_DATA) public data: any[],
@@ -41,16 +44,21 @@ export class EncounterOptionsComponent implements OnInit {
         switchMap((res) => {
           return this.encounterService.exclusionGroupsLoaded$
             .pipe(filter(r => !!r), switchMap(() => this.encounterService.updatedExclusionGroup$));
-        })
+        }),
+        takeUntil(this.destroy$)
       ).subscribe(res => {
         this.group = res;
-        debugger;
         this.toast.openToast({
           title: `Encounter prevention group ${res.enabled ? 'enabled' : 'disabled'}`,
           type: res.enabled ? 'success' : 'info'
         });
     });
     this.updatePosition();
+  }
+
+  ngOnDestroy() {
+    this.destroy$.next();
+    this.destroy$.complete();
   }
 
   updatePosition() {
