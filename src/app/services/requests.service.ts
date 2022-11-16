@@ -36,7 +36,7 @@ export class RequestsService {
     private locationsService: LocationsService,
     private passLimitService: PassLimitService,
     private dialog: MatDialog
-  ) { }
+  ) {}
 
   // Invitations
   createInvitation(data) {
@@ -80,11 +80,13 @@ export class RequestsService {
   }
 
   private overrideRoomLimit(body: AcceptRequestBody, request: Request): Observable<AcceptRequestBody> {
-    return this.locationsService.pass_limits$.pipe(
+    return this.locationsService.getPassLimit().pipe(
+      map(pl => pl.pass_limits),
       filter(pl => pl.length > 0),
       map((pl) => pl.find(p => p.id.toString() === request.destination.id.toString())),
       take(1),
       concatMap(pl => {
+        console.log(pl);
         const roomLimitReached = !!pl
           ? pl?.max_passes_to_active && pl?.max_passes_to <= pl?.to_count
           : false;

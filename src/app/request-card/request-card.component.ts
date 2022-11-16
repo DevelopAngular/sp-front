@@ -13,7 +13,7 @@ import {CreateHallpassFormsComponent} from '../create-hallpass-forms/create-hall
 import {CreateFormService} from '../create-hallpass-forms/create-form.service';
 import {RequestsService} from '../services/requests.service';
 import {NextStep, scalePassCards} from '../animations';
-import {BehaviorSubject, from, interval, Observable, of, Subject, throwError} from 'rxjs';
+import {BehaviorSubject, interval, Observable, of, Subject} from 'rxjs';
 
 import * as moment from 'moment';
 import {isNull, uniq, uniqBy} from 'lodash';
@@ -28,20 +28,8 @@ import {UserService} from '../services/user.service';
 import {School} from '../models/School';
 import {LocationsService} from '../services/locations.service';
 import {Location} from '../models/Location';
-import {
-  PassLimitDialogComponent
-} from '../create-hallpass-forms/main-hallpass--form/locations-group-container/pass-limit-dialog/pass-limit-dialog.component';
 import {PassLimitService} from '../services/pass-limit.service';
-import {
-  ConfirmationDialogComponent,
-  ConfirmationTemplates,
-  RecommendedDialogConfig
-} from '../shared/shared-components/confirmation-dialog/confirmation-dialog.component';
 import {ConfirmDeleteKioskModeComponent} from './confirm-delete-kiosk-mode/confirm-delete-kiosk-mode.component';
-
-const sleep = (ms: number) => new Promise(resolve => {
-  setTimeout(() => resolve(null), ms);
-});
 
 @Component({
   selector: 'app-request-card',
