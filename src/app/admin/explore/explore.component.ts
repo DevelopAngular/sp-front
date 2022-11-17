@@ -443,6 +443,11 @@ export class ExploreComponent implements OnInit, OnDestroy {
 
             return rawObj;
           });
+
+          // every search disable UI downloading button
+          // here we enable it back
+          this.disabled = false;
+
           this.allData = response;
           return response;
         })
@@ -863,7 +868,8 @@ export class ExploreComponent implements OnInit, OnDestroy {
     });
   }
 
-  openFilter(event, action) {
+  openFilter(event: HTMLElement, action: string) {
+
     UNANIMATED_CONTAINER.next(true);
     if (action === 'students' || action === 'destination' || action === 'origin') {
       const studentFilter = this.dialog.open(StudentFilterComponent, {
@@ -965,9 +971,10 @@ export class ExploreComponent implements OnInit, OnDestroy {
       calendar.afterClosed()
         .pipe(
           tap(() => UNANIMATED_CONTAINER.next(false)),
-          filter(res => res)
+          filter(res => res),
         )
         .subscribe(({ date, options }) => {
+
           this.adminCalendarOptions = options;
           if (this.currentView$.getValue() === 'pass_search') {
             if (!date.start) {
@@ -1049,6 +1056,9 @@ export class ExploreComponent implements OnInit, OnDestroy {
   }
 
   search(limit: number = 300) {
+    // prevent CSV file downloading while data to be downloaded is not yet here
+    this.disabled = true;
+
     const queryParams: any = {};
 
     if (this.passSearchData.selectedDestinationRooms) {
@@ -1277,9 +1287,27 @@ export class ExploreComponent implements OnInit, OnDestroy {
     }
   }
 
+  disabled: boolean = false;
+
   exportPasses() {
-    this.adminService.exportCsvPasses(this.queryParams)
-      .pipe(switchMap(res => combineLatest(this.user$, this.passSearchState.countPasses$)))
+    // Why unsubscribe manually:
+    // -------------------------
+    // this method is fired up by button click(s)
+    //
+    // calling this method once by UI click makes
+    // every single UI filter change to trigger a download (creates XLSX file and sends email)
+    // worst
+    // calling this method repeatedly by UI clicks
+    // creates a subscribtion every time
+    // and MULTIPLY the unwanted download associated with a single click
+
+    this.disabled = true;
+
+    const unsubscriber = this.adminService.exportCsvPasses(this.queryParams)
+      .pipe(
+        delay(5000),
+        switchMap(_ => combineLatest(this.user$, this.passSearchState.countPasses$))
+      )
       .subscribe(([user, count]) => {
         this.toastService.openToast(
           {
@@ -1289,6 +1317,9 @@ export class ExploreComponent implements OnInit, OnDestroy {
             showButton: false
           }
         );
+        
+        unsubscriber.unsubscribe();
+        this.disabled = false;
       });
   }
 
@@ -1296,7 +1327,7 @@ export class ExploreComponent implements OnInit, OnDestroy {
     return Util.numberWithCommas(x);
   }
 
-  downloadPasses(countAllData) {
+  downloadPasses(countAllData: number) {
     if ((this.selectedRows.length > 300 || ((!this.selectedRows.length && countAllData > 300) || (this.tableService.isAllSelected$.getValue() && countAllData > 300)))) {
       this.exportPasses();
     } else {
@@ -1334,15 +1365,26 @@ export class ExploreComponent implements OnInit, OnDestroy {
     const exceptPass = rows.map(row => {
       if (row['Contact connection']) {
         const str = row['Contact connection'].changingThisBreaksApplicationSecurity;
-        row['Contact connection'] = str.replace(/(<[^>]+>)+/g, ``);
+        row['Contact connection'] = str.replace(/(<[^>]+>)+/g, '');
       } else {
         row['Email'] = row.email;
         row['Duration'] = row['Duration'].replace(' min', '');
       }
-      if (row.Grade) {
-        const span = document.createElement('span');
-        span.innerHTML = row.Grade.changingThisBreaksApplicationSecurity;
-        row.Grade = span.innerText;
+
+      const $span = document.createElement('span');
+      // when we select rows they are not having changingThisBreaksApplicationSecurity
+      // but without a selection, mean all rows case, they have changingThisBreaksApplicationSecurity 
+      // so, we need to test existence of changingThisBreaksApplicationSecurity
+      // before to get the value wrapped inside changingThisBreaksApplicationSecurity
+      // which we know is in a HTML string, hence the $span trick
+      // to let the browser do the work to get a tag-less value of changingThisBreaksApplicationSecurity
+      if (row.Grade?.changingThisBreaksApplicationSecurity) {
+        $span.innerHTML = row.Grade.changingThisBreaksApplicationSecurity;
+        row.Grade = $span.innerText;
+      }
+      if (row.ID?.changingThisBreaksApplicationSecurity) {
+        $span.innerHTML = row.ID.changingThisBreaksApplicationSecurity;
+        row.ID = $span.innerText;
       }
 
       return omit(row, ['Pass', 'Passes']);

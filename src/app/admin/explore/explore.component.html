@@ -69,12 +69,24 @@
         <div class="search-button not-alone" *ngIf="views[currentView].id === 1 && passSearchState.countPasses$ | async as countPasses">
             <app-round-button *ngIf="!!selectedRows.length" [size]="'small'" [icon]="'Dots'" [borderRadius]="'15%'" (buttonClick)="openConsentDeletePasses($event)">
             </app-round-button>
-            <app-filter-button *ngIf="!selectedRows.length; else selected" [title]="'<var>'+(numberWithCommas(countPasses) + '</var> pass' + (countPasses > 1 ? 'es' : ''))" [isDownloadButton]="true" [customToolTip]="'Click to export passes'" (buttonClick)="downloadPasses(countPasses)">
+            <app-filter-button
+              *ngIf="!selectedRows.length; else selected"
+              [title]="'<var>'+(numberWithCommas(countPasses) + '</var> pass' + (countPasses > 1 ? 'es' : ''))"
+              [isDownloadButton]="true"
+              [customToolTip]="disabled ? null : 'Click to export passes'"
+              [disabled]="disabled"
+              (buttonClick)="downloadPasses(countPasses)"
+            >
             </app-filter-button>
             <ng-template #selected>
-              <app-filter-button [filter]="true" [title]="'<var>' + ((passSearchState.isAllSelected$ | async) ? numberWithCommas(countPasses) : numberWithCommas(selectedRows.length)) + '/' + numberWithCommas(countPasses) + '</var> selected'" [isDownloadButton]="true" [customToolTip]="'Click to export passes'"
-                    (buttonClick)="downloadPasses(countPasses)">
-                </app-filter-button>
+              <app-filter-button
+                [disabled]="disabled"
+                [filter]="true"
+                [title]="'<var>' + ((passSearchState.isAllSelected$ | async) ? numberWithCommas(countPasses) : numberWithCommas(selectedRows.length)) + '/' + numberWithCommas(countPasses) + '</var> selected'"
+                [isDownloadButton]="true"
+                [customToolTip]="disabled ? null : 'Click to export passes'"
+                (buttonClick)="downloadPasses(countPasses)">
+              </app-filter-button>
             </ng-template>
         </div>
 
