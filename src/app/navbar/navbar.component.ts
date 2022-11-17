@@ -300,8 +300,8 @@ export class NavbarComponent implements AfterViewInit, OnInit, OnDestroy {
     this.isAdminRoute = this.router.url.includes("/admin");
     this.router.events.subscribe((value) => {
       if (value instanceof NavigationEnd) {
-        this.hideButtons = this.router.url.includes("kioskMode");
-        this.hideButtons = this.router.url.includes("parent");
+        this.hideButtons = this.router.url.includes("kioskMode") || this.router.url.includes("parent");
+        // this.hideButtons = this.router.url.includes("parent");
         let urlSplit: string[] = value.url.split("/");
         this.tab = urlSplit[urlSplit.length - 1];
         this.tab = this.tab === "" || this.tab === "main" ? "passes" : this.tab;
