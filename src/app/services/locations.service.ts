@@ -173,7 +173,7 @@ export class LocationsService {
     }
 
     getPassLimit() {
-      return this.http.get('v1/locations/pass_limits');
+      return this.http.get<{ pass_limits: PassLimit[] }>('v1/locations/pass_limits');
     }
 
     getPassLimitRequest() {
