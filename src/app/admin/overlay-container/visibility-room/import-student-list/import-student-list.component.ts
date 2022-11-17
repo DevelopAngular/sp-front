@@ -130,6 +130,11 @@ export class ImportStudentListComponent implements OnInit, OnDestroy {
               } else {
                 this.buttonStateSubject$.next({text: `Add students`, active: false});
               }
+            // don’t have what to show
+            } else if (emailsVerified.length === 0) {
+              this.tpl = this.issuesTpl;
+              this.tplImplicit = {fails: [], warning: 'Nothing to send'};
+              this.buttonStateSubject$.next({text: `Add students`, active: false});
             } else { // we are OK
               this.tpl = this.uploadTpl;
               this.attachObservables();

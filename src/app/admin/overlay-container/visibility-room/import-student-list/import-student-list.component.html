@@ -29,10 +29,41 @@
     <div #dropArea class="uploading-area ds-flex-center-center"
       [class.has-no-issues]="data.showClose"
     >
-      <span class="link-like"
+      <span
+        class="link-like"
         [class]="{gray: !data.showClose, green: data.showClose}"
-        (click)="file.click()">{{data.text}}</span>
+        (click)="file.click()">
+        {{data.text}}
+      </span>
 
+<!--//
+      <app-gradient-button
+        [style.margin-left]="'7px'"
+        [size]="'small'"
+        [gradient]="'#F4F4F4, #F4F4F4'"
+        [buttonLink]="'https://www.smartpass.app/roomvisibilitytemplate'"
+        [linkType]="'_blank'"
+        [download]="true"
+        [hoverColor]="'#F4F4F4'"
+        [textColor]="'#1E194F'"
+        [leftIcon]="'./assets/Download (Navy).svg'"
+        [text]="'Download Template'"
+        [cursor]="'pointer'">
+      </app-gradient-button>
+-->
+      <app-gradient-button
+        [style.margin-left]="'7px'"
+        [size]="'small'"
+        [gradient]="'#F4F4F4, #F4F4F4'"
+        [buttonLink]="'./assets/xlsx/SmartPass Room Visibility Template.xlsx'"
+        [linkType]="'_self'"
+        [download]="true"
+        [hoverColor]="'#F4F4F4'"
+        [textColor]="'#1E194F'"
+        [leftIcon]="'./assets/Download (Navy).svg'"
+        [text]="'Download Template'"
+        [cursor]="'pointer'">
+      </app-gradient-button>
       <img *ngIf="data.showClose" class="close" [src]="'./assets/Close (Navy).svg'" (click)="goUpload()" alt="Check.svg">
     </div>
 
