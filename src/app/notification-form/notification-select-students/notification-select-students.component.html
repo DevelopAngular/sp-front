@@ -1,5 +1,8 @@
 <div class="notif-select-students">
-  <div *ngFor="let student of displayedStudents(); let i = index"
+
+  <mat-spinner *ngIf="!showAddStudent" [color]="'accent'" [diameter]="15"></mat-spinner>
+
+  <div *ngFor="let student of displayedStudents; let i = index"
        (click)="removeStudent(i)"
        class="student real">
     <div class="student-overlay">
@@ -8,7 +11,7 @@
     <img alt="" [src]="student['icon'] | resolveAsset">
     <span>{{ student['name'] }}</span>
   </div>
-  <div class="student new" (click)="beginSearch()">
+  <div *ngIf="showAddStudent" class="student new" (click)="beginSearch()">
     <img alt="" [src]="'./assets/Plus (Blue-Gray).svg' | resolveAsset">
     <span>Add Student</span>
   </div>

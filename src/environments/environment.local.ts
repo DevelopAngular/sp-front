@@ -1,5 +1,5 @@
 export const environment = {
-  production: true,
+  production: false,
   buildType: 'local',
   schoolOnboardApiRoot: 'https://smartpass.app/api/staging',
   //schoolOnboardApiRoot: 'https://smartpass.app/api/prod-us-central',

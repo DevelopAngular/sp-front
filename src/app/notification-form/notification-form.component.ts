@@ -4,6 +4,7 @@ import {FormArray, FormBuilder, FormControl, FormGroup, Validators} from '@angul
 
 import {Observable, of, forkJoin, Subject, BehaviorSubject} from 'rxjs';
 import {take, map, flatMap, switchMap, filter, combineLatest} from 'rxjs/operators';
+import {isEqual} from 'lodash';
 
 import {User} from '../models/User';
 import {LocationsService} from '../services/locations.service';
@@ -37,6 +38,8 @@ export class NotificationFormComponent implements OnInit, OnDestroy {
   ) {
   }
 
+  originalFormValue: object;
+
   ngOnInit() {
     if (this.data && this.data['profile']) {
       this.user$.next(User.fromJSON(this.data['profile']));
@@ -46,7 +49,6 @@ export class NotificationFormComponent implements OnInit, OnDestroy {
           this.user$.next(User.fromJSON(user));
         });
     }
-
 
     const settings$: Subject<any> = new Subject();
     this.user$.pipe(switchMap(user => this.notificationService.getUserNotification(user)))
@@ -86,10 +88,18 @@ export class NotificationFormComponent implements OnInit, OnDestroy {
         roomsToRemove.forEach(roomId => {
           delete settings.myRooms[roomId];
         });
+
+        // only here the form is fully initialized
+        this.originalFormValue = this.form.value;
       });
   }
 
   ngOnDestroy(): void {
+    // accurate way to tell the form has changed
+    if (isEqual(this.form.value, this.originalFormValue)) {
+      return;
+    }
+
     this.user$.subscribe(user => {
       this.notificationService.updateUserNotification(user, this.form.getRawValue()).subscribe(res => {
       });
@@ -299,6 +309,11 @@ export class NotificationFormComponent implements OnInit, OnDestroy {
       return new FormGroup({});
     }
 
+    let students = [];
+    if (((settings as any)['students'] ?? []).length > 0) {
+      students = settings['students'].map((s: any) => s?.id).filter(Boolean);
+    }
+
     const result = this.fb.group({
       passRequestsPush: [settings.passRequestsPush],
       passRequestsEmail: [settings.passRequestsEmail],
@@ -308,7 +323,7 @@ export class NotificationFormComponent implements OnInit, OnDestroy {
       myRooms: this.fb.group({}),
       studentPassesPush: [settings.studentPassesPush],
       studentPassesEmail: [settings.studentPassesEmail],
-      studentIds: this.fb.array([]),
+      studentIds: this.fb.array(students),
       settingsVersion: [settings.settingsVersion],
     });
 
