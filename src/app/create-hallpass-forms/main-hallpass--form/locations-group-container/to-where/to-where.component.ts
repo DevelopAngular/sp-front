@@ -475,6 +475,8 @@ export class ToWhereComponent implements OnInit, OnDestroy, AfterViewInit {
     this.storage.setItem('isGrid', isGrid);
     this.isLocationList$.next(isGrid);
     this.removeBanner();
+
+    this.loading = true;
   }
 
   removeBanner() {

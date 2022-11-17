@@ -13,7 +13,9 @@
     </div>
   </div>
 
-  <mat-spinner *ngIf="loading" [color]="'accent'" [diameter]="30"></mat-spinner>
+  <div class="loading-theme_blue-gray ds-h-100" *ngIf="loading">
+    <mat-spinner [color]="'accent'" [diameter]="30"></mat-spinner>
+  </div> 
 
   <div class="content-background"
        [attr.data-motion-opacity]="(frameMotion$ | async).direction"></div>
@@ -86,6 +88,7 @@
       [invalidLocation]="(location ? +location.id : '')"
       [placeholder]="'Search rooms'"
       (onSelect)="locationSelected($event)"
+      (onLoaded)="loading=false"
       [dummyString]="'No rooms found'"
       [mergedAllRooms]="true"
       [updatedLocation$]="updatedLocation$"

@@ -414,6 +414,12 @@ export class PassCardComponent implements OnInit, OnDestroy {
     }
     if (!this.forStaff) {
       delete body['override_visibility'];
+      if (this.forKioskMode) {
+        // that's it, the origin room should be considered room visibility free
+        // to permits a student in kiosk mode to appear in who-are-you component
+        // so the code below
+        body['override_visibility_origin'] = true;
+      }
       body['isNotBulk'] = true;
     }
 

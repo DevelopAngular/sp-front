@@ -107,11 +107,15 @@ export class WhoYouAreComponent implements OnInit {
  
   // used for filtering users found with sp-search component
   getFilteringStudents(): (users: User[] | GSuiteSelector[]) => User[] | GSuiteSelector[] {
-    return ((uu) => {
+    return ((uu: Array<User>) => {
+      // no more room visibility filtering for kiosk mode
+      if (this.kioskService.isKisokMode) {
+        return uu;
+      }
       const students = [...uu];
       const loc = this.formState.data.direction.from;
       const skipped = this.visibilityService.calculateSkipped(students, loc) ?? [];
-      const result = !skipped.length ? uu : uu.filter(u => !skipped.includes(''+u.id));
+      const result = !skipped.length ? uu : uu.filter((u: User) => !skipped.includes(''+u.id));
       return result;
     }).bind(this);
   }
