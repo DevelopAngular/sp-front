@@ -131,9 +131,9 @@ export class ProfilePicturesEffects {
                         }),
                         switchMap((students) => {
                             const picturesData: { userId: string | number, pictureId: number | string }[] = students.filter(s => !!s).map((s: User) => {
-
-                                const pictureId = action.images_data[s.primary_email.toLowerCase()];
-                                return {userId: s.id, pictureId};
+                              const idproperty = s.extras?.clever_student_number ?? s.primary_email.toLowerCase();
+                              const pictureId = action.images_data[idproperty];
+                              return {userId: s.id, pictureId};
                             });
                             return [
                                 profilePicturesActions.changeProfilePictureLoader({percent: 90}),
