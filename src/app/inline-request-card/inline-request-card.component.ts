@@ -14,7 +14,6 @@ import {CreateFormService} from '../create-hallpass-forms/create-form.service';
 import {HallPassesService} from '../services/hall-passes.service';
 import {ScreenService} from '../services/screen.service';
 import {StorageService} from '../services/storage.service';
-import {PassLimitDialogComponent} from '../create-hallpass-forms/main-hallpass--form/locations-group-container/pass-limit-dialog/pass-limit-dialog.component';
 import {PassLimit} from '../models/PassLimit';
 import {LocationsService} from '../services/locations.service';
 
@@ -256,39 +255,6 @@ export class InlineRequestCardComponent implements OnInit, OnDestroy {
   }
 
   goToPin() {
-    return new Promise<boolean>(resolve => {
-      if (!(this.request.destination.id in this.passLimits)) {
-        this.activeTeacherPin = true;
-        return;
-      }
-
-      const passLimit = this.passLimits[this.request.destination.id];
-      const passLimitReached = passLimit.max_passes_to_active && passLimit.max_passes_to < (passLimit.to_count + 1);
-      if (!passLimitReached) {
-        this.activeTeacherPin = true;
-        return;
-      }
-
-
-      const dialogRef = this.dialog.open(PassLimitDialogComponent, {
-        panelClass: 'overlay-dialog',
-        backdropClass: 'custom-backdrop',
-        width: '450px',
-        height: '215px',
-        disableClose: true,
-        data: {
-          passLimit: passLimit.max_passes_to,
-          studentCount: 1,
-          currentCount: passLimit.to_count,
-        }
-      });
-      dialogRef.afterClosed().subscribe(result => {
-        if (result.override) {
-          setTimeout(() => {
-            this.activeTeacherPin = true;
-          }, 200);
-        }
-      });
-    });
+    this.activeTeacherPin = true;
   }
 }

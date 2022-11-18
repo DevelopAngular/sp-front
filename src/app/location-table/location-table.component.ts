@@ -124,6 +124,7 @@ export class LocationTableComponent implements OnInit, OnDestroy {
   @Output() onSelect: EventEmitter<any> = new EventEmitter();
   @Output() onStar: EventEmitter<string> = new EventEmitter();
   @Output() onUpdate: EventEmitter<Location[]> = new EventEmitter<Location[]>();
+  @Output() onLoaded: EventEmitter<boolean> = new EventEmitter();
 
   @ViewChild('item') currentItem: ElementRef;
 
@@ -200,6 +201,7 @@ export class LocationTableComponent implements OnInit, OnDestroy {
       .subscribe(res => {
         this.pinnables = res;
         this.pinnablesLoaded = true;
+        this.onLoaded.emit(true);
     });
 
     this.locationService.pass_limits_entities$
@@ -221,6 +223,8 @@ export class LocationTableComponent implements OnInit, OnDestroy {
       this.locationService.loadedFavoriteLocations$,
       (loc, fav) => loc && fav
     );
+
+    this.loaded$.subscribe({next: isLoaded => this.onLoaded.emit(isLoaded)});
 
     this.loading$ = this.locationService.loadingLocations$;
 

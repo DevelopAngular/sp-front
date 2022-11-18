@@ -19,10 +19,10 @@
         [filteringUsersCallback]="getFilteringStudents()"
         (onUpdate)="setSelectedStudents($event)"
       ></app-sp-search>
-    </ng-container>   
+    </ng-container>
 
     <ng-template #loading>
-      <div class="loading-theme_blue-gray">
+      <div class="loading-theme_blue-gray ds-h-100">
         <mat-spinner [color]="'accent'" [diameter]="30"></mat-spinner>
       </div>
     </ng-template>

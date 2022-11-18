@@ -17,9 +17,9 @@
               <span notranslate *ngIf="request.request_time && forFuture; else forNow">
                 {{ formatDateTime(request.request_time) }}
               </span>
-              <span #forNow>
-                {{ forStaff ? 'Pass For Now' : '' }}
-              </span>
+              <ng-template #forNow>
+                <span>{{ forStaff ? 'Pass For Now' : '' }}</span>
+              </ng-template>
             </div>
           </div>
         </div>
