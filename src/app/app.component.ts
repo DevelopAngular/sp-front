@@ -173,8 +173,6 @@ export class AppComponent implements OnInit, AfterViewInit, OnDestroy {
           }
           if (isAllowed && !this.isMobile) {
             this.registerIntercom(user);
-          } else {
-              window.Intercom('update', {'hide_default_launcher': true})
           }
           return this.nextReleaseService
             .getLastReleasedUpdates(DeviceDetection.platform())
@@ -224,7 +222,7 @@ export class AppComponent implements OnInit, AfterViewInit, OnDestroy {
           );
         })
       )
-      .subscribe(console.log);
+      .subscribe();
 
     this.shortcutsService.initialize();
     this.shortcuts = this.shortcutsService.shortcuts;
@@ -303,6 +301,9 @@ export class AppComponent implements OnInit, AfterViewInit, OnDestroy {
         mergeMap((route) => route.data)
       )
       .subscribe((data) => {
+        if (this.isMobile) {
+          window.Intercom('update', {'hide_default_launcher': true});
+        }
         const existingHub: any = document.querySelector('#hubspot-messages-iframe-container');
         let newHub: any;
 
