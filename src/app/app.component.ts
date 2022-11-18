@@ -173,8 +173,6 @@ export class AppComponent implements OnInit, AfterViewInit, OnDestroy {
           }
           if (isAllowed && !this.isMobile) {
             this.registerIntercom(user);
-          } else {
-            window.Intercom('update', {'hide_default_launcher': true});
           }
           return this.nextReleaseService
             .getLastReleasedUpdates(DeviceDetection.platform())
@@ -294,7 +292,6 @@ export class AppComponent implements OnInit, AfterViewInit, OnDestroy {
         map(() => this.activatedRoute),
         map((route) => {
           this.isKioskMode = this.router.url.includes('kioskMode');
-          window.Intercom('update');
           if (route.firstChild) {
             route = route.firstChild;
           }
@@ -303,11 +300,6 @@ export class AppComponent implements OnInit, AfterViewInit, OnDestroy {
         mergeMap((route) => route.data)
       )
       .subscribe((data) => {
-        if (this.isMobile) {
-          setTimeout(() => {
-            window.Intercom('update', {'hide_default_launcher': true});
-          }, 2000);
-        }
         const existingHub: any = document.querySelector('#hubspot-messages-iframe-container');
         let newHub: any;
 
@@ -450,6 +442,9 @@ export class AppComponent implements OnInit, AfterViewInit, OnDestroy {
   }
 
   ngAfterViewInit() {
+    if (this.isMobile) {
+      window.Intercom('update', {'hide_default_launcher': true});
+    }
     APPLY_ANIMATED_CONTAINER
       .subscribe((v: boolean) => {
         if (v) {
