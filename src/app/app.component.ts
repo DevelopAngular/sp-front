@@ -168,18 +168,11 @@ export class AppComponent implements OnInit, AfterViewInit, OnDestroy {
             // '/login'
           ];
           const isAllowed = urlBlackList.every(route => !this.currentRoute.includes(route));
-          if (this.isMobile) {
-            window.Intercom('update', {'hide_default_launcher': true});
-          }
           if ((!user.isStudent()) && !this.currentRoute.includes('/forms')) {
             this.registerRefiner(user);
           }
           if (isAllowed && !this.isMobile) {
             this.registerIntercom(user);
-          } else {
-            setTimeout(() => {
-              window.Intercom('update', {'hide_default_launcher': true});
-            }, 3000);
           }
           return this.nextReleaseService
             .getLastReleasedUpdates(DeviceDetection.platform())
@@ -229,7 +222,7 @@ export class AppComponent implements OnInit, AfterViewInit, OnDestroy {
           );
         })
       )
-      .subscribe(console.log);
+      .subscribe();
 
     this.shortcutsService.initialize();
     this.shortcuts = this.shortcutsService.shortcuts;
@@ -299,7 +292,6 @@ export class AppComponent implements OnInit, AfterViewInit, OnDestroy {
         map(() => this.activatedRoute),
         map((route) => {
           this.isKioskMode = this.router.url.includes('kioskMode');
-          window.Intercom('update');
           if (route.firstChild) {
             route = route.firstChild;
           }
@@ -450,6 +442,9 @@ export class AppComponent implements OnInit, AfterViewInit, OnDestroy {
   }
 
   ngAfterViewInit() {
+    if (this.isMobile) {
+      window.Intercom('update', {'hide_default_launcher': true});
+    }
     APPLY_ANIMATED_CONTAINER
       .subscribe((v: boolean) => {
         if (v) {
