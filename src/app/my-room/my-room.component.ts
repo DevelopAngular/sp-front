@@ -12,7 +12,7 @@ import {User} from '../models/User';
 import {DropdownComponent} from '../dropdown/dropdown.component';
 import {TimeService} from '../services/time.service';
 import {CalendarComponent} from '../admin/calendar/calendar.component';
-import {filter, map, switchMap, takeUntil, tap} from 'rxjs/operators';
+import {filter, finalize, map, switchMap, takeUntil, tap} from 'rxjs/operators';
 import {DarkThemeSwitch} from '../dark-theme-switch';
 import {LocationsService} from '../services/locations.service';
 import {RepresentedUser} from '../navbar/navbar.component';
@@ -376,8 +376,21 @@ export class MyRoomComponent implements OnInit, OnDestroy, AfterViewInit {
     });
   }
 
+  // used to prevent multiple clicks while dialog hasn't been opened
+  private setRoomToKioskModeProcesing: boolean;
+
   setRoomToKioskMode() {
-    this.http.get(`v1//kiosk/${this.selectedLocation.id}/login`).subscribe({
+    if (this.setRoomToKioskModeProcesing) {
+      return;
+    }
+    this.setRoomToKioskModeProcesing = true;
+
+    this.http.get(`v1//kiosk/${this.selectedLocation.id}/login`)
+    .pipe(
+      takeUntil(this.destroy$),
+      finalize(() => this.setRoomToKioskModeProcesing = false),
+    )
+    .subscribe({
       next:(kioskLoginInfo:any)  => {
         const dialogRef = this.dialog.open(KioskModeDialogComponent, {
           panelClass: 'accounts-profiles-dialog',
@@ -411,8 +424,6 @@ export class MyRoomComponent implements OnInit, OnDestroy, AfterViewInit {
                 });
               }
             })
-
-
           }
         });
       }
