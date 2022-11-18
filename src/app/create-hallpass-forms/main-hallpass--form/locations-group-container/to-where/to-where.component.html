@@ -1,5 +1,5 @@
 <div [ngClass]="{ 'to-wrapper-to-date': formState.forLater && formState.formMode.role === 1, 'to-wrapper': !formState.forLater || formState.formMode.role !== 1}">
-  
+
   <div [ngClass]="headerTransition" #header>
     <div class="header-background"
          [attr.data-motion-opacity]="(frameMotion$ | async).direction"
@@ -90,6 +90,7 @@
       [invalidLocation]="(location ? +location.id : '')"
       [placeholder]="'Search rooms'"
       (onSelect)="locationSelected($event)"
+      (onLoaded)="loading=false"
       [dummyString]="'No rooms found'"
       [mergedAllRooms]="true"
       [updatedLocation$]="updatedLocation$"

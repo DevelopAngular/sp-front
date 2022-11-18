@@ -6,8 +6,8 @@
       <div class="circles" [ngClass]="{incorrect: incorrect}">
         <div
           class="circle"
-          *ngFor="let circle of circles; let i = index"
-          [style.background-color]="circle.pressed ? 'white' : 'transparent'"
+          *ngFor="let pressed of circles"
+          [style.background-color]="pressed ? 'white' : 'transparent'"
         ></div>
       </div>
     </div>
