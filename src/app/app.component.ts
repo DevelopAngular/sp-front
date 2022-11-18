@@ -173,6 +173,8 @@ export class AppComponent implements OnInit, AfterViewInit, OnDestroy {
           }
           if (isAllowed && !this.isMobile) {
             this.registerIntercom(user);
+          } else {
+            window.Intercom('update', {'hide_default_launcher': true});
           }
           return this.nextReleaseService
             .getLastReleasedUpdates(DeviceDetection.platform())
@@ -302,7 +304,9 @@ export class AppComponent implements OnInit, AfterViewInit, OnDestroy {
       )
       .subscribe((data) => {
         if (this.isMobile) {
-          window.Intercom('update', {'hide_default_launcher': true});
+          setTimeout(() => {
+            window.Intercom('update', {'hide_default_launcher': true});
+          }, 2000);
         }
         const existingHub: any = document.querySelector('#hubspot-messages-iframe-container');
         let newHub: any;
