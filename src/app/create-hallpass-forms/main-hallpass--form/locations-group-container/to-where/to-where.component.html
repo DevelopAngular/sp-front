@@ -86,6 +86,7 @@
       [invalidLocation]="(location ? +location.id : '')"
       [placeholder]="'Search rooms'"
       (onSelect)="locationSelected($event)"
+      (onLoaded)="loading=false"
       [dummyString]="'No rooms found'"
       [mergedAllRooms]="true"
       [updatedLocation$]="updatedLocation$"

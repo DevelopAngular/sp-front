@@ -23,6 +23,9 @@ declare const window;
 class School {
 }
 
+const DEFAULT_NAVBAR_HEIGHT = '64px';
+const HIDDEN_NAVBAR_HEIGHT = '0px';
+
 @Component({
   selector: 'app-main-page',
   templateUrl: './main-page.component.html',
@@ -41,7 +44,7 @@ export class MainPageComponent implements OnInit, AfterViewInit, OnDestroy {
   receivedRequests: any;
   isStaff: boolean;
   data: any;
-  navbarHeight: string = '64px';
+  navbarHeight = DEFAULT_NAVBAR_HEIGHT;
   restriction$: Observable<boolean>;
   schools: School[];
   isKioskMode: boolean;
@@ -145,9 +148,15 @@ export class MainPageComponent implements OnInit, AfterViewInit, OnDestroy {
   }
 
   currentNavbarHeight() {
-    return this.router.url === '/main/hallmonitor' && this.screenService.isDeviceLargeExtra ||
-    this.router.url === '/main/myroom' && this.screenService.isDeviceLargeExtra ||
-    this.router.url === '/main/kioskMode/settings' ? '0px' : '64px';
+    const { url } = this.router;
+    if (url.includes('kioskMode')) {
+      return DEFAULT_NAVBAR_HEIGHT;
+    }
+
+    return url === '/main/hallmonitor' && this.screenService.isDeviceLargeExtra ||
+      url === '/main/myroom' && this.screenService.isDeviceLargeExtra
+      ? HIDDEN_NAVBAR_HEIGHT
+      : DEFAULT_NAVBAR_HEIGHT;
   }
 
   get showInbox() {
@@ -198,6 +207,7 @@ export class MainPageComponent implements OnInit, AfterViewInit, OnDestroy {
 
     this.router.events.subscribe( event => {
         if ( event instanceof NavigationEnd) {
+          this.isKioskMode = this.http.checkIfTokenIsKiosk();
           this.navbarHeight = this.currentNavbarHeight();
         }
     });
