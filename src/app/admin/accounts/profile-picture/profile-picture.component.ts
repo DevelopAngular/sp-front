@@ -199,6 +199,8 @@ export class ProfilePictureComponent implements OnInit, OnDestroy {
     this.accountsWithoutPictures$ = this.userService.missingProfilePictures$;
     this.uploadErrors$ = this.userService.profilePicturesUploadErrors$;
     this.lastUploadedGroup$ = this.userService.lastUploadedGroup$;
+
+    this.userService.getUploadedGroupsRequest();
     this.uploadedGroups$ = this.userService.uploadedGroups$.pipe(map(groups => {
       return groups.reverse();
     }));
