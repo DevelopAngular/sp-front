@@ -34,7 +34,14 @@ export class ProfilePictureComponent implements OnInit, OnDestroy {
   @ViewChild('dots') dots: ElementRef;
 
   @ViewChild('csvFile') set fileRef(fileRef: ElementRef) {
+
     if (fileRef && fileRef.nativeElement) {
+      // to ensure that same file can be taken again
+      // it makes change event to be triggerable
+      fromEvent(fileRef.nativeElement, 'click').pipe(tap((evt: Event) => {
+       (evt.target as HTMLInputElement).value = '';
+      })).subscribe();
+
       fromEvent(fileRef.nativeElement, 'change')
         .pipe(
           filter(() => fileRef.nativeElement.files.length),
@@ -43,6 +50,7 @@ export class ProfilePictureComponent implements OnInit, OnDestroy {
             if (extension === 'csv' || extension === 'xlsx') {
               this.selectedMapFile = fileRef.nativeElement.files[0];
               this.uploadingProgress.csv.inProcess = true;
+              this.uploadingProgress.csv.complete = false;
               const FR = new FileReader();
               FR.readAsBinaryString(fileRef.nativeElement.files[0]);
               return fromEvent(FR, 'load');
@@ -270,8 +278,38 @@ export class ProfilePictureComponent implements OnInit, OnDestroy {
     this.page += 1;
     if (this.page === 3) {
       this.errors = this.findIssues();
-      const userIds = this.filesToDB.map(f => f.user_id);
-      const files = this.filesToDB.map(f => f.file);
+      // filter duplicates and preserve sync of userId with file
+      // it keeps the latest duplicate
+      const duplicate = new Map<string, File>();
+      this.filesToDB.forEach((v: {user_id: string|number, file: File}) => duplicate.set(''+v.user_id, v.file));
+      const userIds = Array.from(duplicate.keys());
+      const files = Array.from(duplicate.values());
+      // it keeps the first duplicate
+      /*const combo = this.filesToDB.map(f => [f.user_id, f.file]).filter((v: [string, object], _: number, self: object[]) => {
+        let found = 0;
+        let len = self.length;
+        for (let i = 0; i < len; i++) {
+          if (self[i][0] === v[0]) {
+            found++;
+          }
+        }
+        if (found === 1) {
+          return true;
+        } else {
+          duplicate.set(...v);
+          return false;
+        };
+      });
+      // userIds and files are synced
+      const userIds = [];
+      const files = [];
+      [combo.map(uf => {
+        userIds.push(uf[0]);
+        files.push(uf[1]);
+      });*/
+
+      //const userIds = this.filesToDB.map(f => f.user_id);
+      //const files = this.filesToDB.map(f => f.file);
       if (userIds.length && files.length) {
         this.userService.postProfilePicturesRequest(
           userIds,

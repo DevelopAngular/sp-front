@@ -69,7 +69,14 @@
             [leftIcon]="'./assets/Simple CSV (White).svg'"
             (buttonClick)="csvFile.click()"
             [size]="'small'"
-          >{{ !uploadingProgress.csv.inProcess && !uploadingProgress.csv.complete ? 'Choose Excel File' : 'File selected' }}
+          >
+          {{
+            !uploadingProgress.csv.inProcess && !uploadingProgress.csv.complete ?
+            'Choose Excel File' :
+            uploadingProgress.csv.inProcess && !uploadingProgress.csv.complete ?
+            'Processing...' :
+            'File selected'
+          }}
           </app-gradient-button>
           <app-gradient-button
             [style.margin-left]="'7px'"
