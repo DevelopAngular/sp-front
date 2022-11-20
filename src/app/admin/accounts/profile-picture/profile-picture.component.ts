@@ -2,7 +2,7 @@ import {Component, ElementRef, EventEmitter, Input, OnDestroy, OnInit, Output, R
 import {FormControl, FormGroup} from '@angular/forms';
 
 import {forkJoin, fromEvent, merge, Observable, of, Subject, zip} from 'rxjs';
-import {filter, map, switchMap, take, takeUntil, tap} from 'rxjs/operators';
+import {filter, map, switchMap, take, takeUntil,tap, catchError} from 'rxjs/operators';
 import {cloneDeep, isArray, uniqBy} from 'lodash';
 
 import {XlsxService} from '../../../services/xlsx.service';
@@ -35,17 +35,17 @@ export class ProfilePictureComponent implements OnInit, OnDestroy {
 
   @ViewChild('csvFile') set fileRef(fileRef: ElementRef) {
 
-    if (fileRef && fileRef.nativeElement) {
+    if (fileRef?.nativeElement) {
       // to ensure that same file can be taken again
       // it makes change event to be triggerable
       fromEvent(fileRef.nativeElement, 'click').pipe(tap((evt: Event) => {
-       (evt.target as HTMLInputElement).value = '';
+        (evt.target as HTMLInputElement).value = '';
       })).subscribe();
 
       fromEvent(fileRef.nativeElement, 'change')
         .pipe(
           filter(() => fileRef.nativeElement.files.length),
-          switchMap((evt: Event) => {
+          switchMap(() => {
             const extension = fileRef.nativeElement.files[0].name.toLowerCase().split('.')[fileRef.nativeElement.files[0].name.split('.').length - 1].toLowerCase();
             if (extension === 'csv' || extension === 'xlsx') {
               this.selectedMapFile = fileRef.nativeElement.files[0];
@@ -65,7 +65,7 @@ export class ProfilePictureComponent implements OnInit, OnDestroy {
             return this.xlsxService.parseXlSXFile(res);
           }),
           switchMap(rows => {
-            if (!rows) {
+            if (!rows || rows.length === 0) {
               return of(null);
             }
             // const regexpEmail = new RegExp('^([A-Za-z0-9_\\-.])+@([A-Za-z0-9_\\-.])+\\.([A-Za-z]{2,4})$');
@@ -80,10 +80,9 @@ export class ProfilePictureComponent implements OnInit, OnDestroy {
         )
         .subscribe((items) => {
           if (!items) {
-            this.toastService.openToast({title: 'Type error', subtitle: 'Sorry, please upload a file ending in .csv', type: 'error'});
+            this.toastService.openToast({title: 'Type error', subtitle: 'Sorry, please upload a file ending in .csv or .xlsx', type: 'error'});
             this.uploadingProgress.csv.inProcess = false;
             this.uploadingProgress.csv.complete = false;
-            return;
           } else {
             this.selectedMapFile = fileRef.nativeElement.files[0];
             this.selectedMapFiles = items;
@@ -95,11 +94,11 @@ export class ProfilePictureComponent implements OnInit, OnDestroy {
   }
 
   @ViewChild('zip') set zipRef(fileRef: ElementRef) {
-    if (fileRef && fileRef.nativeElement) {
+    if (fileRef?.nativeElement) {
       fromEvent(fileRef.nativeElement, 'change')
         .pipe(
           filter(() => fileRef.nativeElement.files.length),
-          switchMap((event) => {
+          switchMap(() => {
             const filesStream = [];
             if (fileRef.nativeElement.files.length === 1) {
               const extension = fileRef.nativeElement.files[0].name.toLowerCase().split('.')[fileRef.nativeElement.files[0].name.split('.').length - 1].toLowerCase();
@@ -109,7 +108,7 @@ export class ProfilePictureComponent implements OnInit, OnDestroy {
             }
             this.uploadingProgress.images.inProcess = true;
             for (let i = 0; i < fileRef.nativeElement.files.length; i++) {
-              const file = fileRef.nativeElement.files.item(i);
+              const file: File = fileRef.nativeElement.files.item(i);
               const extension = file.name.toLowerCase().split('.')[file.name.split('.').length - 1].toLowerCase();
               if (extension === 'zip' || extension === 'jpeg' || extension === 'jpg' || extension === 'png') {
                 if (extension === 'zip') {
@@ -118,7 +117,7 @@ export class ProfilePictureComponent implements OnInit, OnDestroy {
                   const reader = new FileReader();
                   reader.readAsDataURL(file);
                   filesStream.push(fromEvent(reader, 'load').pipe(
-                    map((item: any) => {
+                    map(_ => {
                     return { file_name: file.name.toLowerCase().trim(), file: file };
                   })));
                 }
@@ -129,7 +128,7 @@ export class ProfilePictureComponent implements OnInit, OnDestroy {
           filter(res => !!res),
           map(result => {
             let arrayFiles = [];
-            result.forEach(item => {
+            result.forEach((item: Array<File>|File) => {
               if (isArray(item)) {
                 arrayFiles = [...arrayFiles, ...item];
               } else {
@@ -200,10 +199,13 @@ export class ProfilePictureComponent implements OnInit, OnDestroy {
     this.uploadErrors$ = this.userService.profilePicturesUploadErrors$;
     this.lastUploadedGroup$ = this.userService.lastUploadedGroup$;
 
+    // get groups from api and re-fresh the store
     this.userService.getUploadedGroupsRequest();
-    this.uploadedGroups$ = this.userService.uploadedGroups$.pipe(map(groups => {
-      return groups.reverse();
-    }));
+    this.uploadedGroups$ = this.userService.uploadedGroups$.pipe(
+      map(groups => {
+        return groups.reverse();
+      }),
+    );
     this.user$ = this.userService.user$;
 
     this.picturesLoaderPercent$.pipe(
@@ -222,12 +224,19 @@ export class ProfilePictureComponent implements OnInit, OnDestroy {
             return { ...acc, [curr.user_id]: curr };
           }, {});
           return zip(
-            this.userService.profiles$.pipe(take(1)),
-            of(files)
+            this.userService.profiles$.pipe(
+              take(1),
+              // do not let a posible error to get lost because of zip operator
+              catchError(error => of(error)),
+            ),
+            of(files),
           );
         }),
         map(([students, files]) => {
-          return students.map(student => {
+          return students.map((student: User|Error) => {
+            if (student instanceof Error) {
+              return student;
+            }
             const user = {
               ...student,
               file_name: files[student.primary_email] ? files[student.primary_email].file.name : files[student.extras.clever_student_number].file.name,
@@ -389,6 +398,11 @@ export class ProfilePictureComponent implements OnInit, OnDestroy {
   findIssues() {
     const errors = [];
     for (let i = 0; i < this.selectedMapFiles.length; i++) {
+      if (this.selectedMapFiles[i] instanceof Error) {
+        errors.push({'Error': this.selectedMapFiles[i]});
+        continue;
+      }
+
       if (!this.selectedMapFiles[i].file_name) {
         errors.push({'User ID': this.selectedMapFiles[i].user_id, 'error': 'Image filename not listed'});
       } else if (!this.selectedMapFiles[i].user_id) {
