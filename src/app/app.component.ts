@@ -291,6 +291,9 @@ export class AppComponent implements OnInit, AfterViewInit, OnDestroy {
         filter(event => event instanceof NavigationEnd),
         map(() => this.activatedRoute),
         map((route) => {
+          if (this.isMobile) {
+            window.Intercom('update', {'hide_default_launcher': true});
+          }
           this.isKioskMode = this.router.url.includes('kioskMode');
           if (route.firstChild) {
             route = route.firstChild;
