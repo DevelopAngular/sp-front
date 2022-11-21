@@ -1,7 +1,7 @@
 import {Component, ElementRef, EventEmitter, Input, OnDestroy, OnInit, Output, Renderer2, ViewChild} from '@angular/core';
 import {FormControl, FormGroup} from '@angular/forms';
 
-import {forkJoin, fromEvent, merge, Observable, of, Subject, zip} from 'rxjs';
+import {fromEvent, merge, Observable, of, Subject, zip} from 'rxjs';
 import {filter, map, switchMap, take, takeUntil,tap, catchError} from 'rxjs/operators';
 import {cloneDeep, isArray, uniqBy} from 'lodash';
 
@@ -19,6 +19,9 @@ import {SettingsDescriptionPopupComponent} from '../../../settings-description-p
 import {UNANIMATED_CONTAINER} from '../../../consent-menu-overlay';
 import {School} from '../../../models/School';
 import {AdminService} from '../../../services/admin.service';
+
+type MapFile = {user_id: string | number, file_name: string, isUserId: boolean, isFileName: boolean };
+type MapFileUsedID = MapFile & {usedId: boolean};
 
 @Component({
   selector: 'app-profile-picture',
@@ -65,20 +68,48 @@ export class ProfilePictureComponent implements OnInit, OnDestroy {
             return this.xlsxService.parseXlSXFile(res);
           }),
           switchMap(rows => {
+            // return adapted to subscribe callback
             if (!rows || rows.length === 0) {
-              return of(null);
+              return [null, [new Error('no records')]];
             }
+
+            const errors = [];
             // const regexpEmail = new RegExp('^([A-Za-z0-9_\\-.])+@([A-Za-z0-9_\\-.])+\\.([A-Za-z]{2,4})$');
-            const validate$ = rows.map(row => {
-              if (typeof row[0] === 'string' && row[0].includes('@spnx.local')) {
-                row[0] = row[0].replace('@spnx.local', '');
-              }
-                return of({ user_id: typeof row[0] === 'string' ? row[0].toLowerCase().trim() : row[0], file_name: row[1].toLowerCase().trim(), isUserId: !!row[0], isFileName: !!row[1], usedId: false });
-            });
-            return forkJoin(validate$);
-          })
+            const validated: Array<MapFileUsedID> = rows
+              .map(row => {
+                if (typeof row[0] === 'string' && row[0].includes('@spnx.local')) {
+                  row[0] = row[0].replace('@spnx.local', '');
+                }
+                try {
+                  const maybeValid: MapFileUsedID | boolean = {
+                    user_id: typeof row[0] === 'string' ? row[0].toLowerCase().trim() : row[0],
+                    file_name: row[1].toLowerCase().trim(),
+                    isUserId: !!row[0],
+                    isFileName: !!row[1],
+                    usedId: false
+                  };
+                  return maybeValid;
+                } catch(err) {
+                  console.log(err);
+                  errors.push(err);
+                  return false;
+                }
+              })
+              .filter(Boolean) as Array<MapFileUsedID>;
+
+            const result = [validated, errors];
+            return of(result);
+          }),
         )
-        .subscribe((items) => {
+        .subscribe((result) => {
+          const [items, errors] = result;
+
+          // errors that can be bypassed, just notify th euser
+          // and let the valid rows to be processed further
+          if (errors.length) {
+            this.toastService.openToast({title: 'Type error', subtitle: `File had ${errors.length} records with errors `, type: 'error'});
+          }
+
           if (!items) {
             this.toastService.openToast({title: 'Type error', subtitle: 'Sorry, please upload a file ending in .csv or .xlsx', type: 'error'});
             this.uploadingProgress.csv.inProcess = false;
@@ -150,7 +181,7 @@ export class ProfilePictureComponent implements OnInit, OnDestroy {
   @ViewChild('fgf1') stop: ElementRef;
 
   form: FormGroup;
-  selectedMapFiles: {user_id: string | number, file_name: string, isUserId: boolean, isFileName: boolean }[] = [];
+  selectedMapFiles: MapFile[] = [];
   selectedImgFiles: {file: File, file_name: string}[];
   selectedMapFile: File;
   filesToDB: any[] = [];
@@ -333,7 +364,7 @@ export class ProfilePictureComponent implements OnInit, OnDestroy {
       } else {
         this.toastService.openToast({title: 'Sorry, no pictures could be mapped', subtitle: 'No pictures were able to be mapped to account email addresses or IDs. Please check the spreadsheet and photos you uploaded to make sure they map with existing accounts.', type: 'error'});
         this.userService.createPPicturesUploadGroup().pipe(filter(r => !!r))
-          .subscribe((group) => {
+          .subscribe(_ => {
             this.userService.putProfilePicturesErrorsRequest(this.errors);
             this.page -= 1;
             this.clearData();
