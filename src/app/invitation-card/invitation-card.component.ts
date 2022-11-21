@@ -9,11 +9,11 @@ import {getInnerPassName} from '../pass-tile/pass-display-util';
 import {DataService} from '../services/data-service';
 import {LoadingService} from '../services/loading.service';
 import {Navigation} from '../create-hallpass-forms/main-hallpass--form/main-hall-pass-form.component';
-import {filter, map, switchMap, takeUntil, tap} from 'rxjs/operators';
+import {catchError, filter, map, switchMap, takeUntil, tap} from 'rxjs/operators';
 import {CreateFormService} from '../create-hallpass-forms/create-form.service';
 import {CreateHallpassFormsComponent} from '../create-hallpass-forms/create-hallpass-forms.component';
 import {RequestsService} from '../services/requests.service';
-import {BehaviorSubject, Observable, Subject} from 'rxjs';
+import {BehaviorSubject, Observable, of, Subject} from 'rxjs';
 import {ScreenService} from '../services/screen.service';
 import {UNANIMATED_CONTAINER} from '../consent-menu-overlay';
 import {School} from '../models/School';
@@ -25,6 +25,7 @@ import {scalePassCards} from '../animations';
 import {UserService} from '../services/user.service';
 import {HallPassesService} from '../services/hall-passes.service';
 import {LocationsService} from '../services/locations.service';
+import {ToastService} from '../services/toast.service';
 
 @Component({
   selector: 'app-invitation-card',
@@ -86,6 +87,7 @@ export class InvitationCardComponent implements OnInit, OnDestroy {
       private userService: UserService,
       private passesService: HallPassesService,
       private locationsService: LocationsService,
+      private toast: ToastService
   ) {}
 
   get isMobile() {
@@ -224,7 +226,14 @@ export class InvitationCardComponent implements OnInit, OnDestroy {
       'issuer_message': this.invitation.issuer_message
     };
 
-    this.requestService.createInvitation(body).subscribe((data) => {
+    this.requestService.createInvitation(body)
+      .pipe(
+        catchError(error => {
+          this.openErrorToast(error)
+          return of(error);
+        })
+      )
+      .subscribe((data) => {
       if (DeviceDetection.isAndroid() || DeviceDetection.isIOSMobile()) {
         this.dataService.openRequestPageMobile();
         this.navbarData.inboxClick$.next(true);
@@ -241,7 +250,14 @@ export class InvitationCardComponent implements OnInit, OnDestroy {
       'origin' : this.selectedOrigin.id
     };
 
-    this.requestService.acceptInvitation(this.invitation.id, body).subscribe((data: any) => {
+    this.requestService.acceptInvitation(this.invitation.id, body)
+      .pipe(
+        catchError(error => {
+          this.openErrorToast(error)
+          return of(error);
+        })
+      )
+      .subscribe((data: any) => {
       this.dialogRef.close();
     });
   }
@@ -284,10 +300,25 @@ export class InvitationCardComponent implements OnInit, OnDestroy {
                   'travel_type' : this.invitation.travel_type
               };
               return this.requestService.createInvitation(body);
-            }), switchMap(() => this.requestService.cancelInvitation(this.invitation.id, '')))
+            }),
+            switchMap(() => this.requestService.cancelInvitation(this.invitation.id, '')),
+            catchError(error => {
+              this.openErrorToast(error)
+              return of(error);
+            })
+        )
             .subscribe(console.log);
     }
     }
+
+  openErrorToast(error) {
+    this.toast.openToast(
+      {
+        title: 'Oh no! Something went wrong',
+        subtitle: `Please try refreshing the page. If the issue keeps occuring, contact us at support@smartpass.app. (${error.status})`,
+        type: 'error'
+      }, `${error.status}`);
+  }
 
   denyInvitation(evt: MouseEvent) {
     // if (this.screenService.isDeviceMid) {
@@ -349,7 +380,8 @@ export class InvitationCardComponent implements OnInit, OnDestroy {
       const body = {
         'message' : ''
       };
-      this.requestService.denyInvitation(this.invitation.id, body).subscribe((httpData) => {
+      this.requestService.denyInvitation(this.invitation.id, body)
+        .subscribe((httpData) => {
         this.dialogRef.close();
       });
     } else if (action === 'delete') {
