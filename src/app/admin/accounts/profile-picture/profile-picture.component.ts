@@ -1,7 +1,7 @@
 import {Component, ElementRef, EventEmitter, Input, OnDestroy, OnInit, Output, Renderer2, ViewChild} from '@angular/core';
 import {FormControl, FormGroup} from '@angular/forms';
 
-import {fromEvent, merge, Observable, of, Subject, zip} from 'rxjs';
+import {EMPTY, fromEvent, merge, Observable, of, Subject, zip} from 'rxjs';
 import {filter, map, switchMap, take, takeUntil,tap, catchError} from 'rxjs/operators';
 import {cloneDeep, isArray, uniqBy} from 'lodash';
 
@@ -41,13 +41,17 @@ export class ProfilePictureComponent implements OnInit, OnDestroy {
     if (fileRef?.nativeElement) {
       // to ensure that same file can be taken again
       // it makes change event to be triggerable
-      fromEvent(fileRef.nativeElement, 'click').pipe(tap((evt: Event) => {
-        (evt.target as HTMLInputElement).value = '';
-      })).subscribe();
+      fromEvent(fileRef.nativeElement, 'click').pipe(
+        tap((evt: Event) => {
+          (evt.target as HTMLInputElement).value = '';
+        }),
+        takeUntil(this.destroy$),
+      ).subscribe();
 
       fromEvent(fileRef.nativeElement, 'change')
         .pipe(
           filter(() => fileRef.nativeElement.files.length),
+          takeUntil(this.destroy$),
           switchMap(() => {
             const extension = fileRef.nativeElement.files[0].name.toLowerCase().split('.')[fileRef.nativeElement.files[0].name.split('.').length - 1].toLowerCase();
             if (extension === 'csv' || extension === 'xlsx') {
@@ -58,19 +62,15 @@ export class ProfilePictureComponent implements OnInit, OnDestroy {
               FR.readAsBinaryString(fileRef.nativeElement.files[0]);
               return fromEvent(FR, 'load');
             } else {
-              return of(null);
+              throw new Error( 'Sorry, please upload a file ending in .csv or .xlsx');
             }
           }),
-          map(( res: any) => {
-            if (!res) {
-              return null;
-            }
+          map((res: Event) => {
             return this.xlsxService.parseXlSXFile(res);
           }),
           switchMap(rows => {
-            // return adapted to subscribe callback
             if (!rows || rows.length === 0) {
-              return [null, [new Error('no records')]];
+              throw new Error( 'records not found');
             }
 
             const errors = [];
@@ -97,29 +97,35 @@ export class ProfilePictureComponent implements OnInit, OnDestroy {
               })
               .filter(Boolean) as Array<MapFileUsedID>;
 
-            const result = [validated, errors];
+            if (validated.length === 0) {
+              throw new Error('File had no valid records');
+            }
+
+            // return adapted to subscribe callback parameyetr
+            const result: [MapFileUsedID[], Error[]] = [validated, errors];
             return of(result);
           }),
-        )
-        .subscribe((result) => {
-          const [items, errors] = result;
-
-          // errors that can be bypassed, just notify th euser
-          // and let the valid rows to be processed further
-          if (errors.length) {
-            this.toastService.openToast({title: 'Type error', subtitle: `File had ${errors.length} records with errors `, type: 'error'});
-          }
-
-          if (!items) {
-            this.toastService.openToast({title: 'Type error', subtitle: 'Sorry, please upload a file ending in .csv or .xlsx', type: 'error'});
+          /*catchError((err: Error) => {
+            this.toastService.openToast({title: 'Type error', subtitle: err.message, type: 'error'});
             this.uploadingProgress.csv.inProcess = false;
             this.uploadingProgress.csv.complete = false;
-          } else {
+            return of(null);
+          }),
+          filter(Boolean),*/
+        )
+        .subscribe({next: 
+          ([items, errors]:[MapFileUsedID[], Error[]]) => {
+            // errors that can be bypassed, just notify th euser
+            // and let the valid rows to be processed further
+            if (errors?.length) {
+              this.toastService.openToast({title: 'Type error', subtitle: `File had ${errors.length}/${items.length} records with errors `, type: 'error'});
+            }
+
             this.selectedMapFile = fileRef.nativeElement.files[0];
             this.selectedMapFiles = items;
             this.uploadingProgress.csv.inProcess = false;
             this.uploadingProgress.csv.complete = true;
-          }
+          },
         });
     }
   }
