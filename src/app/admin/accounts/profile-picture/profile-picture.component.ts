@@ -1,7 +1,7 @@
 import {Component, ElementRef, EventEmitter, Input, OnDestroy, OnInit, Output, Renderer2, ViewChild} from '@angular/core';
 import {FormControl, FormGroup} from '@angular/forms';
 
-import {EMPTY, fromEvent, merge, Observable, of, Subject, zip} from 'rxjs';
+import {fromEvent, merge, Observable, of, Subject, zip} from 'rxjs';
 import {filter, map, switchMap, take, takeUntil,tap, catchError} from 'rxjs/operators';
 import {cloneDeep, isArray, uniqBy} from 'lodash';
 
@@ -45,13 +45,11 @@ export class ProfilePictureComponent implements OnInit, OnDestroy {
         tap((evt: Event) => {
           (evt.target as HTMLInputElement).value = '';
         }),
-        takeUntil(this.destroy$),
       ).subscribe();
 
       fromEvent(fileRef.nativeElement, 'change')
         .pipe(
           filter(() => fileRef.nativeElement.files.length),
-          takeUntil(this.destroy$),
           switchMap(() => {
             const extension = fileRef.nativeElement.files[0].name.toLowerCase().split('.')[fileRef.nativeElement.files[0].name.split('.').length - 1].toLowerCase();
             if (extension === 'csv' || extension === 'xlsx') {
@@ -105,16 +103,19 @@ export class ProfilePictureComponent implements OnInit, OnDestroy {
             const result: [MapFileUsedID[], Error[]] = [validated, errors];
             return of(result);
           }),
-          /*catchError((err: Error) => {
+          catchError((err: Error) => {
             this.toastService.openToast({title: 'Type error', subtitle: err.message, type: 'error'});
             this.uploadingProgress.csv.inProcess = false;
             this.uploadingProgress.csv.complete = false;
             return of(null);
           }),
-          filter(Boolean),*/
         )
         .subscribe({next: 
-          ([items, errors]:[MapFileUsedID[], Error[]]) => {
+          (result: [MapFileUsedID[], Error[]] | null) => {
+            if (result === null) {
+              return;
+            }
+            const [items, errors]:[MapFileUsedID[], Error[]] = result;;
             // errors that can be bypassed, just notify th euser
             // and let the valid rows to be processed further
             if (errors?.length) {
@@ -126,6 +127,7 @@ export class ProfilePictureComponent implements OnInit, OnDestroy {
             this.uploadingProgress.csv.inProcess = false;
             this.uploadingProgress.csv.complete = true;
           },
+          error: err => console.log('ERR', err)
         });
     }
   }
