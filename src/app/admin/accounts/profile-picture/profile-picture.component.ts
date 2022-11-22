@@ -23,7 +23,13 @@ import {AdminService} from '../../../services/admin.service';
 type MapFile = {user_id: string | number, file_name: string, isUserId: boolean, isFileName: boolean };
 type MapFileUsedID = MapFile & {usedId: boolean};
 
-class CustomError extends Error {}
+// it serves to propagate an error through the rxjs pipe
+// and be handled in subscribe, without triggering complete and thus keeping the stream alive
+class ElsewhereError extends Error {}
+
+// is used with along with ElsewhereError
+// it signals that code must not handle items
+// it replace null value with a specific value
 class skip_items {};
 const SKIP_ITEMS = new skip_items();
 
@@ -43,39 +49,47 @@ export class ProfilePictureComponent implements OnInit, OnDestroy {
   @ViewChild('csvFile') set fileRef(fileRef: ElementRef) {
 
     if (fileRef?.nativeElement) {
-      
-
       // to ensure that same file can be taken again
       // it makes change event to be triggerable
-      fromEvent(fileRef.nativeElement, 'click').pipe(tap((evt: Event) => {
-        (evt.target as HTMLInputElement).value = '';
-      })).subscribe();
+      fromEvent(fileRef.nativeElement, 'click').pipe(
+        tap((evt: Event) => {
+          (evt.target as HTMLInputElement).value = '';
+        }),
+        takeUntil(this.destroy$),
+      ).subscribe();
 
       fromEvent(fileRef.nativeElement, 'change')
         .pipe(
+          takeUntil(this.destroy$),
           filter(() => fileRef.nativeElement.files.length),
           switchMap(() => {
-            const extension = fileRef.nativeElement.files[0].name.toLowerCase().split('.')[fileRef.nativeElement.files[0].name.split('.').length - 1].toLowerCase();
+            const $el = fileRef.nativeElement.files[0];
+            const extension = $el.name.toLowerCase().split('.')[$el.name.split('.').length - 1].toLowerCase();
             if (extension === 'csv' || extension === 'xlsx') {
+              // mapFile is to be checked for valid rows
               this.selectedMapFile = fileRef.nativeElement.files[0];
+              // show UI hint
               this.uploadingProgress.csv.inProcess = true;
               this.uploadingProgress.csv.complete = false;
+              // down to th emain pipe a new stream of File[]
               const FR = new FileReader();
               FR.readAsBinaryString(fileRef.nativeElement.files[0]);
               return fromEvent(FR, 'load');
             } else {
-              return of(new CustomError('Sorry, please upload a file ending in .csv or .xlsx'));
+              // or an error that will be protected down to subscribe
+              return of(new ElsewhereError('Sorry, please upload a file ending in .csv or .xlsx'));
             }
           }),
-          map(( res: Event | CustomError) => {
-            if (res instanceof CustomError) {
+          map(( res: Event | ElsewhereError) => {
+            // sent it down through the pipe to the subscribe
+            if (res instanceof ElsewhereError) {
               return res;
             }
             return this.xlsxService.parseXlSXFile(res);
           }),
-          switchMap(rows => {
+          switchMap((rows: ElsewhereError | Array<MapFileUsedID[]>) => {
             // return adapted to subscribe callback
-            if (rows instanceof CustomError) {
+            if (rows instanceof ElsewhereError) {
               return of([SKIP_ITEMS, [rows]]);
             }
             if (rows.length === 0) {
@@ -84,13 +98,14 @@ export class ProfilePictureComponent implements OnInit, OnDestroy {
 
             const errors = [];
             // const regexpEmail = new RegExp('^([A-Za-z0-9_\\-.])+@([A-Za-z0-9_\\-.])+\\.([A-Za-z]{2,4})$');
-            const validated: Array<MapFileUsedID> = rows
-              .map(row => {
+            const validated: MapFileUsedID[] = rows
+              .map((row: any[]) => {
                 if (typeof row[0] === 'string' && row[0].includes('@spnx.local')) {
                   row[0] = row[0].replace('@spnx.local', '');
                 }
+
                 try {
-                  const maybeValid: MapFileUsedID | boolean = {
+                  const maybeValid: MapFileUsedID = {
                     user_id: typeof row[0] === 'string' ? row[0].toLowerCase().trim() : row[0],
                     file_name: row[1].toLowerCase().trim(),
                     isUserId: !!row[0],
@@ -104,21 +119,21 @@ export class ProfilePictureComponent implements OnInit, OnDestroy {
                   return false;
                 }
               })
-              .filter(Boolean) as Array<MapFileUsedID>;
+              .filter(Boolean) as MapFileUsedID[];
 
             const result: [MapFileUsedID[], Error[]] = [validated, errors];
             return of(result);
           }),
         )
-        .subscribe((result: [MapFileUsedID[], (Error|CustomError)[]]) => {
-          const [items, errors]: [MapFileUsedID[] | skip_items, (Error|CustomError)[]] = result;
+        .subscribe((result: [MapFileUsedID[] | skip_items, (Error|ElsewhereError)[]]) => {
+          const [items, errors]: [MapFileUsedID[] | skip_items, (Error|ElsewhereError)[]] = result;
 
-          // errors that can be bypassed, just notify th euser
+          // errors that can be bypassed, just notify the user
           // and let the valid rows to be processed further
           if (errors.length) {
             this.toastService.openToast({
               title: 'Type error',
-              subtitle: (errors[0] instanceof CustomError) ?  errors[0].message : `File had ${errors.length} records with errors `, 
+              subtitle: (errors[0] instanceof ElsewhereError) ?  errors[0].message : `File had ${errors.length} records with errors `, 
               type: 'error',
             });
           }
@@ -344,29 +359,6 @@ export class ProfilePictureComponent implements OnInit, OnDestroy {
       this.filesToDB.forEach((v: {user_id: string|number, file: File}) => duplicate.set(''+v.user_id, v.file));
       const userIds = Array.from(duplicate.keys());
       const files = Array.from(duplicate.values());
-      // it keeps the first duplicate
-      /*const combo = this.filesToDB.map(f => [f.user_id, f.file]).filter((v: [string, object], _: number, self: object[]) => {
-        let found = 0;
-        let len = self.length;
-        for (let i = 0; i < len; i++) {
-          if (self[i][0] === v[0]) {
-            found++;
-          }
-        }
-        if (found === 1) {
-          return true;
-        } else {
-          duplicate.set(...v);
-          return false;
-        };
-      });
-      // userIds and files are synced
-      const userIds = [];
-      const files = [];
-      [combo.map(uf => {
-        userIds.push(uf[0]);
-        files.push(uf[1]);
-      });*/
 
       //const userIds = this.filesToDB.map(f => f.user_id);
       //const files = this.filesToDB.map(f => f.file);
@@ -375,18 +367,23 @@ export class ProfilePictureComponent implements OnInit, OnDestroy {
           userIds,
           files
         ).pipe(
-          filter(profiles => !!profiles.length)
-        ).subscribe(r => {
+          filter(profiles => !!profiles.length),
+          take(1),
+        ).subscribe(_ => {
           this.userService.putProfilePicturesErrorsRequest(this.errors);
         });
       } else {
         this.toastService.openToast({title: 'Sorry, no pictures could be mapped', subtitle: 'No pictures were able to be mapped to account email addresses or IDs. Please check the spreadsheet and photos you uploaded to make sure they map with existing accounts.', type: 'error'});
-        this.userService.createPPicturesUploadGroup().pipe(filter(r => !!r))
-          .subscribe(_ => {
-            this.userService.putProfilePicturesErrorsRequest(this.errors);
-            this.page -= 1;
-            this.clearData();
-          });
+        this.userService.createPPicturesUploadGroup().pipe(
+          filter(r => !!r),
+          take(1),
+        ).subscribe(_ => {
+          this.userService.putProfilePicturesErrorsRequest(this.errors);
+          console.log(this.page)
+          //this.page -= 1;
+          this.page = 2;
+          this.clearData();
+        });
       }
     } else if (this.page === 5) {
       this.userService.clearUploadedData();
