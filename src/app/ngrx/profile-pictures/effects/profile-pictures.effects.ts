@@ -121,13 +121,21 @@ export class ProfilePicturesEffects {
                             }, {});
                         }),
                         map((students) => {
-                            return action.userIds.map((id, index) => {
-                                if (students[id]) {
+                            const found = action.userIds.map((id: string) => {
+                                if (id in students) {
                                     return students[id];
                                 } else {
+                                    // map returns here undefined
                                     this.userService.profilePicturesErrors$.next({'User ID': id, error: 'No user with this id was found'});
                                 }
-                            });
+                            })
+                            // filter here undefined values
+                            .filter(Boolean);
+
+                            if (found.length) {
+                              return found;
+                            }
+                            throw new Error('Found no any acceptable record');
                         }),
                         switchMap((students) => {
                             const picturesData: { userId: string | number, pictureId: number | string }[] = students.filter(s => !!s).map((s: User) => {
@@ -144,6 +152,18 @@ export class ProfilePicturesEffects {
                     );
                 })
             );
+    });
+
+    mappingUserCollectionFailure$ = createEffect(() => {
+      return this.actions$.pipe(
+        ofType(profilePicturesActions.mappingUserCollectionFailure),
+        map((action: any) => {
+          this.toastService.openToast({title: 'Error', subtitle: action.errorMessage, type: 'error'});
+          this.userService.profilePicturesErrorCancel$.next({error: action.errorMessage});
+
+          return profilePicturesActions.showErrorToast();
+        })
+      );
     });
 
     uploadProfilePictures$ = createEffect(() => {

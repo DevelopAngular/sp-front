@@ -278,6 +278,10 @@ export class UserService implements OnDestroy {
   profiles$: Observable<User[]> = this.store.select(getProfiles);
   profilePictureLoaderPercent$: Observable<number> = this.store.select(getProfilePicturesLoaderPercent);
   profilePicturesErrors$: Subject<{ [id: string]: string, error: string }> = new Subject();
+
+  // cancel operation
+  profilePicturesErrorCancel$: Subject<{error: string}> = new Subject();
+
   uploadedGroups$: Observable<ProfilePicturesUploadGroup[]> = this.store.select(getUploadedGroups);
   currentUploadedGroup$: Observable<ProfilePicturesUploadGroup> = this.store.select(getCurrentUploadedGroup);
   lastUploadedGroup$: Observable<ProfilePicturesUploadGroup> = this.store.select(getLastUploadedGroup);

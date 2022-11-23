@@ -2,7 +2,7 @@ import {Component, ElementRef, EventEmitter, Input, OnDestroy, OnInit, Output, R
 import {FormControl, FormGroup} from '@angular/forms';
 
 import {fromEvent, merge, Observable, of, Subject, zip} from 'rxjs';
-import {filter, map, switchMap, take, takeUntil,tap, catchError, skip} from 'rxjs/operators';
+import {filter, map, switchMap, take, takeUntil,tap, catchError} from 'rxjs/operators';
 import {cloneDeep, isArray, uniqBy} from 'lodash';
 
 import {XlsxService} from '../../../services/xlsx.service';
@@ -301,7 +301,7 @@ export class ProfilePictureComponent implements OnInit, OnDestroy {
             if (student instanceof Error) {
               return student;
             }
-            console.log('STD', student)
+
             const user = {
               ...student,
               file_name: files[student.primary_email] ? files[student.primary_email].file.name : files[student.extras.clever_student_number].file.name,
@@ -319,6 +319,16 @@ export class ProfilePictureComponent implements OnInit, OnDestroy {
 
     this.userService.profilePicturesErrors$.pipe(takeUntil(this.destroy$)).subscribe(er => {
       this.errors.push(er);
+    });
+
+    this.userService.profilePicturesErrorCancel$.asObservable().pipe(
+      takeUntil(this.destroy$),
+    ).subscribe({
+      next: () => {
+        // forced to move to page 2
+        this.page = 2;
+        this.clearData();
+      },
     });
 
     merge(of(this.userService.getUserSchool()), this.userService.getCurrentUpdatedSchool$().pipe(filter(s => !!s)))
@@ -355,14 +365,12 @@ export class ProfilePictureComponent implements OnInit, OnDestroy {
     if (this.page === 3) {
       this.errors = this.findIssues();
       // filter duplicates and preserve sync of userId with file
-      // it keeps the latest duplicate
-      const duplicate = new Map<string, File>();
-      this.filesToDB.forEach((v: {user_id: string|number, file: File}) => duplicate.set(''+v.user_id, v.file));
-      const userIds = Array.from(duplicate.keys());
-      const files = Array.from(duplicate.values());
+      // it keeps the latest, order wise
+      const uniques = new Map<string, File>();
+      this.filesToDB.forEach((v: {user_id: string|number, file: File}) => uniques.set(''+v.user_id, v.file));
+      const userIds = Array.from(uniques.keys());
+      const files = Array.from(uniques.values());
 
-      //const userIds = this.filesToDB.map(f => f.user_id);
-      //const files = this.filesToDB.map(f => f.file);
       if (userIds.length && files.length) {
         this.userService.postProfilePicturesRequest(
           userIds,
@@ -461,22 +469,29 @@ export class ProfilePictureComponent implements OnInit, OnDestroy {
     return errors;
   }
 
-  redirect(location) {
+  redirect(location: string) {
     window.open(location, '_blank');
   }
 
-  genOption(display, color, action, icon?, hoverBackground?, clickBackground?) {
+  genOption(display: string, color: string, action: string, icon?: string, hoverBackground?: string, clickBackground?: string) {
     return { display, color, action, icon, hoverBackground, clickBackground };
   }
 
-  openConfirm(event) {
+  moveBackPage(): void {
+    this.page -= 1;
+    if (this.page === 2) {
+      this.clearData();
+    }
+  }
+
+  openConfirm(event: PointerEvent) {
     const options = [];
     options.push(this.genOption(
       'Cancel',
       '#E32C66',
       'cancel',
       './assets/Cancel (Red).svg',
-      'rgba(227, 44, 102, .1)'
+      'rgba(227, 44, 102, .1)',
     ));
     const target = new ElementRef(event.currentTarget);
     const cm = this.dialog.open(ConsentMenuComponent, {
@@ -487,13 +502,13 @@ export class ProfilePictureComponent implements OnInit, OnDestroy {
 
     cm.afterClosed().subscribe(action => {
       if (action === 'cancel') {
-        this.page -= 1;
+        this.moveBackPage();
       }
     });
   }
 
-  searchUsers(search) {
-    this.uploadedProfiles = this.allProfiles.filter(profile => {
+  searchUsers(search: string) {
+    this.uploadedProfiles = this.allProfiles.filter((profile: User) => {
       return profile.display_name.toLowerCase().includes(search.toLowerCase());
     });
   }
