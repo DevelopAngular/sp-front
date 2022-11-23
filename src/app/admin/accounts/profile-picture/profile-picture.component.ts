@@ -301,6 +301,7 @@ export class ProfilePictureComponent implements OnInit, OnDestroy {
             if (student instanceof Error) {
               return student;
             }
+            console.log('STD', student)
             const user = {
               ...student,
               file_name: files[student.primary_email] ? files[student.primary_email].file.name : files[student.extras.clever_student_number].file.name,
@@ -379,8 +380,6 @@ export class ProfilePictureComponent implements OnInit, OnDestroy {
           take(1),
         ).subscribe(_ => {
           this.userService.putProfilePicturesErrorsRequest(this.errors);
-          console.log(this.page)
-          //this.page -= 1;
           this.page = 2;
           this.clearData();
         });
