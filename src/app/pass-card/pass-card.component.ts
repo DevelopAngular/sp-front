@@ -506,6 +506,7 @@ export class PassCardComponent implements OnInit, OnDestroy {
                   subtitle: `Please try refreshing the page. If the issue keeps occuring, contact us at support@smartpass.app. (${errorResponse.status})`,
                   type: 'error'
                 }, `${errorResponse.status}`);
+                this.performingAction = false;
               throw errorResponse;
             }
             // a student has been checked server side and had no room visibility
