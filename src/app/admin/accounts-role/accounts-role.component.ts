@@ -21,7 +21,7 @@ import {StorageService} from '../../services/storage.service';
 import {ToastService} from '../../services/toast.service';
 import {PassLimitService} from '../../services/pass-limit.service';
 import {StudentPassLimit} from '../../models/HallPassLimits';
-import { ParentAccountService, StudentResponse } from '../../services/parent-account.service'
+import { ParentAccountService, ParentResponse, StudentResponse } from '../../services/parent-account.service'
 
 export const TABLE_RELOADING_TRIGGER =  new Subject<any>();
 
@@ -118,7 +118,31 @@ export class AccountsRoleComponent implements OnInit, OnDestroy {
           }
 
           return this.parentService.getConnectedParents().pipe(
-            map(connectedResponse => connectedResponse.results)
+            map(connectedResponse => {
+              let myInterfacesArray = connectedResponse.results.map(account=>{
+
+                return <ParentResponse>
+                {
+                  id: account.id,
+                  first_name: account.first_name,
+                  last_name: account.last_name,
+                  display_name: account.display_name,
+                  created: account.created, // return as timestamp Date string
+                  first_login: account.first_login, // return as timestamp Date string
+                  last_login: account.last_login && account.last_login !== new Date() ? Util.formatDateTime(new Date(account.last_login)) : 'Never signed in', // return as timestamp Date string
+                  last_updated: account.last_updated, // return as timestamp Date string
+                  active: account.is_active,
+                  primary_email: account.email,
+                  profile_picture: null,
+                  roles: account.roles,
+                  sync_types: [],
+                  username: account.username,
+                  students: account.students
+                 };
+            
+              });
+             return myInterfacesArray
+            })
           );
         }),
         switchMap((accounts: User[]) => {
@@ -306,6 +330,8 @@ export class AccountsRoleComponent implements OnInit, OnDestroy {
         'Name': null,
         'Email': null,
         'Students': null,
+        'Last sign-in': null,
+        'Type': null,
       }];
     }
   }
@@ -419,7 +445,9 @@ export class AccountsRoleComponent implements OnInit, OnDestroy {
       const studentWrapper = `<div class="ds-flex-center-around">${studentsTemplate}</div>`
 
       objectToTable = {...roleObject, ...{
-        'Students': this.sanitizer.bypassSecurityTrustHtml(studentWrapper)
+        'Last sign-in': account.last_login && account.last_login !== new Date() ? Util.formatDateTime(new Date(account.last_login)) : 'Never signed in',
+        'Type': account.demo_account ? 'Demo' : account.sync_types[0] === 'google' ? 'G Suite' : (account.sync_types[0] === 'gg4l' ? 'GG4L' : account.sync_types[0] === 'clever' ? 'Clever' : 'Standard'),
+        'Students': this.sanitizer.bypassSecurityTrustHtml(studentWrapper),
       }};
     }
     const currentObj = {};
