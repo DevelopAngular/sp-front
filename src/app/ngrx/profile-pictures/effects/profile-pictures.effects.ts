@@ -219,15 +219,15 @@ export class ProfilePicturesEffects {
                 // this complete the polling 
                 // and makes exhaustMap take a fresh action
                 take(1), 
-                  switchMap((objdata: any) => {
-                    const data = objdata.data;
-                    console.log('SUCCESS3', data.attached_pictures.map(p => p.user_id), (actionZero as any).users.map(u => u.id))
-                    return [
-                      profilePicturesActions.changeProfilePictureLoader({percent: 100}),
-                      profilePicturesActions.uploadPicturesComplete({profiles: data.attached_pictures, users: actionZero.users})
-                    ];
-                  }),
-                  catchError(error => of(profilePicturesActions.uploadPicturesError({errorMessage: error.message})))
+                switchMap((objdata: any) => {
+                  const data = objdata.data;
+                  console.log('SUCCESS3', data.attached_pictures.map(p => p.user_id), (actionZero as any).users.map(u => u.id))
+                  return [
+                    profilePicturesActions.changeProfilePictureLoader({percent: 100}),
+                    profilePicturesActions.uploadPicturesComplete({profiles: data.attached_pictures, users: actionZero.users})
+                  ];
+                }),
+                catchError(error => of(profilePicturesActions.uploadPicturesError({errorMessage: error.message})))
               );
         }),
       );
