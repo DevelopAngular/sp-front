@@ -289,7 +289,6 @@ export class ProfilePictureComponent implements OnInit, OnDestroy {
           }, {});
           return zip(
             this.userService.profiles$.pipe(
-              take(1),
               // do not let a posible error to get lost because of zip operator
               catchError(error => of(error)),
             ),
@@ -299,6 +298,8 @@ export class ProfilePictureComponent implements OnInit, OnDestroy {
         map(([students, files]) => {
           return students.map((student: User|Error) => {
             if (student instanceof Error) {
+              // TODO add to errors
+              // and post filters this map
               return student;
             }
 

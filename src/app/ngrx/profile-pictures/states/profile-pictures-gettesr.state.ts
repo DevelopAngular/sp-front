@@ -36,7 +36,9 @@ export const getProfiles = createSelector(
     //   debugger
     // }
     return pm.map((profile) => {
-      const user: User = up.filter(s => !!s).find(u => +u.id === profile.user_id);
+      const user: User = up.filter(s => !!s).find(u => ''+u.id === ''+profile.user_id);
+      // what if user is []?)
+      console.log(profile?.user_id, user?.id, up)
       return {...user, profile_picture: profile.photo_url } as User;
     });
   }

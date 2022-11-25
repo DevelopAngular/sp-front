@@ -2,7 +2,7 @@ import {Injectable} from '@angular/core';
 import {Actions, createEffect, ofType} from '@ngrx/effects';
 import {UserService} from '../../../services/user.service';
 import * as profilePicturesActions from '../actions';
-import {catchError, exhaustMap, last, map, mergeMap, switchMap, take, tap} from 'rxjs/operators';
+import {catchError, concatAll, exhaustMap, last, map, mergeMap, switchMap, take, tap, withLatestFrom} from 'rxjs/operators';
 import {of, zip} from 'rxjs';
 import {ProfilePicture} from '../../../models/ProfilePicture';
 import {User} from '../../../models/User';
@@ -184,6 +184,7 @@ export class ProfilePicturesEffects {
                                       }),
                                       switchMap((school) => {
                                         const updatedSchool: School = School.fromJSON({...school, profile_pictures_completed: true});
+                              console.log('UPLOAD', action.students.map(u => u.id))
                                           return [
                                               profilePicturesActions.changeProfilePictureLoader({percent: 95}),
                                               updateSchoolSuccess({school: updatedSchool}),
@@ -202,22 +203,34 @@ export class ProfilePicturesEffects {
     });
 
     uploadProfilePicturesSuccess$ = createEffect(() => {
-        return this.actions$
-            .pipe(
-                ofType(profilePicturesActions.uploadProfilePicturesSuccess),
-                exhaustMap((action: any) => {
-                    return this.pollingService.listen('admin.profile_pictures.attach_profile_pics_end')
-                        .pipe(
-                            switchMap(({data}) => {
-                                return [
-                                    profilePicturesActions.changeProfilePictureLoader({percent: 100}),
-                                    profilePicturesActions.uploadPicturesComplete({profiles: data.attached_pictures, users: action.users})
-                                ];
-                            }),
-                            catchError(error => of(profilePicturesActions.uploadPicturesError({errorMessage: error.message})))
-                        );
-                })
-            );
+      const actions$ = this.actions$.pipe(
+        ofType(profilePicturesActions.uploadProfilePicturesSuccess),
+      );
+
+      return actions$
+        .pipe(
+          tap(a => console.log('SUCCESS1', a.users.map(u=>u.id))),
+          // this will ignore any action$ value 
+          // until its polling observable completes
+          exhaustMap((actionZero: any) => {
+            console.log('SUCCESS2', actionZero.users.map(u=>u.id))
+            return this.pollingService.listen('admin.profile_pictures.attach_profile_pics_end')
+              .pipe(
+                // this complete the polling 
+                // and makes exhaustMap take a fresh action
+                take(1), 
+                  switchMap((objdata: any) => {
+                    const data = objdata.data;
+                    console.log('SUCCESS3', data.attached_pictures.map(p => p.user_id), (actionZero as any).users.map(u => u.id))
+                    return [
+                      profilePicturesActions.changeProfilePictureLoader({percent: 100}),
+                      profilePicturesActions.uploadPicturesComplete({profiles: data.attached_pictures, users: actionZero.users})
+                    ];
+                  }),
+                  catchError(error => of(profilePicturesActions.uploadPicturesError({errorMessage: error.message})))
+              );
+        }),
+      );
     });
 
     uploadPicturesFailure$ = createEffect(() => {
