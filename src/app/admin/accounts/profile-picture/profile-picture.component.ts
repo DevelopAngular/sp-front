@@ -30,8 +30,8 @@ class ElsewhereError extends Error {}
 // is used with along with ElsewhereError
 // it signals that code must not handle items
 // it replace null value with a specific value
-class skip_items {};
-const SKIP_ITEMS = new skip_items();
+class SkipItems {};
+const SKIP_ITEMS = new SkipItems();
 
 @Component({
   selector: 'app-profile-picture',
@@ -71,12 +71,13 @@ export class ProfilePictureComponent implements OnInit, OnDestroy {
               // show UI hint
               this.uploadingProgress.csv.inProcess = true;
               this.uploadingProgress.csv.complete = false;
-              // down to th emain pipe a new stream of File[]
+              // down to the main pipe a new stream of File[]
               const FR = new FileReader();
               FR.readAsBinaryString(fileRef.nativeElement.files[0]);
               return fromEvent(FR, 'load');
             } else {
-              // or an error that will be protected down to subscribe
+              // or an error that will jump from operator to operator 
+              // down the road to subscribe
               return of(new ElsewhereError('Sorry, please upload a file ending in .csv or .xlsx'));
             }
           }),
@@ -89,16 +90,20 @@ export class ProfilePictureComponent implements OnInit, OnDestroy {
           }),
           switchMap((rows: ElsewhereError | Array<MapFileUsedID[]>) => {
             // return adapted to subscribe callback
+            // SKIP_ITEMS signals no need for the flow to carry on 
             if (rows instanceof ElsewhereError) {
               return of([SKIP_ITEMS, [rows]]);
             }
+
+            // the empty case is dealt in subscribe
             if (rows.length === 0) {
-              return of([SKIP_ITEMS, [new Error('no records')]]);
+              return of([rows, []]);
             }
 
             const errors = [];
-            // const regexpEmail = new RegExp('^([A-Za-z0-9_\\-.])+@([A-Za-z0-9_\\-.])+\\.([A-Za-z]{2,4})$');
             const validated: MapFileUsedID[] = rows
+            // we split here the rows into valid rows and 
+            // invalid ones collected into errors as Error[] 
               .map((row: any[]) => {
                 if (typeof row[0] === 'string' && row[0].includes('@spnx.local')) {
                   row[0] = row[0].replace('@spnx.local', '');
@@ -115,6 +120,7 @@ export class ProfilePictureComponent implements OnInit, OnDestroy {
                   return maybeValid;
                 } catch(err) {
                   console.log(err);
+                  // errors are sent and checked in subscribe
                   errors.push(err);
                   return false;
                 }
@@ -125,20 +131,22 @@ export class ProfilePictureComponent implements OnInit, OnDestroy {
             return of(result);
           }),
         )
-        .subscribe((result: [MapFileUsedID[] | skip_items, (Error|ElsewhereError)[]]) => {
-          const [items, errors]: [MapFileUsedID[] | skip_items, (Error|ElsewhereError)[]] = result;
+        .subscribe((result: [MapFileUsedID[] | SkipItems, (Error|ElsewhereError)[]]) => {
+          const [items, errors]: [MapFileUsedID[] | SkipItems, (Error|ElsewhereError)[]] = result;
 
           // errors that can be bypassed, just notify the user
           // and let the valid rows to be processed further
           if (errors.length) {
             this.toastService.openToast({
               title: 'Type error',
-              subtitle: (errors[0] instanceof ElsewhereError) ?  errors[0].message : `File had ${errors.length} records with errors `, 
+              subtitle: (errors[0] instanceof ElsewhereError) ?  errors[0].message : `File had ${errors.length} record(s) with errors `, 
               type: 'error',
             });
           }
 
-          if (items instanceof skip_items || items === SKIP_ITEMS) {
+          if (items instanceof SkipItems || items === SKIP_ITEMS) {
+            this.uploadingProgress.csv.inProcess = false;
+            this.uploadingProgress.csv.complete = true;
             return;
           }
 
@@ -295,21 +303,33 @@ export class ProfilePictureComponent implements OnInit, OnDestroy {
             of(files),
           );
         }),
-        map(([students, files]) => {
-          return students.map((student: User|Error) => {
-            if (student instanceof Error) {
-              // TODO add to errors
-              // and post filters this map
-              return student;
-            }
+        map(([students, files]: [(User | Error)[], object]) => {
 
-            const user = {
-              ...student,
-              file_name: files[student.primary_email] ? files[student.primary_email].file.name : files[student.extras.clever_student_number].file.name,
-              student_number: student.extras.clever_student_number
-            };
-            return user;
-          });
+          return students
+            .map((student: User | Error) => {
+              if (student instanceof Error) {
+                // error expected to have uid
+                // to be displayed in CSV file
+                // TODO: find a better way to provide uid
+                // uid may be poorly packed in error messsage as prefix ended with ":"
+                if (student.message.includes(':')) {
+                  const [uid, msg] = student.message.split(':');
+                  this.errors.push({'User ID': uid, error: msg});
+                } else {
+
+                  this.errors.push({'User ID': '-', error: student.message});
+                }
+                return;
+              }
+
+              const user = {
+                ...student,
+                file_name: files[student.primary_email] ? files[student.primary_email].file.name : files[student.extras.clever_student_number].file.name,
+                student_number: student.extras.clever_student_number
+              };
+              return user;
+            })
+            .filter(Boolean);
         })
       )
       .subscribe((students) => {

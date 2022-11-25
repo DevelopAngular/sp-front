@@ -275,7 +275,7 @@ export class UserService implements OnDestroy {
    */
   profilePicturesLoading$: Observable<boolean> = this.store.select(getProfilePicturesLoading);
   profilePicturesLoaded$: Observable<boolean> = this.store.select(getProfilePicturesLoaded);
-  profiles$: Observable<User[]> = this.store.select(getProfiles);
+  profiles$: Observable<(User | Error)[]> = this.store.select(getProfiles);
   profilePictureLoaderPercent$: Observable<number> = this.store.select(getProfilePicturesLoaderPercent);
   profilePicturesErrors$: Subject<{ [id: string]: string, error: string }> = new Subject();
 

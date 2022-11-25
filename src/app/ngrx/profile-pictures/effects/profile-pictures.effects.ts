@@ -184,7 +184,6 @@ export class ProfilePicturesEffects {
                                       }),
                                       switchMap((school) => {
                                         const updatedSchool: School = School.fromJSON({...school, profile_pictures_completed: true});
-                              console.log('UPLOAD', action.students.map(u => u.id))
                                           return [
                                               profilePicturesActions.changeProfilePictureLoader({percent: 95}),
                                               updateSchoolSuccess({school: updatedSchool}),
@@ -209,11 +208,9 @@ export class ProfilePicturesEffects {
 
       return actions$
         .pipe(
-          tap(a => console.log('SUCCESS1', a.users.map(u=>u.id))),
           // this will ignore any action$ value 
           // until its polling observable completes
-          exhaustMap((actionZero: any) => {
-            console.log('SUCCESS2', actionZero.users.map(u=>u.id))
+          exhaustMap((action: any) => {
             return this.pollingService.listen('admin.profile_pictures.attach_profile_pics_end')
               .pipe(
                 // this complete the polling 
@@ -221,10 +218,9 @@ export class ProfilePicturesEffects {
                 take(1), 
                 switchMap((objdata: any) => {
                   const data = objdata.data;
-                  console.log('SUCCESS3', data.attached_pictures.map(p => p.user_id), (actionZero as any).users.map(u => u.id))
                   return [
                     profilePicturesActions.changeProfilePictureLoader({percent: 100}),
-                    profilePicturesActions.uploadPicturesComplete({profiles: data.attached_pictures, users: actionZero.users})
+                    profilePicturesActions.uploadPicturesComplete({profiles: data.attached_pictures, users: action.users})
                   ];
                 }),
                 catchError(error => of(profilePicturesActions.uploadPicturesError({errorMessage: error.message})))
