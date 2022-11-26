@@ -143,7 +143,9 @@ export class PassTileComponent implements OnInit, OnDestroy, OnChanges {
     fromEvent(document, 'click').pipe(
       takeUntil(this.destroy$),
     ).subscribe((event: PointerEvent) => {
-      if (!(event['path'] as HTMLElement[]).map(e => e?.tagName?.toLowerCase()).filter(Boolean).includes('app-student-passes')) {
+      // event.path is non-standard, event.composedPath() is standard
+      const path: HTMLElement[] | undefined = event['path'] ?? (event?.composedPath && event.composedPath());
+      if (path && !path.map(e => e?.tagName?.toLowerCase()).filter(Boolean).includes('app-student-passes')) {
         this.studentNameLeave();
       }
     });
