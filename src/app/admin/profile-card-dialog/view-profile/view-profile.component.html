@@ -30,12 +30,10 @@
 
             </div>
             <div class="status-button" #status>
-              <app-gradient-button (buttonClick)="goToStudent()" *ngIf="user.isStudent()" [size]="'editable'" [leftImageWidth]="'17px'" [text]="''" [gradient]="'#FFFFFF'"
-                                   [leftIcon]="'./assets/External Link (Navy).svg'"
-                                   [linkType]="'_blank'">
-              </app-gradient-button>
+                <app-gradient-button (buttonClick)="goToStudent()" *ngIf="user.isStudent()" [size]="'editable'" [leftImageWidth]="'17px'" [text]="''" [gradient]="'#FFFFFF'" [leftIcon]="'./assets/External Link (Navy).svg'" [linkType]="'_blank'">
+                </app-gradient-button>
 
-              <!-- <app-icon-button *ngIf="!isEdit" [srcString]="'Dots'" [size]="17" (clickEvent)="openStatusPopup()"></app-icon-button> -->
+                <!-- <app-icon-button *ngIf="!isEdit" [srcString]="'Dots'" [size]="17" (clickEvent)="openStatusPopup()"></app-icon-button> -->
                 <app-gradient-button *ngIf="isEdit" (buttonClick)="save()">Save</app-gradient-button>
             </div>
         </div>
@@ -45,9 +43,9 @@
             <div class="block">
                 <div class="email-info">
                     <div class="title">Email/username</div>
-                    <div notranslate class="subtitle" style="white-space: normal; word-break: break-word; width: 280px">{{ user.primary_email.replace('@spnx.local', '') }}</div>
+                    <div notranslate class="subtitle" style="white-space: normal; word-break: break-word; width: 280px">{{ user?.primary_email?.replace('@spnx.local', '') }}</div>
                 </div>
-                <div class="avatar-info">
+                <div class="avatar-info" *ngIf="!user.isParent()">
                     <div class="avatar" #avatarContainer (mouseenter)="avatarContainer.hover = true" (mouseleave)="avatarContainer.hover = false">
                         <div class="loading-theme_blue-gray spinner" *ngIf="loadingProfilePicture | async">
                             <mat-spinner style="color: #7f879d" [diameter]="30"></mat-spinner>
@@ -92,7 +90,7 @@
                         </app-gradient-button>
                     </div>
                 </div>
-                <div class="id-number-info">
+                <div class="id-number-info" *ngIf="!user.isParent()">
                     <div class="title">ID</div>
                     <div class="subtitle" *ngIf="!user.isAdmin()" style="white-space: normal; word-break: break-word; width: 280px">{{ user.custom_id || '-' }}</div>
                     <div class="subtitle" *ngIf="user.isAdmin()">
@@ -117,63 +115,6 @@
                 </div>
             </div>
 
-<!--            <div *ngIf="user.isStudent()" class="block pass-limit-card" style="flex-direction: column; cursor: pointer; margin: 0px 20px;-->
-<!--      background: #F5F6F8;-->
-<!--      padding: 20px 10px;-->
-<!--      border-radius: 10px;" [ngClass]="{ 'pass-limit-enabled': !studentPassLimit?.isUnlimited }" (click)="passLimitsEmit.emit()">-->
-<!--              <div class="card ds-flex-center-between">-->
-<!--                <div class="ds-flex-center-center label" [style.align-items]="!!studentPassLimit?.description ? 'flex-start !important' : 'center'">-->
-<!--                  <div class="icon" style="background-color: #5E4FED;-->
-<!--      width: 26px;-->
-<!--      height: 26px;-->
-<!--      border-radius: 5px;-->
-<!--      display: flex;-->
-<!--      align-items: center;-->
-<!--      justify-content: center;">-->
-<!--                    <img style="position: absolute; z-index: 10;" height="14px" [src]="'./assets/Pass Limit (White).svg' | resolveAsset" alt="">-->
-<!--                  </div>-->
-<!--                  <div class="ds-ml-10" style="display: flex; flex-direction: column">-->
-<!--                <span class="ds-dialog-heading" style="display: flex; padding-bottom: 0; font-weight: 600 !important;">-->
-<!--                  Pass Limit-->
-<!--                  <div style="display: inline" customToolTip [contentTemplate]="passLimitLearnMore">-->
-<!--                    <img-->
-<!--                      class="support-icon"-->
-<!--                      style="width: 13px"-->
-<!--                      [src]="'./assets/Support (Gray-200).svg' | resolveAsset">-->
-<!--                  </div>-->
-<!--                  <ng-template #passLimitLearnMore>-->
-<!--                    <div class="ds-tooltip">-->
-<!--                      <span>-->
-<!--                        Limit the number of passes students can have per day.-->
-<!--                        <a href="https://www.smartpass.app/passlimits" target="_blank" style="color: white"> Learn more</a>-->
-<!--                      </span>-->
-<!--                    </div>-->
-<!--                  </ng-template>-->
-<!--                </span>-->
-<!--                    <div *ngIf="studentPassLimit?.passLimit" class="ds-flex-column" style="display: flex; gap: 3px; margin-top: 3px;">-->
-<!--                          <span-->
-<!--                            style="font-size: 15px !important; font-weight: 500 !important;"-->
-<!--                            [ngClass]="{ 'pass-limit-counter': true, 'individual-limit': studentPassLimit.isIndividual, 'school-limit': !studentPassLimit.isIndividual }">-->
-<!--                            {{studentPassLimit.passLimit === -2 ? "Unlimited" : studentPassLimit.passLimit}} passes/day-->
-<!--                          </span>-->
-<!--                      <span class="ds-dialog-normal-text" style="font-weight: 400 !important;" *ngIf="studentPassLimit.description && studentPassLimit.isIndividual">{{studentPassLimit.description}}</span>-->
-<!--                    </div>-->
-<!--                  </div>-->
-<!--                </div>-->
-<!--                <app-gradient-button-->
-<!--                  *ngIf="!studentPassLimit?.passLimit"-->
-<!--                  size="tiny"-->
-<!--                  gradient="#6651F1"-->
-<!--                  textColor="#FFFFFF"-->
-<!--                >-->
-<!--                  Set up-->
-<!--                </app-gradient-button>-->
-<!--                <img *ngIf="studentPassLimit?.passLimit"-->
-<!--                     style="width: 16px; height: 16px"-->
-<!--                     [src]="'./assets/Chevron Right (Gray).svg' | resolveAsset" alt="">-->
-<!--              </div>-->
-<!--            </div>-->
-
             <mat-divider></mat-divider>
             <div class="block">
                 <div class="descriptions">
@@ -185,7 +126,7 @@
                         <div class="title">Type</div>
                         <div class="subtitle">{{ profile['Type'] }}</div>
                     </div>
-                    <div class="info" *ngIf="profile['Type'] === 'Standard'">
+                    <div class="info" *ngIf="profile['Type'] === 'Standard' && !user.isParent()">
                         <div class="title">Password</div>
                         <div class="subtitle"><span style="text-decoration: underline; cursor: pointer" (click)="nextStep.emit('password')">Change</span></div>
                     </div>
