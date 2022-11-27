@@ -129,7 +129,7 @@ export class AccountsRoleComponent implements OnInit, OnDestroy {
                   display_name: account.display_name,
                   created: account.created, // return as timestamp Date string
                   first_login: account.first_login, // return as timestamp Date string
-                  last_login: account.last_login && account.last_login !== new Date() ? Util.formatDateTime(new Date(account.last_login)) : 'Never signed in', // return as timestamp Date string
+                  last_login: account.last_login, // return as timestamp Date string
                   last_updated: account.last_updated, // return as timestamp Date string
                   active: account.is_active,
                   primary_email: account.email,
@@ -141,7 +141,7 @@ export class AccountsRoleComponent implements OnInit, OnDestroy {
                  };
             
               });
-             return myInterfacesArray
+             return myInterfacesArray;
             })
           );
         }),
