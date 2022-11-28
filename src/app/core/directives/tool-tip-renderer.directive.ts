@@ -16,7 +16,7 @@ import {Overlay, OverlayPositionBuilder, OverlayRef} from '@angular/cdk/overlay'
 import {ComponentPortal} from '@angular/cdk/portal';
 import {CustomToolTipComponent} from '../../shared/shared-components/custom-tool-tip/custom-tool-tip.component';
 import {ConnectedPosition} from '@angular/cdk/overlay/position/flexible-connected-position-strategy';
-import {of, Subject, timer} from 'rxjs';
+import {of, race, Subject, timer} from 'rxjs';
 import {switchMap, takeUntil} from 'rxjs/operators';
 
 @Directive({
@@ -74,6 +74,12 @@ export class ToolTipRendererDirective implements OnInit, OnDestroy, OnChanges {
         panelClass: 'custom-tooltip',
       }
     );
+
+    race([this.click$, this.hover$]).subscribe({
+      next: () => {
+        this.show();
+      },
+    });
   }
 
   ngOnChanges(changes: SimpleChanges) {
@@ -127,8 +133,17 @@ export class ToolTipRendererDirective implements OnInit, OnDestroy, OnChanges {
     }
   }
 
+  click$: Subject<boolean> = new Subject<boolean>();
+  hover$: Subject<boolean> = new Subject<boolean>();
+
   @HostListener('click')
+  gotClick() {
+    this.click$.next(true);
+  }
   @HostListener('pointerover')
+  gotHover() {
+    this.hover$.next(true);
+  }
   show() {
     // attach the component if it has not already attached to the overlay
     timer(300)
