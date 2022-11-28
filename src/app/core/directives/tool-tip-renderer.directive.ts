@@ -45,7 +45,10 @@ export class ToolTipRendererDirective implements OnInit, OnDestroy, OnChanges {
   @Output() leave: EventEmitter<any> = new EventEmitter<any>();
   @Output() isOpen: EventEmitter<boolean> = new EventEmitter<boolean>();
 
+  // destroy for tooltip component
   private destroyOpen$: Subject<any> = new Subject<any>();
+  // destroy for this directive
+  private destroy$: Subject<any> = new Subject<any>();
 
   private _overlayRef: OverlayRef;
   private tooltipRef: ComponentRef<CustomToolTipComponent>;
@@ -75,11 +78,19 @@ export class ToolTipRendererDirective implements OnInit, OnDestroy, OnChanges {
       }
     );
 
-    race([this.click$, this.hover$]).subscribe({
-      next: () => {
-        this.show();
-      },
-    });
+    // in case of the click event 
+    // this is (all time or most of the time?) followed by a hover event
+    // resulting in a double call to this.show
+    // and the second event triggers this.closeTooltip
+    // so, the tooltip disappears imediatly
+    // rxjs race "filters" the doubles to the quickest one  
+    race([this.click$, this.hover$])
+      .pipe(takeUntil(this.destroy$))
+      .subscribe({
+        next: () => {
+          this.show();
+        },
+      });
   }
 
   ngOnChanges(changes: SimpleChanges) {
@@ -178,9 +189,13 @@ export class ToolTipRendererDirective implements OnInit, OnDestroy, OnChanges {
   }
 
   ngOnDestroy() {
+    console.log('DESTROY')
     this.destroyOpen$.next();
     this.destroyOpen$.complete();
     this.closeToolTip();
+
+    this.destroy$.next();
+    this.destroy$.complete();
   }
 
   private closeToolTip() {
