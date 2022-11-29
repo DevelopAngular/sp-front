@@ -1,8 +1,8 @@
 import {Component, ElementRef, EventEmitter, Input, OnDestroy, OnInit, Output, Renderer2, ViewChild} from '@angular/core';
 import {FormControl, FormGroup} from '@angular/forms';
 
-import {forkJoin, fromEvent, merge, Observable, of, Subject, zip} from 'rxjs';
-import {filter, map, switchMap, take, takeUntil, tap} from 'rxjs/operators';
+import {fromEvent, merge, Observable, of, Subject, zip} from 'rxjs';
+import {filter, map, switchMap, take, takeUntil,tap, catchError} from 'rxjs/operators';
 import {cloneDeep, isArray, uniqBy} from 'lodash';
 
 import {XlsxService} from '../../../services/xlsx.service';
@@ -20,6 +20,19 @@ import {UNANIMATED_CONTAINER} from '../../../consent-menu-overlay';
 import {School} from '../../../models/School';
 import {AdminService} from '../../../services/admin.service';
 
+type MapFile = {user_id: string | number, file_name: string, isUserId: boolean, isFileName: boolean };
+type MapFileUsedID = MapFile & {usedId: boolean};
+
+// it serves to propagate an error through the rxjs pipe
+// and be handled in subscribe, without triggering complete and thus keeping the stream alive
+class ElsewhereError extends Error {}
+
+// is used with along with ElsewhereError
+// it signals that code must not handle items
+// it replace null value with a specific value
+class SkipItems {};
+const SKIP_ITEMS = new SkipItems();
+
 @Component({
   selector: 'app-profile-picture',
   templateUrl: './profile-picture.component.html',
@@ -34,64 +47,130 @@ export class ProfilePictureComponent implements OnInit, OnDestroy {
   @ViewChild('dots') dots: ElementRef;
 
   @ViewChild('csvFile') set fileRef(fileRef: ElementRef) {
-    if (fileRef && fileRef.nativeElement) {
+
+    if (fileRef?.nativeElement) {
+      // to ensure that same file can be taken again
+      // it makes change event to be triggerable
+      fromEvent(fileRef.nativeElement, 'click').pipe(
+        tap((evt: Event) => {
+          (evt.target as HTMLInputElement).value = '';
+        }),
+        takeUntil(this.destroy$),
+      ).subscribe();
+
       fromEvent(fileRef.nativeElement, 'change')
         .pipe(
+          takeUntil(this.destroy$),
           filter(() => fileRef.nativeElement.files.length),
-          switchMap((evt: Event) => {
-            const extension = fileRef.nativeElement.files[0].name.toLowerCase().split('.')[fileRef.nativeElement.files[0].name.split('.').length - 1].toLowerCase();
+          switchMap(() => {
+            const $el = fileRef.nativeElement.files[0];
+            const extension = $el.name.toLowerCase().split('.')[$el.name.split('.').length - 1].toLowerCase();
             if (extension === 'csv' || extension === 'xlsx') {
+              // mapFile is to be checked for valid rows
               this.selectedMapFile = fileRef.nativeElement.files[0];
+              // show UI hint
               this.uploadingProgress.csv.inProcess = true;
+              this.uploadingProgress.csv.complete = false;
+              // down to the main pipe a new stream of File[]
               const FR = new FileReader();
               FR.readAsBinaryString(fileRef.nativeElement.files[0]);
               return fromEvent(FR, 'load');
             } else {
-              return of(null);
+              // or an error that will jump from operator to operator 
+              // down the road to subscribe
+              return of(new ElsewhereError('Sorry, please upload a file ending in .csv or .xlsx'));
             }
           }),
-          map(( res: any) => {
-            if (!res) {
-              return null;
+          map(( res: Event | ElsewhereError) => {
+            // sent it down through the pipe to the subscribe
+            if (res instanceof ElsewhereError) {
+              return res;
             }
             return this.xlsxService.parseXlSXFile(res);
           }),
-          switchMap(rows => {
-            if (!rows) {
-              return of(null);
+          switchMap((rows: ElsewhereError | Array<MapFileUsedID[]>) => {
+            // return adapted to subscribe callback
+            // SKIP_ITEMS signals no need for the flow to carry on 
+            if (rows instanceof ElsewhereError) {
+              return of([SKIP_ITEMS, [rows]]);
             }
-            // const regexpEmail = new RegExp('^([A-Za-z0-9_\\-.])+@([A-Za-z0-9_\\-.])+\\.([A-Za-z]{2,4})$');
-            const validate$ = rows.map(row => {
-              if (typeof row[0] === 'string' && row[0].includes('@spnx.local')) {
-                row[0] = row[0].replace('@spnx.local', '');
-              }
-                return of({ user_id: typeof row[0] === 'string' ? row[0].toLowerCase().trim() : row[0], file_name: row[1].toLowerCase().trim(), isUserId: !!row[0], isFileName: !!row[1], usedId: false });
-            });
-            return forkJoin(validate$);
-          })
+
+            // the empty case is dealt in subscribe
+            if (rows.length === 0) {
+              return of([rows, []]);
+            }
+
+            const errors = [];
+            const validated: MapFileUsedID[] = rows
+            // we split here the rows into valid rows and 
+            // invalid ones collected into errors as Error[] 
+              .map((row: any[]) => {
+                if (typeof row[0] === 'string' && row[0].includes('@spnx.local')) {
+                  row[0] = row[0].replace('@spnx.local', '');
+                }
+
+                try {
+                  const maybeValid: MapFileUsedID = {
+                    user_id: typeof row[0] === 'string' ? row[0].toLowerCase().trim() : row[0],
+                    file_name: row[1].toLowerCase().trim(),
+                    isUserId: !!row[0],
+                    isFileName: !!row[1],
+                    usedId: false
+                  };
+                  return maybeValid;
+                } catch(err) {
+                  console.log(err);
+                  // errors are sent and checked in subscribe
+                  errors.push(err);
+                  return false;
+                }
+              })
+              .filter(Boolean) as MapFileUsedID[];
+
+            const result: [MapFileUsedID[], Error[]] = [validated, errors];
+            return of(result);
+          }),
         )
-        .subscribe((items) => {
-          if (!items) {
-            this.toastService.openToast({title: 'Type error', subtitle: 'Sorry, please upload a file ending in .csv', type: 'error'});
+        .subscribe((result: [MapFileUsedID[] | SkipItems, (Error|ElsewhereError)[]]) => {
+          const [items, errors]: [MapFileUsedID[] | SkipItems, (Error|ElsewhereError)[]] = result;
+
+          // errors that can be bypassed, just notify the user
+          // and let the valid rows to be processed further
+          if (errors.length) {
+            this.toastService.openToast({
+              title: 'Type error',
+              subtitle: (errors[0] instanceof ElsewhereError) ?  errors[0].message : `File had ${errors.length} record(s) with errors `, 
+              type: 'error',
+            });
+          }
+
+          if (items instanceof SkipItems || items === SKIP_ITEMS) {
+            this.uploadingProgress.csv.inProcess = false;
+            this.uploadingProgress.csv.complete = true;
+            return;
+          }
+
+          if (!items.length) {
+            this.toastService.openToast({title: 'Type error', subtitle: 'No valid records', type: 'error'});
             this.uploadingProgress.csv.inProcess = false;
             this.uploadingProgress.csv.complete = false;
             return;
-          } else {
-            this.selectedMapFile = fileRef.nativeElement.files[0];
-            this.selectedMapFiles = items;
-            this.uploadingProgress.csv.inProcess = false;
-            this.uploadingProgress.csv.complete = true;
           }
+
+          this.selectedMapFile = fileRef.nativeElement.files[0];
+          this.selectedMapFiles = items;
+          this.uploadingProgress.csv.inProcess = false;
+          this.uploadingProgress.csv.complete = true;
         });
     }
   }
 
   @ViewChild('zip') set zipRef(fileRef: ElementRef) {
-    if (fileRef && fileRef.nativeElement) {
+    if (fileRef?.nativeElement) {
       fromEvent(fileRef.nativeElement, 'change')
         .pipe(
           filter(() => fileRef.nativeElement.files.length),
-          switchMap((event) => {
+          switchMap(() => {
             const filesStream = [];
             if (fileRef.nativeElement.files.length === 1) {
               const extension = fileRef.nativeElement.files[0].name.toLowerCase().split('.')[fileRef.nativeElement.files[0].name.split('.').length - 1].toLowerCase();
@@ -101,7 +180,7 @@ export class ProfilePictureComponent implements OnInit, OnDestroy {
             }
             this.uploadingProgress.images.inProcess = true;
             for (let i = 0; i < fileRef.nativeElement.files.length; i++) {
-              const file = fileRef.nativeElement.files.item(i);
+              const file: File = fileRef.nativeElement.files.item(i);
               const extension = file.name.toLowerCase().split('.')[file.name.split('.').length - 1].toLowerCase();
               if (extension === 'zip' || extension === 'jpeg' || extension === 'jpg' || extension === 'png') {
                 if (extension === 'zip') {
@@ -110,7 +189,7 @@ export class ProfilePictureComponent implements OnInit, OnDestroy {
                   const reader = new FileReader();
                   reader.readAsDataURL(file);
                   filesStream.push(fromEvent(reader, 'load').pipe(
-                    map((item: any) => {
+                    map(_ => {
                     return { file_name: file.name.toLowerCase().trim(), file: file };
                   })));
                 }
@@ -121,7 +200,7 @@ export class ProfilePictureComponent implements OnInit, OnDestroy {
           filter(res => !!res),
           map(result => {
             let arrayFiles = [];
-            result.forEach(item => {
+            result.forEach((item: Array<File>|File) => {
               if (isArray(item)) {
                 arrayFiles = [...arrayFiles, ...item];
               } else {
@@ -143,7 +222,7 @@ export class ProfilePictureComponent implements OnInit, OnDestroy {
   @ViewChild('fgf1') stop: ElementRef;
 
   form: FormGroup;
-  selectedMapFiles: {user_id: string | number, file_name: string, isUserId: boolean, isFileName: boolean }[] = [];
+  selectedMapFiles: MapFile[] = [];
   selectedImgFiles: {file: File, file_name: string}[];
   selectedMapFile: File;
   filesToDB: any[] = [];
@@ -191,9 +270,14 @@ export class ProfilePictureComponent implements OnInit, OnDestroy {
     this.accountsWithoutPictures$ = this.userService.missingProfilePictures$;
     this.uploadErrors$ = this.userService.profilePicturesUploadErrors$;
     this.lastUploadedGroup$ = this.userService.lastUploadedGroup$;
-    this.uploadedGroups$ = this.userService.uploadedGroups$.pipe(map(groups => {
-      return groups.reverse();
-    }));
+
+    // get groups from api and re-fresh the store
+    this.userService.getUploadedGroupsRequest();
+    this.uploadedGroups$ = this.userService.uploadedGroups$.pipe(
+      map(groups => {
+        return groups.reverse();
+      }),
+    );
     this.user$ = this.userService.user$;
 
     this.picturesLoaderPercent$.pipe(
@@ -212,19 +296,40 @@ export class ProfilePictureComponent implements OnInit, OnDestroy {
             return { ...acc, [curr.user_id]: curr };
           }, {});
           return zip(
-            this.userService.profiles$.pipe(take(1)),
-            of(files)
+            this.userService.profiles$.pipe(
+              // do not let a posible error to get lost because of zip operator
+              catchError(error => of(error)),
+            ),
+            of(files),
           );
         }),
-        map(([students, files]) => {
-          return students.map(student => {
-            const user = {
-              ...student,
-              file_name: files[student.primary_email] ? files[student.primary_email].file.name : files[student.extras.clever_student_number].file.name,
-              student_number: student.extras.clever_student_number
-            };
-            return user;
-          });
+        map(([students, files]: [(User | Error)[], object]) => {
+
+          return students
+            .map((student: User | Error) => {
+              if (student instanceof Error) {
+                // error expected to have uid
+                // to be displayed in CSV file
+                // TODO: find a better way to provide uid
+                // uid may be poorly packed in error messsage as prefix ended with ":"
+                if (student.message.includes(':')) {
+                  const [uid, msg] = student.message.split(':');
+                  this.errors.push({'User ID': uid, error: msg});
+                } else {
+
+                  this.errors.push({'User ID': '-', error: student.message});
+                }
+                return;
+              }
+
+              const user = {
+                ...student,
+                file_name: files[student.primary_email] ? files[student.primary_email].file.name : files[student.extras.clever_student_number].file.name,
+                student_number: student.extras.clever_student_number
+              };
+              return user;
+            })
+            .filter(Boolean);
         })
       )
       .subscribe((students) => {
@@ -235,6 +340,16 @@ export class ProfilePictureComponent implements OnInit, OnDestroy {
 
     this.userService.profilePicturesErrors$.pipe(takeUntil(this.destroy$)).subscribe(er => {
       this.errors.push(er);
+    });
+
+    this.userService.profilePicturesErrorCancel$.asObservable().pipe(
+      takeUntil(this.destroy$),
+    ).subscribe({
+      next: () => {
+        // forced to move to page 2
+        this.page = 2;
+        this.clearData();
+      },
     });
 
     merge(of(this.userService.getUserSchool()), this.userService.getCurrentUpdatedSchool$().pipe(filter(s => !!s)))
@@ -270,25 +385,33 @@ export class ProfilePictureComponent implements OnInit, OnDestroy {
     this.page += 1;
     if (this.page === 3) {
       this.errors = this.findIssues();
-      const userIds = this.filesToDB.map(f => f.user_id);
-      const files = this.filesToDB.map(f => f.file);
+      // filter duplicates and preserve sync of userId with file
+      // it keeps the latest, order wise
+      const uniques = new Map<string, File>();
+      this.filesToDB.forEach((v: {user_id: string|number, file: File}) => uniques.set(''+v.user_id, v.file));
+      const userIds = Array.from(uniques.keys());
+      const files = Array.from(uniques.values());
+
       if (userIds.length && files.length) {
         this.userService.postProfilePicturesRequest(
           userIds,
           files
         ).pipe(
-          filter(profiles => !!profiles.length)
-        ).subscribe(r => {
+          filter(profiles => !!profiles.length),
+          take(1),
+        ).subscribe(_ => {
           this.userService.putProfilePicturesErrorsRequest(this.errors);
         });
       } else {
         this.toastService.openToast({title: 'Sorry, no pictures could be mapped', subtitle: 'No pictures were able to be mapped to account email addresses or IDs. Please check the spreadsheet and photos you uploaded to make sure they map with existing accounts.', type: 'error'});
-        this.userService.createPPicturesUploadGroup().pipe(filter(r => !!r))
-          .subscribe((group) => {
-            this.userService.putProfilePicturesErrorsRequest(this.errors);
-            this.page -= 1;
-            this.clearData();
-          });
+        this.userService.createPPicturesUploadGroup().pipe(
+          filter(r => !!r),
+          take(1),
+        ).subscribe(_ => {
+          this.userService.putProfilePicturesErrorsRequest(this.errors);
+          this.page = 2;
+          this.clearData();
+        });
       }
     } else if (this.page === 5) {
       this.userService.clearUploadedData();
@@ -349,6 +472,11 @@ export class ProfilePictureComponent implements OnInit, OnDestroy {
   findIssues() {
     const errors = [];
     for (let i = 0; i < this.selectedMapFiles.length; i++) {
+      if (this.selectedMapFiles[i] instanceof Error) {
+        errors.push({'Error': this.selectedMapFiles[i]});
+        continue;
+      }
+
       if (!this.selectedMapFiles[i].file_name) {
         errors.push({'User ID': this.selectedMapFiles[i].user_id, 'error': 'Image filename not listed'});
       } else if (!this.selectedMapFiles[i].user_id) {
@@ -362,22 +490,29 @@ export class ProfilePictureComponent implements OnInit, OnDestroy {
     return errors;
   }
 
-  redirect(location) {
+  redirect(location: string) {
     window.open(location, '_blank');
   }
 
-  genOption(display, color, action, icon?, hoverBackground?, clickBackground?) {
+  genOption(display: string, color: string, action: string, icon?: string, hoverBackground?: string, clickBackground?: string) {
     return { display, color, action, icon, hoverBackground, clickBackground };
   }
 
-  openConfirm(event) {
+  moveBackPage(): void {
+    this.page -= 1;
+    if (this.page === 2) {
+      this.clearData();
+    }
+  }
+
+  openConfirm(event: PointerEvent) {
     const options = [];
     options.push(this.genOption(
       'Cancel',
       '#E32C66',
       'cancel',
       './assets/Cancel (Red).svg',
-      'rgba(227, 44, 102, .1)'
+      'rgba(227, 44, 102, .1)',
     ));
     const target = new ElementRef(event.currentTarget);
     const cm = this.dialog.open(ConsentMenuComponent, {
@@ -388,13 +523,13 @@ export class ProfilePictureComponent implements OnInit, OnDestroy {
 
     cm.afterClosed().subscribe(action => {
       if (action === 'cancel') {
-        this.page -= 1;
+        this.moveBackPage();
       }
     });
   }
 
-  searchUsers(search) {
-    this.uploadedProfiles = this.allProfiles.filter(profile => {
+  searchUsers(search: string) {
+    this.uploadedProfiles = this.allProfiles.filter((profile: User) => {
       return profile.display_name.toLowerCase().includes(search.toLowerCase());
     });
   }

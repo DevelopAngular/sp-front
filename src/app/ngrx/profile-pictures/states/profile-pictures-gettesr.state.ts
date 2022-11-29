@@ -36,7 +36,16 @@ export const getProfiles = createSelector(
     //   debugger
     // }
     return pm.map((profile) => {
-      const user: User = up.filter(s => !!s).find(u => +u.id === profile.user_id);
+      const user: User | undefined = up.filter(s => !!s).find(u => ''+u.id === ''+profile.user_id);
+      // what if user is not found, undefined?
+      if (!user) {
+        // avoid to throw error here
+        // just return an error
+        // combine expected user id and error message
+        // will be split in profile component
+        // TODO SpecificProfileStateError ibstead of a plain Error
+        return new Error(`${profile.user_id}:syncing condition`);
+      }
       return {...user, profile_picture: profile.photo_url } as User;
     });
   }

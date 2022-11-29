@@ -57,9 +57,14 @@ export class ToolTipRendererDirective implements OnInit, OnDestroy, OnChanges {
   ) { }
 
   ngOnInit() {
-    if (!this.contentTemplate && !this.text) {
+    // this.contentTemplate has a default template
+    // simpleText in CustomToolTipComponent
+    // this.text is necessary only when we use simpleText
+    // otherwise the template can have its own text
+    // per total, we dont't need this condition
+    /*if (!this.contentTemplate && !this.text) {
       this.showToolTip = false;
-    }
+    }*/
     if (!this.showToolTip) {
       return;
     }
