@@ -129,7 +129,6 @@ export class IosCalendarWheelComponent implements OnInit, OnDestroy {
       )
       .subscribe((days) => {
         // alert('test')
-        console.log(days);
         if (this.wheelData === 'half') {
           // alert(this.rotate.rotateAngle);
           this.selected = this.rotate.rotateAngle ? days[0] : days[1];

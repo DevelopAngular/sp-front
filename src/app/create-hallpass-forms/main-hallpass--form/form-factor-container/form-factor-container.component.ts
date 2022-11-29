@@ -1,4 +1,4 @@
-import {Component, EventEmitter, Inject, Input, OnInit, Output} from '@angular/core';
+import { Component, ElementRef, EventEmitter, Inject, Input, OnInit, Optional, Output, ViewChild } from '@angular/core';
 import {TimeService} from '../../../services/time.service';
 
 import {FormFactor, Navigation} from '../main-hall-pass-form.component';
@@ -7,10 +7,16 @@ import {Request} from '../../../models/Request';
 import {Invitation} from '../../../models/Invitation';
 import {DataService} from '../../../services/data-service';
 import {Pinnable} from '../../../models/Pinnable';
-import {MAT_DIALOG_DATA} from '@angular/material/dialog';
+import { MAT_DIALOG_DATA, MatDialogRef } from '@angular/material/dialog';
 import {StorageService} from '../../../services/storage.service';
 import {PassLimitInfo} from '../../../models/HallPassLimits';
+import { Location } from '../../../models/Location';
+import { PassLike } from '../../../models';
+import { DeviceDetection } from '../../../device-detection.helper';
+import { BehaviorSubject } from 'rxjs';
+import { takeUntil } from 'rxjs/operators';
 
+export type PassLayout = 'pass' | 'request' | 'inlinePass' | 'inlineRequest';
 
 @Component({
   selector: 'app-form-factor-container',
@@ -18,30 +24,54 @@ import {PassLimitInfo} from '../../../models/HallPassLimits';
   styleUrls: ['./form-factor-container.component.scss']
 })
 export class FormFactorContainerComponent implements OnInit {
-
-
   @Input() FORM_STATE: Navigation;
   @Input() forStaff: boolean;
   @Input() passLimitInfo: PassLimitInfo;
   @Output() nextStepEvent: EventEmitter<Navigation> = new EventEmitter<Navigation>();
 
-  public states: any = FormFactor;
-  public currentState: number;
+  // using ViewChild as a setter ensures the element is available for assigning values
+  @ViewChild('wrapper') set wrapper(divRef: ElementRef<HTMLDivElement>) {
+    if (!divRef?.nativeElement) {
+      return;
+    }
+
+    const { nativeElement } = divRef;
+
+    this.fullScreenPass$.asObservable().pipe(
+      takeUntil(this.dialogRef.afterClosed())
+    ).subscribe(scalePassUp => {
+      this.isOpenBigCard = scalePassUp;
+      this.storage.setItem('pass_full_screen', scalePassUp);
+      scalePassUp
+        ? this.scaleCardUp(nativeElement)
+        : this.scaleCardDown(nativeElement);
+    });
+  }
+
+  isMobile = DeviceDetection.isMobile();
+  public states = FormFactor;
   public template: Request | HallPass | Invitation | Pinnable;
   public isOpenBigCard: boolean;
-  isFuturePass = false;
+  fullScreenPass$: BehaviorSubject<boolean>;
 
   constructor(
     private dataService: DataService,
     private timeService: TimeService,
-    @Inject(MAT_DIALOG_DATA) public dialogData: any,
+    @Inject(MAT_DIALOG_DATA) public dialogData: {
+      kioskModeRoom: Location,
+      pass: PassLike,
+      isActive: boolean,
+      forInput: boolean,
+      passLayout: PassLayout
+    },
+    @Optional() public dialogRef: MatDialogRef<FormFactorContainerComponent>,
     private storage: StorageService
   ) {
   }
 
   ngOnInit() {
-    console.log(this.FORM_STATE);
     this.isOpenBigCard = JSON.parse(this.storage.getItem('pass_full_screen')) && !this.forStaff;
+    this.fullScreenPass$ = new BehaviorSubject(this.isOpenBigCard);
     const now = this.timeService.nowDate();
 
     this.dataService.currentUser
@@ -51,7 +81,7 @@ export class FormFactorContainerComponent implements OnInit {
 
         if (this.FORM_STATE.formMode.role === 2) {
           user = _user;
-        } else if (this.FORM_STATE.formMode.role === 1 && this.dialogData['kioskModeRoom']) {
+        } else if (this.FORM_STATE.formMode.role === 1 && this.dialogData.kioskModeRoom) {
           user = this.FORM_STATE.data.selectedStudents[0];
         }
 
@@ -136,6 +166,8 @@ export class FormFactorContainerComponent implements OnInit {
             break;
         }
       });
+
+    console.log(this.template);
   }
 
 
@@ -150,11 +182,33 @@ export class FormFactorContainerComponent implements OnInit {
     this.nextStepEvent.emit(this.FORM_STATE);
   }
 
-  openBigPass(value) {
-    this.storage.setItem('pass_full_screen', value);
-    setTimeout(() => {
-      this.isOpenBigCard = value;
-    }, 10);
+  openBigPass() {
+    this.fullScreenPass$.next(!this.fullScreenPass$.value);
+  }
+
+  private scaleCardUp(wrapper: HTMLDivElement) {
+    let translationDistance = this.passLimitInfo !== undefined
+      ? this.isMobile ? -65 : -60
+      : -65;
+
+    if (this.isMobile) {
+      wrapper.style.transform = `scale(1.15) translateY(${translationDistance}px)`;
+      return;
+    }
+    /**
+     * - we want the full-screen pass to exist in the top 75% of the page
+     * - we want to take off 10% of the remaining pixels to account for some space from the top of the page
+     */
+    const {height} = wrapper.getBoundingClientRect();
+    const targetHeight = (document.documentElement.clientHeight * 0.70 * 0.90);
+    const scalingFactor = targetHeight / height;
+    translationDistance = -100;
+    // translate happens before the scaling
+    wrapper.style.transform = `translateY(${translationDistance}px) scale(${scalingFactor})`;
+  }
+
+  private scaleCardDown(wrapper: HTMLDivElement) {
+    wrapper.style.removeProperty('transform');
   }
 
 }
