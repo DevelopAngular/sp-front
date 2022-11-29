@@ -6,7 +6,7 @@ import {MAT_DIALOG_DATA, MatDialog, MatDialogRef} from '@angular/material/dialog
 import {ConsentMenuComponent} from '../consent-menu/consent-menu.component';
 import {LoadingService} from '../services/loading.service';
 import {Navigation} from '../create-hallpass-forms/main-hallpass--form/main-hall-pass-form.component';
-import {concatMap, filter, map, pluck, retryWhen, switchMap, take, takeUntil, tap} from 'rxjs/operators';
+import {catchError, concatMap, filter, map, pluck, retryWhen, switchMap, take, takeUntil, tap} from 'rxjs/operators';
 import {BehaviorSubject, interval, merge, Observable, of, Subject, zip} from 'rxjs';
 import {CreateFormService} from '../create-hallpass-forms/create-form.service';
 import {HallPassesService} from '../services/hall-passes.service';
@@ -468,7 +468,6 @@ export class PassCardComponent implements OnInit, OnDestroy {
         }
         return of(null);
       }),
-
       retryWhen((errors: Observable<HttpErrorResponse>) => {
         const getOverrideFromDialog = error => {
 
@@ -500,10 +499,16 @@ export class PassCardComponent implements OnInit, OnDestroy {
           tap(errorResponse => {
             const isVisibilityError = ('visibility_alerts' in errorResponse.error);
             // not our error case? dispatch it to the next retryWhen
-            if (! isVisibilityError) {
+            if (!isVisibilityError) {
+              this.toastService.openToast(
+                {
+                  title: 'Oh no! Something went wrong',
+                  subtitle: `Please try refreshing the page. If the issue keeps occuring, contact us at support@smartpass.app. (${errorResponse.status})`,
+                  type: 'error'
+                }, `${errorResponse.status}`);
+                this.performingAction = false;
               throw errorResponse;
             }
-
             // a student has been checked server side and had no room visibility
             const isRoomsClosed = 'rooms_closed' in errorResponse.error;
             if (!this.forStaff && !isRoomsClosed) {
@@ -633,6 +638,10 @@ export class PassCardComponent implements OnInit, OnDestroy {
             }
           })
         );
+      }),
+      catchError(error => {
+        debugger;
+        return of(error);
       })
     ).subscribe({
       next: () => {

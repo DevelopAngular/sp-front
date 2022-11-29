@@ -8,7 +8,7 @@ import {Navigation} from '../create-hallpass-forms/main-hallpass--form/main-hall
 import {getInnerPassName} from '../pass-tile/pass-display-util';
 import {DataService} from '../services/data-service';
 import {LoadingService} from '../services/loading.service';
-import {concatMap, filter, finalize, map, pluck, switchMap, take, takeUntil, tap } from 'rxjs/operators';
+import {catchError, concatMap, filter, finalize, map, pluck, switchMap, take, takeUntil, tap} from 'rxjs/operators';
 import {CreateHallpassFormsComponent} from '../create-hallpass-forms/create-hallpass-forms.component';
 import {CreateFormService} from '../create-hallpass-forms/create-form.service';
 import {RequestsService} from '../services/requests.service';
@@ -30,6 +30,7 @@ import {LocationsService} from '../services/locations.service';
 import {Location} from '../models/Location';
 import {PassLimitService} from '../services/pass-limit.service';
 import {ConfirmDeleteKioskModeComponent} from './confirm-delete-kiosk-mode/confirm-delete-kiosk-mode.component';
+import {ToastService} from '../services/toast.service';
 
 @Component({
   selector: 'app-request-card',
@@ -109,7 +110,8 @@ export class RequestCardComponent implements OnInit, OnDestroy {
     private userService: UserService,
     private locationsService: LocationsService,
     private passLimitsService: PassLimitService,
-    private createPassFormRef: MatDialogRef<CreateHallpassFormsComponent>
+    private createPassFormRef: MatDialogRef<CreateHallpassFormsComponent>,
+    private toast: ToastService
   ) {
   }
 
@@ -312,8 +314,6 @@ export class RequestCardComponent implements OnInit, OnDestroy {
       'travel_type': this.selectedTravelType,
       'duration': this.selectedDuration * 60,
     };
-    console.log(body);
-    console.log(this.nowTeachers);
 
     if (this.isFutureOrNowTeachers && !this.formState.kioskMode) {
       if (this.forFuture) {
@@ -342,7 +342,12 @@ export class RequestCardComponent implements OnInit, OnDestroy {
         takeUntil(this.destroy$),
         switchMap(() => {
           return this.requestService.cancelRequest(this.request.id);
-        })).subscribe(() => {
+        }),
+        catchError(error => {
+          this.openErrorToast(error);
+          return of(error);
+        })
+      ).subscribe(() => {
         this.performingAction = true;
         this.dialogRef.close();
       });
@@ -358,9 +363,12 @@ export class RequestCardComponent implements OnInit, OnDestroy {
           }
           return this.formState.previousStep === 1 ? this.requestService.cancelRequest(this.request.id) :
             (this.formState.missedRequest ? this.requestService.cancelInvitation(this.formState.data.request.id, '') : of(null));
+        }),
+        catchError(error => {
+          this.openErrorToast(error);
+          return of(error);
         })
-      ).subscribe({
-        next: () => {
+      ).subscribe(() => {
           this.performingAction = true;
           if (!this.formState.kioskMode) {
             if ((DeviceDetection.isAndroid() || DeviceDetection.isIOSMobile()) && this.forFuture) {
@@ -370,11 +378,20 @@ export class RequestCardComponent implements OnInit, OnDestroy {
             this.dialogRef.close();
           }
         },
-        error: () => {
+        () => {
           this.performingAction = false;
         }
-      });
+      );
     }
+  }
+
+  openErrorToast(error) {
+    this.toast.openToast(
+      {
+        title: 'Oh no! Something went wrong',
+        subtitle: `Please try refreshing the page. If the issue keeps occuring, contact us at support@smartpass.app. (${error.status})`,
+        type: 'error'
+      }, `${error.status}`);
   }
 
   changeDate(resend_request?: boolean) {
@@ -418,7 +435,11 @@ export class RequestCardComponent implements OnInit, OnDestroy {
 
           return this.requestService.createRequest(body);
         }),
-        switchMap(() => this.requestService.cancelRequest(this.request.id))
+        switchMap(() => this.requestService.cancelRequest(this.request.id)),
+        catchError(error => {
+          this.openErrorToast(error);
+          return of(error);
+        })
       ).subscribe();
     }
   }
@@ -559,7 +580,13 @@ export class RequestCardComponent implements OnInit, OnDestroy {
 
     } else if (action === 'delete') {
       this.requestService.cancelRequest(this.request.id)
-        .pipe(takeUntil(this.destroy$))
+        .pipe(
+          takeUntil(this.destroy$),
+          catchError(error => {
+            this.openErrorToast(error);
+            return of(error);
+          })
+        )
         .subscribe(() => {
           const storageData = JSON.parse(this.storage.getItem('pinAttempts'));
           if (storageData && storageData[this.request.id]) {
@@ -578,7 +605,13 @@ export class RequestCardComponent implements OnInit, OnDestroy {
       'message': denyMessage
     };
     this.requestService.denyRequest(this.request.id, body)
-      .pipe(takeUntil(this.destroy$))
+      .pipe(
+        takeUntil(this.destroy$),
+        catchError(error => {
+          this.openErrorToast(error);
+          return of(error);
+        })
+      )
       .subscribe((httpData) => {
         this.dialogRef.close();
       });
@@ -604,6 +637,7 @@ export class RequestCardComponent implements OnInit, OnDestroy {
             console.log(err.message);
           } else {
             // something unexpected happened, please panic here
+            this.openErrorToast(err);
             console.error(err);
           }
         }

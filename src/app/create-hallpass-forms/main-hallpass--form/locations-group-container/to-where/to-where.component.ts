@@ -153,9 +153,9 @@ export class ToWhereComponent implements OnInit, OnDestroy, AfterViewInit {
       take(1),
     )
     .subscribe({next: (u: User) => {
-      
+
       this.user = u;
-      
+
       const stateData = this.formState.data;
       const isDedicatedUser = this.formState.kioskMode && (
         (!!this.user?.roles.includes('_profile_kiosk') ||
@@ -164,7 +164,7 @@ export class ToWhereComponent implements OnInit, OnDestroy, AfterViewInit {
       const isStaffUser = ((!this.user.isStudent()) && this.formState.kioskMode);
       const isChooseSelectedStudent = (isStaffUser || isDedicatedUser);
       const student = [this.user];
-      if (isChooseSelectedStudent) { 
+      if (isChooseSelectedStudent) {
         student[0] = stateData.kioskModeStudent;
       }
       if (this.user.isStudent() || isStaffUser) {
@@ -182,7 +182,7 @@ export class ToWhereComponent implements OnInit, OnDestroy, AfterViewInit {
               return vv;
             } catch (e) {}
           }),
-        ) 
+        )
       }
     }
   });
@@ -208,8 +208,8 @@ export class ToWhereComponent implements OnInit, OnDestroy, AfterViewInit {
     if (this.isStaff && !this.formState.kioskMode)
       return true;
 
-    if (!this.tooltipDataService.reachedPassLimit( 'to', this.passLimits[+pinnable.location.id]))
-      return false;
+    // if (!this.tooltipDataService.reachedPassLimit( 'to', this.passLimits[+pinnable.location.id]))
+    //   return false;
 
     if (
       (!this.formState.forLater &&
@@ -240,7 +240,7 @@ export class ToWhereComponent implements OnInit, OnDestroy, AfterViewInit {
     return new Promise<boolean>(resolve => {
       const passLimit = this.passLimits[location.id];
       // passLimits has no location.id
-      if (!passLimit){
+      if (!passLimit || this.formState.kioskMode){
         return resolve(true);
       }
       const passLimitReached = passLimit.max_passes_to_active && passLimit.max_passes_to < (passLimit.to_count + this.countStudents());
@@ -251,7 +251,6 @@ export class ToWhereComponent implements OnInit, OnDestroy, AfterViewInit {
         panelClass: 'overlay-dialog',
         backdropClass: 'custom-backdrop',
         width: '450px',
-        height: '215px',
         disableClose: true,
         data: {
           passLimit: passLimit.max_passes_to,
@@ -297,10 +296,31 @@ export class ToWhereComponent implements OnInit, OnDestroy, AfterViewInit {
         return;
       }
 
-      // students go forward
-      if (!this.isStaff) {
-        forwardAndEmit();
-        return;
+      // only students
+      if (!this.isStaff || this.formState.kioskMode) {
+        if (!this.tooltipDataService.reachedPassLimit( 'to', this.passLimits[+pinnable.location.id])) {
+          const ps =  this.dialog.open(PassLimitDialogComponent, {
+            panelClass: 'overlay-dialog',
+            backdropClass: 'custom-backdrop',
+            width: '450px',
+            height: '163px',
+            disableClose: true,
+            data: {
+              isStudent: true
+            }
+          });
+
+          ps.afterClosed().pipe(
+            takeUntil(this.destroy$)
+          ).subscribe(({override}) => {
+            if (!override) {
+              this.dialogRef.close();
+            }
+          });
+          return;
+        }
+       forwardAndEmit();
+       return;
       }
 
      // staff only
@@ -327,7 +347,7 @@ export class ToWhereComponent implements OnInit, OnDestroy, AfterViewInit {
 
       const roomStudents = selectedStudents.filter(s => (!skipped.includes(''+s.id)));
       const noStudentsCase = roomStudents.length === 0;
-      
+
       if (noStudentsCase) denyText = 'Cancel';
 
       this.dialog.open(ConfirmationDialogComponent, {
@@ -378,10 +398,11 @@ export class ToWhereComponent implements OnInit, OnDestroy, AfterViewInit {
       });
     };
 
-    if (pinnable.type !== 'location')
+    if (pinnable.type !== 'location') {
       return emitSelectedPinnable(true);
-    else
+    } else {
       this.passLimitPromise(pinnable.location).then(emitSelectedPinnable);
+    }
   }
 
   locationSelected(location) {
@@ -392,6 +413,35 @@ export class ToWhereComponent implements OnInit, OnDestroy, AfterViewInit {
         this.selectedLocation.emit(location);
       }, 100);
     };
+
+    // only students
+
+    if (!this.isStaff || this.formState.kioskMode) {
+      if (!this.tooltipDataService.reachedPassLimit( 'to', this.passLimits[+location.id])) {
+        const ps =  this.dialog.open(PassLimitDialogComponent, {
+          panelClass: 'overlay-dialog',
+          backdropClass: 'custom-backdrop',
+          width: '450px',
+          height: '163px',
+          disableClose: true,
+          data: {
+            isStudent: true
+          }
+        });
+
+        ps.afterClosed().pipe(
+          takeUntil(this.destroy$)
+        ).subscribe(({override}) => {
+          if (!override) {
+            this.dialogRef.close();
+          }
+        });
+        return;
+      }
+      forwardAndEmit();
+      return;
+    }
+
 
     this.passLimitPromise(location).then((allowed) => {
       if (!allowed) return;
@@ -420,7 +470,7 @@ export class ToWhereComponent implements OnInit, OnDestroy, AfterViewInit {
 
       const roomStudents = selectedStudents.filter(s => (!skipped.includes(''+s.id)));
       const noStudentsCase = roomStudents.length === 0;
-      
+
       if (noStudentsCase) denyText = 'Cancel';
 
       this.dialog.open(ConfirmationDialogComponent, {
@@ -512,7 +562,7 @@ export class ToWhereComponent implements OnInit, OnDestroy, AfterViewInit {
             this.formState.state = 4;
             if(!this.kioskService.getKioskModeSettings().findByName && !this.kioskService.getKioskModeSettings().findById)
             this.formState.step=0
-            
+
           } else {
               this.formState.data.direction.from = null;
               this.formState.state -= 1;
