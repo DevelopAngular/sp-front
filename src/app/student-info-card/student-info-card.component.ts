@@ -56,7 +56,7 @@ import { IdCardIdNumbersComponent } from '../admin/id-cards/id-card-id-numbers/i
 import {PassLimitStudentInfoComponent} from '../pass-limit-student-info/pass-limit-student-info.component';
 import {RecommendedDialogConfig} from '../shared/shared-components/confirmation-dialog/confirmation-dialog.component';
 
-declare const window;
+declare const window: Window;
 
 @Component({
   selector: 'app-student-info-card',

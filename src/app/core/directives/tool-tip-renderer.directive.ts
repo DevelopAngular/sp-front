@@ -30,7 +30,7 @@ export class ToolTipRendererDirective implements OnInit, OnDestroy, OnChanges {
    */
   @Input() showToolTip: boolean = true;
   @Input() nonDisappearing: boolean = true;
-  @Input() position: 'top' | 'bottom' | 'left' | 'right' = 'bottom';
+  @Input() position: 'mouse' | 'top' | 'bottom' | 'left' | 'right' = 'bottom';
   @Input() editable: boolean = false;
   @Input() positionStrategy: ConnectedPosition;
   @Input() width: string = 'auto';
@@ -87,18 +87,33 @@ export class ToolTipRendererDirective implements OnInit, OnDestroy, OnChanges {
     race([this.click$, this.hover$])
       .pipe(takeUntil(this.destroy$))
       .subscribe({
-        next: () => {
+        next: (evt: Event) => {
+          if (this.position === 'mouse') {
+            const origin = this._elementRef.nativeElement.getBoundingClientRect();
+            const e = evt as any;
+            this.mousex = e.clientX - origin.x;
+            this.mousey = e.clientY - origin.y;
+
+            const positionStrategy = this._overlayPositionBuilder
+              .flexibleConnectedTo(this._elementRef)
+              .withPositions([this.getPosition()]);
+            this._overlayRef.updatePositionStrategy(positionStrategy);
+          }
           this.show();
         },
       });
   }
+
+  private mousex: number = 0;
+  private mousey: number = 0;
 
   ngOnChanges(changes: SimpleChanges) {
     if (changes?.['showToolTip']?.currentValue) {
       const positionStrategy = this._overlayPositionBuilder
         .flexibleConnectedTo(this._elementRef)
         .withPositions([this.positionStrategy ? this.positionStrategy : this.getPosition()]);
-
+      // because showToolTip has chabged we re-create the tooltip
+      // TODO: for other significant attributes, beside showToolTip 
       this._overlayRef = this._overlay.create(
         {
           positionStrategy,
@@ -141,19 +156,30 @@ export class ToolTipRendererDirective implements OnInit, OnDestroy, OnChanges {
         overlayX: 'center',
         overlayY: 'top',
       };
+    } else if (this.position === 'mouse') {
+      // TODO: other origin cases: start | end
+      return {
+        originX: 'center',
+        originY: 'top',
+        overlayX: 'center',
+        overlayY: 'top',
+        offsetY: this.mousey + 10, 
+        // added extra offset
+        // to not trigger an accidental mouseleave event
+      };
     }
   }
 
-  click$: Subject<boolean> = new Subject<boolean>();
-  hover$: Subject<boolean> = new Subject<boolean>();
+  click$: Subject<Event> = new Subject<Event>();
+  hover$: Subject<Event> = new Subject<Event>();
 
-  @HostListener('click')
-  gotClick() {
-    this.click$.next(true);
+  @HostListener('click', ['$event'])
+  gotClick(evt: Event) {
+    this.click$.next(evt);
   }
-  @HostListener('pointerover')
-  gotHover() {
-    this.hover$.next(true);
+  @HostListener('pointerover', ['$event'])
+  gotHover(evt: Event) {
+    this.hover$.next(evt);
   }
   show() {
     // attach the component if it has not already attached to the overlay
