@@ -1,4 +1,4 @@
-import { Component, ElementRef, Input, OnDestroy, OnInit, Renderer2, TemplateRef, ViewChild } from '@angular/core'
+import { Component, ElementRef, Input, OnDestroy, OnInit, Renderer2 } from '@angular/core';
 import {Util} from '../../Util';
 import {Request} from '../models/Request';
 import {ConsentMenuComponent} from '../consent-menu/consent-menu.component';
@@ -29,8 +29,6 @@ export class InlineRequestCardComponent implements OnInit, OnDestroy {
   @Input() forInput = false;
   @Input() isOpenBigPass = false;
   @Input() fullScreen = false;
-  @ViewChild('rootTemplate') root: TemplateRef<HTMLDivElement>;
-  @ViewChild('fullscreenInlineCard') fullScreenTemplate: TemplateRef<any>;
 
   selectedDuration: number;
   selectedTravelType: string;
@@ -252,11 +250,8 @@ export class InlineRequestCardComponent implements OnInit, OnDestroy {
   }
 
   openBigPassCard() {
-    // this.storage.setItem('pass_full_screen', !this.isOpenBigPass);
-    this.dialog.open(this.fullScreenTemplate, {
-      panelClass: 'main-form-dialog-container',
-    });
-    // this.screenService.openBigPassCard(this.isOpenBigPass, this.request, 'inlineRequest');
+    this.storage.setItem('pass_full_screen', !this.isOpenBigPass);
+    this.screenService.openBigPassCard(this.isOpenBigPass, this.request, 'inlineRequest');
   }
 
   goToPin() {
