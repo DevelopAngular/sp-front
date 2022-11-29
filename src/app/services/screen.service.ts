@@ -4,6 +4,9 @@ import {BehaviorSubject, Subject} from 'rxjs';
 import {Util} from '../../Util';
 import {BigStudentPassCardComponent} from '../big-student-pass-card/big-student-pass-card.component';
 import {MatDialog} from '@angular/material/dialog';
+import {
+  FormFactorContainerComponent
+} from '../create-hallpass-forms/main-hallpass--form/form-factor-container/form-factor-container.component'
 
 @Injectable({
   providedIn: 'root'
@@ -91,7 +94,7 @@ export class ScreenService {
           'background': `linear-gradient(0deg, ${solidColor} 100%, rgba(0, 0, 0, 0.3) 100%)`,
         });
       }, 50);
-      const bigPassCard = this.dialog.open(BigStudentPassCardComponent, {
+      this.dialog.open(BigStudentPassCardComponent, {
         id: 'bigPass',
         panelClass: 'main-form-dialog-container',
         data: {

@@ -1,11 +1,11 @@
 <div class="pass-card-container">
   <div class="pass-card-wrapper" [@scalePassCards]="scaleCardTrigger$ | async" #cardWrapper [style.background-image]="gradient" [style.height]="forStaff || data.kioskMode ? (isModal ? '400px' : '451px') : '412px'" ondragstart="return false">
 
-    <div class="resize-icon" *ngIf="!forStaff && fullScreenButton" [style.color]="pass.color_profile.solid_color" appCrossPointerEventTarget (pointerClickEvent)="openBigPassCard()">
-      <svg width="24px" height="24px" viewBox="0 0 24 24">
-        <use [attr.xlink:href]="isOpenBigPass ? '#Resize Down' : '#Resize Up'"></use>
-      </svg>
-    </div>
+<!--    <div class="resize-icon" *ngIf="!forStaff && fullScreenButton" [style.color]="pass.color_profile.solid_color" appCrossPointerEventTarget (pointerClickEvent)="openBigPassCard()">-->
+<!--      <svg width="24px" height="24px" viewBox="0 0 24 24">-->
+<!--        <use [attr.xlink:href]="isOpenBigPass ? '#Resize Down' : '#Resize Up'"></use>-->
+<!--      </svg>-->
+<!--    </div>-->
 
     <ng-template #recurringConfigTooltip>
       <div class="ds-tooltip" style="text-align: start">
