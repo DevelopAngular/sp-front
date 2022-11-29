@@ -251,7 +251,7 @@ export class LocationTableComponent implements OnInit, OnDestroy {
                   this.mainContentVisibility = true;
                 });
         } else if (this.forKioskMode) {
-          const request$ = !!this.category ? 
+          const request$ = !!this.category ?
             this.locationService.getLocationsFromCategory(this.category) :
             this.locationService.getLocationsWithConfigRequest(url);
 
@@ -262,7 +262,7 @@ export class LocationTableComponent implements OnInit, OnDestroy {
             });
           });
         } else {
-          const request$ = this.isFavoriteForm ? 
+          const request$ = this.isFavoriteForm ?
             this.locationService.getLocationsWithConfigRequest(url).pipe(filter((res) => !!res.length)) :
             this.locationService.getLocationsFromCategory(this.category).pipe(filter((res) => !!res.length));
 
@@ -501,7 +501,8 @@ export class LocationTableComponent implements OnInit, OnDestroy {
     if (!location)
       return false;
 
-    return this.tooltipService.reachedPassLimit(this.currentPage, location);
+    // return this.tooltipService.reachedPassLimit(this.currentPage, location);
+    return true;
   }
 
   mergeLocations(url, withStars: boolean, category: string) {

@@ -57,7 +57,8 @@ export class IntegrationsDialogComponent implements OnInit, OnDestroy {
     this.classlinkSyncLoading$ = this.adminService.syncLoading$;
     this.classlinkSyncInfo$ = this.adminService.classLinkInfoData$
     this.frameMotion$ = this.formService.getFrameMotionDirection();
-    this.userService.getUploadedGroupsRequest();
+    //this has been moved tp picture-profile component
+    //this.userService.getUploadedGroupsRequest();
 
     merge(of(this.userService.getUserSchool()), this.userService.getCurrentUpdatedSchool$().pipe(filter(s => !!s)))
         .pipe(takeUntil(this.destroy$))

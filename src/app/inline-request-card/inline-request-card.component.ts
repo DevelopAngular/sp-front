@@ -1,4 +1,4 @@
-import {Component, ElementRef, Input, OnDestroy, OnInit, Renderer2} from '@angular/core';
+import { Component, ElementRef, Input, OnDestroy, OnInit, Renderer2 } from '@angular/core';
 import {Util} from '../../Util';
 import {Request} from '../models/Request';
 import {ConsentMenuComponent} from '../consent-menu/consent-menu.component';
