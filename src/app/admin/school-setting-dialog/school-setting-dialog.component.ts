@@ -4,9 +4,8 @@ import {MatDialogRef} from '@angular/material/dialog';
 import {AdminService} from '../../services/admin.service';
 import {Subject} from 'rxjs';
 import {School} from '../../models/School';
-import {filter, switchMap, takeUntil, take} from 'rxjs/operators';
+import {filter, switchMap, takeUntil} from 'rxjs/operators';
 import {HttpService} from '../../services/http-service';
-import {ToastService} from '../../services/toast.service';
 
 @Component({
   selector: 'app-school-setting-dialog',
@@ -34,8 +33,7 @@ export class SchoolSettingDialogComponent implements OnInit, OnDestroy {
   constructor(
       private dialogRef: MatDialogRef<SchoolSettingDialogComponent>,
       private adminService: AdminService,
-      private http: HttpService,
-      private toast: ToastService,
+      private http: HttpService
   ) { }
 
   ngOnInit() {
@@ -58,14 +56,14 @@ export class SchoolSettingDialogComponent implements OnInit, OnDestroy {
         }),
         )
         .subscribe((res) => {
-         
-          if(res) {
+
+          if (res) {
             this.http.currentSchoolSubject.next(res);
             this.dialogRef.close();
           }
 
-      
-          // TODO: (BUG) it opens multiple toasts 
+
+          // TODO: (BUG) it opens multiple toasts
           // doublingng the number every time
           /*this.toast.openToast({
             title: 'Success!',
@@ -86,7 +84,7 @@ export class SchoolSettingDialogComponent implements OnInit, OnDestroy {
         pass_buffer_time: new FormControl(school.pass_buffer_time || 0,
            [Validators.required,
             Validators.pattern('^[0-9]*?[0-9]+$'),
-            Validators.max(60),
+            Validators.max(999),
             Validators.min(0)]),
         show_active_passes_number: new FormControl(school.show_active_passes_number),
         student_can_use_mobile: new FormControl(school.student_can_use_mobile),
