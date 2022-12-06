@@ -21,6 +21,7 @@ import {Location} from '../../../models/Location';
 import {PassLimitInfo} from '../../../models/HallPassLimits';
 import {LocationVisibilityService} from '../location-visibility.service';
 import {PassLimitDialogComponent} from './pass-limit-dialog/pass-limit-dialog.component';
+import { KioskModeService } from '../../../services/kiosk-mode.service'
 
 // when WS notify a change we have to skip functions that change
 // FORM_STATE state and step
@@ -92,7 +93,8 @@ export class LocationsGroupContainerComponent implements OnInit, OnDestroy {
     private elRef: ElementRef,
     private _injector: Injector,
     private cdr: ChangeDetectorRef,
-    private dialog: MatDialog
+    private dialog: MatDialog,
+    private kioskService: KioskModeService
   ) {
   }
 
@@ -407,7 +409,8 @@ export class LocationsGroupContainerComponent implements OnInit, OnDestroy {
   @skipWhenWS()
   async fromCategory(location: Location & { numberOfStudentsInRoom?: number }) {
     const { numberOfStudentsInRoom } = location;
-    if (numberOfStudentsInRoom !== undefined) {
+    const k = this.kioskService.isKisokMode();
+    if (!this.kioskService.isKisokMode() && numberOfStudentsInRoom !== undefined) {
       const totalStudents = numberOfStudentsInRoom + this.FORM_STATE.data.selectedStudents.length;
       if (location.max_passes_to_active && (location.max_passes_to < totalStudents)) {
         const overrideRoomLimit = await this.showDestinationLimitReachedFromCategory(
