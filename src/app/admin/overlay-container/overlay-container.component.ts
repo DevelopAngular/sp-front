@@ -3,7 +3,7 @@ import {AbstractControl, FormControl, FormGroup, Validators, ValidationErrors} f
 import {MAT_DIALOG_DATA, MatDialog, MatDialogRef} from '@angular/material/dialog';
 import {DomSanitizer} from '@angular/platform-browser';
 
-import {BehaviorSubject, combineLatest, forkJoin, fromEvent, merge, Observable, of, Subject, zip, throwError} from 'rxjs';
+import {BehaviorSubject, combineLatest, forkJoin, fromEvent, merge, Observable, of, Subject, zip} from 'rxjs';
 import {debounceTime, distinctUntilChanged, filter, map, switchMap, take, takeUntil, tap, catchError, concatMap} from 'rxjs/operators';
 
 import {bumpIn, NextStep} from '../../animations';
@@ -1145,11 +1145,16 @@ export class OverlayContainerComponent implements OnInit, OnDestroy {
       room.max_passes_to_active = roomData.advOptState.toEnabled;
       room.max_passes_to = roomData.advOptState.to;
 
-      return {
-        ...this.normalizeRoomData(room),
-        ...this.normalizeAdvOptData(roomData),
+      const nroomdata = this.normalizeRoomData(room);
+      const nadvdata = this.normalizeAdvOptData(roomData);
+
+      const composited = {
+        ...nroomdata,
+        ...nadvdata,
         isEdit: true
       };
+
+      return composited;
     });
   }
 
@@ -1162,7 +1167,7 @@ export class OverlayContainerComponent implements OnInit, OnDestroy {
       scheduling_restricted: !!room.scheduling_restricted,
       needs_check_in: !!room.needs_check_in,
       teachers: room.selectedTeachers,
-      travel_types: room.travelType,
+      travel_types: room.travel_types,
       max_allowed_time: +room.timeLimit,
       max_passes_from: +this.passLimitForm.get('from').value,
       max_passes_from_active: false,
