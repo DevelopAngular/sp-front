@@ -70,6 +70,13 @@ export class NotificationSelectStudentsComponent implements OnInit {
     };
 
     const requests = this.ids.value.map((id: string|number) => getUser(id));
+
+    // when no students are to be notified
+    // show the UI to add ones
+    if (requests.length === 0) {
+      this.showAddStudent = true;
+    }
+
     // TODO delete fake requests
     //requests.push(throwError(new Error('fake error')).pipe(retrying,catchError(err => of(err))))
     //requests.push(throwError(new HttpErrorResponse({error: 'http fake error', status: 501})).pipe(retrying,catchError(err => of(err))))
