@@ -175,7 +175,6 @@ export class NotificationSelectStudentsComponent implements OnInit {
       this.students.push(newStudent[0]);
       this.doDisplayedStudents(this.students);
       this.ids.push(new FormControl(newStudent[0].id));
-      console.log(this.students, this.ids);
     });
   }
 }

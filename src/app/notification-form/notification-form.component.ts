@@ -1,4 +1,4 @@
-import {Component, Inject, NgZone, OnDestroy, OnInit} from '@angular/core';
+import {Component, Inject, OnDestroy, OnInit} from '@angular/core';
 import {MatDialog, MatDialogRef, MAT_DIALOG_DATA} from '@angular/material/dialog';
 import {FormArray, FormBuilder, FormControl, FormGroup, Validators} from '@angular/forms';
 
@@ -204,9 +204,19 @@ export class NotificationFormComponent implements OnInit, OnDestroy {
     return `radial-gradient(circle at 73% 71%, ${colors[0]} 0%, ${colors[1]} 144%)`;
   }
 
-  activeNotifications(type) {
-    const push = this.form.controls[type + 'Push']?.value;
-    const email = this.form.controls[type + 'Email']?.value;
+  activeNotifications(type: string): string {
+    // legacy case
+    // no students but notifications may be set true
+    if (!!this.students?.length) {
+      return 'Off';
+    }
+
+    const $push = this.form.controls[type + 'Push'];
+    const $email = this.form.controls[type + 'Email'];
+    // TODO uncomment bellow and the log will be shown continuosly in the console
+    //console.log($email?.value)
+    const push = $push?.value;
+    const email = $email?.value;
     if (push && email) {
       return 'Push, Email';
     } else if (push) {
