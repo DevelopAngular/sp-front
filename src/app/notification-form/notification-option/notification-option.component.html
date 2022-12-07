@@ -12,7 +12,13 @@
 
   </div>
   <div class="option-toggle">
-    <app-toggle-input [form]="this.form" [controlName]="control" [defaultLayout]="false"
-                      [delimiter]="false" controlSize="small"></app-toggle-input>
+    <app-toggle-input
+      [form]="this.form"
+      [controlName]="control"
+      [defaultLayout]="false"
+      [delimiter]="false"
+      [disabled]="disabled"
+      controlSize="small"
+    ></app-toggle-input>
   </div>
 </div>

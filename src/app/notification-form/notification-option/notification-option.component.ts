@@ -13,6 +13,7 @@ export class NotificationOptionComponent implements OnInit {
   @Input() form: FormGroup;
   @Input() control: string;
   @Input() tooltip: string = undefined;
+  @Input() disabled: boolean;
 
   constructor() { }
 
