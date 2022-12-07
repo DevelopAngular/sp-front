@@ -122,10 +122,20 @@
           </div>
           <div>
             <div class="notif-pass-requests">
-              <app-notification-option [disabled]="!students?.length" icon="./assets/Devices (Navy).svg" text="Push"
-                                       [form]="this.form" control="studentPassesPush"></app-notification-option>
-              <app-notification-option [disabled]="!students?.length" icon="./assets/Mail (Navy).svg" text="Email"
-                                       [form]="this.form" control="studentPassesEmail"></app-notification-option>
+              <app-notification-option
+                [customToolTip]="!students?.length ? 'Add students for Push' : null"
+                [disabled]="!students?.length"
+                icon="./assets/Devices (Navy).svg"
+                text="Push"
+                [form]="this.form" control="studentPassesPush"
+              ></app-notification-option>
+              <app-notification-option
+                [customToolTip]="!students?.length ? 'Add students for Email' : null"
+                [disabled]="!students?.length"
+                icon="./assets/Mail (Navy).svg"
+                text="Email"
+                [form]="this.form" control="studentPassesEmail"
+              ></app-notification-option>
             </div>
             <div class="div"></div>
             <div class="app-notif-select-students">
