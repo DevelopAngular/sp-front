@@ -168,7 +168,7 @@ export class NotificationSelectStudentsComponent implements OnInit {
         return;
       }
 
-      if (this.students.some(s => s.id === newStudent[0].id)) {
+      if (this.students.some(s => s.id == newStudent[0].id)) {
         return;
       }
 
