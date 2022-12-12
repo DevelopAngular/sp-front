@@ -417,7 +417,7 @@ export class ToWhereComponent implements OnInit, OnDestroy, AfterViewInit {
     // only students
 
     if (!this.isStaff || this.formState.kioskMode) {
-      if (!this.tooltipDataService.reachedPassLimit( 'to', this.passLimits[+location.id])) {
+      if (this.tooltipDataService.reachedPassLimit( 'to', this.passLimits[+location.id])) {
         const ps =  this.dialog.open(PassLimitDialogComponent, {
           panelClass: 'overlay-dialog',
           backdropClass: 'custom-backdrop',
