@@ -113,8 +113,8 @@ import {
   updateIntrosEncounter,
   updateIntrosMain,
   updateIntrosSearch,
-  updateIntrosStudentPassLimits
-} from '../ngrx/intros/actions';
+  updateIntrosStudentPassLimits, updateIntrosWaitInLine
+} from '../ngrx/intros/actions'
 import {getIntrosData, IntroData} from '../ngrx/intros/state';
 import {clearSchools, getSchoolsFailure} from '../ngrx/schools/actions';
 import {clearRUsers, getRUsers, updateEffectiveUser} from '../ngrx/represented-users/actions';
@@ -596,6 +596,10 @@ export class UserService implements OnDestroy {
     this.store.dispatch(updateIntrosAdminPassLimitsMessage({intros, device, version}));
   }
 
+  updateIntrosWaitInLineRequest(intros, device, version) {
+    this.store.dispatch(updateIntrosWaitInLine({intros, device, version}));
+  }
+
   // TODO: Make all update functions into a single function
   // TODO: Have all update intro endpoints be part of an enum
   // TODO: Share that enum with `intro.effects.ts`
@@ -626,6 +630,10 @@ export class UserService implements OnDestroy {
 
   updateIntrosAdminPassLimitMessage(device, version) {
     return this.http.patch('v1/intros/admin_pass_limit_message', {device, version});
+  }
+
+  updateIntrosWaitInLine(device, version) {
+    return this.http.patch(`v1/intros/wait_in_line`, {device, version});
   }
 
 

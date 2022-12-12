@@ -182,6 +182,28 @@ export class IntrosEffects {
       );
   });
 
+  updateIntroWaitInLine$ = createEffect(() => {
+    return this.action$
+      .pipe(
+        ofType(introsActions.updateIntrosWaitInLine),
+        switchMap((action) => {
+          return this.userService.updateIntrosWaitInLine(action.device, action.version)
+            .pipe(
+              map(data => {
+                const updatedData = {
+                  ...action.intros,
+                  admin_pass_limit_message: {
+                    [action.device]: {seen_version: action.version}
+                  }
+                };
+                return introsActions.updateIntrosWaitInLineSuccess({data: updatedData});
+              }),
+              catchError(error => of(introsActions.updateIntrosWaitInLineFailure({errorMessage: error.message})))
+            );
+        })
+      );
+  });
+
   constructor(
     private action$: Actions,
     private userService: UserService
