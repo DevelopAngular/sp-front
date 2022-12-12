@@ -3,9 +3,9 @@ import {AfterViewInit, Component, ElementRef, HostListener, NgZone, OnDestroy, O
 import {MatDialog} from '@angular/material/dialog';
 import {ActivatedRoute, NavigationEnd, Router} from '@angular/router';
 import {filter as _filter, find} from 'lodash';
-import {BehaviorSubject, interval, Observable, ReplaySubject, Subject, zip, of} from 'rxjs';
+import {BehaviorSubject, interval, Observable, ReplaySubject, Subject, zip} from 'rxjs';
 
-import {filter, map, mergeMap, switchMap, take, takeUntil, withLatestFrom} from 'rxjs/operators';
+import { concatMap, filter, map, mergeMap, switchMap, take, takeUntil, withLatestFrom } from 'rxjs/operators'
 import {BUILD_INFO_REAL} from '../build-info';
 import {DarkThemeSwitch} from './dark-theme-switch';
 
@@ -75,6 +75,8 @@ export class AppComponent implements OnInit, AfterViewInit, OnDestroy {
   public hasCustomBackdrop$: Observable<boolean>;
   public customBackdropStyle$: Observable<any>;
   public user$: Observable<User>;
+  intercomLauncherAdded$: BehaviorSubject<HTMLDivElement> = new BehaviorSubject<HTMLDivElement>(null);
+  intercomObserver: MutationObserver;
 
   private subscriber$ = new Subject();
 
@@ -160,7 +162,10 @@ export class AppComponent implements OnInit, AfterViewInit, OnDestroy {
         switchMap(l => this.userService.user$.pipe(take(1))),
         filter(user => !!user),
         map(user => User.fromJSON(user)),
-        switchMap((user) => {
+        concatMap(user => {
+          return this.intercomLauncherAdded$.pipe(map(intercomWrapper => [user, intercomWrapper]))
+        }),
+        switchMap(([user, intercomWrapper]: [User, HTMLDivElement]) => {
           this.currentRoute = window.location.pathname;
           const urlBlackList = [
             '/forms',
@@ -171,6 +176,11 @@ export class AppComponent implements OnInit, AfterViewInit, OnDestroy {
           if ((!user.isStudent()) && !this.currentRoute.includes('/forms')) {
             this.registerRefiner(user);
           }
+
+          intercomWrapper.style.display = user.isStudent()
+            ? 'none'
+            : 'block'
+
           if (isAllowed && !this.isMobile) {
             this.registerIntercom(user);
           }
@@ -372,6 +382,13 @@ export class AppComponent implements OnInit, AfterViewInit, OnDestroy {
   }
 
   registerIntercom(user: User) {
+    // const intercomLauncher = document.querySelector<HTMLDivElement>('div.intercom-lightweight-app');
+    // if (user.isStudent() && intercomLauncher) {
+    //   intercomLauncher.style.display = 'none';
+    // } else {
+    //   intercomLauncher.style.display = 'block';
+    // }
+    console.log('registering intercom');
     setTimeout(() => {
       const school: School = this.http.getSchool();
       window.intercomSettings = {
@@ -461,6 +478,30 @@ export class AppComponent implements OnInit, AfterViewInit, OnDestroy {
           (this.overlayContainer as ConsentMenuOverlay).restoreContainer();
         }
       });
+
+    // listen for existence of Intercom wrapper
+    // stop listening when the Intercom wrapper is found
+    const targetNode = document.body;
+    const listenerConfig = { childList: true, subtree: true };
+    this.intercomObserver = new MutationObserver((mutationList, observer) => {
+      for (const m of mutationList) {
+        // @ts-ignore
+        if ((m.target as HTMLElement).tagName !== 'BODY') {
+          return;
+        }
+        m.addedNodes.forEach(node => {
+          if (node.nodeType === node.COMMENT_NODE) {
+            return;
+          }
+          if ((node as HTMLElement).classList.contains('intercom-lightweight-app')) {
+            this.intercomLauncherAdded$.next(node as HTMLDivElement);
+            this.intercomObserver.disconnect();
+          }
+        })
+      }
+
+    })
+    this.intercomObserver.observe(targetNode, listenerConfig);
   }
 
   updateApp() {
