@@ -123,14 +123,16 @@
           <div>
             <div class="notif-pass-requests">
               <app-notification-option
-                [customToolTip]="!students?.length ? 'Add students for Push' : null"
+                [tooltip]="!students?.length ? 'Add students to unlock Push' : null"
+                [position]="'mouse'"
                 [disabled]="!students?.length"
                 icon="./assets/Devices (Navy).svg"
                 text="Push"
                 [form]="this.form" control="studentPassesPush"
               ></app-notification-option>
               <app-notification-option
-                [customToolTip]="!students?.length ? 'Add students for Email' : null"
+                [tooltip]="!students?.length ? 'Add students to unlock Email' : null"
+                [position]="'mouse'"
                 [disabled]="!students?.length"
                 icon="./assets/Mail (Navy).svg"
                 text="Email"

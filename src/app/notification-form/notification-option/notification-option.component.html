@@ -1,17 +1,17 @@
 <div class="option">
-  <div class="option-info">
+  <div class="option-info" [customToolTip]="!disabled ? tooltip : null">
     <div class="option-image">
       <img alt="" [src]="icon | resolveAsset">
     </div>
-    <div class="option-text" [customToolTip]="tooltip">
+    <div class="option-text">
       <span>{{text}}</span>
-      <div *ngIf="tooltip !== undefined">
+      <div *ngIf="!disabled && tooltip !== undefined">
         <img width="13px" [src]="'./assets/Support (Gray-200).svg' | resolveAsset">
       </div>
     </div>
 
   </div>
-  <div class="option-toggle">
+  <div class="option-toggle" [customToolTip]="disabled && tooltip ? tooltip : null">
     <app-toggle-input
       [form]="this.form"
       [controlName]="control"
