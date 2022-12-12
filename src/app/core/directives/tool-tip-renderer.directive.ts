@@ -83,12 +83,12 @@ export class ToolTipRendererDirective implements OnInit, OnDestroy, OnChanges {
       }
     );
 
-    // in case of the click event 
+    // in case of the click event
     // this is (all time or most of the time?) followed by a hover event
     // resulting in a double call to this.show
     // and the second event triggers this.closeTooltip
     // so, the tooltip disappears imediatly
-    // rxjs race "filters" the doubles to the quickest one  
+    // rxjs race "filters" the doubles to the quickest one
     race([this.click$, this.hover$])
       .pipe(takeUntil(this.destroy$))
       .subscribe({
@@ -118,7 +118,7 @@ export class ToolTipRendererDirective implements OnInit, OnDestroy, OnChanges {
         .flexibleConnectedTo(this._elementRef)
         .withPositions([this.positionStrategy ? this.positionStrategy : this.getPosition()]);
       // because showToolTip has chabged we re-create the tooltip
-      // TODO: for other significant attributes, beside showToolTip 
+      // TODO: for other significant attributes, beside showToolTip
       this._overlayRef = this._overlay.create(
         {
           positionStrategy,
@@ -168,7 +168,7 @@ export class ToolTipRendererDirective implements OnInit, OnDestroy, OnChanges {
         originY: 'top',
         overlayX: 'center',
         overlayY: 'top',
-        offsetY: this.mousey + 10, 
+        offsetY: this.mousey + 10,
         // added extra offset
         // to not trigger an accidental mouseleave event
       };
@@ -220,7 +220,6 @@ export class ToolTipRendererDirective implements OnInit, OnDestroy, OnChanges {
   }
 
   ngOnDestroy() {
-    console.log('DESTROY')
     this.destroyOpen$.next();
     this.destroyOpen$.complete();
     this.closeToolTip();

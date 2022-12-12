@@ -381,7 +381,7 @@ export class LocationsGroupContainerComponent implements OnInit, OnDestroy {
     });
   }
 
-  showDestinationLimitReachedFromCategory(passLimit: number, studentCount: number, currentCount: number) {
+  showDestinationLimitReachedFromCategory(passLimit: number, studentCount: number, currentCount: number, isStudent: boolean) {
     return new Promise<boolean>(resolve => {
       const dialogRef = this.dialog.open(PassLimitDialogComponent, {
         panelClass: 'overlay-dialog',
@@ -393,6 +393,7 @@ export class LocationsGroupContainerComponent implements OnInit, OnDestroy {
           passLimit,
           studentCount,
           currentCount,
+          isStudent
         }
       });
       dialogRef.afterClosed().subscribe(result => {
@@ -409,14 +410,14 @@ export class LocationsGroupContainerComponent implements OnInit, OnDestroy {
   @skipWhenWS()
   async fromCategory(location: Location & { numberOfStudentsInRoom?: number }) {
     const { numberOfStudentsInRoom } = location;
-    const k = this.kioskService.isKisokMode();
     if (!this.kioskService.isKisokMode() && numberOfStudentsInRoom !== undefined) {
       const totalStudents = numberOfStudentsInRoom + this.FORM_STATE.data.selectedStudents.length;
-      if (location.max_passes_to_active && (location.max_passes_to < totalStudents)) {
+      if (location.max_passes_to_active && (totalStudents >= location.max_passes_to)) {
         const overrideRoomLimit = await this.showDestinationLimitReachedFromCategory(
           location.max_passes_to,
-          this.FORM_STATE.data.selectedStudents.length,
-          numberOfStudentsInRoom);
+          totalStudents,
+          numberOfStudentsInRoom,
+          this.user.isStudent());
 
         if (!overrideRoomLimit) {
           return;

@@ -13,18 +13,17 @@ export class TooltipDataService {
     if (!passLimit) {
       return false;
     }
-    // TODO uncomment when branch SP-1050 is available
-    // if (currentPage === 'from' && passLimit.max_passes_from_active && ((passLimit.from_count && passLimit.from_count >= passLimit.max_passes_from) || (!passLimit.from_count && !passLimit.max_passes_from))) {
-    //   return false;
-    // } else
-    if (currentPage === 'to' && !isStaff)
-      if (passLimit.max_passes_to_active)
-        if (passLimit.to_count) {
-          if (passLimit.max_passes_to <= passLimit.to_count)
-            return false;
-        } else if (!passLimit.max_passes_to)
-          return false;
-    return true;
+
+    const { max_passes_to, max_passes_to_active, to_count } = passLimit;
+    if (currentPage === 'to' && !isStaff) {
+      if (!max_passes_to_active) { // room has no pass limits
+        return false;
+      }
+
+      return to_count >= max_passes_to
+    }
+
+    return false;
   }
 
   tooltipDescription(currentPage: 'from' | 'to', passLimit: PassLimit): string {
@@ -37,18 +36,5 @@ export class TooltipDataService {
     }
 
     return `${passLimit.to_count}/${passLimit.max_passes_to} students have passes to this room.`;
-
-    // TODO uncomment when branch SP-1050 is available
-    // if (currentPage === 'from') {
-    //   if (this.http.getSchool().show_active_passes_number) {
-    //     if (passLimit.max_passes_from_active) {
-    //       if (passLimit.from_count <= passLimit.max_passes_from) {
-    //         return `${passLimit.from_count}/${passLimit.max_passes_from} students have passes from this room. ` + (passLimit.from_count === passLimit.max_passes_from ? `Wait for a spot to open` : ``);
-    //       }
-    //     } else {
-    //       return `${passLimit.from_count} students have passes from this room.`;
-    //     }
-    //   }
-    // } else
   }
 }
