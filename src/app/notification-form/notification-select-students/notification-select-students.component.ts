@@ -70,6 +70,13 @@ export class NotificationSelectStudentsComponent implements OnInit {
     };
 
     const requests = this.ids.value.map((id: string|number) => getUser(id));
+
+    // when no students are to be notified
+    // show the UI to add ones
+    if (requests.length === 0) {
+      this.showAddStudent = true;
+    }
+
     // TODO delete fake requests
     //requests.push(throwError(new Error('fake error')).pipe(retrying,catchError(err => of(err))))
     //requests.push(throwError(new HttpErrorResponse({error: 'http fake error', status: 501})).pipe(retrying,catchError(err => of(err))))
@@ -161,14 +168,13 @@ export class NotificationSelectStudentsComponent implements OnInit {
         return;
       }
 
-      if (this.students.some(s => s.id === newStudent[0].id)) {
+      if (this.students.some(s => s.id == newStudent[0].id)) {
         return;
       }
 
       this.students.push(newStudent[0]);
       this.doDisplayedStudents(this.students);
       this.ids.push(new FormControl(newStudent[0].id));
-      console.log(this.students, this.ids);
     });
   }
 }
