@@ -16,7 +16,7 @@ import {Overlay, OverlayPositionBuilder, OverlayRef} from '@angular/cdk/overlay'
 import {ComponentPortal} from '@angular/cdk/portal';
 import {CustomToolTipComponent} from '../../shared/shared-components/custom-tool-tip/custom-tool-tip.component';
 import {ConnectedPosition} from '@angular/cdk/overlay/position/flexible-connected-position-strategy';
-import {of, Subject, timer} from 'rxjs';
+import {of, race, Subject, timer} from 'rxjs';
 import {switchMap, takeUntil} from 'rxjs/operators';
 
 @Directive({
@@ -30,7 +30,7 @@ export class ToolTipRendererDirective implements OnInit, OnDestroy, OnChanges {
    */
   @Input() showToolTip: boolean = true;
   @Input() nonDisappearing: boolean = true;
-  @Input() position: 'top' | 'bottom' | 'left' | 'right' = 'bottom';
+  @Input() position: 'mouse' | 'top' | 'bottom' | 'left' | 'right' = 'bottom';
   @Input() editable: boolean = false;
   @Input() positionStrategy: ConnectedPosition;
   @Input() width: string = 'auto';
@@ -45,7 +45,10 @@ export class ToolTipRendererDirective implements OnInit, OnDestroy, OnChanges {
   @Output() leave: EventEmitter<any> = new EventEmitter<any>();
   @Output() isOpen: EventEmitter<boolean> = new EventEmitter<boolean>();
 
+  // destroy for tooltip component
   private destroyOpen$: Subject<any> = new Subject<any>();
+  // destroy for this directive
+  private destroy$: Subject<any> = new Subject<any>();
 
   private _overlayRef: OverlayRef;
   private tooltipRef: ComponentRef<CustomToolTipComponent>;
@@ -57,9 +60,14 @@ export class ToolTipRendererDirective implements OnInit, OnDestroy, OnChanges {
   ) { }
 
   ngOnInit() {
-    if (!this.contentTemplate && !this.text) {
+    // this.contentTemplate has a default template
+    // simpleText in CustomToolTipComponent
+    // this.text is necessary only when we use simpleText
+    // otherwise the template can have its own text
+    // per total, we dont't need this condition
+    /*if (!this.contentTemplate && !this.text) {
       this.showToolTip = false;
-    }
+    }*/
     if (!this.showToolTip) {
       return;
     }
@@ -68,20 +76,53 @@ export class ToolTipRendererDirective implements OnInit, OnDestroy, OnChanges {
       .flexibleConnectedTo(this._elementRef)
       .withPositions([this.positionStrategy ? this.positionStrategy : this.getPosition()]);
 
+    //const scrollStrategy = this._overlay.scrollStrategies.reposition({autoClose: true});
+    const scrollStrategy = this._overlay.scrollStrategies.close();
+
     this._overlayRef = this._overlay.create(
       {
         positionStrategy,
+        scrollStrategy,
         panelClass: 'custom-tooltip',
       }
     );
+
+    // in case of the click event
+    // this is (all time or most of the time?) followed by a hover event
+    // resulting in a double call to this.show
+    // and the second event triggers this.closeTooltip
+    // so, the tooltip disappears imediatly
+    // rxjs race "filters" the doubles to the quickest one
+    race([this.click$, this.hover$])
+      .pipe(takeUntil(this.destroy$))
+      .subscribe({
+        next: (evt: Event) => {
+          if (this.position === 'mouse') {
+            const origin = this._elementRef.nativeElement.getBoundingClientRect();
+            const e = evt as any;
+            this.mousex = e.clientX - origin.x;
+            this.mousey = e.clientY - origin.y;
+
+            const positionStrategy = this._overlayPositionBuilder
+              .flexibleConnectedTo(this._elementRef)
+              .withPositions([this.getPosition()]);
+            this._overlayRef.updatePositionStrategy(positionStrategy);
+          }
+          this.show();
+        },
+      });
   }
+
+  private mousex: number = 0;
+  private mousey: number = 0;
 
   ngOnChanges(changes: SimpleChanges) {
     if (changes?.['showToolTip']?.currentValue) {
       const positionStrategy = this._overlayPositionBuilder
         .flexibleConnectedTo(this._elementRef)
         .withPositions([this.positionStrategy ? this.positionStrategy : this.getPosition()]);
-
+      // because showToolTip has chabged we re-create the tooltip
+      // TODO: for other significant attributes, beside showToolTip
       this._overlayRef = this._overlay.create(
         {
           positionStrategy,
@@ -124,11 +165,31 @@ export class ToolTipRendererDirective implements OnInit, OnDestroy, OnChanges {
         overlayX: 'center',
         overlayY: 'top',
       };
+    } else if (this.position === 'mouse') {
+      // TODO: other origin cases: start | end
+      return {
+        originX: 'center',
+        originY: 'top',
+        overlayX: 'center',
+        overlayY: 'top',
+        offsetY: this.mousey + 10,
+        // added extra offset
+        // to not trigger an accidental mouseleave event
+      };
     }
   }
 
-  @HostListener('click')
-  @HostListener('pointerover')
+  click$: Subject<Event> = new Subject<Event>();
+  hover$: Subject<Event> = new Subject<Event>();
+
+  @HostListener('click', ['$event'])
+  gotClick(evt: Event) {
+    this.click$.next(evt);
+  }
+  @HostListener('pointerover', ['$event'])
+  gotHover(evt: Event) {
+    this.hover$.next(evt);
+  }
   show() {
     // attach the component if it has not already attached to the overlay
     timer(300)
@@ -166,6 +227,9 @@ export class ToolTipRendererDirective implements OnInit, OnDestroy, OnChanges {
     this.destroyOpen$.next();
     this.destroyOpen$.complete();
     this.closeToolTip();
+
+    this.destroy$.next();
+    this.destroy$.complete();
   }
 
   private closeToolTip() {

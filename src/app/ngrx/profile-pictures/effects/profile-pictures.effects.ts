@@ -2,7 +2,7 @@ import {Injectable} from '@angular/core';
 import {Actions, createEffect, ofType} from '@ngrx/effects';
 import {UserService} from '../../../services/user.service';
 import * as profilePicturesActions from '../actions';
-import {catchError, exhaustMap, last, map, mergeMap, switchMap, take, tap} from 'rxjs/operators';
+import {catchError, concatAll, exhaustMap, last, map, mergeMap, switchMap, take, tap, withLatestFrom} from 'rxjs/operators';
 import {of, zip} from 'rxjs';
 import {ProfilePicture} from '../../../models/ProfilePicture';
 import {User} from '../../../models/User';
@@ -121,19 +121,27 @@ export class ProfilePicturesEffects {
                             }, {});
                         }),
                         map((students) => {
-                            return action.userIds.map((id, index) => {
-                                if (students[id]) {
+                            const found = action.userIds.map((id: string) => {
+                                if (id in students) {
                                     return students[id];
                                 } else {
+                                    // map returns here undefined
                                     this.userService.profilePicturesErrors$.next({'User ID': id, error: 'No user with this id was found'});
                                 }
-                            });
+                            })
+                            // filter here undefined values
+                            .filter(Boolean);
+
+                            if (found.length) {
+                              return found;
+                            }
+                            throw new Error('Found no any acceptable record');
                         }),
                         switchMap((students) => {
                             const picturesData: { userId: string | number, pictureId: number | string }[] = students.filter(s => !!s).map((s: User) => {
-
-                                const pictureId = action.images_data[s.primary_email.toLowerCase()];
-                                return {userId: s.id, pictureId};
+                              const idproperty = s.extras?.clever_student_number ?? s.primary_email.toLowerCase();
+                              const pictureId = action.images_data[idproperty];
+                              return {userId: s.id, pictureId};
                             });
                             return [
                                 profilePicturesActions.changeProfilePictureLoader({percent: 90}),
@@ -144,6 +152,18 @@ export class ProfilePicturesEffects {
                     );
                 })
             );
+    });
+
+    mappingUserCollectionFailure$ = createEffect(() => {
+      return this.actions$.pipe(
+        ofType(profilePicturesActions.mappingUserCollectionFailure),
+        map((action: any) => {
+          this.toastService.openToast({title: 'Error', subtitle: action.errorMessage, type: 'error'});
+          this.userService.profilePicturesErrorCancel$.next({error: action.errorMessage});
+
+          return profilePicturesActions.showErrorToast();
+        })
+      );
     });
 
     uploadProfilePictures$ = createEffect(() => {
@@ -182,22 +202,31 @@ export class ProfilePicturesEffects {
     });
 
     uploadProfilePicturesSuccess$ = createEffect(() => {
-        return this.actions$
-            .pipe(
-                ofType(profilePicturesActions.uploadProfilePicturesSuccess),
-                exhaustMap((action: any) => {
-                    return this.pollingService.listen('admin.profile_pictures.attach_profile_pics_end')
-                        .pipe(
-                            switchMap(({data}) => {
-                                return [
-                                    profilePicturesActions.changeProfilePictureLoader({percent: 100}),
-                                    profilePicturesActions.uploadPicturesComplete({profiles: data.attached_pictures, users: action.users})
-                                ];
-                            }),
-                            catchError(error => of(profilePicturesActions.uploadPicturesError({errorMessage: error.message})))
-                        );
-                })
-            );
+      const actions$ = this.actions$.pipe(
+        ofType(profilePicturesActions.uploadProfilePicturesSuccess),
+      );
+
+      return actions$
+        .pipe(
+          // this will ignore any action$ value 
+          // until its polling observable completes
+          exhaustMap((action: any) => {
+            return this.pollingService.listen('admin.profile_pictures.attach_profile_pics_end')
+              .pipe(
+                // this complete the polling 
+                // and makes exhaustMap take a fresh action
+                take(1), 
+                switchMap((objdata: any) => {
+                  const data = objdata.data;
+                  return [
+                    profilePicturesActions.changeProfilePictureLoader({percent: 100}),
+                    profilePicturesActions.uploadPicturesComplete({profiles: data.attached_pictures, users: action.users})
+                  ];
+                }),
+                catchError(error => of(profilePicturesActions.uploadPicturesError({errorMessage: error.message})))
+              );
+        }),
+      );
     });
 
     uploadPicturesFailure$ = createEffect(() => {
