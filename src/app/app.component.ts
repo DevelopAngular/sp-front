@@ -177,9 +177,12 @@ export class AppComponent implements OnInit, AfterViewInit, OnDestroy {
             this.registerRefiner(user);
           }
 
-          intercomWrapper.style.display = user.isStudent()
-            ? 'none'
-            : 'block'
+          if (intercomWrapper) {
+            intercomWrapper.style.display = user.isStudent()
+              ? 'none'
+              : 'block'
+          }
+
 
           if (isAllowed && !this.isMobile) {
             this.registerIntercom(user);
