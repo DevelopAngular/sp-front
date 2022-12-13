@@ -76,9 +76,13 @@ export class ToolTipRendererDirective implements OnInit, OnDestroy, OnChanges {
       .flexibleConnectedTo(this._elementRef)
       .withPositions([this.positionStrategy ? this.positionStrategy : this.getPosition()]);
 
+    //const scrollStrategy = this._overlay.scrollStrategies.reposition({autoClose: true});
+    const scrollStrategy = this._overlay.scrollStrategies.close();
+
     this._overlayRef = this._overlay.create(
       {
         positionStrategy,
+        scrollStrategy,
         panelClass: 'custom-tooltip',
       }
     );
