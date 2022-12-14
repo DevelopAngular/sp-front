@@ -285,21 +285,6 @@ export class PassesComponent implements OnInit, AfterViewInit, OnDestroy {
             return of(null);
           }
 
-          // TODO: Pass creation will trigger the remaining passes update
-          // TODO: An update of the school wide pass limits will trigger the remaining pass limits
-          // TODO: Individual pass limit updates will trigger the remaining pass limits for this student
-
-          this.liveDataService.watchActiveHallPasses(new Subject<HallPassFilter>()).pipe(
-            distinctUntilChanged((a, b) => a.length === b.length),
-            concatMap(() => this.passLimitsService.getRemainingLimits({studentId: this.user.id}))
-          ).subscribe({
-            next: remaining => {
-              if (this.passLimitInfo?.showPasses) {
-                this.passLimitInfo.current = remaining.remainingPasses;
-              }
-            }
-          });
-
           this.receivedRequests = this.liveDataService.invitations$;
           this.sentRequests = this.liveDataService.requests$.pipe(
             map(req => req.filter((r) => !!r.request_time)));

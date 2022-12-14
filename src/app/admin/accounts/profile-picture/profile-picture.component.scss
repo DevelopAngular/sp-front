@@ -272,6 +272,7 @@
             justify-content: space-between;
             align-items: center;
             padding: 20px;
+            min-height: 96px;// 20paddingx2 + 56
 
             .title {
               color: $navy;

@@ -1,127 +1,125 @@
-
-
 <div class="inline-request-card-wrapper" [style.background-image]="gradient" [style.height]="'412px'" ondragstart="return false">
   <div class="resize-icon" [style.color]="request.color_profile.solid_color" appCrossPointerEventTarget (pointerClickEvent)="openBigPassCard()">
     <svg width="24px" height="24px" viewBox="0 0 24 24">
       <use [attr.xlink:href]="isOpenBigPass ? '#Resize Down' : '#Resize Up'"></use>
     </svg>
   </div>
-    <div class="pass-card-header">
-        <div class="header-content">
-            <div class="header-info">
-                <img  class="pass-card-header-icon" [src]="request.icon | resolveAsset">
-                <div class="pass-card-header-text">
-                    {{ request.destination.title }}
-                    <div notranslate class="card-subtitle" *ngIf="fromPast || forFuture">
-                        {{ formatDateTime() }}
-                    </div>
-                </div>
-            </div>
-            <app-icon-button *ngIf="!activeTeacherPin" [size]="20" [onDarkShade]="true" [srcString]="'./assets/Delete (Transparent).svg'" (clickEvent)="cancelRequest($event)"></app-icon-button>
-            <app-icon-button *ngIf="activeTeacherPin" [srcString]="'./assets/Chevron Left (White).svg'" [onDarkShade]="true" [size]="20" (clickEvent)="activeTeacherPin = false"></app-icon-button>
-
-          <!--<img class="pass-card-header-close" (click)="cancelRequest($event)" [src]="'./assets/Delete (Transparent).svg' | resolveAsset">-->
+  <div class="pass-card-header">
+    <div class="header-content">
+      <div class="header-info">
+        <img  class="pass-card-header-icon" [src]="request.icon | resolveAsset">
+        <div class="pass-card-header-text">
+          {{ request.destination.title }}
+          <div notranslate class="card-subtitle" *ngIf="fromPast || forFuture">
+            {{ formatDateTime() }}
+          </div>
         </div>
-        <mat-divider></mat-divider>
+      </div>
+      <app-icon-button *ngIf="!activeTeacherPin" [size]="20" [onDarkShade]="true" [srcString]="'./assets/Delete (Transparent).svg'" (clickEvent)="cancelRequest($event)"></app-icon-button>
+      <app-icon-button *ngIf="activeTeacherPin" [srcString]="'./assets/Chevron Left (White).svg'" [onDarkShade]="true" [size]="20" (clickEvent)="activeTeacherPin = false"></app-icon-button>
+
+      <!--<img class="pass-card-header-close" (click)="cancelRequest($event)" [src]="'./assets/Delete (Transparent).svg' | resolveAsset">-->
     </div>
+    <mat-divider></mat-divider>
+  </div>
 
-    <div class="inline-request-content" *ngIf="!activeTeacherPin">
-        <div class="center-block">
+  <div class="inline-request-content" *ngIf="!activeTeacherPin">
+    <div class="center-block">
 
-            <app-pager [arrowPosition]="'-93px'">
-                <div class="page-1" [attr.data-motion-translate]="(frameMotion$ | async).direction">
-                    <app-traveltype-picker *ngIf="forInput" (onSelect)="selectedTravelType=$event" [choices]="request?.destination.travel_types" [altColor]="request?.color_profile.solid_color"></app-traveltype-picker>
+      <app-pager [arrowPosition]="'-93px'">
+        <div class="page-1" [attr.data-motion-translate]="(frameMotion$ | async).direction">
+          <app-traveltype-picker *ngIf="forInput" (onSelect)="selectedTravelType=$event" [choices]="request?.destination.travel_types" [altColor]="request?.color_profile.solid_color"></app-traveltype-picker>
 
-                    <app-duration-picker *ngIf="forInput; else noInput;" (onChange)="selectedDuration=$event"  [maxDuration]="(request?.destination.max_allowed_time?request?.destination.max_allowed_time:15)"></app-duration-picker>
-                    <ng-template #noInput>
-                        <app-travel-view [height]="'174px'" [pass]="request" [shrink]="true"></app-travel-view>
-                    </ng-template>
-                </div>
-                <div class="page-2" [attr.data-motion-translate]="(frameMotion$ | async).direction">
-                    <div class="page-2-wrapper">
-                        <div [ngClass]="isIOSTablet ? 'ios-margin-left' : ''" class="message" [style.height]="(forInput?'70px':'155px')" [style.margin-bottom]="(forInput?'4px':'0px')">
-                            <span [style.font-weight]="'bold'">Your message:</span><br>
-                          <span [attr.notranslate]="request?.attachment_message!==''?true:null" style="user-select: text">{{ (request?.attachment_message===''?'No message':request?.attachment_message) }}</span>
-                            <div *ngIf="request?.status==='declined'">
-                                <br>
-                                <span [style.font-weight]="'bold'" >Message from <span [attr.ignore]="!!request?.teachers[0]?.last_name?true:null">{{request?.teachers[0]?.last_name || "Teacher"}}:</span></span><br>
-                              <span [attr.notranslate]="request?.declined_message!==''?true:null" style="user-select: text">{{ (request?.declined_message===''?'No message':request?.declined_message) }}</span> <!-- deny_message -->
-                            </div>
-                        </div>
-                        <app-card-button *ngIf="forInput" class="edit-button" [width]="'130px'" [height]="'px'" [gradientColor]="request?.color_profile.gradient_color">
-                            <div class="button-content">Edit Message</div>
-                        </app-card-button>
-                    </div>
-                </div>
-
-              <div class="page-5" [attr.data-motion-translate]="(frameMotion$ | async).direction">
-                <app-traveltype-picker *ngIf="forInput" (onSelect)="selectedTravelType=$event" [choices]="request?.destination.travel_types" [altColor]="request?.color_profile.solid_color"></app-traveltype-picker>
-
-                <app-duration-picker *ngIf="forInput; else noInput;" (onChange)="selectedDuration=$event"  [maxDuration]="(request?.destination.max_allowed_time?request?.destination.max_allowed_time:15)"></app-duration-picker>
-                <ng-template #noInput>
-                  <app-travel-view [height]="'174px'" [pass]="request" [shrink]="true"></app-travel-view>
-                </ng-template>
-              </div>
-              <div class="page-6" [attr.data-motion-translate]="(frameMotion$ | async).direction">
-                <div class="page-2-wrapper">
-                  <div [ngClass]="isIOSTablet ? 'ios-margin-left' : ''" class="message" [style.height]="(forInput?'70px':'155px')" [style.margin-bottom]="(forInput?'4px':'0px')">
-                    <span [style.font-weight]="'bold'">Your message:</span><br>
-                    <span style="user-select: text">{{ (request?.attachment_message===''?'No message':request?.attachment_message) }}</span>
-                    <div *ngIf="request?.status==='declined'">
-                      <br>
-                      <span [style.font-weight]="'bold'" ignore>Message from {{request?.teachers[0]?.last_name || "Teacher"}}:</span><br>
-                      <span style="user-select: text">{{ (request?.declined_message===''?'No message':request?.declined_message) }}</span> <!-- deny_message -->
-                    </div>
-                  </div>
-                  <app-card-button *ngIf="forInput" class="edit-button" [width]="'130px'" [height]="'px'" [gradientColor]="request?.color_profile.gradient_color">
-                    <div class="button-content">Edit Message</div>
-                  </app-card-button>
-                </div>
-              </div>
-            </app-pager>
-
+          <app-duration-picker *ngIf="forInput; else noInput;" (onChange)="selectedDuration=$event"  [maxDuration]="(request?.destination.max_allowed_time?request?.destination.max_allowed_time:15)"></app-duration-picker>
+          <ng-template #noInput>
+            <app-travel-view [height]="'174px'" [pass]="request" [shrink]="true"></app-travel-view>
+          </ng-template>
         </div>
-
-        <div class="bottom-block">
-          <div class="pin-button" *ngIf="request?.status !=='declined'" (mouseenter)="onHover(desc, title);"
-               (mouseleave)="onLeave(desc)">
-            <app-card-button
-              [width]="'297px'"
-              [height]="'81px'"
-              [gradientColor]="request.color_profile.gradient_color"
-              (onClick)="goToPin()"
-            >
-              <div class="resend-button-content">
-                <div class="resend-button-content-title" style="display: flex; align-items: center; padding-bottom: 5px">
-                  <img style="margin-right: 10px" width="18" height="18" [src]="'./assets/Lock dots (White).svg' | resolveAsset" alt="Lock">
-                  Enter Teacher Pin
-                </div>
-                <div class="description-container" #title>
-                  <div class="shadow left-radius" [ngStyle]="{'box-shadow': '0px 0px 17px 10px ' + solidColorRgba2}" [style.background]="request.gradient_color.split(',')[1]" [style.left]="0" *ngIf="leftTextShadow"></div>
-                  <div class="description-title" #desc>
-                    Pass Request sent to:
-                    <span style="width: 5px"></span>
-                    <span notranslate style="font-weight: normal; font-size: 17px" *ngFor="let teacher of filteredTeachers; let i = index">
-                    {{ teacher.display_name + (i === filteredTeachers.length - 1 ? '' : ', ') }}
-                  </span>
-                  </div>
-                  <div class="shadow right-radius" [ngStyle]="{'box-shadow': '0px 0px 30px 20px ' + solidColorRgba}" [style.background]="request.gradient_color.split(',')[0]" *ngIf="!removeShadow" [style.right]="0"></div>
-                </div>
+        <div class="page-2" [attr.data-motion-translate]="(frameMotion$ | async).direction">
+          <div class="page-2-wrapper">
+            <div [ngClass]="isIOSTablet ? 'ios-margin-left' : ''" class="message" [style.height]="(forInput?'70px':'155px')" [style.margin-bottom]="(forInput?'4px':'0px')">
+              <span [style.font-weight]="'bold'">Your message:</span><br>
+              <span [attr.notranslate]="request?.attachment_message!==''?true:null" style="user-select: text">{{ (request?.attachment_message===''?'No message':request?.attachment_message) }}</span>
+              <div *ngIf="request?.status==='declined'">
+                <br>
+                <span [style.font-weight]="'bold'" >Message from <span [attr.ignore]="!!request?.teachers[0]?.last_name?true:null">{{request?.teachers[0]?.last_name || "Teacher"}}:</span></span><br>
+                <span [attr.notranslate]="request?.declined_message!==''?true:null" style="user-select: text">{{ (request?.declined_message===''?'No message':request?.declined_message) }}</span> <!-- deny_message -->
               </div>
+            </div>
+            <app-card-button *ngIf="forInput" class="edit-button" [width]="'130px'" [height]="'px'" [gradientColor]="request?.color_profile.gradient_color">
+              <div class="button-content">Edit Message</div>
             </app-card-button>
           </div>
-
-            <div *ngIf="request?.status==='declined'">
-                <app-card-button (click)="resendRequest()" [width]="'269px'" [height]="'81px'" [margin_top]="'81px'" [gradientColor]="request?.color_profile.gradient_color">
-                    <div class="resend-button-content">
-                        <div class="resend-button-content-title">{{ (forFuture?'Change Date & Time':'Resend Request') }}</div>
-                        <div class="resend-button-content-subtitle">Pass Request Denied</div>
-                    </div>
-                </app-card-button>
-            </div>
-
         </div>
+
+        <div class="page-5" [attr.data-motion-translate]="(frameMotion$ | async).direction">
+          <app-traveltype-picker *ngIf="forInput" (onSelect)="selectedTravelType=$event" [choices]="request?.destination.travel_types" [altColor]="request?.color_profile.solid_color"></app-traveltype-picker>
+
+          <app-duration-picker *ngIf="forInput; else noInput;" (onChange)="selectedDuration=$event"  [maxDuration]="(request?.destination.max_allowed_time?request?.destination.max_allowed_time:15)"></app-duration-picker>
+          <ng-template #noInput>
+            <app-travel-view [height]="'174px'" [pass]="request" [shrink]="true"></app-travel-view>
+          </ng-template>
+        </div>
+        <div class="page-6" [attr.data-motion-translate]="(frameMotion$ | async).direction">
+          <div class="page-2-wrapper">
+            <div [ngClass]="isIOSTablet ? 'ios-margin-left' : ''" class="message" [style.height]="(forInput?'70px':'155px')" [style.margin-bottom]="(forInput?'4px':'0px')">
+              <span [style.font-weight]="'bold'">Your message:</span><br>
+              <span style="user-select: text">{{ (request?.attachment_message===''?'No message':request?.attachment_message) }}</span>
+              <div *ngIf="request?.status==='declined'">
+                <br>
+                <span [style.font-weight]="'bold'" ignore>Message from {{request?.teachers[0]?.last_name || "Teacher"}}:</span><br>
+                <span style="user-select: text">{{ (request?.declined_message===''?'No message':request?.declined_message) }}</span> <!-- deny_message -->
+              </div>
+            </div>
+            <app-card-button *ngIf="forInput" class="edit-button" [width]="'130px'" [height]="'px'" [gradientColor]="request?.color_profile.gradient_color">
+              <div class="button-content">Edit Message</div>
+            </app-card-button>
+          </div>
+        </div>
+      </app-pager>
+
     </div>
+
+    <div class="bottom-block">
+      <div class="pin-button" *ngIf="request?.status !=='declined'" (mouseenter)="onHover(desc, title);"
+           (mouseleave)="onLeave(desc)">
+        <app-card-button
+          [width]="'297px'"
+          [height]="'81px'"
+          [gradientColor]="request.color_profile.gradient_color"
+          (onClick)="goToPin()"
+        >
+          <div class="resend-button-content">
+            <div class="resend-button-content-title" style="display: flex; align-items: center; padding-bottom: 5px">
+              <img style="margin-right: 10px" width="18" height="18" [src]="'./assets/Lock dots (White).svg' | resolveAsset" alt="Lock">
+              Enter Teacher Pin
+            </div>
+            <div class="description-container" #title>
+              <div class="shadow left-radius" [ngStyle]="{'box-shadow': '0px 0px 17px 10px ' + solidColorRgba2}" [style.background]="request.gradient_color.split(',')[1]" [style.left]="0" *ngIf="leftTextShadow"></div>
+              <div class="description-title" #desc>
+                Pass Request sent to:
+                <span style="width: 5px"></span>
+                <span notranslate style="font-weight: normal; font-size: 17px" *ngFor="let teacher of filteredTeachers; let i = index">
+                  {{ teacher.display_name + (i === filteredTeachers.length - 1 ? '' : ', ') }}
+                </span>
+              </div>
+              <div class="shadow right-radius" [ngStyle]="{'box-shadow': '0px 0px 30px 20px ' + solidColorRgba}" [style.background]="request.gradient_color.split(',')[0]" *ngIf="!removeShadow" [style.right]="0"></div>
+            </div>
+          </div>
+        </app-card-button>
+      </div>
+
+      <div *ngIf="request?.status==='declined'">
+        <app-card-button (click)="resendRequest()" [width]="'269px'" [height]="'81px'" [margin_top]="'81px'" [gradientColor]="request?.color_profile.gradient_color">
+          <div class="resend-button-content">
+            <div class="resend-button-content-title">{{ (forFuture?'Change Date & Time':'Resend Request') }}</div>
+            <div class="resend-button-content-subtitle">Pass Request Denied</div>
+          </div>
+        </app-card-button>
+      </div>
+
+    </div>
+  </div>
 
   <div class="inline-request-content" *ngIf="activeTeacherPin">
     <app-teacher-pin-student [request]="request" [requestId]="request.id" (pinResult)="activeTeacherPin = false"></app-teacher-pin-student>
@@ -150,4 +148,3 @@
     </symbol>
   </defs>
 </svg>
-

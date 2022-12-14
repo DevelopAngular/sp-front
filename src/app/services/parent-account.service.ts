@@ -29,19 +29,30 @@ export interface StudentResponse {
   username: string;
 }
 
-interface ParentResponse {
+export interface ParentResponse {
   id: number;
-  roles: string[];
   first_name: string;
   last_name: string;
-  username: string;
   display_name: string;
-  email: string;
-  is_active: boolean;
   created: string; // return as timestamp Date string
   first_login: string; // return as timestamp Date string
   last_login: string; // return as timestamp Date string
   last_updated: string; // return as timestamp Date string
+  active: boolean;
+  badge: string;
+  custom_id: string;
+  demo_account: boolean;
+  extras: Record<string, any>;
+  passes_restricted: string;
+  primary_email: string;
+  profile_picture: string;
+  roles: string[];
+  show_expired_passes: boolean;
+  show_profile_pictures: string;
+  specific_approvers: any[];
+  status: string;
+  sync_types: any[];
+  username: string;
   students: StudentResponse[];
 }
 
@@ -98,7 +109,7 @@ export class ParentAccountService {
   }
 
   getConnectedParents() {
-    return this.http.get<{results: ParentResponse[]}>('v1/parent/all');
+    return this.http.get<{results}>('v1/parent/all');
   }
 
   getUnconnectedStudents() {

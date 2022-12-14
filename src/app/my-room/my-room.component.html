@@ -42,6 +42,7 @@
         </div>
     </div>
 
+
     <div *ngIf="UI" class="my-room-wrapper" #scrollableArea [style.height]="(schoolsLength$ | async) > 1 ? ((isUpdateBar$ | async) ? 'calc(100vh - 153px)' : 'calc(100vh - 114px)') : ((isUpdateBar$ | async) ? 'calc(100vh - 103px)' : 'calc(100vh - 64px)')">
         <div class="my-room-left" *ngIf="!(kioskMode.currentRoom$ | async)">
             <div class="my-room-header" [@headerTrigger]="headerState" *ngIf="screenService.isDesktopWidth">
@@ -67,7 +68,20 @@
                 </div>
 
                 <div class="kioskButton">
-                    <app-gradient-button style="margin-left: 10px" [disabled]="!showKioskModeButton" [gradient]="'#1F195E, #1F195E'" [leftIcon]="'./assets/Kiosk Mode (White).svg'" [textColor]="'#FFFFFF'" (buttonClick)="setRoomToKioskMode()">Kiosk Mode</app-gradient-button>
+                  <app-gradient-button 
+                    style="margin-left: 10px"
+                    [disabled]="!showKioskModeButton || setRoomToKioskModeProcesing"
+                    [gradient]="'#1F195E, #1F195E'"
+                    [leftIcon]="setRoomToKioskModeProcesing ? null : './assets/Kiosk Mode (White).svg'" [textColor]="'#FFFFFF'"
+                    (buttonClick)="setRoomToKioskMode()"
+                  >
+                    <div *ngIf="setRoomToKioskModeProcesing" class="loading-theme_white">
+                      <mat-spinner [diameter]="20"></mat-spinner>
+                    </div>
+                    <ng-container *ngIf="!setRoomToKioskModeProcesing">
+                      Kiosk Mode
+                    </ng-container>
+                  </app-gradient-button>
                     <!-- <app-gradient-button
             style="margin-left: 10px"
             [disabled]="!showKioskModeButton"

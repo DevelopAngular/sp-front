@@ -15,7 +15,7 @@
             <div class="travel-settings">
                 <div class="travel-picker">
                     <div class="toggle-label">
-                        <span [ngStyle]="{'color': !data?.travelType.length ? (showErrors ? '#E32C66' : '#7F879D') : ' #1F195E'}">Travel Type</span>
+                        <span [ngStyle]="{'color': !data?.travelType?.length ? (showErrors ? '#E32C66' : '#7F879D') : ' #1F195E'}">Travel Type</span>
                         <div class="tooltip-container">
                             <img [customToolTip]="tooltipText.travel" class="support-icon" [src]="'./assets/Support (Gray).svg' | resolveAsset">
                             <div class="arrow-down-container">

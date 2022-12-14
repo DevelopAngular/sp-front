@@ -1,4 +1,4 @@
-import {ChangeDetectionStrategy, Component, EventEmitter, Input, OnInit, Output} from '@angular/core';
+import {ChangeDetectionStrategy, Component, EventEmitter, Input, OnInit, Output, TemplateRef, ViewChild} from '@angular/core';
 import {tooltipAnimation} from '../../../animations';
 
 @Component({
@@ -10,10 +10,12 @@ import {tooltipAnimation} from '../../../animations';
 })
 export class CustomToolTipComponent implements OnInit {
 
-  @Input() text;
+  @Input() text: string;
   @Input() allowVarTag: boolean;
 
-  @Input() contentTemplate;
+  @Input() contentTemplate: TemplateRef<any>;
+  @ViewChild('simpleText', {static: true}) defaultTpl!: TemplateRef<HTMLElement>;
+
   @Input() width: string;
   @Input() nonDisappearing: boolean;
 
@@ -23,6 +25,8 @@ export class CustomToolTipComponent implements OnInit {
   constructor() {}
 
   ngOnInit() {
-    // console.log('open');
+    if (!this.contentTemplate) {
+      this.contentTemplate = this.defaultTpl;
+    }
   }
 }

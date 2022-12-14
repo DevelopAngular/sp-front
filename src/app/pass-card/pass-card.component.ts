@@ -51,11 +51,8 @@ export class PassCardComponent implements OnInit, OnDestroy {
   @Input() forKioskMode = false;
   @Input() formState: Navigation;
   @Input() students: User[] = [];
-  @Input() isOpenBigPass = false;
-  @Input() fullScreenButton = false;
 
   @Output() cardEvent: EventEmitter<any> = new EventEmitter();
-  @Output() scaleCard: EventEmitter<boolean> = new EventEmitter<boolean>();
 
   @ViewChild('cardWrapper') cardWrapper: ElementRef;
   @ViewChild('confirmDialogBody') confirmDialog: TemplateRef<HTMLElement>;
@@ -732,9 +729,5 @@ export class PassCardComponent implements OnInit, OnDestroy {
 
   receiveOption(action) {
     this.chooseAction(action);
-  }
-
-  openBigPassCard() {
-    this.scaleCard.emit(true);
   }
 }

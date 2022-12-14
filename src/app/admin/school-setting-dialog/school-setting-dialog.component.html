@@ -33,14 +33,15 @@
         </div>
         <div class="control-input">
           <app-input
-            [width]="'58px'"
+            #passBufferTimeInput
+            [width]="'75px'"
             [isErrorIcon]="false"
             [textAlign]="'right'"
             [formGroup]="schoolForm"
             [input_value]="schoolForm.get('pass_buffer_time').value"
             [controlName]="schoolForm.get('pass_buffer_time')"
-            (focusEvent)="hideMin = true"
-            (blurEvent)="hideMin = false"
+            (focusEvent)="hideMin = true; passBufferTimeInput.textAlign = 'left'"
+            (blurEvent)="hideMin = false; passBufferTimeInput.textAlign = schoolForm.get('pass_buffer_time').valid ? 'right' : 'left'"
           ></app-input>
         </div>
       </div>
@@ -65,7 +66,7 @@
       <div class="display-room-control" style="margin-top: 15px">
         <div class="controls-description">
           <div class="ds-cell-text-2">Allow students to use phones</div>
-          <div class="ds-cell-description-text" style="width: 260px; margin-top: 6px">Allow students to use SmartPass on their mobile devices. 
+          <div class="ds-cell-description-text" style="width: 260px; margin-top: 6px">Allow students to use SmartPass on their mobile devices.
           <a href="https://www.smartpass.app/disablephones" target="_blank">Learn more</a>
           </div>
         </div>

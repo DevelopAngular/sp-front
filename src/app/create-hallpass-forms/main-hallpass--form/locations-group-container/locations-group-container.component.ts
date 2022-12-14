@@ -21,6 +21,7 @@ import {Location} from '../../../models/Location';
 import {PassLimitInfo} from '../../../models/HallPassLimits';
 import {LocationVisibilityService} from '../location-visibility.service';
 import {PassLimitDialogComponent} from './pass-limit-dialog/pass-limit-dialog.component';
+import { KioskModeService } from '../../../services/kiosk-mode.service'
 
 // when WS notify a change we have to skip functions that change
 // FORM_STATE state and step
@@ -92,7 +93,8 @@ export class LocationsGroupContainerComponent implements OnInit, OnDestroy {
     private elRef: ElementRef,
     private _injector: Injector,
     private cdr: ChangeDetectorRef,
-    private dialog: MatDialog
+    private dialog: MatDialog,
+    private kioskService: KioskModeService
   ) {
   }
 
@@ -379,7 +381,7 @@ export class LocationsGroupContainerComponent implements OnInit, OnDestroy {
     });
   }
 
-  showDestinationLimitReachedFromCategory(passLimit: number, studentCount: number, currentCount: number) {
+  showDestinationLimitReachedFromCategory(passLimit: number, studentCount: number, currentCount: number, isStudent: boolean) {
     return new Promise<boolean>(resolve => {
       const dialogRef = this.dialog.open(PassLimitDialogComponent, {
         panelClass: 'overlay-dialog',
@@ -391,6 +393,7 @@ export class LocationsGroupContainerComponent implements OnInit, OnDestroy {
           passLimit,
           studentCount,
           currentCount,
+          isStudent
         }
       });
       dialogRef.afterClosed().subscribe(result => {
@@ -407,13 +410,14 @@ export class LocationsGroupContainerComponent implements OnInit, OnDestroy {
   @skipWhenWS()
   async fromCategory(location: Location & { numberOfStudentsInRoom?: number }) {
     const { numberOfStudentsInRoom } = location;
-    if (numberOfStudentsInRoom !== undefined) {
+    if (!this.kioskService.isKisokMode() && numberOfStudentsInRoom !== undefined) {
       const totalStudents = numberOfStudentsInRoom + this.FORM_STATE.data.selectedStudents.length;
-      if (location.max_passes_to_active && (location.max_passes_to < totalStudents)) {
+      if (location.max_passes_to_active && (totalStudents >= location.max_passes_to)) {
         const overrideRoomLimit = await this.showDestinationLimitReachedFromCategory(
           location.max_passes_to,
-          this.FORM_STATE.data.selectedStudents.length,
-          numberOfStudentsInRoom);
+          totalStudents,
+          numberOfStudentsInRoom,
+          this.user.isStudent());
 
         if (!overrideRoomLimit) {
           return;
