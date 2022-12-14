@@ -8,7 +8,6 @@ import {Invitation} from '../../../models/Invitation';
 import {DataService} from '../../../services/data-service';
 import {Pinnable} from '../../../models/Pinnable';
 import { MAT_DIALOG_DATA, MatDialogRef } from '@angular/material/dialog';
-import {StorageService} from '../../../services/storage.service';
 import {PassLimitInfo} from '../../../models/HallPassLimits';
 import { Location } from '../../../models/Location';
 import { PassLike } from '../../../models';
@@ -40,8 +39,6 @@ export class FormFactorContainerComponent implements OnInit {
     this.fullScreenPass$.asObservable().pipe(
       takeUntil(this.dialogRef.afterClosed())
     ).subscribe(scalePassUp => {
-      this.isOpenBigCard = scalePassUp;
-      this.storage.setItem('pass_full_screen', scalePassUp);
       scalePassUp
         ? this.scaleCardUp(nativeElement)
         : this.scaleCardDown(nativeElement);
@@ -51,8 +48,7 @@ export class FormFactorContainerComponent implements OnInit {
   isMobile = DeviceDetection.isMobile();
   public states = FormFactor;
   public template: Request | HallPass | Invitation | Pinnable;
-  public isOpenBigCard: boolean;
-  fullScreenPass$: BehaviorSubject<boolean>;
+  fullScreenPass$: BehaviorSubject<boolean> = new BehaviorSubject(true);
 
   constructor(
     private dataService: DataService,
@@ -64,14 +60,10 @@ export class FormFactorContainerComponent implements OnInit {
       forInput: boolean,
       passLayout: PassLayout
     },
-    @Optional() public dialogRef: MatDialogRef<FormFactorContainerComponent>,
-    private storage: StorageService
-  ) {
-  }
+    @Optional() public dialogRef: MatDialogRef<FormFactorContainerComponent>
+  ) {}
 
   ngOnInit() {
-    this.isOpenBigCard = JSON.parse(this.storage.getItem('pass_full_screen')) && !this.forStaff;
-    this.fullScreenPass$ = new BehaviorSubject(this.isOpenBigCard);
     const now = this.timeService.nowDate();
 
     this.dataService.currentUser
@@ -167,7 +159,6 @@ export class FormFactorContainerComponent implements OnInit {
         }
       });
 
-    console.log(this.template);
   }
 
 
@@ -180,10 +171,6 @@ export class FormFactorContainerComponent implements OnInit {
     this.FORM_STATE.step = 3;
     this.FORM_STATE.state = 1;
     this.nextStepEvent.emit(this.FORM_STATE);
-  }
-
-  openBigPass() {
-    this.fullScreenPass$.next(!this.fullScreenPass$.value);
   }
 
   private scaleCardUp(wrapper: HTMLDivElement) {

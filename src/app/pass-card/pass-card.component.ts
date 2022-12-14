@@ -108,7 +108,6 @@ export class PassCardComponent implements OnInit, OnDestroy {
   cancelEditClick: boolean;
   frameMotion$: BehaviorSubject<any>;
   currentSchool: School;
-  passLimitDialog: MatDialogRef<HTMLElement>;
   recurringConfig: RecurringConfig;
 
   isEnableProfilePictures$: Observable<boolean>;

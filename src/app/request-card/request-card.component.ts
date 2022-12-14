@@ -46,8 +46,6 @@ export class RequestCardComponent implements OnInit, OnDestroy {
   @Input() forInput = false;
   @Input() forStaff = false;
   @Input() formState: Navigation;
-  @Input() isOpenBigPass: boolean;
-  @Input() fullScreenButton = false;
 
   @Output() cardEvent: EventEmitter<any> = new EventEmitter<any>();
   @Output() scaleCard: EventEmitter<boolean> = new EventEmitter<boolean>();
@@ -696,10 +694,6 @@ export class RequestCardComponent implements OnInit, OnDestroy {
 
   goToPin() {
     this.activeTeacherPin = true;
-  }
-
-  openBigPassCard() {
-    this.scaleCard.emit(true);
   }
 
   handlePinResult(teacherPinResponse: any) {
