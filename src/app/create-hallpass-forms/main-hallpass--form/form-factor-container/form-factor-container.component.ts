@@ -156,6 +156,32 @@ export class FormFactorContainerComponent implements OnInit {
               this.FORM_STATE.data.message
             );
             break;
+
+          case this.states.WaitInLine:
+            this.template = new HallPass(
+              'template',
+              user,
+              null,
+              null,
+              null,
+              null,
+              this.FORM_STATE.data.date ? this.FORM_STATE.data.date.date : now,
+              null,
+              null,
+              this.FORM_STATE.data.direction.from,
+              this.FORM_STATE.data.direction.to,
+              '',
+              '',
+              this.FORM_STATE.data.direction.pinnable.icon,
+              this.FORM_STATE.data.direction.pinnable.color_profile,
+              null,
+              '',
+              '',
+              undefined,
+              this.FORM_STATE.data.date ? this.FORM_STATE.data.date.declinable : false,
+              this.forStaff ? this.FORM_STATE.data.message : null
+            );
+            break;
         }
       });
 

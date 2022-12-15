@@ -1,27 +1,42 @@
-import {ChangeDetectorRef, Component, EventEmitter, forwardRef, Inject, Injector, Input, OnInit, Output, ViewChild, OnDestroy, HostListener, ElementRef} from '@angular/core';
-import {BehaviorSubject, Observable, Subject} from 'rxjs';
-import {User} from '../../../models/User';
-import {DataService} from '../../../services/data-service';
-import {Pinnable} from '../../../models/Pinnable';
-import {Util} from '../../../../Util';
-import {FormFactor, MainHallPassFormComponent, Navigation} from '../main-hall-pass-form.component';
-import {CreateFormService} from '../../create-form.service';
-import {NextStep} from '../../../animations';
-import {LocationsService} from '../../../services/locations.service';
-import {MAT_DIALOG_DATA, MatDialog} from '@angular/material/dialog';
-import {FromWhereComponent} from './from-where/from-where.component';
-import {ToCategoryComponent} from './to-category/to-category.component';
-import {RestrictedTargetComponent} from './restricted-target/restricted-target.component';
-import {RestrictedMessageComponent} from './restricted-message/restricted-message.component';
-import {ToWhereComponent} from './to-where/to-where.component';
-import {ScreenService} from '../../../services/screen.service';
-import {DeviceDetection} from '../../../device-detection.helper';
-import {filter, map, withLatestFrom} from 'rxjs/operators';
-import {Location} from '../../../models/Location';
-import {PassLimitInfo} from '../../../models/HallPassLimits';
-import {LocationVisibilityService} from '../location-visibility.service';
-import {PassLimitDialogComponent} from './pass-limit-dialog/pass-limit-dialog.component';
+import {
+  ChangeDetectorRef,
+  Component,
+  ElementRef,
+  EventEmitter,
+  forwardRef,
+  HostListener,
+  Inject,
+  Injector,
+  Input,
+  OnDestroy,
+  OnInit,
+  Output,
+  ViewChild
+} from '@angular/core'
+import { BehaviorSubject, Observable, Subject } from 'rxjs'
+import { User } from '../../../models/User'
+import { DataService } from '../../../services/data-service'
+import { Pinnable } from '../../../models/Pinnable'
+import { Util } from '../../../../Util'
+import { FormFactor, MainHallPassFormComponent, Navigation } from '../main-hall-pass-form.component'
+import { CreateFormService } from '../../create-form.service'
+import { NextStep } from '../../../animations'
+import { LocationsService } from '../../../services/locations.service'
+import { MAT_DIALOG_DATA, MatDialog } from '@angular/material/dialog'
+import { FromWhereComponent } from './from-where/from-where.component'
+import { ToCategoryComponent } from './to-category/to-category.component'
+import { RestrictedTargetComponent } from './restricted-target/restricted-target.component'
+import { RestrictedMessageComponent } from './restricted-message/restricted-message.component'
+import { ToWhereComponent } from './to-where/to-where.component'
+import { ScreenService } from '../../../services/screen.service'
+import { DeviceDetection } from '../../../device-detection.helper'
+import { filter, map, withLatestFrom } from 'rxjs/operators'
+import { Location } from '../../../models/Location'
+import { LocationVisibilityService } from '../location-visibility.service'
+import { PassLimitDialogComponent } from './pass-limit-dialog/pass-limit-dialog.component'
 import { KioskModeService } from '../../../services/kiosk-mode.service'
+import { HttpService } from '../../../services/http-service'
+import { School } from '../../../models/School'
 
 // when WS notify a change we have to skip functions that change
 // FORM_STATE state and step
@@ -64,6 +79,7 @@ export class LocationsGroupContainerComponent implements OnInit, OnDestroy {
   pinnable: Pinnable;
   data: any = {};
   frameMotion$: BehaviorSubject<any>;
+  waitInLineEnabled: boolean;
 
   @HostListener('document:click', ['$event'])
   clickHandler(event: PointerEvent) {
@@ -94,7 +110,8 @@ export class LocationsGroupContainerComponent implements OnInit, OnDestroy {
     private _injector: Injector,
     private cdr: ChangeDetectorRef,
     private dialog: MatDialog,
-    private kioskService: KioskModeService
+    private kioskService: KioskModeService,
+    private httpService: HttpService
   ) {
   }
 
@@ -185,6 +202,11 @@ export class LocationsGroupContainerComponent implements OnInit, OnDestroy {
         this.isStaff = user.isTeacher() || user.isAdmin() || user.isAssistant();
         this.user = user;
       },
+    });
+
+    // Move this to a feature flag service or NgRx (I don't like NgRx though)
+    this.httpService.currentSchool$.subscribe({
+      next: school => this.waitInLineEnabled = school?.feature_flag_wait_in_line
     });
 
     this.pinnables = this.formService.getPinnable(!!this.dialogData['kioskModeRoom']).pipe(
@@ -413,6 +435,12 @@ export class LocationsGroupContainerComponent implements OnInit, OnDestroy {
     if (!this.kioskService.isKisokMode() && numberOfStudentsInRoom !== undefined) {
       const totalStudents = numberOfStudentsInRoom + this.FORM_STATE.data.selectedStudents.length;
       if (location.max_passes_to_active && (totalStudents >= location.max_passes_to)) {
+        // if location has a limit and limit is reached
+        // trigger wait-in-line if enabled for school
+        // if (!this.waitInLineEnabled) {
+        //
+        // }
+
         const overrideRoomLimit = await this.showDestinationLimitReachedFromCategory(
           location.max_passes_to,
           totalStudents,
@@ -463,7 +491,7 @@ export class LocationsGroupContainerComponent implements OnInit, OnDestroy {
       this.isStaff =  false;
     }
     if (!this.isStaff && !restricted) {
-      this.FORM_STATE.formMode.formFactor = FormFactor.HallPass;
+      this.FORM_STATE.formMode.formFactor = restricted ? FormFactor.HallPass : FormFactor.WaitInLine
     }
     if (!this.isStaff && (restricted || isMessage)) {
       this.FORM_STATE.formMode.formFactor = FormFactor.Request;
