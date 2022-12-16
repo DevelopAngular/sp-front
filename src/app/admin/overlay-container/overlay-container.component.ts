@@ -118,7 +118,7 @@ export class OverlayContainerComponent implements OnInit, OnDestroy {
       public overlayService: OverlayDataService,
       private toast: ToastService,
       private dialog: MatDialog,
-      private blockScrollService: BlockScrollService, 
+      private blockScrollService: BlockScrollService,
   ) {}
 
   getHeaderData() {
@@ -857,9 +857,9 @@ export class OverlayContainerComponent implements OnInit, OnDestroy {
         category
       };
 
-      const roomsInFolderUpdateRequests$ = this.folderData.roomsInFolder.map(room => { // data to update rooms
-        return this.createOrUpdateLocation(room, category);
-      });
+      const roomsInFolderUpdateRequests$ = this.folderData.roomsInFolder.length === 0
+        ? [of([])]
+        : this.folderData.roomsInFolder.map(room => this.createOrUpdateLocation(room, category));
 
       zip(...roomsInFolderUpdateRequests$).pipe(
         switchMap(() => zip(
@@ -1167,7 +1167,7 @@ export class OverlayContainerComponent implements OnInit, OnDestroy {
       scheduling_restricted: !!room.scheduling_restricted,
       needs_check_in: !!room.needs_check_in,
       teachers: room.selectedTeachers,
-      travel_types: room.travel_types,
+      travel_types: room.travelType,
       max_allowed_time: +room.timeLimit,
       max_passes_from: +this.passLimitForm.get('from').value,
       max_passes_from_active: false,
