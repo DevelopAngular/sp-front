@@ -1,12 +1,34 @@
 import {Component, ElementRef, EventEmitter, HostListener, Input, OnDestroy, OnInit, Output, Renderer2, ViewChild} from '@angular/core';
 import {MapsAPILoader} from '@agm/core';
 import {User} from '../models/User';
-import {BehaviorSubject, interval, Observable, of, Subject,combineLatest} from 'rxjs';
+import {
+  BehaviorSubject,
+  interval,
+  Observable,
+  of,
+  Subject,
+  combineLatest,
+  Subscription,
+  fromEvent,
+  zip,
+  EMPTY
+} from 'rxjs'
 import {UserService} from '../services/user.service';
 import {DomSanitizer} from '@angular/platform-browser';
 import {HttpService} from '../services/http-service';
 import {School} from '../models/School';
-import {filter, map, pluck, switchMap, take, takeUntil} from 'rxjs/operators';
+import {
+  catchError,
+  debounceTime,
+  distinctUntilChanged,
+  filter, finalize,
+  map,
+  pluck,
+  switchMap,
+  take,
+  takeUntil,
+  tap, withLatestFrom
+} from 'rxjs/operators'
 import {filter as _filter} from 'lodash';
 import {KeyboardShortcutsService} from '../services/keyboard-shortcuts.service';
 import {ScreenService} from '../services/screen.service';
@@ -17,8 +39,9 @@ import {DomCheckerService} from '../services/dom-checker.service';
 import {Overlay} from '@angular/cdk/overlay';
 import {KioskModeService} from '../services/kiosk-mode.service';
 import {AdminService} from '../services/admin.service';
+import { RoundInputComponent } from '../admin/round-input/round-input.component'
 
-declare const window;
+declare const window: Window & {google: any};
 
 export type SearchEntity = 'schools' | 'users' | 'orgunits' | 'local' | 'roles' | 'rooms';
 
@@ -149,9 +172,65 @@ export class SPSearchComponent implements OnInit, OnDestroy {
   @Output() chipsAddEvent: EventEmitter<boolean> = new EventEmitter<boolean>();
 
   @ViewChild('studentInput') input: ElementRef;
+  @ViewChild('inputComponent') inputComponent: RoundInputComponent;
   @ViewChild('wrapper') wrapper: ElementRef;
   @ViewChild('cell') cell: ElementRef;
   @ViewChild('studentPasses') studentPasses: ElementRef;
+  @ViewChild('searchWrapper') set searchWrapper(ref: ElementRef<HTMLDivElement>) {
+    if (!ref?.nativeElement) {
+      return
+    }
+
+    const buffered$ = fromEvent(document, 'click').pipe(
+      takeUntil(this.destroy$),
+    );
+
+    const component$ = fromEvent(ref.nativeElement, 'click').pipe(
+      takeUntil(this.destroy$),
+    );
+
+    // sync addStudent$ with component$
+    // to trigger method this._addStudent after click event has been handled by component$
+    // in order to make this.isClickOutside accurate
+    // as after synchronous this._addStudent,
+    // DOM elements used to calculate isClickOutside  will be changed
+    // and checking will produces logical errors/bugs
+    zip(this.addStudent$, component$).pipe(
+      // corect shape or error
+      filter(vv => !!vv?.length),
+      tap(([student, _]) => {
+        this._addStudent(student);
+      }),
+      takeUntil(this.destroy$),
+      catchError(err => {
+        // TODO: better way to handle err
+        console.log(err);
+        return of([]);
+      }),
+    ).subscribe();
+
+    // only buffered clicks outside of component
+    const outside$ = buffered$.pipe(
+      filter((v: PointerEvent) => this.isClickOutside(v, ref)),
+    );
+    // outside clicks when options panel is open
+    const opened$ = outside$.pipe(
+      // know the options panel's state
+      withLatestFrom(this.isOpenedOptions),
+      // ensure options panel is opened
+      filter(([_, isOpened]: [PointerEvent, boolean]): boolean => {
+        return isOpened;
+      }),
+      // no interest in event information here
+      // just to know that it happened
+      map(_ => true),
+    );
+
+    opened$.subscribe({next: () => this.closeOptionsPanel()});
+
+    this.lastClickOutside$ = outside$.pipe(tap({next: () => this.closeOptionsPanel()}));
+    this.lastClickOutside$.subscribe();
+  }
 
   private placePredictionService;
   private currentPosition;
@@ -188,8 +267,16 @@ export class SPSearchComponent implements OnInit, OnDestroy {
   isEnableProfilePictures$: Observable<boolean>;
 
   destroy$: Subject<any> = new Subject<any>();
+  lastSearchText = '';
+
   // orgUnits:OrgUnits[]=[]
 
+  private lastClickOutside$: Observable<any>;
+  private _onSearchUrl$ = new Subject<string>();
+  private onSearchUrl$: Observable<string> = this._onSearchUrl$.asObservable().pipe(tap((search: string) => this._onSearch(search)));
+  private searchProfileSubscription: Subscription;
+  _addStudent$ = new Subject<User>();
+  addStudent$ = this._addStudent$.asObservable();
 
   @HostListener('document.scroll', ['$event'])
   scroll() {
@@ -209,7 +296,8 @@ export class SPSearchComponent implements OnInit, OnDestroy {
     private domCheckerService: DomCheckerService,
     public overlay: Overlay,
     private kioskMode: KioskModeService,
-    private adminService:AdminService
+    private adminService:AdminService,
+    private elRef: ElementRef,
   ) {
   }
 
@@ -248,7 +336,7 @@ export class SPSearchComponent implements OnInit, OnDestroy {
       this.renderer.setStyle(elem.target, 'background-color', '#FFFFFF');
     }
   }
- 
+
   ngOnInit() {
     this.overlayScrollStrategy = this.overlay.scrollStrategies.close();
     if (this.chipsMode && !this.overrideChipsInputField) {
@@ -323,8 +411,12 @@ export class SPSearchComponent implements OnInit, OnDestroy {
 
     this.user$ = this.userService.user$;
     this.isEnableProfilePictures$ = this.userService.isEnableProfilePictures$;
-    
 
+    this.onSearchUrl$.pipe(
+      debounceTime(500),
+      distinctUntilChanged(),
+      takeUntil(this.destroy$),
+    ).subscribe();
   }
 
 
@@ -333,9 +425,11 @@ export class SPSearchComponent implements OnInit, OnDestroy {
     this.destroy$.complete();
   }
 
-  lastSearchText = '';
+  public onSearch(s: string) {
+    this._onSearchUrl$.next(s);
+  }
 
-  onSearch(search: string) {
+  private _onSearch(search: string) {
     this.lastSearchText = search;
 
     switch (this.searchTarget) {
@@ -364,7 +458,7 @@ export class SPSearchComponent implements OnInit, OnDestroy {
                else if(this.kioskMode.getKioskModeSettings().findByName && !this.kioskMode.getKioskModeSettings().findById){
                 this.students = this.userService.searchProfile(this.role, 50, search)
                 .toPromise()
-                .then((paged: any) => { 
+                .then((paged: any) => {
                   this.pending$.next(false);
                   this.isOpenedOptions.emit(true);
                   const uu = this.removeDuplicateStudents(paged.results);
@@ -372,7 +466,7 @@ export class SPSearchComponent implements OnInit, OnDestroy {
                 });
                }else{
                 this.students = this.userService.possibleProfileByCustomId(search).toPromise()
-                .then((paged: any) => { 
+                .then((paged: any) => {
                  if(paged.results?.user?.length===undefined){
                   this.pending$.next(false);
                   this.isOpenedOptions.emit(true);
@@ -387,21 +481,61 @@ export class SPSearchComponent implements OnInit, OnDestroy {
                 }).catch(err=>{return[]})
                }
 
-                   
+
               }else{
-                this.students = this.userService.searchProfile(this.role, 50, search)
-                .toPromise()
-                .then((paged: any) => { 
-                  this.pending$.next(false);
-                  this.isOpenedOptions.emit(true);
-                  const uu = this.removeDuplicateStudents(paged.results);
-                  return this.mayRemoveStudentsByCallback(uu);
+                // here after first click a listener is created
+                // that  ll be alive for the rest of the component's lifetime
+                // it triggers a cancelable http request (inner observable)
+
+                // after initialization the flow code
+                // goes through here doing nothing
+
+                // already subscribed so noop here
+                // so it ensures the code below is ran only once (per component lifetime) no matter how many times clicks arrive here
+                if (this.searchProfileSubscription instanceof Subscription && !this.searchProfileSubscription.closed) {
+                  return;
+                }
+
+                // setup main observable here
+                this.searchProfileSubscription = this.onSearchUrl$.pipe(
+                  // '' empty string has been/is used to signal no search so skip the search
+                  filter(v => !!v),
+                  // ensures cancelation for previous request
+                  switchMap((search: string) => this.userService.searchProfile(this.role, 50, search)
+                    .pipe(
+                      filter(Boolean),
+                      // ensures cancelation when clicking outside
+                      takeUntil(this.lastClickOutside$),
+                      finalize(() => {
+                        this.pending$.next(false);
+                      })
+                    )
+                  ),
+                  catchError((err: Error) => {
+                    console.error('SEARCH PROFILE', err.message);
+                    this.searchProfileSubscription = null;
+                    // skip execution of subscribe.next
+                    // but completes
+                    // so, next time, main observable will be setup again - kind of reset
+                    return EMPTY;
+                  }),
+                  takeUntil(this.destroy$),
+                )
+                  .subscribe({
+                    next: (paged: any) => {
+                      this.isOpenedOptions.emit(true);
+                      const uu = this.removeDuplicateStudents(paged.results);
+                      this.students = of(this.mayRemoveStudentsByCallback(uu)).toPromise();
+                    },
                 });
+
+
+                // the listener is activated above
+                // by an initializing click that also expects a result,
+                // so do here the expected first job
+                // otherwise only the socond click onwards we will get results
+                this._onSearchUrl$.next(search);
               }
-              // kioskToken
-     
-
-
             } else if (this.type === 'G Suite' || this.type === 'GG4L') {
               let request$;
               if (this.role !== '_all') {
@@ -481,9 +615,8 @@ export class SPSearchComponent implements OnInit, OnDestroy {
           const url = `&search=${search}`;
           this.locationService.searchLocations(100, url)
             .subscribe((locs) => {
-                this.foundLocations = locs.results;
-                this.showDummy = !locs.results.length;
-                this.pending$.next(false);
+              this.foundLocations = locs.results;
+              this.showDummy = !locs.results.length;
           });
         } else {
             this.showDummy = false;
@@ -495,6 +628,7 @@ export class SPSearchComponent implements OnInit, OnDestroy {
         break;
     }
   }
+
   selectSchool(school) {
     this.selectedSchool = school;
     this.onUpdate.emit(school);
@@ -545,6 +679,9 @@ export class SPSearchComponent implements OnInit, OnDestroy {
   }
 
   addStudent(student: User) {
+    this._addStudent$.next(student);
+  }
+  _addStudent(student: User) {
     if (this.isDisabled(student)) {
       return;
     }
@@ -683,5 +820,23 @@ export class SPSearchComponent implements OnInit, OnDestroy {
   reset() {
     this.selectedOptions = [];
     this.onUpdate.emit(undefined);
+  }
+
+  // this checks MUST happens before any view change that angular may operates
+  // read comments down bellow
+  isClickOutside(evt: PointerEvent, componentWrapperReference: ElementRef<HTMLDivElement>): boolean {
+    const $container = componentWrapperReference.nativeElement;
+    const $containee = evt.target as HTMLElement;
+    const inside = $container.contains($containee);
+
+    return !inside;
+  }
+
+  closeOptionsPanel(): void {
+    // inputComponent exists only when flag inputField
+    if (this.inputField) {
+      // be wary of this.reset(); it emits undefined => unhandled elsewere
+      this.inputComponent.reset();
+    }
   }
 }
