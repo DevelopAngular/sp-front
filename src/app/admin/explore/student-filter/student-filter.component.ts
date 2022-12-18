@@ -58,11 +58,11 @@ export class StudentFilterComponent implements OnInit {
     this.dialogRef.updatePosition(matDialogConfig.position);
   }
 
-  updateStudents(students) {
+  updateStudents(students: any) {
     if (this.isMultiSelect || this.type === 'rooms') {
-      this.selectedStudents = students;
+      this.selectedStudents = students ?? [];
     } else {
-      this.selectedStudents = students.length ? [students[students.length - 1]] : [];
+      this.selectedStudents = students?.length ? [students[students.length - 1]] : [];
     }
   }
 

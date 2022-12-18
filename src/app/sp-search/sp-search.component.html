@@ -1,4 +1,4 @@
-<div class="sp-search-wrapper" *ngIf="chipsMode && !inputField">
+<div class="sp-search-wrapper" *ngIf="chipsMode && !inputField" #searchWrapper>
     <div class="chip">
       <app-sp-chips
         [preventRemovingLast]="preventRemovingLast"
@@ -13,11 +13,11 @@
         (updateSelectedEvent)="update($event)"
         (addSuggestedTeacher)="addSuggested($event)"
       ></app-sp-chips>
-      
+
     </div>
 </div>
 
-<div class="sp-search-wrapper" [style.width]="width" *ngIf="inputField">
+<div class="sp-search-wrapper" [style.width]="width" *ngIf="inputField" #searchWrapper>
 
   <div class="input" [style.box-shadow]="isMobile ? 'none' : '0 0 6px 0 rgba(0, 0, 0, 0.1)'">
 
@@ -41,6 +41,7 @@
         (blurEvent)="onBlur($event)"
         (focusEvent)="onFocus($event)"
         #studentInput="roundInputRef"
+        #inputComponent
       >
       </app-round-input>
     </div>
