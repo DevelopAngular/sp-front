@@ -114,6 +114,10 @@ export class ProfilePicturesEffects {
                                 if (user.primary_email.includes('@spnx.local')) {
                                     user.primary_email = user.primary_email.replace('@spnx.local', '');
                                 }
+                                if (user.extras.clever) {
+                                    return {...acc, [user.extras.clever]: user, [user.primary_email.toLowerCase()]: user};
+                                }
+                                // TODO: is clever_student_number used anymore?
                                 if (user.extras.clever_student_number) {
                                     return {...acc, [user.extras.clever_student_number]: user, [user.primary_email.toLowerCase()]: user};
                                 }
@@ -139,7 +143,7 @@ export class ProfilePicturesEffects {
                         }),
                         switchMap((students) => {
                             const picturesData: { userId: string | number, pictureId: number | string }[] = students.filter(s => !!s).map((s: User) => {
-                              const idproperty = s.extras?.clever_student_number ?? s.primary_email.toLowerCase();
+                              const idproperty = s.extras?.clever ?? s.extras?.clever_student_number ?? s.primary_email.toLowerCase();
                               const pictureId = action.images_data[idproperty];
                               return {userId: s.id, pictureId};
                             });
