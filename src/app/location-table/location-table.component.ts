@@ -8,7 +8,6 @@ import {filter as _filter, sortBy} from 'lodash';
 import {KeyboardShortcutsService} from '../services/keyboard-shortcuts.service';
 import {ScreenService} from '../services/screen.service';
 import {HallPassesService} from '../services/hall-passes.service';
-import {TooltipDataService} from '../services/tooltip-data.service';
 import {PassLimit} from '../models/PassLimit';
 import {DeviceDetection} from '../device-detection.helper';
 import {CdkDragDrop, moveItemInArray} from '@angular/cdk/drag-drop';
@@ -158,7 +157,6 @@ export class LocationTableComponent implements OnInit, OnDestroy {
       private pinnableService: HallPassesService,
       private shortcutsService: KeyboardShortcutsService,
       public screenService: ScreenService,
-      public tooltipService: TooltipDataService,
       private userService: UserService,
       private visibilityService: LocationVisibilityService,
       // used only when in context of a MainHallPassFormComponent to get access to FORM_STATE,

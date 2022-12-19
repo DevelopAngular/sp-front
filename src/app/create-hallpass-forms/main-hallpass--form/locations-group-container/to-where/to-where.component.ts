@@ -15,7 +15,6 @@ import {Subject, BehaviorSubject, fromEvent, Observable} from 'rxjs';
 import {filter, take, takeUntil, map} from 'rxjs/operators';
 import {DeviceDetection} from '../../../../device-detection.helper';
 import {StorageService} from '../../../../services/storage.service';
-import {TooltipDataService} from '../../../../services/tooltip-data.service';
 import {PassLimit} from '../../../../models/PassLimit';
 import {LocationsService} from '../../../../services/locations.service';
 import {PassLimitDialogComponent} from '../pass-limit-dialog/pass-limit-dialog.component';
@@ -110,7 +109,6 @@ export class ToWhereComponent implements OnInit, OnDestroy, AfterViewInit {
     private formService: CreateFormService,
     public screenService: ScreenService,
     private storage: StorageService,
-    private tooltipDataService: TooltipDataService,
     private locationsService: LocationsService,
     private dialog: MatDialog,
     private userService: UserService,
@@ -319,7 +317,7 @@ export class ToWhereComponent implements OnInit, OnDestroy, AfterViewInit {
    */
   private async handleStudentRoomLimits(selection: Pinnable | Location) {
     const location = this.getLocationFromSelection(selection);
-    const reachedRoomPassLimit = this.tooltipDataService.reachedPassLimit( 'to', this.passLimits[+location.id]);
+    const reachedRoomPassLimit = this.locationsService.reachedRoomPassLimit( 'to', this.passLimits[+location.id]);
 
     if(!reachedRoomPassLimit) {
       this.forwardAndEmit(selection);
