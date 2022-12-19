@@ -265,7 +265,7 @@ export class FolderComponent implements OnInit, OnDestroy {
       this.change$.next();
 
       const visibility = {
-        mode: room.visibility_type, 
+        mode: room.visibility_type,
         over: room.visibility_students.map(s => {
           try {
           return User.fromJSON(s);
