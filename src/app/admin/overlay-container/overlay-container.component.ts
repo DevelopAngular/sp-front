@@ -1167,7 +1167,8 @@ export class OverlayContainerComponent implements OnInit, OnDestroy {
       scheduling_restricted: !!room.scheduling_restricted,
       needs_check_in: !!room.needs_check_in,
       teachers: room.selectedTeachers,
-      travel_types: room.travelType,
+      // TODO: Make every single travelType prop into travel_types to avoid this kind of error in the future
+      travel_types: room.travelType ?? room.travel_types,
       max_allowed_time: +room.timeLimit,
       max_passes_from: +this.passLimitForm.get('from').value,
       max_passes_from_active: false,
