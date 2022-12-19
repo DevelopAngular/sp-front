@@ -29,6 +29,10 @@ import {KioskModeService} from '../../../../services/kiosk-mode.service';
 import {User} from '../../../../models/User';
 import {Location} from '../../../../models/Location';
 
+/**
+ * TODO: This component should be refactored so that it emits a location and nothing more
+ */
+
 @Component({
   selector: 'app-to-where',
   templateUrl: './to-where.component.html',
@@ -243,7 +247,7 @@ export class ToWhereComponent implements OnInit, OnDestroy, AfterViewInit {
       if (!passLimit || this.formState.kioskMode){
         return resolve(true);
       }
-      const passLimitReached = passLimit.max_passes_to_active && passLimit.max_passes_to < (passLimit.to_count + this.countStudents());
+      const passLimitReached = passLimit.max_passes_to_active && (passLimit.to_count + this.countStudents()) >=  passLimit.max_passes_to;
       if (!passLimitReached)
         return resolve(true);
 
@@ -269,10 +273,25 @@ export class ToWhereComponent implements OnInit, OnDestroy, AfterViewInit {
     });
   }
 
-  pinnableSelected(pinnable) {
-    const location = pinnable.location;
+  private getLocationFromSelection(selection: Pinnable | Location): Location {
+    const isPinnable = 'type' in selection;
+    if (isPinnable) {
+      return (selection as Pinnable).location;
+    }
 
-    const forwardAndEmit = () => {
+    return selection as Location;
+  }
+
+  /**
+   * If there's nothing in the way ot selecting a location or pinnable, then we can emit
+   * and move on to the next pass screen after selecting a destination
+   */
+  private forwardAndEmit(selection: Pinnable | Location) {
+    console.log('selection made');
+    console.log(selection);
+    const isPinnable = 'type' in selection;
+    if (isPinnable) {
+      const pinnable = selection as Pinnable; // value doesn't change, but it helps TypeScript to narrow the type down
       if (this.formState.formMode.role === 1 && pinnable.type === 'location') {
         this.formService.setFrameMotionDirection('disable');
       } else {
@@ -282,45 +301,70 @@ export class ToWhereComponent implements OnInit, OnDestroy, AfterViewInit {
       this.formService.scalableBoxController.next(true);
 
       setTimeout(() => {
-        this.formState.previousState = 2;
+        this.formState.previousState = States.toWhere;
         this.selectedPinnable.emit(pinnable);
       }, 100);
+    } else {
+      const location = selection as Location; // value doesn't change, but it helps TypeScript to narrow the type down
+      this.formService.setFrameMotionDirection('disable');
+      this.formService.scalableBoxController.next(true);
+      setTimeout(() => {
+        this.selectedLocation.emit(location);
+      }, 100);
+    }
+  }
+
+  /**
+   * If a student has not reached the room limit, they are allowed to continue creating their pass
+   */
+  private async handleStudentRoomLimits(selection: Pinnable | Location) {
+    const location = this.getLocationFromSelection(selection);
+    const reachedRoomPassLimit = this.tooltipDataService.reachedPassLimit( 'to', this.passLimits[+location.id]);
+
+    if(!reachedRoomPassLimit) {
+      this.forwardAndEmit(selection);
+      return;
+    }
+
+    const studentRoomLimitReachedConfig = {
+      panelClass: 'overlay-dialog',
+      backdropClass: 'custom-backdrop',
+      width: '450px',
+      height: '163px',
+      disableClose: true,
+      data: {
+        isStudent: true
+      }
     };
 
-    const emitSelectedPinnable = (allowed) => {
+    const chooseAnotherLocation = (await this.dialog
+      .open(PassLimitDialogComponent, studentRoomLimitReachedConfig)
+      .afterClosed()
+      .pipe(takeUntil(this.destroy$)).toPromise()).override;
+
+    if (!chooseAnotherLocation) {
+      this.dialogRef.close();
+    }
+
+    return;
+  }
+
+  async pinnableSelected(pinnable) {
+    const location = pinnable.location;
+
+    const emitSelectedPinnable = async (allowed) => {
       if (!allowed) return;
 
       // is folder
       if (!!pinnable.category && pinnable.location === null) {
-        forwardAndEmit();
+        this.forwardAndEmit(pinnable);
         return;
       }
 
       // only students
       if (!this.isStaff || this.formState.kioskMode) {
-        if (this.tooltipDataService.reachedPassLimit( 'to', this.passLimits[+pinnable.location.id])) {
-          const ps =  this.dialog.open(PassLimitDialogComponent, {
-            panelClass: 'overlay-dialog',
-            backdropClass: 'custom-backdrop',
-            width: '450px',
-            height: '163px',
-            disableClose: true,
-            data: {
-              isStudent: true
-            }
-          });
-
-          ps.afterClosed().pipe(
-            takeUntil(this.destroy$)
-          ).subscribe(({override}) => {
-            if (!override) {
-              this.dialogRef.close();
-            }
-          });
-          return;
-        }
-       forwardAndEmit();
-       return;
+        await this.handleStudentRoomLimits(pinnable);
+        return;
       }
 
      // staff only
@@ -329,7 +373,7 @@ export class ToWhereComponent implements OnInit, OnDestroy, AfterViewInit {
      let skipped = this.visibilityService.calculateSkipped(selectedStudents, location);
 
       if (skipped.length === 0) {
-        forwardAndEmit();
+        this.forwardAndEmit(pinnable);
         return;
       }
 
@@ -379,7 +423,7 @@ export class ToWhereComponent implements OnInit, OnDestroy, AfterViewInit {
 
         // override case
         if (override) {
-          forwardAndEmit();
+          this.forwardAndEmit(pinnable);
           return;
         }
 
@@ -394,54 +438,24 @@ export class ToWhereComponent implements OnInit, OnDestroy, AfterViewInit {
         }
 
         this.formState.data.roomStudents = roomStudents;
-        forwardAndEmit();
+        this.forwardAndEmit(pinnable);
       });
     };
 
     if (pinnable.type !== 'location') {
-      return emitSelectedPinnable(true);
+      return await emitSelectedPinnable(true);
     } else {
-      this.passLimitPromise(pinnable.location).then(emitSelectedPinnable);
+      const allowed = await this.passLimitPromise(pinnable.location);
+      await emitSelectedPinnable(allowed);
     }
   }
 
-  locationSelected(location) {
-    const forwardAndEmit = () => {
-      this.formService.setFrameMotionDirection('disable');
-      this.formService.scalableBoxController.next(true);
-      setTimeout(() => {
-        this.selectedLocation.emit(location);
-      }, 100);
-    };
-
+  async locationSelected(location) {
     // only students
-
     if (!this.isStaff || this.formState.kioskMode) {
-      if (this.tooltipDataService.reachedPassLimit( 'to', this.passLimits[+location.id])) {
-        const ps =  this.dialog.open(PassLimitDialogComponent, {
-          panelClass: 'overlay-dialog',
-          backdropClass: 'custom-backdrop',
-          width: '450px',
-          height: '163px',
-          disableClose: true,
-          data: {
-            isStudent: true
-          }
-        });
-
-        ps.afterClosed().pipe(
-          takeUntil(this.destroy$)
-        ).subscribe(({override}) => {
-          if (!override) {
-            this.dialogRef.close();
-          }
-        });
-        return;
-      }
-      forwardAndEmit();
+      await this.handleStudentRoomLimits(location);
       return;
     }
-
 
     this.passLimitPromise(location).then((allowed) => {
       if (!allowed) return;
@@ -452,7 +466,7 @@ export class ToWhereComponent implements OnInit, OnDestroy, AfterViewInit {
      let skipped = this.visibilityService.calculateSkipped(selectedStudents, location);
 
       if (skipped.length === 0) {
-        forwardAndEmit();
+        this.forwardAndEmit(location);
         return;
       }
 
@@ -501,7 +515,7 @@ export class ToWhereComponent implements OnInit, OnDestroy, AfterViewInit {
 
         // override case
         if (override) {
-          forwardAndEmit();
+          this.forwardAndEmit(location);
           return;
         }
 
@@ -516,7 +530,7 @@ export class ToWhereComponent implements OnInit, OnDestroy, AfterViewInit {
         }
 
         this.formState.data.roomStudents = roomStudents;
-        forwardAndEmit();
+        this.forwardAndEmit(location);
       });
     });
   }
