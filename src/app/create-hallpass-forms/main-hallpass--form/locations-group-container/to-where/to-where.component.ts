@@ -1,32 +1,47 @@
-import {Component, ElementRef, EventEmitter, HostListener, Inject, Input, OnInit, OnDestroy, Output, TemplateRef, ViewChild, ViewChildren, QueryList, AfterViewInit} from '@angular/core';
-import {MatDialogRef} from '@angular/material/dialog';
-import {ToastService} from '../../../../services/toast.service';
-import {Pinnable} from '../../../../models/Pinnable';
-import {Navigation} from '../../main-hall-pass-form.component';
-import {CreateFormService} from '../../../create-form.service';
-import {States} from '../locations-group-container.component';
-import {ScreenService} from '../../../../services/screen.service';
-import {ToWhereGridRestriction} from '../../../../models/to-where-grid-restrictions/ToWhereGridRestriction';
-import {ToWhereGridRestrictionLg} from '../../../../models/to-where-grid-restrictions/ToWhereGridRestrictionLg';
-import {ToWhereGridRestrictionSm} from '../../../../models/to-where-grid-restrictions/ToWhereGridRestrictionSm';
-import {ToWhereGridRestrictionMd} from '../../../../models/to-where-grid-restrictions/ToWhereGridRestrictionMd';
-import {MAT_DIALOG_DATA, MatDialog} from '@angular/material/dialog';
-import {Subject, BehaviorSubject, fromEvent, Observable} from 'rxjs';
-import {filter, take, takeUntil, map} from 'rxjs/operators';
-import {DeviceDetection} from '../../../../device-detection.helper';
-import {StorageService} from '../../../../services/storage.service';
-import {PassLimit} from '../../../../models/PassLimit';
-import {LocationsService} from '../../../../services/locations.service';
-import {PassLimitDialogComponent} from '../pass-limit-dialog/pass-limit-dialog.component';
+import {
+  AfterViewInit,
+  Component,
+  ElementRef,
+  EventEmitter,
+  HostListener,
+  Inject,
+  Input,
+  OnDestroy,
+  OnInit,
+  Output,
+  QueryList,
+  TemplateRef,
+  ViewChild,
+  ViewChildren
+} from '@angular/core'
+import { MAT_DIALOG_DATA, MatDialog, MatDialogRef } from '@angular/material/dialog'
+import { ToastService } from '../../../../services/toast.service'
+import { Pinnable } from '../../../../models/Pinnable'
+import { Navigation } from '../../main-hall-pass-form.component'
+import { CreateFormService } from '../../../create-form.service'
+import { States } from '../locations-group-container.component'
+import { ScreenService } from '../../../../services/screen.service'
+import { ToWhereGridRestriction } from '../../../../models/to-where-grid-restrictions/ToWhereGridRestriction'
+import { ToWhereGridRestrictionLg } from '../../../../models/to-where-grid-restrictions/ToWhereGridRestrictionLg'
+import { ToWhereGridRestrictionSm } from '../../../../models/to-where-grid-restrictions/ToWhereGridRestrictionSm'
+import { ToWhereGridRestrictionMd } from '../../../../models/to-where-grid-restrictions/ToWhereGridRestrictionMd'
+import { BehaviorSubject, fromEvent, Observable, Subject } from 'rxjs'
+import { filter, map, take, takeUntil } from 'rxjs/operators'
+import { DeviceDetection } from '../../../../device-detection.helper'
+import { StorageService } from '../../../../services/storage.service'
+import { PassLimit } from '../../../../models/PassLimit'
+import { LocationsService } from '../../../../services/locations.service'
+import { PassLimitDialogComponent } from '../pass-limit-dialog/pass-limit-dialog.component'
 import {
   ConfirmationDialogComponent,
   ConfirmationTemplates
-} from '../../../../shared/shared-components/confirmation-dialog/confirmation-dialog.component';
-import {LocationVisibilityService} from '../../location-visibility.service';
-import {UserService} from '../../../../services/user.service';
-import {KioskModeService} from '../../../../services/kiosk-mode.service';
-import {User} from '../../../../models/User';
-import {Location} from '../../../../models/Location';
+} from '../../../../shared/shared-components/confirmation-dialog/confirmation-dialog.component'
+import { LocationVisibilityService } from '../../location-visibility.service'
+import { UserService } from '../../../../services/user.service'
+import { KioskModeService } from '../../../../services/kiosk-mode.service'
+import { User } from '../../../../models/User'
+import { Location } from '../../../../models/Location'
+import { FLAGS, FeatureFlagService } from '../../../../services/feature-flag.service'
 
 /**
  * TODO: This component should be refactored so that it emits a location and nothing more
@@ -112,7 +127,8 @@ export class ToWhereComponent implements OnInit, OnDestroy, AfterViewInit {
     private locationsService: LocationsService,
     private dialog: MatDialog,
     private userService: UserService,
-    private kioskService:KioskModeService
+    private kioskService:KioskModeService,
+    private featureFlags: FeatureFlagService
   ) {
     this.states = States;
   }
@@ -285,8 +301,6 @@ export class ToWhereComponent implements OnInit, OnDestroy, AfterViewInit {
    * and move on to the next pass screen after selecting a destination
    */
   private forwardAndEmit(selection: Pinnable | Location) {
-    console.log('selection made');
-    console.log(selection);
     const isPinnable = 'type' in selection;
     if (isPinnable) {
       const pinnable = selection as Pinnable; // value doesn't change, but it helps TypeScript to narrow the type down
@@ -322,6 +336,13 @@ export class ToWhereComponent implements OnInit, OnDestroy, AfterViewInit {
     if(!reachedRoomPassLimit) {
       this.forwardAndEmit(selection);
       return;
+    }
+
+    // TODO: Insert Wait In Line Logic here
+    if (this.featureFlags.isFeatureEnabled(FLAGS.WaitInLine)) {
+      // move forward to wait in line card
+      this.forwardAndEmit(selection);
+      return
     }
 
     const studentRoomLimitReachedConfig = {
@@ -432,30 +453,12 @@ export class ToWhereComponent implements OnInit, OnDestroy, AfterViewInit {
   }
 
   async pinnableSelected(pinnable) {
-    const emitSelectedPinnable = async (allowed) => {
-      if (!allowed) return;
-
-      // is folder
-      if (!!pinnable.category && pinnable.location === null) {
-        this.forwardAndEmit(pinnable);
-        return;
-      }
-
-      // only students
-      if (!this.isStaff || this.formState.kioskMode) {
-        await this.handleStudentRoomLimits(pinnable);
-        return;
-      }
-
-      await this.handleRoomVisibility(pinnable);
-    };
-
     if (pinnable.type !== 'location') {
-      return await emitSelectedPinnable(true);
-    } else {
-      const allowed = await this.passLimitPromise(pinnable.location);
-      await emitSelectedPinnable(allowed);
+      this.forwardAndEmit(pinnable);
+      return;
     }
+
+    await this.locationSelected(pinnable.location);
   }
 
   async locationSelected(location) {

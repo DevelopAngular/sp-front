@@ -4,7 +4,7 @@ import { HttpService } from './http-service'
 /**
  * Add any future feature flags to this enum
  */
-export enum FEATURE_FLAGS {
+export enum FLAGS {
   EncounterDetection = 'feature_flag_encounter_detection',
   DigitalId = 'feature_flag_digital_id',
   ParentAccounts = 'feature_flag_parent_accounts',
@@ -19,7 +19,7 @@ export class FeatureFlagService {
 
   constructor(private http: HttpService) {}
 
-  isFeatureEnabled(featureFlag: FEATURE_FLAGS): boolean {
+  isFeatureEnabled(featureFlag: FLAGS): boolean {
     const school = this.http.getSchool();
     return featureFlag in school
   }

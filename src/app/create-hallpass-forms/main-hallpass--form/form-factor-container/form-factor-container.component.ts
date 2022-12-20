@@ -158,7 +158,7 @@ export class FormFactorContainerComponent implements OnInit {
             break;
 
           case this.states.WaitInLine:
-            this.template = new HallPass(
+            this.template = new HallPass( // TODO: Make new class, HallPass placeholder is just here for mocking
               'template',
               user,
               null,

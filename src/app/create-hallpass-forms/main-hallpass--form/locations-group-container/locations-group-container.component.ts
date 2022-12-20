@@ -36,7 +36,7 @@ import { LocationVisibilityService } from '../location-visibility.service'
 import { PassLimitDialogComponent } from './pass-limit-dialog/pass-limit-dialog.component'
 import { KioskModeService } from '../../../services/kiosk-mode.service'
 import { HttpService } from '../../../services/http-service'
-import { School } from '../../../models/School'
+import { FeatureFlagService, FLAGS } from '../../../services/feature-flag.service'
 
 // when WS notify a change we have to skip functions that change
 // FORM_STATE state and step
@@ -111,7 +111,8 @@ export class LocationsGroupContainerComponent implements OnInit, OnDestroy {
     private cdr: ChangeDetectorRef,
     private dialog: MatDialog,
     private kioskService: KioskModeService,
-    private httpService: HttpService
+    private httpService: HttpService,
+    private featureService: FeatureFlagService
   ) {
   }
 
@@ -339,7 +340,7 @@ export class LocationsGroupContainerComponent implements OnInit, OnDestroy {
   }
 
   @skipWhenWS()
-  toWhere(pinnable) {
+  async toWhere(pinnable) {
     this.pinnable = pinnable;
     this.FORM_STATE.data.direction = {
       from: this.data.fromLocation,
@@ -364,7 +365,7 @@ export class LocationsGroupContainerComponent implements OnInit, OnDestroy {
         this.FORM_STATE.previousState = this.FORM_STATE.state;
         this.FORM_STATE.state = States.message;
       } else {
-        return this.postComposetData();
+        return await this.postComposetData();
       }
     }
   }
@@ -464,7 +465,7 @@ export class LocationsGroupContainerComponent implements OnInit, OnDestroy {
       this.FORM_STATE.previousState = this.FORM_STATE.state;
       this.FORM_STATE.state = States.message;
     } else {
-      this.postComposetData();
+      await this.postComposetData();
     }
   }
 
@@ -474,24 +475,34 @@ export class LocationsGroupContainerComponent implements OnInit, OnDestroy {
     this.FORM_STATE.state = States.message;
   }
 
-  resultMessage(message, denyMessage: boolean = false) {
+  async resultMessage(message, denyMessage: boolean = false) {
     if (!message) {
       message = '';
     }
     this.data.message = message;
     this.FORM_STATE.data.message = message;
-    this.postComposetData(denyMessage, true);
+    await this.postComposetData(denyMessage, true);
   }
 
   @skipWhenWS()
-  private postComposetData(close: boolean = false, isMessage?: boolean) {
+  private async postComposetData(close: boolean = false, isMessage?: boolean) {
     const restricted = ((this.FORM_STATE.data.direction.to.restricted && !this.FORM_STATE.forLater) ||
       (this.FORM_STATE.data.direction.to.scheduling_restricted && !!this.FORM_STATE.forLater));
     if (this.FORM_STATE.kioskMode && this.FORM_STATE.data.kioskModeStudent && restricted) {
       this.isStaff =  false;
     }
+
+    const dest = this.FORM_STATE.data.direction.to;
+    const { pass_limits } = await this.locationsService.getPassLimit().toPromise();
+    const destPassLimit = pass_limits.find(p => p.id == dest.id);
+    const destLimitReached = this.locationsService.reachedRoomPassLimit('to', destPassLimit, false);
+
     if (!this.isStaff && !restricted) {
-      this.FORM_STATE.formMode.formFactor = restricted ? FormFactor.HallPass : FormFactor.WaitInLine
+      if (this.featureService.isFeatureEnabled(FLAGS.WaitInLine)) {
+        this.FORM_STATE.formMode.formFactor = destLimitReached ? FormFactor.WaitInLine : FormFactor.HallPass;
+      } else {
+        this.FORM_STATE.formMode.formFactor = FormFactor.HallPass;
+      }
     }
     if (!this.isStaff && (restricted || isMessage)) {
       this.FORM_STATE.formMode.formFactor = FormFactor.Request;
