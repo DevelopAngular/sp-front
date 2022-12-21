@@ -5,10 +5,10 @@ import {DomSanitizer} from '@angular/platform-browser';
 import {interval, of, Subject} from 'rxjs';
 import {delay, takeUntil} from 'rxjs/operators';
 import {cloneDeep} from 'lodash';
-import {TooltipDataService} from '../services/tooltip-data.service';
 import {PassLimit} from '../models/PassLimit';
 import {HttpService} from '../services/http-service';
 import {School} from '../models/School';
+import { LocationsService } from '../services/locations.service'
 
 @Component({
   selector: 'app-pinnable',
@@ -80,7 +80,7 @@ export class PinnableComponent implements OnInit, OnChanges {
   constructor(
     private sanitizer: DomSanitizer,
     private changeDetector: ChangeDetectorRef,
-    private tooltipService: TooltipDataService,
+    private locationsService: LocationsService,
     private http: HttpService
   ) {
     this.currentSchool = this.http.getSchool();
@@ -131,7 +131,7 @@ export class PinnableComponent implements OnInit, OnChanges {
       return 'This room has been closed by an admin.';
     }
     if (this.passLimit) {
-      return this.passLimit && this.tooltipService.tooltipDescription('to', this.passLimit);
+      return this.passLimit && this.locationsService.tooltipDescription('to', this.passLimit);
     }
   }
 
