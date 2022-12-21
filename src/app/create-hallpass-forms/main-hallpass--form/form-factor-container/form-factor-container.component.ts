@@ -14,6 +14,7 @@ import { PassLike } from '../../../models';
 import { DeviceDetection } from '../../../device-detection.helper';
 import { BehaviorSubject } from 'rxjs';
 import { takeUntil } from 'rxjs/operators';
+import { WaitInLine } from '../../../models/WaitInLine'
 
 export type PassLayout = 'pass' | 'request' | 'inlinePass' | 'inlineRequest';
 
@@ -47,7 +48,7 @@ export class FormFactorContainerComponent implements OnInit {
 
   isMobile = DeviceDetection.isMobile();
   public states = FormFactor;
-  public template: Request | HallPass | Invitation | Pinnable;
+  public template: Request | HallPass | Invitation | Pinnable | WaitInLine;
   fullScreenPass$: BehaviorSubject<boolean> = new BehaviorSubject(true);
 
   constructor(
@@ -158,14 +159,11 @@ export class FormFactorContainerComponent implements OnInit {
             break;
 
           case this.states.WaitInLine:
-            this.template = new HallPass( // TODO: Make new class, HallPass placeholder is just here for mocking
+            console.log(this.FORM_STATE.data.direction.pinnable.color_profile);
+            this.template = new WaitInLine(
               'template',
               user,
               null,
-              null,
-              null,
-              null,
-              this.FORM_STATE.data.date ? this.FORM_STATE.data.date.date : now,
               null,
               null,
               this.FORM_STATE.data.direction.from,
@@ -174,13 +172,11 @@ export class FormFactorContainerComponent implements OnInit {
               '',
               this.FORM_STATE.data.direction.pinnable.icon,
               this.FORM_STATE.data.direction.pinnable.color_profile,
-              null,
-              '',
-              '',
-              undefined,
+              true,
+              '3rd',
               this.FORM_STATE.data.date ? this.FORM_STATE.data.date.declinable : false,
-              this.forStaff ? this.FORM_STATE.data.message : null
-            );
+              this.forStaff ? this.FORM_STATE.data.message : null,
+              );
             break;
         }
       });

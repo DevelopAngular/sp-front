@@ -45,7 +45,7 @@
 
       <ng-container *ngSwitchCase="states.WaitInLine">
         <app-wait-in-line-card
-          [pass]="template"
+          [wil]="template"
           [forStaff]="forStaff && !dialogData.kioskModeRoom"
           [forInput]="true"
           [forKioskMode]="!!dialogData.kioskModeRoom"

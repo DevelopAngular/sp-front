@@ -60,6 +60,7 @@ import {MainHallPassFormComponent} from '../create-hallpass-forms/main-hallpass-
 import {CheckForUpdateService} from '../services/check-for-update.service';
 import {Title} from '@angular/platform-browser';
 import { FeatureFlagService, FLAGS } from '../services/feature-flag.service';
+import { WaitInLine } from '../models/WaitInLine'
 
 @Component({
   selector: 'app-passes',
@@ -134,9 +135,12 @@ export class PassesComponent implements OnInit, AfterViewInit, OnDestroy {
 
   currentPass$ = new BehaviorSubject<HallPass>(null);
   currentRequest$ = new BehaviorSubject<Request>(null);
+  currentWaitInLine$ = new BehaviorSubject<WaitInLine>(null);
 
   isActivePass$: Observable<boolean>;
   isActiveRequest$: Observable<boolean>;
+  isActiveWaitInLine$: Observable<boolean>;
+
   inboxHasItems: Observable<boolean> = of(null);
   passesHaveItems: Observable<boolean> = of(false);
 
