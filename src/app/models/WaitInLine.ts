@@ -5,7 +5,7 @@ import { ColorProfile } from './ColorProfile'
 
 // Given the position in a line, return the ordinal number
 // Position 1: "1st", Position 3: "3rd", etc.
-const ordinance = (positionInLine: number): string => {
+export const ordinance = (positionInLine: number): string => {
   const suffixMap = {
     1: 'st',
     2: 'nd',

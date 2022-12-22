@@ -61,6 +61,7 @@ import {CheckForUpdateService} from '../services/check-for-update.service';
 import {Title} from '@angular/platform-browser';
 import { FeatureFlagService, FLAGS } from '../services/feature-flag.service';
 import { WaitInLine } from '../models/WaitInLine'
+import { WaitInLineService } from '../services/wait-in-line.service'
 
 @Component({
   selector: 'app-passes',
@@ -267,7 +268,8 @@ export class PassesComponent implements OnInit, AfterViewInit, OnDestroy {
     private updateService: CheckForUpdateService,
     private cdr: ChangeDetectorRef,
     private titleService: Title,
-    private featureService: FeatureFlagService
+    private featureService: FeatureFlagService,
+    private wilService: WaitInLineService
   ) {
 
     this.userService.user$
@@ -342,6 +344,9 @@ export class PassesComponent implements OnInit, AfterViewInit, OnDestroy {
       })
     );
 
+    this.isActiveWaitInLine$ = this.wilService.fakeWilActive.asObservable();
+    this.currentWaitInLine$ = this.wilService.fakeWil;
+
     this.dataService.currentUser.pipe(
       takeUntil(this.destroy$),
       switchMap((user: User) => {
@@ -350,6 +355,7 @@ export class PassesComponent implements OnInit, AfterViewInit, OnDestroy {
         }
       ))
       .subscribe(passLike => {
+
         this._zone.run(() => {
           if ((passLike instanceof HallPass || passLike instanceof Request) && this.currentScrollPosition) {
             this.scrollableArea.scrollTo({top: 0});

@@ -11,7 +11,7 @@ import {
 } from '@angular/core'
 import { Navigation } from '../../create-hallpass-forms/main-hallpass--form/main-hall-pass-form.component'
 import { User } from '../../models/User'
-import { BehaviorSubject, Observable, Subject } from 'rxjs'
+import { BehaviorSubject, Observable, Subject, timer } from 'rxjs'
 import { School } from '../../models/School'
 import { MAT_DIALOG_DATA, MatDialog, MatDialogRef } from '@angular/material/dialog'
 import { HallPassesService } from '../../services/hall-passes.service'
@@ -30,14 +30,8 @@ import { DeviceDetection } from '../../device-detection.helper'
 import { Util } from '../../../Util'
 import { scalePassCards } from '../../animations'
 import { WaitInLine } from '../../models/WaitInLine'
-
-export enum WaitInLineState {
-  CreatingPass,
-  WaitingInLine,
-  FrontOfLine,
-  PassStarted,
-  RequestWaiting
-}
+import { WaitInLineService } from '../../services/wait-in-line.service'
+import { startWith, takeUntil, tap } from 'rxjs/operators'
 
 @Component({
   selector: 'app-wait-in-line-card',
@@ -57,12 +51,26 @@ export class WaitInLineCardComponent implements OnInit {
   @Input() forKioskMode = false;
   @Input() formState: Navigation;
   @Input() students: User[] = [];
+  @Input() isInline = false;
 
   @Output() cardEvent: EventEmitter<any> = new EventEmitter();
 
   @ViewChild('cardWrapper') cardWrapper: ElementRef;
   @ViewChild('confirmDialogBody') confirmDialog: TemplateRef<HTMLElement>;
   @ViewChild('confirmDialogBodyVisibility') confirmDialogVisibility: TemplateRef<HTMLElement>;
+  @ViewChild('waitingDots') set dotsSpan(span: ElementRef<HTMLSpanElement>) {
+    if (!span) {
+      return;
+    }
+
+    timer(0, 750).pipe(
+      takeUntil(this.destroy$),
+      tap(count => {
+        span.nativeElement.innerText = '.'.repeat(count % 4);
+        count++;
+      })
+    ).subscribe();
+  }
 
   timeLeft = '';
   valid = true;
@@ -121,12 +129,11 @@ export class WaitInLineCardComponent implements OnInit {
 
   destroy$: Subject<any> = new Subject<any>();
 
-  waitInLineState: WaitInLineState = WaitInLineState.CreatingPass;
   fakeDate = new Date();
 
   constructor(
     @Optional() public dialogRef: MatDialogRef<WaitInLineCardComponent>,
-    @Inject(MAT_DIALOG_DATA) public data: any,
+    @Optional() @Inject(MAT_DIALOG_DATA) public data: any,
     private hallPassService: HallPassesService,
     public dialog: MatDialog,
     private loadingService: LoadingService,
@@ -139,7 +146,8 @@ export class WaitInLineCardComponent implements OnInit {
     private toastService: ToastService,
     private encounterService: EncounterPreventionService,
     private passLimitService: PassLimitService,
-    private locationsService: LocationsService
+    private locationsService: LocationsService,
+    private wilService: WaitInLineService
   ) {
   }
 
@@ -190,7 +198,6 @@ export class WaitInLineCardComponent implements OnInit {
   }
 
   ngOnInit(): void {
-    this.isModal = this.dialogRef.componentInstance instanceof WaitInLineCardComponent;
   }
 
   ngOnDestroy() {
@@ -304,7 +311,7 @@ export class WaitInLineCardComponent implements OnInit {
    */
   queuePassInLine() {
     // 1. Set the performingAction to true
-    this.waitInLineState = WaitInLineState.RequestWaiting;
+    this.performingAction = true;
 
     // 2. Gather data from inputs to send to the backend
     const body = {
@@ -343,18 +350,16 @@ export class WaitInLineCardComponent implements OnInit {
     }
 
     // 3. Send data to backend
-    console.log(this.wil);
-  }
-
-  newPass() {
-
-  }
-
-  endPass() {
-    this.hallPassService.endPassRequest(this.wil.id);
+    this.wilService.fakeWilActive.next(true);
+    this.wilService.fakeWil.next(this.wil);
+    this.performingAction = false;
     this.dialogRef.close();
   }
 
+  endPass()
+  {
+
+  }
   genOption(display, color, action, icon?) {
     return {display: display, color: color, action: action, icon};
   }
