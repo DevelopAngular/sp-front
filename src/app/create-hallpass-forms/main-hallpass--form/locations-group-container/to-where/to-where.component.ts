@@ -236,14 +236,20 @@ export class ToWhereComponent implements OnInit, OnDestroy, AfterViewInit {
 
   passLimitPromise(location) {
     return new Promise<boolean>(resolve => {
-      const passLimit = this.passLimits[location.id];
-      // passLimits has no location.id
-      if (!passLimit || this.formState.kioskMode){
+      if (this.formState.kioskMode) {
         return resolve(true);
       }
-      const passLimitReached = passLimit.max_passes_to_active && (passLimit.to_count + this.countStudents()) >=  passLimit.max_passes_to;
-      if (!passLimitReached)
+
+      const passLimit = this.passLimits[location.id];
+
+      if (!passLimit) { // passLimits has no location.id
         return resolve(true);
+      }
+      const passLimitReached = (passLimit.to_count + this.countStudents()) > passLimit.max_passes_to;
+
+      if (!passLimitReached) {
+        return resolve(true);
+      }
 
       const dialogRef = this.dialog.open(PassLimitDialogComponent, {
         panelClass: 'overlay-dialog',
