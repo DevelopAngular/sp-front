@@ -778,4 +778,9 @@ export class StudentInfoCardComponent implements OnInit, AfterViewInit, OnDestro
     this.userService.updateIntrosStudentPassLimitRequest(this.introsData, 'universal', '1');
   }
 
+  // predicate tu use in filtering HallPass array
+  isNotCancelledPass(p: HallPass): boolean {
+    return !(p.cancellable_by_student === false && p.cancelled !== null);
+  }
+
 }
