@@ -1,0 +1,21 @@
+@import '../../../../sp-colors.scss';
+
+.timer {
+  position: relative;
+  display: flex;
+  justify-content: center;
+
+  .back-svg {
+    position: absolute;
+    circle {
+      stroke: #D4D9E2 !important;
+      fill: transparent;
+    }
+  }
+
+  ::ng-deep .example-margin.mat-progress-spinner circle,
+  .mat-spinner circle {
+    stroke: $gray500 !important;
+    transition: all 1s linear;
+  }
+}

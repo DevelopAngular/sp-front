@@ -14,7 +14,7 @@
       <app-icon-button *ngIf="activeRoomCodePin || activeTeacherPin || activeTeacherSelection" [srcString]="'./assets/Chevron Left (White).svg'" [onDarkShade]="true" [size]="20" (clickEvent)="back()"></app-icon-button>
     </div>
     <mat-divider></mat-divider>
-  </div>x
+  </div>
 
   <div class="inline-pass-card-content" *ngIf="!activeRoomCodePin && !activeTeacherPin && !activeTeacherSelection">
     <div class="travel">
@@ -22,16 +22,22 @@
     </div>
     <div class="button">
       <app-card-button [width]="buttonWidth +'px'" [height]="'81px'" [gradientColor]="wil?.color_profile.gradient_color" [overlayWidth]="overlayWidth" [valid]="valid">
-        <div class="end-pass-content" [ngSwitch]="waitInLineState">
-          <ng-container *ngSwitchCase="1">
+        <ng-container [ngSwitch]="waitInLineState">
+          <div class="end-pass-content" *ngSwitchCase="1">
+            <img class="ds-mr-20" [src]="'./assets/Clock (White).svg' | resolveAsset" alt="Clock face">
             {{wil.position}} in line<span #waitingDots></span>
-          </ng-container>
+          </div>
 
-          <ng-container *ngSwitchDefault>
+          <div class="end-pass-content ds-flex-center-between" style="justify-content: space-around" *ngSwitchCase="2">
+            <sp-timer-spinner></sp-timer-spinner>
+            <span>Start Pass</span>
+            <img style="width: 25px" [src]="'./assets/Chevron Right (White).svg' | resolveAsset" alt="Right Arrow">
+          </div>
+
+          <div class="end-pass-content" *ngSwitchDefault>
             <mat-spinner [color]="'accent'" [diameter]="35"></mat-spinner>
-          </ng-container>
-
-        </div>
+          </div>
+        </ng-container>
       </app-card-button>
 <!--      <ng-container >-->
 <!--        <div class="end-pass-content" >-->
