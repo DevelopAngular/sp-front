@@ -498,13 +498,6 @@ export class PassCardComponent implements OnInit, OnDestroy {
             const isVisibilityError = ('visibility_alerts' in errorResponse.error);
             // not our error case? dispatch it to the next retryWhen
             if (!isVisibilityError) {
-              this.toastService.openToast(
-                {
-                  title: 'Oh no! Something went wrong',
-                  subtitle: `Please try refreshing the page. If the issue keeps occuring, contact us at support@smartpass.app. (${errorResponse.status})`,
-                  type: 'error'
-                }, `${errorResponse.status}`);
-                this.performingAction = false;
               throw errorResponse;
             }
             // a student has been checked server side and had no room visibility

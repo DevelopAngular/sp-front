@@ -5,11 +5,11 @@ import {DomSanitizer} from '@angular/platform-browser';
 import {ScreenService} from '../services/screen.service';
 import {DeviceDetection} from '../device-detection.helper';
 import {School} from '../models/School';
-import {TooltipDataService} from '../services/tooltip-data.service';
 import {PassLimit} from '../models/PassLimit';
 import {of, Subject} from 'rxjs';
 import {delay, pluck, takeUntil} from 'rxjs/operators';
 import {KeyboardShortcutsService} from '../services/keyboard-shortcuts.service';
+import { LocationsService } from '../services/locations.service'
 
 @Component({
   selector: 'app-location-cell',
@@ -55,7 +55,7 @@ export class LocationCellComponent implements OnInit, OnDestroy {
     private sanitizer: DomSanitizer,
     public screen: ScreenService,
     private renderer: Renderer2,
-    private tooltipService: TooltipDataService,
+    private locationsService: LocationsService,
     private shortcutsService: KeyboardShortcutsService
   ) {
     this.currentSchool = this.http.getSchool();
@@ -73,7 +73,7 @@ export class LocationCellComponent implements OnInit, OnDestroy {
       return 'This room has been closed by an admin.';
     }
     if (this.passLimit && this.currentPage !== 'from') {
-      return this.tooltipService.tooltipDescription(this.currentPage, this.passLimit);
+      return this.locationsService.tooltipDescription(this.currentPage, this.passLimit);
     }
   }
 

@@ -15,7 +15,6 @@ import {Subject, BehaviorSubject, fromEvent, Observable} from 'rxjs';
 import {filter, take, takeUntil, map} from 'rxjs/operators';
 import {DeviceDetection} from '../../../../device-detection.helper';
 import {StorageService} from '../../../../services/storage.service';
-import {TooltipDataService} from '../../../../services/tooltip-data.service';
 import {PassLimit} from '../../../../models/PassLimit';
 import {LocationsService} from '../../../../services/locations.service';
 import {PassLimitDialogComponent} from '../pass-limit-dialog/pass-limit-dialog.component';
@@ -106,7 +105,6 @@ export class ToWhereComponent implements OnInit, OnDestroy, AfterViewInit {
     private formService: CreateFormService,
     public screenService: ScreenService,
     private storage: StorageService,
-    private tooltipDataService: TooltipDataService,
     private locationsService: LocationsService,
     private dialog: MatDialog,
     private userService: UserService,
@@ -238,14 +236,25 @@ export class ToWhereComponent implements OnInit, OnDestroy, AfterViewInit {
 
   passLimitPromise(location) {
     return new Promise<boolean>(resolve => {
-      const passLimit = this.passLimits[location.id];
-      // passLimits has no location.id
-      if (!passLimit || this.formState.kioskMode){
+      if (this.formState.kioskMode) {
         return resolve(true);
       }
-      const passLimitReached = passLimit.max_passes_to_active && passLimit.max_passes_to < (passLimit.to_count + this.countStudents());
-      if (!passLimitReached)
+
+      const passLimit = this.passLimits[location.id];
+
+      if (!passLimit) { // passLimits has no location.id
         return resolve(true);
+      }
+
+      if (!passLimit.max_passes_to_active) {
+        return resolve(true);
+      }
+
+      const passLimitReached = (passLimit.to_count + this.countStudents()) > passLimit.max_passes_to;
+
+      if (!passLimitReached) {
+        return resolve(true);
+      }
 
       const dialogRef = this.dialog.open(PassLimitDialogComponent, {
         panelClass: 'overlay-dialog',
@@ -269,10 +278,23 @@ export class ToWhereComponent implements OnInit, OnDestroy, AfterViewInit {
     });
   }
 
-  pinnableSelected(pinnable) {
-    const location = pinnable.location;
+  private getLocationFromSelection(selection: Pinnable | Location): Location {
+    const isPinnable = 'type' in selection;
+    if (isPinnable) {
+      return (selection as Pinnable).location;
+    }
 
-    const forwardAndEmit = () => {
+    return selection as Location;
+  }
+
+  /**
+   * If there's nothing in the way ot selecting a location or pinnable, then we can emit
+   * and move on to the next pass screen after selecting a destination
+   */
+  private forwardAndEmit(selection: Pinnable | Location) {
+    const isPinnable = 'type' in selection;
+    if (isPinnable) {
+      const pinnable = selection as Pinnable; // value doesn't change, but it helps TypeScript to narrow the type down
       if (this.formState.formMode.role === 1 && pinnable.type === 'location') {
         this.formService.setFrameMotionDirection('disable');
       } else {
@@ -282,243 +304,160 @@ export class ToWhereComponent implements OnInit, OnDestroy, AfterViewInit {
       this.formService.scalableBoxController.next(true);
 
       setTimeout(() => {
-        this.formState.previousState = 2;
+        this.formState.previousState = States.toWhere;
         this.selectedPinnable.emit(pinnable);
       }, 100);
-    };
-
-    const emitSelectedPinnable = (allowed) => {
-      if (!allowed) return;
-
-      // is folder
-      if (!!pinnable.category && pinnable.location === null) {
-        forwardAndEmit();
-        return;
-      }
-
-      // only students
-      if (!this.isStaff || this.formState.kioskMode) {
-        if (this.tooltipDataService.reachedPassLimit( 'to', this.passLimits[+pinnable.location.id])) {
-          const ps =  this.dialog.open(PassLimitDialogComponent, {
-            panelClass: 'overlay-dialog',
-            backdropClass: 'custom-backdrop',
-            width: '450px',
-            height: '163px',
-            disableClose: true,
-            data: {
-              isStudent: true
-            }
-          });
-
-          ps.afterClosed().pipe(
-            takeUntil(this.destroy$)
-          ).subscribe(({override}) => {
-            if (!override) {
-              this.dialogRef.close();
-            }
-          });
-          return;
-        }
-       forwardAndEmit();
-       return;
-      }
-
-     // staff only
-     const selectedStudents = this.formState.data.roomStudents ?? this.formState.data.selectedStudents;
-     // skipped are students that do not qualify to go forward
-     let skipped = this.visibilityService.calculateSkipped(selectedStudents, location);
-
-      if (skipped.length === 0) {
-        forwardAndEmit();
-        return;
-      }
-
-      let text =  'This room is only available to certain students';
-      let names = selectedStudents.filter(s => skipped.includes(''+s.id)).map(s => s.display_name);
-      let title =  'Student does not have permission to go to this room';
-      let denyText =  'Skip';
-      if (names.length > 1) {
-        text = names?.join(', ') ?? 'This room is only available to certain students'
-        title = 'These students do not have permission to go to this room:';
-        denyText = 'Skip these students';
-      } else {
-        title = (names?.join(', ') ?? 'Student') + ' does not have permission to go to this room';
-      }
-
-      const roomStudents = selectedStudents.filter(s => (!skipped.includes(''+s.id)));
-      const noStudentsCase = roomStudents.length === 0;
-
-      if (noStudentsCase) denyText = 'Cancel';
-
-      this.dialog.open(ConfirmationDialogComponent, {
-        panelClass: 'overlay-dialog',
-        backdropClass: 'custom-backdrop',
-        closeOnNavigation: true,
-        width: '450px',
-        data: {
-          headerText: '',
-          body: this.confirmDialogVisibility,
-          buttons: {
-            confirmText: 'Override',
-            denyText,
-          },
-          templateData: {alerts: [{title, text}]},
-          icon: {
-            name: 'Eye (Green-White).svg',
-            background: '',
-          }
-        } as ConfirmationTemplates
-      }).afterClosed().pipe(
-        takeUntil(this.destroy$),
-      ).subscribe(override => {
-        this.formState.data.roomOverride = !!override;
-
-        if (override === undefined) {
-          return;
-        }
-
-        // override case
-        if (override) {
-          forwardAndEmit();
-          return;
-        }
-
-        // SKIPPING case
-        // avoid a certain no students case
-        if (selectedStudents.length === 1) {
-          return;
-        }
-
-        if (noStudentsCase) {
-          return;
-        }
-
-        this.formState.data.roomStudents = roomStudents;
-        forwardAndEmit();
-      });
-    };
-
-    if (pinnable.type !== 'location') {
-      return emitSelectedPinnable(true);
     } else {
-      this.passLimitPromise(pinnable.location).then(emitSelectedPinnable);
-    }
-  }
-
-  locationSelected(location) {
-    const forwardAndEmit = () => {
+      const location = selection as Location; // value doesn't change, but it helps TypeScript to narrow the type down
       this.formService.setFrameMotionDirection('disable');
       this.formService.scalableBoxController.next(true);
       setTimeout(() => {
         this.selectedLocation.emit(location);
       }, 100);
-    };
+    }
+  }
 
-    // only students
+  /**
+   * If a student has not reached the room limit, they are allowed to continue creating their pass
+   */
+  private async handleStudentRoomLimits(selection: Pinnable | Location) {
+    const location = this.getLocationFromSelection(selection);
+    const reachedRoomPassLimit = this.locationsService.reachedRoomPassLimit( 'to', this.passLimits[+location.id]);
 
-    if (!this.isStaff || this.formState.kioskMode) {
-      if (this.tooltipDataService.reachedPassLimit( 'to', this.passLimits[+location.id])) {
-        const ps =  this.dialog.open(PassLimitDialogComponent, {
-          panelClass: 'overlay-dialog',
-          backdropClass: 'custom-backdrop',
-          width: '450px',
-          height: '163px',
-          disableClose: true,
-          data: {
-            isStudent: true
-          }
-        });
-
-        ps.afterClosed().pipe(
-          takeUntil(this.destroy$)
-        ).subscribe(({override}) => {
-          if (!override) {
-            this.dialogRef.close();
-          }
-        });
-        return;
-      }
-      forwardAndEmit();
+    if(!reachedRoomPassLimit) {
+      this.forwardAndEmit(selection);
       return;
     }
 
-
-    this.passLimitPromise(location).then((allowed) => {
-      if (!allowed) return;
-
-     // staff only
-     const selectedStudents = this.formState.data.roomStudents ?? this.formState.data.selectedStudents;
-     // skipped are students that do not qualify to go forward
-     let skipped = this.visibilityService.calculateSkipped(selectedStudents, location);
-
-      if (skipped.length === 0) {
-        forwardAndEmit();
-        return;
+    const studentRoomLimitReachedConfig = {
+      panelClass: 'overlay-dialog',
+      backdropClass: 'custom-backdrop',
+      width: '450px',
+      height: '163px',
+      disableClose: true,
+      data: {
+        isStudent: true
       }
+    };
 
-      let text =  'This room is only available to certain students';
-      let names = selectedStudents.filter(s => skipped.includes(''+s.id)).map(s => s.display_name);
-      let title =  'Student does not have permission to go to this room';
-      let denyText =  'Skip';
-      if (names.length > 1) {
-        text = names?.join(', ') ?? 'This room is only available to certain students'
-        title = 'These students do not have permission to go to this room:';
-        denyText = 'Skip these students';
-      } else {
-        title = (names?.join(', ') ?? 'Student') + ' does not have permission to go to this room';
-      }
+    const chooseAnotherLocation = (await this.dialog
+      .open(PassLimitDialogComponent, studentRoomLimitReachedConfig)
+      .afterClosed()
+      .pipe(takeUntil(this.destroy$)).toPromise()).override;
 
-      const roomStudents = selectedStudents.filter(s => (!skipped.includes(''+s.id)));
-      const noStudentsCase = roomStudents.length === 0;
+    if (!chooseAnotherLocation) {
+      this.dialogRef.close();
+    }
 
-      if (noStudentsCase) denyText = 'Cancel';
+    return;
+  }
 
-      this.dialog.open(ConfirmationDialogComponent, {
-        panelClass: 'overlay-dialog',
-        backdropClass: 'custom-backdrop',
-        closeOnNavigation: true,
-        data: {
-          headerText: '',
-          body: this.confirmDialogVisibility,
-          buttons: {
-            confirmText: 'Override',
-            denyText,
-          },
-          templateData: {alerts: [{title, text}]},
-          icon: {
-            name: 'Eye (Green-White).svg',
-            background: '',
-          }
-        } as ConfirmationTemplates
-      }).afterClosed().pipe(
-        takeUntil(this.destroy$),
-      ).subscribe(override => {
-        this.formState.data.roomOverride = !!override;
+  /**
+   * If a teacher selects a room for a group of students and some student do not belong to the
+   * room's visibility rule, we have the option to either skip those students or override the rule
+   * and create the pass for all selected students
+   */
+  private async handleRoomVisibility(selection: Pinnable | Location) {
+    const location = this.getLocationFromSelection(selection);
+    const selectedStudents = this.formState.data.roomStudents ?? this.formState.data.selectedStudents;
+    const skipped = this.visibilityService.calculateSkipped(selectedStudents, location);
 
-        if (override === undefined) {
-          return;
+    if (skipped.length === 0) {
+      this.forwardAndEmit(location);
+      return;
+    }
+
+    let text =  'This room is only available to certain students';
+    let names = selectedStudents.filter(s => skipped.includes(''+s.id)).map(s => s.display_name);
+    let title =  'Student does not have permission to go to this room';
+    let denyText =  'Skip';
+    if (names.length > 1) {
+      text = names?.join(', ') ?? 'This room is only available to certain students'
+      title = 'These students do not have permission to go to this room:';
+      denyText = 'Skip these students';
+    } else {
+      title = (names?.join(', ') ?? 'Student') + ' does not have permission to go to this room';
+    }
+
+    const roomStudents = selectedStudents.filter(s => (!skipped.includes(''+s.id)));
+    const noStudentsCase = roomStudents.length === 0;
+    if (noStudentsCase) {
+      denyText = 'Cancel';
+    }
+    const visibilityDialogConfig = {
+      panelClass: 'overlay-dialog',
+      backdropClass: 'custom-backdrop',
+      closeOnNavigation: true,
+      width: '450px',
+      data: {
+        headerText: '',
+        body: this.confirmDialogVisibility,
+        buttons: {
+          confirmText: 'Override',
+          denyText,
+        },
+        templateData: {alerts: [{title, text}]},
+        icon: {
+          name: 'Eye (Green-White).svg',
+          background: '',
         }
+      } as ConfirmationTemplates
+    }
 
-        // override case
-        if (override) {
-          forwardAndEmit();
-          return;
-        }
+    const overrideSkippedStudents = await this.dialog
+      .open(ConfirmationDialogComponent, visibilityDialogConfig)
+      .afterClosed()
+      .pipe(takeUntil(this.destroy$))
+      .toPromise();
 
-        // SKIPPING case
-        // avoid a certain no students case
-        if (selectedStudents.length === 1) {
-          return;
-        }
+    this.formState.data.roomOverride = !!overrideSkippedStudents;
 
-        if (noStudentsCase) {
-          return;
-        }
+    if (overrideSkippedStudents === undefined) {
+      return;
+    }
 
-        this.formState.data.roomStudents = roomStudents;
-        forwardAndEmit();
-      });
-    });
+    // override case
+    if (overrideSkippedStudents) {
+      this.forwardAndEmit(location);
+      return;
+    }
+
+    // SKIPPING case
+    // avoid a certain no students case
+    if (selectedStudents.length === 1) {
+      return;
+    }
+
+    if (noStudentsCase) {
+      return;
+    }
+
+    this.formState.data.roomStudents = roomStudents;
+    this.forwardAndEmit(location);
+  }
+
+  async pinnableSelected(pinnable) {
+    if (pinnable.type !== 'location') {
+      this.forwardAndEmit(pinnable);
+      return;
+    }
+
+    await this.locationSelected(pinnable.location);
+  }
+
+  async locationSelected(location) {
+    // only students
+    if (!this.isStaff || this.formState.kioskMode) {
+      await this.handleStudentRoomLimits(location);
+      return;
+    }
+
+    const allowed = await this.passLimitPromise(location);
+    if (!allowed) {
+      return;
+    }
+
+    await this.handleRoomVisibility(location);
   }
 
   switchView(isGrid) {
