@@ -245,6 +245,11 @@ export class ToWhereComponent implements OnInit, OnDestroy, AfterViewInit {
       if (!passLimit) { // passLimits has no location.id
         return resolve(true);
       }
+
+      if (!passLimit.max_passes_to_active) {
+        return resolve(true);
+      }
+
       const passLimitReached = (passLimit.to_count + this.countStudents()) > passLimit.max_passes_to;
 
       if (!passLimitReached) {
