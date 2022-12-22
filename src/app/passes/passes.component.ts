@@ -59,6 +59,7 @@ import {PassLimitInfo} from '../models/HallPassLimits';
 import {MainHallPassFormComponent} from '../create-hallpass-forms/main-hallpass--form/main-hall-pass-form.component';
 import {CheckForUpdateService} from '../services/check-for-update.service';
 import {Title} from '@angular/platform-browser';
+import { FeatureFlagService, FLAGS } from '../services/feature-flag.service';
 
 @Component({
   selector: 'app-passes',
@@ -126,6 +127,7 @@ export class PassesComponent implements OnInit, AfterViewInit, OnDestroy {
   futurePasses: any;
   activePasses: any;
   pastPasses: any;
+  waitInLinePasses: any;
 
   sentRequests: any;
   receivedRequests: any;
@@ -214,6 +216,10 @@ export class PassesComponent implements OnInit, AfterViewInit, OnDestroy {
     );
   }
 
+  get isWaitInLine(): boolean {
+    return this.featureService.isFeatureEnabled(FLAGS.WaitInLine);
+  }
+
   get showInbox() {
     if (!this.isStaff) {
       return this.dataService.inboxState;
@@ -256,7 +262,8 @@ export class PassesComponent implements OnInit, AfterViewInit, OnDestroy {
     private passLimitsService: PassLimitService,
     private updateService: CheckForUpdateService,
     private cdr: ChangeDetectorRef,
-    private titleService: Title
+    private titleService: Title,
+    private featureService: FeatureFlagService
   ) {
 
     this.userService.user$

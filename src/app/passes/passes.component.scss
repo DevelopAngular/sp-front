@@ -1,217 +1,207 @@
 @import '../../sp-colors';
-
 @media all and (max-width: 320px) {
-  div.current-pass-card {
-    max-width: 300px;
-  }
-
-  div.pass-buttons {
-    grid-template-columns: 143px 143px !important;
-  }
+    div.current-pass-card {
+        max-width: 300px;
+    }
+    div.pass-buttons {
+        grid-template-columns: 143px 143px !important;
+    }
 }
 
 @media all and (max-width: 425px) {
-  div.inbox-content {
-    width: 100%;
-    min-height: calc(100vh - 78px);
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-  }
-
-  div.current-pass,
-  div.future-passes,
-  div.past-passes,
-  div.active-passes {
-    width: 100%;
-  }
-
-  div.pass-buttons{
-    align-self: center;
-    display: grid;
-    grid-template-columns: 157px 157px;
-    grid-gap: 10px 10px;
-    width: initial;
-  }
-
-  .requests-title,
-  h1.passes-heading {
-    display: flex;
-    align-items: center;
-    height: 39px;
-    color: #1F195E;
-    position: fixed;
-    left: 50%;
-    transform: translateX(-50%) scale(1);
-    margin: 0;
-    z-index: 10;
-    top: 69.5px;
-    font-size: 22px;
-  }
-
-  .passes {
-    margin-top: 10px;
-  }
-
-  img.empty-passes-svg {
-    width: 100%;
-  }
-
-  .requests-or-invitations {
-    width: 328px;
-  }
-
+    div.inbox-content {
+        width: 100%;
+        min-height: calc(100vh - 78px);
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+    }
+    div.current-pass,
+    div.future-passes,
+    div.waitinline-passes,
+    div.past-passes,
+    div.active-passes {
+        width: 100%;
+    }
+    div.pass-buttons {
+        align-self: center;
+        display: grid;
+        grid-template-columns: 157px 157px;
+        grid-gap: 10px 10px;
+        width: initial;
+    }
+    .requests-title,
+    h1.passes-heading {
+        display: flex;
+        align-items: center;
+        height: 39px;
+        color: #1F195E;
+        position: fixed;
+        left: 50%;
+        transform: translateX(-50%) scale(1);
+        margin: 0;
+        z-index: 10;
+        top: 69.5px;
+        font-size: 22px;
+    }
+    .passes {
+        margin-top: 10px;
+    }
+    img.empty-passes-svg {
+        width: 100%;
+    }
+    .requests-or-invitations {
+        width: 328px;
+    }
 }
 
 @media all and (max-width: 768px) {
-  div.main-page-left {
-    margin-right: 0;
-    //width: 100%;
-    margin-top: 15px;
-  }
-
-  div.main-page-right {
-    display: none !important;
-  }
+    div.main-page-left {
+        margin-right: 0;
+        //width: 100%;
+        margin-top: 15px;
+    }
+    div.main-page-right {
+        display: none !important;
+    }
 }
 
 @media all and (max-width: 940px) {
-  div.current-pass-card {
-    max-width: 335px;
-    margin: 0 auto;
-  }
+    div.current-pass-card {
+        max-width: 335px;
+        margin: 0 auto;
+    }
 }
 
 @media all and (max-width: 1024px) {
-  .pass-collection  {
-    &:last-child {
-      padding-bottom: 78px;
+    .pass-collection {
+        &:last-child {
+            padding-bottom: 78px;
+        }
     }
-  }
 }
 
 .passes-wrapper {
-  display: flex;
-  justify-content: center;
-  margin-left: auto;
-  margin-right: auto;
-  position: relative;
-  //height: calc(100vh - 128px);
-  overflow: auto;
-  padding-top: 40px;
-  //padding-bottom: 78px;
-  //-webkit-box-sizing: border-box;
-  //-moz-box-sizing: border-box;
-  //box-sizing: border-box;
+    display: flex;
+    justify-content: center;
+    margin-left: auto;
+    margin-right: auto;
+    position: relative;
+    //height: calc(100vh - 128px);
+    overflow: auto;
+    padding-top: 40px;
+    //padding-bottom: 78px;
+    //-webkit-box-sizing: border-box;
+    //-moz-box-sizing: border-box;
+    //box-sizing: border-box;
 }
 
 .mobile-pass-wrapper {
-  position: relative;
-  height: calc(100vh - 127px);
-  overflow: auto;
-
-  .passes-mobile-height {
-    position: absolute;
-    width: 100%;
-  }
+    position: relative;
+    height: calc(100vh - 127px);
+    overflow: auto;
+    .passes-mobile-height {
+        position: absolute;
+        width: 100%;
+    }
 }
 
-.main-page-left{
-  margin-right: 80px;
-  display: flex;
-  flex-direction: column;
-  align-items: center;
+.main-page-left {
+    margin-right: 80px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
 }
 
-.current-pass{
-  margin-bottom: 40px;
+.current-pass {
+    margin-bottom: 40px;
 }
 
 .inbox-content {
-  width: 301px;
+    width: 301px;
 }
 
-.pass-buttons{
-  display: flex;
-  flex-direction: row;
-  //margin-left: 25px;
-  justify-content: space-between;
-  width: 301px;
+.pass-buttons {
+    display: flex;
+    flex-direction: row;
+    //margin-left: 25px;
+    justify-content: space-between;
+    width: 301px;
 }
 
-.future-passes, .past-passes, .active-passes {
-  width: 450px;
-  //margin-bottom: 40px;
+.future-passes,
+.past-passes,
+.active-passes,
+.waitinline-passes {
+    width: 450px;
+    //margin-bottom: 40px;
 }
+
 .requests-or-invitations {
-  //margin-bottom: 40px;
+    //margin-bottom: 40px;
 }
 
-.main-page-right{
-  //margin-left: 80px;
-  //animation: requestsInMotion .8s ease forwards;
+.main-page-right {
+    //margin-left: 80px;
+    //animation: requestsInMotion .8s ease forwards;
 }
 
 .requests-in-motion {
-  animation: requestsInMotion .8s ease forwards;
+    animation: requestsInMotion .8s ease forwards;
 }
 
 @keyframes requestsInMotion {
-  0% {
-    width: 0px;
-    opacity: 0;
-    transform: translateX(50px);
-  }
-  100% {
-    width: 351px;
-    opacity: 1;
-    transform: translateX(0px);
-  }
+    0% {
+        width: 0px;
+        opacity: 0;
+        transform: translateX(50px);
+    }
+    100% {
+        width: 351px;
+        opacity: 1;
+        transform: translateX(0px);
+    }
 }
 
 .big-text {
-  font-size: 16pt;
+    font-size: 16pt;
 }
 
 .empty-container {
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  color: $blue-gray;
-  margin-top: 50px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    color: $blue-gray;
+    margin-top: 50px;
 }
 
 .empty-inbox-svg {
-  margin: 20px 0;
-  width: 68px;
+    margin: 20px 0;
+    width: 68px;
 }
 
 .empty-passes-svg {
-  margin: 20px 0;
-  width: 330px;
+    margin: 20px 0;
+    width: 330px;
 }
 
 .passes-heading {
-  display: none;
+    display: none;
 }
 
 .side-menu {
-  &-content {
-    max-height: 267px;
-    max-width: 340px;
-    margin: 0 auto;
-  }
-
-  &-title {
-    color: #1F195E;
-    font-weight: bold;
-    font-size: 25px;
-    padding-top: 100px;
-  }
-
-  &-requests {
-    padding-top: 30px;
-  }
+    &-content {
+        max-height: 267px;
+        max-width: 340px;
+        margin: 0 auto;
+    }
+    &-title {
+        color: #1F195E;
+        font-weight: bold;
+        font-size: 25px;
+        padding-top: 100px;
+    }
+    &-requests {
+        padding-top: 30px;
+    }
 }
-
-

@@ -39,6 +39,7 @@ export class PassTileComponent implements OnInit, OnDestroy, OnChanges {
   @Input() pass: PassLike;
   @Input() fromPast = false;
   @Input() forFuture: boolean;
+  @Input() waitInLine: boolean;
   // just presents a less "active" version of pass tile
   @Input() presentational: boolean;
   @Input() isActive = false;
@@ -83,6 +84,9 @@ export class PassTileComponent implements OnInit, OnDestroy, OnChanges {
   get tileContent() {
     if (this.isActive) {
       return this.timeLeft + (this.valid ? ' Remaining' : ' Expiring');
+    } else if (this.waitInLine) {
+      // Here we will fetch number in line
+      return '3rd in Line'
     } else {
       if (this.encounterPreventionCard) {
         return 'Now';

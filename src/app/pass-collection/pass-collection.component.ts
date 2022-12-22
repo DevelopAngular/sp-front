@@ -61,6 +61,7 @@ export class PassCollectionComponent implements OnInit, AfterViewInit, OnDestroy
   @Input() icon: string;
   @Input() emptyMessage;
   @Input() columns = 3;
+  @Input() waitInLine = false;
   @Input() fromPast = false;
   @Input() forFuture = false;
   @Input() isActive = false;
@@ -367,6 +368,7 @@ export class PassCollectionComponent implements OnInit, AfterViewInit, OnDestroy
         pass: pass,
         fromPast: this.fromPast,
         forFuture: this.forFuture,
+        waitInLine: this.waitInLine,
         forMonitor: this.forMonitor,
         isActive: this.isActive,
         forStaff: this.forStaff,
