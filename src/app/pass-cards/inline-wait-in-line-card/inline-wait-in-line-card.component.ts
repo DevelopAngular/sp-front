@@ -23,9 +23,10 @@ import { MatDialog } from '@angular/material/dialog'
 import { ScreenService } from '../../services/screen.service'
 import { StorageService } from '../../services/storage.service'
 import { DeviceDetection } from '../../device-detection.helper'
-import { ordinance, WaitInLine } from '../../models/WaitInLine'
+import { WaitInLine } from '../../models/WaitInLine'
 import { WaitInLineService } from '../../services/wait-in-line.service'
 import { take, takeUntil, tap } from 'rxjs/operators'
+import { MatRipple } from '@angular/material/core'
 
 export enum WaitInLineState {
   CreatingPass,
@@ -35,6 +36,7 @@ export enum WaitInLineState {
   RequestWaiting
 }
 
+// TODO: Delete button for WIL pass
 @Component({
   selector: 'app-inline-wait-in-line-card',
   templateUrl: './inline-wait-in-line-card.component.html',
@@ -50,6 +52,25 @@ export class InlineWaitInLineCardComponent implements OnInit, OnDestroy, OnChang
   @Input() isOpenBigPass: boolean;
   @Input() fullScreen: boolean;
 
+  @ViewChild(MatRipple) set constantRipple(ripple: MatRipple) {
+    if (!ripple) {
+      return;
+    }
+
+    timer(0, 2500)
+      .pipe(
+        takeUntil(this.destroy$)
+      )
+      .subscribe({
+        next: () => {
+          const rippleRef = ripple.launch({
+            persistent: true,
+            centered: true
+          });
+          rippleRef.fadeOut();
+        }
+      })
+  }
   @ViewChild('waitingDots') set dotsSpan(span: ElementRef<HTMLSpanElement>) {
     if (!span) {
       return;
@@ -79,6 +100,8 @@ export class InlineWaitInLineCardComponent implements OnInit, OnDestroy, OnChang
   selectedTeacher: User;
   destroy$: Subject<any> = new Subject<any>();
   waitInLineState: WaitInLineState = WaitInLineState.WaitingInLine;
+  acceptingPassTimeRemaining: number;
+  passAttempts = 2; // TODO: when this hits 0, then kick the student to the back of the line
 
   public FORM_STATE: Navigation;
   pinnable: Pinnable;
@@ -110,6 +133,7 @@ export class InlineWaitInLineCardComponent implements OnInit, OnDestroy, OnChang
 
   ngOnInit() {
 
+    // TODO: Remove mock code when APIs are available
     timer(0, 2000).pipe(
       take(3)
     ).subscribe({

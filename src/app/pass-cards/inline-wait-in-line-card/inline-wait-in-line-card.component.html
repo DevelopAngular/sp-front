@@ -28,10 +28,26 @@
             {{wil.position}} in line<span #waitingDots></span>
           </div>
 
-          <div class="end-pass-content ds-flex-center-between" style="justify-content: space-around" *ngSwitchCase="2">
-            <sp-timer-spinner></sp-timer-spinner>
+          <!-- TODO: Opacity Pulse -->
+          <!-- TODO: Kick student to the back of line if attempts expire -->
+          <div class="end-pass-content ds-flex-center-between" style="justify-content: space-around; width: 100%; border-radius: 8px" *ngSwitchCase="2" matRipple>
+            <sp-timer-spinner
+              customToolTip
+              [contentTemplate]="passAttemptTooltip"
+              [seconds]="30"
+              [showNumber]="true"
+              (pulse)="acceptingPassTimeRemaining = $event">
+            </sp-timer-spinner>
             <span>Start Pass</span>
             <img style="width: 25px" [src]="'./assets/Chevron Right (White).svg' | resolveAsset" alt="Right Arrow">
+
+            <ng-template #passAttemptTooltip>
+              <div class="ds-tooltip" style="width: 200px">
+                <span>
+                  You have {{acceptingPassTimeRemaining}} sec left to start your pass or you will be sent to the back of the line.
+                </span>
+              </div>
+            </ng-template>
           </div>
 
           <div class="end-pass-content" *ngSwitchDefault>
