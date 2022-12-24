@@ -16,6 +16,7 @@ import {ActivatedRoute} from '@angular/router';
 import {MainHallPassFormComponent} from '../create-hallpass-forms/main-hallpass--form/main-hall-pass-form.component';
 import {Title} from '@angular/platform-browser';
 import {Location} from '../models/Location';
+import { FeatureFlagService, FLAGS } from '../services/feature-flag.service';
 
 declare const window;
 
@@ -69,12 +70,17 @@ export class KioskModeComponent implements OnInit, AfterViewInit, OnDestroy {
     private storage: StorageService,
     private timeService: TimeService,
     private activatedRoute: ActivatedRoute,
-    private titleService: Title
+    private titleService: Title,
+    private featureService: FeatureFlagService
   ) {
   }
 
   get showProfilePicture() {
     return this.userService.getUserSchool()?.profile_pictures_enabled;
+  }
+
+  get isWaitInLine(): boolean {
+    return this.featureService.isFeatureEnabled(FLAGS.WaitInLine);
   }
 
   ngOnInit() {

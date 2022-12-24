@@ -1,128 +1,160 @@
 @media (max-width: 320px) {
-  div.pass-buttons {
-    grid-template-columns: 143px 143px !important;
-  }
+    div.pass-buttons {
+        grid-template-columns: 143px 143px !important;
+    }
 }
 
 @media all and (max-width: 425px) {
-  div.pass-buttons {
-    align-self: center;
-    display: grid !important;
-    grid-template-columns: 157px 157px;
-    grid-gap: 10px 10px;
-    width: initial !important;
-  }
-
-  .kiosk-mode-container {
-    .future-passes, .past-passes, .active-passes {
-      width: auto !important;
+    div.pass-buttons {
+        align-self: center;
+        display: grid !important;
+        grid-template-columns: 157px 157px;
+        grid-gap: 10px 10px;
+        width: initial !important;
     }
-  }
+    .kiosk-mode-container {
+        .future-passes,
+        .past-passes,
+        .waitinline-passes,
+        .active-passes {
+            width: auto !important;
+        }
+    }
+}
+
+@media all and (max-width: 768px) {
+    div.main-page-left {
+        margin-right: 0;
+        //width: 100%;
+        margin-top: 15px;
+    }
+    div.main-page-right {
+        display: none !important;
+    }
+}
+
+@media all and (max-width: 1024px) {
+    .pass-collection {
+        &:last-child {
+            padding-bottom: 78px;
+        }
+    }
 }
 
 .kiosk-mode-container {
-  height: calc(100vh - 64px);
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  position: relative;
-  .pass-buttons{
     display: flex;
-    flex-direction: row;
-    justify-content: space-between;
-    width: 301px;
-  }
-
-  .future-passes, .past-passes, .active-passes {
-    width: 755px;
-    //margin-bottom: 40px;
-  }
-
-  .inp {
-    position: fixed;
-    top: 0;
-  }
+    justify-content: center;
+    margin-left: auto;
+    margin-right: auto;
+    position: relative;
+    //height: calc(100vh - 128px);
+    overflow: auto;
+    padding-top: 40px;
+    // height: calc(100vh - 64px);
+    // display: flex;
+    // flex-direction: column;
+    // align-items: center;
+    // position: relative;
+    .main-page-left {
+        margin-right: 80px;
+        display: flex;
+        flex-direction: column;
+    }
+    .pass-buttons {
+        display: flex;
+        flex-direction: row;
+        justify-content: space-between;
+        width: 301px;
+    }
+    .waitinline-passes {
+        width: 450px;
+        //margin-bottom: 40px;
+    }
+    .future-passes,
+    .past-passes,
+    .active-passes {
+        width: 755px;
+        //margin-bottom: 40px;
+    }
+    .inp {
+        position: fixed;
+        top: 0;
+    }
 }
 
 .app-display-card-container {
-  display: flex;
-  flex-direction: column;
+    display: flex;
+    flex-direction: column;
 }
 
 .display-card-divider {
-  width: 100%;
-  height: 60px;
-
-  display: flex;
-  justify-content: space-evenly;
-  align-items: center;
-
-  div {
-    height: 1px;
-    width: 53px;
-    background-color: rgba(183,193,207, 1);
-  }
-
-  span {
-    opacity: 1;
-    color: rgba(183,193,207,1);
-    font-size: 17px;
-    font-weight: 500;
-    font-style: normal;
-    letter-spacing: 0;
-    text-align: left;
-  }
+    width: 100%;
+    height: 60px;
+    display: flex;
+    justify-content: space-evenly;
+    align-items: center;
+    div {
+        height: 1px;
+        width: 53px;
+        background-color: rgba(183, 193, 207, 1);
+    }
+    span {
+        opacity: 1;
+        color: rgba(183, 193, 207, 1);
+        font-size: 17px;
+        font-weight: 500;
+        font-style: normal;
+        letter-spacing: 0;
+        text-align: left;
+    }
 }
 
 .scanner-display {
-  display: flex;
-  flex-direction: column;
-  border-radius: 15px;
-  background-color: rgba(240,242,245, 1);
-  height: 170px;
-  width: 300px;
-  align-items: center;
-  justify-content: space-evenly;
-
-  img {
-    width: 76px;
-    height: 40px;
-  }
-
-  span {
-    opacity: 1;
-    color: rgba(112,131,160,1);
-    font-size: 17px;
-    font-weight: 500;
-    font-style: normal;
-    letter-spacing: 0;
-    text-align: left;
-  }
+    display: flex;
+    flex-direction: column;
+    border-radius: 15px;
+    background-color: rgba(240, 242, 245, 1);
+    height: 170px;
+    width: 300px;
+    align-items: center;
+    justify-content: space-evenly;
+    img {
+        width: 76px;
+        height: 40px;
+    }
+    span {
+        opacity: 1;
+        color: rgba(112, 131, 160, 1);
+        font-size: 17px;
+        font-weight: 500;
+        font-style: normal;
+        letter-spacing: 0;
+        text-align: left;
+    }
 }
 
 .error-field {
-  padding: 0px 20px;
-  max-width: 305px;
-  display: flex;
-  justify-content: center;
-
-.error-display{
-  background-color: #fceaf0;
-  border-radius: 14px;
-  padding: 20px;
-  text-align: center;
-  display: inline-flex;
-  align-items: center;
-  justify-content: center;
-  span{
-    color:#e42866;
-    font-size: 17px;
-    font-weight: 500;
-    font-style: normal;
-    line-height: 20px;
-    display: block;
-    text-align: center;
-    margin-top: 10px;
-  }
-}
+    padding: 0px 20px;
+    max-width: 305px;
+    display: flex;
+    justify-content: center;
+    .error-display {
+        background-color: #fceaf0;
+        border-radius: 14px;
+        padding: 20px;
+        text-align: center;
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        span {
+            color: #e42866;
+            font-size: 17px;
+            font-weight: 500;
+            font-style: normal;
+            line-height: 20px;
+            display: block;
+            text-align: center;
+            margin-top: 10px;
+        }
+    }
 }
