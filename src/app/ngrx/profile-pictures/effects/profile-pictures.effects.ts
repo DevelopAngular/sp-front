@@ -2,7 +2,7 @@ import {Injectable} from '@angular/core';
 import {Actions, createEffect, ofType} from '@ngrx/effects';
 import {UserService} from '../../../services/user.service';
 import * as profilePicturesActions from '../actions';
-import {catchError, concatAll, exhaustMap, last, map, mergeMap, switchMap, take, tap, withLatestFrom} from 'rxjs/operators';
+import {catchError, exhaustMap, last, map, mergeMap, switchMap, take, tap} from 'rxjs/operators';
 import {of, zip} from 'rxjs';
 import {ProfilePicture} from '../../../models/ProfilePicture';
 import {User} from '../../../models/User';
@@ -46,7 +46,16 @@ export class ProfilePicturesEffects {
                                 const urls = images.map(prof => prof.upload_url);
                                 const content_types = images.map(prof => prof.content_type);
                                 const images_data = images.reduce((acc, pic, index) => {
-                                    return {...acc, [action.userIds[index]]: pic.id};
+                                  // lowercased as every search are performed on lowercased values
+                                  const key = action.userIds[index].toLowerCase();
+                                  // this should not happen
+                                  if (!key) {
+                                    // TODO throw exception?
+                                    // or just return the previous accumulated object
+                                    // as it nothing happened
+                                    return acc;
+                                  }
+                                  return {...acc, [key]: pic.id};
                                 }, {});
                                 return [
                                     profilePicturesActions.createUploadGroup(),
@@ -103,6 +112,16 @@ export class ProfilePicturesEffects {
             .pipe(
                 ofType(profilePicturesActions.mappingUserCollection),
                 exhaustMap((action: any) => {
+                  // TODO too cautionary?
+                  // as this data is lowercased above
+                  // used down to the pipe
+                  /*  const images_data_lowercased = Object.keys(action.images_data).reduce((acc, k) => {
+                      acc[k.toLowerCase()] = action.images_data[k];
+                      return acc;
+                    }, {});
+                  */
+                 const images_data_lowercased = action.images_data;
+
                     return zip(
                         this.userService.getUsersList('_profile_student', '', null, true),
                         this.userService.getUsersList('_profile_teacher', '', null, true),
@@ -111,27 +130,42 @@ export class ProfilePicturesEffects {
                         map(([students, teachers, assistants]) => [...students, ...teachers, ...assistants]),
                         map((students: User[]) => {
                             return students.reduce((acc, user) => {
-                                if (user.primary_email.includes('@spnx.local')) {
-                                    user.primary_email = user.primary_email.replace('@spnx.local', '');
-                                }
-                                if (user.extras.clever) {
-                                    return {...acc, [user.extras.clever]: user, [user.primary_email.toLowerCase()]: user};
-                                }
-                                // TODO: is clever_student_number used anymore?
-                                if (user.extras.clever_student_number) {
-                                    return {...acc, [user.extras.clever_student_number]: user, [user.primary_email.toLowerCase()]: user};
-                                }
-                                return {...acc, [user.primary_email.toLowerCase()]: user};
+                              // it is supposed to exist
+                              // normalize it, as it can have user-esque shapes:
+                              // most notable title cased
+                              const primary_email = user?.primary_email.toLowerCase();
+                              // this condition shouldn't happen
+                              if (!primary_email) {
+                                // TODO throw exception?
+                                // or just return the previous accumulated object
+                                // as it nothing happened
+                                return acc;
+                              }
+
+                              if (user.primary_email.includes('@spnx.local')) {
+                                  user.primary_email = primary_email.replace('@spnx.local', '');
+                              }
+                              if (user.extras.clever) {
+                                  return {...acc, [user.extras.clever]: user, [primary_email]: user};
+                              }
+                              // TODO: is clever_student_number used anymore?
+                              if (user.extras.clever_student_number) {
+                                  return {...acc, [user.extras.clever_student_number]: user, [primary_email]: user};
+                              }
+                              return {...acc, [primary_email]: user};
                             }, {});
                         }),
                         map((students) => {
-                            const found = action.userIds.map((id: string) => {
-                                if (id in students) {
-                                    return students[id];
-                                } else {
-                                    // map returns here undefined
-                                    this.userService.profilePicturesErrors$.next({'User ID': id, error: 'No user with this id was found'});
-                                }
+                            const found = action.userIds.map((rawId: string) => {
+                              // sync with the keys on received students
+                              // they are already lowercased
+                              const id = rawId.toLowerCase();
+                              if (id in students) {
+                                  return students[id];
+                              } else {
+                                  // map returns here undefined
+                                  this.userService.profilePicturesErrors$.next({'User ID': id, error: 'No user with this id was found'});
+                              }
                             })
                             // filter here undefined values
                             .filter(Boolean);
@@ -143,8 +177,14 @@ export class ProfilePicturesEffects {
                         }),
                         switchMap((students) => {
                             const picturesData: { userId: string | number, pictureId: number | string }[] = students.filter(s => !!s).map((s: User) => {
-                              const idproperty = s.extras?.clever ?? s.extras?.clever_student_number ?? s.primary_email.toLowerCase();
-                              const pictureId = action.images_data[idproperty];
+                              const email = s.primary_email.toLowerCase();
+                              let clever: string, clever_student_number: string;
+
+                              if (!!s.extras) {
+                                [clever, clever_student_number] = [s.extras.clever, s.extras.clever_student_number];
+                              }
+
+                              const pictureId = images_data_lowercased[email] ?? images_data_lowercased[clever] ?? images_data_lowercased[clever_student_number];
                               return {userId: s.id, pictureId};
                             });
                             return [
@@ -212,14 +252,14 @@ export class ProfilePicturesEffects {
 
       return actions$
         .pipe(
-          // this will ignore any action$ value 
+          // this will ignore any action$ value
           // until its polling observable completes
           exhaustMap((action: any) => {
             return this.pollingService.listen('admin.profile_pictures.attach_profile_pics_end')
               .pipe(
-                // this complete the polling 
+                // this complete the polling
                 // and makes exhaustMap take a fresh action
-                take(1), 
+                take(1),
                 switchMap((objdata: any) => {
                   const data = objdata.data;
                   return [
