@@ -2,7 +2,7 @@ import {Injectable} from '@angular/core';
 import {Actions, createEffect, ofType} from '@ngrx/effects';
 import {UserService} from '../../../services/user.service';
 import * as profilePicturesActions from '../actions';
-import {catchError, concatAll, exhaustMap, last, map, mergeMap, switchMap, take, tap, withLatestFrom} from 'rxjs/operators';
+import {catchError, exhaustMap, last, map, mergeMap, switchMap, take, tap} from 'rxjs/operators';
 import {of, zip} from 'rxjs';
 import {ProfilePicture} from '../../../models/ProfilePicture';
 import {User} from '../../../models/User';
@@ -53,7 +53,7 @@ export class ProfilePicturesEffects {
                                     // TODO throw exception?
                                     // or just return the previous accumulated object
                                     // as it nothing happened
-                                    return acc; 
+                                    return acc;
                                   }
                                   return {...acc, [key]: pic.id};
                                 }, {});
@@ -131,15 +131,15 @@ export class ProfilePicturesEffects {
                         map((students: User[]) => {
                             return students.reduce((acc, user) => {
                               // it is supposed to exist
-                              // normalize it, as it can have user-esque shapes: 
-                              // most notable title cased 
+                              // normalize it, as it can have user-esque shapes:
+                              // most notable title cased
                               const primary_email = user?.primary_email.toLowerCase();
                               // this condition shouldn't happen
                               if (!primary_email) {
                                 // TODO throw exception?
                                 // or just return the previous accumulated object
                                 // as it nothing happened
-                                return acc; 
+                                return acc;
                               }
 
                               if (user.primary_email.includes('@spnx.local')) {
@@ -157,7 +157,7 @@ export class ProfilePicturesEffects {
                         }),
                         map((students) => {
                             const found = action.userIds.map((rawId: string) => {
-                              // sync with the keys on received students 
+                              // sync with the keys on received students
                               // they are already lowercased
                               const id = rawId.toLowerCase();
                               if (id in students) {
@@ -177,8 +177,14 @@ export class ProfilePicturesEffects {
                         }),
                         switchMap((students) => {
                             const picturesData: { userId: string | number, pictureId: number | string }[] = students.filter(s => !!s).map((s: User) => {
-                              const idproperty = s.extras?.clever ?? s.extras?.clever_student_number ?? s.primary_email.toLowerCase();
-                              const pictureId = images_data_lowercased[idproperty];
+                              const email = s.primary_email.toLowerCase();
+                              let clever: string, clever_student_number: string;
+
+                              if (!!s.extras) {
+                                [clever, clever_student_number] = [s.extras.clever, s.extras.clever_student_number];
+                              }
+
+                              const pictureId = images_data_lowercased[email] ?? images_data_lowercased[clever] ?? images_data_lowercased[clever_student_number];
                               return {userId: s.id, pictureId};
                             });
                             return [
@@ -246,14 +252,14 @@ export class ProfilePicturesEffects {
 
       return actions$
         .pipe(
-          // this will ignore any action$ value 
+          // this will ignore any action$ value
           // until its polling observable completes
           exhaustMap((action: any) => {
             return this.pollingService.listen('admin.profile_pictures.attach_profile_pics_end')
               .pipe(
-                // this complete the polling 
+                // this complete the polling
                 // and makes exhaustMap take a fresh action
-                take(1), 
+                take(1),
                 switchMap((objdata: any) => {
                   const data = objdata.data;
                   return [
