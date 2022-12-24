@@ -9,8 +9,7 @@ import {
   SimpleChanges,
   ViewChild
 } from '@angular/core'
-import { RecurringConfig } from '../../models/RecurringFutureConfig'
-import { interval, merge, Observable, of, Subject, timer } from 'rxjs'
+import { Subject, timer } from 'rxjs'
 import { User } from '../../models/User'
 import { Navigation } from '../../create-hallpass-forms/main-hallpass--form/main-hall-pass-form.component'
 import { Pinnable } from '../../models/Pinnable'
@@ -27,6 +26,7 @@ import { WaitInLine } from '../../models/WaitInLine'
 import { WaitInLineService } from '../../services/wait-in-line.service'
 import { take, takeUntil, tap } from 'rxjs/operators'
 import { MatRipple } from '@angular/material/core'
+import { ConsentMenuComponent } from '../../consent-menu/consent-menu.component'
 
 export enum WaitInLineState {
   CreatingPass,
@@ -34,6 +34,11 @@ export enum WaitInLineState {
   FrontOfLine,
   PassStarted,
   RequestWaiting
+}
+
+export enum WILHeaderOptions {
+  Delete = 'delete',
+  Start = 'start'
 }
 
 // TODO: Delete button for WIL pass
@@ -51,6 +56,7 @@ export class InlineWaitInLineCardComponent implements OnInit, OnDestroy, OnChang
   @Input() forFuture: boolean = false;
   @Input() isOpenBigPass: boolean;
   @Input() fullScreen: boolean;
+  @Input() forStaff: boolean;
 
   @ViewChild(MatRipple) set constantRipple(ripple: MatRipple) {
     if (!ripple) {
@@ -221,7 +227,7 @@ export class InlineWaitInLineCardComponent implements OnInit, OnDestroy, OnChang
   }
 
   ngOnDestroy() {
-    this.subscribers$.unsubscribe();
+    // this.subscribers$.unsubscribe();
     this.closeDialog();
     this.destroy$.next();
     this.destroy$.complete();
@@ -230,6 +236,47 @@ export class InlineWaitInLineCardComponent implements OnInit, OnDestroy, OnChang
   roomCodeResult(event){
     console.log("event : ", event);
 
+  }
+
+  get optionsIcon() {
+    return this.forStaff
+      ? './assets/Dots (Transparent).svg'
+      : './assets/Delete (White).svg';
+  }
+
+  showOptions(clickEvent: MouseEvent) {
+    const target = new ElementRef(clickEvent.currentTarget);
+    const targetElement = target.nativeElement as HTMLElement;
+    const targetCoords = targetElement.getBoundingClientRect();
+
+    const options = [
+      { display: 'Delete Pass', color: '#E32C66', action: WILHeaderOptions.Delete, icon: './assets/Delete (Red).svg' }
+    ];
+
+    if (this.forStaff) {
+      options.unshift({
+        display: 'Start Pass Now', color: '#7083A0', action: WILHeaderOptions.Start, icon: './assets/Pause (Blue-Gray).svg'
+      })
+    }
+
+    const cancelDialog = this.dialog.open(ConsentMenuComponent, {
+      panelClass: 'consent-dialog-container',
+      backdropClass: 'invis-backdrop',
+      data: {options: options, 'trigger': target},
+      position: {
+        top: `${targetCoords.bottom + 20}px`,
+        left: `${targetCoords.left}px`
+      }
+    });
+
+    cancelDialog.afterClosed().subscribe({
+      next: action => {
+        if (action === WILHeaderOptions.Delete) {
+          this.wilService.fakeWilActive.next(false);
+          this.wilService.fakeWil.next(null);
+        }
+      }
+    });
   }
 
   enableTeacherPin(){
@@ -249,24 +296,8 @@ export class InlineWaitInLineCardComponent implements OnInit, OnDestroy, OnChang
     this.selectedTeacher = teacher;
   }
 
-  back(){
-    if (this.activeTeacherPin == true) {
-      this.activeTeacherPin = false;
-      this.activeRoomCodePin = false;
-      this.activeTeacherSelection = true;
-    }else if(this.activeTeacherSelection == true) {
-      this.activeRoomCodePin = true;
-      this.activeTeacherPin = false;
-      this.activeTeacherSelection = false;
-    }else {
-      this.activeRoomCodePin = false;
-      this.activeTeacherPin = false;
-      this.activeTeacherSelection = false;
-    }
-  }
-
   closeDialog() {
-    this.screen.closeDialog();
+    // this.screen.closeDialog();
   }
 
   openBigPassCard() {

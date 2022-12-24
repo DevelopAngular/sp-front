@@ -1,9 +1,4 @@
 <div class="inline-pass-card-wrapper" style="z-index: 501 !important;" [style.background-image]="gradient" [style.height]="'412px'" ondragstart="return false">
-<!--  <div class="resize-icon" [style.color]="wil.color_profile.solid_color" appCrossPointerEventTarget (pointerClickEvent)="openBigPassCard()">-->
-<!--    <svg width="24px" height="24px" viewBox="0 0 24 24">-->
-<!--      <use [attr.xlink:href]="isOpenBigPass ? '#Resize Down' : '#Resize Up'"></use>-->
-<!--    </svg>-->
-<!--  </div>-->
 
   <div class="pass-card-header">
     <div class="header-content">
@@ -11,7 +6,7 @@
         <img  class="pass-card-header-icon" [src]="wil.icon | resolveAsset">
         <div class="pass-card-header-text">{{ activeTeacherSelection ? 'Who is Ending?' : wil.destination.title }}</div>
       </div>
-      <app-icon-button *ngIf="activeRoomCodePin || activeTeacherPin || activeTeacherSelection" [srcString]="'./assets/Chevron Left (White).svg'" [onDarkShade]="true" [size]="20" (clickEvent)="back()"></app-icon-button>
+      <app-icon-button [srcString]="optionsIcon" [onDarkShade]="true" [size]="20" (clickEvent)="showOptions($event)"></app-icon-button>
     </div>
     <mat-divider></mat-divider>
   </div>
@@ -28,7 +23,6 @@
             {{wil.position}} in line<span #waitingDots></span>
           </div>
 
-          <!-- TODO: Opacity Pulse -->
           <!-- TODO: Kick student to the back of line if attempts expire -->
           <div class="end-pass-content ds-flex-center-between" style="justify-content: space-around; width: 100%; border-radius: 8px" *ngSwitchCase="2" matRipple>
             <sp-timer-spinner
