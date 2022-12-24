@@ -1,106 +1,115 @@
-<div class="inline-pass-card-wrapper" style="z-index: 501 !important;" [style.background-image]="gradient" [style.height]="'412px'" ondragstart="return false">
+<ng-template #root>
+  <div #rootWrapper
+       class="inline-pass-card-wrapper"
+       style="z-index: 501 !important; height: 412px" [style.background-image]="gradient"
+       ondragstart="return false"
+       [ngStyle]="firstInLinePopup ? { color: 'red' } : {}"
+  >
 
-  <div class="pass-card-header">
-    <div class="header-content">
-      <div class="header-info">
-        <img  class="pass-card-header-icon" [src]="wil.icon | resolveAsset">
-        <div class="pass-card-header-text">{{ activeTeacherSelection ? 'Who is Ending?' : wil.destination.title }}</div>
+    <div class="pass-card-header">
+      <div class="header-content">
+        <div class="header-info">
+          <img  class="pass-card-header-icon" [src]="wil.icon | resolveAsset">
+          <div class="pass-card-header-text">{{ activeTeacherSelection ? 'Who is Ending?' : wil.destination.title }}</div>
+        </div>
+        <app-icon-button [srcString]="optionsIcon" [onDarkShade]="true" [size]="20" (clickEvent)="showOptions($event)"></app-icon-button>
       </div>
-      <app-icon-button [srcString]="optionsIcon" [onDarkShade]="true" [size]="20" (clickEvent)="showOptions($event)"></app-icon-button>
+      <mat-divider></mat-divider>
     </div>
-    <mat-divider></mat-divider>
-  </div>
 
-  <div class="inline-pass-card-content" *ngIf="!activeRoomCodePin && !activeTeacherPin && !activeTeacherSelection">
-    <div class="travel">
-      <app-travel-view [pass]="wil"></app-travel-view>
-    </div>
-    <div class="button">
-      <app-card-button [width]="buttonWidth +'px'" [height]="'81px'" [gradientColor]="wil?.color_profile.gradient_color" [overlayWidth]="overlayWidth" [valid]="valid">
-        <ng-container [ngSwitch]="waitInLineState">
-          <div class="end-pass-content" *ngSwitchCase="1">
-            <img class="ds-mr-20" [src]="'./assets/Clock (White).svg' | resolveAsset" alt="Clock face">
-            {{wil.position}} in line<span #waitingDots></span>
-          </div>
+    <div class="inline-pass-card-content" *ngIf="!activeRoomCodePin && !activeTeacherPin && !activeTeacherSelection">
+      <div class="travel">
+        <app-travel-view [pass]="wil"></app-travel-view>
+      </div>
+      <div class="button">
+        <app-card-button [width]="buttonWidth +'px'" [height]="'81px'" [gradientColor]="wil?.color_profile.gradient_color" [overlayWidth]="overlayWidth" [valid]="valid">
+          <ng-container [ngSwitch]="waitInLineState">
+            <div class="end-pass-content" *ngSwitchCase="1">
+              <img class="ds-mr-20" [src]="'./assets/Clock (White).svg' | resolveAsset" alt="Clock face">
+              {{wil.position}} in line<span #waitingDots></span>
+            </div>
 
-          <!-- TODO: Kick student to the back of line if attempts expire -->
-          <div class="end-pass-content ds-flex-center-between" style="justify-content: space-around; width: 100%; border-radius: 8px" *ngSwitchCase="2" matRipple>
-            <sp-timer-spinner
-              customToolTip
-              [contentTemplate]="passAttemptTooltip"
-              [seconds]="30"
-              [showNumber]="true"
-              (pulse)="acceptingPassTimeRemaining = $event">
-            </sp-timer-spinner>
-            <span>Start Pass</span>
-            <img style="width: 25px" [src]="'./assets/Chevron Right (White).svg' | resolveAsset" alt="Right Arrow">
+            <!-- TODO: Kick student to the back of line if attempts expire -->
+            <div class="end-pass-content ds-flex-center-between" style="justify-content: space-around; width: 100%; border-radius: 8px" *ngSwitchCase="2" matRipple [matRippleDisabled]="true">
+              <sp-timer-spinner
+                customToolTip
+                [contentTemplate]="passAttemptTooltip"
+                [seconds]="30"
+                [showNumber]="true"
+                (pulse)="acceptingPassTimeRemaining = $event">
+              </sp-timer-spinner>
+              <span>Start Pass</span>
+              <img style="width: 25px" [src]="'./assets/Chevron Right (White).svg' | resolveAsset" alt="Right Arrow">
 
-            <ng-template #passAttemptTooltip>
-              <div class="ds-tooltip" style="width: 200px">
+              <ng-template #passAttemptTooltip>
+                <div class="ds-tooltip" style="width: 200px">
                 <span>
                   You have {{acceptingPassTimeRemaining}} sec left to start your pass or you will be sent to the back of the line.
                 </span>
-              </div>
-            </ng-template>
-          </div>
+                </div>
+              </ng-template>
+            </div>
 
-          <div class="end-pass-content" *ngSwitchDefault>
-            <mat-spinner [color]="'accent'" [diameter]="35"></mat-spinner>
-          </div>
-        </ng-container>
-      </app-card-button>
-<!--      <ng-container >-->
-<!--        <div class="end-pass-content" >-->
-<!--          <ng-container *ngSwitchCase="1">-->
-<!--            3rd in line<span #waitingDots></span>-->
-<!--          </ng-container>-->
+            <div class="end-pass-content" *ngSwitchDefault>
+              <mat-spinner [color]="'accent'" [diameter]="35"></mat-spinner>
+            </div>
+          </ng-container>
+        </app-card-button>
+        <!--      <ng-container >-->
+        <!--        <div class="end-pass-content" >-->
+        <!--          <ng-container *ngSwitchCase="1">-->
+        <!--            3rd in line<span #waitingDots></span>-->
+        <!--          </ng-container>-->
 
-<!--          <ng-container *ngSwitchDefault>-->
-<!--            <mat-spinner [color]="'accent'" [diameter]="35"></mat-spinner>-->
-<!--          </ng-container>-->
-<!--        </div>-->
-<!--&lt;!&ndash;        <app-card-button *ngSwitchCase="1" [width]="buttonWidth +'px'" [height]="'81px'" [gradientColor]="wil?.color_profile.gradient_color" [overlayWidth]="overlayWidth" [valid]="valid">&ndash;&gt;-->
-<!--&lt;!&ndash;          <div class="end-pass-content">&ndash;&gt;-->
+        <!--          <ng-container *ngSwitchDefault>-->
+        <!--            <mat-spinner [color]="'accent'" [diameter]="35"></mat-spinner>-->
+        <!--          </ng-container>-->
+        <!--        </div>-->
+        <!--&lt;!&ndash;        <app-card-button *ngSwitchCase="1" [width]="buttonWidth +'px'" [height]="'81px'" [gradientColor]="wil?.color_profile.gradient_color" [overlayWidth]="overlayWidth" [valid]="valid">&ndash;&gt;-->
+        <!--&lt;!&ndash;          <div class="end-pass-content">&ndash;&gt;-->
 
-<!--&lt;!&ndash;          </div>&ndash;&gt;-->
-<!--&lt;!&ndash;        </app-card-button>&ndash;&gt;-->
+        <!--&lt;!&ndash;          </div>&ndash;&gt;-->
+        <!--&lt;!&ndash;        </app-card-button>&ndash;&gt;-->
 
-<!--&lt;!&ndash;        <app-card-button *ngSwitchDefault [width]="buttonWidth +'px'" [height]="'81px'" [gradientColor]="wil?.color_profile.gradient_color" [overlayWidth]="overlayWidth" [valid]="valid">&ndash;&gt;-->
-<!--&lt;!&ndash;          <div class="start-pass-content" *ngSwitchDefault>&ndash;&gt;-->
-<!--&lt;!&ndash;            &ndash;&gt;-->
-<!--&lt;!&ndash;          </div>&ndash;&gt;-->
-<!--&lt;!&ndash;        </app-card-button>&ndash;&gt;-->
+        <!--&lt;!&ndash;        <app-card-button *ngSwitchDefault [width]="buttonWidth +'px'" [height]="'81px'" [gradientColor]="wil?.color_profile.gradient_color" [overlayWidth]="overlayWidth" [valid]="valid">&ndash;&gt;-->
+        <!--&lt;!&ndash;          <div class="start-pass-content" *ngSwitchDefault>&ndash;&gt;-->
+        <!--&lt;!&ndash;            &ndash;&gt;-->
+        <!--&lt;!&ndash;          </div>&ndash;&gt;-->
+        <!--&lt;!&ndash;        </app-card-button>&ndash;&gt;-->
 
-<!--&lt;!&ndash;        <app-card-button (onClick)="endPass()" [disabled]="endPassLoading$ | async" [width]="buttonWidth +'px'" [height]="'81px'" [gradientColor]="pass?.color_profile.gradient_color" [overlayWidth]="overlayWidth" [valid]="valid">&ndash;&gt;-->
-<!--&lt;!&ndash;          <div [ngClass]="{'isExpiring': isExpiring}" class="end-pass-content" *ngIf="!(endPassLoading$ | async); else spinner">&ndash;&gt;-->
-<!--&lt;!&ndash;            <img class="lock" height="30%" *ngIf="wil.needs_check_in" [src]="'./assets/Lock dots (White).svg' | resolveAsset" alt=""> {{ timeLeft +(timeLeft===''?'':' -')}} End Pass&ndash;&gt;-->
-<!--&lt;!&ndash;          </div>&ndash;&gt;-->
-<!--&lt;!&ndash;          <ng-template #spinner>&ndash;&gt;-->
-<!--&lt;!&ndash;            <div class="end-pass-content">&ndash;&gt;-->
-<!--&lt;!&ndash;              <mat-spinner [color]="'accent'" [diameter]="35"></mat-spinner>&ndash;&gt;-->
-<!--&lt;!&ndash;            </div>&ndash;&gt;-->
-<!--&lt;!&ndash;          </ng-template>&ndash;&gt;-->
-<!--&lt;!&ndash;        </app-card-button>&ndash;&gt;-->
-<!--      </ng-container>-->
+        <!--&lt;!&ndash;        <app-card-button (onClick)="endPass()" [disabled]="endPassLoading$ | async" [width]="buttonWidth +'px'" [height]="'81px'" [gradientColor]="pass?.color_profile.gradient_color" [overlayWidth]="overlayWidth" [valid]="valid">&ndash;&gt;-->
+        <!--&lt;!&ndash;          <div [ngClass]="{'isExpiring': isExpiring}" class="end-pass-content" *ngIf="!(endPassLoading$ | async); else spinner">&ndash;&gt;-->
+        <!--&lt;!&ndash;            <img class="lock" height="30%" *ngIf="wil.needs_check_in" [src]="'./assets/Lock dots (White).svg' | resolveAsset" alt=""> {{ timeLeft +(timeLeft===''?'':' -')}} End Pass&ndash;&gt;-->
+        <!--&lt;!&ndash;          </div>&ndash;&gt;-->
+        <!--&lt;!&ndash;          <ng-template #spinner>&ndash;&gt;-->
+        <!--&lt;!&ndash;            <div class="end-pass-content">&ndash;&gt;-->
+        <!--&lt;!&ndash;              <mat-spinner [color]="'accent'" [diameter]="35"></mat-spinner>&ndash;&gt;-->
+        <!--&lt;!&ndash;            </div>&ndash;&gt;-->
+        <!--&lt;!&ndash;          </ng-template>&ndash;&gt;-->
+        <!--&lt;!&ndash;        </app-card-button>&ndash;&gt;-->
+        <!--      </ng-container>-->
 
+      </div>
+    </div>
+    <div class="inline-pass-card-content" *ngIf="activeRoomCodePin">
+      <app-room-code [pass]="wil" (roomCodeResult)="roomCodeResult($event)"></app-room-code>
+      <div class="bottom-divider-wreapper">
+        <mat-divider class="bottom-divider" [style.margin]="'9px 0'"></mat-divider>
+        or
+        <mat-divider class="bottom-divider" [style.margin]="'9px 0'"></mat-divider>
+      </div>
+      <div class="pin-info" (click)="selectTeacher()">End Pass with Teacher Pin</div>
+    </div>
+    <div class="inline-request-content" *ngIf="activeTeacherSelection">
+      <app-teacher-selection [pass]="wil" (requestTarget)="requestTarget($event)"></app-teacher-selection>
+    </div>
+    <div class="inline-request-content" *ngIf="activeTeacherPin">
+      <app-teacher-pin-end-pass [pass]="wil" [selectedTeacher]="selectedTeacher" (pinResult)="activeTeacherPin = false"></app-teacher-pin-end-pass>
     </div>
   </div>
-  <div class="inline-pass-card-content" *ngIf="activeRoomCodePin">
-    <app-room-code [pass]="wil" (roomCodeResult)="roomCodeResult($event)"></app-room-code>
-    <div class="bottom-divider-wreapper">
-      <mat-divider class="bottom-divider" [style.margin]="'9px 0'"></mat-divider>
-      or
-      <mat-divider class="bottom-divider" [style.margin]="'9px 0'"></mat-divider>
-    </div>
-    <div class="pin-info" (click)="selectTeacher()">End Pass with Teacher Pin</div>
-  </div>
-  <div class="inline-request-content" *ngIf="activeTeacherSelection">
-    <app-teacher-selection [pass]="wil" (requestTarget)="requestTarget($event)"></app-teacher-selection>
-  </div>
-  <div class="inline-request-content" *ngIf="activeTeacherPin">
-    <app-teacher-pin-end-pass [pass]="wil" [selectedTeacher]="selectedTeacher" (pinResult)="activeTeacherPin = false"></app-teacher-pin-end-pass>
-  </div>
-</div>
+</ng-template>
+
+<ng-container [ngTemplateOutlet]="root"></ng-container>
 
 <svg style="display: none">
   <defs>

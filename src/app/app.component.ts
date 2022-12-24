@@ -72,6 +72,8 @@ export class AppComponent implements OnInit, AfterViewInit, OnDestroy {
   public showSupportButton: boolean;
   public customToastOpen$: Observable<boolean>;
   public toasts$: Observable<any>;
+  hasCustomBackdrop: boolean;
+  customStyle: Record<string, any>;
   public hasCustomBackdrop$: Observable<boolean>;
   public customBackdropStyle$: Observable<any>;
   public user$: Observable<User>;
@@ -121,6 +123,14 @@ export class AppComponent implements OnInit, AfterViewInit, OnDestroy {
     this.customToastOpen$ = this.toastService.isOpen$;
     this.toasts$ = this.toastService.toasts$;
     this.user$ = this.userService.user$.pipe(map(user => User.fromJSON(user)));
+    this.screen.customBackdropEvent$.asObservable().subscribe({
+      next: (hasBackdrop: boolean) => this.hasCustomBackdrop = hasBackdrop
+    });
+    this.screen.customBackdropStyle$.asObservable().subscribe({
+      next: (customStyle: Record<string, any>) => this.customStyle = customStyle
+    });
+
+
     this.hasCustomBackdrop$ = this.screen.customBackdropEvent$.asObservable();
     this.customBackdropStyle$ = this.screen.customBackdropStyle$;
 
