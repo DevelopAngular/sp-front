@@ -7,7 +7,7 @@ import {ConsentMenuComponent} from '../consent-menu/consent-menu.component';
 import {LoadingService} from '../services/loading.service';
 import {Navigation} from '../create-hallpass-forms/main-hallpass--form/main-hall-pass-form.component';
 import {catchError, concatMap, filter, map, pluck, retryWhen, switchMap, take, takeUntil, tap} from 'rxjs/operators';
-import {BehaviorSubject, interval, merge, Observable, of, Subject, zip} from 'rxjs';
+import { BehaviorSubject, interval, merge, Observable, of, Subject, throwError, zip } from 'rxjs'
 import {CreateFormService} from '../create-hallpass-forms/create-form.service';
 import {HallPassesService} from '../services/hall-passes.service';
 import {TimeService} from '../services/time.service';
@@ -22,7 +22,7 @@ import {UserService} from '../services/user.service';
 import {ToastService} from '../services/toast.service';
 import {EncounterPreventionService} from '../services/encounter-prevention.service';
 import {isEmpty, remove} from 'lodash';
-import {HttpErrorResponse} from '@angular/common/http';
+import {HttpErrorResponse} from '@angular/common/http'
 import {
   ConfirmationDialogComponent, ConfirmationTemplates,
   RecommendedDialogConfig
@@ -561,10 +561,13 @@ export class PassCardComponent implements OnInit, OnDestroy {
           })
         );
       }),
-
       retryWhen((errors: Observable<HttpErrorResponse>) => {
         return errors.pipe(
-          filter(errorResponse => errorResponse.error?.message === 'one or more pass limits reached!'),
+          tap((errorResponse: HttpErrorResponse) => {
+            if (errorResponse.error?.message !== 'one or more pass limits reached!') {
+              throw errorResponse
+            }
+          }),
           concatMap((errorResponse) => {
             const students = errorResponse.error.students as { displayName: string, id: number, passLimit: number }[];
             const numPasses = body['students']?.length || 1;
@@ -630,9 +633,21 @@ export class PassCardComponent implements OnInit, OnDestroy {
           })
         );
       }),
-      catchError(error => {
-        debugger;
-        return of(error);
+      catchError((error: HttpErrorResponse) => {
+        if (error.error.detail === 'could not create pass' && this.pass.student.status === 'suspended') {
+          this.toastService.openToast({
+            title: 'Your account is suspended. Please contact your school admin',
+            type: 'error'
+          });
+          return throwError(error);
+        }
+
+        this.toastService.openToast({
+          title: 'Something went wrong!',
+          subtitle: 'Could not create pass, contact support for more info',
+          type: 'error'
+        });
+        return throwError(error);
       })
     ).subscribe({
       next: () => {
