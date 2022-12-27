@@ -5,7 +5,7 @@ import {
   Input,
   OnChanges,
   OnDestroy,
-  OnInit, Optional, QueryList,
+  OnInit, QueryList,
   SimpleChanges, TemplateRef,
   ViewChild, ViewChildren
 } from '@angular/core'
@@ -59,31 +59,49 @@ export class InlineWaitInLineCardComponent implements OnInit, OnDestroy, OnChang
   @Input() forStaff: boolean;
 
   @ViewChild('root') root: TemplateRef<any>;
-  @ViewChild('rootWrapper') wrapperElem: ElementRef<HTMLDivElement>;
+  @ViewChildren('rootWrapper') set wrapperElem(wrappers: QueryList<ElementRef<HTMLDivElement>>) {
+    if (!wrappers) {
+      return
+    }
+
+    if (!this.firstInLinePopup) {
+      return
+    }
+
+    let scalingFactor: number;
+    if (this.isMobile) {
+      scalingFactor = 1.15;
+    } else {
+      const targetHeight = document.documentElement.clientHeight * 0.85;
+      scalingFactor = targetHeight / 412; // 412 is defined height of this component according to the design system
+    }
+    wrappers.last.nativeElement.parentElement.parentElement.style.transform = `scale(${scalingFactor})`;
+  }
   @ViewChildren(MatRipple) set constantRipple(ripples: QueryList<MatRipple>) {
     if (!ripples?.length) {
       return;
     }
 
-    console.log(ripples);
+    timer(1000, 2500).pipe(
+      takeUntil(this.destroy$)
+    ).subscribe(() => {
+      // second ripple on popup doesn't seem to work well due to transform scaling issue
+      // ripples.forEach(ripple => {
+      //   const rippleRef = ripple.launch({
+      //     persistent: true,
+      //     centered: true
+      //   });
+      //   rippleRef.fadeOut();
+      // })
 
-    timer(0, 2500)
-      .pipe(
-        takeUntil(this.destroy$)
-      )
-      .subscribe({
-        next: () => {
-          ripples.forEach(r => {
-            const rippleRef = r.launch({
-              persistent: true,
-              centered: true
-            });
-            rippleRef.fadeOut();
-          })
-
-        }
-      })
+      const rippleRef = ripples.first.launch({
+        persistent: true,
+        centered: true
+      });
+      rippleRef.fadeOut();
+    });
   }
+
   @ViewChild('waitingDots') set dotsSpan(span: ElementRef<HTMLSpanElement>) {
     if (!span) {
       return;
@@ -117,6 +135,7 @@ export class InlineWaitInLineCardComponent implements OnInit, OnDestroy, OnChang
   acceptingPassTimeRemaining: number;
   passAttempts = 2; // TODO: when this hits 0, then kick the student to the back of the line
   firstInLinePopup = false;
+  firstInLinePopupRef: MatDialogRef<TemplateRef<any>>;
 
   public FORM_STATE: Navigation;
   pinnable: Pinnable;
@@ -219,7 +238,6 @@ export class InlineWaitInLineCardComponent implements OnInit, OnDestroy, OnChang
     const { wil } = changes;
     if (wil.currentValue?.position === '1st') {
       this.waitInLineState = WaitInLineState.FrontOfLine;
-      this.firstInLinePopup = true;
       this.openBigPassCard();
     }
   }
@@ -271,6 +289,9 @@ export class InlineWaitInLineCardComponent implements OnInit, OnDestroy, OnChang
       next: action => {
         // TODO: Close dialog before deleting pass if dialog is open
         if (action === WILHeaderOptions.Delete) {
+          if (this.firstInLinePopup) {
+            this.firstInLinePopupRef.close();
+          }
           this.wilService.fakeWilActive.next(false);
           this.wilService.fakeWil.next(null);
         }
@@ -300,62 +321,27 @@ export class InlineWaitInLineCardComponent implements OnInit, OnDestroy, OnChang
   }
 
   openBigPassCard() {
-    console.log('open big card');
-    console.log(this.wil.color_profile);
     const solidColor = Util.convertHex(this.wil.color_profile.solid_color, 70);
-    console.log(solidColor);
     this.screen.customBackdropStyle$.next({
       'background': `linear-gradient(0deg, ${solidColor} 100%, rgba(0, 0, 0, 0.3) 100%)`,
     });
     this.screen.customBackdropEvent$.next(true);
 
-    let scalingFactor: number;
-    const translationDistance = this.isMobile
-      ? `-65px`
-      : `-60px`;
-    if (this.isMobile) {
-      scalingFactor = 1.15;
-    } else {
-      const targetHeight = document.documentElement.clientHeight * 0.85;
-      scalingFactor = targetHeight / 412; // 412 is defined height of this component according to the design system
-    }
-
+    this.firstInLinePopup = true;
     // open this same template scaled up
-    const openedWILCardRef = this.dialog.open(this.root, {
+    this.firstInLinePopupRef = this.dialog.open(this.root, {
       panelClass: 'overlay-dialog',
       data: {
         firstInLinePopup: true
       }
     });
 
-    openedWILCardRef.afterOpened().subscribe({
-      next: () => {
-        const wrapperDiv = document.querySelector<HTMLDivElement>('mat-dialog-container.mat-dialog-container').parentElement;
-        wrapperDiv.style.transform = `scale(${scalingFactor})`;
-        // console.log(wrapperDiv);
-        // const translationDistance = this.isMobile
-        //   ? `-65px`
-        //   : `-60px`;
-        //
-        // if (this.isMobile) {
-        //   wrapperDiv.style.transform = `scale(1.15) translateY(${translationDistance})`;
-        //   return;
-        // }
-        // we want the pass limit and bottom banners to be 90% of the
-        // screen height
-        // const {height} = wrapperDiv.getBoundingClientRect();
-        // const targetHeight = document.documentElement.clientHeight * 0.85;
-        // const scalingFactor = targetHeight / height;
-        // translate happens before the scaling
-        // wrapperDiv.style.transform = `translateY(${translationDistance}) scale(${scalingFactor})`;
-        // console.log(scalingFactor);
-        // console.log(wrapperDiv);
-      }
-    })
-    openedWILCardRef.afterClosed().subscribe({
+    this.firstInLinePopupRef.afterClosed().subscribe({
     next: () => {
       this.screen.customBackdropEvent$.next(false);
       this.screen.customBackdropStyle$.next(null);
+      this.firstInLinePopup = false;
+      this.firstInLinePopupRef = null;
     }
   });
 

@@ -31,7 +31,6 @@ import { Util } from '../../../Util'
 import { scalePassCards } from '../../animations'
 import { WaitInLine } from '../../models/WaitInLine'
 import { WaitInLineService } from '../../services/wait-in-line.service'
-import { startWith, takeUntil, tap } from 'rxjs/operators'
 
 @Component({
   selector: 'app-wait-in-line-card',
@@ -58,19 +57,6 @@ export class WaitInLineCardComponent implements OnInit {
   @ViewChild('cardWrapper') cardWrapper: ElementRef;
   @ViewChild('confirmDialogBody') confirmDialog: TemplateRef<HTMLElement>;
   @ViewChild('confirmDialogBodyVisibility') confirmDialogVisibility: TemplateRef<HTMLElement>;
-  @ViewChild('waitingDots') set dotsSpan(span: ElementRef<HTMLSpanElement>) {
-    if (!span) {
-      return;
-    }
-
-    timer(0, 750).pipe(
-      takeUntil(this.destroy$),
-      tap(count => {
-        span.nativeElement.innerText = '.'.repeat(count % 4);
-        count++;
-      })
-    ).subscribe();
-  }
 
   timeLeft = '';
   valid = true;
