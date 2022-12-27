@@ -4,12 +4,6 @@
        [style.width]="'334px'"
        #wrapper>
 
-    <div class="resize-icon" *ngIf="!forStaff" [style.color]="template.color_profile.solid_color" appCrossPointerEventTarget (pointerClickEvent)="openBigPass()">
-      <svg width="24px" height="24px" viewBox="0 0 24 24">
-        <use [attr.xlink:href]="(fullScreenPass$ | async) ? '#Resize Down' : '#Resize Up'"></use>
-      </svg>
-    </div>
-
     <ng-container [ngSwitch]="FORM_STATE.formMode.formFactor">
       <ng-container *ngSwitchCase="states.HallPass">
         <app-pass-card
@@ -20,8 +14,7 @@
           [formState]="FORM_STATE"
           [forFuture]="!!FORM_STATE.data.date"
           [students]="FORM_STATE.formMode.role === 1 ? FORM_STATE.data.selectedStudents : []"
-          (cardEvent)="onNextStep($event)"
-          (scaleCard)="openBigPass()">
+          (cardEvent)="onNextStep($event)">
         </app-pass-card>
         <app-pass-limit-info [passLimitInfo]="passLimitInfo"></app-pass-limit-info>
       </ng-container>
@@ -34,7 +27,6 @@
           [formState]="FORM_STATE"
           [forFuture]="!!FORM_STATE.data.date"
           (cardEvent)="onNextStep($event)"
-          (scaleCard)="openBigPass()"
           [fullScreenButton]="!forStaff"
         ></app-request-card>
       </ng-container>
@@ -50,9 +42,22 @@
           (cardEvent)="onNextStep($event)">
         </app-invitation-card>
       </ng-container>
+
+      <ng-container *ngSwitchCase="states.WaitInLine">
+        <app-wait-in-line-card
+          [wil]="template"
+          [forStaff]="forStaff && !dialogData.kioskModeRoom"
+          [forInput]="true"
+          [forKioskMode]="!!dialogData.kioskModeRoom"
+          [formState]="FORM_STATE"
+          [forFuture]="!!FORM_STATE.data.date"
+          [students]="FORM_STATE.formMode.role === 1 ? FORM_STATE.data.selectedStudents : []"
+          (cardEvent)="onNextStep($event)"></app-wait-in-line-card>
+      </ng-container>
     </ng-container>
 
-    <div class="metrics" *ngIf="(fullScreenPass$ | async) && (FORM_STATE.formMode.formFactor === states.HallPass || FORM_STATE.formMode.formFactor === states.Request)">
+    <div class="metrics" *ngIf="(fullScreenPass$ | async) &&
+      (FORM_STATE.formMode.formFactor === states.HallPass || FORM_STATE.formMode.formFactor === states.Request || FORM_STATE.formMode.formFactor === states.WaitInLine)">
       <app-student-metrics></app-student-metrics>
     </div>
 

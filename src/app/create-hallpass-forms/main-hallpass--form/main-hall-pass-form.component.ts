@@ -21,7 +21,7 @@ import {RecurringOption} from '../../models/RecurringFutureConfig';
 
 export enum Role { Teacher = 1, Student = 2 }
 
-export enum FormFactor { HallPass = 1, Request = 2, Invitation = 3 }
+export enum FormFactor { HallPass = 1, Request = 2, Invitation = 3, WaitInLine = 4 }
 
 export interface FormMode {
   role?: number;

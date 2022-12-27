@@ -1,92 +1,79 @@
-<div class="collection-wrapper" *ngIf="!mock && ((currentPasses$ | async) && (currentPasses$ | async).length > 0) || showEmptyHeader; else emptyMessage">
-  <div class="collection-header" [style.width]="headerWidth">
-    <div class="collection-title">
-      <img *ngIf="icon" draggable="false" class="collection-icon" [src]="_icon | resolveAsset">
-      <div class="collection-title" [style.color]="!!(this.darkTheme.isEnabled$ | async) ? '#FFFFFF' : '#1F195E'">
-        {{title}}
-      </div>
-    </div>
-<!--    <ng-container *ngIf="currentPasses$ | async as passes">-->
-<!--      <div class="search" *ngIf="searchPanel && (passes.length || !!search)">-->
-<!--        <app-round-input-->
-<!--          [isSearch]="true"-->
-<!--          [placeholder]="'Search ' + (randomObject$ | async)"-->
-<!--          [focused]="true"-->
-<!--          (ontextupdate)="search = $event; searchValue.emit($event)"-->
-<!--        ></app-round-input>-->
-<!--      </div>-->
-<!--    </ng-container>-->
-
-      <div class="filter-button"
-         *ngIf="hasFilterPasses"
-      >
-        <div class="icon" *ngIf="selectedSort === 'school-year'; else sort">
-          <app-white-round-button [icon]="'Filter'" (buttonClick)="openFilter($event)"></app-white-round-button>
-<!--          <img width="15" draggable="false" [src]="'./assets/Filter (Blue-Gray).svg' | resolveAsset" alt="Filter">-->
+<div class="collection-wrapper" [ngClass]="{'wait-in-line-wrapper': waitInLine}" *ngIf="!mock && ((currentPasses$ | async) && (currentPasses$ | async).length > 0) || showEmptyHeader; else emptyMessage">
+    <div class="collection-header" [style.width]="headerWidth">
+        <div class="collection-title">
+            <img *ngIf="icon" draggable="false" class="collection-icon" [src]="_icon | resolveAsset">
+            <div class="collection-title" [style.color]="!!(this.darkTheme.isEnabled$ | async) ? '#FFFFFF' : '#1F195E'">
+                {{title}}
+            </div>
         </div>
-        <ng-template #sort>
-          <div class="selected-button" appCrossPointerEventTarget (pointerClickEvent)="openFilter($event)">
-            <img width="15" draggable="false" [src]="'./assets/Filter (Navy).svg' | resolveAsset" alt="Filter">
-            <div class="selected-title">{{ selectedText }}</div>
-          </div>
+        <!--    <ng-container *ngIf="currentPasses$ | async as passes">-->
+        <!--      <div class="search" *ngIf="searchPanel && (passes.length || !!search)">-->
+        <!--        <app-round-input-->
+        <!--          [isSearch]="true"-->
+        <!--          [placeholder]="'Search ' + (randomObject$ | async)"-->
+        <!--          [focused]="true"-->
+        <!--          (ontextupdate)="search = $event; searchValue.emit($event)"-->
+        <!--        ></app-round-input>-->
+        <!--      </div>-->
+        <!--    </ng-container>-->
+
+        <div class="filter-button" *ngIf="hasFilterPasses">
+            <div class="icon" *ngIf="selectedSort === 'school-year'; else sort">
+                <app-white-round-button [icon]="'Filter'" (buttonClick)="openFilter($event)"></app-white-round-button>
+                <!--          <img width="15" draggable="false" [src]="'./assets/Filter (Blue-Gray).svg' | resolveAsset" alt="Filter">-->
+            </div>
+            <ng-template #sort>
+                <div class="selected-button" appCrossPointerEventTarget (pointerClickEvent)="openFilter($event)">
+                    <img width="15" draggable="false" [src]="'./assets/Filter (Navy).svg' | resolveAsset" alt="Filter">
+                    <div class="selected-title">{{ selectedText }}</div>
+                </div>
+            </ng-template>
+
+        </div>
+        <div class="sort-label" *ngIf="hasSort">
+            <!--        <app-icon-button [srcString]="'Hall Monitor Sort'" [size]="20" (clickEvent)="openSortDialog($event)"></app-icon-button>-->
+            <app-white-round-button [icon]="'Hall Monitor Sort'" (buttonClick)="openSortDialog($event)"></app-white-round-button>
+        </div>
+    </div>
+    <div *ngIf="(currentPasses$ | async) as currentPasses">
+        <div *ngIf="currentPasses.length > 0; else emptyMessage">
+            <div class="collection-grid-wrapper" [style.gridTemplateColumns]="gridTemplate" [style.gridGap]="gridGap">
+                <div class="tile" *ngFor="let pass of currentPasses">
+                    <app-pass-tile (tileSelected)="showPass($event)" [timerEvent]="timerEvent" [waitInLine]="waitInLine" [fromPast]="fromPast" [forFuture]="forFuture" [isActive]="isActive" [forStaff]="forStaff" [pass]="pass" [allowPopup]="true" [profileImage]="showProfilePictures"
+                        [isEnableProfilePictures]="(isEnabledProfilePictures$ | async) && (!!user && !!user.show_profile_pictures)"></app-pass-tile>
+                </div>
+            </div>
+        </div>
+
+        <ng-template #emptyMessage>
+            <div class="empty-state" *ngIf="hasFilterPasses && showEmptyHeader">
+                <img width="80" height="80" [src]="'./assets/Empty filter (Blue-Gray).svg' | resolveAsset" alt="Filter Empty">
+                <div class="empty-message" [style.color]="darkTheme.getColor({dark: '#FFFFFF', white: '#7F879D'})">
+                    No expired passes <br/>
+                    <span *ngIf="selectedText !== 'Today'">in <span *ngIf="selectedText !== 'This school year'">the </span> </span><span style="text-transform: lowercase">{{ selectedText }}</span>
+                </div>
+            </div>
         </ng-template>
 
-      </div>
-      <div class="sort-label" *ngIf="hasSort">
-<!--        <app-icon-button [srcString]="'Hall Monitor Sort'" [size]="20" (clickEvent)="openSortDialog($event)"></app-icon-button>-->
-        <app-white-round-button [icon]="'Hall Monitor Sort'" (buttonClick)="openSortDialog($event)"></app-white-round-button>
-      </div>
-  </div>
-  <div *ngIf="(currentPasses$ | async) as currentPasses">
-    <div *ngIf="currentPasses.length > 0; else emptyMessage">
-      <div class="collection-grid-wrapper" [style.gridTemplateColumns]="gridTemplate" [style.gridGap]="gridGap">
-        <div class="tile" *ngFor="let pass of currentPasses">
-          <app-pass-tile
-           (tileSelected)="showPass($event)"
-           [timerEvent]="timerEvent"
-           [fromPast]="fromPast"
-           [forFuture]="forFuture"
-           [isActive]="isActive"
-           [forStaff]="forStaff"
-           [pass]="pass"
-           [allowPopup]="true"
-           [profileImage]="showProfilePictures"
-           [isEnableProfilePictures]="(isEnabledProfilePictures$ | async) && (!!user && !!user.show_profile_pictures)"
-          ></app-pass-tile>
+        <!-- Needs for Intro page -->
+
+        <!--<div class="collection-wrapper" *ngIf="mock" [style.width]=" columns === 3 ? '393px' : columns === 2 ? '322px' : 'auto'">-->
+        <div class="collection-wrapper" *ngIf="mock">
+            <div class="collection-header">
+                <img draggable="false" class="collection-icon" [src]="icon | resolveAsset">
+                <div class="collection-title">
+                    {{title}}
+                </div>
+                <img draggable="false" class="collection-display-toggle global-opacity-icons" [src]="'./assets/List (Navy).svg'| resolveAsset" [style.margin-left]="hasSort?'10px':'auto'">
+            </div>
+            <div class="collection-divider"></div>
+            <div class="collection-grid-wrapper">
+                <div class="tile" *ngFor="let mockTile of mock">
+                    <app-pass-tile [mock]="mockTile" [forStaff]="forStaff"></app-pass-tile>
+                </div>
+            </div>
         </div>
-      </div>
-</div>
-
-<ng-template #emptyMessage>
-  <div class="empty-state" *ngIf="hasFilterPasses && showEmptyHeader">
-    <img width="80" height="80" [src]="'./assets/Empty filter (Blue-Gray).svg' | resolveAsset" alt="Filter Empty">
-    <div class="empty-message" [style.color]="darkTheme.getColor({dark: '#FFFFFF', white: '#7F879D'})">
-      No expired passes <br/>
-      <span *ngIf="selectedText !== 'Today'">in <span *ngIf="selectedText !== 'This school year'">the </span> </span><span style="text-transform: lowercase">{{ selectedText }}</span>
     </div>
-  </div>
-</ng-template>
-
-<!-- Needs for Intro page -->
-
-<!--<div class="collection-wrapper" *ngIf="mock" [style.width]=" columns === 3 ? '393px' : columns === 2 ? '322px' : 'auto'">-->
-<div class="collection-wrapper" *ngIf="mock">
-  <div class="collection-header">
-    <img draggable="false" class="collection-icon" [src]="icon | resolveAsset">
-    <div class="collection-title">
-      {{title}}
-    </div>
-    <img draggable="false" class="collection-display-toggle global-opacity-icons" [src]="'./assets/List (Navy).svg'| resolveAsset" [style.margin-left]="hasSort?'10px':'auto'">
-  </div>
-  <div class="collection-divider"></div>
-    <div class="collection-grid-wrapper">
-      <div class="tile" *ngFor="let mockTile of mock">
-        <app-pass-tile [mock]="mockTile" [forStaff]="forStaff"></app-pass-tile>
-      </div>
-    </div>
-</div>
-  </div>
-<!--  <div *ngIf="showBottomShadow" class="bottom-shadow"></div>-->
+    <!--  <div *ngIf="showBottomShadow" class="bottom-shadow"></div>-->
 </div>
 <!-- End -->
-

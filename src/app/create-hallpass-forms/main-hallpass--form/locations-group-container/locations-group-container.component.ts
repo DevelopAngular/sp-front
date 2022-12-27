@@ -1,27 +1,42 @@
-import {ChangeDetectorRef, Component, EventEmitter, forwardRef, Inject, Injector, Input, OnInit, Output, ViewChild, OnDestroy, HostListener, ElementRef} from '@angular/core';
-import {BehaviorSubject, Observable, Subject} from 'rxjs';
-import {User} from '../../../models/User';
-import {DataService} from '../../../services/data-service';
-import {Pinnable} from '../../../models/Pinnable';
-import {Util} from '../../../../Util';
-import {FormFactor, MainHallPassFormComponent, Navigation} from '../main-hall-pass-form.component';
-import {CreateFormService} from '../../create-form.service';
-import {NextStep} from '../../../animations';
-import {LocationsService} from '../../../services/locations.service';
-import {MAT_DIALOG_DATA, MatDialog} from '@angular/material/dialog';
-import {FromWhereComponent} from './from-where/from-where.component';
-import {ToCategoryComponent} from './to-category/to-category.component';
-import {RestrictedTargetComponent} from './restricted-target/restricted-target.component';
-import {RestrictedMessageComponent} from './restricted-message/restricted-message.component';
-import {ToWhereComponent} from './to-where/to-where.component';
-import {ScreenService} from '../../../services/screen.service';
-import {DeviceDetection} from '../../../device-detection.helper';
-import {filter, map, withLatestFrom} from 'rxjs/operators';
-import {Location} from '../../../models/Location';
-import {PassLimitInfo} from '../../../models/HallPassLimits';
-import {LocationVisibilityService} from '../location-visibility.service';
-import {PassLimitDialogComponent} from './pass-limit-dialog/pass-limit-dialog.component';
+import {
+  ChangeDetectorRef,
+  Component,
+  ElementRef,
+  EventEmitter,
+  forwardRef,
+  HostListener,
+  Inject,
+  Injector,
+  Input,
+  OnDestroy,
+  OnInit,
+  Output,
+  ViewChild
+} from '@angular/core'
+import { BehaviorSubject, Observable, Subject } from 'rxjs'
+import { User } from '../../../models/User'
+import { DataService } from '../../../services/data-service'
+import { Pinnable } from '../../../models/Pinnable'
+import { Util } from '../../../../Util'
+import { FormFactor, MainHallPassFormComponent, Navigation } from '../main-hall-pass-form.component'
+import { CreateFormService } from '../../create-form.service'
+import { NextStep } from '../../../animations'
+import { LocationsService } from '../../../services/locations.service'
+import { MAT_DIALOG_DATA, MatDialog } from '@angular/material/dialog'
+import { FromWhereComponent } from './from-where/from-where.component'
+import { ToCategoryComponent } from './to-category/to-category.component'
+import { RestrictedTargetComponent } from './restricted-target/restricted-target.component'
+import { RestrictedMessageComponent } from './restricted-message/restricted-message.component'
+import { ToWhereComponent } from './to-where/to-where.component'
+import { ScreenService } from '../../../services/screen.service'
+import { DeviceDetection } from '../../../device-detection.helper'
+import { filter, map, withLatestFrom } from 'rxjs/operators'
+import { Location } from '../../../models/Location'
+import { LocationVisibilityService } from '../location-visibility.service'
+import { PassLimitDialogComponent } from './pass-limit-dialog/pass-limit-dialog.component'
 import { KioskModeService } from '../../../services/kiosk-mode.service'
+import { HttpService } from '../../../services/http-service'
+import { FeatureFlagService, FLAGS } from '../../../services/feature-flag.service'
 
 // when WS notify a change we have to skip functions that change
 // FORM_STATE state and step
@@ -64,6 +79,7 @@ export class LocationsGroupContainerComponent implements OnInit, OnDestroy {
   pinnable: Pinnable;
   data: any = {};
   frameMotion$: BehaviorSubject<any>;
+  waitInLineEnabled: boolean;
 
   @HostListener('document:click', ['$event'])
   clickHandler(event: PointerEvent) {
@@ -94,7 +110,9 @@ export class LocationsGroupContainerComponent implements OnInit, OnDestroy {
     private _injector: Injector,
     private cdr: ChangeDetectorRef,
     private dialog: MatDialog,
-    private kioskService: KioskModeService
+    private kioskService: KioskModeService,
+    private httpService: HttpService,
+    private featureService: FeatureFlagService
   ) {
   }
 
@@ -185,6 +203,11 @@ export class LocationsGroupContainerComponent implements OnInit, OnDestroy {
         this.isStaff = user.isTeacher() || user.isAdmin() || user.isAssistant();
         this.user = user;
       },
+    });
+
+    // Move this to a feature flag service or NgRx (I don't like NgRx though)
+    this.httpService.currentSchool$.subscribe({
+      next: school => this.waitInLineEnabled = school?.feature_flag_wait_in_line
     });
 
     this.pinnables = this.formService.getPinnable(!!this.dialogData['kioskModeRoom']).pipe(
@@ -317,7 +340,7 @@ export class LocationsGroupContainerComponent implements OnInit, OnDestroy {
   }
 
   @skipWhenWS()
-  toWhere(pinnable) {
+  async toWhere(pinnable) {
     this.pinnable = pinnable;
     this.FORM_STATE.data.direction = {
       from: this.data.fromLocation,
@@ -342,7 +365,7 @@ export class LocationsGroupContainerComponent implements OnInit, OnDestroy {
         this.FORM_STATE.previousState = this.FORM_STATE.state;
         this.FORM_STATE.state = States.message;
       } else {
-        return this.postComposetData();
+        return await this.postComposetData();
       }
     }
   }
@@ -413,6 +436,12 @@ export class LocationsGroupContainerComponent implements OnInit, OnDestroy {
     if (!this.kioskService.isKisokMode() && numberOfStudentsInRoom !== undefined) {
       const totalStudents = numberOfStudentsInRoom + this.FORM_STATE.data.selectedStudents.length;
       if (location.max_passes_to_active && (totalStudents >= location.max_passes_to)) {
+        // if location has a limit and limit is reached
+        // trigger wait-in-line if enabled for school
+        // if (!this.waitInLineEnabled) {
+        //
+        // }
+
         const overrideRoomLimit = await this.showDestinationLimitReachedFromCategory(
           location.max_passes_to,
           totalStudents,
@@ -436,7 +465,7 @@ export class LocationsGroupContainerComponent implements OnInit, OnDestroy {
       this.FORM_STATE.previousState = this.FORM_STATE.state;
       this.FORM_STATE.state = States.message;
     } else {
-      this.postComposetData();
+      await this.postComposetData();
     }
   }
 
@@ -446,24 +475,34 @@ export class LocationsGroupContainerComponent implements OnInit, OnDestroy {
     this.FORM_STATE.state = States.message;
   }
 
-  resultMessage(message, denyMessage: boolean = false) {
+  async resultMessage(message, denyMessage: boolean = false) {
     if (!message) {
       message = '';
     }
     this.data.message = message;
     this.FORM_STATE.data.message = message;
-    this.postComposetData(denyMessage, true);
+    await this.postComposetData(denyMessage, true);
   }
 
   @skipWhenWS()
-  private postComposetData(close: boolean = false, isMessage?: boolean) {
+  private async postComposetData(close: boolean = false, isMessage?: boolean) {
     const restricted = ((this.FORM_STATE.data.direction.to.restricted && !this.FORM_STATE.forLater) ||
       (this.FORM_STATE.data.direction.to.scheduling_restricted && !!this.FORM_STATE.forLater));
     if (this.FORM_STATE.kioskMode && this.FORM_STATE.data.kioskModeStudent && restricted) {
       this.isStaff =  false;
     }
+
+    const dest = this.FORM_STATE.data.direction.to;
+    const { pass_limits } = await this.locationsService.getPassLimit().toPromise();
+    const destPassLimit = pass_limits.find(p => p.id == dest.id);
+    const destLimitReached = this.locationsService.reachedRoomPassLimit('to', destPassLimit, false);
+
     if (!this.isStaff && !restricted) {
-      this.FORM_STATE.formMode.formFactor = FormFactor.HallPass;
+      if (this.featureService.isFeatureEnabled(FLAGS.WaitInLine)) {
+        this.FORM_STATE.formMode.formFactor = destLimitReached ? FormFactor.WaitInLine : FormFactor.HallPass;
+      } else {
+        this.FORM_STATE.formMode.formFactor = FormFactor.HallPass;
+      }
     }
     if (!this.isStaff && (restricted || isMessage)) {
       this.FORM_STATE.formMode.formFactor = FormFactor.Request;

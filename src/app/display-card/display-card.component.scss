@@ -1,48 +1,43 @@
-﻿:host {
-
-}
+﻿:host {}
 
 .overlay {
-  position: relative;
-  //box-shadow: 0 5px 20px rgba(0, 0, 0, 0.06);
-  border-radius: 12px;
+    position: relative;
+    //box-shadow: 0 5px 20px rgba(0, 0, 0, 0.06);
+    border-radius: 12px;
 }
 
 @media all and (max-width: 425px) {
-  div.display-card-wrapper{
-    width: 100%;
-    border-radius: 0;
-    box-shadow: none;
-    background-color: transparent !important;
-    //min-height: 100vh;
-    //padding: 0 0 50px;
-    &.inbox {
-      //height: 100%;
+    div.display-card-wrapper {
+        width: 100%;
+        border-radius: 0;
+        box-shadow: none;
+        background-color: transparent !important;
+        //min-height: 100vh;
+        //padding: 0 0 50px;
+        &.inbox {
+            //height: 100%;
+        }
     }
-  }
-
-  div.display-card-divider{
-    width: inherit;
-  }
-
-  div.overlay {
-    box-shadow: none;
-    border-radius: 0;
-  }
-
-  div.display-card-header {
-    //width: 93%;
-    //margin: 0 auto;
-  }
+    div.display-card-divider {
+        width: inherit;
+    }
+    div.overlay {
+        box-shadow: none;
+        border-radius: 0;
+    }
+    div.display-card-header {
+        //width: 93%;
+        //margin: 0 auto;
+    }
 }
 
 .display-card {
-  position: relative;
-  overflow: hidden;
-  border-radius: 12px;
+    position: relative;
+    overflow: hidden;
+    border-radius: 12px;
 }
 
-.display-card-wrapper{
+.display-card-wrapper {
     width: 351px;
     padding: 25px 15px;
     box-sizing: border-box;
@@ -50,15 +45,15 @@
     display: flex;
     flex-direction: column;
     align-items: center;
+    margin: auto;
     //box-shadow: 0px 3px 20px rgba(0, 0, 0, 0.1);
     background-color: #fff;
-
     &.inbox {
         height: calc(100vh - 190px);
         overflow: auto;
     }
-
 }
+
 .bottom-shadow {
     position: absolute;
     bottom: 0px;
@@ -69,7 +64,7 @@
     box-shadow: 0px -3px 30px 16px rgba(255, 255, 255, 1);
 }
 
-.display-card-header{
+.display-card-header {
     display: flex;
     flex-direction: row;
     align-items: center;
@@ -79,30 +74,30 @@
     position: relative;
 }
 
-.display-card-header-icon{
+.display-card-header-icon {
     //margin-right: 10px;
     width: 20px;
     height: 20px;
 }
 
-.inbox-icon{
+.inbox-icon {
     width: 32px;
 }
 
-.display-card-header-title{
+.display-card-header-title {
     //color: #1F195E;
     //font-size: 22px;
     font-weight: bold;
     margin-left: 10px;
 }
 
-.display-card-divider{
+.display-card-divider {
     width: 301px;
     height: 1px;
     margin-bottom: 12px;
 }
 
-.inbox-wrapper{
+.inbox-wrapper {
     //margin-right: 15px;
     //width: 20px;
     //height: 20px;
@@ -110,9 +105,9 @@
     justify-content: center;
     align-items: center;
     user-select: none;
-  }
+}
 
-.inbox-modifiers{
+.inbox-modifiers {
     width: 45px;
     height: 45px;
     position: absolute;
@@ -124,40 +119,44 @@
 .inbox-content {
     width: 301px;
 }
-.inbox-badge{
+
+.inbox-badge {
     width: 20px;
     height: 20px;
     position: absolute;
     top: 8px;
 }
 
-.inbox-number{
+.inbox-number {
     color: white;
     font-size: 9pt;
     position: absolute;
     top: 10px;
 }
 
-.inbox-front{
+.inbox-front {
     width: 24px;
     height: 23px;
     position: absolute;
     top: 12px;
 }
+
 .justify-content {
-  justify-content: space-between;
-  left:0;
+    justify-content: space-between;
+    left: 0;
 }
 
 .flexCls {
-  display: flex;
-  //padding:0 0 0 26px;
-  align-items: center;
+    display: flex;
+    //padding:0 0 0 26px;
+    align-items: center;
 }
+
 .righticon {
-  padding:0 16px 20px 0;
-  margin-right:0;
+    padding: 0 16px 20px 0;
+    margin-right: 0;
 }
+
 .subtitlecls {
-  padding-left:16px;
+    padding-left: 16px;
 }

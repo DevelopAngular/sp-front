@@ -59,6 +59,9 @@ import {PassLimitInfo} from '../models/HallPassLimits';
 import {MainHallPassFormComponent} from '../create-hallpass-forms/main-hallpass--form/main-hall-pass-form.component';
 import {CheckForUpdateService} from '../services/check-for-update.service';
 import {Title} from '@angular/platform-browser';
+import { FeatureFlagService, FLAGS } from '../services/feature-flag.service';
+import { WaitInLine } from '../models/WaitInLine'
+import { WaitInLineService } from '../services/wait-in-line.service'
 
 @Component({
   selector: 'app-passes',
@@ -126,15 +129,19 @@ export class PassesComponent implements OnInit, AfterViewInit, OnDestroy {
   futurePasses: any;
   activePasses: any;
   pastPasses: any;
+  waitInLinePasses: any;
 
   sentRequests: any;
   receivedRequests: any;
 
   currentPass$ = new BehaviorSubject<HallPass>(null);
   currentRequest$ = new BehaviorSubject<Request>(null);
+  currentWaitInLine$ = new BehaviorSubject<WaitInLine>(null);
 
   isActivePass$: Observable<boolean>;
   isActiveRequest$: Observable<boolean>;
+  isActiveWaitInLine$: Observable<boolean>;
+
   inboxHasItems: Observable<boolean> = of(null);
   passesHaveItems: Observable<boolean> = of(false);
 
@@ -214,6 +221,10 @@ export class PassesComponent implements OnInit, AfterViewInit, OnDestroy {
     );
   }
 
+  get isWaitInLine(): boolean {
+    return this.featureService.isFeatureEnabled(FLAGS.WaitInLine);
+  }
+
   get showInbox() {
     if (!this.isStaff) {
       return this.dataService.inboxState;
@@ -256,7 +267,9 @@ export class PassesComponent implements OnInit, AfterViewInit, OnDestroy {
     private passLimitsService: PassLimitService,
     private updateService: CheckForUpdateService,
     private cdr: ChangeDetectorRef,
-    private titleService: Title
+    private titleService: Title,
+    private featureService: FeatureFlagService,
+    private wilService: WaitInLineService
   ) {
 
     this.userService.user$
@@ -331,6 +344,9 @@ export class PassesComponent implements OnInit, AfterViewInit, OnDestroy {
       })
     );
 
+    this.isActiveWaitInLine$ = this.wilService.fakeWilActive.asObservable();
+    this.currentWaitInLine$ = this.wilService.fakeWil;
+
     this.dataService.currentUser.pipe(
       takeUntil(this.destroy$),
       switchMap((user: User) => {
@@ -339,6 +355,7 @@ export class PassesComponent implements OnInit, AfterViewInit, OnDestroy {
         }
       ))
       .subscribe(passLike => {
+
         this._zone.run(() => {
           if ((passLike instanceof HallPass || passLike instanceof Request) && this.currentScrollPosition) {
             this.scrollableArea.scrollTo({top: 0});
