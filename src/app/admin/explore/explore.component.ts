@@ -36,7 +36,6 @@ import {
   RecommendedDialogConfig
 } from '../../shared/shared-components/confirmation-dialog/confirmation-dialog.component';
 import {SpDataTableComponent} from '../sp-data-table/sp-data-table.component';
-import {ActivatedRoute, Router} from '@angular/router';
 import { EncounterDetectionService } from '../../services/EncounterDetectionService';
 import { EncounterDetection } from '../../models/EncounterDetection';
 import { EncounterDetectionDialogComponent } from './encounter-detection-dialog/encounter-detection-dialog.component';
@@ -50,7 +49,7 @@ export interface View {
 }
 
 export interface CurrentView {
-  id: number;
+  id: ExplorePages;
   title: string;
   color: string;
   icon: string;
@@ -58,11 +57,12 @@ export interface CurrentView {
   isPro?: boolean;
 }
 
-export enum SearchPages {
+export enum ExplorePages {
   search = 1,
   report = 2,
   contact = 3,
-  rooms = 4
+  encounter = 4,
+  rooms = 5
 }
 
 export interface SearchData {
@@ -92,10 +92,10 @@ export class ExploreComponent implements OnInit, OnDestroy {
   @ViewChild(SpDataTableComponent) passtable!: SpDataTableComponent;
 
   views: View = {
-    'pass_search': { id: 1, title: 'Passes', color: '#00B476', icon: 'Pass Search', action: 'pass_search' },
-    'report_search': { id: 2, title: 'Report Submissions', color: '#E32C66', icon: 'Report Search', action: 'report_search' },
-    'contact_trace': { id: 3, title: 'Contact Trace', color: '#139BE6', icon: 'Contact Trace', action: 'contact_trace' },
-    'encounter_detection': { id: 4, title: 'Detected Encounters', color: '#1F195E', icon: 'Encounter Detection', action: 'encounter_detection' },
+    'pass_search': { id: ExplorePages.search, title: 'Passes', color: '#00B476', icon: 'Pass Search', action: 'pass_search' },
+    'report_search': { id: ExplorePages.report, title: 'Report Submissions', color: '#E32C66', icon: 'Report Search', action: 'report_search' },
+    'contact_trace': { id: ExplorePages.contact, title: 'Contact Trace', color: '#139BE6', icon: 'Contact Trace', action: 'contact_trace' },
+    'encounter_detection': { id: ExplorePages.encounter, title: 'Detected Encounters', color: '#1F195E', icon: 'Encounter Detection', action: 'encounter_detection' },
     // 'rooms_usage': {id: 4, title: 'Rooms Usage', color: 'orange', icon: 'Rooms Usage', action: 'rooms_usage'}
   };
 
@@ -207,9 +207,7 @@ export class ExploreComponent implements OnInit, OnDestroy {
     public xlsx: XlsxService,
     private userService: UserService,
     private componentService: ComponentsService,
-    private encounterDetectionService: EncounterDetectionService,
-    private route: ActivatedRoute,
-    private router: Router
+    private encounterDetectionService: EncounterDetectionService
     ) {
     window.passClick = (id) => {
       this.passClick(id);
@@ -249,20 +247,12 @@ export class ExploreComponent implements OnInit, OnDestroy {
   ngOnInit() {
     this.schools$ = this.http.schoolsCollection$;
     this.clickEventSubscription = this.componentService.getClickEvent().subscribe((action) => {
-      if (action == "encounter_detection" && !this.userService.getFeatureEncounterDetection()) {
-        this.isProUser = false;
-      }else {
-        this.isProUser = true;
-      }
+      this.isProUser = !(action == "encounter_detection" && !this.userService.getFeatureEncounterDetection());
       this.currentView$.next(action);
       this.storage.setItem('explore_page', action);
       this.cdr.detectChanges();
     })
-    if (this.currentView$.getValue() == "encounter_detection" && !this.userService.getFeatureEncounterDetection()) {
-      this.isProUser = false;
-    }else {
-      this.isProUser = true;
-    }
+    this.isProUser = !(this.currentView$.getValue() == "encounter_detection" && !this.userService.getFeatureEncounterDetection());
     this.user$ = this.userService.user$;
 
     this.passSearchState = {
@@ -483,8 +473,8 @@ export class ExploreComponent implements OnInit, OnDestroy {
               const DEFAULTAVATAR = '\'./assets/Avatar Default.svg\' | resolveAsset';
               const students =
                 `<div class="ds-flex-center-start">
-                  <div class="ds-flex-center-start name-wrapper"><img src=${encounter.firstStudent.profile_picture ?? DEFAULTAVATAR}><p class="student-name">${encounter.firstStudent.display_name}</p></div>
-                  <div class="ds-flex-center-start name-wrapper"><img src=${encounter.secondStudent.profile_picture ?? DEFAULTAVATAR}><p class="student-name">${encounter.secondStudent.display_name}</p></div>
+                  <div class="ds-flex-center-start name-wrapper"><img src=${encounter.firstStudent.profile_picture ?? DEFAULTAVATAR} alt="First student picture"><p class="student-name">${encounter.firstStudent.display_name}</p></div>
+                  <div class="ds-flex-center-start name-wrapper"><img src=${encounter.secondStudent.profile_picture ?? DEFAULTAVATAR} alt="Second student picture"><p class="student-name">${encounter.secondStudent.display_name}</p></div>
               </div>`;
               const rawObj: any = {
                 'Students': students,
@@ -680,31 +670,6 @@ export class ExploreComponent implements OnInit, OnDestroy {
     return 'radial-gradient(circle at 73% 71%, ' + (colors[0]) + ', ' + colors[1] + ')';
   }
 
-  openSwitchPage() {
-    UNANIMATED_CONTAINER.next(true);
-    // const pagesDialog = this.dialog.open(PagesDialogComponent, {
-    //   panelClass: 'consent-dialog-container',
-    //   backdropClass: 'invis-backdrop',
-    //   data: {
-    //     // 'trigger': event.currentTarget,
-    //     'trigger': document.getElementById('explore'),
-    //     'pages': Object.values(this.views),
-    //     'selectedPage': this.views[this.currentView$.getValue()]
-    //   }
-    // });
-
-    // pagesDialog.afterClosed()
-    //   .pipe(
-    //     tap(() => UNANIMATED_CONTAINER.next(false)),
-    //     filter(res => !!res)
-    //   )
-    //   .subscribe(action => {
-    //     this.currentView$.next(action);
-    //     this.storage.setItem('explore_page', action);
-    //     this.cdr.detectChanges();
-    // });
-  }
-
   openConsentDeletePasses(event: Event) {
     const ActionPassDeletion = 'deletePasses';
 
@@ -850,7 +815,7 @@ export class ExploreComponent implements OnInit, OnDestroy {
           isActive: false,
           forStaff: true,
         };
-        const dialogRef = this.dialog.open(PassCardComponent, {
+        this.dialog.open(PassCardComponent, {
           panelClass: 'search-pass-card-dialog-container',
           backdropClass: 'custom-bd',
           data: data,
@@ -859,7 +824,7 @@ export class ExploreComponent implements OnInit, OnDestroy {
   }
 
   encounterClick(encounte_data) {
-    const dialogRef = this.dialog.open(EncounterDetectionDialogComponent, {
+    this.dialog.open(EncounterDetectionDialogComponent, {
       panelClass: 'accounts-profiles-dialog',
       backdropClass: 'custom-bd',
       width: '425px',
@@ -1134,7 +1099,7 @@ export class ExploreComponent implements OnInit, OnDestroy {
           isActive: false,
           forStaff: true,
         };
-        const dialogRef = this.dialog.open(PassCardComponent, {
+        this.dialog.open(PassCardComponent, {
           panelClass: 'search-pass-card-dialog-container',
           backdropClass: invisBackdrop ? 'invis-backdrop' : 'custom-bd',
           data: data,
@@ -1169,38 +1134,8 @@ export class ExploreComponent implements OnInit, OnDestroy {
   }
 
   searchEncounterDetection() {
-    const queryParams: any = {};
-    if (this.encounterDetectedData.selectedStudents) {
-      queryParams['student'] = this.encounterDetectedData.selectedStudents.map(s => s.id);
-    }
-    if (this.encounterDetectedData.selectedDate) {
-      let start;
-      let end;
-      if (this.encounterDetectedData.selectedDate['start']) {
-        start = this.encounterDetectedData.selectedDate['start'].toISOString();
-        queryParams['start_time'] = start;
-      }
-      if (this.encounterDetectedData.selectedDate['end']) {
-        end = this.encounterDetectedData.selectedDate['end'].toISOString();
-        queryParams['end_time'] = end;
-      }
-    } else {
-      this.encounterDetectedData.selectedDate = {};
-      let start;
-      let end;
-      start = moment().subtract(30, 'days').toISOString();
-      queryParams['start_time'] = start;
-      this.encounterDetectedData.selectedDate['start'] = moment().subtract(30, 'days');
-      end = moment().toISOString();
-      queryParams['end_time'] = end;
-      this.encounterDetectedData.selectedDate['end'] = moment();
-      this.adminCalendarOptions = {
-        rangeId: 'range_2',
-        toggleResult: 'Range',
-      };
-    }
     const school = this.http.getSchool();
-    const url = constructUrl(`v1/schools/${school.id}/stats/encounter_detection`, queryParams);
+    const url = `v1/schools/${school.id}/stats/encounter_detection`;
     this.encounterDetectionService.getEncounterDetectionRequest(url);
   }
 
@@ -1317,7 +1252,7 @@ export class ExploreComponent implements OnInit, OnDestroy {
             showButton: false
           }
         );
-        
+
         unsubscriber.unsubscribe();
         this.disabled = false;
       });
@@ -1373,7 +1308,7 @@ export class ExploreComponent implements OnInit, OnDestroy {
 
       const $span = document.createElement('span');
       // when we select rows they are not having changingThisBreaksApplicationSecurity
-      // but without a selection, mean all rows case, they have changingThisBreaksApplicationSecurity 
+      // but without a selection, mean all rows case, they have changingThisBreaksApplicationSecurity
       // so, we need to test existence of changingThisBreaksApplicationSecurity
       // before to get the value wrapped inside changingThisBreaksApplicationSecurity
       // which we know is in a HTML string, hence the $span trick
