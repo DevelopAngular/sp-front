@@ -264,6 +264,8 @@ export class InlineWaitInLineCardComponent implements OnInit, OnDestroy, OnChang
     // open this same template scaled up
     this.firstInLinePopupRef = this.dialog.open(this.root, {
       panelClass: 'overlay-dialog',
+      disableClose: true,
+      closeOnNavigation: true,
       data: {
         firstInLinePopup: true
       }
