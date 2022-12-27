@@ -1,7 +1,6 @@
 import { Component, EventEmitter, Input, OnInit, Output } from '@angular/core'
 import { timer } from 'rxjs'
-import { finalize, take } from 'rxjs/operators'
-import { over } from 'lodash'
+import { finalize, take, tap } from 'rxjs/operators'
 
 @Component({
   selector: 'sp-timer-spinner',
@@ -17,16 +16,18 @@ export class TimerSpinnerComponent implements OnInit {
   countdown: number = this.seconds;
 
   ngOnInit(): void {
-    timer(0, 1000).pipe(
+    this.createTimer(this.seconds).subscribe();
+  }
+
+  private createTimer(seconds: number) {
+    return timer(0, 1000).pipe(
       take(this.seconds + 1),
-      finalize(() => this.completed.emit()) // emit when counter finishes
-    ).subscribe({
-      next: counter => {
+      tap(counter => {
         const remaining = this.seconds - counter;
         this.countdown = remaining;
         this.pulse.emit(remaining);
-      }
-    }); // no need to unsubscribe
+      }),
+      finalize(() => this.completed.emit())); // emit when counter finishes
   }
 
   get remainingPercentage(): number {
@@ -38,5 +39,6 @@ export class TimerSpinnerComponent implements OnInit {
       this.seconds = overrideSeconds;
     }
     this.countdown = this.seconds;
+    this.createTimer(this.seconds).subscribe();
   }
 }

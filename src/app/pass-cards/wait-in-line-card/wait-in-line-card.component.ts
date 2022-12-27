@@ -11,7 +11,7 @@ import {
 } from '@angular/core'
 import { Navigation } from '../../create-hallpass-forms/main-hallpass--form/main-hall-pass-form.component'
 import { User } from '../../models/User'
-import { BehaviorSubject, Observable, Subject, timer } from 'rxjs'
+import { BehaviorSubject, Observable, Subject } from 'rxjs'
 import { School } from '../../models/School'
 import { MAT_DIALOG_DATA, MatDialog, MatDialogRef } from '@angular/material/dialog'
 import { HallPassesService } from '../../services/hall-passes.service'
@@ -32,6 +32,20 @@ import { scalePassCards } from '../../animations'
 import { WaitInLine } from '../../models/WaitInLine'
 import { WaitInLineService } from '../../services/wait-in-line.service'
 
+/**
+ * Wait in Line has 2 parts, similar to the pass request flow:
+ * 1. Wait in Line Creation (queuing a student in line)
+ * 2. Wait in Line Acceptance (starting the pass for a student at the front of the line)
+ *
+ * This component deals with the first step (queuing a student in line).
+ * A student waits in line to a room when the active now limit has been reached.
+ * This component collects all the basic information required to start a pass (origin,
+ * destination, duration, student, color, etc). When the student reaches the front of
+ * the line, this same info can be used to start the pass.
+ *
+ * // TODO: Cut out any unnecessary parts of this component
+ * // TODO: Teacher's flow
+ */
 @Component({
   selector: 'app-wait-in-line-card',
   templateUrl: './wait-in-line-card.component.html',
@@ -298,7 +312,6 @@ export class WaitInLineCardComponent implements OnInit {
   queuePassInLine() {
     // 1. Set the performingAction to true
     this.performingAction = true;
-
     // 2. Gather data from inputs to send to the backend
     const body = {
       'duration': this.selectedDuration * 60,
@@ -306,16 +319,11 @@ export class WaitInLineCardComponent implements OnInit {
       'destination': this.wil.destination.id,
       'travel_type': this.selectedTravelType
     };
-    if (this.forStaff) {
-      let ss: User[] = this.selectedStudents;
-      if (this.formState.data?.roomStudents?.length > 0) {
-        ss = this.formState.data.roomStudents;
-      }
-      body['students'] = ss.map(user => user.id);
-    } else {
-      body['student'] = this.wil.student.id;
-    }
-    body['override_visibility'] = this.formState.data.roomOverride;
+
+    this.wil.duration = this.selectedDuration * 60;
+    this.wil.travel_type = this.selectedTravelType;
+
+    // body['override_visibility'] = this.formState.data.roomOverride;
 
     // if (this.forFuture) {
     //   body['issuer_message'] = this.wil.issuer_message;
@@ -323,6 +331,7 @@ export class WaitInLineCardComponent implements OnInit {
     // }
     if (this.forKioskMode) {
       body['self_issued'] = true;
+      this.wil.self_issued = true
     }
     if (!this.forStaff) {
       delete body['override_visibility'];

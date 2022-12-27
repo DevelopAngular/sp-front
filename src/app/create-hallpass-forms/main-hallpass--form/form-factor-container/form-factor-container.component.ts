@@ -166,6 +166,7 @@ export class FormFactorContainerComponent implements OnInit {
               null,
               null,
               null,
+              5, // placeholder duration
               this.FORM_STATE.data.direction.from,
               this.FORM_STATE.data.direction.to,
               '',
@@ -176,6 +177,7 @@ export class FormFactorContainerComponent implements OnInit {
               '3rd',
               this.FORM_STATE.data.date ? this.FORM_STATE.data.date.declinable : false,
               this.forStaff ? this.FORM_STATE.data.message : null,
+              !this.forStaff
               );
             break;
         }

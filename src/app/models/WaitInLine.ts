@@ -34,6 +34,7 @@ export class WaitInLine extends BaseModel {
     public issuer: User,
     public created: Date,
     public last_updated: Date,
+    public duration: number,
     public origin: Location,
     public destination: Location,
     public travel_type: string,
@@ -44,6 +45,7 @@ export class WaitInLine extends BaseModel {
     public position: string,
     public cancelled?: boolean,
     public issuer_message?: string,
+    public self_issued?: boolean
 
   ) {
     super()
@@ -59,6 +61,7 @@ export class WaitInLine extends BaseModel {
       issuer: User = User.fromJSON(JSON['issuer']),
       created: Date = new Date(JSON['created']),
       last_updated: Date = new Date(JSON['last_updated']),
+      duration: number = JSON['duration'],
       origin: Location = Location.fromJSON(JSON['origin']),
       destination: Location = Location.fromJSON(JSON['destination']),
       travel_type: string = JSON['travel_type'],
@@ -68,12 +71,13 @@ export class WaitInLine extends BaseModel {
       cancelled: boolean = JSON['cancelled'],
       cancellable_by_student: boolean = !!JSON['cancellable_by_student'],
       issuer_message: string = JSON['issuer_message'],
-      position: string = ordinance(JSON['position'] as number);
+      position: string = ordinance(JSON['position'] as number),
+      self_issued: boolean = !!JSON['self_issued'];
 
     const wil =  new WaitInLine(
-      id, student, issuer, created, last_updated,
+      id, student, issuer, created, last_updated, duration,
       origin, destination, travel_type, gradient_color, icon, color_profile,
-      cancellable_by_student, position, cancelled, issuer_message);
+      cancellable_by_student, position, cancelled, issuer_message, self_issued);
 
     if (JSON['school_id']) {
       (wil as any).school_id = JSON['school_id'];

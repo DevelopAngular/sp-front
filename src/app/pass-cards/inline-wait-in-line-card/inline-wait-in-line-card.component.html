@@ -9,14 +9,14 @@
       <div class="header-content">
         <div class="header-info">
           <img  class="pass-card-header-icon" [src]="wil.icon | resolveAsset">
-          <div class="pass-card-header-text">{{ activeTeacherSelection ? 'Who is Ending?' : wil.destination.title }}</div>
+          <div class="pass-card-header-text">{{ wil.destination.title }}</div>
         </div>
         <app-icon-button [srcString]="optionsIcon" [onDarkShade]="true" [size]="20" (clickEvent)="showOptions($event)"></app-icon-button>
       </div>
       <mat-divider></mat-divider>
     </div>
 
-    <div class="inline-pass-card-content" *ngIf="!activeRoomCodePin && !activeTeacherPin && !activeTeacherSelection">
+    <div class="inline-pass-card-content">
       <div class="travel">
         <app-travel-view [pass]="wil"></app-travel-view>
       </div>
@@ -29,13 +29,19 @@
             </div>
 
             <!-- TODO: Kick student to the back of line if attempts expire -->
-            <div class="end-pass-content ds-flex-center-between" style="justify-content: space-around; width: 100%; border-radius: 8px" *ngSwitchCase="2" matRipple [matRippleDisabled]="false" [matRippleCentered]="true" [matRippleUnbounded]="false">
+            <div
+              class="end-pass-content ds-flex-center-between"
+              style="justify-content: space-around; width: 100%; border-radius: 8px"
+              *ngSwitchCase="2"
+              matRipple [matRippleDisabled]="true" [matRippleCentered]="true" [matRippleUnbounded]="false"
+              (click)="startPass()">
               <sp-timer-spinner
                 customToolTip
                 [contentTemplate]="passAttemptTooltip"
                 [seconds]="30"
                 [showNumber]="true"
-                (pulse)="acceptingPassTimeRemaining = $event">
+                (pulse)="acceptingPassTimeRemaining = $event"
+                (completed)="resetAttempt()">
               </sp-timer-spinner>
               <span>Start Pass</span>
               <img style="width: 25px" [src]="'./assets/Chevron Right (White).svg' | resolveAsset" alt="Right Arrow">
@@ -87,23 +93,7 @@
         <!--&lt;!&ndash;          </ng-template>&ndash;&gt;-->
         <!--&lt;!&ndash;        </app-card-button>&ndash;&gt;-->
         <!--      </ng-container>-->
-
       </div>
-    </div>
-    <div class="inline-pass-card-content" *ngIf="activeRoomCodePin">
-      <app-room-code [pass]="wil" (roomCodeResult)="roomCodeResult($event)"></app-room-code>
-      <div class="bottom-divider-wreapper">
-        <mat-divider class="bottom-divider" [style.margin]="'9px 0'"></mat-divider>
-        or
-        <mat-divider class="bottom-divider" [style.margin]="'9px 0'"></mat-divider>
-      </div>
-      <div class="pin-info" (click)="selectTeacher()">End Pass with Teacher Pin</div>
-    </div>
-    <div class="inline-request-content" *ngIf="activeTeacherSelection">
-      <app-teacher-selection [pass]="wil" (requestTarget)="requestTarget($event)"></app-teacher-selection>
-    </div>
-    <div class="inline-request-content" *ngIf="activeTeacherPin">
-      <app-teacher-pin-end-pass [pass]="wil" [selectedTeacher]="selectedTeacher" (pinResult)="activeTeacherPin = false"></app-teacher-pin-end-pass>
     </div>
   </div>
 </ng-template>
