@@ -23,6 +23,7 @@ import {TextFieldModule} from '@angular/cdk/text-field';
 import {OverlayModule} from '@angular/cdk/overlay';
 import {DragDropModule} from '@angular/cdk/drag-drop';
 import {MatTabsModule} from '@angular/material/tabs';
+import { MatRippleModule } from '@angular/material/core'
 
 @NgModule({
   declarations: [],
@@ -50,7 +51,8 @@ import {MatTabsModule} from '@angular/material/tabs';
     DragDropModule,
     TextFieldModule,
     OverlayModule,
-    MatTabsModule
+    MatTabsModule,
+    MatRippleModule
   ],
   exports: [
     MatProgressBarModule,
@@ -75,7 +77,8 @@ import {MatTabsModule} from '@angular/material/tabs';
     DragDropModule,
     TextFieldModule,
     OverlayModule,
-    MatTabsModule
+    MatTabsModule,
+    MatRippleModule
   ]
 })
 export class MaterialModule {

@@ -4,7 +4,6 @@ import {HallPass} from '../models/HallPass';
 import {Util} from '../../Util';
 import {MAT_DIALOG_DATA, MatDialog, MatDialogRef} from '@angular/material/dialog';
 import {ConsentMenuComponent} from '../consent-menu/consent-menu.component';
-import {LoadingService} from '../services/loading.service';
 import {Navigation} from '../create-hallpass-forms/main-hallpass--form/main-hall-pass-form.component';
 import {catchError, concatMap, filter, map, pluck, retryWhen, switchMap, take, takeUntil, tap} from 'rxjs/operators';
 import {BehaviorSubject, interval, merge, Observable, of, Subject, zip} from 'rxjs';
@@ -27,7 +26,6 @@ import {
   ConfirmationDialogComponent, ConfirmationTemplates,
   RecommendedDialogConfig
 } from '../shared/shared-components/confirmation-dialog/confirmation-dialog.component';
-import {PassLimitService} from '../services/pass-limit.service';
 import {LocationsService} from '../services/locations.service';
 import {Location} from '../models/Location';
 import {RecurringSchedulePassService} from '../services/recurring-schedule-pass.service';
@@ -122,7 +120,6 @@ export class PassCardComponent implements OnInit, OnDestroy {
     @Inject(MAT_DIALOG_DATA) public data: any,
     private hallPassService: HallPassesService,
     public dialog: MatDialog,
-    private loadingService: LoadingService,
     private formService: CreateFormService,
     private timeService: TimeService,
     public screenService: ScreenService,
@@ -131,7 +128,6 @@ export class PassCardComponent implements OnInit, OnDestroy {
     private userService: UserService,
     private toastService: ToastService,
     private encounterService: EncounterPreventionService,
-    private passLimitService: PassLimitService,
     private locationsService: LocationsService,
     private recurringConfigService: RecurringSchedulePassService
   ) {
@@ -325,6 +321,12 @@ export class PassCardComponent implements OnInit, OnDestroy {
   }
 
   buildPage(title: string, subtitle: string, stamp: string, page: number) {
+    console.log({
+      title,
+      subtitle,
+      stamp,
+      page
+    });
     if (page === 1) {
       this.p1Title = title;
       this.p1Subtitle = subtitle;

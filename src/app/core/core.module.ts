@@ -22,6 +22,7 @@ import {NuxTooltipRendererDirective} from './directives/nux-tooltip-renderer.dir
 import {SpEmailPipe} from './pipes/sp-email.pipe';
 import { IdCardComponent } from '../admin/id-cards/id-card/id-card.component';
 import { DropdownSelectionComponent } from './components/dropdown-selection/dropdown-selection.component';
+import { TimerSpinnerComponent } from './components/timer-spinner/timer-spinner.component';
 
 @NgModule({
   declarations: [
@@ -45,7 +46,8 @@ import { DropdownSelectionComponent } from './components/dropdown-selection/drop
     NuxTooltipRendererDirective,
     SpEmailPipe,
     IdCardComponent,
-    DropdownSelectionComponent
+    DropdownSelectionComponent,
+    TimerSpinnerComponent
   ],
   imports: [
     CommonModule,
@@ -71,7 +73,8 @@ import { DropdownSelectionComponent } from './components/dropdown-selection/drop
         EncounterPreventionTooltipComponent,
         NuxTooltipRendererDirective,
         IdCardComponent,
-        DropdownSelectionComponent
+        DropdownSelectionComponent,
+        TimerSpinnerComponent
     ]
 })
 export class CoreModule { }

@@ -4,12 +4,11 @@ import {
   EventEmitter,
   Inject,
   Input,
-  OnInit,
+  OnInit, Optional,
   Output,
   TemplateRef,
   ViewChild
 } from '@angular/core'
-import { HallPass } from '../../models/HallPass'
 import { Navigation } from '../../create-hallpass-forms/main-hallpass--form/main-hall-pass-form.component'
 import { User } from '../../models/User'
 import { BehaviorSubject, Observable, Subject } from 'rxjs'
@@ -30,14 +29,23 @@ import { LocationsService } from '../../services/locations.service'
 import { DeviceDetection } from '../../device-detection.helper'
 import { Util } from '../../../Util'
 import { scalePassCards } from '../../animations'
+import { WaitInLine } from '../../models/WaitInLine'
+import { WaitInLineService } from '../../services/wait-in-line.service'
 
-export enum WaitInLineState {
-  CreatingPass,
-  WaitingInLine,
-  FrontOfLine,
-  PassStarted
-}
-
+/**
+ * Wait in Line has 2 parts, similar to the pass request flow:
+ * 1. Wait in Line Creation (queuing a student in line)
+ * 2. Wait in Line Acceptance (starting the pass for a student at the front of the line)
+ *
+ * This component deals with the first step (queuing a student in line).
+ * A student waits in line to a room when the active now limit has been reached.
+ * This component collects all the basic information required to start a pass (origin,
+ * destination, duration, student, color, etc). When the student reaches the front of
+ * the line, this same info can be used to start the pass.
+ *
+ * // TODO: Cut out any unnecessary parts of this component
+ * // TODO: Teacher's flow
+ */
 @Component({
   selector: 'app-wait-in-line-card',
   templateUrl: './wait-in-line-card.component.html',
@@ -46,7 +54,7 @@ export enum WaitInLineState {
 })
 export class WaitInLineCardComponent implements OnInit {
 
-  @Input() pass: HallPass;
+  @Input() wil: WaitInLine;
   @Input() forInput = false;
   @Input() fromPast = false;
   @Input() forFuture = false;
@@ -56,6 +64,7 @@ export class WaitInLineCardComponent implements OnInit {
   @Input() forKioskMode = false;
   @Input() formState: Navigation;
   @Input() students: User[] = [];
+  @Input() isInline = false;
 
   @Output() cardEvent: EventEmitter<any> = new EventEmitter();
 
@@ -97,7 +106,7 @@ export class WaitInLineCardComponent implements OnInit {
   activePage;
 
   performingAction: boolean;
-  isModal: boolean;
+  isModal = false;
   showStudentInfoBlock: boolean = true;
   passForStudentsComponent: boolean;
   hideButton: boolean;
@@ -120,11 +129,11 @@ export class WaitInLineCardComponent implements OnInit {
 
   destroy$: Subject<any> = new Subject<any>();
 
-  waitInLineState: WaitInLineState = WaitInLineState.CreatingPass;
+  fakeDate = new Date();
 
   constructor(
-    public dialogRef: MatDialogRef<WaitInLineCardComponent>,
-    @Inject(MAT_DIALOG_DATA) public data: any,
+    @Optional() public dialogRef: MatDialogRef<WaitInLineCardComponent>,
+    @Optional() @Inject(MAT_DIALOG_DATA) public data: any,
     private hallPassService: HallPassesService,
     public dialog: MatDialog,
     private loadingService: LoadingService,
@@ -137,7 +146,8 @@ export class WaitInLineCardComponent implements OnInit {
     private toastService: ToastService,
     private encounterService: EncounterPreventionService,
     private passLimitService: PassLimitService,
-    private locationsService: LocationsService
+    private locationsService: LocationsService,
+    private wilService: WaitInLineService
   ) {
   }
 
@@ -150,7 +160,7 @@ export class WaitInLineCardComponent implements OnInit {
   }
 
   get gradient() {
-    return 'radial-gradient(circle at 73% 71%, ' + this.pass.color_profile.gradient_color + ')';
+    return 'radial-gradient(circle at 73% 71%, ' + this.wil.color_profile.gradient_color + ')';
   }
 
   get studentText() {
@@ -163,12 +173,12 @@ export class WaitInLineCardComponent implements OnInit {
           selectedStudents[0].display_name + ' and ' + (selectedStudents.length - 1) + ' more' :
           selectedStudents[0].display_name + (selectedStudents.length > 1 ?
             ' and ' + selectedStudents[1].display_name : '')) :
-        this.pass.student.display_name + ` (${this.studentEmail})`);
+        this.wil.student.display_name + ` (${this.studentEmail})`);
     }
   }
 
   get studentEmail() {
-    return this.pass.student.primary_email.split('@', 1)[0];
+    return this.wil.student.primary_email.split('@', 1)[0];
   }
 
   get isMobile() {
@@ -184,11 +194,10 @@ export class WaitInLineCardComponent implements OnInit {
   }
 
   get hasClose() {
-    return ((this.forInput || this.forStaff || this.pass.cancellable_by_student || this.user.isStudent()) && !this.fromPast) && !this.hideButton;
+    return ((this.forInput || this.forStaff || this.wil.cancellable_by_student || this.user.isStudent()) && !this.fromPast) && !this.hideButton;
   }
 
   ngOnInit(): void {
-    console.log(this.pass);
   }
 
   ngOnDestroy() {
@@ -203,45 +212,55 @@ export class WaitInLineCardComponent implements OnInit {
   }
 
   getDuration() {
-    const start: Date = this.pass.start_time;
-    const end: Date = this.pass.end_time;
-    const timeDiff = Math.abs(start.getTime() - end.getTime());
-    const diffSecs = Math.ceil(timeDiff / 1000);
-    return Math.floor(diffSecs / 60) + ':' + (diffSecs % 60 < 10 ? '0' : '') + diffSecs % 60;
+    // const start: Date = this.wil.start_time;
+    // const end: Date = this.wil.end_time;
+    // const timeDiff = Math.abs(start.getTime() - end.getTime());
+    // const diffSecs = Math.ceil(timeDiff / 1000);
+    // return Math.floor(diffSecs / 60) + ':' + (diffSecs % 60 < 10 ? '0' : '') + diffSecs % 60;
+
+    return 10;
   }
 
   buildPages() {
-    if (this.pass.parent_invitation) {
-      this.buildPage('Pass Request Sent', 'by ' +
-        this.getUserName(this.pass.issuer), this.formatDateTime(this.pass.flow_start), (this.pagerPages + 1));
-      this.buildPage('Pass Request Accepted', 'by ' +
-        this.getUserName(this.pass.student), this.formatDateTime(this.pass.created), (this.pagerPages + 1));
-    } else if (this.pass.parent_request) {
-      this.buildPage('Pass Request Sent', 'by ' +
-        this.getUserName(this.pass.student), this.formatDateTime(this.pass.flow_start), (this.pagerPages + 1));
-      this.buildPage('Pass Request Accepted', 'by ' +
-        this.getUserName(this.pass.issuer), this.formatDateTime(this.pass.created), (this.pagerPages + 1));
-    } else if (this.forFuture && this.pass.issuer) {
+    if (this.forFuture && this.wil.issuer) {
       this.buildPage('Pass Created', 'by ' +
-        this.getUserName(this.pass.issuer), this.formatDateTime(this.pass.created), (this.pagerPages + 1));
-    } else if (this.pass.issuer) {
+        this.getUserName(this.wil.issuer), this.formatDateTime(this.wil.created), (this.pagerPages + 1));
+    } else if (this.wil.issuer) {
       this.buildPage('Pass Created', 'by ' +
-        this.getUserName(this.pass.issuer), this.formatDateTime(this.pass.created), (this.pagerPages + 1));
+        this.getUserName(this.wil.issuer), this.formatDateTime(this.wil.created), (this.pagerPages + 1));
     }
 
-    if (this.isActive) {
-      this.buildPage('Pass Started', '', this.formatDateTime(this.pass.start_time), (this.pagerPages + 1));
-      this.activePage = (this.pagerPages);
-    } else if (this.fromPast) {
-      this.buildPage('Pass Started', '', this.formatDateTime(this.pass.start_time), (this.pagerPages + 1));
-      const start: Date = this.pass.start_time;
-      const end: Date = this.pass.end_time;
-      const diff: number = (end.getTime() - start.getTime()) / 1000;
-      const mins: number = Math.floor(Math.floor(diff) / 60);
-      const secs: number = Math.abs(Math.floor(diff) % 60);
-      const totalTime = mins + ':' + (secs < 10 ? '0' + secs : secs);
-      this.buildPage('Pass Ended', '', totalTime + ' - Total Time', (this.pagerPages + 1));
-    }
+    // if (this.wil.parent_invitation) {
+    //   this.buildPage('Pass Request Sent', 'by ' +
+    //     this.getUserName(this.wil.issuer), this.formatDateTime(this.wil.flow_start), (this.pagerPages + 1));
+    //   this.buildPage('Pass Request Accepted', 'by ' +
+    //     this.getUserName(this.wil.student), this.formatDateTime(this.wil.created), (this.pagerPages + 1));
+    // } else if (this.wil.parent_request) {
+    //   this.buildPage('Pass Request Sent', 'by ' +
+    //     this.getUserName(this.wil.student), this.formatDateTime(this.wil.flow_start), (this.pagerPages + 1));
+    //   this.buildPage('Pass Request Accepted', 'by ' +
+    //     this.getUserName(this.wil.issuer), this.formatDateTime(this.wil.created), (this.pagerPages + 1));
+    // } else if (this.forFuture && this.wil.issuer) {
+    //   this.buildPage('Pass Created', 'by ' +
+    //     this.getUserName(this.wil.issuer), this.formatDateTime(this.wil.created), (this.pagerPages + 1));
+    // } else if (this.wil.issuer) {
+    //   this.buildPage('Pass Created', 'by ' +
+    //     this.getUserName(this.wil.issuer), this.formatDateTime(this.wil.created), (this.pagerPages + 1));
+    // }
+
+    // if (this.isActive) {
+    //   this.buildPage('Pass Started', '', this.formatDateTime(this.wil.start_time), (this.pagerPages + 1));
+    //   this.activePage = (this.pagerPages);
+    // } else if (this.fromPast) {
+    //   this.buildPage('Pass Started', '', this.formatDateTime(this.wil.start_time), (this.pagerPages + 1));
+    //   const start: Date = this.wil.start_time;
+    //   const end: Date = this.wil.end_time;
+    //   const diff: number = (end.getTime() - start.getTime()) / 1000;
+    //   const mins: number = Math.floor(Math.floor(diff) / 60);
+    //   const secs: number = Math.abs(Math.floor(diff) % 60);
+    //   const totalTime = mins + ':' + (secs < 10 ? '0' + secs : secs);
+    //   this.buildPage('Pass Ended', '', totalTime + ' - Total Time', (this.pagerPages + 1));
+    // }
   }
 
   buildPage(title: string, subtitle: string, stamp: string, page: number) {
@@ -269,30 +288,73 @@ export class WaitInLineCardComponent implements OnInit {
     this.cancelOpen = false;
     if (action === 'delete') {
       const body = {};
-      this.hallPassService.cancelPass(this.pass.id, body)
+      this.hallPassService.cancelPass(this.wil.id, body)
         .subscribe((httpData) => {
           this.dialogRef.close();
         });
     } else if (action === 'report') {
-      this.dialogRef.close({'report': this.pass.student});
+      this.dialogRef.close({'report': this.wil.student});
     } else if (action === 'end') {
       this.endPass();
     }
   }
 
-  waitInLine() {
+  /**
+   * Trigger this function to queue this pass into a line waiting on a room
+   * This does not count as actually creating a pass
+   * The origin and destination will already be present in this.wil.
+   *
+   * 1. Set the performingAction to true
+   * 2. Gather data from inputs to send to the backend
+   * 3. Send data to backend
+   * 4.
+   */
+  queuePassInLine() {
+    // 1. Set the performingAction to true
+    this.performingAction = true;
+    // 2. Gather data from inputs to send to the backend
+    const body = {
+      'duration': this.selectedDuration * 60,
+      'origin': this.wil.origin.id,
+      'destination': this.wil.destination.id,
+      'travel_type': this.selectedTravelType
+    };
 
-  }
+    this.wil.duration = this.selectedDuration * 60;
+    this.wil.travel_type = this.selectedTravelType;
 
-  newPass() {
+    // body['override_visibility'] = this.formState.data.roomOverride;
 
-  }
+    // if (this.forFuture) {
+    //   body['issuer_message'] = this.wil.issuer_message;
+    //   body['start_time'] = this.wil.start_time.toISOString();
+    // }
+    if (this.forKioskMode) {
+      body['self_issued'] = true;
+      this.wil.self_issued = true
+    }
+    if (!this.forStaff) {
+      delete body['override_visibility'];
+      if (this.forKioskMode) {
+        // that's it, the origin room should be considered room visibility free
+        // to permits a student in kiosk mode to appear in who-are-you component
+        // so the code below
+        body['override_visibility_origin'] = true;
+      }
+      body['isNotBulk'] = true;
+    }
 
-  endPass() {
-    this.hallPassService.endPassRequest(this.pass.id);
+    // 3. Send data to backend
+    this.wilService.fakeWilActive.next(true);
+    this.wilService.fakeWil.next(this.wil);
+    this.performingAction = false;
     this.dialogRef.close();
   }
 
+  endPass()
+  {
+
+  }
   genOption(display, color, action, icon?) {
     return {display: display, color: color, action: action, icon};
   }

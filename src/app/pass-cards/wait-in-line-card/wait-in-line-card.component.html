@@ -1,14 +1,14 @@
 <div class="pass-card-container">
-  <div class="pass-card-wrapper" [@scalePassCards]="scaleCardTrigger$ | async" #cardWrapper [style.background-image]="gradient" [style.height]="forStaff || data.kioskMode ? (isModal ? '400px' : '451px') : '412px'" ondragstart="return false">
+  <div class="pass-card-wrapper" [@scalePassCards]="scaleCardTrigger$ | async" #cardWrapper [style.background-image]="gradient" [style.height]="forStaff || data?.kioskMode ? (isModal ? '400px' : '451px') : '412px'" ondragstart="return false">
 
     <div class="pass-card-header">
       <div class="header-content">
         <div class="header-info">
-          <img  class="pass-card-header-icon" [src]="pass.icon | resolveAsset">
+          <img  class="pass-card-header-icon" [src]="wil.icon | resolveAsset">
           <div class="pass-card-header-text">
-            <span>{{ pass.destination.title }}</span>
+            <span>{{ wil.destination.title }}</span>
             <div class="card-subtitle ds-flex-center-start" *ngIf="fromPast || forFuture">
-              <span notranslate>{{ formatDateTime(pass.start_time) }}</span>
+              <span notranslate>{{ formatDateTime(fakeDate) }}</span>
             </div>
           </div>
         </div>
@@ -24,28 +24,26 @@
     <div class="pass-card-content" *ngIf="!isModal">
       <div class="duration-picker">
         <app-traveltype-picker
-          [width]="(pass.destination.travel_types.length < 2 ? '106px' : '185px')"
+          [width]="(wil.destination.travel_types.length < 2 ? '106px' : '185px')"
           [height]="'32px'"
-          (onSelect)="selectedTravelType=$event" [choices]="pass.destination.travel_types" [altColor]="pass.color_profile.solid_color"></app-traveltype-picker>
-        <app-duration-picker [forStaff]="forStaff" [plural]="selectedStudents.length>1" (onChange)="selectedDuration=$event" [maxDuration]="pass.destination.max_allowed_time?pass.destination.max_allowed_time:15"></app-duration-picker>
+          (onSelect)="selectedTravelType=$event" [choices]="wil.destination.travel_types" [altColor]="wil.color_profile.solid_color"></app-traveltype-picker>
+        <app-duration-picker [forStaff]="forStaff" [plural]="selectedStudents.length>1" (onChange)="selectedDuration=$event" [maxDuration]="wil.destination.max_allowed_time?wil.destination.max_allowed_time:15"></app-duration-picker>
       </div>
       <div class="button">
-        <app-card-button (onClick)="waitInLine()" [disabled]="performingAction" [width]="buttonWidth +'px'" [height]="'79px'" [gradientColor]="pass.color_profile.gradient_color">
-          <ng-container [ngSwitch]="waitInLineState">
-            <div class="start-pass-content" *ngSwitchCase="0">
-              <div class="start-pass-content-text" style="display: flex">
-                <img [src]="'./assets/Clock (White).svg' | resolveAsset" alt="Clock face">
-                <span class="ds-ml-10">Wait In Line</span>
-              </div>
-              <img class="button-icon-right" [src]="'./assets/SP Arrow (White).svg' | resolveAsset">
+        <app-card-button (onClick)="queuePassInLine()" [disabled]="performingAction" [width]="buttonWidth +'px'" [height]="'79px'" [gradientColor]="wil.color_profile.gradient_color">
+          <div *ngIf="!performingAction; else spinner" class="start-pass-content ds-mr-20">
+            <div class="start-passs-content-text" style="display: flex">
+              <img [src]="'./assets/Clock (White).svg' | resolveAsset" alt="Clock face">
+              <span class="ds-ml-20">Wait In Line</span>
             </div>
-            <div class="start-pass-content" *ngSwitchCase="2">
-              <mat-spinner *ngIf="performingAction" [color]="'accent'" [diameter]="35"></mat-spinner>
-              <div *ngIf="!performingAction" class="start-pass-content-text">
-                {{((forFuture && forInput)?'Schedule Pass' + (selectedStudents.length > 1 ? 'es' : ''):(forStaff?'Send Pass' + (selectedStudents.length > 1 ? 'es' : ''):'Start Pass' + (selectedStudents.length > 1 ? 'es' : '')))}}</div>
-              <img *ngIf="!performingAction"  class="button-icon-right" [src]="'./assets/SP Arrow (White).svg' | resolveAsset">
+            <img class="button-icon-right" [src]="'./assets/SP Arrow (White).svg' | resolveAsset">
+          </div>
+
+          <ng-template #spinner>
+            <div class="start-pass-content">
+              <mat-spinner [color]="'accent'" [diameter]="35"></mat-spinner>
             </div>
-          </ng-container>
+          </ng-template>
         </app-card-button>
 
       </div>
@@ -54,23 +52,23 @@
     <div class="pass-card-content-modal" *ngIf="isModal">
       <div class="center-block">
 
-        <app-travel-view *ngIf="pass.cancellable_by_student || data.kioskMode; else message" [pass]="pass"></app-travel-view>
+<!--        <app-travel-view *ngIf="wil.cancellable_by_student || data.kioskMode; else message" [pass]="pass"></app-travel-view>-->
 
         <ng-template #message>
           <ng-container *ngIf="!isMobile; else mobile">
             <app-pager [arrowPosition]="'-93px'" [isStaff]="true" >
               <div class="page-1" [attr.data-motion-translate]="(frameMotion$ | async).direction">
-                <app-travel-view
-                  [forStaff]="forStaff"
-                  [height]="'170px'"
-                  [pass]="pass"
-                ></app-travel-view>
+<!--                <app-travel-view-->
+<!--                  [forStaff]="forStaff"-->
+<!--                  [height]="'170px'"-->
+<!--                  [pass]="pass"-->
+<!--                ></app-travel-view>-->
               </div>
               <div class="page-2" [attr.data-motion-translate]="(frameMotion$ | async).direction">
                 <div style="display: flex; justify-content: center">
                   <div class="message">
-                    <span [style.font-weight]="'bold'">{{ forStaff ? 'Your message:' : 'Message from' }}</span><span ignore [style.font-weight]> {{ pass.issuer.display_name }}</span><br>
-                    <span [attr.notranslate]="pass.issuer_message ? true : null" style="user-select: text">{{ pass.issuer_message ? pass.issuer_message : 'No Message' }}</span>
+                    <span [style.font-weight]="'bold'">{{ forStaff ? 'Your message:' : 'Message from' }}</span><span ignore [style.font-weight]> {{ wil.issuer.display_name }}</span><br>
+                    <span [attr.notranslate]="wil.issuer_message ? true : null" style="user-select: text">{{ wil.issuer_message ? wil.issuer_message : 'No Message' }}</span>
                   </div>
                 </div>
               </div>
@@ -80,18 +78,18 @@
           <ng-template #mobile>
             <app-pager [arrowPosition]="'-93px'" [isStaff]="true" >
               <div class="page-5" [attr.data-motion-translate]="(frameMotion$ | async).direction">
-                <app-travel-view
-                  [forStaff]="forStaff"
-                  [height]="'170px'"
-                  [pass]="pass"
-                ></app-travel-view>
+<!--                <app-travel-view-->
+<!--                  [forStaff]="forStaff"-->
+<!--                  [height]="'170px'"-->
+<!--                  [pass]="pass"-->
+<!--                ></app-travel-view>-->
               </div>
               <div class="page-6" [attr.data-motion-translate]="(frameMotion$ | async).direction">
                 <div style="display: flex; justify-content: center">
                   <div class="message">
-                    <span [style.font-weight]="'bold'">{{ forStaff ? 'Your message:' : 'Message from' }}</span><span notranslate [style.font-weight]> {{ pass.issuer.display_name }}</span><br>
-                    {{pass.issuer_message|json}}
-                    <span [attr.notranslate]="pass.issuer_message ? true : null" style="user-select: text">{{ pass.issuer_message ? pass.issuer_message : 'No Message' }}</span>
+                    <span [style.font-weight]="'bold'">{{ forStaff ? 'Your message:' : 'Message from' }}</span><span notranslate [style.font-weight]> {{ wil.issuer.display_name }}</span><br>
+                    {{wil.issuer_message|json}}
+                    <span [attr.notranslate]="wil.issuer_message ? true : null" style="user-select: text">{{ wil.issuer_message ? wil.issuer_message : 'No Message' }}</span>
                   </div>
                 </div>
               </div>
@@ -100,12 +98,12 @@
         </ng-template>
       </div>
 
-      <mat-divider *ngIf="!data.kioskMode"></mat-divider>
+      <mat-divider *ngIf="!data?.kioskMode"></mat-divider>
 
-      <div class="top-block" [style.justify-content]="data.kioskMode ? 'flex-start' : 'center'">
+      <div class="top-block" [style.justify-content]="data?.kioskMode ? 'flex-start' : 'center'">
 
         <div *ngIf="isActive && !forStaff">
-          <app-card-button *ngIf="!(forStaff || forMonitor)" [disabled]="performingAction" [width]="buttonWidth +'px'" [height]="'79px'"  [gradientColor]="pass.color_profile.gradient_color" [overlayWidth]="overlayWidth" [valid]="valid" (onClick)="endPass()">
+          <app-card-button *ngIf="!(forStaff || forMonitor)" [disabled]="performingAction" [width]="buttonWidth +'px'" [height]="'79px'"  [gradientColor]="wil.color_profile.gradient_color" [overlayWidth]="overlayWidth" [valid]="valid" (onClick)="endPass()">
             <div class="end-pass-content">
               {{ timeLeft +(timeLeft===''?'':' -')}} End Pass
             </div>
@@ -145,7 +143,7 @@
         </app-pager>
       </div>
     </div>
-    <div class="pass-card-footer" *ngIf="(forStaff || data.kioskMode) && !isModal">
+    <div class="pass-card-footer" *ngIf="(forStaff || data?.kioskMode) && !isModal">
       <div class="student-footer"></div>
       <div class="student-text"> {{ studentText }} </div>
     </div>
@@ -157,7 +155,7 @@
     *ngIf="forStaff && isModal && showStudentInfoBlock"
     [style.marginTop]="'58px'"
   >
-    <app-student-passes [pass]="pass" [profile]="pass.student"></app-student-passes>
+<!--    <app-student-passes [pass]="pass" [profile]="wil.student"></app-student-passes>-->
   </div>
 </div>
 
