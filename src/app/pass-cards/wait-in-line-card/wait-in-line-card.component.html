@@ -27,14 +27,14 @@
           [width]="(wil.destination.travel_types.length < 2 ? '106px' : '185px')"
           [height]="'32px'"
           (onSelect)="selectedTravelType=$event" [choices]="wil.destination.travel_types" [altColor]="wil.color_profile.solid_color"></app-traveltype-picker>
-        <app-duration-picker [forStaff]="forStaff" [plural]="selectedStudents.length>1" (onChange)="selectedDuration=$event" [maxDuration]="wil.destination.max_allowed_time?wil.destination.max_allowed_time:15"></app-duration-picker>
+        <app-duration-picker [forStaff]="forStaff" (onChange)="selectedDuration=$event" [maxDuration]="wil.destination.max_allowed_time?wil.destination.max_allowed_time:15"></app-duration-picker>
       </div>
       <div class="button">
         <app-card-button (onClick)="queuePassInLine()" [disabled]="performingAction" [width]="buttonWidth +'px'" [height]="'79px'" [gradientColor]="wil.color_profile.gradient_color">
           <div *ngIf="!performingAction; else spinner" class="start-pass-content ds-mr-20">
-            <div class="start-passs-content-text" style="display: flex">
+            <div class="start-pass-content-text" style="display: flex">
               <img [src]="'./assets/Clock (White).svg' | resolveAsset" alt="Clock face">
-              <span class="ds-ml-20">Wait In Line</span>
+              <span class="ds-mx-20">{{forStaff ? 'Send to Line' : 'Wait In Line'}}</span>
             </div>
             <img class="button-icon-right" [src]="'./assets/SP Arrow (White).svg' | resolveAsset">
           </div>
@@ -111,7 +111,7 @@
         </div>
         <div *ngIf="(fromPast || forFuture && !forInput) && !forStaff">
           <span *ngIf="forFuture" style="font-size: 20px; font-weight: bold; color: white">Pass Auto Starts</span>
-          <span *ngIf="!forFuture" style="font-size: 20px; font-weight: bold; color: white"><var>{{ getDuration() }}</var> - Total Time</span>
+          <span *ngIf="!forFuture" style="font-size: 20px; font-weight: bold; color: white"><var>{{ wil.duration }}</var> - Total Time</span>
         </div>
 
         <app-pager [pages]="pagerPages" [page]="pagerPages" *ngIf="forStaff ">

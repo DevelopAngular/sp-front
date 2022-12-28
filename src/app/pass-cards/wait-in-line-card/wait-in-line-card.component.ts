@@ -81,7 +81,6 @@ export class WaitInLineCardComponent implements OnInit {
   selectedDuration: number;
   selectedTravelType: string;
   cancelOpen = false;
-  selectedStudents: User[] = [];
   fromHistory;
   fromHistoryIndex;
 
@@ -164,17 +163,14 @@ export class WaitInLineCardComponent implements OnInit {
   }
 
   get studentText() {
-    if (this.formState && this.formState.data.selectedGroup) {
-      return this.formState.data.selectedGroup.title;
-    } else {
-      const selectedStudents = this.formState.data.roomStudents ?? this.selectedStudents;
-      return (selectedStudents ?
-        (selectedStudents.length > 2 ?
-          selectedStudents[0].display_name + ' and ' + (selectedStudents.length - 1) + ' more' :
-          selectedStudents[0].display_name + (selectedStudents.length > 1 ?
-            ' and ' + selectedStudents[1].display_name : '')) :
-        this.wil.student.display_name + ` (${this.studentEmail})`);
-    }
+    // studentGroup is populated on when a teacher creates the pass
+    // Wait-in-Line passes are not maod
+    const studentGroup = this.formState.data.roomStudents ?? this.formState.data.selectedStudents;
+    const student = studentGroup[0];
+
+    return student
+      ? student.display_name
+      : this.wil.student.display_name + ` (${this.studentEmail})`;
   }
 
   get studentEmail() {
@@ -211,16 +207,8 @@ export class WaitInLineCardComponent implements OnInit {
     return Util.formatDateTime(date);
   }
 
-  getDuration() {
-    // const start: Date = this.wil.start_time;
-    // const end: Date = this.wil.end_time;
-    // const timeDiff = Math.abs(start.getTime() - end.getTime());
-    // const diffSecs = Math.ceil(timeDiff / 1000);
-    // return Math.floor(diffSecs / 60) + ':' + (diffSecs % 60 < 10 ? '0' : '') + diffSecs % 60;
-
-    return 10;
-  }
-
+  // might have to use this between student, teacher and kiosk mode
+  // if not, then remove this
   buildPages() {
     if (this.forFuture && this.wil.issuer) {
       this.buildPage('Pass Created', 'by ' +
@@ -284,21 +272,6 @@ export class WaitInLineCardComponent implements OnInit {
     this.pagerPages++;
   }
 
-  chooseAction(action) {
-    this.cancelOpen = false;
-    if (action === 'delete') {
-      const body = {};
-      this.hallPassService.cancelPass(this.wil.id, body)
-        .subscribe((httpData) => {
-          this.dialogRef.close();
-        });
-    } else if (action === 'report') {
-      this.dialogRef.close({'report': this.wil.student});
-    } else if (action === 'end') {
-      this.endPass();
-    }
-  }
-
   /**
    * Trigger this function to queue this pass into a line waiting on a room
    * This does not count as actually creating a pass
@@ -351,10 +324,6 @@ export class WaitInLineCardComponent implements OnInit {
     this.dialogRef.close();
   }
 
-  endPass()
-  {
-
-  }
   genOption(display, color, action, icon?) {
     return {display: display, color: color, action: action, icon};
   }
