@@ -22,6 +22,7 @@ export class WaitInLineService {
 
   fakeWil = new BehaviorSubject<WaitInLine>(null);
   fakeWilActive = new BehaviorSubject<boolean>(false);
+  fakeWilPasses = new BehaviorSubject<WaitInLine[]>([]);
 
   constructor() { }
 }

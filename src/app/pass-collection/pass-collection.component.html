@@ -1,4 +1,4 @@
-<div class="collection-wrapper" [ngClass]="{'wait-in-line-wrapper': waitInLine}" *ngIf="!mock && ((currentPasses$ | async) && (currentPasses$ | async).length > 0) || showEmptyHeader; else emptyMessage">
+<div class="collection-wrapper"  [ngClass]="{'wait-in-line-wrapper': waitInLine && isKioskMode}" *ngIf="!mock && ((currentPasses$ | async) && (currentPasses$ | async).length > 0) || showEmptyHeader; else emptyMessage">
     <div class="collection-header" [style.width]="headerWidth">
         <div class="collection-title">
             <img *ngIf="icon" draggable="false" class="collection-icon" [src]="_icon | resolveAsset">

@@ -222,7 +222,7 @@ export class PassesComponent implements OnInit, AfterViewInit, OnDestroy {
   }
 
   get isWaitInLine(): boolean {
-    return this.featureService.isFeatureEnabled(FLAGS.WaitInLine);
+    return this.featureService.isFeatureEnabled(FLAGS.WaitInLine) && this.wilService.fakeWilActive.getValue();
   }
 
   get showInbox() {
@@ -404,6 +404,7 @@ export class PassesComponent implements OnInit, AfterViewInit, OnDestroy {
     this.isUpdateBar$ = this.updateService.needToUpdate$;
     this.futurePasses = this.liveDataService.futurePasses$;
     this.activePasses = this.getActivePasses();
+    this.waitInLinePasses = this.wilService.fakeWilPasses.asObservable();
     this.pastPasses = this.liveDataService.expiredPasses$;
     this.expiredPassesSelectedSort$ = this.passesService.passFilters$.pipe(
       filter(res => !!res),

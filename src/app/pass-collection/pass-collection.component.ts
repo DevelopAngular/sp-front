@@ -157,6 +157,10 @@ export class PassCollectionComponent implements OnInit, AfterViewInit, OnDestroy
     return this.grid_gap;
   }
 
+  get isKioskMode() {
+    return this.kioskMode.isKisokMode();
+  }
+
   get selectedText() {
     if (this.selectedSort === 'past-hour') {
       return 'Past hour';
