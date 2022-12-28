@@ -1,37 +1,23 @@
-import {
-  AfterViewInit,
-  Component,
-  ElementRef,
-  EventEmitter,
-  HostListener,
-  Inject,
-  Input,
-  OnDestroy,
-  OnInit,
-  Output,
-  QueryList,
-  TemplateRef,
-  ViewChild,
-  ViewChildren
-} from '@angular/core'
-import { MAT_DIALOG_DATA, MatDialog, MatDialogRef } from '@angular/material/dialog'
-import { ToastService } from '../../../../services/toast.service'
-import { Pinnable } from '../../../../models/Pinnable'
-import { Navigation } from '../../main-hall-pass-form.component'
-import { CreateFormService } from '../../../create-form.service'
-import { States } from '../locations-group-container.component'
-import { ScreenService } from '../../../../services/screen.service'
-import { ToWhereGridRestriction } from '../../../../models/to-where-grid-restrictions/ToWhereGridRestriction'
-import { ToWhereGridRestrictionLg } from '../../../../models/to-where-grid-restrictions/ToWhereGridRestrictionLg'
-import { ToWhereGridRestrictionSm } from '../../../../models/to-where-grid-restrictions/ToWhereGridRestrictionSm'
-import { ToWhereGridRestrictionMd } from '../../../../models/to-where-grid-restrictions/ToWhereGridRestrictionMd'
-import { BehaviorSubject, fromEvent, Observable, Subject } from 'rxjs'
-import { filter, map, take, takeUntil } from 'rxjs/operators'
-import { DeviceDetection } from '../../../../device-detection.helper'
-import { StorageService } from '../../../../services/storage.service'
-import { PassLimit } from '../../../../models/PassLimit'
-import { LocationsService } from '../../../../services/locations.service'
-import { PassLimitDialogComponent } from '../pass-limit-dialog/pass-limit-dialog.component'
+import {Component, ElementRef, EventEmitter, HostListener, Inject, Input, OnInit, OnDestroy, Output, TemplateRef, ViewChild, ViewChildren, QueryList, AfterViewInit} from '@angular/core';
+import {MatDialogRef} from '@angular/material/dialog';
+import {ToastService} from '../../../../services/toast.service';
+import {Pinnable} from '../../../../models/Pinnable';
+import {Navigation} from '../../main-hall-pass-form.component';
+import {CreateFormService} from '../../../create-form.service';
+import {States} from '../locations-group-container.component';
+import {ScreenService} from '../../../../services/screen.service';
+import {ToWhereGridRestriction} from '../../../../models/to-where-grid-restrictions/ToWhereGridRestriction';
+import {ToWhereGridRestrictionLg} from '../../../../models/to-where-grid-restrictions/ToWhereGridRestrictionLg';
+import {ToWhereGridRestrictionSm} from '../../../../models/to-where-grid-restrictions/ToWhereGridRestrictionSm';
+import {ToWhereGridRestrictionMd} from '../../../../models/to-where-grid-restrictions/ToWhereGridRestrictionMd';
+import {MAT_DIALOG_DATA, MatDialog} from '@angular/material/dialog';
+import {Subject, BehaviorSubject, fromEvent, Observable} from 'rxjs';
+import {filter, take, takeUntil, map} from 'rxjs/operators';
+import {DeviceDetection} from '../../../../device-detection.helper';
+import {StorageService} from '../../../../services/storage.service';
+import {PassLimit} from '../../../../models/PassLimit';
+import {LocationsService} from '../../../../services/locations.service';
+import {PassLimitDialogComponent} from '../pass-limit-dialog/pass-limit-dialog.component';
 import {
   ConfirmationDialogComponent,
   ConfirmationTemplates
@@ -226,24 +212,20 @@ export class ToWhereComponent implements OnInit, OnDestroy, AfterViewInit {
     if (this.isStaff && !this.formState.kioskMode)
       return true;
 
-    // if (!this.tooltipDataService.reachedPassLimit( 'to', this.passLimits[+pinnable.location.id]))
-    //   return false;
-
-    if (
-      (!this.formState.forLater &&
+    const forNowCondition = !this.formState.forLater &&
       pinnable.location.restricted &&
       pinnable.location.request_mode === 'all_teachers_in_room' &&
       pinnable.location.request_send_origin_teachers &&
-      !this.location.teachers.length) ||
-      (this.formState.forLater &&
+      !this.location.teachers.length;
+
+    const forLaterCondition = this.formState.forLater &&
       pinnable.location.scheduling_restricted &&
       pinnable.location.scheduling_request_mode === 'all_teachers_in_room' &&
       pinnable.location.scheduling_request_send_origin_teachers &&
-      !this.location.teachers.length)
-    ) {
-      return false;
-    }
-    return true;
+      !this.location.teachers.length;
+
+    return !(forNowCondition || forLaterCondition);
+
   }
 
   countStudents(): number {
@@ -256,14 +238,24 @@ export class ToWhereComponent implements OnInit, OnDestroy, AfterViewInit {
 
   passLimitPromise(location) {
     return new Promise<boolean>(resolve => {
-      const passLimit = this.passLimits[location.id];
-      // passLimits has no location.id
-      if (!passLimit || this.formState.kioskMode){
+      if (this.formState.kioskMode) {
         return resolve(true);
       }
-      const passLimitReached = passLimit.max_passes_to_active && (passLimit.to_count + this.countStudents()) >=  passLimit.max_passes_to;
-      if (!passLimitReached)
+
+      const passLimit = this.passLimits[location.id];
+      if (!passLimit) { // passLimits has no location.id
         return resolve(true);
+      }
+
+      if (!passLimit.max_passes_to_active) {
+        return resolve(true);
+      }
+
+      console.log(passLimit.to_count);
+      const passLimitReached = passLimit.max_passes_to_active && (passLimit.to_count + this.countStudents()) > passLimit.max_passes_to;
+      if (!passLimitReached) {
+        return resolve(true);
+      }
 
       const dialogRef = this.dialog.open(PassLimitDialogComponent, {
         panelClass: 'overlay-dialog',
@@ -498,8 +490,8 @@ export class ToWhereComponent implements OnInit, OnDestroy, AfterViewInit {
     //   this.formService.setFrameMotionDirection('disable');
     //   this.formService.compressableBoxController.next(true);
     // } else {
-      this.formService.compressableBoxController.next(false);
-      this.formService.setFrameMotionDirection('back');
+    this.formService.compressableBoxController.next(false);
+    this.formService.setFrameMotionDirection('back');
     // }
     setTimeout(() => {
       if (!!this.date &&
@@ -510,17 +502,17 @@ export class ToWhereComponent implements OnInit, OnDestroy, AfterViewInit {
         this.formState.previousStep = 3;
       } else {
         if (this.formState.formMode.formFactor === 3 && this.formState.data.date.declinable) {
-            this.formState.step = 1;
+          this.formState.step = 1;
         } else {
           if (this.formState.kioskMode) {
             this.formState.step = 2;
             this.formState.state = 4;
             if(!this.kioskService.getKioskModeSettings().findByName && !this.kioskService.getKioskModeSettings().findById)
-            this.formState.step=0
+              this.formState.step=0
 
           } else {
-              this.formState.data.direction.from = null;
-              this.formState.state -= 1;
+            this.formState.data.direction.from = null;
+            this.formState.state -= 1;
           }
         }
       }
