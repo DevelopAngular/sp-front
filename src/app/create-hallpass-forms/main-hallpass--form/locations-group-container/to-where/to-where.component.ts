@@ -250,6 +250,7 @@ export class ToWhereComponent implements OnInit, OnDestroy, AfterViewInit {
     return sum;
   }
 
+  // TODO: Replace this entire function with LocationsService.staffRoomLimitOverride
   passLimitPromise(location) {
     return new Promise<boolean>(resolve => {
       if (this.formState.kioskMode) {

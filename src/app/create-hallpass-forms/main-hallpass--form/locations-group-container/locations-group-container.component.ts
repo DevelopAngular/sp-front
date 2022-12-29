@@ -510,9 +510,14 @@ export class LocationsGroupContainerComponent implements OnInit, OnDestroy {
       if (this.FORM_STATE.data.date && this.FORM_STATE.data.date.declinable) {
         this.FORM_STATE.formMode.formFactor = FormFactor.Invitation;
       } else {
-        this.FORM_STATE.formMode.formFactor = wilEnabled && destLimitReached
-          ? FormFactor.WaitInLine
-          : FormFactor.HallPass
+        const { selectedStudents } = this.FORM_STATE.data
+        if (selectedStudents?.length > 1) {
+          this.FORM_STATE.formMode.formFactor = FormFactor.HallPass
+        } else {
+          this.FORM_STATE.formMode.formFactor = wilEnabled && destLimitReached
+            ? FormFactor.WaitInLine
+            : FormFactor.HallPass
+        }
       }
     }
 
