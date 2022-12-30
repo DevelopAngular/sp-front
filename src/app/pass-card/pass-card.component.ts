@@ -87,6 +87,7 @@ export class PassCardComponent implements OnInit, OnDestroy {
   p3StampExtra;
   p4Title;
   p4Subtitle;
+  p4StampExtra;
   p4Stamp;
 
   user: User;
@@ -347,6 +348,9 @@ export class PassCardComponent implements OnInit, OnDestroy {
       this.p4Title = title;
       this.p4Subtitle = subtitle;
       this.p4Stamp = stamp;
+      if (stampExtra) {
+        this.p4StampExtra = stampExtra;
+      }
     }
     this.pagerPages++;
   }
