@@ -96,6 +96,14 @@
       </div>
     </div>
   </div>
+
+  <div
+    class="student-footer-info"
+    *ngIf="openedFromPassTile"
+    [style.marginTop]="'58px'"
+  >
+    <app-student-passes [pass]="wil" [profile]="wil.student"></app-student-passes>
+  </div>
 </ng-template>
 
 <ng-container [ngTemplateOutlet]="root"></ng-container>

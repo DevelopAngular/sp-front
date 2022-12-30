@@ -1,29 +1,35 @@
 import {
   Component,
   ElementRef,
+  Inject,
   Input,
   OnChanges,
   OnDestroy,
-  OnInit, QueryList,
-  SimpleChanges, TemplateRef,
-  ViewChild, ViewChildren
+  OnInit,
+  Optional,
+  QueryList,
+  SimpleChanges,
+  TemplateRef,
+  ViewChild,
+  ViewChildren
 } from '@angular/core'
-import { of, Subject, timer } from 'rxjs'
+import { from, of, Subject, timer } from 'rxjs'
 import { Navigation } from '../../create-hallpass-forms/main-hallpass--form/main-hall-pass-form.component'
 import { Pinnable } from '../../models/Pinnable'
 import { HttpService } from '../../services/http-service'
 import { DataService } from '../../services/data-service'
 import { HallPassesService } from '../../services/hall-passes.service'
-import { MatDialog, MatDialogRef } from '@angular/material/dialog'
+import { MAT_DIALOG_DATA, MatDialog, MatDialogRef } from '@angular/material/dialog'
 import { ScreenService } from '../../services/screen.service'
 import { DeviceDetection } from '../../device-detection.helper'
 import { WaitInLine } from '../../models/WaitInLine'
 import { WaitInLineService, WaitInLineState } from '../../services/wait-in-line.service'
-import { concatMap, take, takeUntil, takeWhile, tap } from 'rxjs/operators'
+import { concatMap, filter, take, takeUntil, takeWhile, tap } from 'rxjs/operators'
 import { MatRipple } from '@angular/material/core'
 import { ConsentMenuComponent } from '../../consent-menu/consent-menu.component'
 import { Util } from '../../../Util'
 import { KioskModeService } from '../../services/kiosk-mode.service'
+import { LocationsService } from '../../services/locations.service'
 
 export enum WILHeaderOptions {
   Delete = 'delete',
@@ -68,18 +74,16 @@ export class InlineWaitInLineCardComponent implements OnInit, OnDestroy, OnChang
       return
     }
 
+    if (this.showBigCard) {
+      wrappers.last.nativeElement.parentElement.parentElement.parentElement.style.transform = `scale(${this.scalingFactor})`;
+      return;
+    }
+
     if (!this.firstInLinePopup) {
       return
     }
 
-    let scalingFactor: number;
-    if (this.isMobile) {
-      scalingFactor = 1.15;
-    } else {
-      const targetHeight = document.documentElement.clientHeight * 0.85;
-      scalingFactor = targetHeight / 412; // 412 is defined height of this component according to the design system
-    }
-    wrappers.last.nativeElement.parentElement.parentElement.style.transform = `scale(${scalingFactor})`;
+    wrappers.last.nativeElement.parentElement.parentElement.style.transform = `scale(${this.scalingFactor})`;
   }
   @ViewChildren(MatRipple) set constantRipple(ripples: QueryList<MatRipple>) {
     if (!ripples?.length) {
@@ -125,6 +129,7 @@ export class InlineWaitInLineCardComponent implements OnInit, OnDestroy, OnChang
   valid: boolean = true;
   overlayWidth: string = '0px';
   buttonWidth: number = 288;
+  isMobile = DeviceDetection.isMobile();
 
   destroy$: Subject<any> = new Subject<any>();
   waitInLineState: WaitInLineState = WaitInLineState.WaitingInLine;
@@ -137,8 +142,11 @@ export class InlineWaitInLineCardComponent implements OnInit, OnDestroy, OnChang
   pinnable: Pinnable;
 
   constructor(
+    @Optional() private dialogRef: MatDialogRef<InlineWaitInLineCardComponent>,
+    @Optional() @Inject(MAT_DIALOG_DATA) public dialogData: { pass: WaitInLine, forStaff: boolean },
     private http: HttpService,
     private dataService: DataService,
+    private locationsService: LocationsService,
     private hallPassService: HallPassesService,
     private dialog: MatDialog,
     private screen: ScreenService,
@@ -146,14 +154,29 @@ export class InlineWaitInLineCardComponent implements OnInit, OnDestroy, OnChang
     private kioskService: KioskModeService
   ) { }
 
-  get isMobile() {
-    return DeviceDetection.isMobile();
+  private get scalingFactor() {
+    if (this.isMobile) {
+      return 1.15;
+    }
+    let targetHeight = document.documentElement.clientHeight * 0.85;
+    if (this.openedFromPassTile) {
+      targetHeight -= 200; // make space for app-student-passes under the dialog tile
+    }
+    return targetHeight / 412; // 412 is defined height of this component according to the design system
+  }
+
+  get openedFromPassTile(): boolean {
+    return !!this.dialogRef && !!this.dialogData.pass;
   }
 
   get optionsIcon() {
     return this.forStaff
       ? './assets/Dots (Transparent).svg'
       : './assets/Delete (White).svg';
+  }
+
+  get showBigCard() {
+    return this.waitInLineState === WaitInLineState.FrontOfLine || this.openedFromPassTile;
   }
 
   ngOnChanges (changes: SimpleChanges) {
@@ -165,15 +188,26 @@ export class InlineWaitInLineCardComponent implements OnInit, OnDestroy, OnChang
   }
 
   ngOnInit() {
+    if (this.openedFromPassTile) {
+      // pass has already been created, this dialog has been opened by clicking on its pass-tile from inside a
+      // pass-collection
+      this.waitInLineState = WaitInLineState.WaitingInLine;
+      this.wil = this.dialogData.pass;
+      this.forStaff = this.dialogData.forStaff
+    }
+
     this.gradient = `radial-gradient(circle at 73% 71%, ${this.wil.color_profile.gradient_color})`;
-    // TODO: Remove mock code when APIs are available
-    timer(0, 2000).pipe(
-      take(3)
-    ).subscribe({
-      next: counter => {
-        this.wilService.fakeWil.next(WaitInLine.fromJSON({...this.wil, position: 3 - counter}));
-      }
-    })
+
+    if (!this.openedFromPassTile) {
+      // TODO: Remove mock code when APIs are available
+      timer(0, 2000).pipe(
+        take(3)
+      ).subscribe({
+        next: counter => {
+          this.wilService.fakeWil.next(WaitInLine.fromJSON({...this.wil, position: 3 - counter}));
+        }
+      })
+    }
   }
 
   showOptions(clickEvent: MouseEvent) {
@@ -205,6 +239,12 @@ export class InlineWaitInLineCardComponent implements OnInit, OnDestroy, OnChang
       next: action => {
         if (action === WILHeaderOptions.Delete) {
           this.closeDialog(true);
+          return;
+        }
+
+        if (action === WILHeaderOptions.Start) {
+          this.startPass();
+          return;
         }
       }
     });
@@ -225,35 +265,50 @@ export class InlineWaitInLineCardComponent implements OnInit, OnDestroy, OnChang
       newPassRequestBody['self_issued'] = true;
     }
 
-    of(newPassRequestBody).pipe(
-      concatMap(b => this.hallPassService.createPass(b)),
+    from(this.locationsService.staffRoomLimitOverride(this.wil.destination, this.kioskService.isKisokMode(), 1, true)).pipe(
+      concatMap(overrideRoomLimit => {
+        if (!overrideRoomLimit) {
+          this.waitInLineState = this.wil.position === '1st' ? WaitInLineState.FrontOfLine : WaitInLineState.WaitingInLine;
+          return of(null);
+        }
+
+        return of(newPassRequestBody)
+      }),
+      filter(Boolean),
+      concatMap(requestBody => this.hallPassService.createPass(requestBody)),
       takeUntil(this.destroy$)
     ).subscribe({
       next: () => { // pass response
         this.waitInLineState = WaitInLineState.PassStarted;
         this.closeDialog(true);
       },
-      error: () => {
+      error: (err) => {
+        console.error(err);
         this.waitInLineState = WaitInLineState.FrontOfLine;
       }
     })
   }
 
   private closeDialog(deleteWil: boolean = true) {
-    if (this.firstInLinePopupRef) {
+    if (this.dialogRef) {
+      this.dialogRef.close()
+    } else if (this.firstInLinePopupRef) {
       this.firstInLinePopupRef.close();
-      if (deleteWil) {
-        this.deleteWil();
-      }
+    }
+
+    if (deleteWil) {
+      this.deleteWil();
     }
   }
 
   private deleteWil() {
     this.wilService.fakeWilActive.next(false);
-    this.wilService.fakeWil.next(null);
+    this.forStaff
+      ? this.wilService.fakeWilPasses.next([])
+      : this.wilService.fakeWil.next(null)
   }
 
-  openBigPassCard() {
+  private openBigPassCard() {
     const solidColor = Util.convertHex(this.wil.color_profile.solid_color, 70);
     this.screen.customBackdropStyle$.next({
       'background': `linear-gradient(0deg, ${solidColor} 100%, rgba(0, 0, 0, 0.3) 100%)`,
