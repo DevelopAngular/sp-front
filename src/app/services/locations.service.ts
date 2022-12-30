@@ -1,5 +1,5 @@
 import {Injectable} from '@angular/core';
-import {bufferCount, flatMap, reduce} from 'rxjs/operators';
+import { bufferCount, flatMap, reduce, take } from 'rxjs/operators'
 import {constructUrl} from '../live-data/helpers';
 import {Paged} from '../models';
 import {HttpService} from './http-service';
@@ -40,6 +40,11 @@ import {PassLimit} from '../models/PassLimit';
 import {getPassLimitCollection, getPassLimitEntities} from '../ngrx/pass-limits/states';
 import {getPassLimits, updatePassLimit} from '../ngrx/pass-limits/actions';
 import {PollingService} from './polling-service';
+import { FeatureFlagService, FLAGS } from './feature-flag.service'
+import {
+  PassLimitDialogComponent
+} from '../create-hallpass-forms/main-hallpass--form/locations-group-container/pass-limit-dialog/pass-limit-dialog.component'
+import { MatDialog } from '@angular/material/dialog'
 
 @Injectable({
   providedIn: 'root'
@@ -70,7 +75,9 @@ export class LocationsService {
   constructor(
     private http: HttpService,
     private store: Store<AppState>,
-    private pollingService: PollingService
+    private pollingService: PollingService,
+    private featureFlags: FeatureFlagService,
+    private dialog: MatDialog
   ) { }
 
   // TODO: Convert params of function into an object
@@ -223,22 +230,65 @@ export class LocationsService {
         return this.http.put('v1/users/@me/starred', body);
     }
 
-    reachedRoomPassLimit(currentPage: 'from' | 'to', passLimit: PassLimit, isStaff?: boolean) {
-      if (!passLimit) {
+  async staffRoomLimitOverride(location: Location, isKioskMode: boolean, studentCount: number, skipLine?: boolean): Promise<boolean> {
+    if (isKioskMode) {
+      return true;
+    }
+
+    const passLimit = (await this.pass_limits$.pipe(take(1)).toPromise()).find(pl => pl.id == location.id);
+    if (!passLimit) { // passLimits has no location.id
+      return true;
+    }
+
+    if (!passLimit.max_passes_to_active) {
+      return true;
+    }
+
+    const passLimitReached = passLimit.max_passes_to_active && (passLimit.to_count + studentCount) > passLimit.max_passes_to;
+    if (!passLimitReached) {
+      return true;
+    }
+
+    // room pass limit has been reached on the teacher's side
+    if (this.featureFlags.isFeatureEnabled(FLAGS.WaitInLine)) {
+      const multipleStudents = studentCount > 1; // more than one student has been selected
+      if (!multipleStudents && !skipLine) {
+        return true;
+      }
+    }
+
+    const dialogRef = this.dialog.open(PassLimitDialogComponent, {
+      panelClass: 'overlay-dialog',
+      backdropClass: 'custom-backdrop',
+      width: '450px',
+      disableClose: true,
+      data: {
+        passLimit: passLimit.max_passes_to,
+        studentCount: studentCount,
+        currentCount: passLimit.to_count,
+      }
+    });
+
+    const result: { override: boolean } = await (dialogRef.afterClosed().toPromise());
+    return result.override
+  }
+
+  reachedRoomPassLimit(currentPage: 'from' | 'to', passLimit: PassLimit, isStaff?: boolean) {
+    if (!passLimit) {
+      return false;
+    }
+
+    const { max_passes_to, max_passes_to_active, to_count } = passLimit;
+    if (currentPage === 'to' && !isStaff) {
+      if (!max_passes_to_active) { // room has no pass limits
         return false;
       }
 
-      const { max_passes_to, max_passes_to_active, to_count } = passLimit;
-      if (currentPage === 'to' && !isStaff) {
-        if (!max_passes_to_active) { // room has no pass limits
-          return false;
-        }
-
-        return to_count >= max_passes_to
-      }
-
-      return false;
+      return to_count >= max_passes_to
     }
+
+    return false;
+  }
 
   tooltipDescription(currentPage: 'from' | 'to', passLimit: PassLimit): string {
     if ([!passLimit, currentPage === 'from',

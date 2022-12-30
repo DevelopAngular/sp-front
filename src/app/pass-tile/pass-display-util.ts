@@ -35,7 +35,7 @@ export function getInnerPassContent(pass: PassLike, now?: boolean) {
   }
 
   if (!(pass instanceof HallPass)) {
-    if (pass.status === 'declined') {
+    if (pass['status'] === 'declined') {
       return 'Declined';
     }
   }
@@ -53,5 +53,5 @@ export function getInnerPassName(pass: PassLike) {
 }
 
 export function isBadgeVisible(pass: PassLike) {
-  return !(pass instanceof HallPass) && !pass.isRead;
+  return !(pass instanceof HallPass) && !('isRead' in pass);
 }
