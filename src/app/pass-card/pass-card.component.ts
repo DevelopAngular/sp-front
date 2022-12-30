@@ -84,6 +84,7 @@ export class PassCardComponent implements OnInit, OnDestroy {
   p3Title;
   p3Subtitle;
   p3Stamp;
+  p3StampExtra;
   p4Title;
   p4Subtitle;
   p4Stamp;
@@ -322,11 +323,11 @@ export class PassCardComponent implements OnInit, OnDestroy {
       const mins: number = Math.floor(Math.floor(diff) / 60);
       const secs: number = Math.abs(Math.floor(diff) % 60);
       const totalTime = mins + ':' + (secs < 10 ? '0' + secs : secs);
-      this.buildPage('Pass Ended', '', totalTime + ' - Total Time', (this.pagerPages + 1));
+      this.buildPage('Pass Ended', '', totalTime, (this.pagerPages + 1), ' - Total Time');
     }
   }
 
-  buildPage(title: string, subtitle: string, stamp: string, page: number) {
+  buildPage(title: string, subtitle: string, stamp: string, page: number, stampExtra?: string) {
     if (page === 1) {
       this.p1Title = title;
       this.p1Subtitle = subtitle;
@@ -339,6 +340,9 @@ export class PassCardComponent implements OnInit, OnDestroy {
       this.p3Title = title;
       this.p3Subtitle = subtitle;
       this.p3Stamp = stamp;
+      if (stampExtra) {
+        this.p3StampExtra = stampExtra;
+      }
     } else if (page === 4) {
       this.p4Title = title;
       this.p4Subtitle = subtitle;
