@@ -194,6 +194,7 @@ export class WaitInLineCardComponent implements OnInit {
       this.wilService.fakeWilPasses.next([...this.wilService.fakeWilPasses.getValue(), this.wil]);
     } else {
       this.wilService.fakeWil.next(this.wil);
+      this.wilService.fakeWilPasses.next([...this.wilService.fakeWilPasses.getValue(), this.wil]);
     }
 
     this.wilService.fakeWilActive.next(true);

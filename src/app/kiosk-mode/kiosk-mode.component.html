@@ -33,7 +33,7 @@
             </app-display-card>
         </div>
         <div class="waitinline-passes pass-collection">
-            <app-pass-collection *ngIf="isWaitInLine" [waitInLine]="true" [forStaff]="true" [style.width]="'460px'" [passProvider]="activePassesKiosk" [title]="'Waiting in Line…'" [columns]="2" [showProfilePictures]="showProfilePicture"></app-pass-collection>
+            <app-pass-collection *ngIf="isWaitInLine" [waitInLine]="true" [forStaff]="true" [style.width]="'460px'" [passProvider]="waitInLinePassesKiosk" [title]="'Waiting in Line…'" [columns]="2" [showProfilePictures]="showProfilePicture"></app-pass-collection>
         </div>
     </div>
     <div class="main-page-right" *ngIf="(activePassesKiosk| async)?.length > 0">

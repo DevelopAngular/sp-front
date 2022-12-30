@@ -17,6 +17,8 @@ import {MainHallPassFormComponent} from '../create-hallpass-forms/main-hallpass-
 import {Title} from '@angular/platform-browser';
 import {Location} from '../models/Location';
 import { FeatureFlagService, FLAGS } from '../services/feature-flag.service';
+import { WaitInLineService } from '../services/wait-in-line.service';
+// import { WaitInLine } from '../models/WaitInLine';
 
 declare const window;
 
@@ -28,6 +30,9 @@ declare const window;
 export class KioskModeComponent implements OnInit, AfterViewInit, OnDestroy {
 
   activePassesKiosk: Observable<HallPass[]>;
+  waitInLinePassesKiosk: any;
+  // isActiveWaitInLine$: Observable<boolean>;
+  // currentWaitInLine$ = new BehaviorSubject<WaitInLine>(null);
 
   cardReaderValue: string;
 
@@ -71,8 +76,11 @@ export class KioskModeComponent implements OnInit, AfterViewInit, OnDestroy {
     private timeService: TimeService,
     private activatedRoute: ActivatedRoute,
     private titleService: Title,
-    private featureService: FeatureFlagService
+    private featureService: FeatureFlagService,
+    private wilService: WaitInLineService
   ) {
+    // this.isActiveWaitInLine$ = this.wilService.fakeWilActive.asObservable();
+    // this.currentWaitInLine$ = this.wilService.fakeWil;
   }
 
   get showProfilePicture() {
@@ -80,7 +88,7 @@ export class KioskModeComponent implements OnInit, AfterViewInit, OnDestroy {
   }
 
   get isWaitInLine(): boolean {
-    return this.featureService.isFeatureEnabled(FLAGS.WaitInLine);
+    return this.featureService.isFeatureEnabled(FLAGS.WaitInLine) && this.wilService.fakeWilActive.getValue();
   }
 
   ngOnInit() {
@@ -132,6 +140,7 @@ export class KioskModeComponent implements OnInit, AfterViewInit, OnDestroy {
       });
 
     this.activePassesKiosk = this.liveDataService.myRoomActivePasses$;
+    this.waitInLinePassesKiosk = this.wilService.fakeWilPasses.asObservable();
 
     /**
      * The following listener is responsible for checking if incoming hall passes are the result
