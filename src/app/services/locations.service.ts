@@ -235,14 +235,10 @@ export class LocationsService {
       return true;
     }
 
-    console.log('before ballsness')
-
     const passLimit = (await this.pass_limits$.pipe(take(1)).toPromise()).find(pl => pl.id == location.id);
     if (!passLimit) { // passLimits has no location.id
       return true;
     }
-
-    console.log('after ballsness');
 
     if (!passLimit.max_passes_to_active) {
       return true;
@@ -254,8 +250,11 @@ export class LocationsService {
     }
 
     // room pass limit has been reached on the teacher's side
-    if (this.featureFlags.isFeatureEnabled(FLAGS.WaitInLine) && !skipLine) {
-      return true;
+    if (this.featureFlags.isFeatureEnabled(FLAGS.WaitInLine)) {
+      const multipleStudents = studentCount > 1; // more than one student has been selected
+      if (!multipleStudents && !skipLine) {
+        return true;
+      }
     }
 
     const dialogRef = this.dialog.open(PassLimitDialogComponent, {

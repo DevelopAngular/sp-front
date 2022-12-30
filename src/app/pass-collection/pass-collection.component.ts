@@ -296,7 +296,9 @@ export class PassCollectionComponent implements OnInit, AfterViewInit, OnDestroy
   showPass({time$, pass}) {
     this.activePassTime$ = time$;
     this.passClick.emit(true);
-    this.dataService.markRead(pass).subscribe();
+    if (pass.id !== 'template') {
+      this.dataService.markRead(pass).subscribe();
+    }
     this.initializeDialog(pass);
   }
 

@@ -321,12 +321,6 @@ export class PassCardComponent implements OnInit, OnDestroy {
   }
 
   buildPage(title: string, subtitle: string, stamp: string, page: number) {
-    console.log({
-      title,
-      subtitle,
-      stamp,
-      page
-    });
     if (page === 1) {
       this.p1Title = title;
       this.p1Subtitle = subtitle;

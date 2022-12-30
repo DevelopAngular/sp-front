@@ -250,54 +250,6 @@ export class ToWhereComponent implements OnInit, OnDestroy, AfterViewInit {
     return sum;
   }
 
-  // TODO: Replace this entire function with LocationsService.staffRoomLimitOverride
-  passLimitPromise(location) {
-    return new Promise<boolean>(resolve => {
-      if (this.formState.kioskMode) {
-        return resolve(true);
-      }
-
-      const passLimit = this.passLimits[location.id];
-      if (!passLimit) { // passLimits has no location.id
-        return resolve(true);
-      }
-
-      if (!passLimit.max_passes_to_active) {
-        return resolve(true);
-      }
-
-      const passLimitReached = passLimit.max_passes_to_active && (passLimit.to_count + this.countStudents()) > passLimit.max_passes_to;
-      if (!passLimitReached) {
-        return resolve(true);
-      }
-
-      // room pass limit has been reached on the teacher's side
-      if (this.featureFlags.isFeatureEnabled(FLAGS.WaitInLine)) {
-        return resolve(true);
-      }
-
-      const dialogRef = this.dialog.open(PassLimitDialogComponent, {
-        panelClass: 'overlay-dialog',
-        backdropClass: 'custom-backdrop',
-        width: '450px',
-        disableClose: true,
-        data: {
-          passLimit: passLimit.max_passes_to,
-          studentCount: this.countStudents(),
-          currentCount: passLimit.to_count,
-        }
-      });
-      dialogRef.afterClosed().subscribe(result => {
-        if (result.override) {
-          setTimeout(() => {
-            return resolve(true);
-          }, 200);
-        } else
-          return resolve(false);
-      });
-    });
-  }
-
   private getLocationFromSelection(selection: Pinnable | Location): Location {
     const isPinnable = 'type' in selection;
     if (isPinnable) {
@@ -479,7 +431,7 @@ export class ToWhereComponent implements OnInit, OnDestroy, AfterViewInit {
       return;
     }
 
-    const allowed = await this.passLimitPromise(location);
+    const allowed = await this.locationsService.staffRoomLimitOverride(location, this.kioskService.isKisokMode(), this.countStudents());
     if (!allowed) {
       return;
     }
