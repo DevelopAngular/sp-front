@@ -64,8 +64,6 @@ export enum WILHeaderOptions {
 export class InlineWaitInLineCardComponent implements OnInit, OnDestroy, OnChanges {
 
   @Input() wil: WaitInLine;
-  @Input() isActive: boolean = false; // maybe get rid of this?
-  @Input() forInput: boolean = false; // maybe get rid of this?
   @Input() forStaff: boolean;
 
   @ViewChild('root') root: TemplateRef<any>;
@@ -252,7 +250,6 @@ export class InlineWaitInLineCardComponent implements OnInit, OnDestroy, OnChang
 
   startPass() {
     this.waitInLineState = WaitInLineState.CreatingPass;
-
     const newPassRequestBody = {
       duration: this.wil.duration,
       origin: this.wil.origin.id,

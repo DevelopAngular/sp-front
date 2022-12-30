@@ -55,16 +55,10 @@ import { WaitInLineService } from '../../services/wait-in-line.service'
 export class WaitInLineCardComponent implements OnInit {
 
   @Input() wil: WaitInLine;
-  @Input() forInput = false;
-  @Input() fromPast = false;
-  @Input() forFuture = false;
-  @Input() isActive = false;
   @Input() forStaff = false;
-  @Input() forMonitor = false;
+  @Input() forInput = false;
   @Input() forKioskMode = false;
   @Input() formState: Navigation;
-  @Input() students: User[] = [];
-  @Input() isInline = false;
 
   @Output() cardEvent: EventEmitter<any> = new EventEmitter();
 
@@ -72,63 +66,24 @@ export class WaitInLineCardComponent implements OnInit {
   @ViewChild('confirmDialogBody') confirmDialog: TemplateRef<HTMLElement>;
   @ViewChild('confirmDialogBodyVisibility') confirmDialogVisibility: TemplateRef<HTMLElement>;
 
-  timeLeft = '';
   valid = true;
-  returnData: any = {};
-  overlayWidth = '0px';
   buttonWidth = 288;
-
   selectedDuration: number;
   selectedTravelType: string;
-  cancelOpen = false;
-  fromHistory;
-  fromHistoryIndex;
-
-  pagerPages = 0;
-
   timers: number[] = [];
-
-  p1Title;
-  p1Subtitle;
-  p1Stamp;
-  p2Title;
-  p2Subtitle;
-  p2Stamp;
-  p3Title;
-  p3Subtitle;
-  p3Stamp;
-  p4Title;
-  p4Subtitle;
-  p4Stamp;
-
   user: User;
-  activePage;
-
   performingAction: boolean;
   isModal = false;
   showStudentInfoBlock: boolean = true;
   passForStudentsComponent: boolean;
-  hideButton: boolean;
-
-  startEndPassLoading$: Observable<boolean>;
-
-  isSeen: boolean;
-
   activePassTime$: Observable<string>;
-
   header: string;
   options: any = [];
-  cancelEditClick: boolean;
   frameMotion$: BehaviorSubject<any>;
   currentSchool: School;
-
   isEnableProfilePictures$: Observable<boolean>;
-
   scaleCardTrigger$: Observable<string>;
-
   destroy$: Subject<any> = new Subject<any>();
-
-  fakeDate = new Date();
 
   constructor(
     @Optional() public dialogRef: MatDialogRef<WaitInLineCardComponent>,
@@ -150,12 +105,8 @@ export class WaitInLineCardComponent implements OnInit {
   ) {
   }
 
-  getUserName(user: any) {
-    if (user instanceof User) {
-      return user.isSameObject(this.user) ? 'Me' : user.first_name.substr(0, 1) + '. ' + user.last_name;
-    } else {
-      return user.first_name.substr(0, 1) + '. ' + user.last_name;
-    }
+  cancelEdit() {
+    console.log('mock cancel');
   }
 
   get gradient() {
@@ -181,18 +132,6 @@ export class WaitInLineCardComponent implements OnInit {
     return DeviceDetection.isMobile();
   }
 
-  get closeIcon() {
-    if (((this.isActive && this.forStaff) || this.forMonitor)) {
-      return './assets/Dots (Transparent).svg';
-    } else {
-      return './assets/' + (this.forInput ? 'Chevron Left ' : 'Delete ') + '(Transparent).svg';
-    }
-  }
-
-  get hasClose() {
-    return ((this.forInput || this.forStaff || this.wil.cancellable_by_student || this.user.isStudent()) && !this.fromPast) && !this.hideButton;
-  }
-
   ngOnInit(): void {
     const studentGroup = this.formState.data.roomStudents ?? this.formState.data.selectedStudents;
     this.wil.student = studentGroup[0];
@@ -207,71 +146,6 @@ export class WaitInLineCardComponent implements OnInit {
   formatDateTime(date: Date) {
     date = new Date(date);
     return Util.formatDateTime(date);
-  }
-
-  // might have to use this between student, teacher and kiosk mode
-  // if not, then remove this
-  buildPages() {
-    if (this.forFuture && this.wil.issuer) {
-      this.buildPage('Pass Created', 'by ' +
-        this.getUserName(this.wil.issuer), this.formatDateTime(this.wil.created), (this.pagerPages + 1));
-    } else if (this.wil.issuer) {
-      this.buildPage('Pass Created', 'by ' +
-        this.getUserName(this.wil.issuer), this.formatDateTime(this.wil.created), (this.pagerPages + 1));
-    }
-
-    // if (this.wil.parent_invitation) {
-    //   this.buildPage('Pass Request Sent', 'by ' +
-    //     this.getUserName(this.wil.issuer), this.formatDateTime(this.wil.flow_start), (this.pagerPages + 1));
-    //   this.buildPage('Pass Request Accepted', 'by ' +
-    //     this.getUserName(this.wil.student), this.formatDateTime(this.wil.created), (this.pagerPages + 1));
-    // } else if (this.wil.parent_request) {
-    //   this.buildPage('Pass Request Sent', 'by ' +
-    //     this.getUserName(this.wil.student), this.formatDateTime(this.wil.flow_start), (this.pagerPages + 1));
-    //   this.buildPage('Pass Request Accepted', 'by ' +
-    //     this.getUserName(this.wil.issuer), this.formatDateTime(this.wil.created), (this.pagerPages + 1));
-    // } else if (this.forFuture && this.wil.issuer) {
-    //   this.buildPage('Pass Created', 'by ' +
-    //     this.getUserName(this.wil.issuer), this.formatDateTime(this.wil.created), (this.pagerPages + 1));
-    // } else if (this.wil.issuer) {
-    //   this.buildPage('Pass Created', 'by ' +
-    //     this.getUserName(this.wil.issuer), this.formatDateTime(this.wil.created), (this.pagerPages + 1));
-    // }
-
-    // if (this.isActive) {
-    //   this.buildPage('Pass Started', '', this.formatDateTime(this.wil.start_time), (this.pagerPages + 1));
-    //   this.activePage = (this.pagerPages);
-    // } else if (this.fromPast) {
-    //   this.buildPage('Pass Started', '', this.formatDateTime(this.wil.start_time), (this.pagerPages + 1));
-    //   const start: Date = this.wil.start_time;
-    //   const end: Date = this.wil.end_time;
-    //   const diff: number = (end.getTime() - start.getTime()) / 1000;
-    //   const mins: number = Math.floor(Math.floor(diff) / 60);
-    //   const secs: number = Math.abs(Math.floor(diff) % 60);
-    //   const totalTime = mins + ':' + (secs < 10 ? '0' + secs : secs);
-    //   this.buildPage('Pass Ended', '', totalTime + ' - Total Time', (this.pagerPages + 1));
-    // }
-  }
-
-  buildPage(title: string, subtitle: string, stamp: string, page: number) {
-    if (page === 1) {
-      this.p1Title = title;
-      this.p1Subtitle = subtitle;
-      this.p1Stamp = stamp;
-    } else if (page === 2) {
-      this.p2Title = title;
-      this.p2Subtitle = subtitle;
-      this.p2Stamp = stamp;
-    } else if (page === 3) {
-      this.p3Title = title;
-      this.p3Subtitle = subtitle;
-      this.p3Stamp = stamp;
-    } else if (page === 4) {
-      this.p4Title = title;
-      this.p4Subtitle = subtitle;
-      this.p4Stamp = stamp;
-    }
-    this.pagerPages++;
   }
 
   /**

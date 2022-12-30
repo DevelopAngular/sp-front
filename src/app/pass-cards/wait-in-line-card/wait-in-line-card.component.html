@@ -4,19 +4,16 @@
     <div class="pass-card-header">
       <div class="header-content">
         <div class="header-info">
-          <img  class="pass-card-header-icon" [src]="wil.icon | resolveAsset">
+          <img  class="pass-card-header-icon" [src]="wil.icon | resolveAsset" alt="Wait in Line Destination Room Icon">
           <div class="pass-card-header-text">
             <span>{{ wil.destination.title }}</span>
-            <div class="card-subtitle ds-flex-center-start" *ngIf="fromPast || forFuture">
-              <span notranslate>{{ formatDateTime(fakeDate) }}</span>
-            </div>
           </div>
         </div>
         <div *ngIf="passForStudentsComponent" appCrossPointerEventTarget (pointerClickEvent)="dialogRef.close()" style="position: absolute; right: 10px; top: 10px; cursor: pointer">
           <img width="25" height="25" [src]="'./assets/Cancel (Transparent).svg' | resolveAsset" alt="">
         </div>
 
-<!--        <app-icon-button *ngIf="hasClose" [srcString]="closeIcon" [onDarkShade]="true" [size]="20" (clickEvent)="cancelEdit($event)"></app-icon-button>-->
+        <app-icon-button srcString="./assets/Chevron Left (Transparent).svg" [onDarkShade]="true" [size]="20" (clickEvent)="cancelEdit()"></app-icon-button>
 
       </div>
       <mat-divider></mat-divider>
@@ -36,7 +33,7 @@
               <img [src]="'./assets/Clock (White).svg' | resolveAsset" alt="Clock face">
               <span class="ds-mx-20">{{forStaff ? 'Send to Line' : 'Wait In Line'}}</span>
             </div>
-            <img class="button-icon-right" [src]="'./assets/SP Arrow (White).svg' | resolveAsset">
+            <img class="button-icon-right" [src]="'./assets/SP Arrow (White).svg' | resolveAsset" alt="Start pass button">
           </div>
 
           <ng-template #spinner>
@@ -67,7 +64,7 @@
               <div class="page-2" [attr.data-motion-translate]="(frameMotion$ | async).direction">
                 <div style="display: flex; justify-content: center">
                   <div class="message">
-                    <span [style.font-weight]="'bold'">{{ forStaff ? 'Your message:' : 'Message from' }}</span><span ignore [style.font-weight]> {{ wil.issuer.display_name }}</span><br>
+                    <span [style.font-weight]="'bold'">{{ forStaff ? 'Your message:' : 'Message from' }}</span><span [style.font-weight]="500"> {{ wil.issuer.display_name }}</span><br>
                     <span [attr.notranslate]="wil.issuer_message ? true : null" style="user-select: text">{{ wil.issuer_message ? wil.issuer_message : 'No Message' }}</span>
                   </div>
                 </div>
@@ -87,7 +84,7 @@
               <div class="page-6" [attr.data-motion-translate]="(frameMotion$ | async).direction">
                 <div style="display: flex; justify-content: center">
                   <div class="message">
-                    <span [style.font-weight]="'bold'">{{ forStaff ? 'Your message:' : 'Message from' }}</span><span notranslate [style.font-weight]> {{ wil.issuer.display_name }}</span><br>
+                    <span [style.font-weight]="'bold'">{{ forStaff ? 'Your message:' : 'Message from' }}</span><span notranslate [style.font-weight]="500"> {{ wil.issuer.display_name }}</span><br>
                     {{wil.issuer_message|json}}
                     <span [attr.notranslate]="wil.issuer_message ? true : null" style="user-select: text">{{ wil.issuer_message ? wil.issuer_message : 'No Message' }}</span>
                   </div>
@@ -99,49 +96,6 @@
       </div>
 
       <mat-divider *ngIf="!data?.kioskMode"></mat-divider>
-
-      <div class="top-block" [style.justify-content]="data?.kioskMode ? 'flex-start' : 'center'">
-
-        <div *ngIf="isActive && !forStaff">
-          <app-card-button *ngIf="!(forStaff || forMonitor)" [disabled]="performingAction" [width]="buttonWidth +'px'" [height]="'79px'"  [gradientColor]="wil.color_profile.gradient_color" [overlayWidth]="overlayWidth" [valid]="valid" (onClick)="endPass()">
-            <div class="end-pass-content">
-              {{ timeLeft +(timeLeft===''?'':' -')}} End Pass
-            </div>
-          </app-card-button>
-        </div>
-        <div *ngIf="(fromPast || forFuture && !forInput) && !forStaff">
-          <span *ngIf="forFuture" style="font-size: 20px; font-weight: bold; color: white">Pass Auto Starts</span>
-          <span *ngIf="!forFuture" style="font-size: 20px; font-weight: bold; color: white"><var>{{ wil.duration }}</var> - Total Time</span>
-        </div>
-
-        <app-pager [pages]="pagerPages" [page]="pagerPages" *ngIf="forStaff ">
-          <div class="page-1 teacher-details" *ngIf="p1Title" [attr.data-motion-translate]="(frameMotion$ | async).direction">
-            <span class="bold">{{ (activePage==1?(timeLeft +(timeLeft===''?'':' - ')):'') +p1Title }}</span><span class="smaller"><br>{{ p1Subtitle }} <span *ngIf="p1Subtitle">-</span> <var>{{ p1Stamp }}</var></span>
-          </div>
-          <div class="page-2 teacher-details" *ngIf="p2Title" [attr.data-motion-translate]="(frameMotion$ | async).direction">
-            <span class="bold">{{ (activePage==2?((activePassTime$ | async) +(timeLeft===''?'':' - ')):'') +p2Title }}</span><span class="smaller"><br>{{ p2Subtitle +  (p2Subtitle===''?'':' - ') }}  <var>{{ p2Stamp }}</var></span>
-          </div>
-          <div class="page-3 teacher-details" *ngIf="p3Title" [attr.data-motion-translate]="(frameMotion$ | async).direction">
-            <span class="bold">{{ (activePage==3?(timeLeft +(timeLeft===''?'':' - ')):'') +p3Title }}</span><span class="smaller"><br>{{ p3Subtitle }}  <var>{{ p3Stamp }}</var></span>
-          </div>
-          <div class="page-4 teacher-details" *ngIf="p4Title" [attr.data-motion-translate]="(frameMotion$ | async).direction">
-            <span class="bold">{{ (activePage==4?(timeLeft +(timeLeft===''?'':' - ')):'') +p4Title }}</span><span class="smaller"><br>{{ p4Subtitle }}  <var>{{ p4Stamp }}</var></span>
-          </div>
-
-          <div class="page-5 teacher-details" *ngIf="p1Title" [attr.data-motion-translate]="(frameMotion$ | async).direction">
-            <span class="bold">{{ (activePage==1?(timeLeft +(timeLeft===''?'':' - ')):'') +p1Title }}</span><span class="smaller"><br>{{ p1Subtitle }} <span *ngIf="p1Subtitle">-</span> <var>{{ p1Stamp }}</var></span>
-          </div>
-          <div class="page-6 teacher-details" *ngIf="p2Title" [attr.data-motion-translate]="(frameMotion$ | async).direction">
-            <span class="bold">{{ (activePage==2?(timeLeft +(timeLeft===''?'':' - ')):'') +p2Title }}</span><span class="smaller"><br>{{ p2Subtitle +  (p2Subtitle===''?'':' - ') }}  <var>{{ p2Stamp }}</var></span>
-          </div>
-          <div class="page-7 teacher-details" *ngIf="p3Title" [attr.data-motion-translate]="(frameMotion$ | async).direction">
-            <span class="bold">{{ (activePage==3?(timeLeft +(timeLeft===''?'':' - ')):'') +p3Title }}</span><span class="smaller"><br>{{ p3Subtitle }}  <var>{{ p3Stamp }}</var></span>
-          </div>
-          <div class="page-8 teacher-details" *ngIf="p4Title" [attr.data-motion-translate]="(frameMotion$ | async).direction">
-            <span class="bold">{{ (activePage==4?(timeLeft +(timeLeft===''?'':' - ')):'') +p4Title }}</span><span class="smaller"><br>{{ p4Subtitle }}  <var>{{ p4Stamp }}</var></span>
-          </div>
-        </app-pager>
-      </div>
     </div>
     <div class="pass-card-footer" *ngIf="(forStaff || data?.kioskMode) && !isModal">
       <div class="student-footer"></div>
