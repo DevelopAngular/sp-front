@@ -5,7 +5,7 @@
 <div *ngIf="!loading" class="main-wrapper">
     <div class="content-wrapper">
         <div class="heading">
-          <p class="title">Good morning, <var>{{ user?.display_name}}</var></p>
+          <p class="title">Good morning, <span notranslate>{{ user?.display_name}}</span></p>
             <div *ngIf="studentsList.length != 0">
                 <app-gradient-button [hoverColor]="'#00B476'" [withShadow]="true" [gradient]="'#00B476'" [cursor]="'pointer'" leftIcon="assets/Plus (White).svg" (buttonClick)="openInviteFamiliesDialog()">
                     Add a student
