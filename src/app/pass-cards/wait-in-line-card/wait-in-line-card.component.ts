@@ -27,7 +27,6 @@ import { EncounterPreventionService } from '../../services/encounter-prevention.
 import { PassLimitService } from '../../services/pass-limit.service'
 import { LocationsService } from '../../services/locations.service'
 import { DeviceDetection } from '../../device-detection.helper'
-import { Util } from '../../../Util'
 import { scalePassCards } from '../../animations'
 import { WaitInLine } from '../../models/WaitInLine'
 import { WaitInLineService } from '../../services/wait-in-line.service'
@@ -56,7 +55,6 @@ export class WaitInLineCardComponent implements OnInit {
 
   @Input() wil: WaitInLine;
   @Input() forStaff = false;
-  @Input() forInput = false;
   @Input() forKioskMode = false;
   @Input() formState: Navigation;
 
@@ -105,10 +103,6 @@ export class WaitInLineCardComponent implements OnInit {
   ) {
   }
 
-  cancelEdit() {
-    console.log('mock cancel');
-  }
-
   get gradient() {
     return 'radial-gradient(circle at 73% 71%, ' + this.wil.color_profile.gradient_color + ')';
   }
@@ -143,9 +137,11 @@ export class WaitInLineCardComponent implements OnInit {
   }
 
 
-  formatDateTime(date: Date) {
-    date = new Date(date);
-    return Util.formatDateTime(date);
+  cancelEdit() {
+    this.formState.step = 3;
+    this.formState.previousStep = 4;
+    this.formService.setFrameMotionDirection('disable');
+    this.cardEvent.emit(this.formState);
   }
 
   /**

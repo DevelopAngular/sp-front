@@ -46,7 +46,6 @@
         <app-wait-in-line-card
           [wil]="template"
           [forStaff]="forStaff && !dialogData.kioskModeRoom"
-          [forInput]="true"
           [forKioskMode]="!!dialogData.kioskModeRoom"
           [formState]="FORM_STATE"
           (cardEvent)="onNextStep($event)"></app-wait-in-line-card>
