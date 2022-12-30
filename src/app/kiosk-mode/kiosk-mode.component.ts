@@ -18,6 +18,7 @@ import {Title} from '@angular/platform-browser';
 import {Location} from '../models/Location';
 import { FeatureFlagService, FLAGS } from '../services/feature-flag.service';
 import { WaitInLineService } from '../services/wait-in-line.service';
+// import { WaitInLine } from '../models/WaitInLine';
 
 declare const window;
 
@@ -30,6 +31,8 @@ export class KioskModeComponent implements OnInit, AfterViewInit, OnDestroy {
 
   activePassesKiosk: Observable<HallPass[]>;
   waitInLinePassesKiosk: any;
+  // isActiveWaitInLine$: Observable<boolean>;
+  // currentWaitInLine$ = new BehaviorSubject<WaitInLine>(null);
 
   cardReaderValue: string;
 
@@ -76,6 +79,8 @@ export class KioskModeComponent implements OnInit, AfterViewInit, OnDestroy {
     private featureService: FeatureFlagService,
     private wilService: WaitInLineService
   ) {
+    // this.isActiveWaitInLine$ = this.wilService.fakeWilActive.asObservable();
+    // this.currentWaitInLine$ = this.wilService.fakeWil;
   }
 
   get showProfilePicture() {
