@@ -159,11 +159,11 @@ export class FormFactorContainerComponent implements OnInit {
             break;
 
           case this.states.WaitInLine:
-            console.log(this.FORM_STATE.data.direction.pinnable.color_profile);
+            const student = user ?? this.FORM_STATE.data.selectedStudents[0];
             this.template = new WaitInLine(
               'template',
-              user,
-              null,
+              student,
+              _user,
               null,
               null,
               5, // placeholder duration

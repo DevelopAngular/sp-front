@@ -27,7 +27,6 @@
           [formState]="FORM_STATE"
           [forFuture]="!!FORM_STATE.data.date"
           (cardEvent)="onNextStep($event)"
-          [fullScreenButton]="!forStaff"
         ></app-request-card>
       </ng-container>
 
@@ -47,11 +46,8 @@
         <app-wait-in-line-card
           [wil]="template"
           [forStaff]="forStaff && !dialogData.kioskModeRoom"
-          [forInput]="true"
           [forKioskMode]="!!dialogData.kioskModeRoom"
           [formState]="FORM_STATE"
-          [forFuture]="!!FORM_STATE.data.date"
-          [students]="FORM_STATE.formMode.role === 1 ? FORM_STATE.data.selectedStudents : []"
           (cardEvent)="onNextStep($event)"></app-wait-in-line-card>
       </ng-container>
     </ng-container>
