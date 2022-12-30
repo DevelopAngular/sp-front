@@ -13,7 +13,7 @@ import {
   ViewChild,
   ViewChildren
 } from '@angular/core'
-import { from, of, Subject, timer } from 'rxjs'
+import { from, Observable, of, Subject, timer } from 'rxjs'
 import { Navigation } from '../../create-hallpass-forms/main-hallpass--form/main-hall-pass-form.component'
 import { Pinnable } from '../../models/Pinnable'
 import { HttpService } from '../../services/http-service'
@@ -67,13 +67,19 @@ export class InlineWaitInLineCardComponent implements OnInit, OnDestroy, OnChang
   @Input() forStaff: boolean;
 
   @ViewChild('root') root: TemplateRef<any>;
-  @ViewChildren('rootWrapper') set wrapperElem(wrappers: QueryList<ElementRef<HTMLDivElement>>) {
+  @ViewChildren('rootWrapper') set wrapperElem(wrappers: QueryList<ElementRef<HTMLElement>>) {
     if (!wrappers) {
       return
     }
 
+    let elem = wrappers.last.nativeElement;
+    while (!elem.classList.contains('cdk-overlay-pane')) {
+      elem = elem.parentElement;
+    }
+
     if (this.showBigCard) {
-      wrappers.last.nativeElement.parentElement.parentElement.parentElement.style.transform = `scale(${this.scalingFactor})`;
+      // document.querySelector<HTMLDivElement>('.cdk-overlay-pane').style.transform = `scale(${this.scalingFactor})`;
+      elem.style.transform = `scale(${this.scalingFactor})`;
       return;
     }
 
@@ -81,7 +87,8 @@ export class InlineWaitInLineCardComponent implements OnInit, OnDestroy, OnChang
       return
     }
 
-    wrappers.last.nativeElement.parentElement.parentElement.style.transform = `scale(${this.scalingFactor})`;
+    // document.querySelector<HTMLDivElement>('.cdk-overlay-pane').style.transform = `scale(${this.scalingFactor})`;
+    elem.style.transform = `scale(${this.scalingFactor})`;
   }
   @ViewChildren(MatRipple) set constantRipple(ripples: QueryList<MatRipple>) {
     if (!ripples?.length) {
@@ -168,7 +175,7 @@ export class InlineWaitInLineCardComponent implements OnInit, OnDestroy, OnChang
   }
 
   get optionsIcon() {
-    return this.forStaff
+    return (this.forStaff && !this.kioskService.isKisokMode())
       ? './assets/Dots (Transparent).svg'
       : './assets/Delete (White).svg';
   }
@@ -217,7 +224,7 @@ export class InlineWaitInLineCardComponent implements OnInit, OnDestroy, OnChang
       { display: 'Delete Pass', color: '#E32C66', action: WILHeaderOptions.Delete, icon: './assets/Delete (Red).svg' }
     ];
 
-    if (this.forStaff) {
+    if (this.forStaff && !this.kioskService.isKisokMode()) {
       options.unshift({
         display: 'Start Pass Now', color: '#7083A0', action: WILHeaderOptions.Start, icon: './assets/Pause (Blue-Gray).svg'
       })
@@ -262,19 +269,31 @@ export class InlineWaitInLineCardComponent implements OnInit, OnDestroy, OnChang
       newPassRequestBody['self_issued'] = true;
     }
 
-    from(this.locationsService.staffRoomLimitOverride(this.wil.destination, this.kioskService.isKisokMode(), 1, true)).pipe(
-      concatMap(overrideRoomLimit => {
-        if (!overrideRoomLimit) {
-          this.waitInLineState = this.wil.position === '1st' ? WaitInLineState.FrontOfLine : WaitInLineState.WaitingInLine;
-          return of(null);
-        }
+    // console.log(this.forStaff, this.kioskService.isKisokMode());
+    // return;
 
-        return of(newPassRequestBody)
-      }),
-      filter(Boolean),
-      concatMap(requestBody => this.hallPassService.createPass(requestBody)),
-      takeUntil(this.destroy$)
-    ).subscribe({
+    const passRequest$ = this.hallPassService.createPass(newPassRequestBody).pipe(takeUntil(this.destroy$));
+    let overallPassRequest$: Observable<any>;
+
+    if (!this.forStaff && !this.kioskService.isKisokMode()) {
+      overallPassRequest$ = passRequest$;
+    } else {
+      overallPassRequest$ = from(this.locationsService.staffRoomLimitOverride(this.wil.destination, this.kioskService.isKisokMode(), 1, true)).pipe(
+        concatMap(overrideRoomLimit => {
+          if (!overrideRoomLimit) {
+            this.waitInLineState = this.wil.position === '1st' ? WaitInLineState.FrontOfLine : WaitInLineState.WaitingInLine;
+            return of(null);
+          }
+
+          return of(newPassRequestBody)
+        }),
+        filter(Boolean),
+        concatMap(() => passRequest$),
+        takeUntil(this.destroy$)
+      )
+    }
+
+    overallPassRequest$.subscribe({
       next: () => { // pass response
         this.waitInLineState = WaitInLineState.PassStarted;
         this.closeDialog(true);
@@ -284,6 +303,29 @@ export class InlineWaitInLineCardComponent implements OnInit, OnDestroy, OnChang
         this.waitInLineState = WaitInLineState.FrontOfLine;
       }
     })
+
+    // from(this.locationsService.staffRoomLimitOverride(this.wil.destination, this.kioskService.isKisokMode(), 1, true)).pipe(
+    //   concatMap(overrideRoomLimit => {
+    //     if (!overrideRoomLimit) {
+    //       this.waitInLineState = this.wil.position === '1st' ? WaitInLineState.FrontOfLine : WaitInLineState.WaitingInLine;
+    //       return of(null);
+    //     }
+    //
+    //     return of(newPassRequestBody)
+    //   }),
+    //   filter(Boolean),
+    //   concatMap(requestBody => this.hallPassService.createPass(requestBody)),
+    //   takeUntil(this.destroy$)
+    // ).subscribe({
+    //   next: () => { // pass response
+    //     this.waitInLineState = WaitInLineState.PassStarted;
+    //     this.closeDialog(true);
+    //   },
+    //   error: (err) => {
+    //     console.error(err);
+    //     this.waitInLineState = WaitInLineState.FrontOfLine;
+    //   }
+    // })
   }
 
   private closeDialog(deleteWil: boolean = true) {
@@ -298,6 +340,20 @@ export class InlineWaitInLineCardComponent implements OnInit, OnDestroy, OnChang
     }
   }
 
+  private toggleBigBackground(applyBackground = true) {
+    if (applyBackground) {
+      const solidColor = Util.convertHex(this.wil.color_profile.solid_color, 70);
+      this.screen.customBackdropStyle$.next({
+        'background': `linear-gradient(0deg, ${solidColor} 100%, rgba(0, 0, 0, 0.3) 100%)`,
+      });
+      this.screen.customBackdropEvent$.next(true);
+      return;
+    }
+
+    this.screen.customBackdropEvent$.next(false);
+    this.screen.customBackdropStyle$.next(null);
+  }
+
   private deleteWil() {
     this.wilService.fakeWilActive.next(false);
     this.forStaff
@@ -306,12 +362,7 @@ export class InlineWaitInLineCardComponent implements OnInit, OnDestroy, OnChang
   }
 
   private openBigPassCard() {
-    const solidColor = Util.convertHex(this.wil.color_profile.solid_color, 70);
-    this.screen.customBackdropStyle$.next({
-      'background': `linear-gradient(0deg, ${solidColor} 100%, rgba(0, 0, 0, 0.3) 100%)`,
-    });
-    this.screen.customBackdropEvent$.next(true);
-
+    this.toggleBigBackground()
     this.firstInLinePopup = true;
     // open this same template scaled up
     this.firstInLinePopupRef = this.dialog.open(this.root, {
@@ -325,8 +376,7 @@ export class InlineWaitInLineCardComponent implements OnInit, OnDestroy, OnChang
 
     this.firstInLinePopupRef.afterClosed().subscribe({
       next: () => {
-        this.screen.customBackdropEvent$.next(false);
-        this.screen.customBackdropStyle$.next(null);
+        this.toggleBigBackground(false);
         this.firstInLinePopup = false;
         this.firstInLinePopupRef = null;
       }
