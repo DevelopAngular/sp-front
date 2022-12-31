@@ -2,8 +2,8 @@ import { AfterViewInit, ChangeDetectorRef, Component, ElementRef, HostListener, 
 import { MatDialog } from '@angular/material/dialog';
 import { ActivatedRoute, Router } from '@angular/router';
 import * as moment from 'moment';
-import { Observable, Subject, Subscription } from 'rxjs';
-import { filter, map, switchMap, takeUntil, tap } from 'rxjs/operators';
+import { Observable, Subject, Subscription, of } from 'rxjs';
+import { filter, map, switchMap, takeUntil, tap, take } from 'rxjs/operators';
 import { Util } from '../../../Util';
 import { DateTimeFilterComponent } from '../../admin/explore/date-time-filter/date-time-filter.component';
 import { StatusPopupComponent } from '../../admin/profile-card-dialog/status-popup/status-popup.component';
@@ -142,10 +142,9 @@ export class StudentInfoComponent implements OnInit, AfterViewInit, OnDestroy  {
     // what if the user is a parent? they don't have school
     this.school = this.userService.getUserSchool();
     this.schoolsLength$ = this.http.schoolsLength$;
-    this.userService.user$.pipe(
+    this.userService.getUser().pipe(
       takeUntil(this.destroy$),
       filter(r => !!r),
-      tap(console.log),
       map(u => User.fromJSON(u))
     )
       .subscribe(user => {
@@ -161,7 +160,15 @@ export class StudentInfoComponent implements OnInit, AfterViewInit, OnDestroy  {
       next: user => {
         this.profile = user;
         console.log("profile : ", this.profile)
-        this.school = this.userService.getUserSchool();
+        // school of the logged user
+        let school$ = of(this.userService.getUserSchool());
+        // need to get student's school?
+        if (this.user.isParent() && this.profile.isStudent() && ('school_id' in this.profile)) {
+          // school of student
+          school$ = this.http.get(`v1/schools/${(this.profile as any).school_id}`);
+        }
+        school$.pipe(filter(Boolean), take(1)).subscribe({next: (s: School) => this.school = s});
+        //this.school = this.userService.getUserSchool();
         this.passesService.getQuickPreviewPassesRequest(this.profile.id, true);
         this.getUserStats();
         this.studentStats$ = this.userService.studentsStats$.pipe(map(stats => stats[this.profile.id]));

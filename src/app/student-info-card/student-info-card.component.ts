@@ -181,7 +181,6 @@ export class StudentInfoCardComponent implements OnInit, AfterViewInit, OnDestro
 
   ngOnInit(): void {
     this.school = this.userService.getUserSchool();
-    console.log(this.school)
     this.schoolsLength$ = this.http.schoolsLength$;
     this.userService.user$.pipe(
       takeUntil(this.destroy$),
