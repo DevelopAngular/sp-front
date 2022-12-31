@@ -109,7 +109,10 @@
         cursor: pointer;
 
         .release {
-          width: 44px;
+          box-sizing: border-box;
+          padding: 0px 4px;
+          min-width: 44px;
+          width: min-content;
           height: 21px;
           background-color: #E32C66;
           border-radius: 11px;

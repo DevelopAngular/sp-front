@@ -139,11 +139,13 @@ export class StudentInfoComponent implements OnInit, AfterViewInit, OnDestroy  {
   }
 
   ngOnInit(): void {
+    // what if the user is a parent? they don't have school
     this.school = this.userService.getUserSchool();
     this.schoolsLength$ = this.http.schoolsLength$;
     this.userService.user$.pipe(
       takeUntil(this.destroy$),
       filter(r => !!r),
+      tap(console.log),
       map(u => User.fromJSON(u))
     )
       .subscribe(user => {
