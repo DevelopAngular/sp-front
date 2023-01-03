@@ -97,6 +97,7 @@ export class StudentPassesComponent implements OnInit, OnDestroy, AfterViewInit 
   user$: Observable<User>;
 
   destroy$: Subject<any> = new Subject<any>();
+  kioskModeRoom$ = this.kioskMode.getCurrentRoom();
 
   @HostListener('document.scroll', ['$event'])
   scroll(event) {
