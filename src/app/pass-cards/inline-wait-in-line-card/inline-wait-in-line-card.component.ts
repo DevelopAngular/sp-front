@@ -303,29 +303,6 @@ export class InlineWaitInLineCardComponent implements OnInit, OnDestroy, OnChang
         this.waitInLineState = WaitInLineState.FrontOfLine;
       }
     })
-
-    // from(this.locationsService.staffRoomLimitOverride(this.wil.destination, this.kioskService.isKisokMode(), 1, true)).pipe(
-    //   concatMap(overrideRoomLimit => {
-    //     if (!overrideRoomLimit) {
-    //       this.waitInLineState = this.wil.position === '1st' ? WaitInLineState.FrontOfLine : WaitInLineState.WaitingInLine;
-    //       return of(null);
-    //     }
-    //
-    //     return of(newPassRequestBody)
-    //   }),
-    //   filter(Boolean),
-    //   concatMap(requestBody => this.hallPassService.createPass(requestBody)),
-    //   takeUntil(this.destroy$)
-    // ).subscribe({
-    //   next: () => { // pass response
-    //     this.waitInLineState = WaitInLineState.PassStarted;
-    //     this.closeDialog(true);
-    //   },
-    //   error: (err) => {
-    //     console.error(err);
-    //     this.waitInLineState = WaitInLineState.FrontOfLine;
-    //   }
-    // })
   }
 
   private closeDialog(deleteWil: boolean = true) {
