@@ -179,7 +179,7 @@
                                             <ng-template #autoEndedTemplate>
                                                 <div class="ds-tooltip" style="max-width: 275px; text-align: left">
                                                     <div>Number of passes automatically ended, likely where student forgot to end it.<br/></div>
-                                                    <div style="color: #7f879d; margin-top: 5px">When pass time reaches zero, passes count up and are automatically ended after <span style="text-decoration-line: underline; text-decoration-style: dashed; text-decoration-color: #7f879d">{{ school.pass_buffer_time === 1 ? school.pass_buffer_time + ' minute.' : school.pass_buffer_time + ' minutes.' }}</span></div>
+                                                    <div style="color: #7f879d; margin-top: 5px">When pass time reaches zero, passes count up and are automatically ended after <span style="text-decoration-line: underline; text-decoration-style: dashed; text-decoration-color: #7f879d">{{ profile?.school_pass_buffer_time === 1 ? profile?.school_pass_buffer_time + ' minute.' : profile?.school_pass_buffer_time + ' minutes.' }}</span></div>
                                                 </div>
                                             </ng-template>
                                         </div>

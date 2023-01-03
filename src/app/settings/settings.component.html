@@ -18,7 +18,6 @@
 
             <!--      <mat-divider class="divider"></mat-divider>-->
         </div>
-
         <div class="setting" *ngFor="let setting of settings; let i = index">
             <div *ngIf="!setting.hidden">
                 <div class="content" #set appCrossPointerEventTarget (pointerClickEvent)="handleAction(setting); set.hovered = false" (pointerDownEvent)="set.pressed = true" (pointerCancelEvent)="set.pressed = false; set.hovered = false;" (mouseenter)="set.hovered = true"
