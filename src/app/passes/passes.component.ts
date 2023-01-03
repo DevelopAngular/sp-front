@@ -165,6 +165,7 @@ export class PassesComponent implements OnInit, AfterViewInit, OnDestroy {
   user: User;
   passLimitInfo: PassLimitInfo;
   isStaff = false;
+  isStudent = false;
   currentScrollPosition: number;
 
   isUpdateBar$: Subject<any>;
@@ -290,7 +291,7 @@ export class PassesComponent implements OnInit, AfterViewInit, OnDestroy {
           return user.roles.includes('hallpass_student');
         }), // TODO filter events to only changes.
         concatMap(isStudent => {
-
+          this.isStudent = isStudent;
           if (!isStudent) {
             this.receivedRequests = this.liveDataService.requests$;
             this.sentRequests = this.liveDataService.invitations$;
