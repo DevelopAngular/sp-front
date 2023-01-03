@@ -828,7 +828,7 @@ export class SPSearchComponent implements OnInit, OnDestroy {
     const $container = componentWrapperReference.nativeElement;
     const $containee = evt.target as HTMLElement;
     const inside = $container.contains($containee);
-
+console.log()
     return !inside;
   }
 
@@ -836,7 +836,10 @@ export class SPSearchComponent implements OnInit, OnDestroy {
     // inputComponent exists only when flag inputField
     if (this.inputField) {
       // be wary of this.reset(); it emits undefined => unhandled elsewere
-      this.inputComponent.reset();
+      // TODO reset method also triggers a focus on inputComponent
+      // which may have unintended effects
+      // rest without focus-ing
+      this.inputComponent.reset(false);
     }
   }
 }
