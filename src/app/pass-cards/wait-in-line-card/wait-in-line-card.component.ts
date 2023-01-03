@@ -127,8 +127,12 @@ export class WaitInLineCardComponent implements OnInit {
   }
 
   ngOnInit(): void {
-    const studentGroup = this.formState.data.roomStudents ?? this.formState.data.selectedStudents;
-    this.wil.student = studentGroup[0];
+    if (!this.forStaff && !this.forKioskMode) {
+      this.wil.student = this.wil.issuer;
+    } else {
+      const studentGroup = this.formState.data.roomStudents ?? this.formState.data.selectedStudents;
+      this.wil.student = studentGroup[0];
+    }
   }
 
   ngOnDestroy() {
