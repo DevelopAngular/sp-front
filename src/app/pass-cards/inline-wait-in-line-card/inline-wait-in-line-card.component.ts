@@ -13,7 +13,7 @@ import {
   ViewChild,
   ViewChildren
 } from '@angular/core'
-import { from, Observable, of, Subject, timer } from 'rxjs'
+import { BehaviorSubject, from, Observable, of, Subject, timer } from 'rxjs'
 import { Navigation } from '../../create-hallpass-forms/main-hallpass--form/main-hall-pass-form.component'
 import { Pinnable } from '../../models/Pinnable'
 import { HttpService } from '../../services/http-service'
@@ -61,9 +61,9 @@ export enum WILHeaderOptions {
   templateUrl: './inline-wait-in-line-card.component.html',
   styleUrls: ['./inline-wait-in-line-card.component.scss']
 })
-export class InlineWaitInLineCardComponent implements OnInit, OnDestroy, OnChanges {
+export class InlineWaitInLineCardComponent implements OnInit, OnDestroy {
 
-  @Input() wil: WaitInLine;
+  @Input() wil$: BehaviorSubject<WaitInLine>;
   @Input() forStaff: boolean;
 
   @ViewChild('root') root: TemplateRef<any>;
@@ -184,32 +184,41 @@ export class InlineWaitInLineCardComponent implements OnInit, OnDestroy, OnChang
     return this.waitInLineState === WaitInLineState.FrontOfLine || this.openedFromPassTile;
   }
 
-  ngOnChanges (changes: SimpleChanges) {
-    const { wil } = changes;
-    if (wil.currentValue?.position === '1st') {
-      this.waitInLineState = WaitInLineState.FrontOfLine;
-      this.openBigPassCard();
-    }
-  }
-
   ngOnInit() {
+    this.wil$ = this.wilService.fakeWil;
+    this.wil$.asObservable().pipe(
+      takeUntil(this.destroy$)
+    ).subscribe({
+      next: wil => {
+        if (wil.position === '1st') {
+          this.waitInLineState = WaitInLineState.FrontOfLine;
+          this.openBigPassCard();
+        }
+      }
+    });
+
     if (this.openedFromPassTile) {
       // pass has already been created, this dialog has been opened by clicking on its pass-tile from inside a
       // pass-collection
       this.waitInLineState = WaitInLineState.WaitingInLine;
-      this.wil = this.dialogData.pass;
+      // this.wil = this.dialogData.pass;
       this.forStaff = this.dialogData.forStaff
     }
 
-    this.gradient = `radial-gradient(circle at 73% 71%, ${this.wil.color_profile.gradient_color})`;
+    this.gradient = `radial-gradient(circle at 73% 71%, ${this.wil$.value.color_profile.gradient_color})`;
 
-    if (!this.openedFromPassTile) {
+    if (!this.openedFromPassTile || this.kioskService.isKisokMode()) {
       // TODO: Remove mock code when APIs are available
       timer(0, 2000).pipe(
+        takeUntil(this.destroy$),
         take(3)
       ).subscribe({
         next: counter => {
-          this.wilService.fakeWil.next(WaitInLine.fromJSON({...this.wil, position: 3 - counter}));
+          const newWil = WaitInLine.fromJSON( {...this.wil$.value, position: 3 - counter});
+          // this.ngOnChanges({ 'wil': { currentValue: newWil, previousValue: undefined, firstChange: false, isFirstChange: () => false } })
+          this.wilService.fakeWil.next(newWil);
+          // @ts-ignore
+          this.wilService.fakeWilPasses.next([newWil]);
         }
       })
     }
@@ -257,12 +266,13 @@ export class InlineWaitInLineCardComponent implements OnInit, OnDestroy, OnChang
 
   startPass() {
     this.waitInLineState = WaitInLineState.CreatingPass;
+    const wil = this.wil$.value;
     const newPassRequestBody = {
-      duration: this.wil.duration,
-      origin: this.wil.origin.id,
-      destination: this.wil.destination.id,
-      travel_type: this.wil.travel_type,
-      student: this.wil.student.id
+      duration: wil.duration,
+      origin: wil.origin.id,
+      destination: wil.destination.id,
+      travel_type: wil.travel_type,
+      student: wil.student.id
     };
 
     if (this.kioskService.isKisokMode()) {
@@ -278,10 +288,10 @@ export class InlineWaitInLineCardComponent implements OnInit, OnDestroy, OnChang
     if (!this.forStaff && !this.kioskService.isKisokMode()) {
       overallPassRequest$ = passRequest$;
     } else {
-      overallPassRequest$ = from(this.locationsService.staffRoomLimitOverride(this.wil.destination, this.kioskService.isKisokMode(), 1, true)).pipe(
+      overallPassRequest$ = from(this.locationsService.staffRoomLimitOverride(this.wil$.value.destination, this.kioskService.isKisokMode(), 1, true)).pipe(
         concatMap(overrideRoomLimit => {
           if (!overrideRoomLimit) {
-            this.waitInLineState = this.wil.position === '1st' ? WaitInLineState.FrontOfLine : WaitInLineState.WaitingInLine;
+            this.waitInLineState = this.wil$.value.position === '1st' ? WaitInLineState.FrontOfLine : WaitInLineState.WaitingInLine;
             return of(null);
           }
 
@@ -319,7 +329,7 @@ export class InlineWaitInLineCardComponent implements OnInit, OnDestroy, OnChang
 
   private toggleBigBackground(applyBackground = true) {
     if (applyBackground) {
-      const solidColor = Util.convertHex(this.wil.color_profile.solid_color, 70);
+      const solidColor = Util.convertHex(this.wil$.value.color_profile.solid_color, 70);
       this.screen.customBackdropStyle$.next({
         'background': `linear-gradient(0deg, ${solidColor} 100%, rgba(0, 0, 0, 0.3) 100%)`,
       });
@@ -343,6 +353,7 @@ export class InlineWaitInLineCardComponent implements OnInit, OnDestroy, OnChang
     this.firstInLinePopup = true;
     // open this same template scaled up
     this.firstInLinePopupRef = this.dialog.open(this.root, {
+      id: 'inline-wait-in-line-large',
       panelClass: 'overlay-dialog',
       disableClose: true,
       closeOnNavigation: true,
@@ -350,6 +361,10 @@ export class InlineWaitInLineCardComponent implements OnInit, OnDestroy, OnChang
         firstInLinePopup: true
       }
     });
+
+    if (this.dialogRef) {
+      this.dialogRef.close();
+    }
 
     this.firstInLinePopupRef.afterClosed().subscribe({
       next: () => {
