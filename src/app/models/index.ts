@@ -1,6 +1,7 @@
 import { HallPass } from './HallPass';
 import { Invitation } from './Invitation';
 import { Request } from './Request';
+import { WaitInLine } from './WaitInLine'
 
 export interface Paged<T> {
   results: T[];
@@ -14,7 +15,7 @@ export interface HallPassSummary {
   future_passes: HallPass[];
 }
 
-export type PassLike = HallPass | Invitation | Request;
+export type PassLike = HallPass | Invitation | Request | WaitInLine;
 
 export function includesPassLike<T extends PassLike>(array: T[], item: T) {
   return array.find(p => p.id === item.id);

@@ -8,8 +8,8 @@
     <div class="pass-card-header">
       <div class="header-content">
         <div class="header-info">
-          <img  class="pass-card-header-icon" [src]="wil.icon | resolveAsset">
-          <div class="pass-card-header-text">{{ wil.destination.title }}</div>
+          <img  class="pass-card-header-icon" [src]="wil$.value.icon | resolveAsset">
+          <div class="pass-card-header-text">{{ wil$.value.destination.title }}</div>
         </div>
         <app-icon-button [srcString]="optionsIcon" [onDarkShade]="true" [size]="20" (clickEvent)="showOptions($event)"></app-icon-button>
       </div>
@@ -18,14 +18,14 @@
 
     <div class="inline-pass-card-content">
       <div class="travel">
-        <app-travel-view [pass]="wil"></app-travel-view>
+        <app-travel-view [pass]="wil$.value"></app-travel-view>
       </div>
       <div class="button">
-        <app-card-button [width]="buttonWidth +'px'" [height]="'81px'" [gradientColor]="wil?.color_profile.gradient_color" [overlayWidth]="overlayWidth" [valid]="valid">
+        <app-card-button [width]="buttonWidth +'px'" [height]="'81px'" [gradientColor]="wil$.value?.color_profile.gradient_color" [overlayWidth]="overlayWidth" [valid]="valid">
           <ng-container [ngSwitch]="waitInLineState">
             <div class="end-pass-content" *ngSwitchCase="1">
               <img class="ds-mr-20" [src]="'./assets/Clock (White).svg' | resolveAsset" alt="Clock face">
-              {{wil.position}} in line<span #waitingDots></span>
+              {{wil$.value.position}} in line<span #waitingDots></span>
             </div>
 
             <!-- TODO: Kick student to the back of line if attempts expire -->
@@ -95,6 +95,14 @@
         <!--      </ng-container>-->
       </div>
     </div>
+  </div>
+
+  <div
+    class="student-footer-info"
+    *ngIf="openedFromPassTile"
+    [style.marginTop]="'58px'"
+  >
+    <app-student-passes [pass]="wil$.value" [profile]="wil$.value.student"></app-student-passes>
   </div>
 </ng-template>
 

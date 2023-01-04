@@ -37,6 +37,10 @@ import {User} from '../models/User';
 import {UserService} from '../services/user.service';
 import * as moment from 'moment';
 import {PassTileComponent} from '../pass-tile/pass-tile.component';
+import {
+  InlineWaitInLineCardComponent
+} from '../pass-cards/inline-wait-in-line-card/inline-wait-in-line-card.component'
+import { WaitInLine } from '../models/WaitInLine'
 
 export class SortOption {
   constructor(private name: string, public value: string) {
@@ -117,7 +121,12 @@ export class PassCollectionComponent implements OnInit, AfterViewInit, OnDestroy
     }
   }
 
+  // pass parameter must always be defined
   private static getDetailDialog(pass: PassLike): any {
+    if (!pass) {
+      throw new Error('Cannot open dialog with undefined pass data');
+    }
+
     if (pass instanceof HallPass) {
       return PassCardComponent;
     }
@@ -129,6 +138,10 @@ export class PassCollectionComponent implements OnInit, AfterViewInit, OnDestroy
     // noinspection SuspiciousInstanceOfGuard
     if (pass instanceof Request) {
       return RequestCardComponent;
+    }
+
+    if (pass instanceof WaitInLine) {
+      return InlineWaitInLineCardComponent
     }
 
     return null;
@@ -155,6 +168,10 @@ export class PassCollectionComponent implements OnInit, AfterViewInit, OnDestroy
 
   get gridGap() {
     return this.grid_gap;
+  }
+
+  get isKioskMode() {
+    return this.kioskMode.isKisokMode();
   }
 
   get selectedText() {
@@ -279,7 +296,9 @@ export class PassCollectionComponent implements OnInit, AfterViewInit, OnDestroy
   showPass({time$, pass}) {
     this.activePassTime$ = time$;
     this.passClick.emit(true);
-    this.dataService.markRead(pass).subscribe();
+    if (pass.id !== 'template') {
+      this.dataService.markRead(pass).subscribe();
+    }
     this.initializeDialog(pass);
   }
 

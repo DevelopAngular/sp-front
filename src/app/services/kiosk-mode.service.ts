@@ -82,10 +82,10 @@ export class KioskModeService {
   getAllKioskLogin(){
     return this.http.get(`v1//kiosk/all_logins`);
   }
-isKisokMode(){
-  return this.storageService.getItem('kioskToken')? true :false
-  
-}
+
+  isKisokMode(): boolean {
+    return !!this.storageService.getItem('kioskToken')
+  }
 
 kioskSettingsValidCheck(obj:KioskSettings){
   let check = false

@@ -1,23 +1,36 @@
-import {Component, ElementRef, EventEmitter, HostListener, Inject, Input, OnInit, OnDestroy, Output, TemplateRef, ViewChild, ViewChildren, QueryList, AfterViewInit} from '@angular/core';
-import {MatDialogRef} from '@angular/material/dialog';
-import {ToastService} from '../../../../services/toast.service';
-import {Pinnable} from '../../../../models/Pinnable';
-import {Navigation} from '../../main-hall-pass-form.component';
-import {CreateFormService} from '../../../create-form.service';
-import {States} from '../locations-group-container.component';
-import {ScreenService} from '../../../../services/screen.service';
-import {ToWhereGridRestriction} from '../../../../models/to-where-grid-restrictions/ToWhereGridRestriction';
-import {ToWhereGridRestrictionLg} from '../../../../models/to-where-grid-restrictions/ToWhereGridRestrictionLg';
-import {ToWhereGridRestrictionSm} from '../../../../models/to-where-grid-restrictions/ToWhereGridRestrictionSm';
-import {ToWhereGridRestrictionMd} from '../../../../models/to-where-grid-restrictions/ToWhereGridRestrictionMd';
-import {MAT_DIALOG_DATA, MatDialog} from '@angular/material/dialog';
-import {Subject, BehaviorSubject, fromEvent, Observable} from 'rxjs';
-import {filter, take, takeUntil, map} from 'rxjs/operators';
-import {DeviceDetection} from '../../../../device-detection.helper';
-import {StorageService} from '../../../../services/storage.service';
-import {PassLimit} from '../../../../models/PassLimit';
-import {LocationsService} from '../../../../services/locations.service';
-import {PassLimitDialogComponent} from '../pass-limit-dialog/pass-limit-dialog.component';
+import {
+  AfterViewInit,
+  Component,
+  ElementRef,
+  EventEmitter,
+  HostListener,
+  Inject,
+  Input,
+  OnDestroy,
+  OnInit,
+  Output,
+  QueryList,
+  TemplateRef,
+  ViewChild,
+  ViewChildren
+} from '@angular/core'
+import { MAT_DIALOG_DATA, MatDialog, MatDialogRef } from '@angular/material/dialog'
+import { ToastService } from '../../../../services/toast.service'
+import { Pinnable } from '../../../../models/Pinnable'
+import { Navigation } from '../../main-hall-pass-form.component'
+import { CreateFormService } from '../../../create-form.service'
+import { ScreenService } from '../../../../services/screen.service'
+import { ToWhereGridRestriction } from '../../../../models/to-where-grid-restrictions/ToWhereGridRestriction'
+import { ToWhereGridRestrictionLg } from '../../../../models/to-where-grid-restrictions/ToWhereGridRestrictionLg'
+import { ToWhereGridRestrictionSm } from '../../../../models/to-where-grid-restrictions/ToWhereGridRestrictionSm'
+import { ToWhereGridRestrictionMd } from '../../../../models/to-where-grid-restrictions/ToWhereGridRestrictionMd'
+import { BehaviorSubject, fromEvent, Observable, Subject } from 'rxjs'
+import { filter, map, take, takeUntil } from 'rxjs/operators'
+import { DeviceDetection } from '../../../../device-detection.helper'
+import { StorageService } from '../../../../services/storage.service'
+import { PassLimit } from '../../../../models/PassLimit'
+import { LocationsService } from '../../../../services/locations.service'
+import { PassLimitDialogComponent } from '../pass-limit-dialog/pass-limit-dialog.component'
 import {
   ConfirmationDialogComponent,
   ConfirmationTemplates
@@ -27,7 +40,8 @@ import { UserService } from '../../../../services/user.service'
 import { KioskModeService } from '../../../../services/kiosk-mode.service'
 import { User } from '../../../../models/User'
 import { Location } from '../../../../models/Location'
-import { FLAGS, FeatureFlagService } from '../../../../services/feature-flag.service'
+import { FeatureFlagService, FLAGS } from '../../../../services/feature-flag.service'
+import { States } from '../locations-group-container.component'
 
 /**
  * TODO: This component should be refactored so that it emits a location and nothing more
@@ -236,49 +250,6 @@ export class ToWhereComponent implements OnInit, OnDestroy, AfterViewInit {
     return sum;
   }
 
-  passLimitPromise(location) {
-    return new Promise<boolean>(resolve => {
-      if (this.formState.kioskMode) {
-        return resolve(true);
-      }
-
-      const passLimit = this.passLimits[location.id];
-      if (!passLimit) { // passLimits has no location.id
-        return resolve(true);
-      }
-
-      if (!passLimit.max_passes_to_active) {
-        return resolve(true);
-      }
-
-      console.log(passLimit.to_count);
-      const passLimitReached = passLimit.max_passes_to_active && (passLimit.to_count + this.countStudents()) > passLimit.max_passes_to;
-      if (!passLimitReached) {
-        return resolve(true);
-      }
-
-      const dialogRef = this.dialog.open(PassLimitDialogComponent, {
-        panelClass: 'overlay-dialog',
-        backdropClass: 'custom-backdrop',
-        width: '450px',
-        disableClose: true,
-        data: {
-          passLimit: passLimit.max_passes_to,
-          studentCount: this.countStudents(),
-          currentCount: passLimit.to_count,
-        }
-      });
-      dialogRef.afterClosed().subscribe(result => {
-        if (result.override) {
-          setTimeout(() => {
-            return resolve(true);
-          }, 200);
-        } else
-          return resolve(false);
-      });
-    });
-  }
-
   private getLocationFromSelection(selection: Pinnable | Location): Location {
     const isPinnable = 'type' in selection;
     if (isPinnable) {
@@ -460,7 +431,7 @@ export class ToWhereComponent implements OnInit, OnDestroy, AfterViewInit {
       return;
     }
 
-    const allowed = await this.passLimitPromise(location);
+    const allowed = await this.locationsService.staffRoomLimitOverride(location, this.kioskService.isKisokMode(), this.countStudents());
     if (!allowed) {
       return;
     }

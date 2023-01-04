@@ -21,6 +21,7 @@ export class SchoolSettingDialogComponent implements OnInit, OnDestroy {
     pass_buffer_time: string | number,
     show_active_passes_number: boolean,
     student_can_use_mobile: boolean,
+    wait_in_line: boolean
   };
 
   changeForm: boolean;
@@ -46,7 +47,8 @@ export class SchoolSettingDialogComponent implements OnInit, OnDestroy {
       this.changeForm = res.display_card_room !== this.initialState.display_card_room ||
         +res.pass_buffer_time !== +this.initialState.pass_buffer_time ||
          res.show_active_passes_number !== this.initialState.show_active_passes_number ||
-         res.student_can_use_mobile !== this.initialState.student_can_use_mobile;
+         res.student_can_use_mobile !== this.initialState.student_can_use_mobile ||
+         res.wait_in_line !== this.initialState.wait_in_line;
 
     });
     this.changeSettings$.pipe(
@@ -88,6 +90,7 @@ export class SchoolSettingDialogComponent implements OnInit, OnDestroy {
             Validators.min(0)]),
         show_active_passes_number: new FormControl(school.show_active_passes_number),
         student_can_use_mobile: new FormControl(school.student_can_use_mobile),
+        wait_in_line: new FormControl(school.feature_flag_wait_in_line)
     });
   }
 
