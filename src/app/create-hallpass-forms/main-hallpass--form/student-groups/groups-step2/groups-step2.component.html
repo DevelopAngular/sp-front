@@ -106,6 +106,7 @@
       <div class="content-right_sudent-search">
         <div class="seach-wrapper">
           <app-sp-search
+            [focused]="false"
             (onUpdate)="selectedStudents=$event" [selectedOptions]="selectedStudents"
           ></app-sp-search>
         </div>

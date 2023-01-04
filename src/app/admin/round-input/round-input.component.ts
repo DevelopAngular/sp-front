@@ -193,9 +193,11 @@ export class RoundInputComponent implements OnInit, OnChanges, OnDestroy {
     }
   }
 
-  reset() {
+  reset(withFocus=true) {
       this.input.nativeElement.value = '';
-      this.input.nativeElement.focus();
+      if (withFocus) {
+        this.input.nativeElement.focus();
+      }
       this.ontextupdate.emit('');
   }
 

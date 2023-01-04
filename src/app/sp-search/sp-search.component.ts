@@ -181,21 +181,23 @@ export class SPSearchComponent implements OnInit, OnDestroy {
       return
     }
 
-    const buffered$ = fromEvent(document, 'click').pipe(
+    // TODO we need a global document click observable
+    // as we use this in many places
+    const documentClick$ = fromEvent(document, 'click').pipe(
       takeUntil(this.destroy$),
     );
 
-    const component$ = fromEvent(ref.nativeElement, 'click').pipe(
+    const componentClick$ = fromEvent(ref.nativeElement, 'click').pipe(
       takeUntil(this.destroy$),
     );
 
-    // sync addStudent$ with component$
-    // to trigger method this._addStudent after click event has been handled by component$
+    // sync addStudent$ with componentClick$
+    // to trigger method this._addStudent after click event has been handled by componentClick$
     // in order to make this.isClickOutside accurate
     // as after synchronous this._addStudent,
     // DOM elements used to calculate isClickOutside  will be changed
     // and checking will produces logical errors/bugs
-    zip(this.addStudent$, component$).pipe(
+    zip(this.addStudent$, componentClick$).pipe(
       // corect shape or error
       filter(vv => !!vv?.length),
       tap(([student, _]) => {
@@ -210,7 +212,7 @@ export class SPSearchComponent implements OnInit, OnDestroy {
     ).subscribe();
 
     // only buffered clicks outside of component
-    const outside$ = buffered$.pipe(
+    const outside$ = documentClick$.pipe(
       filter((v: PointerEvent) => this.isClickOutside(v, ref)),
     );
     // outside clicks when options panel is open
@@ -836,7 +838,10 @@ export class SPSearchComponent implements OnInit, OnDestroy {
     // inputComponent exists only when flag inputField
     if (this.inputField) {
       // be wary of this.reset(); it emits undefined => unhandled elsewere
-      this.inputComponent.reset();
+      // TODO reset method by default triggers a focus on inputComponent
+      // which may have unintended effects
+      // rest without focus-ing
+      this.inputComponent.reset(false);
     }
   }
 }
