@@ -397,12 +397,13 @@ export class LocationsGroupContainerComponent implements OnInit, OnDestroy {
         }
       });
       dialogRef.afterClosed().subscribe(result => {
-        if (!result.override) {
+        if (result.override) {
+          setTimeout(() => {
+            return resolve(true);
+          }, 200);
+        } else {
           return resolve(false);
         }
-        setTimeout(() => {
-          return resolve(true);
-        }, 200);
       });
     });
   }
@@ -412,14 +413,21 @@ export class LocationsGroupContainerComponent implements OnInit, OnDestroy {
     const { numberOfStudentsInRoom } = location;
     if (!this.kioskService.isKisokMode() && numberOfStudentsInRoom !== undefined) {
       const totalStudents = numberOfStudentsInRoom + this.FORM_STATE.data.selectedStudents.length;
-      if (location.max_passes_to_active && (totalStudents >= location.max_passes_to)) {
+      let reached = location?.max_passes_to_active;
+      if (this.user.isStudent() || this.kioskService.isKisokMode()) {
+        reached = reached && totalStudents >= location.max_passes_to
+      } else {
+        reached = reached && totalStudents > location.max_passes_to;
+      }
+
+      if (reached) {
         const overrideRoomLimit = await this.showDestinationLimitReachedFromCategory(
           location.max_passes_to,
-          totalStudents,
+          this.FORM_STATE.data.selectedStudents.length,
           numberOfStudentsInRoom,
           this.user.isStudent());
 
-        if (!overrideRoomLimit) {
+        if (!overrideRoomLimit || (overrideRoomLimit && this.user.isStudent())) {
           return;
         }
       }
