@@ -318,9 +318,13 @@ export class InlineWaitInLineCardComponent implements OnInit, OnDestroy {
   private closeDialog(deleteWil: boolean = true) {
     if (this.dialogRef) {
       this.dialogRef.close()
-    } else if (this.firstInLinePopupRef) {
-      this.firstInLinePopupRef.close();
     }
+
+    if (this.firstInLinePopupRef) {
+      this.firstInLinePopupRef.close()
+    }
+
+    this.toggleBigBackground(false);
 
     if (deleteWil) {
       this.deleteWil();
@@ -343,7 +347,7 @@ export class InlineWaitInLineCardComponent implements OnInit, OnDestroy {
 
   private deleteWil() {
     this.wilService.fakeWilActive.next(false);
-    this.forStaff
+    this.forStaff || this.kioskService.isKisokMode()
       ? this.wilService.fakeWilPasses.next([])
       : this.wilService.fakeWil.next(null)
   }
@@ -353,7 +357,6 @@ export class InlineWaitInLineCardComponent implements OnInit, OnDestroy {
     this.firstInLinePopup = true;
     // open this same template scaled up
     this.firstInLinePopupRef = this.dialog.open(this.root, {
-      id: 'inline-wait-in-line-large',
       panelClass: 'overlay-dialog',
       disableClose: true,
       closeOnNavigation: true,
