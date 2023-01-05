@@ -200,7 +200,7 @@ export class KioskModeComponent implements OnInit, AfterViewInit, OnDestroy {
       }), map(([user, passes]) => {
         const myPass = (passes as HallPass[]).find(pass => pass.issuer.id === user.id);
         if (myPass) {
-          this.passesService.endPass(myPass.id).toPromise().then(value=>{
+          this.passesService.endPass(myPass.id).toPromise().then(() => {
             // this.showMainForm(false, [user]);
             return of(null)
           })
@@ -218,7 +218,6 @@ export class KioskModeComponent implements OnInit, AfterViewInit, OnDestroy {
   }
 
   showMainForm(forLater: boolean, student?): void {
-
     this.hideInput = true;
     this.mainFormRef = this.dialog.open(MainHallPassFormComponent, {
         panelClass: 'main-form-dialog-container',

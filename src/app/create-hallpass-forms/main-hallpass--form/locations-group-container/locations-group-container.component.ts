@@ -18,7 +18,6 @@ import {ScreenService} from '../../../services/screen.service';
 import {DeviceDetection} from '../../../device-detection.helper';
 import {filter, map, withLatestFrom} from 'rxjs/operators';
 import {Location} from '../../../models/Location';
-import {PassLimitInfo} from '../../../models/HallPassLimits';
 import {LocationVisibilityService} from '../location-visibility.service';
 import {PassLimitDialogComponent} from './pass-limit-dialog/pass-limit-dialog.component';
 import { KioskModeService } from '../../../services/kiosk-mode.service'
@@ -198,59 +197,57 @@ export class LocationsGroupContainerComponent implements OnInit, OnDestroy {
       map(([pins, user]) => {
         const student = [user];
         const stateData = this.FORM_STATE.data;
-        const isDedicatedUser = this.FORM_STATE.kioskMode && (
-        (!!user?.roles.includes('_profile_kiosk') ||
-        stateData?.kioskModeStudent instanceof User)
-      );
-      const isStaffUser = ((!this.user.isStudent()) && this.FORM_STATE.kioskMode);
-      const isChooseSelectedStudent = (isStaffUser || isDedicatedUser);
-      // on kioskmode student is found in selectedStudents[0]
-      if (isChooseSelectedStudent) {
-        // TODO when not found case
-        student[0] = stateData.kioskModeStudent;
-      }
-      pins = pins.filter(p => {
-        // filtering here based on location and student may return (or not) a pinnable
-        if (p.type === 'location' && p.location !== null) {
-          // is a Location
-          try {
-            const loc = Location.fromJSON(p.location);
-            // staff is unfiltered but not in kiosk mode
-            if (this.isStaff && !this.FORM_STATE?.kioskMode) {
-              return p;
-            }
-            // filter students here
-            if (this.visibilityService.filterByVisibility(loc, student)) {
-              return p;
-            }
-          } catch (e) {
-            console.log(e.message)
-          }
-        // folder containing pinnables
-        } else if (p.type === 'category') {
-          return p;
+        const isDedicatedUser = this.FORM_STATE.kioskMode &&
+          ((!!user?.roles.includes('_profile_kiosk') || stateData?.kioskModeStudent instanceof User));
+        const isStaffUser = ((!this.user.isStudent()) && this.FORM_STATE.kioskMode);
+        const isChooseSelectedStudent = (isStaffUser || isDedicatedUser);
+
+        // on kioskmode student is found in selectedStudents[0]
+        if (isChooseSelectedStudent) {
+          // TODO when not found case
+          student[0] = stateData.kioskModeStudent || stateData.selectedStudents[0];
         }
-      });
-
-      const { passLimitInfo } = this.FORM_STATE;
-      if (!passLimitInfo?.showPasses) {
-        return pins;
-      }
-
-      if (passLimitInfo.current === 0) {
-        pins.forEach(p => {
-          if (p.location === null) { // ignore folders
+        pins = pins.filter(p => {
+          // filtering here based on location and student may return (or not) a pinnable
+          if (p.type === 'location' && p.location !== null) {
+            // is a Location
+            try {
+              const loc = Location.fromJSON(p.location);
+              // staff is unfiltered but not in kiosk mode
+              if (this.isStaff && !this.FORM_STATE?.kioskMode) {
+                return p;
+              }
+              // filter students here
+              if (this.visibilityService.filterByVisibility(loc, student)) {
+                return p;
+              }
+            } catch (e) {
+            }
+          // folder containing pinnables
+          } else if (p.type === 'category') {
             return p;
           }
-          if (!p?.location?.restricted) {
-            p.location.restricted = true;
-          }
         });
-      }
-      return pins;
-    }),
-  );
 
+
+        const { passLimitInfo } = this.FORM_STATE;
+        if (!passLimitInfo?.showPasses) {
+          return pins;
+        }
+
+        if (passLimitInfo.current === 0) {
+          pins.forEach(p => {
+            if (p.location === null) { // ignore folders
+              return p;
+            }
+            if (!p?.location?.restricted) {
+              p.location.restricted = true;
+            }
+          });
+        }
+        return pins;
+      })
+    );
     this.pinnable = this.FORM_STATE.data.direction ? this.FORM_STATE.data.direction.pinnable : null;
   }
 

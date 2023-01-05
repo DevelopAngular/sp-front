@@ -163,7 +163,7 @@ export class ToWhereComponent implements OnInit, OnDestroy, AfterViewInit {
       const isChooseSelectedStudent = (isStaffUser || isDedicatedUser);
       const student = [this.user];
       if (isChooseSelectedStudent) {
-        student[0] = stateData.kioskModeStudent;
+        student[0] = stateData.kioskModeStudent || stateData.selectedStudents[0];
       }
       if (this.user.isStudent() || isStaffUser) {
         this.pinnables = this.pinnables.pipe(
@@ -174,8 +174,7 @@ export class ToWhereComponent implements OnInit, OnDestroy, AfterViewInit {
                 if (loc === null && pinn.type === 'category') {
                   return true;
                 }
-                const keep = this.visibilityService.filterByVisibility(loc, student);
-                return keep;
+                return this.visibilityService.filterByVisibility(loc, student);
               });
               return vv;
             } catch (e) {}

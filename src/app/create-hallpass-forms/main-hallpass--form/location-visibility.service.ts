@@ -23,7 +23,7 @@ export class LocationVisibilityService {
 
     const students = users.map((s:User) => this.getIdOrThrow(s));
     const ruleStudents = location.visibility_students.map((s: User) => this.getIdOrThrow(s));
-                 
+
     let byid: string[] = [];
 
     // when we have just grades this visibility_students is empty
@@ -39,8 +39,7 @@ export class LocationVisibilityService {
       if (!s?.grade_level) {
         return false;
       }
-      const toSkip = ruleGrades.includes(s.grade_level)
-      return toSkip;
+      return ruleGrades.includes(s.grade_level)
     });
     const bygrade: string[] = _bygrade.map((s: User) => ''+s.id);
 
