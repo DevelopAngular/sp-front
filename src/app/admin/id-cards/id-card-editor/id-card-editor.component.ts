@@ -1,59 +1,31 @@
 import {
   Component,
-  ElementRef,
-  ErrorHandler,
   HostListener,
   OnDestroy,
   OnInit,
-  ViewChild,
   ViewEncapsulation,
 } from "@angular/core";
 import { MatDialog } from "@angular/material/dialog";
 import { merge, of, ReplaySubject, Subject } from "rxjs";
-import { catchError, filter, map, takeUntil, tap } from "rxjs/operators";
+import { filter, takeUntil, tap } from "rxjs/operators";
 import { AdminService } from "../../../services/admin.service";
 import { BackgroundTextComponent } from "../background-text/background-text.component";
 import { UploadLogoComponent } from "../upload-logo/upload-logo.component";
-import { DomSanitizer } from "@angular/platform-browser";
 import { UserService } from "../../../services/user.service";
 import { DarkThemeSwitch } from "../../../dark-theme-switch";
 import { SettingsDescriptionPopupComponent } from "../../../settings-description-popup/settings-description-popup.component";
 import { IdCardProfilePictureComponent } from "../id-card-profile-picture/id-card-profile-picture.component";
 import { ConfirmationComponent } from "../../../shared/shared-components/confirmation/confirmation.component";
-import { IDCardService } from "../../../services/IDCardService";
+import { BARCODE_TYPES, BarcodeTypes, IDCardService } from '../../../services/IDCardService'
 import { QRBarcodeGeneratorService } from "../../../services/qrbarcode-generator.service";
 import { ToastService } from "../../../services/toast.service";
 import * as moment from "moment";
-import { StorageService } from "../../../services/storage.service";
-import { IdNumbersComponent } from "../../accounts/id-numbers/id-numbers.component";
 import { IdCardGradeLevelsComponent } from "../id-card-grade-levels/id-card-grade-levels.component";
 import { IdCardIdNumbersComponent } from "../id-card-id-numbers/id-card-id-numbers.component";
 
 export const UNANIMATED_CONTAINER: ReplaySubject<boolean> = new ReplaySubject(
   1
 );
-
-export interface IDCard {
-  userName?: string;
-  schoolName?: string;
-  userRole?: string;
-  profilePicture?: string;
-  idNumberData?: { idNumber: string; barcodeURL: any };
-  greadLevel?: string;
-  backgroundColor?: string;
-  logoURL?: string;
-  backsideText?: string;
-  showCustomID?: boolean;
-  barcodeType?: string;
-}
-
-export interface BarcodeTypes {
-  label: string;
-  action: string;
-  icon: string;
-  textColor: string;
-  backgroundColor: string;
-}
 
 @Component({
   selector: "app-id-card-editor",
@@ -77,29 +49,8 @@ export class IdCardEditorComponent implements OnInit, OnDestroy {
 
   isLogoAdded: boolean = false;
 
-  typeOfBarcodes: BarcodeTypes[] = [
-    {
-      label: "Traditional",
-      icon: "./assets/Barcode (Black).svg",
-      textColor: "#7f879d",
-      backgroundColor: "#F4F4F4",
-      action: "code39",
-    },
-    {
-      label: "QR Code",
-      icon: "./assets/QR Code (Black).svg",
-      textColor: "#7f879d",
-      backgroundColor: "#F4F4F4",
-      action: "qr-code",
-    },
-  ];
-  selectedBarcode: BarcodeTypes = {
-    label: "QR Code",
-    icon: "./assets/QR Code (Black).svg",
-    textColor: "#7f879d",
-    backgroundColor: "#F4F4F4",
-    action: "qr-code",
-  };
+  typeOfBarcodes: BarcodeTypes[] = BARCODE_TYPES;
+  selectedBarcode: BarcodeTypes;
 
   IDCardVisibleTo: string = "Students only";
   IDCardEnabled: boolean = false;
@@ -110,7 +61,6 @@ export class IdCardEditorComponent implements OnInit, OnDestroy {
   showCustomID: boolean = false;
   isScrollable: boolean;
 
-
   constructor(
     public adminService: AdminService,
     private dialog: MatDialog,
@@ -118,64 +68,16 @@ export class IdCardEditorComponent implements OnInit, OnDestroy {
     public darkTheme: DarkThemeSwitch,
     public idCardService: IDCardService,
     private qrBarcodeGenerator: QRBarcodeGeneratorService,
-    private toast: ToastService,
-    private store: StorageService
-  ) {
-    if (store.getItem('idcard')) {
-      this.isAdded = true;
-      const IDCARDDETAILS = JSON.parse(store.getItem('idcard'));
-      this.IDCARDDETAILS = IDCARDDETAILS;
-      this.setUpData(IDCARDDETAILS);
-      // this.IDCardEnabled = IDCARDDETAILS.enabled;
-      // this.backsideText = IDCARDDETAILS.backside_text;
-      // this.backgroundColor = IDCARDDETAILS.color;
-      // this.IDCardVisibleTo = IDCARDDETAILS.visible_to_who;
-      // this.logoURL = IDCARDDETAILS.signed_url;
-      // IDCARDDETAILS.show_custom_ids
-      //   ? this.setUpIDNumber(IDCARDDETAILS.barcode_type || 'qr-code')
-      //   : null;
-      // IDCARDDETAILS.show_grade_levels ? this.greadLevel = '11' : null
-      // IDCARDDETAILS.signed_url ? this.logoURL = IDCARDDETAILS.signed_url : null
-
-      store.removeItem('idcard')
-    } else {
-      this.idCardService.getIDCardDetailsEdit().subscribe({
-        next: (result: any) => {
-          if (result?.results?.digital_id_card) {
-            this.isAdded = true;
-            const IDCARDDETAILS = result.results.digital_id_card;
-            this.IDCARDDETAILS = IDCARDDETAILS;
-            this.setUpData(IDCARDDETAILS);
-            // this.IDCardEnabled = IDCARDDETAILS.enabled;
-            // this.backsideText = IDCARDDETAILS.backside_text;
-            // this.backgroundColor = IDCARDDETAILS.color;
-            // this.IDCardVisibleTo = IDCARDDETAILS.visible_to_who;
-            // this.logoURL = IDCARDDETAILS.signed_url;
-            // IDCARDDETAILS.show_custom_ids
-            //   ? this.setUpIDNumber(IDCARDDETAILS.barcode_type || 'qr-code')
-            //   : null;
-            // IDCARDDETAILS.show_grade_levels ? this.greadLevel = '11' : null
-            // IDCARDDETAILS.signed_url ? this.logoURL = IDCARDDETAILS.signed_url : null
-          }
-        },
-        error: (error: any) => {
-          console.log("Error : ", error)
-
-        }
-      });
-    }
-  }
+    private toast: ToastService
+  ) {}
 
   @HostListener('document.scroll', ['$event'])
   scroll(event) {
-    if (event.currentTarget.scrollTop > 20) {
-      this.isScrollable = true;
-    } else {
-      this.isScrollable = false;
-    }
+    this.isScrollable = event.currentTarget.scrollTop > 20;
   }
 
   ngOnInit(): void {
+    this.fetchAndSetIdCard()
     merge(
       of(this.userService.getUserSchool()),
       this.userService.getCurrentUpdatedSchool$().pipe(filter((s) => !!s))
@@ -188,6 +90,22 @@ export class IdCardEditorComponent implements OnInit, OnDestroy {
         }
       });
     this.isUploadedProfilePictures ? (this.status = "done") : "disconnect";
+  }
+
+  private fetchAndSetIdCard() {
+    this.idCardService.getIDCardDetailsEdit().subscribe({
+      next: (result) => {
+        if (result?.results?.digital_id_card) {
+          this.isAdded = true;
+          const IDCARDDETAILS = result.results.digital_id_card;
+          this.IDCARDDETAILS = IDCARDDETAILS;
+          this.setUpData(IDCARDDETAILS);
+        }
+      },
+      error: (error: any) => {
+        console.log("Error : ", error)
+      }
+    });
   }
 
   ngOnDestroy() {
@@ -216,7 +134,7 @@ export class IdCardEditorComponent implements OnInit, OnDestroy {
 
   saveIDCardFields() {
     this.idCardService.updateIDCardField(this.idCardFormData).subscribe({
-      next: (result: any) => {
+      next: () => {
         this.toast.openToast({ title: "ID Cards updated", type: "success" });
         this.isInEditingMode = false;
       },
@@ -230,7 +148,7 @@ export class IdCardEditorComponent implements OnInit, OnDestroy {
     } else if (this.isAdded) {
       this.isInEditingMode = false;
       this.idCardService.updateIDCardField(this.idCardFormData).subscribe({
-        next: (result: any) => {
+        next: () => {
           this.idCardFormData = new FormData();
         },
       });
@@ -240,24 +158,11 @@ export class IdCardEditorComponent implements OnInit, OnDestroy {
   cancelEditing() {
     this.idCardFormData = new FormData();
     this.isInEditingMode = false;
-    this.idCardService.getIDCardDetailsEdit().subscribe({
-      next: (result: any) => {
-        if (result?.results?.digital_id_card) {
-          this.isAdded = true;
-          const IDCARDDETAILS = result.results.digital_id_card;
-          this.IDCARDDETAILS = IDCARDDETAILS;
-          this.setUpData(IDCARDDETAILS);
-        }
-      },
-      error: (error: any) => {
-        console.log("Error : ", error)
-
-      }
-    });
+    this.fetchAndSetIdCard();
   }
 
   async setUpProfilePicture() {
-    const PPD = this.dialog.open(IdCardProfilePictureComponent, {
+    this.dialog.open(IdCardProfilePictureComponent, {
       panelClass: 'accounts-profiles-dialog',
       backdropClass: 'custom-bd',
       width: '425px',
@@ -375,7 +280,7 @@ export class IdCardEditorComponent implements OnInit, OnDestroy {
         height: '510px',
       });
 
-      PPD.afterClosed().subscribe((result) => {
+      PPD.afterClosed().subscribe(() => {
         this.userService.getStatusOfIDNumber().subscribe({
           next: (result: any) => {
             if (result?.results?.setup) {
@@ -405,8 +310,10 @@ export class IdCardEditorComponent implements OnInit, OnDestroy {
       await this.qrBarcodeGenerator.selectBarcodeType(value, 123456);
     if (value == "qr-code") {
       this.IDNumberData["type"] = "qr-code";
+      this.selectedBarcode = BARCODE_TYPES[1]
     } else {
       this.IDNumberData["type"] = "code39";
+      this.selectedBarcode = BARCODE_TYPES[0];
     }
     if (byUser) {
       this.idCardFormData.delete("barcode_type");
@@ -445,7 +352,7 @@ export class IdCardEditorComponent implements OnInit, OnDestroy {
       height: '510px',
     });
 
-    PPD.afterClosed().subscribe((result) => {
+    PPD.afterClosed().subscribe(() => {
       this.userService.getStatusOfGradeLevel().subscribe({
         next: (result: any) => {
           if (result?.results?.setup) {
@@ -527,7 +434,7 @@ export class IdCardEditorComponent implements OnInit, OnDestroy {
       };
       this.openConfirmationDialog(data).then((res) => {
         if (res) {
-          this.idCardService.disableIDCard().subscribe((result) => {
+          this.idCardService.disableIDCard().subscribe(() => {
             this.toast.openToast({ title: "ID Cards disabled", type: "info" });
             this.IDCardEnabled = false;
           });
@@ -539,11 +446,11 @@ export class IdCardEditorComponent implements OnInit, OnDestroy {
       body.append('datetime_created', moment().toISOString());
       body.append('enabled', 'true');
       this.idCardService.addIDCard(body).subscribe({
-        next: result => {
+        next: () => {
           this.IDCardEnabled = true;
           this.toast.openToast({ title: "ID Cards are live", type: "success" });
           this.idCardService.enableIDCard().subscribe({
-            next: (result) => {
+            next: () => {
               this.isAdded = true;
               this.IDCardEnabled = true;
             },
@@ -555,7 +462,7 @@ export class IdCardEditorComponent implements OnInit, OnDestroy {
       })
     } else if (!this.IDCardEnabled) {
       this.idCardService.enableIDCard().subscribe({
-        next: (result) => {
+        next: () => {
           this.isAdded = true;
           this.IDCardEnabled = true;
           this.toast.openToast({ title: "ID Cards are live", type: "success" });
