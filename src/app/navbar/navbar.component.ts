@@ -24,7 +24,6 @@ import { filter, map, pluck, switchMap, takeUntil } from "rxjs/operators";
 
 import { DataService } from "../services/data-service";
 import { GoogleLoginService } from "../services/google-login.service";
-import { LoadingService } from "../services/loading.service";
 import { NavbarDataService } from "../main/navbar-data.service";
 import { User } from "../models/User";
 import { UserService } from "../services/user.service";
@@ -52,12 +51,10 @@ import { SpAppearanceComponent } from "../sp-appearance/sp-appearance.component"
 import { MyProfileDialogComponent } from "../my-profile-dialog/my-profile-dialog.component";
 import { SpLanguageComponent } from "../sp-language/sp-language.component";
 import * as moment from "moment";
-import { IDCard } from "../admin/id-cards/id-card-editor/id-card-editor.component";
 import { QRBarcodeGeneratorService } from "../services/qrbarcode-generator.service";
 import { IdcardOverlayContainerComponent } from "../idcard-overlay-container/idcard-overlay-container.component";
-import { IDCardService } from "../services/IDCardService";
+import { IDCard, IDCardService } from '../services/IDCardService'
 import { CheckForUpdateService } from "../services/check-for-update.service";
-import { KioskSettingsDialogComponent } from "../kiosk-settings-dialog/kiosk-settings-dialog.component";
 import { SmartpassSearchComponent } from "../smartpass-search/smartpass-search.component";
 
 declare const window;
