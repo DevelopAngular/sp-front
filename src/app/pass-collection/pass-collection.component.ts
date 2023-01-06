@@ -374,6 +374,9 @@ export class PassCollectionComponent implements OnInit, AfterViewInit, OnDestroy
     }
     if (data.isActive) {
       data.hideReport = true;
+      if (this.kioskMode.isKisokMode() && !this.forFuture) {
+        data['hasDeleteButton'] = false;
+      }
     }
     const dialogRef = this.dialog.open(PassCollectionComponent.getDetailDialog(pass), {
       panelClass: (this.forStaff ? 'teacher-' : 'student-') + 'pass-card-dialog-container',

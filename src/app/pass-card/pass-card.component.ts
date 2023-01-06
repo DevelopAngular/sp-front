@@ -138,6 +138,7 @@ export class PassCardComponent implements OnInit, OnDestroy {
     private locationsService: LocationsService,
     private recurringConfigService: RecurringSchedulePassService
   ) {
+    console.log(this.data);
   }
 
   getUserName(user: any) {
@@ -183,6 +184,10 @@ export class PassCardComponent implements OnInit, OnDestroy {
   }
 
   get hasClose() {
+    if (this.hideButton === false || this.fromPast) {
+      return false;
+    }
+
     // return ((this.forInput || this.forStaff || this.pass.cancellable_by_student || this.user.isStudent()) && !this.fromPast) && !this.hideButton;
     return this.user?.id === this.pass?.issuer?.id ? true : ((this.forInput || this.forStaff || (this.pass.cancellable_by_student && this.user.isStudent())) && !this.fromPast) && !this.hideButton;
   }
