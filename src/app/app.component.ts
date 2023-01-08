@@ -284,6 +284,7 @@ export class AppComponent implements OnInit, AfterViewInit, OnDestroy {
     this.http.schoolsCollection$.pipe(
       map(schools => _filter(schools, (school => school.my_roles.length > 0))),
       withLatestFrom(this.http.currentSchool$),
+      filter(([schools, currentSchool]) => !!schools.length && !!currentSchool),
       takeUntil(this.subscriber$))
       .subscribe(([schools, currentSchool]) => {
         this.schools = schools;
