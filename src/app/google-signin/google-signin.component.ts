@@ -214,6 +214,7 @@ export class GoogleSigninComponent implements OnInit, OnDestroy {
 
   updateDemoUsername(event) {
     this.showSpinner = false;
+    this.loginData.demoLoginEnabled = false;
     if (!event) {
       this.loginData.demoLoginEnabled = false;
       this.loginData.demoUsername = '';
