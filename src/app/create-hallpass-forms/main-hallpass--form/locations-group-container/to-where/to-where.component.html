@@ -24,21 +24,24 @@
         <div [ngClass]="isIOSTablet ? 'ios-rooms-title' : 'rooms-title'" class="ds-dialog-subtitle">My Rooms</div>
         <div class="rooms">
           <mat-grid-list class="grid center" [cols]="gridRestrictions.colsAmount" rowHeight="75px" [gutterSize]="gridRestrictions.gutterSize" [style.width]="gridRestrictions.gridWidth">
-            <mat-grid-tile *ngFor="let room of teacherRooms">
-              <app-pinnable
-                [width]="gridRestrictions.pileWidth"
-                [height]="gridRestrictions.pileHeight"
-                [valid]="(room.location && location ? room.location.id != location.id : true)"
-                [passLimit]="room.location ? passLimits[room.location.id] : null"
-                [disabledRoom]="room.location ? !room.location.enable : false"
-                [forStaff]="isStaff"
-                [forLater]="!!date"
-                [currentPage]="'to'"
-                [pinnable]="room"
-                [isSameRoom]="(room.location && location ? +room.location.id === +location.id : false)"
-                (onSelectEvent)="pinnableSelected($event)"
-              ></app-pinnable>
-            </mat-grid-tile>
+            <ng-container *ngFor="let room of teacherRooms">
+              <mat-grid-tile *ngIf="checkPinnable(true, room)">
+                <app-pinnable
+                  [width]="gridRestrictions.pileWidth"
+                  [height]="gridRestrictions.pileHeight"
+                  [valid]="(room.location && location ? room.location.id != location.id : true)"
+                  [passLimit]="room.location ? passLimits[room.location.id] : null"
+                  [disabledRoom]="room.location ? !room.location.enable : false"
+                  [forStaff]="isStaff"
+                  [forLater]="!!date"
+                  [currentPage]="'to'"
+                  [pinnable]="room"
+                  [isSameRoom]="(room.location && location ? +room.location.id === +location.id : false)"
+                  (onSelectEvent)="pinnableSelected($event)"
+                ></app-pinnable>
+              </mat-grid-tile>
+            </ng-container>
+
           </mat-grid-list>
         </div>
       </div>
@@ -47,21 +50,25 @@
         <div  [ngClass]="isIOSTablet ? 'ios-rooms-title' : 'rooms-title'" class="ds-dialog-subtitle" *ngIf="isStaff && teacherRooms.length && !dialogData.kioskModeRoom">All Rooms</div>
         <div class="pin-collection">
           <mat-grid-list class="grid center" [cols]="gridRestrictions.colsAmount" rowHeight="75px" [gutterSize]="gridRestrictions.gutterSize" [style.width]="gridRestrictions.gridWidth">
-            <mat-grid-tile #ngForPinnables *ngFor="let pinnable of pinnables | async">
-              <app-pinnable
-                [width]="gridRestrictions.pileWidth"
-                [height]="gridRestrictions.pileHeight"
-                [valid]="(pinnable.location && location ? isValidPinnable(pinnable) : true)"
-                [forStaff]="isStaff && !dialogData.kioskMode"
-                [passLimit]="pinnable.location ? passLimits[pinnable.location.id] : null"
-                [disabledRoom]="pinnable.location ? !pinnable.location.enable : false"
-                [forLater]="!!date"
-                [pinnable]="pinnable"
-                [currentPage]="'to'"
-                [isSameRoom]="(pinnable.location && location ? +pinnable.location.id === +location.id : false)"
-                (onSelectEvent)="pinnableSelected($event)"
-              ></app-pinnable>
-            </mat-grid-tile>
+            <ng-container #ngForPinnables *ngFor="let pinnable of pinnables | async">
+              <mat-grid-tile
+                *ngIf="checkPinnable(false, pinnable)">
+                <app-pinnable
+                  [width]="gridRestrictions.pileWidth"
+                  [height]="gridRestrictions.pileHeight"
+                  [valid]="(pinnable.location && location ? isValidPinnable(pinnable) : true)"
+                  [forStaff]="isStaff && !dialogData.kioskMode"
+                  [passLimit]="pinnable.location ? passLimits[pinnable.location.id] : null"
+                  [disabledRoom]="pinnable.location ? !pinnable.location.enable : false"
+                  [forLater]="!!date"
+                  [pinnable]="pinnable"
+                  [currentPage]="'to'"
+                  [isSameRoom]="(pinnable.location && location ? +pinnable.location.id === +location.id : false)"
+                  (onSelectEvent)="pinnableSelected($event)"
+                ></app-pinnable>
+              </mat-grid-tile>
+            </ng-container>
+
           </mat-grid-list>
         </div>
       </div>

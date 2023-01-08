@@ -194,6 +194,23 @@ export class ToWhereComponent implements OnInit, OnDestroy, AfterViewInit {
     this.destroy$.complete();
   }
 
+  checkPinnable(forTeacherRooms: boolean, pinnable: Pinnable): boolean {
+    // hide kiosk mode room
+    if (!forTeacherRooms) {
+      if (this.formState.kioskMode) {
+        return (pinnable.location && this.location ? this.isValidPinnable(pinnable) : true);
+      } else {
+        return true;
+      }
+    } else {
+      if (this.formState.kioskMode) {
+        return (pinnable.location && this.location ? pinnable.location.id != this.location.id : true)
+      } else {
+        return true;
+      }
+    }
+  }
+
   isValidPinnable(pinnable: Pinnable) {
     // === and ids are dangerous as ids are numeric strings or numbers
     // using == will pose its own dangers

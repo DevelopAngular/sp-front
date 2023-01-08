@@ -94,7 +94,7 @@
             *ngFor="let choice of choices"
             #item
           >
-            <app-location-cell *ngIf="getPassLimit(choice) || isFavoriteForm"
+            <app-location-cell *ngIf="getPassLimit(choice) && checkRoomIsHidden(choice) || isFavoriteForm"
                class="choice"
                [hasLocks]="hasLocks"
                [forLater]="forLater"
