@@ -40,7 +40,6 @@ import { EncounterDetectionService } from '../../services/EncounterDetectionServ
 import { EncounterDetection } from '../../models/EncounterDetection';
 import { EncounterDetectionDialogComponent } from './encounter-detection-dialog/encounter-detection-dialog.component';
 import { TotalAccounts } from '../../models/TotalAccounts';
-import {Router} from '@angular/router';
 
 declare const window: Window & typeof globalThis & {passClick: any, reportedPassClick: any};
 type OverflownTries = HttpErrorResponse & {overflown: boolean};
@@ -208,8 +207,7 @@ export class ExploreComponent implements OnInit, OnDestroy {
     public xlsx: XlsxService,
     private userService: UserService,
     private componentService: ComponentsService,
-    private encounterDetectionService: EncounterDetectionService,
-    private router: Router
+    private encounterDetectionService: EncounterDetectionService
     ) {
     window.passClick = (id) => {
       this.passClick(id);
@@ -217,9 +215,7 @@ export class ExploreComponent implements OnInit, OnDestroy {
     window.reportedPassClick = (id, invisBackdrop) => {
       this.openPassDialog(id, !!invisBackdrop);
     };
-    if (
-      window.history.state.open_on_load?.dialog === 'admin/explore/report_search' ||
-      (this.router.getCurrentNavigation() && this.router.getCurrentNavigation().extras.state.target === 'report_search')) {
+    if (window.history.state.open_on_load?.dialog === 'admin/explore/report_search') {
       this.currentView$.next('report_search');
     }
   }
