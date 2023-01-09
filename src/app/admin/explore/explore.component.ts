@@ -450,18 +450,7 @@ export class ExploreComponent implements OnInit, OnDestroy {
       .pipe(
         filter((res: any) => this.currentView$.getValue() === 'encounter_detection'),
         map((encounterDetection: EncounterDetection[]) => {
-            // const getColumns = this.storage.getItem(`order${this.currentView$.getValue()}`);
-            // const getColumns = this.storage.getItem(`order${this.currentView$.getValue()}`);
-            // const columns = {};
-            // if (getColumns) {
-            //   console.log("In if")
-            //   const columnsOrder = ('Pass,' + getColumns).split(',');
-            //   for (let i = 0; i < columnsOrder.length; i++) {
-            //     Object.assign(columns, { [columnsOrder[i]]: null });
-            //   }
-            //   this.currentColumns = cloneDeep(columns);
-            // }
-            if (!encounterDetection.length) {
+            if (!encounterDetection?.length) {
               this.encounterDetectedState.isEmpty = true;
               return [{
                 'Students': null,
