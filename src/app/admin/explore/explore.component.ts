@@ -354,7 +354,10 @@ export class ExploreComponent implements OnInit, OnDestroy {
             selectedDate: null,
           };
 
-          this.searchEncounterDetection();
+          if (this.userService.getFeatureEncounterDetection()) {
+            this.searchEncounterDetection();
+          }
+
           return this.encounterDetectionService.encounterLoading$.pipe(map(loading => !loading));
         }
       });
