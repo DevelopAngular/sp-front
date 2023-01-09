@@ -31,6 +31,7 @@ export class ProgressInterceptor implements HttpInterceptor {
                           'pass_requests/',
                           'hall_passes/bulk_create',
                           'hall_passes',
+                          'encounter_detection',
                           'forms/quoterequest',
                           '//server.test-cors.org'
                         ].every(_url => error.url.search(_url) < 0);
@@ -39,7 +40,7 @@ export class ProgressInterceptor implements HttpInterceptor {
                           this.toast.openToast(
                             {
                               title: 'Oh no! Something went wrong',
-                              subtitle: `Please try refreshing the page. If the issue keeps occuring, contact us at support@smartpass.app. (${error.status})`,
+                              subtitle: `Please try refreshing the page. If the issue keeps occurring, contact us at support@smartpass.app. (${error.status})`,
                               type: 'error'
                             }, error.status);
                         }
