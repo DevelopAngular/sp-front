@@ -176,7 +176,7 @@ export class InlineWaitInLineCardComponent implements OnInit, OnDestroy {
     private dialog: MatDialog,
     private screen: ScreenService,
     private wilService: WaitInLineService,
-    private kioskService: KioskModeService
+    public kioskService: KioskModeService
   ) { }
 
   private get scalingFactor() {

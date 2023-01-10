@@ -1,104 +1,71 @@
 <div class="settings-wrapper">
-  <div class="settings-header">
-    <img class="back-button" *ngIf="!changeForm" [src]="'./assets/Back Button (Blue-White).svg' | resolveAsset" (click)="close()">
-    <div class="back-button" *ngIf="changeForm" (click)="close()">Cancel</div>
-    <img width="21" height="21" [src]="'./assets/Options (Navy).svg' | resolveAsset" alt="Options">
-    <div class="ds-dialog-title" [style.margin-left]="'12px'">Pass Options</div>
-    <div class="save-button" *ngIf="changeForm && schoolForm.valid">
-      <app-gradient-button
-              [width]="'85px'"
-              [minHeight]="'30px'"
-              [fontSize]="'14px'"
-              [cursor]="'pointer'"
-              (buttonClick)="save()"
-      >
-        <span *ngIf="!showSpinner">Save</span>
-        <mat-spinner *ngIf="showSpinner" [color]="'accent'" [diameter]="30"></mat-spinner>
-      </app-gradient-button>
+    <div class="settings-header">
+        <img class="back-button" *ngIf="!changeForm" [src]="'./assets/Back Button (Blue-White).svg' | resolveAsset" (click)="close()">
+        <div class="back-button" *ngIf="changeForm" (click)="close()">Cancel</div>
+        <img width="21" height="21" [src]="'./assets/Options (Navy).svg' | resolveAsset" alt="Options">
+        <div class="ds-dialog-title" [style.margin-left]="'12px'">Pass Options</div>
+        <div class="save-button" *ngIf="changeForm && schoolForm.valid">
+            <app-gradient-button [width]="'85px'" [minHeight]="'30px'" [fontSize]="'14px'" [cursor]="'pointer'" (buttonClick)="save()">
+                <span *ngIf="!showSpinner">Save</span>
+                <mat-spinner *ngIf="showSpinner" [color]="'accent'" [diameter]="30"></mat-spinner>
+            </app-gradient-button>
+        </div>
     </div>
-  </div>
-  <div class="settings-content">
-    <div class="controls-block">
-      <form [formGroup]="schoolForm"></form>
-      <div class="display-room-control" style="margin-top: 15px">
-        <div class="controls-description">
-          <div class="ds-cell-text-2">Enable Wait in Line</div>
-          <div class="ds-cell-description-text" style="width: 260px; margin-top: 6px">When a room reaches the Active Pass Limit, put students in a virtual waiting line. <a href="#" target="_blank" style="outline: 0">Learn more</a></div>
-        </div>
-        <div class="toggle-control">
-          <app-toggle-input
-            [form]="schoolForm"
-            [hasIcon]="false"
-            [controlSize]="'small'"
-            [delimiter]="false"
-            [controlName]="'wait_in_line'"
-          ></app-toggle-input>
-        </div>
-      </div>
-      <div class="display-room-control">
-        <div class="ds-cell-text-2">Show Room Numbers on Passes</div>
-        <div class="toggle-control">
-          <app-toggle-input [form]="schoolForm" [controlSize]="'small'" [delimiter]="false" [controlName]="'display_card_room'"></app-toggle-input>
-        </div>
-      </div>
-      <div class="buffer-time-control">
-        <div class="control-text" style="width: 210px">
-          <span class="ds-cell-text-2">Pass Buffer Time <span *ngIf="!hideMin">(min)</span></span> <br>
-          <span class="ds-cell-description-text">How long an expiring pass will count up until it automatically ends and moves to the Expired Pass section.</span>
-        </div>
-        <div class="control-input">
-          <app-input
-            #passBufferTimeInput
-            [width]="'75px'"
-            [isErrorIcon]="false"
-            [textAlign]="'right'"
-            [formGroup]="schoolForm"
-            [input_value]="schoolForm.get('pass_buffer_time').value"
-            [controlName]="schoolForm.get('pass_buffer_time')"
-            (focusEvent)="hideMin = true; passBufferTimeInput.textAlign = 'left'"
-            (blurEvent)="hideMin = false; passBufferTimeInput.textAlign = schoolForm.get('pass_buffer_time').valid ? 'right' : 'left'"
-          ></app-input>
-        </div>
-      </div>
-      <div class="display-room-control" style="margin-top: 15px">
-        <div class="controls-description">
-          <div class="ds-cell-text-2">Display pass counts</div>
-          <div class="ds-cell-description-text" style="width: 260px; margin-top: 6px">Show the number of active passes when making a pass so that a student/teacher knows how many passes there are to that room</div>
-          <!-- TODO uncomment when branch SP-1050 is available -->
-<!--          <div class="ds-cell-description-text" style="width: 300px; margin-top: 6px">Show the number of passes to/from a room when students are making passes.</div>-->
-        </div>
-        <div class="toggle-control">
-          <app-toggle-input
-            [form]="schoolForm"
-            [hasIcon]="true"
-            [controlSize]="'small'"
-            [delimiter]="false"
-            [controlName]="'show_active_passes_number'"
-          ></app-toggle-input>
-        </div>
-      </div>
+    <div class="settings-content">
+        <div class="controls-block">
+            <form [formGroup]="schoolForm"></form>
+            <div class="display-room-control" style="margin-top: 15px">
+                <div class="controls-description">
+                    <div class="ds-cell-text-2">Enable Wait in Line</div>
+                    <div class="ds-cell-description-text" style="width: 260px; margin-top: 6px">When a room reaches the Active Pass Limit, put students in a virtual waiting line. <a href="https://www.smartpass.app/waitinline" target="_blank" style="outline: 0">Learn more</a></div>
+                </div>
+                <div class="toggle-control">
+                    <app-toggle-input [form]="schoolForm" [hasIcon]="false" [controlSize]="'small'" [delimiter]="false" [controlName]="'wait_in_line'"></app-toggle-input>
+                </div>
+            </div>
+            <div class="display-room-control">
+                <div class="ds-cell-text-2">Show Room Numbers on Passes</div>
+                <div class="toggle-control">
+                    <app-toggle-input [form]="schoolForm" [controlSize]="'small'" [delimiter]="false" [controlName]="'display_card_room'"></app-toggle-input>
+                </div>
+            </div>
+            <div class="buffer-time-control">
+                <div class="control-text" style="width: 210px">
+                    <span class="ds-cell-text-2">Pass Buffer Time <span *ngIf="!hideMin">(min)</span></span> <br>
+                    <span class="ds-cell-description-text">How long an expiring pass will count up until it automatically ends and moves to the Expired Pass section.</span>
+                </div>
+                <div class="control-input">
+                    <app-input #passBufferTimeInput [width]="'75px'" [isErrorIcon]="false" [textAlign]="'right'" [formGroup]="schoolForm" [input_value]="schoolForm.get('pass_buffer_time').value" [controlName]="schoolForm.get('pass_buffer_time')" (focusEvent)="hideMin = true; passBufferTimeInput.textAlign = 'left'"
+                        (blurEvent)="hideMin = false; passBufferTimeInput.textAlign = schoolForm.get('pass_buffer_time').valid ? 'right' : 'left'"></app-input>
+                </div>
+            </div>
+            <div class="display-room-control" style="margin-top: 15px">
+                <div class="controls-description">
+                    <div class="ds-cell-text-2">Display pass counts</div>
+                    <div class="ds-cell-description-text" style="width: 260px; margin-top: 6px">Show the number of active passes when making a pass so that a student/teacher knows how many passes there are to that room</div>
+                    <!-- TODO uncomment when branch SP-1050 is available -->
+                    <!--          <div class="ds-cell-description-text" style="width: 300px; margin-top: 6px">Show the number of passes to/from a room when students are making passes.</div>-->
+                </div>
+                <div class="toggle-control">
+                    <app-toggle-input [form]="schoolForm" [hasIcon]="true" [controlSize]="'small'" [delimiter]="false" [controlName]="'show_active_passes_number'"></app-toggle-input>
+                </div>
+            </div>
 
-      <div class="display-room-control" style="margin-top: 15px">
-        <div class="controls-description">
-          <div class="ds-cell-text-2">Allow students to use phones</div>
-          <div class="ds-cell-description-text" style="width: 260px; margin-top: 6px">Allow students to use SmartPass on their mobile devices.
-          <a href="https://www.smartpass.app/disablephones" target="_blank">Learn more</a>
-          </div>
-        </div>
-        <div class="toggle-control">
-          <app-toggle-input
-            [form]="schoolForm"
-            [hasIcon]="false"
-            [controlSize]="'small'"
-            [delimiter]="false"
-            [controlName]="'student_can_use_mobile'"
-          ></app-toggle-input>
-        </div>
-      </div>
+            <div class="display-room-control" style="margin-top: 15px">
+                <div class="controls-description">
+                    <div class="ds-cell-text-2">Allow students to use phones</div>
+                    <div class="ds-cell-description-text" style="width: 260px; margin-top: 6px">Allow students to use SmartPass on their mobile devices.
+                        <a href="https://www.smartpass.app/disablephones" target="_blank">Learn more</a>
+                    </div>
+                </div>
+                <div class="toggle-control">
+                    <app-toggle-input [form]="schoolForm" [hasIcon]="false" [controlSize]="'small'" [delimiter]="false" [controlName]="'student_can_use_mobile'"></app-toggle-input>
+                </div>
+            </div>
 
-<!--    <div class="bottom-block">-->
-<!--      <div class="ds-dialog-bold-text">Have a feature suggestion?</div>-->
-<!--      <div class="ds-small-link-text">Email us at support@smartpass.app</div>-->
-<!--    </div>-->
-  </div>
-</div>
+            <!--    <div class="bottom-block">-->
+            <!--      <div class="ds-dialog-bold-text">Have a feature suggestion?</div>-->
+            <!--      <div class="ds-small-link-text">Email us at support@smartpass.app</div>-->
+            <!--    </div>-->
+        </div>
+    </div>

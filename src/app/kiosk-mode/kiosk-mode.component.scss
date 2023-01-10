@@ -30,6 +30,7 @@
     }
     div.main-page-right {
         display: none !important;
+        // margin-top: 22px;
     }
 }
 
@@ -61,6 +62,12 @@
         // margin-right: 80px;
         display: flex;
         flex-direction: column;
+        .current-pass {
+            padding-top: 0 !important;
+        }
+    }
+    .main-page-right {
+        margin-top: 22px;
     }
     .pass-buttons {
         display: flex;
@@ -69,8 +76,9 @@
         width: 301px;
     }
     .waitinline-passes {
-        width: 340px;
-        margin: auto;
+        width: 350px;
+        // margin: auto;
+        padding: 0 25px;
     }
     .future-passes,
     .past-passes,

@@ -40,18 +40,20 @@
                         <div notranslate class="email" [@showHideEmail]="animationTrigger">{{ profile.primary_email | spEmail }}</div>
                     </div>
 
-                    <div class="open" *ngIf="isClose; else close">
-                        <img width="20" [src]="'./assets/Chevron Right (Blue-Gray).svg' | resolveAsset" alt="Chevron">
-                    </div>
-                    <ng-template #close>
-                        <div *ngIf="isResize" class="close" appCrossPointerEventTarget (pointerClickEvent)="closeProfile($event)">
-                            <img width="25" height="25" [src]="'./assets/Cancel (Gray-White).svg' | resolveAsset">
+                    <div *ngIf="!kioskModeRoom$.value">
+                        <div class="open" *ngIf="isClose; else close">
+                            <img width="20" [src]="'./assets/Chevron Right (Blue-Gray).svg' | resolveAsset" alt="Chevron">
                         </div>
-                    </ng-template>
+                        <ng-template #close>
+                            <div *ngIf="isResize" class="close" appCrossPointerEventTarget (pointerClickEvent)="closeProfile($event)">
+                                <img width="25" height="25" [src]="'./assets/Cancel (Gray-White).svg' | resolveAsset">
+                            </div>
+                        </ng-template>
+                    </div>
                 </div>
             </div>
         </div>
-        <div *ngIf="(isStaff || kioskModeRoom$.value) && !isOpen" class="action-buttons-wrapper" [style.marginTop]="(height-extraSpace + 10) + 'px'">
+        <div *ngIf="isStaff && !isOpen" class="action-buttons-wrapper" [style.marginTop]="(height-extraSpace + 10) + 'px'">
             <app-gradient-button [cursor]="'pointer'" [leftIcon]="'./assets/Report (Gray-500).svg' | resolveAsset" [textColor]="'#7083A0'" [customBackground]="'#F0F2F5'" [isGradient]="false" [withShadow]="false" [className]="'action-button'" (buttonClick)="openReport($event, pass)">Report</app-gradient-button>
             <app-gradient-button [cursor]="'pointer'" [leftIcon]="'./assets/Plus (Gray-500).svg' | resolveAsset" [textColor]="'#7083A0'" [customBackground]="'#F0F2F5'" [isGradient]="false" [withShadow]="false" [className]="'action-button'" (buttonClick)="openCreatePass($event)">Create Pass</app-gradient-button>
         </div>

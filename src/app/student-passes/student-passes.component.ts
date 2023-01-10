@@ -174,7 +174,9 @@ export class StudentPassesComponent implements OnInit, OnDestroy, AfterViewInit 
       }),
       tap((isStaff) => {
         this.isStaff = isStaff;
-        this.height += this.extraSpace;
+        if (!this.kioskModeRoom$.value) {
+          this.height += this.extraSpace;
+        }
       })
     ).subscribe();
   }
