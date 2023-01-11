@@ -442,13 +442,13 @@ export class PassCardComponent implements OnInit, OnDestroy {
       switchMap(({conflict_student_ids, passes}) => {
         if (conflict_student_ids) {
           if (!this.forStaff) {
-            this.toastService.openToast({
-              title: 'Sorry, you can\'t start your pass right now.',
-              subtitle: 'Please try again later.',
-              type: 'error',
-              encounterPrevention: true,
-              exclusionPass: {...this.pass, travel_type: this.selectedTravelType}
-            });
+            this.encounterService.showEncounterPreventionToast({
+              exclusionPass: {
+                ...this.pass,
+                travel_type: this.selectedTravelType
+              } as HallPass,
+              isStaff: this.forStaff
+            })
             this.dialogRef.close();
             return of(null);
           } else {
@@ -460,18 +460,15 @@ export class PassCardComponent implements OnInit, OnDestroy {
                   tap((groups) => {
                     const exclusionGroups = groups[+id];
                     if (exclusionGroups[0].enabled) {
-                      this.toastService.openToast({
-                        title: 'This pass can\'t start now to prevent encounter.',
-                        subtitle: 'These students can\'t have a pass at the same time.',
-                        type: 'error',
-                        encounterPrevention: true,
+                      this.encounterService.showEncounterPreventionToast({
                         exclusionPass: {
                           ...this.pass,
                           travel_type: this.selectedTravelType,
                           student: this.selectedStudents.find(user => +user.id === +id)
-                        },
+                        } as HallPass,
+                        isStaff: this.forStaff,
                         exclusionGroups
-                      });
+                      })
                     }
                   }));
             }));

@@ -20,6 +20,7 @@ import {PassLimitService} from '../services/pass-limit.service';
 import {HttpErrorResponse} from '@angular/common/http';
 import {MatDialog} from '@angular/material/dialog';
 import {ToastService} from '../services/toast.service';
+import { EncounterPreventionService } from '../services/encounter-prevention.service'
 
 /*
  * TODO: Restructure component
@@ -57,7 +58,8 @@ export class TeacherPinStudentComponent implements OnInit, OnDestroy {
     private storage: StorageService,
     private passLimitsService: PassLimitService,
     private dialog: MatDialog,
-    private toastService: ToastService
+    private toastService: ToastService,
+    private encounterService: EncounterPreventionService
   ) {
   }
 
@@ -95,14 +97,11 @@ export class TeacherPinStudentComponent implements OnInit, OnDestroy {
               return this.requestService.checkLimits({teacher_pin: this.pin}, this.request, this.confirmDialogBody).pipe(
                 concatMap((httpBody) => this.requestService.acceptRequest(this.request.id, httpBody)),
                 catchError((err: Error) => {
-                  if (err instanceof HttpErrorResponse && (err?.error?.detail as string).includes('here are active passes for users in same prevention group')) {
-                    this.toastService.openToast({
-                      title: 'Sorry, you can\'t start your pass right now.',
-                      subtitle: 'Please try again later.',
-                      type: 'error',
-                      encounterPrevention: true,
-                      exclusionPass: this.request
-                    });
+                  if (err instanceof HttpErrorResponse && err?.error?.conflict_student_ids) {
+                    this.encounterService.showEncounterPreventionToast({
+                      exclusionPass: this.request,
+                      isStaff: true
+                    })
                     return of('encounter prevention');
                   } else if (err.message === 'override cancelled') {
                     this.clearPin();
