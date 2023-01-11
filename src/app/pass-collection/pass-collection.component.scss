@@ -42,7 +42,7 @@
     margin-bottom: 40px;
     position: relative;
     &.wait-in-line-wrapper {
-        padding: 25px 15px;
+        padding: 25px 20px;
         box-sizing: border-box;
         border-radius: 12px;
         background-color: #fff;
@@ -106,6 +106,9 @@
 .collection-grid-wrapper {
     display: grid;
     margin-top: 15px;
+    &.wait-in-line-grid {
+        justify-content: center;
+    }
 }
 
 .tile {

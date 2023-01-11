@@ -1,4 +1,4 @@
-<div class="collection-wrapper"  [ngClass]="{'wait-in-line-wrapper': waitInLine && isKioskMode}" *ngIf="!mock && ((currentPasses$ | async) && (currentPasses$ | async).length > 0) || showEmptyHeader; else emptyMessage">
+<div class="collection-wrapper" [ngClass]="{'wait-in-line-wrapper': waitInLine && isKioskMode}" *ngIf="!mock && ((currentPasses$ | async) && (currentPasses$ | async).length > 0) || showEmptyHeader; else emptyMessage">
     <div class="collection-header" [style.width]="headerWidth">
         <div class="collection-title">
             <img *ngIf="icon" draggable="false" class="collection-icon" [src]="_icon | resolveAsset">
@@ -37,7 +37,7 @@
     </div>
     <div *ngIf="(currentPasses$ | async) as currentPasses">
         <div *ngIf="currentPasses.length > 0; else emptyMessage">
-            <div class="collection-grid-wrapper" [style.gridTemplateColumns]="gridTemplate" [style.gridGap]="gridGap">
+            <div class="collection-grid-wrapper" [ngClass]="{'wait-in-line-grid': waitInLine && isKioskMode}" [style.gridTemplateColumns]="gridTemplate" [style.gridGap]="gridGap">
                 <div class="tile" *ngFor="let pass of currentPasses">
                     <app-pass-tile (tileSelected)="showPass($event)" [timerEvent]="timerEvent" [waitInLine]="waitInLine" [fromPast]="fromPast" [forFuture]="forFuture" [isActive]="isActive" [forStaff]="forStaff" [pass]="pass" [allowPopup]="true" [profileImage]="showProfilePictures"
                         [isEnableProfilePictures]="(isEnabledProfilePictures$ | async) && (!!user && !!user.show_profile_pictures)"></app-pass-tile>
