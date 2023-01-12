@@ -1255,11 +1255,11 @@ export class ExploreComponent implements OnInit, OnDestroy {
   }
 
   downloadPasses(countAllData: number) {
-    if ((this.selectedRows.length > 300 || ((!this.selectedRows.length && countAllData > 300) || (this.tableService.isAllSelected$.getValue() && countAllData > 300)))) {
+    // if ((this.selectedRows.length > 300 || ((!this.selectedRows.length && countAllData > 300) || (this.tableService.isAllSelected$.getValue() && countAllData > 300)))) {
       this.exportPasses();
-    } else {
-      this.generateCSV();
-    }
+    // } else {
+    //   this.generateCSV();
+    // }
   }
 
   openReportDialog(report: Report) {
