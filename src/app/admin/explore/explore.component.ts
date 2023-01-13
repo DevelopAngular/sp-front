@@ -1254,13 +1254,6 @@ export class ExploreComponent implements OnInit, OnDestroy {
     return Util.numberWithCommas(x);
   }
 
-  downloadPasses(countAllData: number) {
-    if ((this.selectedRows.length > 300 || ((!this.selectedRows.length && countAllData > 300) || (this.tableService.isAllSelected$.getValue() && countAllData > 300)))) {
-      this.exportPasses();
-    } else {
-      this.generateCSV();
-    }
-  }
 
   openReportDialog(report: Report) {
     this.reportSearchState.entities$
