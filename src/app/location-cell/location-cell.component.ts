@@ -55,7 +55,7 @@ export class LocationCellComponent implements OnInit, OnDestroy {
     private sanitizer: DomSanitizer,
     public screen: ScreenService,
     private renderer: Renderer2,
-    private locationService: LocationsService,
+    private locationsService: LocationsService,
     private shortcutsService: KeyboardShortcutsService
   ) {
     this.currentSchool = this.http.getSchool();
@@ -73,7 +73,7 @@ export class LocationCellComponent implements OnInit, OnDestroy {
       return 'This room has been closed by an admin.';
     }
     if (this.passLimit && this.currentPage !== 'from') {
-      return this.locationService.tooltipDescription(this.currentPage, this.passLimit);
+      return this.locationsService.tooltipDescription(this.currentPage, this.passLimit);
     }
   }
 

@@ -12,6 +12,7 @@ import { ParentAccountService } from '../../services/parent-account.service';
 import { ScreenService } from '../../services/screen.service';
 import { SideNavService } from '../../services/side-nav.service';
 import { SettingsComponent } from '../../settings/settings.component';
+import {SpLanguageComponent} from '../../sp-language/sp-language.component';
 import { ParentSettingComponent } from '../parent-setting/parent-setting.component';
 
 @Component({
@@ -87,7 +88,18 @@ export class ParentNavbarComponent implements OnInit {
       const settingRef = this.dialog.open(SettingsComponent, {
         panelClass: ["calendar-dialog-container", "animation"],
         backdropClass: "invis-backdrop",
-        data: { trigger: target, isSwitch: this.showSwitchButton },
+        data: {
+          trigger: target,
+          isSwitch: this.showSwitchButton,
+          settings: [
+            { 'hidden': false,
+              'background': '#134482',
+              'icon': 'Language',
+              'action': 'language',
+              'title': 'Language',
+              'isNew': true, },
+          ], 
+        },
       });
 
       settingRef.afterClosed().subscribe((action) => {
@@ -116,6 +128,10 @@ export class ParentNavbarComponent implements OnInit {
   settingsAction(action: string) {
     if (action === "signout") {
       this.router.navigate(["sign-out"]);
+    } else if (action === "language") {
+      this.dialog.open(SpLanguageComponent, {
+        panelClass: "sp-form-dialog",
+      });
     }
   }
 

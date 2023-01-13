@@ -21,6 +21,6 @@ export class FeatureFlagService {
 
   isFeatureEnabled(featureFlag: FLAGS): boolean {
     const school = this.http.getSchool();
-    return featureFlag in school
+    return !!school[featureFlag]
   }
 }

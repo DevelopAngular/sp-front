@@ -1,6 +1,5 @@
-import {Component, ElementRef, Inject, Input, NgZone, OnDestroy, OnInit, Optional} from '@angular/core';
+import {Component, ElementRef, Inject, Input, OnDestroy, OnInit, Optional} from '@angular/core';
 import {MAT_DIALOG_DATA, MatDialog, MatDialogConfig, MatDialogRef} from '@angular/material/dialog';
-import {DataService} from '../services/data-service';
 import {LoadingService} from '../services/loading.service';
 import {User} from '../models/User';
 import {DarkThemeSwitch} from '../dark-theme-switch';
@@ -25,6 +24,25 @@ export interface Setting {
   tooltip?: string;
   isNew?: boolean;
 }
+
+type DialogData ={
+  trigger: ElementRef,
+  isSwitch: boolean,
+  settings?: DialogDataSetting[], 
+};
+
+// todo from typescript 4.1
+//type hex = `#${string}`;
+type hex = string;
+
+type DialogDataSetting = {
+  hidden: boolean,
+  background: hex,
+  icon: string,
+  action: string,
+  title: string,
+  isNew: boolean,
+};
 
 @Component({
   selector: 'app-settings',
@@ -58,10 +76,8 @@ export class SettingsComponent implements OnInit, OnDestroy {
 
   constructor(
       public dialog: MatDialog,
-      @Optional() @Inject(MAT_DIALOG_DATA) public data: { trigger: ElementRef, isSwitch: boolean },
+      @Optional() @Inject(MAT_DIALOG_DATA) public data: DialogData,
       @Optional() public dialogRef: MatDialogRef<SettingsComponent>,
-      private dataService: DataService,
-      private _zone: NgZone,
       private sideNavService: SideNavService,
       public loadingService: LoadingService,
       public darkTheme: DarkThemeSwitch,
@@ -89,20 +105,42 @@ export class SettingsComponent implements OnInit, OnDestroy {
 
   ngOnInit() {
     this.teacherPin$ = this.userService.userPin$;
-    this.userService.introsData$
-      .pipe(withLatestFrom(this.userService.user$.pipe(filter(user => !!user))), takeUntil(this.destroy$))
-      .subscribe(([intros, user]) => {
-        this._zone.run(() => {
-          this.user = User.fromJSON(user);
-          this.intosData = intros;
+
+    const user$ = this.userService.user$.pipe(
+      filter(user => !!user),
+      takeUntil(this.destroy$),
+    );
+
+    /*user$.subscribe({next: (user: User) => {
+      this.user = User.fromJSON(user);
+      this.isStaff = this.user.isTeacher() || this.user.isAssistant();
+    }});*/
+
+    const intro$ = this.userService.introsData$.pipe(
+      takeUntil(this.destroy$),
+    );
+
+    //intro$.subscribe({next: intros => this.intosData = intros});
+
+    intro$.pipe(withLatestFrom(user$))
+      .subscribe({next: ([intros, user]) => {
+        this.user = User.fromJSON(user);
+        this.isStaff = this.user.isTeacher() || this.user.isAssistant();
+        this.intosData = intros;
+        // data.settings has prority
+        if (!this?.data?.settings) {
           this.settings = [];
-          this.isStaff = this.user.isTeacher() || this.user.isAssistant();
           this.initializeSettings();
-        });
-      });
+        }
+      }});
+
     if (this.data) {
       this.targetElementRef = this.data['trigger'];
       this.isSwitch = this.data['isSwitch'] && !this.kioskMode.getCurrentRoom().value;
+      // overwrite existent settings
+      if (this.data.settings) {
+        this.settings = this.data.settings;
+      }
     }
 
     this.sideNavService.sideNavData.pipe(takeUntil(this.destroy$)).subscribe( sideNavData => {

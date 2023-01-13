@@ -80,7 +80,7 @@ export class PinnableComponent implements OnInit, OnChanges {
   constructor(
     private sanitizer: DomSanitizer,
     private changeDetector: ChangeDetectorRef,
-    private locationService: LocationsService,
+    private locationsService: LocationsService,
     private http: HttpService
   ) {
     this.currentSchool = this.http.getSchool();
@@ -130,8 +130,8 @@ export class PinnableComponent implements OnInit, OnChanges {
     if (this.pinnable.location && !this.pinnable.location.enable && this.currentPage === 'to') {
       return 'This room has been closed by an admin.';
     }
-    if (this.passLimit) {
-      return this.passLimit && this.locationService.tooltipDescription('to', this.passLimit);
+    if (this.passLimit?.max_passes_to_active) {
+      return this.passLimit && this.locationsService.tooltipDescription('to', this.passLimit);
     }
   }
 

@@ -183,7 +183,7 @@ export class ToWhereComponent implements OnInit, OnDestroy, AfterViewInit {
       const isChooseSelectedStudent = (isStaffUser || isDedicatedUser);
       const student = [this.user];
       if (isChooseSelectedStudent) {
-        student[0] = stateData.kioskModeStudent;
+        student[0] = stateData.kioskModeStudent || stateData.selectedStudents[0];
       }
       if (this.user.isStudent() || isStaffUser) {
         this.pinnables = this.pinnables.pipe(
@@ -194,8 +194,7 @@ export class ToWhereComponent implements OnInit, OnDestroy, AfterViewInit {
                 if (loc === null && pinn.type === 'category') {
                   return true;
                 }
-                const keep = this.visibilityService.filterByVisibility(loc, student);
-                return keep;
+                return this.visibilityService.filterByVisibility(loc, student);
               });
               return vv;
             } catch (e) {}
@@ -213,6 +212,23 @@ export class ToWhereComponent implements OnInit, OnDestroy, AfterViewInit {
   ngOnDestroy() {
     this.destroy$.next();
     this.destroy$.complete();
+  }
+
+  checkPinnable(forTeacherRooms: boolean, pinnable: Pinnable): boolean {
+    // hide kiosk mode room
+    if (!forTeacherRooms) {
+      if (this.formState.kioskMode) {
+        return (pinnable.location && this.location ? this.isValidPinnable(pinnable) : true);
+      } else {
+        return true;
+      }
+    } else {
+      if (this.formState.kioskMode) {
+        return (pinnable.location && this.location ? pinnable.location.id != this.location.id : true)
+      } else {
+        return true;
+      }
+    }
   }
 
   isValidPinnable(pinnable: Pinnable) {

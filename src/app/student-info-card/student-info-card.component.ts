@@ -47,10 +47,9 @@ import {PassLimitService} from '../services/pass-limit.service';
 import {StudentPassLimit} from '../models/HallPassLimits';
 import {ConnectedPosition} from '@angular/cdk/overlay';
 import {IntroData} from '../ngrx/intros';
-import { IDCard } from '../admin/id-cards/id-card-editor/id-card-editor.component';
 import { IdcardOverlayContainerComponent } from '../idcard-overlay-container/idcard-overlay-container.component';
 import { QRBarcodeGeneratorService } from '../services/qrbarcode-generator.service';
-import { IDCardService } from '../services/IDCardService';
+import { IDCardService, IDCard } from '../services/IDCardService';
 import { IdCardGradeLevelsComponent } from '../admin/id-cards/id-card-grade-levels/id-card-grade-levels.component';
 import { IdCardIdNumbersComponent } from '../admin/id-cards/id-card-id-numbers/id-card-id-numbers.component';
 import {PassLimitStudentInfoComponent} from '../pass-limit-student-info/pass-limit-student-info.component';
@@ -776,6 +775,11 @@ export class StudentInfoCardComponent implements OnInit, AfterViewInit, OnDestro
   dismissPassLimitNux() {
     this.showPassLimitNux.next(false);
     this.userService.updateIntrosStudentPassLimitRequest(this.introsData, 'universal', '1');
+  }
+
+  // predicate tu use in filtering HallPass array
+  isNotCancelledPass(p: HallPass): boolean {
+    return !(p.cancellable_by_student === false && p.cancelled !== null);
   }
 
 }

@@ -70,6 +70,7 @@ export class RoundInputComponent implements OnInit, OnChanges, OnDestroy {
     public darkTheme: DarkThemeSwitch,
     public sanitizer: DomSanitizer,
     private storage: StorageService,
+    public elRef: ElementRef
   ) { }
 
   get labelIcon() {
@@ -158,16 +159,14 @@ export class RoundInputComponent implements OnInit, OnChanges, OnDestroy {
     const langStored = this.storage.getItem('codelang');
     merge(of(langStored), this.httpService.currentLang$).pipe(
       //distinctUntilChanged(),
+      takeUntil(this.destroyer$),
       tap(lang => {
-        console.log(lang)
         if (lang === 'es') {
           const tr = (window as any).Localize;
           if (!tr) {
             return;
           }
-          console.log('b', this.placeholder)
           this.placeholder = tr.translate(this.placeholder)
-          console.log('a', this.placeholder)
         }
       }),
     ).subscribe();
@@ -194,9 +193,11 @@ export class RoundInputComponent implements OnInit, OnChanges, OnDestroy {
     }
   }
 
-  reset() {
+  reset(withFocus=true) {
       this.input.nativeElement.value = '';
-      this.input.nativeElement.focus();
+      if (withFocus) {
+        this.input.nativeElement.focus();
+      }
       this.ontextupdate.emit('');
   }
 

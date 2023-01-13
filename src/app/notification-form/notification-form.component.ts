@@ -1,15 +1,15 @@
 import {Component, Inject, OnDestroy, OnInit} from '@angular/core';
 import {MatDialog, MatDialogRef, MAT_DIALOG_DATA} from '@angular/material/dialog';
-import {FormArray, FormBuilder, FormControl, FormGroup, Validators} from '@angular/forms';
+import {FormArray, FormBuilder, FormGroup} from '@angular/forms';
 
 import {Observable, of, forkJoin, Subject, BehaviorSubject} from 'rxjs';
-import {take, map, flatMap, switchMap, filter, combineLatest} from 'rxjs/operators';
+import {take, map, switchMap, filter} from 'rxjs/operators';
 import {isEqual} from 'lodash';
 
 import {User} from '../models/User';
 import {LocationsService} from '../services/locations.service';
 import {UserService} from '../services/user.service';
-import {MyRoomsType, NotificationService, UserNotificationSettings} from '../services/notification-service';
+import {NotificationService, UserNotificationSettings} from '../services/notification-service';
 import {DeviceDetection} from '../device-detection.helper';
 import {NotificationRoomFormComponent} from './notification-room-form/notification-room-form.component';
 import {HallPassesService} from '../services/hall-passes.service';
@@ -101,8 +101,7 @@ export class NotificationFormComponent implements OnInit, OnDestroy {
     }
 
     this.user$.subscribe(user => {
-      this.notificationService.updateUserNotification(user, this.form.getRawValue()).subscribe(res => {
-      });
+      this.notificationService.updateUserNotification(user, this.form.getRawValue()).subscribe();
     });
   }
 
@@ -152,7 +151,7 @@ export class NotificationFormComponent implements OnInit, OnDestroy {
       'weeklySummaryEmail',
     ];
 
-    return controls.some(control => this.form.get(control).value) && this.hasEmail;
+    return controls.some(control => this.form.get(control)?.value) && this.hasEmail;
   }
 
   get isUsingPush() {
@@ -205,12 +204,6 @@ export class NotificationFormComponent implements OnInit, OnDestroy {
   }
 
   activeNotifications(type: string): string {
-    // legacy case
-    // no students but notifications may be set true
-    if (!!this.students?.length) {
-      return 'Off';
-    }
-
     const $push = this.form.controls[type + 'Push'];
     const $email = this.form.controls[type + 'Email'];
     // TODO uncomment bellow and the log will be shown continuosly in the console
@@ -256,8 +249,7 @@ export class NotificationFormComponent implements OnInit, OnDestroy {
       return;
     }
 
-    this.userService.sendTestNotification(this.user$.value.id).subscribe(res => {
-    });
+    this.userService.sendTestNotification(this.user$.value.id).subscribe();
   }
 
   close() {

@@ -1,39 +1,25 @@
-import {
-  ChangeDetectorRef,
-  Component,
-  ElementRef,
-  EventEmitter,
-  forwardRef,
-  HostListener,
-  Inject,
-  Injector,
-  Input,
-  OnDestroy,
-  OnInit,
-  Output,
-  ViewChild
-} from '@angular/core'
-import { BehaviorSubject, Observable, Subject } from 'rxjs'
-import { User } from '../../../models/User'
-import { DataService } from '../../../services/data-service'
-import { Pinnable } from '../../../models/Pinnable'
-import { Util } from '../../../../Util'
-import { FormFactor, MainHallPassFormComponent, Navigation } from '../main-hall-pass-form.component'
-import { CreateFormService } from '../../create-form.service'
-import { NextStep } from '../../../animations'
-import { LocationsService } from '../../../services/locations.service'
-import { MAT_DIALOG_DATA, MatDialog } from '@angular/material/dialog'
-import { FromWhereComponent } from './from-where/from-where.component'
-import { ToCategoryComponent } from './to-category/to-category.component'
-import { RestrictedTargetComponent } from './restricted-target/restricted-target.component'
-import { RestrictedMessageComponent } from './restricted-message/restricted-message.component'
-import { ToWhereComponent } from './to-where/to-where.component'
-import { ScreenService } from '../../../services/screen.service'
-import { DeviceDetection } from '../../../device-detection.helper'
-import { filter, map, withLatestFrom } from 'rxjs/operators'
-import { Location } from '../../../models/Location'
-import { LocationVisibilityService } from '../location-visibility.service'
-import { PassLimitDialogComponent } from './pass-limit-dialog/pass-limit-dialog.component'
+import {ChangeDetectorRef, Component, EventEmitter, forwardRef, Inject, Injector, Input, OnInit, Output, ViewChild, OnDestroy, HostListener, ElementRef} from '@angular/core';
+import {BehaviorSubject, Observable, Subject} from 'rxjs';
+import {User} from '../../../models/User';
+import {DataService} from '../../../services/data-service';
+import {Pinnable} from '../../../models/Pinnable';
+import {Util} from '../../../../Util';
+import {FormFactor, MainHallPassFormComponent, Navigation} from '../main-hall-pass-form.component';
+import {CreateFormService} from '../../create-form.service';
+import {NextStep} from '../../../animations';
+import {LocationsService} from '../../../services/locations.service';
+import {MAT_DIALOG_DATA, MatDialog} from '@angular/material/dialog';
+import {FromWhereComponent} from './from-where/from-where.component';
+import {ToCategoryComponent} from './to-category/to-category.component';
+import {RestrictedTargetComponent} from './restricted-target/restricted-target.component';
+import {RestrictedMessageComponent} from './restricted-message/restricted-message.component';
+import {ToWhereComponent} from './to-where/to-where.component';
+import {ScreenService} from '../../../services/screen.service';
+import {DeviceDetection} from '../../../device-detection.helper';
+import {filter, map, withLatestFrom} from 'rxjs/operators';
+import {Location} from '../../../models/Location';
+import {LocationVisibilityService} from '../location-visibility.service';
+import {PassLimitDialogComponent} from './pass-limit-dialog/pass-limit-dialog.component';
 import { KioskModeService } from '../../../services/kiosk-mode.service'
 import { HttpService } from '../../../services/http-service'
 import { FeatureFlagService, FLAGS } from '../../../services/feature-flag.service'
@@ -221,59 +207,57 @@ export class LocationsGroupContainerComponent implements OnInit, OnDestroy {
       map(([pins, user]) => {
         const student = [user];
         const stateData = this.FORM_STATE.data;
-        const isDedicatedUser = this.FORM_STATE.kioskMode && (
-        (!!user?.roles.includes('_profile_kiosk') ||
-        stateData?.kioskModeStudent instanceof User)
-      );
-      const isStaffUser = ((!this.user.isStudent()) && this.FORM_STATE.kioskMode);
-      const isChooseSelectedStudent = (isStaffUser || isDedicatedUser);
-      // on kioskmode student is found in selectedStudents[0]
-      if (isChooseSelectedStudent) {
-        // TODO when not found case
-        student[0] = stateData.kioskModeStudent;
-      }
-      pins = pins.filter(p => {
-        // filtering here based on location and student may return (or not) a pinnable
-        if (p.type === 'location' && p.location !== null) {
-          // is a Location
-          try {
-            const loc = Location.fromJSON(p.location);
-            // staff is unfiltered but not in kiosk mode
-            if (this.isStaff && !this.FORM_STATE?.kioskMode) {
-              return p;
-            }
-            // filter students here
-            if (this.visibilityService.filterByVisibility(loc, student)) {
-              return p;
-            }
-          } catch (e) {
-            console.log(e.message)
-          }
-        // folder containing pinnables
-        } else if (p.type === 'category') {
-          return p;
+        const isDedicatedUser = this.FORM_STATE.kioskMode &&
+          ((!!user?.roles.includes('_profile_kiosk') || stateData?.kioskModeStudent instanceof User));
+        const isStaffUser = ((!this.user.isStudent()) && this.FORM_STATE.kioskMode);
+        const isChooseSelectedStudent = (isStaffUser || isDedicatedUser);
+
+        // on kioskmode student is found in selectedStudents[0]
+        if (isChooseSelectedStudent) {
+          // TODO when not found case
+          student[0] = stateData.kioskModeStudent || stateData.selectedStudents[0];
         }
-      });
-
-      const { passLimitInfo } = this.FORM_STATE;
-      if (!passLimitInfo?.showPasses) {
-        return pins;
-      }
-
-      if (passLimitInfo.current === 0) {
-        pins.forEach(p => {
-          if (p.location === null) { // ignore folders
+        pins = pins.filter(p => {
+          // filtering here based on location and student may return (or not) a pinnable
+          if (p.type === 'location' && p.location !== null) {
+            // is a Location
+            try {
+              const loc = Location.fromJSON(p.location);
+              // staff is unfiltered but not in kiosk mode
+              if (this.isStaff && !this.FORM_STATE?.kioskMode) {
+                return p;
+              }
+              // filter students here
+              if (this.visibilityService.filterByVisibility(loc, student)) {
+                return p;
+              }
+            } catch (e) {
+            }
+          // folder containing pinnables
+          } else if (p.type === 'category') {
             return p;
           }
-          if (!p?.location?.restricted) {
-            p.location.restricted = true;
-          }
         });
-      }
-      return pins;
-    }),
-  );
 
+
+        const { passLimitInfo } = this.FORM_STATE;
+        if (!passLimitInfo?.showPasses) {
+          return pins;
+        }
+
+        if (passLimitInfo.current === 0) {
+          pins.forEach(p => {
+            if (p.location === null) { // ignore folders
+              return p;
+            }
+            if (!p?.location?.restricted) {
+              p.location.restricted = true;
+            }
+          });
+        }
+        return pins;
+      })
+    );
     this.pinnable = this.FORM_STATE.data.direction ? this.FORM_STATE.data.direction.pinnable : null;
   }
 
@@ -420,12 +404,13 @@ export class LocationsGroupContainerComponent implements OnInit, OnDestroy {
         }
       });
       dialogRef.afterClosed().subscribe(result => {
-        if (!result.override) {
+        if (result.override) {
+          setTimeout(() => {
+            return resolve(true);
+          }, 200);
+        } else {
           return resolve(false);
         }
-        setTimeout(() => {
-          return resolve(true);
-        }, 200);
       });
     });
   }
@@ -435,20 +420,21 @@ export class LocationsGroupContainerComponent implements OnInit, OnDestroy {
     const { numberOfStudentsInRoom } = location;
     if (!this.kioskService.isKisokMode() && numberOfStudentsInRoom !== undefined) {
       const totalStudents = numberOfStudentsInRoom + this.FORM_STATE.data.selectedStudents.length;
-      if (location.max_passes_to_active && (totalStudents >= location.max_passes_to)) {
-        // if location has a limit and limit is reached
-        // trigger wait-in-line if enabled for school
-        // if (!this.waitInLineEnabled) {
-        //
-        // }
+      let reached = location?.max_passes_to_active;
+      if (this.user.isStudent() || this.kioskService.isKisokMode()) {
+        reached = reached && totalStudents >= location.max_passes_to
+      } else {
+        reached = reached && totalStudents > location.max_passes_to;
+      }
 
+      if (reached) {
         const overrideRoomLimit = await this.showDestinationLimitReachedFromCategory(
           location.max_passes_to,
-          totalStudents,
+          this.FORM_STATE.data.selectedStudents.length,
           numberOfStudentsInRoom,
           this.user.isStudent());
 
-        if (!overrideRoomLimit) {
+        if (!overrideRoomLimit || (overrideRoomLimit && this.user.isStudent())) {
           return;
         }
       }
@@ -514,6 +500,7 @@ export class LocationsGroupContainerComponent implements OnInit, OnDestroy {
         if (selectedStudents?.length > 1) {
           this.FORM_STATE.formMode.formFactor = FormFactor.HallPass
         } else {
+          console.log(wilEnabled);
           this.FORM_STATE.formMode.formFactor = wilEnabled && destLimitReached
             ? FormFactor.WaitInLine
             : FormFactor.HallPass

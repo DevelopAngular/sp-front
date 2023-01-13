@@ -76,7 +76,7 @@ $climb: '../../../..';
   &.grades {
     justify-content: left;
     margin: 0;
-    margin-bottom: -7px-10px;// for grades + students to look as being in the same container compensates padding + margin 
+    margin-bottom: -7px-10px;// for grades + students to look as being in the same container compensates padding + margin
     padding-left: 0;
     width: 100%;
   }
@@ -93,7 +93,8 @@ $climb: '../../../..';
 }
 
 .students-search {
-  flex: 0 0 100%;
+  flex: 0 0 auto;
+  max-width: 100%;
 }
 
 ul.error {
@@ -172,7 +173,7 @@ ul.error {
      }
     }
     &.selected.grayed {
-      color: $gray500;  
+      color: $gray500;
       background-color: $gray050;
       &:after {
         background-image: none;

@@ -540,6 +540,13 @@ export class LocationTableComponent implements OnInit, OnDestroy {
     this.onSelect.emit(choice);
   }
 
+  checkRoomIsHidden(location): boolean {
+    if (this.forKioskMode) {
+      return this.isValidLocation(location.id);
+    }
+    return true;
+  }
+
   isSelected(choice) {
     return !!this.starredChoices.find(item => item.id === choice.id);
   }

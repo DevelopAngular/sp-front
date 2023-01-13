@@ -322,10 +322,14 @@ export class ProfilePictureComponent implements OnInit, OnDestroy {
                 return;
               }
 
+              const file_key = student.extras.clever ?? student.extras.clever_student_student ?? student.primary_email ?? null;
+              const info  = file_key ? files[file_key] : null;
+              const file_name = info?.file.name;
+              const student_number = file_key ?? ''; 
               const user = {
                 ...student,
-                file_name: files[student.primary_email] ? files[student.primary_email].file.name : files[student.extras.clever_student_number].file.name,
-                student_number: student.extras.clever_student_number
+                file_name,
+                student_number,
               };
               return user;
             })

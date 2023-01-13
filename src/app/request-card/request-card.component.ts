@@ -31,6 +31,8 @@ import {Location} from '../models/Location';
 import {PassLimitService} from '../services/pass-limit.service';
 import {ConfirmDeleteKioskModeComponent} from './confirm-delete-kiosk-mode/confirm-delete-kiosk-mode.component';
 import {ToastService} from '../services/toast.service';
+import { HttpErrorResponse } from '@angular/common/http'
+import { EncounterPreventionService } from '../services/encounter-prevention.service'
 
 @Component({
   selector: 'app-request-card',
@@ -109,7 +111,8 @@ export class RequestCardComponent implements OnInit, OnDestroy {
     private locationsService: LocationsService,
     private passLimitsService: PassLimitService,
     private createPassFormRef: MatDialogRef<CreateHallpassFormsComponent>,
-    private toast: ToastService
+    private toast: ToastService,
+    private encounterService: EncounterPreventionService
   ) {
   }
 
@@ -631,13 +634,15 @@ export class RequestCardComponent implements OnInit, OnDestroy {
       .subscribe({
         next: () => this.dialogRef.close(),
         error: (err: Error) => {
-          if (err.message === 'override cancelled') {
-            console.log(err.message);
-          } else {
-            // something unexpected happened, please panic here
-            this.openErrorToast(err);
-            console.error(err);
+          if ((err as HttpErrorResponse).error.conflict_student_ids) {
+            this.encounterService.showEncounterPreventionToast({
+              exclusionPass: this.request,
+              isStaff: this.forStaff
+            });
+            return;
           }
+          this.openErrorToast(err);
+          console.error(err);
         }
       });
   }

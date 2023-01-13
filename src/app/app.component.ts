@@ -2,7 +2,7 @@ import {HttpClient} from '@angular/common/http';
 import {AfterViewInit, Component, ElementRef, HostListener, NgZone, OnDestroy, OnInit, ViewChild} from '@angular/core';
 import {MatDialog} from '@angular/material/dialog';
 import {ActivatedRoute, NavigationEnd, Router} from '@angular/router';
-import {filter as _filter, find} from 'lodash';
+import {filter as _filter} from 'lodash';
 import {BehaviorSubject, interval, Observable, ReplaySubject, Subject, zip} from 'rxjs';
 
 import { concatMap, filter, map, mergeMap, switchMap, take, takeUntil, withLatestFrom } from 'rxjs/operators'
@@ -297,7 +297,8 @@ export class AppComponent implements OnInit, AfterViewInit, OnDestroy {
       takeUntil(this.subscriber$))
       .subscribe(([schools, currentSchool]) => {
         this.schools = schools;
-        if (currentSchool && !find(schools, {id: currentSchool.id})) {
+        const isCurrentSchoolInList = schools.find(s => s.id == currentSchool.id);
+        if (currentSchool && !isCurrentSchoolInList) {
           this.http.setSchool(schools[0]);
         }
       });

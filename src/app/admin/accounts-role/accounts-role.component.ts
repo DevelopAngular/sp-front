@@ -99,6 +99,36 @@ export class AccountsRoleComponent implements OnInit, OnDestroy {
           this.accountRoleNextUrl$ = this.userService.nextRequests$[this.role];
         }),
         switchMap(() => {
+          if (this.role === '_profile_parent') {
+            return this.parentService.getConnectedParents().pipe(
+              map(connectedResponse => {
+                let myInterfacesArray = connectedResponse.results.map(account=>{
+
+                  return <ParentResponse>
+                    {
+                      id: account.id,
+                      first_name: account.first_name,
+                      last_name: account.last_name,
+                      display_name: account.display_name,
+                      created: account.created, // return as timestamp Date string
+                      first_login: account.first_login, // return as timestamp Date string
+                      last_login: account.last_login, // return as timestamp Date string
+                      last_updated: account.last_updated, // return as timestamp Date string
+                      active: account.is_active,
+                      primary_email: account.email,
+                      profile_picture: null,
+                      roles: account.roles,
+                      sync_types: [],
+                      username: account.username,
+                      students: account.students
+                    };
+
+                });
+                return myInterfacesArray;
+              })
+            );
+          }
+
           return this.userService.getAccountsRole(this.role);
         }),
         /**
@@ -108,43 +138,6 @@ export class AccountsRoleComponent implements OnInit, OnDestroy {
          *
          * The following should be converted using User.fromJSON if intending to use methods on that class
          */
-        switchMap((accounts: User[]) => {
-          if (accounts.length === 0) {
-            return of([]);
-          }
-
-          if (this.role !== '_profile_parent') {
-            return of(accounts);
-          }
-
-          return this.parentService.getConnectedParents().pipe(
-            map(connectedResponse => {
-              let myInterfacesArray = connectedResponse.results.map(account=>{
-
-                return <ParentResponse>
-                {
-                  id: account.id,
-                  first_name: account.first_name,
-                  last_name: account.last_name,
-                  display_name: account.display_name,
-                  created: account.created, // return as timestamp Date string
-                  first_login: account.first_login, // return as timestamp Date string
-                  last_login: account.last_login, // return as timestamp Date string
-                  last_updated: account.last_updated, // return as timestamp Date string
-                  active: account.is_active,
-                  primary_email: account.email,
-                  profile_picture: null,
-                  roles: account.roles,
-                  sync_types: [],
-                  username: account.username,
-                  students: account.students
-                 };
-            
-              });
-             return myInterfacesArray;
-            })
-          );
-        }),
         switchMap((accounts: User[]) => {
           if (accounts.length === 0) {
             return of([]);

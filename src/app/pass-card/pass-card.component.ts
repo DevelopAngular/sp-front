@@ -6,7 +6,7 @@ import {MAT_DIALOG_DATA, MatDialog, MatDialogRef} from '@angular/material/dialog
 import {ConsentMenuComponent} from '../consent-menu/consent-menu.component';
 import {Navigation} from '../create-hallpass-forms/main-hallpass--form/main-hall-pass-form.component';
 import {catchError, concatMap, filter, map, pluck, retryWhen, switchMap, take, takeUntil, tap} from 'rxjs/operators';
-import {BehaviorSubject, interval, merge, Observable, of, Subject, zip} from 'rxjs';
+import { BehaviorSubject, interval, merge, Observable, of, Subject, throwError, zip } from 'rxjs'
 import {CreateFormService} from '../create-hallpass-forms/create-form.service';
 import {HallPassesService} from '../services/hall-passes.service';
 import {TimeService} from '../services/time.service';
@@ -21,7 +21,7 @@ import {UserService} from '../services/user.service';
 import {ToastService} from '../services/toast.service';
 import {EncounterPreventionService} from '../services/encounter-prevention.service';
 import {isEmpty, remove} from 'lodash';
-import {HttpErrorResponse} from '@angular/common/http';
+import {HttpErrorResponse} from '@angular/common/http'
 import {
   ConfirmationDialogComponent, ConfirmationTemplates,
   RecommendedDialogConfig
@@ -82,8 +82,10 @@ export class PassCardComponent implements OnInit, OnDestroy {
   p3Title;
   p3Subtitle;
   p3Stamp;
+  p3StampExtra;
   p4Title;
   p4Subtitle;
+  p4StampExtra;
   p4Stamp;
 
   user: User;
@@ -131,6 +133,7 @@ export class PassCardComponent implements OnInit, OnDestroy {
     private locationsService: LocationsService,
     private recurringConfigService: RecurringSchedulePassService
   ) {
+    console.log(this.data);
   }
 
   getUserName(user: any) {
@@ -176,7 +179,12 @@ export class PassCardComponent implements OnInit, OnDestroy {
   }
 
   get hasClose() {
-    return ((this.forInput || this.forStaff || this.pass.cancellable_by_student || this.user.isStudent()) && !this.fromPast) && !this.hideButton;
+    if (this.hideButton === false || this.fromPast) {
+      return false;
+    }
+
+    // return ((this.forInput || this.forStaff || this.pass.cancellable_by_student || this.user.isStudent()) && !this.fromPast) && !this.hideButton;
+    return this.user?.id === this.pass?.issuer?.id ? true : ((this.forInput || this.forStaff || (this.pass.cancellable_by_student && this.user.isStudent())) && !this.fromPast) && !this.hideButton;
   }
 
   ngOnInit() {
@@ -316,11 +324,11 @@ export class PassCardComponent implements OnInit, OnDestroy {
       const mins: number = Math.floor(Math.floor(diff) / 60);
       const secs: number = Math.abs(Math.floor(diff) % 60);
       const totalTime = mins + ':' + (secs < 10 ? '0' + secs : secs);
-      this.buildPage('Pass Ended', '', totalTime + ' - Total Time', (this.pagerPages + 1));
+      this.buildPage('Pass Ended', '', totalTime, (this.pagerPages + 1), ' - Total Time');
     }
   }
 
-  buildPage(title: string, subtitle: string, stamp: string, page: number) {
+  buildPage(title: string, subtitle: string, stamp: string, page: number, stampExtra?: string) {
     if (page === 1) {
       this.p1Title = title;
       this.p1Subtitle = subtitle;
@@ -333,10 +341,16 @@ export class PassCardComponent implements OnInit, OnDestroy {
       this.p3Title = title;
       this.p3Subtitle = subtitle;
       this.p3Stamp = stamp;
+      if (stampExtra) {
+        this.p3StampExtra = stampExtra;
+      }
     } else if (page === 4) {
       this.p4Title = title;
       this.p4Subtitle = subtitle;
       this.p4Stamp = stamp;
+      if (stampExtra) {
+        this.p4StampExtra = stampExtra;
+      }
     }
     this.pagerPages++;
   }
@@ -423,13 +437,13 @@ export class PassCardComponent implements OnInit, OnDestroy {
       switchMap(({conflict_student_ids, passes}) => {
         if (conflict_student_ids) {
           if (!this.forStaff) {
-            this.toastService.openToast({
-              title: 'Sorry, you can\'t start your pass right now.',
-              subtitle: 'Please try again later.',
-              type: 'error',
-              encounterPrevention: true,
-              exclusionPass: {...this.pass, travel_type: this.selectedTravelType}
-            });
+            this.encounterService.showEncounterPreventionToast({
+              exclusionPass: {
+                ...this.pass,
+                travel_type: this.selectedTravelType
+              } as HallPass,
+              isStaff: this.forStaff
+            })
             this.dialogRef.close();
             return of(null);
           } else {
@@ -441,18 +455,15 @@ export class PassCardComponent implements OnInit, OnDestroy {
                   tap((groups) => {
                     const exclusionGroups = groups[+id];
                     if (exclusionGroups[0].enabled) {
-                      this.toastService.openToast({
-                        title: 'This pass can\'t start now to prevent encounter.',
-                        subtitle: 'These students can\'t have a pass at the same time.',
-                        type: 'error',
-                        encounterPrevention: true,
+                      this.encounterService.showEncounterPreventionToast({
                         exclusionPass: {
                           ...this.pass,
                           travel_type: this.selectedTravelType,
                           student: this.selectedStudents.find(user => +user.id === +id)
-                        },
+                        } as HallPass,
+                        isStaff: this.forStaff,
                         exclusionGroups
-                      });
+                      })
                     }
                   }));
             }));
@@ -555,10 +566,13 @@ export class PassCardComponent implements OnInit, OnDestroy {
           })
         );
       }),
-
       retryWhen((errors: Observable<HttpErrorResponse>) => {
         return errors.pipe(
-          filter(errorResponse => errorResponse.error?.message === 'one or more pass limits reached!'),
+          tap((errorResponse: HttpErrorResponse) => {
+            if (errorResponse.error?.message !== 'one or more pass limits reached!') {
+              throw errorResponse
+            }
+          }),
           concatMap((errorResponse) => {
             const students = errorResponse.error.students as { displayName: string, id: number, passLimit: number }[];
             const numPasses = body['students']?.length || 1;
@@ -624,9 +638,21 @@ export class PassCardComponent implements OnInit, OnDestroy {
           })
         );
       }),
-      catchError(error => {
-        debugger;
-        return of(error);
+      catchError((error: HttpErrorResponse) => {
+        if (error.error.detail === 'could not create pass' && this.pass.student.status === 'suspended') {
+          this.toastService.openToast({
+            title: 'Your account is suspended. Please contact your school admin',
+            type: 'error'
+          });
+          return throwError(error);
+        }
+
+        this.toastService.openToast({
+          title: 'Something went wrong!',
+          subtitle: 'Could not create pass, contact support for more info',
+          type: 'error'
+        });
+        return throwError(error);
       })
     ).subscribe({
       next: () => {

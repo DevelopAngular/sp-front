@@ -1,9 +1,8 @@
 import {AfterViewInit, Component, OnDestroy, OnInit} from '@angular/core';
 import { MatDialog } from '@angular/material/dialog';
-import { IDCard } from '../admin/id-cards/id-card-editor/id-card-editor.component';
 import { IdcardOverlayContainerComponent } from '../idcard-overlay-container/idcard-overlay-container.component';
 import { QRBarcodeGeneratorService } from '../services/qrbarcode-generator.service';
-import { IDCardService } from '../services/IDCardService';
+import { IDCardService, IDCard } from '../services/IDCardService';
 
 declare const window;
 

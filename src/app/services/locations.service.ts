@@ -273,7 +273,7 @@ export class LocationsService {
     return result.override
   }
 
-  reachedRoomPassLimit(currentPage: 'from' | 'to', passLimit: PassLimit, isStaff?: boolean) {
+  reachedRoomPassLimit(currentPage: 'from' | 'to', passLimit: PassLimit, isStaff?: boolean): boolean {
     if (!passLimit) {
       return false;
     }

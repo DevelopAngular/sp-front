@@ -67,7 +67,7 @@
                     <span style="user-select: text">{{ (request.attachment_message===''?'No message':request.attachment_message) }}</span>
                     <div *ngIf="request.status==='declined'">
                       <br>
-                      <span [style.font-weight]="'bold'" ignore>Message from {{ request.teacher.last_name }}:</span><br>
+                      <span [style.font-weight]="'bold'" ignore>Message from {{ request.teachers[0].last_name }}:</span><br>
                       <span style="user-select: text">{{ (request.declined_message===''?'No message':request.declined_message) }}</span> <!-- deny_message -->
                     </div>
                   </div>
@@ -92,7 +92,7 @@
                     <span style="user-select: text">{{ (request.attachment_message===''?'No message':request.attachment_message) }}</span>
                     <div *ngIf="request.status==='declined'">
                       <br>
-                      <span [style.font-weight]="'bold'" ignore>Message from {{request.teacher.last_name}}:</span><br>
+                      <span [style.font-weight]="'bold'" ignore>Message from {{request.teachers[0].last_name}}:</span><br>
                       <span style="user-select: text">{{ (request.declined_message===''?'No message':request.declined_message) }}</span> <!-- deny_message -->
                     </div>
                   </div>
@@ -152,7 +152,7 @@
               <div class="request-description">
                 <img class="request-description-icon" [src]="'./assets/Arrow (White).svg' | resolveAsset">
                 <div class="request-description-text" ignore>
-                  Pass Request accepted by {{ request.teacher.last_name }}
+                  Pass Request accepted by {{ request.teachers[0].last_name }}
                 </div>
               </div>
             </div>
@@ -193,7 +193,7 @@
                   <span style="user-select: text">{{ (request.attachment_message===''?'No message':request.attachment_message) }}</span>
                   <div *ngIf="request.status==='declined'">
                     <br>
-                    <span [style.font-weight]="'bold'" ignore>Message from {{ request.teacher.last_name }}:</span><br>
+                    <span [style.font-weight]="'bold'" ignore>Message from {{ request.teachers[0].last_name }}:</span><br>
                     <span style="user-select: text">{{ (request.declined_message===''?'No message':request.declined_message) }}</span> <!-- deny_message -->
                   </div>
                 </div>
@@ -217,7 +217,7 @@
                   <span style="user-select: text">{{ (request.attachment_message===''?'No message':request.attachment_message) }}</span>
                   <div *ngIf="request.status==='declined'">
                     <br>
-                    <span [style.font-weight]="'bold'" ignore>Message from {{request.teacher.last_name}}:</span><br>
+                    <span [style.font-weight]="'bold'" ignore>Message from {{request.teachers[0].last_name}}:</span><br>
                     <span style="user-select: text">{{ (request.declined_message===''?'No message':request.declined_message) }}</span> <!-- deny_message -->
                   </div>
                 </div>
