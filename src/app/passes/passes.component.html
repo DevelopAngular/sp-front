@@ -57,7 +57,7 @@
     >
       <div class="main-page-left">
         <div class="current-pass" [style.margin-bottom]="'15px'">
-          <div *ngIf="(isActivePass$ | async) || (isActiveRequest$ | async) || (isActiveWaitInLine$ | async); else newPass;" class="center">
+          <div *ngIf="((isActivePass$ | async) || (isActiveRequest$ | async) || (isActiveWaitInLine$ | async) && isStudent); else newPass;" class="center">
             <app-inline-request-card *ngIf="(isActiveRequest$ | async) && !(isActivePass$ | async)" [request]="currentRequest$ | async"></app-inline-request-card>
             <app-inline-pass-card *ngIf="isActivePass$ | async" [pass]="currentPass$ | async" [isActive]="true"></app-inline-pass-card>
             <app-wait-in-line-card *ngIf="isActiveWaitInLine$ | async" [wil]="currentWaitInLine$ | async"></app-wait-in-line-card>
@@ -167,7 +167,7 @@
   <h1 class="passes-heading">Passes</h1>
   <div class="main-page-left">
     <div class="current-pass">
-      <div *ngIf="(isActivePass$ | async) || (isActiveRequest$ | async) || ((isActiveWaitInLine$ | async) && (currentWaitInLine$ | async)); else newPass;" class="center">
+      <div *ngIf="((isActivePass$ | async) || (isActiveRequest$ | async) || ((isActiveWaitInLine$ | async) && (currentWaitInLine$ | async)) && isStudent); else newPass;" class="center">
         <app-inline-request-card *ngIf="(isActiveRequest$ | async) && !(isActivePass$ | async)" [request]="currentRequest$ | async"></app-inline-request-card>
         <app-inline-pass-card *ngIf="isActivePass$ | async" [pass]="currentPass$ | async" [isActive]="true"></app-inline-pass-card>
         <app-inline-wait-in-line-card *ngIf="(isActiveWaitInLine$ | async) && !!(currentWaitInLine$ | async)" [wil]="currentWaitInLine$ | async" [forStaff]="isStaff"></app-inline-wait-in-line-card>
@@ -196,7 +196,7 @@
         <!--      <div class="text ds-empty-text-info">The hallway will never be the same</div>-->
         <!--    </div>-->
         <div class="waitinline-passes pass-collection" *ngIf="!isStudent">
-            <app-pass-collection *ngIf="isWaitInLine && isStaff" [waitInLine]="true" [forStaff]="isStaff" [style.width]="'460px'" [passProvider]="waitInLinePasses" [title]="'Waiting in Line…'" [columns]="3" [showProfilePictures]="showProfilePictures$ | async"></app-pass-collection>
+            <app-pass-collection *ngIf="isWaitInLine && isStaff" [waitInLine]="true" [forStaff]="isStaff" [style.width]="'460px'" [passProvider]="waitInLinePasses" [title]="waitInLineTitle | async" [columns]="3" [showProfilePictures]="showProfilePictures$ | async"></app-pass-collection>
         </div>
         <div class="active-passes pass-collection">
             <app-pass-collection *ngIf="isStaff" [isActive]="true" [forStaff]="isStaff" [style.width]="'460px'" [passProvider]="activePasses" [title]="'Active Passes'" [columns]="3" [showProfilePictures]="showProfilePictures$ | async"></app-pass-collection>

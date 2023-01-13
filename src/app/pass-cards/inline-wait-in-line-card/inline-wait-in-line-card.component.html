@@ -25,7 +25,7 @@
           <ng-container [ngSwitch]="waitInLineState">
             <div class="end-pass-content" *ngSwitchCase="1">
               <img class="ds-mr-20" [src]="'./assets/Clock (White).svg' | resolveAsset" alt="Clock face">
-              {{wil$.value.position}} in line<span #waitingDots></span>
+              <span style="width: 210px">{{wil$.value.position}} in line</span><span style="width: 20px" #waitingDots></span>
             </div>
 
             <!-- TODO: Kick student to the back of line if attempts expire -->
@@ -49,7 +49,7 @@
               <ng-template #passAttemptTooltip>
                 <div class="ds-tooltip" style="width: 200px">
                 <span>
-                  You have {{acceptingPassTimeRemaining}} sec left to start your pass or you will be sent to the back of the line.
+                  You have {{acceptingPassTimeRemaining}} sec left to start your pass or you will be sent back in line.
                 </span>
                 </div>
               </ng-template>

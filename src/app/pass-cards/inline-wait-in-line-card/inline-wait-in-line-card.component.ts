@@ -3,12 +3,10 @@ import {
   ElementRef,
   Inject,
   Input,
-  OnChanges,
   OnDestroy,
   OnInit,
   Optional,
   QueryList,
-  SimpleChanges,
   TemplateRef,
   ViewChild,
   ViewChildren

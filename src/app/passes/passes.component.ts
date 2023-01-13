@@ -11,7 +11,7 @@ import {
 } from '@angular/core';
 import {MatDialog, MatDialogRef, MatDialogState} from '@angular/material/dialog';
 // TODO: Replace combineLatest with non-deprecated implementation
-import {BehaviorSubject, combineLatest, forkJoin, interval, merge, Observable, of, Subject} from 'rxjs';
+import { BehaviorSubject, combineLatest, forkJoin, interval, merge, Observable, of, Subject, timer } from 'rxjs'
 import {
   concatMap,
   distinctUntilChanged,
@@ -173,6 +173,11 @@ export class PassesComponent implements OnInit, AfterViewInit, OnDestroy {
   isInboxClicked$: Observable<boolean>;
 
   cursor = 'pointer';
+
+  waitInLineTitle: Observable<string> = timer(0, 750).pipe(
+    takeUntil(this.destroy$),
+    map(count => `Waiting in Line${'.'.repeat(count % 4)}`)
+  );
 
   public schoolsLength$: Observable<number>;
   private createHallPassDialogRef: MatDialogRef<MainHallPassFormComponent>;

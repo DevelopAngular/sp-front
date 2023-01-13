@@ -194,13 +194,15 @@ export class WaitInLineCardComponent implements OnInit {
     }
 
     // 3. Send data to backend
-    if (this.forStaff) {
-      this.wilService.fakeWilPasses.next([...this.wilService.fakeWilPasses.getValue(), this.wil]);
-    } else {
-      this.wilService.fakeWil.next(this.wil);
-      this.wilService.fakeWilPasses.next([...this.wilService.fakeWilPasses.getValue(), this.wil]);
-    }
+    // if (this.forStaff) {
+    //   this.wilService.fakeWilPasses.next([...this.wilService.fakeWilPasses.getValue(), this.wil]);
+    // } else {
+    //   this.wilService.fakeWil.next(this.wil);
+    //   this.wilService.fakeWilPasses.next([...this.wilService.fakeWilPasses.getValue(), this.wil]);
+    // }
 
+    this.wilService.fakeWil.next(this.wil);
+    this.wilService.fakeWilPasses.next([...this.wilService.fakeWilPasses.getValue(), this.wil]);
     this.wilService.fakeWilActive.next(true);
     this.performingAction = false;
     this.dialogRef.close();

@@ -2,7 +2,7 @@ import {AfterViewInit, Component, ElementRef, HostListener, OnDestroy, OnInit, V
 import {MatDialog, MatDialogRef, MatDialogState} from '@angular/material/dialog';
 import {KioskModeService, KioskSettings} from '../services/kiosk-mode.service';
 import {LiveDataService} from '../live-data/live-data.service';
-import {BehaviorSubject, combineLatest, EMPTY, Observable, of, Subject} from 'rxjs';
+import { BehaviorSubject, combineLatest, EMPTY, Observable, of, Subject, timer } from 'rxjs'
 import {UserService} from '../services/user.service';
 import {HallPassesService} from '../services/hall-passes.service';
 import {HallPass} from '../models/HallPass';
@@ -64,6 +64,11 @@ export class KioskModeComponent implements OnInit, AfterViewInit, OnDestroy {
   setFocus() {
     this.inputFocus();
   }
+
+  waitInLineTitle: Observable<string> = timer(0, 750).pipe(
+    takeUntil(this.destroy$),
+    map(count => `Waiting in Line${'.'.repeat(count % 4)}`)
+  );
 
   constructor(
     private dialog: MatDialog,
