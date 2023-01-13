@@ -28,6 +28,7 @@ import { ConsentMenuComponent } from '../../consent-menu/consent-menu.component'
 import { Util } from '../../../Util'
 import { KioskModeService } from '../../services/kiosk-mode.service'
 import { LocationsService } from '../../services/locations.service'
+import { Title } from '@angular/platform-browser'
 
 export enum WILHeaderOptions {
   Delete = 'delete',
@@ -147,6 +148,7 @@ export class InlineWaitInLineCardComponent implements OnInit, OnDestroy {
   constructor(
     @Optional() private dialogRef: MatDialogRef<InlineWaitInLineCardComponent>,
     @Optional() @Inject(MAT_DIALOG_DATA) public dialogData: { pass: WaitInLine, forStaff: boolean },
+    private titleService: Title,
     private http: HttpService,
     private dataService: DataService,
     private locationsService: LocationsService,
@@ -219,6 +221,20 @@ export class InlineWaitInLineCardComponent implements OnInit, OnDestroy {
           this.wilService.fakeWilPasses.next([newWil]);
         }
       })
+    }
+  }
+
+  readyToStartTick(remainingTime: number) {
+    this.acceptingPassTimeRemaining = remainingTime;
+    if (remainingTime === 30 || remainingTime === 29) {
+      this.titleService.setTitle('⚠️ It\'s Time to Start your Pass');
+      return
+    }
+
+    if (remainingTime % 2 === 0) {
+      this.titleService.setTitle(`⏳ ${remainingTime} sec left...`);
+    } else {
+      this.titleService.setTitle(document.title = `Pass Ready to Start`);
     }
   }
 

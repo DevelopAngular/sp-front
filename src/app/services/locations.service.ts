@@ -1,16 +1,16 @@
-import {Injectable} from '@angular/core';
+import { Injectable } from '@angular/core'
 import { bufferCount, flatMap, reduce, take } from 'rxjs/operators'
-import {constructUrl} from '../live-data/helpers';
-import {Paged} from '../models';
-import {HttpService} from './http-service';
-import {User} from '../models/User';
-import {BehaviorSubject, from, Observable, of} from 'rxjs';
-import {Location} from '../models/Location';
-import {Pinnable} from '../models/Pinnable';
-import {Store} from '@ngrx/store';
-import {AppState} from '../ngrx/app-state/app-state';
-import {getTeacherLocationsCollection} from '../ngrx/teacherLocations/state/locations-getters.state';
-import {getLocsWithTeachers} from '../ngrx/teacherLocations/actions';
+import { constructUrl } from '../live-data/helpers'
+import { Paged } from '../models'
+import { HttpService } from './http-service'
+import { User } from '../models/User'
+import { BehaviorSubject, from, Observable, of } from 'rxjs'
+import { Location } from '../models/Location'
+import { Pinnable } from '../models/Pinnable'
+import { Store } from '@ngrx/store'
+import { AppState } from '../ngrx/app-state/app-state'
+import { getTeacherLocationsCollection } from '../ngrx/teacherLocations/state/locations-getters.state'
+import { getLocsWithTeachers } from '../ngrx/teacherLocations/actions'
 import {
   getCreatedLocation,
   getFoundLocations,
@@ -19,7 +19,7 @@ import {
   getLocationsCollection,
   getLocationsFromCategoryGetter,
   getUpdatedLocation
-} from '../ngrx/locations/states/locations-getters.state';
+} from '../ngrx/locations/states/locations-getters.state'
 import {
   getLocations,
   getLocationsFromCategory,
@@ -28,18 +28,18 @@ import {
   searchLocations,
   updateLocation,
   updateLocationSuccess,
-} from '../ngrx/locations/actions';
-import {updatePinnableSuccess} from '../ngrx/pinnables/actions';
+} from '../ngrx/locations/actions'
+import { updatePinnableSuccess } from '../ngrx/pinnables/actions'
 import {
   getFavoriteLocationsCollection,
   getLoadedFavoriteLocations,
   getLoadingFavoriteLocations
-} from '../ngrx/favorite-locations/states/favorite-locations-getters.state';
-import {getFavoriteLocations, updateFavoriteLocations} from '../ngrx/favorite-locations/actions';
-import {PassLimit} from '../models/PassLimit';
-import {getPassLimitCollection, getPassLimitEntities} from '../ngrx/pass-limits/states';
-import {getPassLimits, updatePassLimit} from '../ngrx/pass-limits/actions';
-import {PollingService} from './polling-service';
+} from '../ngrx/favorite-locations/states/favorite-locations-getters.state'
+import { getFavoriteLocations, updateFavoriteLocations } from '../ngrx/favorite-locations/actions'
+import { PassLimit } from '../models/PassLimit'
+import { getPassLimitCollection, getPassLimitEntities } from '../ngrx/pass-limits/states'
+import { getPassLimits, updatePassLimit } from '../ngrx/pass-limits/actions'
+import { PollingService } from './polling-service'
 import { FeatureFlagService, FLAGS } from './feature-flag.service'
 import {
   PassLimitDialogComponent
@@ -266,6 +266,7 @@ export class LocationsService {
         passLimit: passLimit.max_passes_to,
         studentCount: studentCount,
         currentCount: passLimit.to_count,
+        isWaitInLine: this.featureFlags.isFeatureEnabled(FLAGS.WaitInLine) && skipLine
       }
     });
 

@@ -35,6 +35,10 @@ export class FormFactorContainerComponent implements OnInit {
       return;
     }
 
+    if (this.forStaff) {
+      return;
+    }
+
     const { nativeElement } = divRef;
 
     this.fullScreenPass$.asObservable().pipe(

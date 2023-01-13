@@ -21,45 +21,57 @@
         <app-travel-view [pass]="wil$.value"></app-travel-view>
       </div>
       <div class="button">
-        <app-card-button [width]="buttonWidth +'px'" [height]="'81px'" [gradientColor]="wil$.value?.color_profile.gradient_color" [overlayWidth]="overlayWidth" [valid]="valid">
-          <ng-container [ngSwitch]="waitInLineState">
-            <div class="end-pass-content" *ngSwitchCase="1">
-              <img class="ds-mr-20" [src]="'./assets/Clock (White).svg' | resolveAsset" alt="Clock face">
-              <span style="width: 210px">{{wil$.value.position}} in line</span><span style="width: 20px" #waitingDots></span>
-            </div>
+        <ng-container *ngIf="waitInLineState === 1; else wilCardButton">
+          <mat-divider></mat-divider>
+          <div class="end-pass-content" style="margin-left: 10px !important; margin-top: 10px !important;">
+            <img class="ds-mr-20" [src]="'./assets/Clock (White).svg' | resolveAsset" alt="Clock face">
+            <span style="width: 120px">{{wil$.value.position}} in line<span style="width: 20px" #waitingDots></span></span>
+          </div>
+        </ng-container>
 
-            <!-- TODO: Kick student to the back of line if attempts expire -->
-            <div
-              class="end-pass-content ds-flex-center-between"
-              style="justify-content: space-around; width: 100%; border-radius: 8px"
-              *ngSwitchCase="2"
-              matRipple [matRippleDisabled]="true" [matRippleCentered]="true" [matRippleUnbounded]="false"
-              (click)="startPass()">
-              <sp-timer-spinner
-                customToolTip
-                [contentTemplate]="passAttemptTooltip"
-                [seconds]="30"
-                [showNumber]="true"
-                (pulse)="acceptingPassTimeRemaining = $event"
-                (completed)="resetAttempt()">
-              </sp-timer-spinner>
-              <span>Start Pass</span>
-              <img style="width: 25px" [src]="'./assets/Chevron Right (White).svg' | resolveAsset" alt="Right Arrow">
+        <ng-template #wilCardButton>
+          <app-card-button [width]="buttonWidth +'px'" [height]="'81px'" [gradientColor]="wil$.value?.color_profile.gradient_color" [overlayWidth]="overlayWidth" [valid]="valid">
+            <ng-container [ngSwitch]="waitInLineState">
+              <div class="end-pass-content" *ngSwitchCase="1">
+                <img class="ds-mr-20" [src]="'./assets/Clock (White).svg' | resolveAsset" alt="Clock face">
+                <span style="width: 120px">{{wil$.value.position}} in line<span style="width: 20px" #waitingDots></span></span>
+              </div>
 
-              <ng-template #passAttemptTooltip>
-                <div class="ds-tooltip" style="width: 200px">
+              <!-- TODO: Kick student to the back of line if attempts expire -->
+              <div
+                class="end-pass-content ds-flex-center-between"
+                style="justify-content: space-around; width: 100%; border-radius: 8px"
+                *ngSwitchCase="2"
+                matRipple [matRippleDisabled]="true" [matRippleCentered]="true" [matRippleUnbounded]="false"
+                (click)="startPass()">
+                <sp-timer-spinner
+                  customToolTip
+                  [contentTemplate]="passAttemptTooltip"
+                  [seconds]="30"
+                  [showNumber]="true"
+                  (pulse)="readyToStartTick($event)"
+                  (completed)="resetAttempt()">
+                </sp-timer-spinner>
+                <span>Start Pass</span>
+                <img style="width: 25px" [src]="'./assets/Chevron Right (White).svg' | resolveAsset" alt="Right Arrow">
+
+                <ng-template #passAttemptTooltip>
+                  <div class="ds-tooltip" style="width: 200px">
                 <span>
                   You have {{acceptingPassTimeRemaining}} sec left to start your pass or you will be sent back in line.
                 </span>
-                </div>
-              </ng-template>
-            </div>
+                  </div>
+                </ng-template>
+              </div>
 
-            <div class="end-pass-content" *ngSwitchDefault>
-              <mat-spinner [color]="'accent'" [diameter]="35"></mat-spinner>
-            </div>
-          </ng-container>
-        </app-card-button>
+              <div class="end-pass-content" *ngSwitchDefault>
+                <mat-spinner [color]="'accent'" [diameter]="35"></mat-spinner>
+              </div>
+            </ng-container>
+          </app-card-button>
+        </ng-template>
+
+
         <!--      <ng-container >-->
         <!--        <div class="end-pass-content" >-->
         <!--          <ng-container *ngSwitchCase="1">-->

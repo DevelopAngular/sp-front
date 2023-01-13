@@ -26,7 +26,7 @@
       [withShadow]="false"
       [leftIcon]="!data.isStudent ? null : './assets/Chevron Left (White).svg'"
       [mat-dialog-close]="{ override: true }"
-    >{{ !data.isStudent ? 'Override limit' : 'Back' }}
+    >{{ !data.isStudent || data.isWaitInLine ? 'Override limit' : 'Back' }}
     </app-gradient-button>
   </div>
 </div>
