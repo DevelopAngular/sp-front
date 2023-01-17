@@ -11,7 +11,7 @@ import {
   ViewChild,
   ViewChildren
 } from '@angular/core'
-import { BehaviorSubject, from, Observable, of, Subject, timer } from 'rxjs'
+import { BehaviorSubject, from, interval, Observable, of, Subject, timer } from 'rxjs'
 import { Navigation } from '../../create-hallpass-forms/main-hallpass--form/main-hall-pass-form.component'
 import { Pinnable } from '../../models/Pinnable'
 import { HttpService } from '../../services/http-service'
@@ -22,13 +22,16 @@ import { ScreenService } from '../../services/screen.service'
 import { DeviceDetection } from '../../device-detection.helper'
 import { WaitInLine } from '../../models/WaitInLine'
 import { WaitInLineService, WaitInLineState } from '../../services/wait-in-line.service'
-import { concatMap, filter, take, takeUntil, takeWhile, tap } from 'rxjs/operators'
+import { concatMap, filter, map, take, takeUntil, takeWhile, tap } from 'rxjs/operators'
 import { MatRipple } from '@angular/material/core'
 import { ConsentMenuComponent } from '../../consent-menu/consent-menu.component'
 import { Util } from '../../../Util'
 import { KioskModeService } from '../../services/kiosk-mode.service'
 import { LocationsService } from '../../services/locations.service'
 import { Title } from '@angular/platform-browser'
+import { CreateFormService } from '../../create-hallpass-forms/create-form.service'
+import { User } from '../../models/User'
+import { UserService } from '../../services/user.service'
 
 export enum WILHeaderOptions {
   Delete = 'delete',
@@ -72,8 +75,20 @@ export class InlineWaitInLineCardComponent implements OnInit, OnDestroy {
     }
 
     let elem = wrappers.last.nativeElement;
+    if (!elem) {
+      return;
+    }
+
     while (!elem.classList.contains('cdk-overlay-pane')) {
       elem = elem.parentElement;
+    }
+
+    if (this.user.isTeacher()) {
+      return;
+    }
+
+    if (this.kioskService.isKisokMode() && this.wil$.value.position !== '1st') {
+      return;
     }
 
     if (this.showBigCard) {
@@ -135,12 +150,15 @@ export class InlineWaitInLineCardComponent implements OnInit, OnDestroy {
   buttonWidth: number = 288;
   isMobile = DeviceDetection.isMobile();
 
+  frameMotion$: BehaviorSubject<any>;
   destroy$: Subject<any> = new Subject<any>();
   waitInLineState: WaitInLineState = WaitInLineState.WaitingInLine;
   acceptingPassTimeRemaining: number;
   passAttempts = 2;
   firstInLinePopup = false;
   firstInLinePopupRef: MatDialogRef<TemplateRef<any>>;
+  user: User;
+  currentDate = interval(1000).pipe(map(() => new Date())); // less CD cycles and better pipe caching
 
   public FORM_STATE: Navigation;
   pinnable: Pinnable;
@@ -151,6 +169,8 @@ export class InlineWaitInLineCardComponent implements OnInit, OnDestroy {
     private titleService: Title,
     private http: HttpService,
     private dataService: DataService,
+    private userService: UserService,
+    private formService: CreateFormService,
     private locationsService: LocationsService,
     private hallPassService: HallPassesService,
     private dialog: MatDialog,
@@ -184,7 +204,19 @@ export class InlineWaitInLineCardComponent implements OnInit, OnDestroy {
     return this.waitInLineState === WaitInLineState.FrontOfLine || this.openedFromPassTile;
   }
 
+  get getUserName() {
+    return this.wil$.value.issuer.id === this.user.id
+      ? 'Me'
+      : this.wil$.value.issuer.display_name;
+  }
+
   ngOnInit() {
+    this.userService.user$
+      .pipe(map(user => User.fromJSON(user)), takeUntil(this.destroy$))
+      .subscribe(user => {
+        this.user = user;
+      });
+    this.frameMotion$ = this.formService.getFrameMotionDirection();
     this.wil$ = this.wilService.fakeWil;
     this.wil$.asObservable().pipe(
       takeUntil(this.destroy$)
@@ -229,6 +261,10 @@ export class InlineWaitInLineCardComponent implements OnInit, OnDestroy {
     if (remainingTime === 30 || remainingTime === 29) {
       this.titleService.setTitle('⚠️ It\'s Time to Start your Pass');
       return
+    }
+
+    if (remainingTime === 0) {
+      this.titleService.setTitle('SmartPass');
     }
 
     if (remainingTime % 2 === 0) {
@@ -320,6 +356,7 @@ export class InlineWaitInLineCardComponent implements OnInit, OnDestroy {
     overallPassRequest$.subscribe({
       next: () => { // pass response
         this.waitInLineState = WaitInLineState.PassStarted;
+        this.titleService.setTitle('SmartPass');
         this.closeDialog(true);
       },
       error: (err) => {
@@ -402,6 +439,7 @@ export class InlineWaitInLineCardComponent implements OnInit, OnDestroy {
     if (this.passAttempts === 2) {
       this.closeDialog(true);
     }
+    this.titleService.setTitle('SmartPass');
   }
 
   ngOnDestroy() {
