@@ -217,7 +217,7 @@ export class FormFactorContainerComponent implements OnInit {
     const {height} = wrapper.getBoundingClientRect();
     const targetHeight = (document.documentElement.clientHeight * 0.70 * 0.90);
     const scalingFactor = targetHeight / height;
-    translationDistance = -100;
+    translationDistance = (this.forStaff || this.dialogData.kioskModeRoom) ? 0 : -100;
     // translate happens before the scaling
     wrapper.style.transform = `translateY(${translationDistance}px) scale(${scalingFactor})`;
   }

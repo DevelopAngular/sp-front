@@ -87,7 +87,7 @@ export class InlineWaitInLineCardComponent implements OnInit, OnDestroy {
       return;
     }
 
-    if (this.kioskService.isKisokMode() && this.wil$.value.position !== '1st') {
+    if (this.isKiosk && this.wil$.value.position !== '1st') {
       return;
     }
 
@@ -195,7 +195,7 @@ export class InlineWaitInLineCardComponent implements OnInit, OnDestroy {
   }
 
   get optionsIcon() {
-    return (this.forStaff && !this.kioskService.isKisokMode())
+    return (this.forStaff && !this.isKiosk)
       ? './assets/Dots (Transparent).svg'
       : './assets/Delete (White).svg';
   }
@@ -208,6 +208,10 @@ export class InlineWaitInLineCardComponent implements OnInit, OnDestroy {
     return this.wil$.value.issuer.id === this.user.id
       ? 'Me'
       : this.wil$.value.issuer.display_name;
+  }
+
+  get isKiosk() {
+    return this.kioskService.isKisokMode();
   }
 
   ngOnInit() {
@@ -239,7 +243,7 @@ export class InlineWaitInLineCardComponent implements OnInit, OnDestroy {
 
     this.gradient = `radial-gradient(circle at 73% 71%, ${this.wil$.value.color_profile.gradient_color})`;
 
-    if (!this.openedFromPassTile || this.kioskService.isKisokMode()) {
+    if (!this.openedFromPassTile || this.isKiosk) {
       // TODO: Remove mock code when APIs are available
       timer(0, 2000).pipe(
         takeUntil(this.destroy$),
@@ -283,7 +287,7 @@ export class InlineWaitInLineCardComponent implements OnInit, OnDestroy {
       { display: 'Delete Pass', color: '#E32C66', action: WILHeaderOptions.Delete, icon: './assets/Delete (Red).svg' }
     ];
 
-    if (this.forStaff && !this.kioskService.isKisokMode()) {
+    if (this.forStaff && !this.isKiosk) {
       options.unshift({
         display: 'Start Pass Now', color: '#7083A0', action: WILHeaderOptions.Start, icon: './assets/Pause (Blue-Gray).svg'
       })
@@ -325,20 +329,20 @@ export class InlineWaitInLineCardComponent implements OnInit, OnDestroy {
       student: wil.student.id
     };
 
-    if (this.kioskService.isKisokMode()) {
+    if (this.isKiosk) {
       newPassRequestBody['self_issued'] = true;
     }
 
-    // console.log(this.forStaff, this.kioskService.isKisokMode());
+    // console.log(this.forStaff, this.isKiosk);
     // return;
 
     const passRequest$ = this.hallPassService.createPass(newPassRequestBody).pipe(takeUntil(this.destroy$));
     let overallPassRequest$: Observable<any>;
 
-    if (!this.forStaff && !this.kioskService.isKisokMode()) {
+    if (!this.forStaff && !this.isKiosk) {
       overallPassRequest$ = passRequest$;
     } else {
-      overallPassRequest$ = from(this.locationsService.staffRoomLimitOverride(this.wil$.value.destination, this.kioskService.isKisokMode(), 1, true)).pipe(
+      overallPassRequest$ = from(this.locationsService.staffRoomLimitOverride(this.wil$.value.destination, this.isKiosk, 1, true)).pipe(
         concatMap(overrideRoomLimit => {
           if (!overrideRoomLimit) {
             this.waitInLineState = this.wil$.value.position === '1st' ? WaitInLineState.FrontOfLine : WaitInLineState.WaitingInLine;
@@ -375,6 +379,7 @@ export class InlineWaitInLineCardComponent implements OnInit, OnDestroy {
       this.firstInLinePopupRef.close()
     }
 
+    this.titleService.setTitle('SmartPass');
     this.toggleBigBackground(false);
 
     if (deleteWil) {
@@ -398,7 +403,7 @@ export class InlineWaitInLineCardComponent implements OnInit, OnDestroy {
 
   private deleteWil() {
     this.wilService.fakeWilActive.next(false);
-    this.forStaff || this.kioskService.isKisokMode()
+    this.forStaff || this.isKiosk
       ? this.wilService.fakeWilPasses.next([])
       : this.wilService.fakeWil.next(null)
   }
@@ -408,7 +413,8 @@ export class InlineWaitInLineCardComponent implements OnInit, OnDestroy {
     this.firstInLinePopup = true;
     // open this same template scaled up
     this.firstInLinePopupRef = this.dialog.open(this.root, {
-      panelClass: 'overlay-dialog',
+      panelClass: ['overlay-dialog', 'teacher-pass-card-dialog-container'],
+      backdropClass: 'custom-backdrop',
       disableClose: true,
       closeOnNavigation: true,
       data: {

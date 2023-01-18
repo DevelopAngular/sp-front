@@ -93,41 +93,6 @@
               </ng-container>
             </app-card-button>
           </ng-template>
-
-
-          <!--      <ng-container >-->
-          <!--        <div class="end-pass-content" >-->
-          <!--          <ng-container *ngSwitchCase="1">-->
-          <!--            3rd in line<span #waitingDots></span>-->
-          <!--          </ng-container>-->
-
-        <!--          <ng-container *ngSwitchDefault>-->
-        <!--            <mat-spinner [color]="'accent'" [diameter]="35"></mat-spinner>-->
-        <!--          </ng-container>-->
-        <!--        </div>-->
-        <!--&lt;!&ndash;        <app-card-button *ngSwitchCase="1" [width]="buttonWidth +'px'" [height]="'81px'" [gradientColor]="wil?.color_profile.gradient_color" [overlayWidth]="overlayWidth" [valid]="valid">&ndash;&gt;-->
-        <!--&lt;!&ndash;          <div class="end-pass-content">&ndash;&gt;-->
-
-        <!--&lt;!&ndash;          </div>&ndash;&gt;-->
-        <!--&lt;!&ndash;        </app-card-button>&ndash;&gt;-->
-
-        <!--&lt;!&ndash;        <app-card-button *ngSwitchDefault [width]="buttonWidth +'px'" [height]="'81px'" [gradientColor]="wil?.color_profile.gradient_color" [overlayWidth]="overlayWidth" [valid]="valid">&ndash;&gt;-->
-        <!--&lt;!&ndash;          <div class="start-pass-content" *ngSwitchDefault>&ndash;&gt;-->
-        <!--&lt;!&ndash;            &ndash;&gt;-->
-        <!--&lt;!&ndash;          </div>&ndash;&gt;-->
-        <!--&lt;!&ndash;        </app-card-button>&ndash;&gt;-->
-
-        <!--&lt;!&ndash;        <app-card-button (onClick)="endPass()" [disabled]="endPassLoading$ | async" [width]="buttonWidth +'px'" [height]="'81px'" [gradientColor]="pass?.color_profile.gradient_color" [overlayWidth]="overlayWidth" [valid]="valid">&ndash;&gt;-->
-        <!--&lt;!&ndash;          <div [ngClass]="{'isExpiring': isExpiring}" class="end-pass-content" *ngIf="!(endPassLoading$ | async); else spinner">&ndash;&gt;-->
-        <!--&lt;!&ndash;            <img class="lock" height="30%" *ngIf="wil.needs_check_in" [src]="'./assets/Lock dots (White).svg' | resolveAsset" alt=""> {{ timeLeft +(timeLeft===''?'':' -')}} End Pass&ndash;&gt;-->
-        <!--&lt;!&ndash;          </div>&ndash;&gt;-->
-        <!--&lt;!&ndash;          <ng-template #spinner>&ndash;&gt;-->
-        <!--&lt;!&ndash;            <div class="end-pass-content">&ndash;&gt;-->
-        <!--&lt;!&ndash;              <mat-spinner [color]="'accent'" [diameter]="35"></mat-spinner>&ndash;&gt;-->
-        <!--&lt;!&ndash;            </div>&ndash;&gt;-->
-        <!--&lt;!&ndash;          </ng-template>&ndash;&gt;-->
-        <!--&lt;!&ndash;        </app-card-button>&ndash;&gt;-->
-        <!--      </ng-container>-->
       </div>
     </div>
   </div>
@@ -135,7 +100,6 @@
   <div
     class="student-footer-info"
     *ngIf="openedFromPassTile"
-    [style.marginTop]="!kioskService.isKisokMode() ? '58px' : ''"
   >
     <app-student-passes [pass]="wil$.value" [profile]="wil$.value.student"></app-student-passes>
   </div>

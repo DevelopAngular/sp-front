@@ -53,7 +53,7 @@
     </ng-container>
 
     <div class="metrics" *ngIf="(fullScreenPass$ | async) &&
-      (FORM_STATE.formMode.formFactor === states.HallPass || FORM_STATE.formMode.formFactor === states.Request || FORM_STATE.formMode.formFactor === states.WaitInLine)">
+      (FORM_STATE.formMode.formFactor === states.HallPass || FORM_STATE.formMode.formFactor === states.Request || (states.WaitInLine && !forStaff && !dialogData.kioskModeRoom))">
       <app-student-metrics></app-student-metrics>
     </div>
 
