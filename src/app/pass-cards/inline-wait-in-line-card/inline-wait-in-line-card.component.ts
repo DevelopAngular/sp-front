@@ -83,7 +83,7 @@ export class InlineWaitInLineCardComponent implements OnInit, OnDestroy {
       elem = elem.parentElement;
     }
 
-    if (this.user.isTeacher()) {
+    if (this.user.isTeacher() && !this.isKiosk) {
       return;
     }
 
