@@ -221,6 +221,7 @@ export class NavComponent implements OnInit, AfterViewInit, OnDestroy {
       case 'openMenu':
         // this.tab = ['admin', button.route];
         if (button.id == 'explore') {
+          this.currentView$ = new BehaviorSubject<string>(this.storage.getItem('explore_page') || 'pass_search');
           const pagesDialog = this.dialog.open(PagesDialogComponent, {
             panelClass: 'consent-dialog-container',
             backdropClass: 'invis-backdrop',
