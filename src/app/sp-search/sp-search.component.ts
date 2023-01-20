@@ -29,7 +29,7 @@ import {
   takeUntil,
   tap, withLatestFrom
 } from 'rxjs/operators'
-import { filter as _filter, uniqBy } from 'lodash'
+import { filter as _filter, remove } from 'lodash'
 import {KeyboardShortcutsService} from '../services/keyboard-shortcuts.service';
 import {ScreenService} from '../services/screen.service';
 import {LocationsService} from '../services/locations.service';
@@ -722,7 +722,12 @@ export class SPSearchComponent implements OnInit, OnDestroy {
     }
 
     if (students[0] instanceof User || this.searchTarget === 'users') {
-      return uniqBy(students as User[], s => s.id);
+      const idsToRemove = (this.selectedOptions as User[]).map(u => u.id);
+      if (idsToRemove.length === 0) {
+        return students;
+      }
+      remove(students as User[], s => idsToRemove.includes(s.id)); // remove mutates the array
+      return students;
     }
 
     if (students[0] instanceof GSuiteSelector || this.searchTarget === 'orgunits') {
