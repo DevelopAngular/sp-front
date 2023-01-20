@@ -1,4 +1,4 @@
-import {Component, ElementRef, NgZone, OnDestroy, OnInit, ViewChild} from '@angular/core';
+import {ChangeDetectorRef, Component, ElementRef, NgZone, OnDestroy, OnInit, ViewChild} from '@angular/core';
 import {HttpService} from '../../../services/http-service';
 import {AdminService} from '../../../services/admin.service';
 import {HallPassesService} from '../../../services/hall-passes.service';
@@ -10,13 +10,16 @@ import {TimeService} from '../../../services/time.service';
 import {DarkThemeSwitch} from '../../../dark-theme-switch';
 import {ThemeService} from 'ng2-charts';
 import {UserService} from '../../../services/user.service';
-import {combineLatest, interval, Observable, of, Subject} from 'rxjs';
+import {BehaviorSubject, combineLatest, interval, Observable, of, Subject} from 'rxjs';
 import {Report} from '../../../models/Report';
 import {Onboard} from '../../../models/Onboard';
 import {filter, map, switchMap, takeUntil, tap} from 'rxjs/operators';
 import {HallPass} from '../../../models/HallPass';
 import {CalendarComponent} from '../../calendar/calendar.component';
 import {isEmpty} from 'lodash';
+import { ComponentsService } from '../../../services/components.service';
+import { StorageService } from '../../../services/storage.service';
+import { Router } from '@angular/router';
 
 @Component({
   selector: 'app-dashboard-content',
@@ -58,6 +61,8 @@ export class DashboardContentComponent implements OnInit, OnDestroy {
     // stepSize: 5,
   };
 
+  currentView$: BehaviorSubject<string> = new BehaviorSubject<string>(this.storage.getItem('explore_page') || 'pass_search');
+
   constructor(
     private http: HttpService,
     private adminService: AdminService,
@@ -71,7 +76,11 @@ export class DashboardContentComponent implements OnInit, OnDestroy {
     private host: ElementRef,
     public darkTheme: DarkThemeSwitch,
     private chartTheming: ThemeService,
-    public userService: UserService
+    public userService: UserService,
+    private componentService: ComponentsService,
+    private storage: StorageService,
+    public router: Router,
+    private cdr: ChangeDetectorRef,
   ) { }
 
 
@@ -388,6 +397,14 @@ export class DashboardContentComponent implements OnInit, OnDestroy {
           }
         })
       ).subscribe();
+  }
+
+  navigateToExplore(page: string){
+    this.router.navigate(['/admin/explore']);
+    this.componentService.sendClickEvent(page);
+    this.currentView$.next(page);
+    this.storage.setItem('explore_page', page);
+    this.cdr.detectChanges();
   }
 
 
