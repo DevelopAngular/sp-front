@@ -370,6 +370,7 @@ export class AppComponent implements OnInit, AfterViewInit, OnDestroy {
       email: user.primary_email,
       created_at: user.created,
       last_login_at: user.last_login,
+      last_active_at: user.last_active,
       first_login_at: user.first_login,
       first_name: user.first_name,
       last_name: user.last_name,

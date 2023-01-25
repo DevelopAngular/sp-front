@@ -102,7 +102,7 @@ export class AccountsRoleComponent implements OnInit, OnDestroy {
           if (this.role === '_profile_parent') {
             return this.parentService.getConnectedParents().pipe(
               map(connectedResponse => {
-                let myInterfacesArray = connectedResponse.results.map(account=>{
+                return connectedResponse.results.map(account => {
 
                   return <ParentResponse>
                     {
@@ -114,6 +114,7 @@ export class AccountsRoleComponent implements OnInit, OnDestroy {
                       first_login: account.first_login, // return as timestamp Date string
                       last_login: account.last_login, // return as timestamp Date string
                       last_updated: account.last_updated, // return as timestamp Date string
+                      last_active: account.last_active,
                       active: account.is_active,
                       primary_email: account.email,
                       profile_picture: null,
@@ -122,9 +123,7 @@ export class AccountsRoleComponent implements OnInit, OnDestroy {
                       username: account.username,
                       students: account.students
                     };
-
                 });
-                return myInterfacesArray;
               })
             );
           }
@@ -179,7 +178,7 @@ export class AccountsRoleComponent implements OnInit, OnDestroy {
             const rowObj = this.buildDataForRole(account);
             Object.defineProperty(rowObj, 'id', { enumerable: false, value: account.id});
             Object.defineProperty(rowObj, 'me', { enumerable: false, value: +account.id === +this.user.id });
-            Object.defineProperty(rowObj, 'last_sign_in', {enumerable: false, value: account.last_login });
+            Object.defineProperty(rowObj, 'last_active', {enumerable: false, value: account.last_active });
             Object.defineProperty(rowObj, '_originalUserProfile', {
               enumerable: false,
               configurable: false,
@@ -394,7 +393,7 @@ export class AccountsRoleComponent implements OnInit, OnDestroy {
         'ID': account.custom_id ? this.sanitizer.bypassSecurityTrustHtml(`<span class="id-number">${account.custom_id}</span>`) : "-",
         'Grade': account.grade_level ? this.sanitizer.bypassSecurityTrustHtml(`<span class="grade-level">${account.grade_level}</span>`) : "-",
         'Status': this.sanitizer.bypassSecurityTrustHtml(`<span class="status">${account.status}</span>`),
-        'Last sign-in': account.last_login && account.last_login !== new Date() ? Util.formatDateTime(new Date(account.last_login)) : 'Never signed in',
+        'Last active': account.last_active && account.last_active !== new Date() ? Util.formatDateTime(new Date(account.last_active)) : 'Never signed in',
         'Type': account.demo_account ? 'Demo' : account.sync_types[0] === 'google' ? 'G Suite' : (account.sync_types[0] === 'gg4l' ? 'GG4L' : account.sync_types[0] === 'clever' ? 'Clever' : 'Standard'),
         'Permissions': `<div class="no-wrap">` + permissions + `</div>`,
         'Pass Limit': this.sanitizer.bypassSecurityTrustHtml(`<div style="width: 150px !important;" class="${classList}">${passLimitCells.passLimit}</div>`),
@@ -404,7 +403,7 @@ export class AccountsRoleComponent implements OnInit, OnDestroy {
       objectToTable = {...roleObject, ...{
         'ID': account.custom_id ? this.sanitizer.bypassSecurityTrustHtml(`<span class="id-number">${account.custom_id}</span>`) : "-",
         'Status': this.sanitizer.bypassSecurityTrustHtml(`<span class="status">${account.status}</span>`),
-        'Last sign-in': account.last_login && account.last_login !== new Date() ? Util.formatDateTime(new Date(account.last_login)) : 'Never signed in',
+        'Last active': account.last_active && account.last_active !== new Date() ? Util.formatDateTime(new Date(account.last_active)) : 'Never signed in',
         'Type': account.demo_account ? 'Demo' : account.sync_types[0] === 'google' ? 'G Suite' : (account.sync_types[0] === 'gg4l' ? 'GG4L' : account.sync_types[0] === 'clever' ? 'Clever' : 'Standard'),
         'Permissions': `<div class="no-wrap">` + permissions + `</div>`
       }};
@@ -413,7 +412,7 @@ export class AccountsRoleComponent implements OnInit, OnDestroy {
         'ID': account.custom_id ? this.sanitizer.bypassSecurityTrustHtml(`<span class="id-number">${account.custom_id}</span>`) : "-",
           'Rooms': this.sanitizer.bypassSecurityTrustHtml(`<div class="no-wrap">` + (account.assignedTo && account.assignedTo.length ? uniqBy(account.assignedTo, 'id').map((room: any) => room.title).join(', ') : 'No rooms assigned') + `</div>`),
           'Status': this.sanitizer.bypassSecurityTrustHtml(`<span class="status">${account.status}</span>`),
-          'Last sign-in': account.last_login ? Util.formatDateTime(new Date(account.last_login)) : 'Never signed in',
+          'Last active': account.last_active && account.last_active !== new Date() ? Util.formatDateTime(new Date(account.last_active)) : 'Never signed in',
           'Type': account.demo_account ? 'Demo' : account.sync_types[0] === 'google' ? 'G Suite' : (account.sync_types[0] === 'gg4l' ? 'GG4L' : account.sync_types[0] === 'clever' ? 'Clever' :account.sync_types[0] === 'classlink' ? 'Classlink ': 'Standard'),
           'Permissions': `<div class="no-wrap">` + permissions + `</div>`
       }};
@@ -424,7 +423,7 @@ export class AccountsRoleComponent implements OnInit, OnDestroy {
             return `${u.user.display_name} (${u.user.primary_email.slice(0, u.user.primary_email.indexOf('@'))})`;
           }).join(', ') : 'No Teachers') + `</div>`),
           'Status': this.sanitizer.bypassSecurityTrustHtml(`<span class="status">${account.status}</span>`),
-          'Last sign-in': account.last_login && account.last_login !== new Date() ? Util.formatDateTime(new Date(account.last_login)) : 'Never signed in',
+          'Last active': account.last_active && account.last_active !== new Date() ? Util.formatDateTime(new Date(account.last_active)) : 'Never signed in',
           'Type': account.demo_account ? 'Demo' : account.sync_types[0] === 'google' ? 'G Suite' : (account.sync_types[0] === 'gg4l' ? 'GG4L' : account.sync_types[0] === 'clever' ? 'Clever' :account.sync_types[0] === 'classlink' ? 'Classlink ': 'Standard'),
           'Permissions': `<div class="no-wrap">` + permissions + `</div>`
       }};
@@ -438,7 +437,7 @@ export class AccountsRoleComponent implements OnInit, OnDestroy {
       const studentWrapper = `<div class="ds-flex-center-around">${studentsTemplate}</div>`
 
       objectToTable = {...roleObject, ...{
-        'Last sign-in': account.last_login && account.last_login !== new Date() ? Util.formatDateTime(new Date(account.last_login)) : 'Never signed in',
+        'Last active': account.last_active && account.last_active !== new Date() ? Util.formatDateTime(new Date(account.last_active)) : 'Never signed in',
         'Type': account.demo_account ? 'Demo' : account.sync_types[0] === 'google' ? 'G Suite' : (account.sync_types[0] === 'gg4l' ? 'GG4L' : account.sync_types[0] === 'clever' ? 'Clever' : 'Standard'),
         'Students': this.sanitizer.bypassSecurityTrustHtml(studentWrapper),
       }};
@@ -525,8 +524,8 @@ export class AccountsRoleComponent implements OnInit, OnDestroy {
           case 'Status':
             queryParams.sort = sort && sort === 'asc' ? '-status' : 'status';
             break;
-          case 'Last sign-in':
-            queryParams.sort = sort && sort === 'asc' ? '-last_sign_in' : 'last_sign_in';
+          case 'Last active':
+            queryParams.sort = sort && sort === 'asc' ? '-last_active' : 'last_active';
             break;
           case 'Type':
             queryParams.sort = sort && sort === 'asc' ? '-sync_type' : 'sync_type';

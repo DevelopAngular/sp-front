@@ -22,7 +22,8 @@ export class User extends BaseModel {
               public extras: any,
               public first_login: Date,
               public grade_level: string,
-              public custom_id: string
+              public custom_id: string,
+              public last_active: Date
               ) {
     super();
   }
@@ -54,7 +55,8 @@ export class User extends BaseModel {
       extras: any = JSON['extras'],
       first_login: Date = new Date(JSON['first_login']),
       grade_level: string = JSON['grade_level'],
-      custom_id: string = JSON['custom_id']
+      custom_id: string = JSON['custom_id'],
+      last_active: Date = new Date(JSON['last_active']);
 
     const rolesJSON = JSON['roles'];
     const sync_types_json = JSON['sync_types'];
@@ -87,7 +89,8 @@ export class User extends BaseModel {
       extras,
       first_login,
       grade_level,
-      custom_id
+      custom_id,
+      last_active
     );
   }
 
