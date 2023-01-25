@@ -396,6 +396,10 @@ export class LocationsGroupContainerComponent implements OnInit, OnDestroy {
         }
       });
       dialogRef.afterClosed().subscribe(result => {
+        if (isStudent) {
+          return resolve(false)
+        }
+
         if (result.override) {
           setTimeout(() => {
             return resolve(true);
