@@ -107,6 +107,8 @@ export class SpChipsComponent implements OnInit {
       if(existCount==this.selectedProfiles.length){
         this.orgUnitExistCheck.next(false)
       }
+    } else if(this.selectedProfiles.length == 0) {
+      this.orgUnitExistCheck.next(false);
     }
 
   }
