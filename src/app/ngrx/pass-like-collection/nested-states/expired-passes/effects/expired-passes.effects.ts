@@ -2,9 +2,11 @@ import {Injectable} from '@angular/core';
 import {Actions, createEffect, ofType} from '@ngrx/effects';
 import {LiveDataService} from '../../../../../live-data/live-data.service';
 import {catchError, map, switchMap} from 'rxjs/operators';
-import * as expiredPassesActions from '../actions';
 import {HallPass} from '../../../../../models/HallPass';
 import {of} from 'rxjs';
+
+import * as expiredPassesActions from '../actions';
+import * as passesActions from '../../../../passes/actions';
 
 @Injectable()
 export class ExpiredPassesEffects {
@@ -15,7 +17,8 @@ export class ExpiredPassesEffects {
         ofType(
           expiredPassesActions.getExpiredPasses,
           expiredPassesActions.filterExpiredPasses,
-          expiredPassesActions.getMoreExpiredPasses
+          expiredPassesActions.getMoreExpiredPasses,
+          passesActions.endPassActionSuccess
         ),
         switchMap((action: any) => {
           const offset = action.offset ? action.offset : null;

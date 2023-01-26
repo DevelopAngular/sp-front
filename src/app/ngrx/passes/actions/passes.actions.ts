@@ -1,5 +1,6 @@
 import {createAction, props} from '@ngrx/store';
 import {HallPass} from '../../../models/HallPass';
+import {User} from '../../../models/User';
 
 const PASSES = 'Passes';
 
@@ -16,7 +17,7 @@ export const sortPassesSuccess = createAction(`[${PASSES}] Sort Passes Success`,
 export const sortPassesFailure = createAction(`[${PASSES}] Sort Passes Failure`, props<{errorMessage: string}>());
 
 export const endPassAction = createAction(`[${PASSES}] End Pass`, props<{passId: string | number}>());
-export const endPassActionSuccess = createAction(`[${PASSES}] End Pass Success`);
+export const endPassActionSuccess = createAction(`[${PASSES}] End Pass Success`, props<{user: User, timeFilter: string}>());
 export const endPassActionFailure = createAction(`[${PASSES}] End Pass Failure`, props<{errorMessage: string}>());
 
 export const changePassesCollectionAction = createAction(`[${PASSES}]  Change Passes's Collection`, props<{passIds: number[]}>());
