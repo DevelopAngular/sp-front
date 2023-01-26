@@ -24,6 +24,7 @@ import { FeatureFlagService, FLAGS } from '../services/feature-flag.service'
 import { WaitInLineService } from '../services/wait-in-line.service'
 import { LocationsService } from '../services/locations.service'
 import { EncounterPreventionService } from '../services/encounter-prevention.service'
+import {ToastService} from '../services/toast.service';
 
 /*
  * TODO: Restructure component
@@ -64,7 +65,8 @@ export class TeacherPinStudentComponent implements OnInit, OnDestroy {
     private featureService: FeatureFlagService,
     private wilService: WaitInLineService,
     private locationsService: LocationsService,
-    private encounterService: EncounterPreventionService
+    private encounterService: EncounterPreventionService,
+    private toastService: ToastService,
   ) {
   }
 

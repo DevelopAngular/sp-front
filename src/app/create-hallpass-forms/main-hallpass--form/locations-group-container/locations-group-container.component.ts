@@ -61,6 +61,7 @@ export class LocationsGroupContainerComponent implements OnInit, OnDestroy {
   user$: Observable<User>;
   user: User;
   isStaff: boolean;
+  isKioskMode: boolean;
   pinnables: Observable<Pinnable[]>;
   pinnable: Pinnable;
   data: any = {};
@@ -176,6 +177,7 @@ export class LocationsGroupContainerComponent implements OnInit, OnDestroy {
   }
 
   ngOnInit() {
+    this.isKioskMode = this.kioskService.isKisokMode();
     this.parentMainHallPassForm = this._injector.get<MainHallPassFormComponent>(MainHallPassFormComponent);
     this.frameMotion$ = this.formService.getFrameMotionDirection();
     this.FORM_STATE.quickNavigator = false;
@@ -394,7 +396,7 @@ export class LocationsGroupContainerComponent implements OnInit, OnDestroy {
         panelClass: 'overlay-dialog',
         backdropClass: 'custom-backdrop',
         width: '450px',
-        height: '215px',
+        height: 'auto',
         disableClose: true,
         data: {
           passLimit,
@@ -404,6 +406,10 @@ export class LocationsGroupContainerComponent implements OnInit, OnDestroy {
         }
       });
       dialogRef.afterClosed().subscribe(result => {
+        if (isStudent) {
+          return resolve(false)
+        }
+
         if (result.override) {
           setTimeout(() => {
             return resolve(true);
@@ -418,8 +424,10 @@ export class LocationsGroupContainerComponent implements OnInit, OnDestroy {
   @skipWhenWS()
   async fromCategory(location: Location & { numberOfStudentsInRoom?: number }) {
     const { numberOfStudentsInRoom } = location;
-    if (!this.kioskService.isKisokMode() && numberOfStudentsInRoom !== undefined) {
-      const totalStudents = numberOfStudentsInRoom + this.FORM_STATE.data.selectedStudents.length;
+    if (numberOfStudentsInRoom !== undefined) {
+      const totalStudents = this.user.isStudent() || this.isKioskMode
+        ? numberOfStudentsInRoom
+        : numberOfStudentsInRoom + this.FORM_STATE.data.selectedStudents.length;
       let reached = location?.max_passes_to_active;
       if (this.user.isStudent() || this.kioskService.isKisokMode()) {
         reached = reached && totalStudents >= location.max_passes_to
@@ -432,7 +440,7 @@ export class LocationsGroupContainerComponent implements OnInit, OnDestroy {
           location.max_passes_to,
           this.FORM_STATE.data.selectedStudents.length,
           numberOfStudentsInRoom,
-          this.user.isStudent());
+          this.user.isStudent() || this.isKioskMode);
 
         if (!overrideRoomLimit || (overrideRoomLimit && this.user.isStudent())) {
           return;

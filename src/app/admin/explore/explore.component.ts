@@ -306,7 +306,7 @@ export class ExploreComponent implements OnInit, OnDestroy {
             selectedDestinationRooms: null,
             selectedOriginRooms: null,
             selectedDate: {
-              start: moment('1/8/2022', 'DD/MM/YYYY'),
+              start: moment('1/8/' + (moment().year() - 1), 'DD/MM/YYYY'),
               end: moment(moment(), 'DD/MM/YYYY')
             },
             onlyEnded: true,
@@ -325,7 +325,7 @@ export class ExploreComponent implements OnInit, OnDestroy {
           this.contactTraceData = {
             selectedStudents: null,
             selectedDate: {
-              start: moment('1/8/' + moment().year(), 'DD/MM/YYYY'),
+              start: moment('1/8/' + (moment().year() - 1), 'DD/MM/YYYY'),
               end: moment(moment(), 'DD/MM/YYYY')
             }
           };
@@ -340,7 +340,7 @@ export class ExploreComponent implements OnInit, OnDestroy {
           this.reportSearchData = {
             selectedStudents: null,
             selectedDate: {
-              start: moment('1/8/' + moment().year(), 'DD/MM/YYYY'),
+              start: moment('1/8/' + (moment().year() - 1), 'DD/MM/YYYY'),
               end: moment(moment(), 'DD/MM/YYYY')
             },
             selectedStatus: null,
@@ -1254,13 +1254,6 @@ export class ExploreComponent implements OnInit, OnDestroy {
     return Util.numberWithCommas(x);
   }
 
-  downloadPasses(countAllData: number) {
-    if ((this.selectedRows.length > 300 || ((!this.selectedRows.length && countAllData > 300) || (this.tableService.isAllSelected$.getValue() && countAllData > 300)))) {
-      this.exportPasses();
-    } else {
-      this.generateCSV();
-    }
-  }
 
   openReportDialog(report: Report) {
     this.reportSearchState.entities$

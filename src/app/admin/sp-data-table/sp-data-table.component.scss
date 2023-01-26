@@ -504,8 +504,15 @@
 }
 
 ::ng-deep .id-number {
-    width: 200px;
+    min-width: 50px;
+    width: auto;
     display: block;
+}
+
+::ng-deep .last-active {
+  min-width: 160px;
+  width: auto;
+  display: block;
 }
 
 @keyframes shimmer {

@@ -174,12 +174,12 @@ and the cycle is repeating endlessly causing an UI flickering
                                     </div>
                                 </div>
                                 <div class="form-content">
-                                    <div class="title">Last sign-in
-                                        <span class="support-icon" customToolTip="The last time the student signed into SmartPass." [width]="'200px'">
+                                    <div class="title">Last active
+                                        <span class="support-icon" customToolTip="The last time a student was signed in and/or active on desktop or mobile." [width]="'200px'">
                                           <img width="13px" [src]="'./assets/Support (Gray-200).svg' | resolveAsset">
                                         </span>
                                     </div>
-                                    <div class="value">{{ profile?.last_login ? getLastActiveDate(profile?.last_login) : 'Hasn\'t signed in' }}</div>
+                                    <div class="value">{{ profile?.last_active ? getLastActiveDate(profile?.last_active) : 'Hasn\'t signed in' }}</div>
                                 </div>
                             </div>
                         </div>

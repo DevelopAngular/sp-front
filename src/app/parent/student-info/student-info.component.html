@@ -67,9 +67,9 @@
                                     </div>
                                     <div class="form-content">
                                         <div class="title">Last Sign-in
-                                            <span class="support-icon" customToolTip="The last time a student was signed in and active on desktop or mobile."><img width="13px" [src]="'./assets/Support (Gray-200).svg' | resolveAsset"></span>
+                                            <span class="support-icon" customToolTip="The last time a student was signed in and/or active on desktop or mobile."><img width="13px" [src]="'./assets/Support (Gray-200).svg' | resolveAsset"></span>
                                         </div>
-                                        <div class="value">{{ profile?.last_login ? getLastActiveDate(profile?.last_login) : 'Hasn\'t signed in' }}</div>
+                                        <div class="value">{{ profile?.last_active ? getLastActiveDate(profile?.last_active) : 'Hasn\'t signed in' }}</div>
                                     </div>
                                 </div>
                             </div>

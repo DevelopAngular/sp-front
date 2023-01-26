@@ -2,12 +2,13 @@ import {Injectable} from '@angular/core';
 import {Actions, createEffect, ofType} from '@ngrx/effects';
 import {HallPassesService} from '../../../services/hall-passes.service';
 
-import {catchError, concatMap, map, switchMap, take} from 'rxjs/operators';
-import {forkJoin, of} from 'rxjs';
+import {catchError, concatMap, filter, map, switchMap, take, takeUntil} from 'rxjs/operators';
+import {combineLatest, forkJoin, of} from 'rxjs';
 
 import * as passesActions from '../actions';
 import {openToastAction} from '../../toast/actions';
 import {HallPass} from '../../../models/HallPass';
+import {UserService} from '../../../services/user.service';
 
 @Injectable()
 export class PassesEffects {
@@ -79,8 +80,15 @@ export class PassesEffects {
         switchMap((action) => {
           return this.hallPassesService.endPass(action.passId)
             .pipe(
-              map(() => {
-                return passesActions.endPassActionSuccess();
+              switchMap((pass) => {
+                return combineLatest([
+                  this.userService.user$.pipe(filter(u => !!u), take(1)),
+                  this.hallPassesService.passFilters$.pipe(filter(f => !!f), take(1))
+                ]);
+              }),
+              map(([user, filters]) => {
+                const timeFilter = filters['past-passes'].default;
+                return passesActions.endPassActionSuccess({user, timeFilter});
               }),
               catchError(error => [
                 passesActions.endPassActionFailure({errorMessage: error.message}),
@@ -98,7 +106,8 @@ export class PassesEffects {
 
   constructor(
     private actions$: Actions,
-    private hallPassesService: HallPassesService
+    private hallPassesService: HallPassesService,
+    private userService: UserService
   ) {
   }
 }

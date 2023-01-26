@@ -46,6 +46,8 @@ export class ToCategoryComponent implements OnInit {
 
   @Input() isStaff: boolean;
 
+  @Input() isKiosk: boolean;
+
   @Input() date;
 
   @Input() studentText;
@@ -239,7 +241,7 @@ export class ToCategoryComponent implements OnInit {
       }, 100);
     };
 
-    if (!this.isStaff) {
+    if (!this.isStaff || this.isKiosk) {
       forwardAndEmit();
       return;
     }

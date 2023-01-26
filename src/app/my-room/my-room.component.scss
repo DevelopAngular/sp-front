@@ -108,6 +108,7 @@
   }
 
   div.my-room-options-mobile {
+    padding: 17px 0;
     &-wrapper {
       position: fixed;
       width: 100%;
@@ -137,7 +138,7 @@
   div.my-room-left {
     padding: 20px;
     min-height: calc(100vh - 248px) !important;
-    margin-top: 130px;
+    margin-top: 160px;
     max-width: unset;
   }
 }

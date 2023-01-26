@@ -10,6 +10,7 @@ export interface StudentResponse {
   first_login: string; // return as timestamp Date string
   last_login: string; // return as timestamp Date string
   last_updated: string; // return as timestamp Date string
+  last_active: string;
   active: boolean;
   badge: string;
   custom_id: string;
@@ -38,6 +39,7 @@ export interface ParentResponse {
   first_login: string; // return as timestamp Date string
   last_login: string; // return as timestamp Date string
   last_updated: string; // return as timestamp Date string
+  last_active: string;
   active: boolean;
   badge: string;
   custom_id: string;

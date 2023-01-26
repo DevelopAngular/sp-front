@@ -448,6 +448,7 @@ export class ToWhereComponent implements OnInit, OnDestroy, AfterViewInit {
     }
 
     const allowed = await this.locationsService.staffRoomLimitOverride(location, this.kioskService.isKisokMode(), this.countStudents());
+    console.log(allowed);
     if (!allowed) {
       return;
     }
