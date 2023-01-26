@@ -1,21 +1,19 @@
-# Hallpass
+# hall-pass-web
 
-This project was generated with [Angular CLI](https://github.com/angular/angular-cli) version 1.5.4.
+This is the frontend for the SmartPass system. It is an Angular web app. 
+It is used on Chromebooks primarily, but also as a PWA for Android devices.
 
-## Cloning the repo
+## Setting up
 
-After cloning, run: 
+To run the project, follow the below instructions:
 
 - Install `nvm` by following this doc [https://github.com/nvm-sh/nvm](https://github.com/nvm-sh/nvm)
     If you get any issues on macOS, follow this instructions [https://github.com/nvm-sh/nvm#macos-troubleshooting](https://github.com/nvm-sh/nvm#macos-troubleshooting)
-- `npm ci` 
-- `npm install firebase@^5.1.0` (You might need this if you run into grpc 1.20.0 install errors from previous command)
-- `npm run start`
-
-<b>Why use `npm ci` and not `npm install` for a newly clone repo?</b>
-
-The current repo version of Firebase requires gRPC 1.20.0, which isn't supported by the current version of Node. `npm ci`  seems to work without problems but `npm install` catches the 
-incompatibility between the node version and gRPC. It's unclear why this happens now, but when packages are updated, this should go away.
+- cd into the root project directory
+- `nvm use`
+- `npm install -g yarn`
+- `yarn install`
+- `yarn run start`
 
 ## Gitlab CI
 
@@ -39,26 +37,6 @@ available. `nvm -v` is called to make sure its installed properly.
 This behaviour may work in the future, but at the time of writing these docs, there seems to be a problem downloading the archives through `nvm`. The package is downloaded manually using `wget` 
 and places into a folder where `nvm` can look for the binary locally.
 
-## Development server
-
-Run `ng serve` for a dev server. Navigate to `http://localhost:4200/`. The app will automatically reload if you change any of the source files.
-
 ## Code scaffolding
 
 Run `ng generate component component-name` to generate a new component. You can also use `ng generate directive|pipe|service|class|guard|interface|enum|module`.
-
-## Build
-
-Run `ng build` to build the project. The build artifacts will be stored in the `dist/` directory. Use the `-prod` flag for a production build.
-
-## Running unit tests
-
-Run `ng test` to execute the unit tests via [Karma](https://karma-runner.github.io).
-
-## Running end-to-end tests
-
-Run `ng e2e` to execute the end-to-end tests via [Protractor](http://www.protractortest.org/).
-
-## Further help
-
-To get more help on the Angular CLI use `ng help` or go check out the [Angular CLI README](https://github.com/angular/angular-cli/blob/master/README.md).
