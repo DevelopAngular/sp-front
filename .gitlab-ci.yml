@@ -58,9 +58,8 @@ testing_e2e:
   stage: build
   image: cypress/browsers:node12.19.0-chrome86-ff82
   script:
-    - npm cache verify
-    - npm ci
-    - npm run e2e:ci
+    - yarn install --immutable
+    - yarn run e2e:ci
   only:
     refs:
       - merge_requests

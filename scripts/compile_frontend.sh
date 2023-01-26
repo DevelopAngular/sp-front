@@ -1,7 +1,7 @@
 #!/usr/bin/env bash
 set -e
 
-yarn install --frozen-lockfile
+yarn install --immutable
 
 export PATH="$PATH:$(pwd)/node_modules/.bin"
 
