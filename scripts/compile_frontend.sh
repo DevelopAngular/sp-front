@@ -1,17 +1,7 @@
 #!/usr/bin/env bash
 set -e
 
-#if [[ -d "/persistent_volume" ]]; then
-#  echo "Found /persistent_volume, using yarn with cache"
-#
-#  mkdir -p /persistent_volume/yarn_cache
-#
-#  yarn install --cache-folder /persistent_volume/yarn_cache
-#else
-  # echo "Using fresh yarn install"
-  # yarn install
-  npm ci
-#fi
+yarn install --frozen-lockfile
 
 export PATH="$PATH:$(pwd)/node_modules/.bin"
 
