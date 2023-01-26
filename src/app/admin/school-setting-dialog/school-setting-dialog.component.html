@@ -14,7 +14,7 @@
     <div class="settings-content">
         <div class="controls-block">
             <form [formGroup]="schoolForm"></form>
-            <div class="display-room-control" style="margin-top: 15px">
+            <div class="display-room-control" style="margin-top: 15px" *ngIf="currentSchool?.feature_flag_wait_in_line">
                 <div class="controls-description">
                     <div class="ds-cell-text-2">Enable Wait in Line</div>
                     <div class="ds-cell-description-text" style="width: 260px; margin-top: 6px">When a room reaches the Active Pass Limit, put students in a virtual waiting line. <a href="https://www.smartpass.app/waitinline" target="_blank" style="outline: 0">Learn more</a></div>
