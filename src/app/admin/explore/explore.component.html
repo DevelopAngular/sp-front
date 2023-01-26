@@ -73,13 +73,24 @@
         <div class="search-button not-alone" *ngIf="views[currentView].id === 1 && passSearchState.countPasses$ | async as countPasses">
             <app-round-button *ngIf="!!selectedRows.length" [size]="'small'" [icon]="'Dots'" [borderRadius]="'15%'" (buttonClick)="openConsentDeletePasses($event)">
             </app-round-button>
-            <app-filter-button *ngIf="!selectedRows.length; else selected" [title]="'<var>'+(numberWithCommas(countPasses) + '</var> pass' + (countPasses > 1 ? 'es' : ''))" [isDownloadButton]="true" [customToolTip]="disabled ? null : 'Click to export passes'" [disabled]="disabled"
-                (buttonClick)="exportPasses()">
+            <app-filter-button
+              *ngIf="!selectedRows.length; else selected"
+              [title]="'<var>'+(numberWithCommas(countPasses) + '</var> pass' + (countPasses > 1 ? 'es' : ''))"
+              [isDownloadButton]="true"
+              [customToolTip]="disabled ? null : 'Click to export passes'"
+              [disabled]="disabled"
+              (buttonClick)="exportPasses()"
+            >
             </app-filter-button>
             <ng-template #selected>
-                <app-filter-button [disabled]="disabled" [filter]="true" [title]="'<var>' + ((passSearchState.isAllSelected$ | async) ? numberWithCommas(countPasses) : numberWithCommas(selectedRows.length)) + '/' + numberWithCommas(countPasses) + '</var> selected'" [isDownloadButton]="true"
-                    [customToolTip]="disabled ? null : 'Click to export passes'" (buttonClick)="exportPasses()">
-                </app-filter-button>
+              <app-filter-button
+                [disabled]="disabled"
+                [filter]="true"
+                [title]="'<var>' + ((passSearchState.isAllSelected$ | async) ? numberWithCommas(countPasses) : numberWithCommas(selectedRows.length)) + '/' + numberWithCommas(countPasses) + '</var> selected'"
+                [isDownloadButton]="true"
+                [customToolTip]="disabled ? null : 'Click to export passes'"
+                (buttonClick)="exportPasses()">
+              </app-filter-button>
             </ng-template>
         </div>
 
@@ -131,9 +142,9 @@
                     [currentPage]="'encounter_detection'" [height]="(schools$ | async).length > 1 ? 'calc(100vh - 200px)' : 'calc(100vh - 150px)'" [disabledInfinityScroll]="true" [showPrintButtons]="false"></app-sp-data-table>
             </div>
             <ng-template #success>
-                <app-sp-data-table [isCheckbox]="isCheckbox$" [data$]="encounterDetectionData$" [loading$]="encounterDetectedState.loading$" [showEmptyState]="encounterDetectedState.isEmpty && !(encounterDetectedState.loading$ | async)" [emptyIcon]="'./assets/Encounter Detection (Blue-Gray).svg' | resolveAsset"
-                    [emptyText]="'No detected encounters found with the selected filters.'" [currentPage]="currentView$.value" [height]="(schools$ | async).length > 1 ? 'calc(100vh - 200px)' : 'calc(100vh - 150px)'" [isRowClick]="true" (rowClickEvent)="encounterClick($event)"
-                    [disabledInfinityScroll]="true" [showPrintButtons]="false"></app-sp-data-table>
+              <app-sp-data-table [isCheckbox]="isCheckbox$" [data$]="encounterDetectionData$" [loading$]="encounterDetectedState.loading$" [showEmptyState]="encounterDetectedState.isEmpty && !(encounterDetectedState.loading$ | async)" [emptyIcon]="'./assets/Encounter Detection (Blue-Gray).svg' | resolveAsset"
+                                 [emptyText]="'No detected encounters found with the selected filters.'" [currentPage]="currentView$.value" [height]="(schools$ | async).length > 1 ? 'calc(100vh - 200px)' : 'calc(100vh - 150px)'" [isRowClick]="true" (rowClickEvent)="encounterClick($event)"
+                                 [disabledInfinityScroll]="true" [showPrintButtons]="false"></app-sp-data-table>
             </ng-template>
         </div>
 

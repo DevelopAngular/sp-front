@@ -12,7 +12,7 @@ import {User} from '../../models/User';
 import {DarkThemeSwitch} from '../../dark-theme-switch';
 import {RepresentedUser} from '../../navbar/navbar.component';
 import {GSuiteOrgs} from '../../models/GSuiteOrgs';
-import {DomSanitizer} from '@angular/platform-browser';
+import { DomSanitizer, SafeHtml } from '@angular/platform-browser'
 import {cloneDeep, uniqBy} from 'lodash';
 import {School} from '../../models/School';
 import {TableService} from '../sp-data-table/table.service';
@@ -130,13 +130,6 @@ export class AccountsRoleComponent implements OnInit, OnDestroy {
 
           return this.userService.getAccountsRole(this.role);
         }),
-        /**
-         * Be careful when marking raw JSON responses from the server as TypeScript classes instead of interfaces.
-         * Marking the response from this.userService.getAccountsRole as Observable<User[]> incorrectly tells TypeScript
-         * that the methods on the User class are present on these objects when they are not.
-         *
-         * The following should be converted using User.fromJSON if intending to use methods on that class
-         */
         switchMap((accounts: User[]) => {
           if (accounts.length === 0) {
             return of([]);
@@ -353,6 +346,48 @@ export class AccountsRoleComponent implements OnInit, OnDestroy {
     };
   }
 
+  private getAccountType(account: User): string {
+    if (account?.demo_account) {
+      return 'Demo';
+    }
+
+    let role: string;
+    switch (account?.sync_types[0]) {
+      case 'google':
+        role = 'G Suite';
+        break
+      case 'gg4l':
+        role = 'GG4L';
+        break
+      case 'clever':
+        role = 'Clever'
+        break
+      case 'classlink':
+        role = 'Classlink'
+        break
+      default:
+        role = 'Standard'
+    }
+
+    return role;
+  }
+
+  private getRowId(account: User): SafeHtml {
+    return this.sanitizer.bypassSecurityTrustHtml(
+      `<span class="id-number">${account?.custom_id || '-'}</span>`
+    );
+  }
+
+  private getRowLastActive(account: User): SafeHtml {
+    const dateString = account.last_active && account.last_active !== new Date()
+      ? Util.formatDateTime(new Date(account.last_active))
+      : 'Never signed in';
+
+    return this.sanitizer.bypassSecurityTrustHtml(
+      `<span class="last-active">${dateString}</span>`
+    );
+  }
+
   buildDataForRole(account) {
     const permissionsRef = this.profilePermissions;
     const permissions = (function() {
@@ -375,7 +410,11 @@ export class AccountsRoleComponent implements OnInit, OnDestroy {
     const roleObject = {
       'Name': this.sanitizer.bypassSecurityTrustHtml(`<div class="no-wrap" style="width: 150px !important;">` + account.display_name + '</div>'),
       'Email/username': `<div class="no-wrap">` + email.split('@spnx.local')[0] + '</div>',
-      // 'ID': account.custom_id ? this.sanitizer.bypassSecurityTrustHtml(`<span class="id-number">${account.custom_id}</span>`) : "-"
+      'ID': this.getRowId(account),
+      'Last active': this.getRowLastActive(account),
+      'Status': this.sanitizer.bypassSecurityTrustHtml(`<span class="status">${account.status}</span>`),
+      'Type': this.getAccountType(account),
+      'Permissions': `<div class="no-wrap">` + permissions + `</div>`,
     };
     let objectToTable;
     if (this.role === '_profile_student') {
@@ -390,55 +429,35 @@ export class AccountsRoleComponent implements OnInit, OnDestroy {
         classList += 'school-limit';
       }
       objectToTable = {...roleObject, ...{
-        'ID': account.custom_id ? this.sanitizer.bypassSecurityTrustHtml(`<span class="id-number">${account.custom_id}</span>`) : "-",
         'Grade': account.grade_level ? this.sanitizer.bypassSecurityTrustHtml(`<span class="grade-level">${account.grade_level}</span>`) : "-",
-        'Status': this.sanitizer.bypassSecurityTrustHtml(`<span class="status">${account.status}</span>`),
-        'Last active': account.last_active && account.last_active !== new Date() ? Util.formatDateTime(new Date(account.last_active)) : 'Never signed in',
-        'Type': account.demo_account ? 'Demo' : account.sync_types[0] === 'google' ? 'G Suite' : (account.sync_types[0] === 'gg4l' ? 'GG4L' : account.sync_types[0] === 'clever' ? 'Clever' : 'Standard'),
-        'Permissions': `<div class="no-wrap">` + permissions + `</div>`,
         'Pass Limit': this.sanitizer.bypassSecurityTrustHtml(`<div style="width: 150px !important;" class="${classList}">${passLimitCells.passLimit}</div>`),
         'Pass Limit Description': this.sanitizer.bypassSecurityTrustHtml(`<div class="${classList}">${passLimitCells.description}</div>`)
         }};
     } else if (this.role === '_profile_admin') {
-      objectToTable = {...roleObject, ...{
-        'ID': account.custom_id ? this.sanitizer.bypassSecurityTrustHtml(`<span class="id-number">${account.custom_id}</span>`) : "-",
-        'Status': this.sanitizer.bypassSecurityTrustHtml(`<span class="status">${account.status}</span>`),
-        'Last active': account.last_active && account.last_active !== new Date() ? Util.formatDateTime(new Date(account.last_active)) : 'Never signed in',
-        'Type': account.demo_account ? 'Demo' : account.sync_types[0] === 'google' ? 'G Suite' : (account.sync_types[0] === 'gg4l' ? 'GG4L' : account.sync_types[0] === 'clever' ? 'Clever' : 'Standard'),
-        'Permissions': `<div class="no-wrap">` + permissions + `</div>`
-      }};
+      objectToTable = {...roleObject};
     } else if (this.role === '_profile_teacher') {
       objectToTable = {...roleObject, ...{
-        'ID': account.custom_id ? this.sanitizer.bypassSecurityTrustHtml(`<span class="id-number">${account.custom_id}</span>`) : "-",
-          'Rooms': this.sanitizer.bypassSecurityTrustHtml(`<div class="no-wrap">` + (account.assignedTo && account.assignedTo.length ? uniqBy(account.assignedTo, 'id').map((room: any) => room.title).join(', ') : 'No rooms assigned') + `</div>`),
-          'Status': this.sanitizer.bypassSecurityTrustHtml(`<span class="status">${account.status}</span>`),
-          'Last active': account.last_active && account.last_active !== new Date() ? Util.formatDateTime(new Date(account.last_active)) : 'Never signed in',
-          'Type': account.demo_account ? 'Demo' : account.sync_types[0] === 'google' ? 'G Suite' : (account.sync_types[0] === 'gg4l' ? 'GG4L' : account.sync_types[0] === 'clever' ? 'Clever' :account.sync_types[0] === 'classlink' ? 'Classlink ': 'Standard'),
-          'Permissions': `<div class="no-wrap">` + permissions + `</div>`
+        'Rooms': this.sanitizer.bypassSecurityTrustHtml(`<div class="no-wrap">` + (account.assignedTo && account.assignedTo.length ? uniqBy(account.assignedTo, 'id').map((room: any) => room.title).join(', ') : 'No rooms assigned') + `</div>`),
       }};
     } else if (this.role === '_profile_assistant') {
       objectToTable = {...roleObject, ...{
-        'ID': account.custom_id ? this.sanitizer.bypassSecurityTrustHtml(`<span class="id-number">${account.custom_id}</span>`) : "-",
           'Acting on Behalf Of': this.sanitizer.bypassSecurityTrustHtml(`<div class="no-wrap">` + (account.canActingOnBehalfOf && account.canActingOnBehalfOf.length ? account.canActingOnBehalfOf.map((u: RepresentedUser) => {
             return `${u.user.display_name} (${u.user.primary_email.slice(0, u.user.primary_email.indexOf('@'))})`;
           }).join(', ') : 'No Teachers') + `</div>`),
-          'Status': this.sanitizer.bypassSecurityTrustHtml(`<span class="status">${account.status}</span>`),
-          'Last active': account.last_active && account.last_active !== new Date() ? Util.formatDateTime(new Date(account.last_active)) : 'Never signed in',
-          'Type': account.demo_account ? 'Demo' : account.sync_types[0] === 'google' ? 'G Suite' : (account.sync_types[0] === 'gg4l' ? 'GG4L' : account.sync_types[0] === 'clever' ? 'Clever' :account.sync_types[0] === 'classlink' ? 'Classlink ': 'Standard'),
-          'Permissions': `<div class="no-wrap">` + permissions + `</div>`
       }};
     } else if (this.role === '_profile_parent') {
+      delete roleObject['Status'];
+      delete roleObject['ID'];
+      delete roleObject['Permissions'];
       const studentsTemplate = (account['students'] as StudentResponse[]).map(s => `
         <div class="student">
             <div style='background: url("${s.profile_picture}") left center / cover no-repeat; height: 23px; width: 23px'></div>
             <span class="ds-mx-10">${s.display_name}</span>
         </div>
       `).join('');
-      const studentWrapper = `<div class="ds-flex-center-around">${studentsTemplate}</div>`
+      const studentWrapper = `<div class="ds-flex-center-start">${studentsTemplate}</div>`
 
       objectToTable = {...roleObject, ...{
-        'Last active': account.last_active && account.last_active !== new Date() ? Util.formatDateTime(new Date(account.last_active)) : 'Never signed in',
-        'Type': account.demo_account ? 'Demo' : account.sync_types[0] === 'google' ? 'G Suite' : (account.sync_types[0] === 'gg4l' ? 'GG4L' : account.sync_types[0] === 'clever' ? 'Clever' : 'Standard'),
         'Students': this.sanitizer.bypassSecurityTrustHtml(studentWrapper),
       }};
     }

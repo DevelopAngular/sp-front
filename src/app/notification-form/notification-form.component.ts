@@ -80,7 +80,7 @@ export class NotificationFormComponent implements OnInit, OnDestroy {
         });
 
         const roomsToRemove = [];
-        Object.entries(settings.myRooms).forEach((roomId) => {
+        Object.entries(settings?.myRooms || []).forEach((roomId) => {
           if (!roomIds.includes(roomId[0])) {
             roomsToRemove.push(roomId[0]);
           }

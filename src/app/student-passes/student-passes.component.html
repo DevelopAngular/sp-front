@@ -1,60 +1,26 @@
 <div class="host">
-  <div
-    [@scaleStudentPasses]="scaleCardTrigger$ | async"
-    [@resizeStudentPasses]="resizeTriggerParams$ | async"
-    [@studentPassFadeInOut]="fadeInOutTrigger$ | async"
-    [@pressState]="pressed && !isOpen ? 'down' : 'up'"
-    class="student-wrapper"
-    appCrossPointerEventTarget
-    (pointerClickEvent)="openProfile();"
-    [style.height]="height + 'px'"
-    [style.padding]="isClose ? '10px 0' : 0"
-    [style.cursor]="isOpen ? 'default' : 'pointer'"
-    [style.border]="!isOpen ? '1px solid #E2E6EC' : 'none'"
-    [style.background-color]="getBg()"
-    (mouseenter)="hovered = true"
-    (mouseleave)="hovered = false; pressed = false"
-    (pointerDownEvent)="pressed = true"
-  >
-    <div class="header-container"
-      [style.box-shadow]="isScrollable ? '0 2px 4px 0 rgba(0, 0, 0, 0.1)' : 'none'"
-      [style.border-radius]="isOpen ? '13px 13px 0 0' : '13px'"
-    >
-      <div class="header"
-           [style.padding]="isClose ? 0 : '15px 0'"
-           [style.background-color]="isOpen ? '#FFFFFF' : 'transparent'"
-           (mouseenter)="headerInfoHover = isOpen"
-           (mouseleave)="headerInfoHover = false"
-           (click)="isOpen ? openStudentInfoPage() : null"
-      >
-        <div class="profile-info" [style.padding]="isScrollable ? '0 0 0 10px' : (hasProfilePicture ? '0 10px' : '10px 10px')">
-          <div class="profile-image avatar-animate" *ngIf="hasProfilePicture">
-            <div [@openCloseProfile]="animationTrigger" *ngIf="profile.profile_picture; else d" [ngStyle]="{'background': 'url(' + profile.profile_picture + ') no-repeat left center/cover', width: '88px', height: '88px'}"></div>
-            <ng-template #d>
-              <img
-                [@openCloseProfile]="animationTrigger"
-                width="88"
-                height="88"
-                [src]="'./assets/Avatar Default.svg' | resolveAsset"
-                alt="Avatar"
-                customToolTip
-                [contentTemplate]="tooltip"
-                [editable]="true"
-                [nonDisappearing]="false"
-                [showToolTip]="!(user$ | async).isAdmin()"
-              >
-              <ng-template #tooltip>
-                <div class="ds-tooltip" style="text-align: left">
-                  <div class="only-admin">ADMIN ONLY</div>
-                  Please contact your admin so they can bulk upload profile pictures for your school.
-                </div>
-              </ng-template>
-            </ng-template>
-          </div>
-          <div class="title">
-            <div class="full-name" [style.font-size]="isLongName ? '15px' : '22px'" [@topBottomName]="animationTrigger" [style.text-decoration]="headerInfoHover ? 'underline' : 'none'">
-              <span style="white-space: nowrap" notranslate>{{ profile.first_name }} {{ profile.last_name }}</span>
-              <span style="margin-left: 7px;" *ngIf="(exclusionGroups$ | async)?.length" (mouseenter)="notClose(true)">
+    <div [@scaleStudentPasses]="scaleCardTrigger$ | async" [@resizeStudentPasses]="resizeTriggerParams$ | async" [@studentPassFadeInOut]="fadeInOutTrigger$ | async" [@pressState]="pressed && !isOpen ? 'down' : 'up'" class="student-wrapper" appCrossPointerEventTarget
+        (pointerClickEvent)="openProfile();" [style.height]="height + 'px'" [style.padding]="isClose ? '10px 0' : 0" [style.cursor]="isOpen ? 'default' : 'pointer'" [style.border]="!isOpen ? '1px solid #E2E6EC' : 'none'" [style.background-color]="getBg()"
+        (mouseenter)="hovered = true" (mouseleave)="hovered = false; pressed = false" (pointerDownEvent)="pressed = true">
+        <div class="header-container" [style.box-shadow]="isScrollable ? '0 2px 4px 0 rgba(0, 0, 0, 0.1)' : 'none'" [style.border-radius]="isOpen ? '13px 13px 0 0' : '13px'">
+            <div class="header" [style.padding]="isClose ? 0 : '15px 0'" [style.background-color]="isOpen ? '#FFFFFF' : 'transparent'" (mouseenter)="headerInfoHover = isOpen" (mouseleave)="headerInfoHover = false" (click)="isOpen ? openStudentInfoPage() : null">
+                <div class="profile-info" [style.padding]="isScrollable ? '0 0 0 10px' : (hasProfilePicture ? '0 10px' : '10px 10px')">
+                    <div class="profile-image avatar-animate" *ngIf="hasProfilePicture">
+                        <div [@openCloseProfile]="animationTrigger" *ngIf="profile.profile_picture; else d" [ngStyle]="{'background': 'url(' + profile.profile_picture + ') no-repeat left center/cover', width: '88px', height: '88px'}"></div>
+                        <ng-template #d>
+                            <img [@openCloseProfile]="animationTrigger" width="88" height="88" [src]="'./assets/Avatar Default.svg' | resolveAsset" alt="Avatar" customToolTip [contentTemplate]="tooltip" [editable]="true" [nonDisappearing]="false" [showToolTip]="!(user$ | async).isAdmin()">
+                            <ng-template #tooltip>
+                                <div class="ds-tooltip" style="text-align: left">
+                                    <div class="only-admin">ADMIN ONLY</div>
+                                    Please contact your admin so they can bulk upload profile pictures for your school.
+                                </div>
+                            </ng-template>
+                        </ng-template>
+                    </div>
+                    <div class="title">
+                        <div class="full-name" [style.font-size]="isLongName ? '15px' : '22px'" [@topBottomName]="animationTrigger" [style.text-decoration]="headerInfoHover ? 'underline' : 'none'">
+                            <span style="white-space: nowrap" notranslate>{{ profile.first_name }} {{ profile.last_name }}</span>
+                            <span style="margin-left: 7px;" *ngIf="(exclusionGroups$ | async)?.length" (mouseenter)="notClose(true)">
                 <app-octagon
                   [size]="22"
                   customToolTip
@@ -70,120 +36,71 @@
                   ></app-encounter-prevention-tooltip>
                 </ng-template>
               </span>
-            </div>
-            <div notranslate class="email" [@showHideEmail]="animationTrigger">{{ profile.primary_email | spEmail }}</div>
-          </div>
+                        </div>
+                        <div notranslate class="email" [@showHideEmail]="animationTrigger">{{ profile.primary_email | spEmail }}</div>
+                    </div>
 
-          <div class="open" *ngIf="isClose; else close">
-            <img width="20" [src]="'./assets/Chevron Right (Blue-Gray).svg' | resolveAsset" alt="Chevron">
-          </div>
-          <ng-template #close>
-            <div *ngIf="isResize" class="close" appCrossPointerEventTarget (pointerClickEvent)="closeProfile($event)">
-              <img width="25" height="25" [src]="'./assets/Cancel (Gray-White).svg' | resolveAsset">
+                    <div *ngIf="!kioskModeRoom$.value && !isWaitInLine">
+                        <div class="open" *ngIf="isClose; else close">
+                            <img width="20" [src]="'./assets/Chevron Right (Blue-Gray).svg' | resolveAsset" alt="Chevron">
+                        </div>
+                        <ng-template #close>
+                            <div *ngIf="isResize" class="close" appCrossPointerEventTarget (pointerClickEvent)="closeProfile($event)">
+                                <img width="25" height="25" [src]="'./assets/Cancel (Gray-White).svg' | resolveAsset">
+                            </div>
+                        </ng-template>
+                    </div>
+                </div>
             </div>
-          </ng-template>
         </div>
-      </div>
-    </div>
-    <div
-      *ngIf="isStaff && !isOpen"
-      class="action-buttons-wrapper"
-      [style.marginTop]="(height-extraSpace + 10) + 'px'"
-    >
-      <app-gradient-button
-        [cursor]="'pointer'"
-        [leftIcon]="'./assets/Report (Gray-500).svg' | resolveAsset"
-        [textColor]="'#7083A0'"
-        [customBackground]="'#F0F2F5'"
-        [isGradient]="false"
-        [withShadow]="false"
-        [className]="'action-button'"
-
-        (buttonClick)="openReport($event, pass)"
-      >Report</app-gradient-button>
-      <app-gradient-button
-        [cursor]="'pointer'"
-        [leftIcon]="'./assets/Plus (Gray-500).svg' | resolveAsset"
-        [textColor]="'#7083A0'"
-        [customBackground]="'#F0F2F5'"
-        [isGradient]="false"
-        [withShadow]="false"
-        [className]="'action-button'"
-
-        (buttonClick)="openCreatePass($event)"
-      >Create Pass</app-gradient-button>
-    </div>
-
-    <div class="collection-wrapper" *ngIf="(isOpenEvent$ | async) || !isResize " (scroll)="scroll($event)" [style.height]="!isResize ? '300px' : '475px'">
-      <div class="content" (mouseenter)="headerInfoHover = true" (mouseleave)="headerInfoHover = false" (click)="openStudentInfoPage()">
-
-        <div class="student-info" *ngIf="passesStats$ | async as stats">
-          <app-student-passes-info-card
-            [customToolTip]="'The student had ' + stats?.past_passes_today + (stats?.past_passes_today === 1 ? ' pass' : ' passes') +  ' today.'"
-            [nonDisappearing]="false"
-            [editable]="true"
-            [number]="stats?.past_passes_today"
-            [title]="'today'"
-            [loading]="loading$ | async"
-          ></app-student-passes-info-card>
-          <app-student-passes-info-card
-            [customToolTip]="'The student had ' + stats?.past_passes_week + (stats?.past_passes_week === 1 ? ' pass' : ' passes') +  ' this week.'"
-            [nonDisappearing]="false"
-            [editable]="true"
-            [number]="stats?.past_passes_week"
-            [title]="'this week'"
-            [loading]="loading$ | async"
-          ></app-student-passes-info-card>
-          <app-student-passes-info-card
-            [customToolTip]="'The student had ' + stats?.past_passes_month + (stats?.past_passes_month === 1 ? ' pass' : ' passes') +  ' this month.'"
-            [nonDisappearing]="false"
-            [editable]="true"
-            [number]="stats?.past_passes_month"
-            [title]="'this month'"
-            [loading]="loading$ | async"
-          ></app-student-passes-info-card>
+        <div *ngIf="isStaff && !isOpen && !kioskModeRoom$.value && !isWaitInLine" class="action-buttons-wrapper" [style.marginTop]="(height-extraSpace + 10) + 'px'">
+            <app-gradient-button [cursor]="'pointer'" [leftIcon]="'./assets/Report (Gray-500).svg' | resolveAsset" [textColor]="'#7083A0'" [customBackground]="'#F0F2F5'" [isGradient]="false" [withShadow]="false" [className]="'action-button'" (buttonClick)="openReport($event, pass)">Report</app-gradient-button>
+            <app-gradient-button [cursor]="'pointer'" [leftIcon]="'./assets/Plus (Gray-500).svg' | resolveAsset" [textColor]="'#7083A0'" [customBackground]="'#F0F2F5'" [isGradient]="false" [withShadow]="false" [className]="'action-button'" (buttonClick)="openCreatePass($event)">Create Pass</app-gradient-button>
         </div>
 
-      </div>
+        <div class="collection-wrapper" *ngIf="(isOpenEvent$ | async) || !isResize " (scroll)="scroll($event)" [style.height]="!isResize ? '300px' : '475px'">
+            <div class="content" (mouseenter)="headerInfoHover = true" (mouseleave)="headerInfoHover = false" (click)="openStudentInfoPage()">
 
-      <mat-divider></mat-divider>
-      <div class="collection">
-        <div class="emptyState" *ngIf="(loaded$ | async) && !(lastStudentPasses | async).length; else passes">
-          <img style="opacity: 0.5" width="60" [src]="'./assets/Passes (Blue-Gray).svg'" alt="Passes">
-          <div class="empty-title">
-            No expired passes
-          </div>
+                <div class="student-info" *ngIf="passesStats$ | async as stats">
+                    <app-student-passes-info-card [customToolTip]="'The student had ' + stats?.past_passes_today + (stats?.past_passes_today === 1 ? ' pass' : ' passes') +  ' today.'" [nonDisappearing]="false" [editable]="true" [number]="stats?.past_passes_today" [title]="'today'"
+                        [loading]="loading$ | async"></app-student-passes-info-card>
+                    <app-student-passes-info-card [customToolTip]="'The student had ' + stats?.past_passes_week + (stats?.past_passes_week === 1 ? ' pass' : ' passes') +  ' this week.'" [nonDisappearing]="false" [editable]="true" [number]="stats?.past_passes_week" [title]="'this week'"
+                        [loading]="loading$ | async"></app-student-passes-info-card>
+                    <app-student-passes-info-card [customToolTip]="'The student had ' + stats?.past_passes_month + (stats?.past_passes_month === 1 ? ' pass' : ' passes') +  ' this month.'" [nonDisappearing]="false" [editable]="true" [number]="stats?.past_passes_month" [title]="'this month'"
+                        [loading]="loading$ | async"></app-student-passes-info-card>
+                </div>
+
+            </div>
+
+            <mat-divider></mat-divider>
+            <div class="collection">
+                <div class="emptyState" *ngIf="(loaded$ | async) && !(lastStudentPasses | async).length; else passes">
+                    <img style="opacity: 0.5" width="60" [src]="'./assets/Passes (Blue-Gray).svg'" alt="Passes">
+                    <div class="empty-title">
+                        No expired passes
+                    </div>
+                </div>
+
+                <ng-template #passes>
+                    <div class="pass-collection" [style.width]="isMobile ? '325px' : '300px'">
+                        <div class="title">
+                            <div style="margin-left: 8px; font-weight: 600">Passes</div>
+                        </div>
+                        <div class="passes" *ngIf="!(loading$ | async); else fakePasses" [style.grid-template-columns]="isMobile ? 'repeat(auto-fill, 157px)' : 'repeat(auto-fill, 144px)'">
+                            <div class="pass" *ngFor="let pass of lastStudentPasses | async">
+                                <app-pass-tile [forFuture]="false" [fromPast]="true" [forStaff]="false" [pass]="pass" (tileSelected)="openPass($event)" [profileImage]="false" [isMiniCard]="true"></app-pass-tile>
+                            </div>
+                        </div>
+                        <ng-template #fakePasses>
+                            <div class="passes">
+                                <div class="fake-pass animate" *ngFor="let pass of [1, 1, 1, 1, 1, 1]"></div>
+                            </div>
+                        </ng-template>
+                    </div>
+                </ng-template>
+
+            </div>
         </div>
 
-        <ng-template #passes>
-          <div class="pass-collection" [style.width]="isMobile ? '325px' : '300px'">
-            <div class="title">
-              <div style="margin-left: 8px; font-weight: 600">Passes</div>
-            </div>
-            <div class="passes" *ngIf="!(loading$ | async); else fakePasses" [style.grid-template-columns]="isMobile ? 'repeat(auto-fill, 157px)' : 'repeat(auto-fill, 144px)'">
-              <div class="pass" *ngFor="let pass of lastStudentPasses | async">
-                <app-pass-tile
-                  [forFuture]="false"
-                  [fromPast]="true"
-                  [forStaff]="false"
-                  [pass]="pass"
-                  (tileSelected)="openPass($event)"
-                  [profileImage]="false"
-                  [isMiniCard]="true"
-                ></app-pass-tile>
-              </div>
-            </div>
-            <ng-template #fakePasses>
-              <div class="passes">
-                <div class="fake-pass animate" *ngFor="let pass of [1, 1, 1, 1, 1, 1]"></div>
-              </div>
-            </ng-template>
-          </div>
-        </ng-template>
-
-      </div>
     </div>
-
-  </div>
 </div>
-

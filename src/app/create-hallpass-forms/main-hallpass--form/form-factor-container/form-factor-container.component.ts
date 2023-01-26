@@ -8,13 +8,14 @@ import {Invitation} from '../../../models/Invitation';
 import {DataService} from '../../../services/data-service';
 import {Pinnable} from '../../../models/Pinnable';
 import { MAT_DIALOG_DATA, MatDialogRef } from '@angular/material/dialog';
-import {StorageService} from '../../../services/storage.service';
 import {PassLimitInfo} from '../../../models/HallPassLimits';
 import { Location } from '../../../models/Location';
 import { PassLike } from '../../../models';
 import { DeviceDetection } from '../../../device-detection.helper';
 import { BehaviorSubject } from 'rxjs';
 import { takeUntil } from 'rxjs/operators';
+import { WaitInLine } from '../../../models/WaitInLine'
+import { StorageService } from '../../../services/storage.service'
 
 export type PassLayout = 'pass' | 'request' | 'inlinePass' | 'inlineRequest';
 
@@ -35,6 +36,10 @@ export class FormFactorContainerComponent implements OnInit {
       return;
     }
 
+    if (this.forStaff) {
+      return;
+    }
+
     const { nativeElement } = divRef;
 
     this.fullScreenPass$.asObservable().pipe(
@@ -50,9 +55,9 @@ export class FormFactorContainerComponent implements OnInit {
 
   isMobile = DeviceDetection.isMobile();
   public states = FormFactor;
-  public template: Request | HallPass | Invitation | Pinnable;
-  public isOpenBigCard: boolean;
-  fullScreenPass$: BehaviorSubject<boolean>;
+  public template: Request | HallPass | Invitation | Pinnable | WaitInLine;
+  isOpenBigCard: boolean;
+  fullScreenPass$: BehaviorSubject<boolean> = new BehaviorSubject(true);
 
   constructor(
     private dataService: DataService,
@@ -66,8 +71,7 @@ export class FormFactorContainerComponent implements OnInit {
     },
     @Optional() public dialogRef: MatDialogRef<FormFactorContainerComponent>,
     private storage: StorageService
-  ) {
-  }
+  ) {}
 
   ngOnInit() {
     this.isOpenBigCard = JSON.parse(this.storage.getItem('pass_full_screen')) && !this.forStaff;
@@ -164,10 +168,32 @@ export class FormFactorContainerComponent implements OnInit {
               this.FORM_STATE.data.message
             );
             break;
+
+          case this.states.WaitInLine:
+            const student = user ?? this.FORM_STATE.data.selectedStudents[0];
+            this.template = new WaitInLine(
+              'template',
+              student,
+              _user,
+              null,
+              null,
+              5, // placeholder duration
+              this.FORM_STATE.data.direction.from,
+              this.FORM_STATE.data.direction.to,
+              '',
+              '',
+              this.FORM_STATE.data.direction.pinnable.icon,
+              this.FORM_STATE.data.direction.pinnable.color_profile,
+              true,
+              '3rd',
+              this.FORM_STATE.data.date ? this.FORM_STATE.data.date.declinable : false,
+              this.forStaff ? this.FORM_STATE.data.message : null,
+              !this.forStaff
+              );
+            break;
         }
       });
 
-    console.log(this.template);
   }
 
 
@@ -202,7 +228,7 @@ export class FormFactorContainerComponent implements OnInit {
     const {height} = wrapper.getBoundingClientRect();
     const targetHeight = (document.documentElement.clientHeight * 0.70 * 0.90);
     const scalingFactor = targetHeight / height;
-    translationDistance = -100;
+    translationDistance = (this.forStaff || this.dialogData.kioskModeRoom) ? 0 : -100;
     // translate happens before the scaling
     wrapper.style.transform = `translateY(${translationDistance}px) scale(${scalingFactor})`;
   }

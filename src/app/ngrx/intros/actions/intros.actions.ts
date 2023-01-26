@@ -33,3 +33,7 @@ export const updateIntrosStudentPassLimitsFailure = createAction(`[${INTROS}] Up
 export const updateIntrosAdminPassLimitsMessage = createAction(`[${INTROS}] Update intros Admin Pass Limits Message`, props<{ intros: any, device: string, version: string }>());
 export const updateIntrosAdminPassLimitsMessageSuccess = createAction(`[${INTROS}] Update intros Admin Pass Limits Message Success`, props<{ data: any }>());
 export const updateIntrosAdminPassLimitsMessageFailure = createAction(`[${INTROS}] Update intros Admin Pass Limits Message Failure`, props<{ errorMessage: string }>());
+
+export const updateIntrosWaitInLine = createAction(`[${INTROS}] Update intros Wait In Line`, props<{ intros: any, device: string, version: string }>());
+export const updateIntrosWaitInLineSuccess = createAction(`[${INTROS}] Update intros Wait In Line Success`, props<{ data: any }>());
+export const updateIntrosWaitInLineFailure = createAction(`[${INTROS}] Update intros Wait In Line Failure`, props<{ errorMessage: string }>());

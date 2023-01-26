@@ -8,6 +8,7 @@ import {Subject} from 'rxjs';
 import {FormBuilder, FormControl, FormGroup} from '@angular/forms';
 import {OverlayDataService, RoomData} from '../overlay-data.service';
 import {takeUntil} from 'rxjs/operators';
+import { FeatureFlagService, FLAGS } from '../../../services/feature-flag.service';
 
 export interface OptionState {
     now: {
@@ -104,8 +105,13 @@ export class AdvancedOptionsComponent implements OnInit, OnDestroy {
         public darkTheme: DarkThemeSwitch,
         private sanitizer: DomSanitizer,
         private fb: FormBuilder,
-        private overlayService: OverlayDataService
+        private overlayService: OverlayDataService,
+        private featureService: FeatureFlagService,
     ) {
+    }
+
+    get isWaitInLine(): boolean {
+      return this.featureService.isFeatureEnabled(FLAGS.WaitInLine);
     }
 
     ngOnInit() {

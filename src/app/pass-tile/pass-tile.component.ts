@@ -23,6 +23,7 @@ import {filter, take, takeUntil} from 'rxjs/operators';
 import {ConnectedPosition, Overlay} from '@angular/cdk/overlay';
 import {DomCheckerService} from '../services/dom-checker.service';
 import {KioskModeService} from '../services/kiosk-mode.service';
+import { WaitInLine } from '../models/WaitInLine'
 
 @Component({
   selector: 'app-pass-tile',
@@ -39,6 +40,7 @@ export class PassTileComponent implements OnInit, OnDestroy, OnChanges {
   @Input() pass: PassLike;
   @Input() fromPast = false;
   @Input() forFuture: boolean;
+  @Input() waitInLine: boolean;
   // just presents a less "active" version of pass tile
   @Input() presentational: boolean;
   @Input() isActive = false;
@@ -83,6 +85,9 @@ export class PassTileComponent implements OnInit, OnDestroy, OnChanges {
   get tileContent() {
     if (this.isActive) {
       return this.timeLeft + (this.valid ? ' Remaining' : ' Expiring');
+    } else if (this.waitInLine) {
+      // Here we will fetch number in line
+      return `${(this.pass as WaitInLine).position} in line`;
     } else {
       if (this.encounterPreventionCard) {
         return 'Now';

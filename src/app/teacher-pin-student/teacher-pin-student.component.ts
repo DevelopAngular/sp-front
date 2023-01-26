@@ -10,17 +10,21 @@ import {
   Output, TemplateRef,
   ViewChild
 } from '@angular/core';
-import { fromEvent, of, Subject } from 'rxjs';
+import { fromEvent, iif, of, Subject } from 'rxjs'
 import {isNaN} from 'lodash';
 import {RequestsService} from '../services/requests.service';
-import { catchError, concatMap, mapTo, switchMap, takeUntil } from 'rxjs/operators';
+import { catchError, concatMap, map, mapTo, switchMap, takeUntil, tap } from 'rxjs/operators'
 import {StorageService} from '../services/storage.service';
 import {Request} from '../models/Request';
 import {PassLimitService} from '../services/pass-limit.service';
 import {HttpErrorResponse} from '@angular/common/http';
 import {MatDialog} from '@angular/material/dialog';
-import {ToastService} from '../services/toast.service';
+import { WaitInLine } from '../models/WaitInLine'
+import { FeatureFlagService, FLAGS } from '../services/feature-flag.service'
+import { WaitInLineService } from '../services/wait-in-line.service'
+import { LocationsService } from '../services/locations.service'
 import { EncounterPreventionService } from '../services/encounter-prevention.service'
+import {ToastService} from '../services/toast.service';
 
 /*
  * TODO: Restructure component
@@ -58,8 +62,11 @@ export class TeacherPinStudentComponent implements OnInit, OnDestroy {
     private storage: StorageService,
     private passLimitsService: PassLimitService,
     private dialog: MatDialog,
+    private featureService: FeatureFlagService,
+    private wilService: WaitInLineService,
+    private locationsService: LocationsService,
+    private encounterService: EncounterPreventionService,
     private toastService: ToastService,
-    private encounterService: EncounterPreventionService
   ) {
   }
 
@@ -95,7 +102,38 @@ export class TeacherPinStudentComponent implements OnInit, OnDestroy {
 
             if (this.pin.length === 4) {
               return this.requestService.checkLimits({teacher_pin: this.pin}, this.request, this.confirmDialogBody).pipe(
-                concatMap((httpBody) => this.requestService.acceptRequest(this.request.id, httpBody)),
+                concatMap(httpBody => {
+                  return this.locationsService.pass_limits$.pipe(
+                    map(pass_limits => ({
+                      pass_limit: pass_limits.find(pl => pl.id == this.request.destination.id),
+                      httpBody
+                    }))
+                  )
+                }),
+                concatMap(({pass_limit, httpBody}) => {
+                  const waitInLineEnabled = this.featureService.isFeatureEnabled(FLAGS.WaitInLine);
+                  const destFull = pass_limit?.max_passes_to_active && pass_limit.to_count >= pass_limit.max_passes_to;
+                  const mockWaitInLine = this.requestService.cancelRequest(this.request.id).pipe(
+                    tap(() => {
+                      const wil: WaitInLine = {
+                        ...this.request,
+                        issuer: null,
+                        position: '3rd',
+                        isSameObject: this.request.isSameObject,
+                        cancellable_by_student: true,
+                        isAssignedToSchool: this.request?.hallpass?.isAssignedToSchool ?? (() => true),
+                        cancelled: false,
+                      };
+
+                      this.wilService.fakeWil.next(wil);
+                      this.wilService.fakeWilActive.next(true);
+                      console.log(this.wilService.fakeWil.value);
+                    })
+                  );
+
+                  return iif(() => destFull && waitInLineEnabled, mockWaitInLine, this.requestService.acceptRequest(this.request.id, httpBody))
+                }),
+
                 catchError((err: Error) => {
                   if (err instanceof HttpErrorResponse && err?.error?.conflict_student_ids) {
                     this.encounterService.showEncounterPreventionToast({

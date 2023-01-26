@@ -142,11 +142,18 @@
                     </div>
                     <div class="toggle-content">
                         <div class="title-line">
-                            <div class="label" [style.color]="passLimitForm.get('toEnabled').value ? '#1F194E' : '#7F879D'">
-                                Active Pass Limit
-                                <!-- TODO uncomment when branch SP-1050 is available -->
-                                <!--                <span class="place">to</span> this room-->
-                            </div>
+                            <div class="label" [style.color]="passLimitForm.get('toEnabled').value ? '#1F194E' : '#7F879D'">Active Pass Limit</div>
+                            <img customToolTip [contentTemplate]="isWaitInLine ? activePassLimitText : activePassLimitTextDisabled" class="support-icon" [src]="'./assets/Support (Gray).svg' | resolveAsset">
+                            <ng-template #activePassLimitText>
+                                <div class="ds-tooltip" style="width: 240px">
+                                    When the limit is reached, passes will Wait in Line before they can be started.
+                                    <a href="https://www.smartpass.app/waitinline" target="_blank" class="link">Learn more</a></div>
+                            </ng-template>
+                            <ng-template #activePassLimitTextDisabled>
+                                <div class="ds-tooltip" style="width: 240px">
+                                    Limit the number of active passes to this room.
+                                    <a href="https://www.smartpass.app/activepasslimit" target="_blank" class="link">Learn more</a></div>
+                            </ng-template>
                         </div>
                     </div>
                 </div>

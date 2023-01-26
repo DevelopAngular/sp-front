@@ -109,7 +109,11 @@ import { TeacherSelectionComponent } from '../teacher-selection/teacher-selectio
 import { DateButtonComponent } from '../student-info-card/date-button/date-button.component';
 import { OverviewContainerComponent } from '../student-info-card/student-passes-overwiew/overview-container.component';
 import { SettingsComponent } from '../settings/settings.component';
-import { InviteFamiliesDialogComponent } from '../admin/invite-families-dialog/invite-families-dialog.component';
+import { InviteFamiliesDialogComponent } from '../admin/invite-families-dialog/invite-families-dialog.component';;
+import { WaitInLineCardComponent } from '../pass-cards/wait-in-line-card/wait-in-line-card.component'
+import {
+  InlineWaitInLineCardComponent
+} from '../pass-cards/inline-wait-in-line-card/inline-wait-in-line-card.component'
 const DEFAULT_SWIPER_CONFIG: SwiperConfigInterface = {
   direction: 'horizontal',
   slidesPerView: 'auto'
@@ -181,6 +185,7 @@ const DEFAULT_SWIPER_CONFIG: SwiperConfigInterface = {
     InlinePassCardComponent,
     RequestCardComponent,
     InlineRequestCardComponent,
+    InlineWaitInLineCardComponent,
     DropdownComponent,
     SettingsDescriptionPopupComponent,
     AppTextareaComponent,
@@ -227,7 +232,8 @@ const DEFAULT_SWIPER_CONFIG: SwiperConfigInterface = {
     OverviewContainerComponent,
     SettingsComponent,
     InviteFamiliesDialogComponent
-
+,
+    WaitInLineCardComponent
   ],
   exports: [
     ReactiveFormsModule,
@@ -282,6 +288,7 @@ const DEFAULT_SWIPER_CONFIG: SwiperConfigInterface = {
     InlinePassCardComponent,
     RequestCardComponent,
     InlineRequestCardComponent,
+    InlineWaitInLineCardComponent,
     DropdownComponent,
     AppTextareaComponent,
     SquareButtonComponent,
@@ -326,7 +333,8 @@ const DEFAULT_SWIPER_CONFIG: SwiperConfigInterface = {
     OverviewContainerComponent,
     SettingsComponent,
     InviteFamiliesDialogComponent
-  ],
+,
+    WaitInLineCardComponent  ],
   providers: [
     {
       provide: SWIPER_CONFIG,

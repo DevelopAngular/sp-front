@@ -43,6 +43,7 @@ import {KioskModeService} from '../services/kiosk-mode.service';
 import {UNANIMATED_CONTAINER} from '../consent-menu-overlay';
 import {SettingsDescriptionPopupComponent} from '../settings-description-popup/settings-description-popup.component';
 import {CreateHallpassFormsComponent} from '../create-hallpass-forms/create-hallpass-forms.component';
+import { WaitInLine } from '../models/WaitInLine'
 
 @Component({
   selector: 'app-student-passes',
@@ -75,8 +76,7 @@ export class StudentPassesComponent implements OnInit, OnDestroy, AfterViewInit 
 
   isStaff: boolean;// for staff the passes have a richer UI
   extraSpace: number = 50; // space we need for staff UI
-
-  reportFormInstance: ReportFormComponent;
+  isWaitInLine: boolean;
 
   isScrollable: boolean;
   animationTrigger = {value: 'open', params: {size: '75'}};
@@ -97,6 +97,7 @@ export class StudentPassesComponent implements OnInit, OnDestroy, AfterViewInit 
   user$: Observable<User>;
 
   destroy$: Subject<any> = new Subject<any>();
+  kioskModeRoom$ = this.kioskMode.getCurrentRoom();
 
   @HostListener('document.scroll', ['$event'])
   scroll(event) {
@@ -129,6 +130,7 @@ export class StudentPassesComponent implements OnInit, OnDestroy, AfterViewInit 
   }
 
   ngOnInit() {
+    this.isWaitInLine = this.pass instanceof WaitInLine;
     this.user$ = this.userService.user$.pipe(map(u => User.fromJSON(u)));
     this.fadeInOutTrigger$ = this.domCheckerService.fadeInOutTrigger$;
     this.passesService.getQuickPreviewPassesRequest(this.profile.id, true);
@@ -173,7 +175,9 @@ export class StudentPassesComponent implements OnInit, OnDestroy, AfterViewInit 
       }),
       tap((isStaff) => {
         this.isStaff = isStaff;
-        this.height += this.extraSpace;
+        if (!this.kioskModeRoom$.value && !this.isWaitInLine) {
+          this.height += this.extraSpace;
+        }
       })
     ).subscribe();
   }

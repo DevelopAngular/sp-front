@@ -1,26 +1,40 @@
-import {Component, ElementRef, HostListener, OnDestroy, OnInit, ViewChild} from '@angular/core';
-import {MatDialog} from '@angular/material/dialog';
+import { Component, ElementRef, HostListener, OnDestroy, OnInit, ViewChild } from '@angular/core'
+import { MatDialog } from '@angular/material/dialog'
 
-import {BehaviorSubject, forkJoin, interval, Observable, of, ReplaySubject, Subject, Subscription, zip} from 'rxjs';
-import {filter, map, switchMap, take, takeUntil, tap} from 'rxjs/operators';
+import {
+  BehaviorSubject,
+  combineLatest,
+  forkJoin,
+  interval,
+  Observable,
+  of,
+  ReplaySubject,
+  Subject,
+  Subscription,
+  zip
+} from 'rxjs'
+import { debounceTime, filter, map, switchMap, take, takeUntil, tap } from 'rxjs/operators'
 
-import {HttpService} from '../../services/http-service';
-import {Pinnable} from '../../models/Pinnable';
-import {OverlayContainerComponent} from '../overlay-container/overlay-container.component';
-import {PinnableCollectionComponent} from '../pinnable-collection/pinnable-collection.component';
-import {isArray} from 'lodash';
-import {HallPassesService} from '../../services/hall-passes.service';
-import {SchoolSettingDialogComponent} from '../school-setting-dialog/school-setting-dialog.component';
-import {Location} from '../../models/Location';
-import {ActivatedRoute, Router} from '@angular/router';
-import {LocationsService} from '../../services/locations.service';
-import {DarkThemeSwitch} from '../../dark-theme-switch';
-import {ConsentMenuComponent} from '../../consent-menu/consent-menu.component';
-import {AdminService} from '../../services/admin.service';
-import {UNANIMATED_CONTAINER} from '../../consent-menu-overlay';
-import {ScrollPositionService} from '../../scroll-position.service';
-import {Onboard} from '../../models/Onboard';
-import {SupportService} from '../../services/support.service';
+import { HttpService } from '../../services/http-service'
+import { Pinnable } from '../../models/Pinnable'
+import { OverlayContainerComponent } from '../overlay-container/overlay-container.component'
+import { PinnableCollectionComponent } from '../pinnable-collection/pinnable-collection.component'
+import { isArray } from 'lodash'
+import { HallPassesService } from '../../services/hall-passes.service'
+import { SchoolSettingDialogComponent } from '../school-setting-dialog/school-setting-dialog.component'
+import { Location } from '../../models/Location'
+import { ActivatedRoute, Router } from '@angular/router'
+import { LocationsService } from '../../services/locations.service'
+import { DarkThemeSwitch } from '../../dark-theme-switch'
+import { ConsentMenuComponent } from '../../consent-menu/consent-menu.component'
+import { AdminService } from '../../services/admin.service'
+import { UNANIMATED_CONTAINER } from '../../consent-menu-overlay'
+import { ScrollPositionService } from '../../scroll-position.service'
+import { Onboard } from '../../models/Onboard'
+import { SupportService } from '../../services/support.service'
+import { UserService } from '../../services/user.service'
+import * as moment from 'moment/moment'
+import { FeatureFlagService, FLAGS } from '../../services/feature-flag.service'
 
 @Component({
   selector: 'app-pass-congif',
@@ -105,6 +119,9 @@ export class PassConfigComponent implements OnInit, OnDestroy {
     destroy$ = new Subject();
     showRooms: boolean;
     globalReloadSubs: Subscription;
+    showWaitInLineNux = new Subject<boolean>();
+    showNuxTooltip: Subject<boolean> = new Subject();
+    introsData: any;
 
     @HostListener('window:scroll', ['$event'])
     scroll(event) {
@@ -126,7 +143,9 @@ export class PassConfigComponent implements OnInit, OnDestroy {
       public darkTheme: DarkThemeSwitch,
       private adminService: AdminService,
       private scrollPosition: ScrollPositionService,
-      private supportService: SupportService
+      private supportService: SupportService,
+      private userService: UserService,
+      private features: FeatureFlagService
   ) { }
 
   get headerButtonText() {
@@ -182,6 +201,24 @@ export class PassConfigComponent implements OnInit, OnDestroy {
       });
 
       this.selectPinnable({ action: 'room/folder_edit', selection: this.pinnable });
+    });
+
+    combineLatest(
+      this.userService.introsData$.pipe(filter(res => !!res)),
+      this.userService.nuxDates$.pipe(filter(r => !!r)),
+      this.userService.user$.pipe(filter(r => !!r))
+    )
+      .pipe(
+        debounceTime(1000),
+        takeUntil(this.destroy$)
+      ).subscribe(([intros, nuxDates, user]) => {
+      this.introsData = intros;
+      const showNux = moment(user.first_login).isBefore(moment(nuxDates[0].created), 'day');
+      this.showNuxTooltip.next(!this.introsData.encounter_reminder.universal.seen_version && showNux);
+
+      if (this.features.isFeatureEnabled(FLAGS.WaitInLine)) {
+        this.showWaitInLineNux.next(!intros?.wait_in_line?.universal?.seen_version);
+      }
     });
   }
 
@@ -413,5 +450,10 @@ export class PassConfigComponent implements OnInit, OnDestroy {
 
   closeChat(event) {
     this.supportService.closeChat(event);
+  }
+
+  dismissWaitInLineNux() {
+    this.showWaitInLineNux.next(false);
+    this.userService.updateIntrosWaitInLineRequest(this.introsData, 'universal', '1');
   }
 }
