@@ -85,3 +85,12 @@ Sessionx.vim
 tags
 # Persistent undo
 [._]*.un~
+
+# Recommended yarn gitignore
+.pnp.*
+.yarn/*
+!.yarn/patches
+!.yarn/plugins
+!.yarn/releases
+!.yarn/sdks
+!.yarn/versions
