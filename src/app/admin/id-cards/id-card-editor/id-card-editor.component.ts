@@ -118,11 +118,16 @@ export class IdCardEditorComponent implements OnInit, OnDestroy {
     this.backsideText = IDCARDDETAILS.backside_text;
     this.backgroundColor = IDCARDDETAILS.color;
     this.IDCardVisibleTo = IDCARDDETAILS.visible_to_who;
-    IDCARDDETAILS.show_custom_ids
-      ? this.selectBarcodeType(IDCARDDETAILS.barcode_type || 'qr-code', false)
-      : null;
-    IDCARDDETAILS.show_grade_levels ? this.greadLevel = '11' : null
-    IDCARDDETAILS.signed_url && IDCARDDETAILS.logo_file_name ? this.logoURL = IDCARDDETAILS.signed_url : null
+    if (IDCARDDETAILS.show_custom_ids) {
+      this.selectBarcodeType(IDCARDDETAILS.barcode_type || 'qr-code', false)
+    }
+    if (IDCARDDETAILS.show_grade_levels) {
+      this.greadLevel = '11';
+    }
+    if (IDCARDDETAILS.signed_url && IDCARDDETAILS.logo_file_name) {
+      this.logoURL = IDCARDDETAILS.signed_url;
+    }
+
   }
 
   setBackgroundColor() {
