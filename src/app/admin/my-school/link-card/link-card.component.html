@@ -6,6 +6,7 @@
       [gradient]="buttonColor"
       [rightIcon]="rightIcon ? rightIcon : null"
       [leftIcon]="leftIcon ? leftIcon : null"
+      [buttonId]="buttonId"
       (buttonClick)="buttonClick.emit($event)">
       {{ buttonText }}
     </app-gradient-button>

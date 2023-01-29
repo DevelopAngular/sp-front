@@ -14,6 +14,7 @@ export class LinkCardComponent implements OnInit {
   @Input() buttonColor: string;
   @Input() leftIcon: string;
   @Input() rightIcon: string;
+  @Input() buttonId: string;
 
   @Output() buttonClick: EventEmitter<any> = new EventEmitter<any>();
 
