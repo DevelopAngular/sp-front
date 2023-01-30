@@ -5,7 +5,7 @@ import {ActivatedRoute, NavigationEnd, Router} from '@angular/router';
 import {filter as _filter} from 'lodash';
 import {BehaviorSubject, interval, Observable, ReplaySubject, Subject, zip} from 'rxjs';
 
-import { concatMap, filter, map, mergeMap, switchMap, take, takeUntil, withLatestFrom } from 'rxjs/operators'
+import { concatMap, filter, map, mergeMap, switchMap, take, takeUntil, withLatestFrom } from 'rxjs/operators';
 import {BUILD_INFO_REAL} from '../build-info';
 import {DarkThemeSwitch} from './dark-theme-switch';
 
@@ -62,8 +62,8 @@ export class AppComponent implements OnInit, AfterViewInit, OnDestroy {
   }
 
   public isAuthenticated = null;
-  public hideScroll: boolean = true;
-  public hideSchoolToggleBar: boolean = false;
+  public hideScroll = true;
+  public hideSchoolToggleBar = false;
   public showUISubject: BehaviorSubject<boolean> = new BehaviorSubject<boolean>(false);
   public showUI: Observable<boolean> = this.showUISubject.asObservable();
   public schools: School[] = [];
@@ -81,6 +81,19 @@ export class AppComponent implements OnInit, AfterViewInit, OnDestroy {
   intercomObserver: MutationObserver;
 
   private subscriber$ = new Subject();
+
+  trialEndDate$ = this.http.currentSchoolSubject.pipe(
+    takeUntil(this.subscriber$),
+    filter(s => !!s?.trial_end_date),
+    map(s => new Date(s.trial_end_date)),
+  );
+
+  isAdmin$ = this.userService.userData.pipe(
+    filter(u => !!u),
+    map(u => u.isAdmin()),
+  );
+
+  private todayDate = new Date();
 
   @HostListener('window:popstate', ['$event'])
   back(event) {
@@ -173,7 +186,7 @@ export class AppComponent implements OnInit, AfterViewInit, OnDestroy {
         filter(user => !!user),
         map(user => User.fromJSON(user)),
         concatMap(user => {
-          return this.intercomLauncherAdded$.pipe(map(intercomWrapper => [user, intercomWrapper]))
+          return this.intercomLauncherAdded$.pipe(map(intercomWrapper => [user, intercomWrapper]));
         }),
         switchMap(([user, intercomWrapper]: [User, HTMLDivElement]) => {
           this.currentRoute = window.location.pathname;
@@ -190,7 +203,7 @@ export class AppComponent implements OnInit, AfterViewInit, OnDestroy {
           if (intercomWrapper) {
             intercomWrapper.style.display = user.isStudent()
               ? 'none'
-              : 'block'
+              : 'block';
           }
 
 
@@ -297,7 +310,7 @@ export class AppComponent implements OnInit, AfterViewInit, OnDestroy {
       takeUntil(this.subscriber$))
       .subscribe(([schools, currentSchool]) => {
         this.schools = schools;
-        const isCurrentSchoolInList = schools.find(s => s.id == currentSchool.id);
+        const isCurrentSchoolInList = schools.find(s => s.id === currentSchool.id);
         if (currentSchool && !isCurrentSchoolInList) {
           this.http.setSchool(schools[0]);
         }
@@ -405,6 +418,7 @@ export class AppComponent implements OnInit, AfterViewInit, OnDestroy {
     // }
     console.log('registering intercom');
     setTimeout(() => {
+      const now = new Date();
       const school: School = this.http.getSchool();
       window.intercomSettings = {
         user_id: user.id,
@@ -419,12 +433,21 @@ export class AppComponent implements OnInit, AfterViewInit, OnDestroy {
           id: school.id,
           name: school.name,
           'Id Card Access': school.feature_flag_digital_id,
-          'Plus Access': school.feature_flag_encounter_detection
+          'Plus Access': school.feature_flag_encounter_detection,
+          'Trialing': (!!school.trial_end_date && (school.trial_end_date > now)) ? 'Yes' : 'No',
+          'Trial End Date': !!school.trial_end_date ? new Date(school.trial_end_date).toDateString() : 'N/A'
         },
         hide_default_launcher: false
       };
       window.Intercom('update');
     }, 3000);
+  }
+
+  getDaysUntil(date: Date): string {
+    const oneDay = 24 * 60 * 60 * 1000; // hours*minutes*seconds*milliseconds
+    // @ts-ignore
+    const diffDays = Math.round(Math.abs((date - this.todayDate) / oneDay));
+    return diffDays.toString();
   }
 
   getUserType(user: User): string {
@@ -512,10 +535,10 @@ export class AppComponent implements OnInit, AfterViewInit, OnDestroy {
             this.intercomLauncherAdded$.next(node as HTMLDivElement);
             this.intercomObserver.disconnect();
           }
-        })
+        });
       }
 
-    })
+    });
     this.intercomObserver.observe(targetNode, listenerConfig);
   }
 
