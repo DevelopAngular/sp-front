@@ -93,8 +93,6 @@ export class AdminPageComponent implements OnInit, AfterViewInit, OnDestroy {
         }
         this.router.navigate(['/admin', tab]);
     });
-
-
   }
 
   ngOnDestroy(): void {

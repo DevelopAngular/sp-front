@@ -22,6 +22,7 @@ export class School extends BaseModel {
         public feature_flag_encounter_detection: boolean,
         public feature_flag_parent_accounts: boolean,
         public feature_flag_wait_in_line: boolean,
+        public trial_end_date: Date,
         public timezone: string,
     ) {
         super();
@@ -55,6 +56,11 @@ export class School extends BaseModel {
             feature_flag_wait_in_line: boolean = !!JSON['feature_flag_wait_in_line'],
             timezone: string = JSON['timezone'];
 
+        let trial_end_date: Date;
+        if (JSON['trial_end_date']) {
+          trial_end_date = new Date(JSON['trial_end_date']);
+        }
+
         return new School(
             display_card_room,
             student_can_use_mobile,
@@ -74,6 +80,7 @@ export class School extends BaseModel {
             feature_flag_encounter_detection,
             feature_flag_parent_accounts,
             feature_flag_wait_in_line,
+            trial_end_date,
             timezone
         );
     }

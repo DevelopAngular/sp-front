@@ -1,6 +1,5 @@
 <ng-container *ngIf="user">
-    <div class="host" [style.background]="darkTheme.getColor({dark: '#0F171E', white: ((isStaff || isAssistant) && !isKioskMode ? '#FFFFFF' : 'transparent' )})" [style.position]="(isStaff || user.isAdmin() || isAssistant) || screenService.isDeviceLargeExtra ? 'fixed' : 'static'"
-        [style.top]="(countSchools$ | async) > 1 && !hideButtons && !isParent ? ((isUpdateBar$ | async) ? '89px' : '50px') : ((isUpdateBar$ | async) ? '39px' : '0px')" *ngIf="showNav && !isHallMonitorRoute && showNav && !isMyRoomRoute || showNav && !islargeDeviceWidth"
+    <div class="host" [style.background]="darkTheme.getColor({dark: '#0F171E', white: ((isStaff || isAssistant) && !isKioskMode ? '#FFFFFF' : 'transparent' )})" *ngIf="showNav && !isHallMonitorRoute && showNav && !isMyRoomRoute || showNav && !islargeDeviceWidth"
         [style.border-bottom]="(darkTheme.isEnabled$ | async) && !user.isStudent() ? '1px solid #7083A0' : 'none'">
         <div class="bar" appNavbarElementSender [ngClass]="{shadow: ((isStaff || isAssistant) && !isKioskMode && !isKioskModeSettingsPage()) || screenService.isDeviceLargeExtra}" [ngStyle]="{
     padding: (user && user.isStudent()) || isKioskMode ? '0 16px' : '0 16px 0 0'

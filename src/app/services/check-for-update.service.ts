@@ -1,7 +1,7 @@
 import {ApplicationRef, Injectable, OnDestroy} from '@angular/core';
 import {SwUpdate} from '@angular/service-worker';
 import {filter, first, map, switchMap, take, takeUntil} from 'rxjs/operators';
-import {concat, interval, ReplaySubject, Subject} from 'rxjs';
+import {concat, interval, ReplaySubject, Subject, of} from 'rxjs';
 import {AdminService} from './admin.service';
 
 @Injectable({

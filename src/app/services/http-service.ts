@@ -866,7 +866,7 @@ export class HttpService implements OnDestroy {
     //    '@angular/common/locales/es-US'
     //  ).then(lang => {
     //    registerLocaleData(lang.default);
-    //    this.esUSRegistered = true;     
+    //    this.esUSRegistered = true;
     //  });
     //}
   }
