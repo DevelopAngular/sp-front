@@ -84,7 +84,7 @@ export class AppComponent implements OnInit, AfterViewInit, OnDestroy {
 
   trialEndDate$ = this.http.currentSchoolSubject.pipe(
     takeUntil(this.subscriber$),
-    filter(s => !!s && !!s.trial_end_date),
+    filter(s => !!s?.trial_end_date),
     map(s => new Date(s.trial_end_date)),
   );
 
