@@ -18,7 +18,7 @@ import {Title} from '@angular/platform-browser';
 import {Location} from '../models/Location';
 import { FeatureFlagService, FLAGS } from '../services/feature-flag.service';
 import { WaitInLineService } from '../services/wait-in-line.service';
-// import { WaitInLine } from '../models/WaitInLine';
+import { WaitInLine } from '../models/WaitInLine'
 
 declare const window;
 
@@ -30,7 +30,7 @@ declare const window;
 export class KioskModeComponent implements OnInit, AfterViewInit, OnDestroy {
 
   activePassesKiosk: Observable<HallPass[]>;
-  waitInLinePassesKiosk: any;
+  waitInLinePassesKiosk: Observable<WaitInLine[]>;
   // isActiveWaitInLine$: Observable<boolean>;
   // currentWaitInLine$ = new BehaviorSubject<WaitInLine>(null);
 
@@ -93,7 +93,11 @@ export class KioskModeComponent implements OnInit, AfterViewInit, OnDestroy {
   }
 
   get isWaitInLine(): boolean {
-    return this.featureService.isFeatureEnabled(FLAGS.WaitInLine) && this.wilService.fakeWilActive.getValue();
+    return this.featureService.isFeatureEnabled(FLAGS.WaitInLine)
+  }
+
+  get waitInLinePassesPresent() {
+    return this.isWaitInLine && this.wilService.fakeWilActive.getValue();
   }
 
   ngOnInit() {
