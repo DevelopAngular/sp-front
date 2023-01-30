@@ -19,6 +19,7 @@
      (pointerClickEvent)="buttonDown = false; hovered = false; onClick($event)"
 
      [@pressState]="buttonState"
+     [attr.id]="buttonId"
      [ngClass]="{'center': !(leftIcon || rightIcon), 'disabled': disabled}">
   <div *ngIf="!buttonLink" class="wrapper-container" [style.width]="textWidth" [style.padding]="padding">
     <div class="wrapper">

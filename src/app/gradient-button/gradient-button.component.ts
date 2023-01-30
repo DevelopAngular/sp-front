@@ -69,6 +69,7 @@ export class GradientButtonComponent implements OnInit {
   @Input() documentType: docType;
   @Input() isGradient: boolean;
   @Input() customBackground: string = '';
+  @Input() buttonId: string;
   @Output() buttonClick = new EventEmitter<any>();
   @Output() disabledButtonClick = new EventEmitter<any>();
 
