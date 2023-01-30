@@ -76,7 +76,7 @@ export class AppComponent implements OnInit, AfterViewInit, OnDestroy {
   customStyle: Record<string, any>;
   public hasCustomBackdrop$: Observable<boolean>;
   public customBackdropStyle$: Observable<any>;
-  public user$: Subject<User>;
+  public user$: Observable<User>;
   intercomLauncherAdded$: BehaviorSubject<HTMLDivElement> = new BehaviorSubject<HTMLDivElement>(null);
   intercomObserver: MutationObserver;
 
