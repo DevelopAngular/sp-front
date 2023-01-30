@@ -36,6 +36,7 @@ lint:
     - "wget -P ~/.nvm/.cache/bin/node-v$(cat .nvmrc)-linux-x64-musl https://unofficial-builds.nodejs.org/download/release/v$(cat .nvmrc)/node-v$(cat .nvmrc)-linux-x64-musl.tar.xz"
     - nvm install $(cat .nvmrc)
     - nvm use
+    - yarn install
     - yarn lint
     - git add .
     - git commit -am "ci(lint)"
