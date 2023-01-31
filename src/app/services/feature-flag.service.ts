@@ -1,5 +1,6 @@
 import { Injectable } from '@angular/core';
 import { HttpService } from './http-service';
+import { School } from '../models/School';
 
 /**
  * Add any future feature flags to this enum
@@ -16,10 +17,15 @@ export enum FLAGS {
 	providedIn: 'root',
 })
 export class FeatureFlagService {
-	constructor(private http: HttpService) {}
+	private school: School;
+
+	constructor(private http: HttpService) {
+		this.http.currentUpdateSchool$.subscribe({
+			next: (s) => (this.school = s),
+		});
+	}
 
 	isFeatureEnabled(featureFlag: FLAGS): boolean {
-		const school = this.http.getSchool();
-		return !!school[featureFlag];
+		return !!this.school?.[featureFlag];
 	}
 }
