@@ -37,10 +37,7 @@ lint:
     - nvm install $(cat .nvmrc)
     - nvm use
     - yarn install
-    - yarn lint
-    - git add .
-    - git commit -am "ci(lint)"
-    - git push origin "${CI_COMMIT_BRANCH}"
+    - yarn lint:ci
   only:
     refs:
       - merge_requests
