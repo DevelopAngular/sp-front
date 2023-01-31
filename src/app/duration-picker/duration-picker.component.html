@@ -1,19 +1,22 @@
 <div class="wrapper">
-    <div class="left">
-        <mat-slider class="slider"
-                    [max]="maxDuration"
-                    [min]="minDuration"
-                    [vertical]="true"
-                    [(ngModel)]="selectedDuration"
-                    (input)="updateDuration($event)">
-        </mat-slider>
-    </div>
-    <div class="right">
-        <div class="right-top">
-            {{forStaff?'How much time do'+(plural?' the students need?':'es the student need?'):'How much time do you need?'}}
-        </div>
-        <div class="right-bottom">
-          <div class="large"><var>{{ selectedDuration }}</var> min</div>
-        </div>
-    </div>
+	<div class="left">
+		<mat-slider
+			class="slider"
+			[max]="maxDuration"
+			[min]="minDuration"
+			[vertical]="true"
+			[(ngModel)]="selectedDuration"
+			(input)="updateDuration($event)">
+		</mat-slider>
+	</div>
+	<div class="right">
+		<div class="right-top">
+			{{ forStaff ? 'How much time do' + (plural ? ' the students need?' : 'es the student need?') : 'How much time do you need?' }}
+		</div>
+		<div class="right-bottom">
+			<div class="large">
+				<var>{{ selectedDuration }}</var> min
+			</div>
+		</div>
+	</div>
 </div>

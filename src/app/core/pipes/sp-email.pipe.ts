@@ -1,15 +1,13 @@
-import {Pipe, PipeTransform} from '@angular/core';
+import { Pipe, PipeTransform } from '@angular/core';
 
 @Pipe({
-  name: 'spEmail'
+	name: 'spEmail',
 })
 export class SpEmailPipe implements PipeTransform {
-
-  transform(email: string, ...args: unknown[]): unknown {
-    if (email.includes('@spnx.local')) {
-      email = email.replace('@spnx.local', '');
-    }
-    return email.toLowerCase();
-  }
-
+	transform(email: string, ...args: unknown[]): unknown {
+		if (email.includes('@spnx.local')) {
+			email = email.replace('@spnx.local', '');
+		}
+		return email.toLowerCase();
+	}
 }

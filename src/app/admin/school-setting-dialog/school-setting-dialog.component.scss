@@ -1,109 +1,106 @@
 .settings-wrapper {
-  background-color: #FFFFFF;
-  width: 425px;
-  height: 100%;
-  .settings-header {
-    height: 70px;
-    display: flex;
-    position: relative;
-    align-items: center;
-    justify-content: center;
-    box-shadow: 0 2px 4px 0 rgba(0, 0, 0, 0.1);
+	background-color: #ffffff;
+	width: 425px;
+	height: 100%;
+	.settings-header {
+		height: 70px;
+		display: flex;
+		position: relative;
+		align-items: center;
+		justify-content: center;
+		box-shadow: 0 2px 4px 0 rgba(0, 0, 0, 0.1);
 
-    .back-button {
-      width: 28px;
-      cursor: pointer;
-      position: absolute;
-      font-size: 15px;
-      font-weight: 500;
-      color: #1F195E;
-      left: 15px;
+		.back-button {
+			width: 28px;
+			cursor: pointer;
+			position: absolute;
+			font-size: 15px;
+			font-weight: 500;
+			color: #1f195e;
+			left: 15px;
+		}
 
-    }
+		.save-button {
+			width: 85px;
+			position: absolute;
+			right: 27px;
+		}
 
-    .save-button {
-      width: 85px;
-      position: absolute;
-      right: 27px;
-    }
+		.settings-header-text {
+			color: #1f195e;
+			font-size: 17px;
+		}
+	}
 
-    .settings-header-text {
-      color: #1F195E;
-      font-size: 17px;
-    }
-  }
+	.settings-content {
+		height: 370px;
+		padding: 20px;
+		display: flex;
+		flex-direction: column;
+		justify-content: space-between;
+		overflow: auto;
 
-  .settings-content {
-    height: 370px;
-    padding: 20px;
-    display: flex;
-    flex-direction: column;
-    justify-content: space-between;
-    overflow: auto;
+		.controls-block {
+			.control-text {
+				color: #7f879d;
+				font-size: 15px;
 
-    .controls-block {
+				.control-subtext {
+					color: #d3d6de;
+					font-size: 13px;
+				}
+			}
 
-      .control-text {
-        color: #7F879D;
-        font-size: 15px;
+			.display-room-control {
+				display: flex;
+				align-items: center;
+				justify-content: space-between;
+				margin-bottom: 20px;
 
-        .control-subtext {
-          color: #D3D6DE;
-          font-size: 13px;
-        }
-      }
+				.controls-description {
+					display: flex;
+					flex-direction: column;
+					a {
+						color: #b3b7c1;
+					}
+					.badge-secondary {
+						color: #fff;
+						background-color: rgb(0, 180, 118);
+					}
+					.badge {
+						display: inline-block;
+						padding: 0.25em 0.4em;
+						font-size: 13px;
+						font-weight: 700;
+						line-height: 1;
+						text-align: center;
+						white-space: nowrap;
+						vertical-align: baseline;
+						border-radius: 0.5rem;
+					}
+				}
+			}
 
-      .display-room-control {
-        display: flex;
-        align-items: center;
-        justify-content: space-between;
-        margin-bottom: 20px;
+			.buffer-time-control {
+				display: flex;
+				justify-content: space-between;
+				align-items: center;
+			}
+		}
 
-        .controls-description {
-          display: flex;
-          flex-direction: column;
-          a{
-            color: #B3B7C1;
-          }
-          .badge-secondary {
-            color: #fff;
-            background-color: rgb(0, 180, 118);
-        }
-        .badge {
-            display: inline-block;
-            padding: 0.25em 0.4em;
-            font-size: 13px;
-            font-weight: 700;
-            line-height: 1;
-            text-align: center;
-            white-space: nowrap;
-            vertical-align: baseline;
-            border-radius: 0.5rem;
-        }
-        }
-      }
+		.bottom-block {
+			display: flex;
+			flex-direction: column;
+			align-items: center;
+			justify-content: center;
+			color: #7f879d;
+			font-size: 14px;
 
-      .buffer-time-control {
-        display: flex;
-        justify-content: space-between;
-        align-items: center;
-      }
-    }
-
-    .bottom-block {
-      display: flex;
-      flex-direction: column;
-      align-items: center;
-      justify-content: center;
-      color: #7F879D;
-      font-size: 14px;
-
-      .ask {
-        font-weight: bold;
-      }
-      .support-email {
-
-      }
-    }
-  }
+			.ask {
+				font-weight: bold;
+			}
+			.support-email {
+			}
+		}
+	}
 }

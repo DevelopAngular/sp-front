@@ -1,55 +1,40 @@
-import {Injectable} from '@angular/core';
+import { Injectable } from '@angular/core';
 
-import {BehaviorSubject, combineLatest} from 'rxjs';
-import {DataService} from '../services/data-service';
-import {LiveDataService} from '../live-data/live-data.service';
-import {UserService} from '../services/user.service';
-import {map, switchMap} from 'rxjs/operators';
+import { BehaviorSubject, combineLatest } from 'rxjs';
+import { DataService } from '../services/data-service';
+import { LiveDataService } from '../live-data/live-data.service';
+import { UserService } from '../services/user.service';
+import { map, switchMap } from 'rxjs/operators';
 
 function count<T>(items: T[], fn: (item: T) => boolean): number {
-  let acc = 0;
-  for (const item of items) {
-    if (fn(item)) {
-      acc++;
-    }
-  }
-  return acc;
+	let acc = 0;
+	for (const item of items) {
+		if (fn(item)) {
+			acc++;
+		}
+	}
+	return acc;
 }
 
 @Injectable({
-  providedIn: 'root'
+	providedIn: 'root',
 })
 export class NavbarDataService {
+	notificationBadge$ = new BehaviorSubject(0);
 
-  notificationBadge$ = new BehaviorSubject(0);
+	public inboxClick$: BehaviorSubject<boolean> = new BehaviorSubject<boolean>(false);
 
-  public inboxClick$: BehaviorSubject<boolean> = new BehaviorSubject<boolean>(false);
+	constructor(private userService: UserService, private dataService: DataService, private liveData: LiveDataService) {
+		const badgeCount$ = this.userService.userData.pipe(
+			switchMap((user) => {
+				const invitationCount$ = this.liveData.invitations$.pipe(map((invitations) => count(invitations, (invitation) => !invitation.isRead)));
 
-  constructor(
-    private userService: UserService,
-    private dataService: DataService,
-    private liveData: LiveDataService
-  ) {
+				const requestCount$ = this.liveData.requests$.pipe(map((requests) => count(requests, (request) => !request.isRead)));
 
+				return combineLatest(invitationCount$, requestCount$, (iCount, rCount) => iCount + rCount);
+			})
+		);
 
-    const badgeCount$ = this.userService.userData.pipe(
-      switchMap(user => {
-
-        const invitationCount$ = this.liveData.invitations$
-          .pipe(map(invitations => count(invitations, invitation => !invitation.isRead)));
-
-        const requestCount$ = this.liveData.requests$
-          .pipe(map(requests => count(requests, request => !request.isRead)));
-
-        return combineLatest(
-          invitationCount$, requestCount$,
-          (iCount, rCount) => iCount + rCount
-        );
-      })
-    );
-
-    badgeCount$.subscribe(this.notificationBadge$);
-
-
-  }
+		badgeCount$.subscribe(this.notificationBadge$);
+	}
 }

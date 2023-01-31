@@ -9,16 +9,7 @@ import { KioskModeDialogComponent } from './kiosk-mode-dialog/kiosk-mode-dialog.
 import { KioskSettingsComponent } from './kiosk-settings/kiosk-settings.component';
 
 @NgModule({
-  declarations: [
-    KioskModeComponent,
-    KioskModeDialogComponent,
-    KioskSettingsComponent
-  ],
-  imports: [
-    CommonModule,
-    KioskModeRoutingModule,
-    SharedModule,
-    FormsModule
-  ]
+	declarations: [KioskModeComponent, KioskModeDialogComponent, KioskSettingsComponent],
+	imports: [CommonModule, KioskModeRoutingModule, SharedModule, FormsModule],
 })
-export class KioskModeModule { }
+export class KioskModeModule {}

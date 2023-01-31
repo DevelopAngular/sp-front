@@ -1,139 +1,136 @@
-import {Component, ElementRef, HostListener, Inject, OnDestroy, OnInit, ViewChild} from '@angular/core';
-import {MAT_DIALOG_DATA, MatDialogRef} from '@angular/material/dialog';
-import {Subject} from 'rxjs';
+import { Component, ElementRef, HostListener, Inject, OnDestroy, OnInit, ViewChild } from '@angular/core';
+import { MAT_DIALOG_DATA, MatDialogRef } from '@angular/material/dialog';
+import { Subject } from 'rxjs';
 
-import {Report, ReportDataUpdate} from '../../../models/Report';
-import {HallPass} from '../../../models/HallPass';
-import {PassLike} from '../../../models';
-import {ReportUpdateService} from '../../../services/report-update.service';
-import {AdminService} from '../../../services/admin.service';
-import {TimeService} from '../../../services/time.service';
-import {PdfGeneratorService} from '../../pdf-generator.service';
+import { Report, ReportDataUpdate } from '../../../models/Report';
+import { HallPass } from '../../../models/HallPass';
+import { PassLike } from '../../../models';
+import { ReportUpdateService } from '../../../services/report-update.service';
+import { AdminService } from '../../../services/admin.service';
+import { TimeService } from '../../../services/time.service';
+import { PdfGeneratorService } from '../../pdf-generator.service';
 
 import * as moment from 'moment';
-import {takeUntil, switchMap} from 'rxjs/operators';
+import { takeUntil, switchMap } from 'rxjs/operators';
 
 declare const window;
 
 @Component({
-  selector: 'app-report-info-dialog',
-  templateUrl: './report-info-dialog.component.html',
-  styleUrls: ['./report-info-dialog.component.scss']
+	selector: 'app-report-info-dialog',
+	templateUrl: './report-info-dialog.component.html',
+	styleUrls: ['./report-info-dialog.component.scss'],
 })
 export class ReportInfoDialogComponent implements OnInit, OnDestroy {
+	@ViewChild('content') content: ElementRef;
 
-  @ViewChild('content') content: ElementRef;
+	report: Report;
+	isReportedPassActive: boolean | null = null;
+	showBottomShadow: boolean = true;
 
-  report: Report;
-  isReportedPassActive: boolean | null = null;
-  showBottomShadow: boolean = true;
+	pdfUrl: string;
 
-  pdfUrl: string;
+	destroy$: Subject<any> = new Subject<any>();
 
-  destroy$: Subject<any> = new Subject<any>();
+	@HostListener('document:scroll', ['$event'])
+	scroll(event) {
+		if (event.target.offsetHeight + event.target.scrollTop >= event.target.scrollHeight) {
+			this.showBottomShadow = false;
+		} else {
+			this.showBottomShadow = true;
+		}
+	}
 
-  @HostListener('document:scroll', ['$event'])
-  scroll(event) {
-    if (event.target.offsetHeight + event.target.scrollTop >= event.target.scrollHeight) {
-      this.showBottomShadow = false;
-    } else {
-      this.showBottomShadow = true;
-    }
-  }
+	constructor(
+		@Inject(MAT_DIALOG_DATA) public data: any,
+		private dialogRef: MatDialogRef<ReportInfoDialogComponent>,
+		private pdfService: PdfGeneratorService,
+		private reportUpdateService: ReportUpdateService,
+		private adminService: AdminService,
+		private timeService: TimeService
+	) {}
 
-  constructor(
-    @Inject(MAT_DIALOG_DATA) public data: any,
-    private dialogRef: MatDialogRef<ReportInfoDialogComponent>,
-    private pdfService: PdfGeneratorService,
-    private reportUpdateService: ReportUpdateService,
-    private adminService: AdminService,
-    private timeService: TimeService,
-  ) {}
+	get dateFormat() {
+		return moment(this.report.created).format('MMM DD, YYYY') + ' at ' + moment(this.report.created).format('hh:mm A');
+	}
 
-  get dateFormat() {
-    return moment(this.report.created).format('MMM DD, YYYY') + ' at ' + moment(this.report.created).format('hh:mm A');
-  }
+	ngOnInit(): void {
+		this.report = this.data['report'];
 
-  ngOnInit(): void {
-    this.report = this.data['report'];
+		if (this.report.reported_pass_id) {
+			// reported pass is always a HallPass
+			let pass: HallPass | null;
+			if (this.report.reported_pass instanceof HallPass) {
+				pass = this.report.reported_pass;
+			} else {
+				try {
+					pass = HallPass.fromJSON(this.report.reported_pass);
+				} catch (e) {
+					console.log(e);
+				}
+			}
 
-    if (this.report.reported_pass_id) {
-      // reported pass is always a HallPass
-      let pass : HallPass | null;
-      if (this.report.reported_pass instanceof HallPass) {
-        pass = this.report.reported_pass;
-      } else {
-        try {
-          pass = HallPass.fromJSON(this.report.reported_pass);
-        } catch(e) {
-          console.log(e);
-        }
-      }
+			if (pass instanceof HallPass) {
+				// change reported_pass from being an 'object type' to a "HallPass'
+				// to properly initialize the pass tile
+				this.report.reported_pass = pass;
+				let isActive = false;
+				const now = this.timeService.nowDate();
+				isActive = new Date(pass.start_time).getTime() <= now.getTime() && now.getTime() < new Date(pass.end_time).getTime();
+				this.isReportedPassActive = isActive;
+			}
+		}
 
-      if (pass instanceof HallPass) {
-        // change reported_pass from being an 'object type' to a "HallPass'
-        // to properly initialize the pass tile
-        this.report.reported_pass = pass;
-        let isActive = false; 
-        const now = this.timeService.nowDate();
-        isActive = 
-          new Date(pass.start_time).getTime() <= now.getTime() && 
-          now.getTime() < new Date(pass.end_time).getTime();
-        this.isReportedPassActive = isActive;
-      }
-    }
+		this.generatePDF();
 
-    this.generatePDF();
+		this.reportUpdateService
+			.notifier()
+			.pipe(
+				takeUntil(this.destroy$),
+				switchMap((v) => this.updateReport(v))
+			)
+			.subscribe();
+	}
 
-    this.reportUpdateService.notifier()
-      .pipe(
-        takeUntil(this.destroy$),
-        switchMap(v => this.updateReport(v)), 
-      )
-      .subscribe();
-  }
+	// wrapper for an external function available on object window
+	// it will open reported pass
+	// it is set to window by parent component explore-component
+	// TODO should be that a service?
+	reportedPassClick() {
+		if (window?.reportedPassClick) {
+			window.reportedPassClick(this.report.reported_pass.id);
+		}
+	}
 
-  // wrapper for an external function available on object window
-  // it will open reported pass
-  // it is set to window by parent component explore-component
-  // TODO should be that a service?
-  reportedPassClick() {
-    if (window?.reportedPassClick) {
-      window.reportedPassClick(this.report.reported_pass.id);
-    }
-  }
+	ngOnDestroy() {
+		this.destroy$.next();
+		this.destroy$.complete();
+	}
 
-  ngOnDestroy() {
-    this.destroy$.next();
-    this.destroy$.complete();
-  }
+	close() {
+		this.dialogRef.close();
+	}
 
-  close() {
-    this.dialogRef.close();
-  }
+	updateReport(updata: ReportDataUpdate) {
+		return this.adminService.updateReportRequest(updata);
+	}
 
-  updateReport(updata: ReportDataUpdate) {
-    return this.adminService.updateReportRequest(updata);
-  }
-  
+	generatePDF() {
+		const report = {
+			created: this.dateFormat,
+			issuer: this.report.issuer.display_name,
+			message: this.report.message,
+			student_name: this.report.student.display_name + ` (${this.report.student.primary_email})`,
+		};
+		Object.defineProperty(report, 'date', { enumerable: false, value: this.report.created });
+		this.pdfService
+			.generateReport(report as any, 'p', 'explore')
+			.pipe(takeUntil(this.destroy$))
+			.subscribe(() => {
+				this.pdfUrl = this.pdfService.pdfUrl;
+			});
+	}
 
-  generatePDF() {
-    const report = {
-      created: this.dateFormat,
-      issuer: this.report.issuer.display_name,
-      message: this.report.message,
-      student_name: this.report.student.display_name + ` (${this.report.student.primary_email})`
-    };
-    Object.defineProperty(report, 'date', {enumerable: false, value: this.report.created});
-    this.pdfService.generateReport(report as any, 'p', 'explore')
-      .pipe(takeUntil(this.destroy$))
-      .subscribe(() => {
-      this.pdfUrl = this.pdfService.pdfUrl;
-    });
-  }
-
-  openPdfLink() {
-    window.open(this.pdfUrl, '_blank');
-  }
-
+	openPdfLink() {
+		window.open(this.pdfUrl, '_blank');
+	}
 }

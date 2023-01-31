@@ -1,13 +1,13 @@
 import { Injectable } from '@angular/core';
-import { BehaviorSubject } from 'rxjs'
-import { WaitInLine } from '../models/WaitInLine'
+import { BehaviorSubject } from 'rxjs';
+import { WaitInLine } from '../models/WaitInLine';
 
 export enum WaitInLineState {
-  CreatingPass,
-  WaitingInLine,
-  FrontOfLine,
-  PassStarted,
-  RequestWaiting
+	CreatingPass,
+	WaitingInLine,
+	FrontOfLine,
+	PassStarted,
+	RequestWaiting,
 }
 
 /**
@@ -16,13 +16,12 @@ export enum WaitInLineState {
  * Currently, it represents a mock server while the backend is being built.
  */
 @Injectable({
-  providedIn: 'root'
+	providedIn: 'root',
 })
 export class WaitInLineService {
+	fakeWil = new BehaviorSubject<WaitInLine>(null);
+	fakeWilActive = new BehaviorSubject<boolean>(false);
+	fakeWilPasses = new BehaviorSubject<WaitInLine[]>([]);
 
-  fakeWil = new BehaviorSubject<WaitInLine>(null);
-  fakeWilActive = new BehaviorSubject<boolean>(false);
-  fakeWilPasses = new BehaviorSubject<WaitInLine[]>([]);
-
-  constructor() { }
+	constructor() {}
 }

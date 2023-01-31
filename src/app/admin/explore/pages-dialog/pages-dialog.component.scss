@@ -1,33 +1,33 @@
 @import '../../../../sp-colors';
 .wrapper {
-    width: 310px;
-    background-color: #FFFFFF;
-    border-radius: 12px;
-    .options {
-        padding: 15px 0;
-        .option {
-            height: 40px;
-            padding: 0 27px;
-            display: flex;
-            align-items: center;
-            justify-content: space-between;
-            cursor: pointer;
-            &:hover {
-                background-color: rgba(210, 210, 210, 0.3);
-            }
-            .title {
-                font-size: 14px;
-                display: flex;
-                align-items: center;
-            }
-            .pro-plan-wrapper {
-                padding: 0 5px;
-            }
-        }
-        .divider {
-            border-bottom: 1px solid #C9C9C9;
-            padding-bottom: 16px;
-            margin-bottom: 10px;
-        }
-    }
+	width: 310px;
+	background-color: #ffffff;
+	border-radius: 12px;
+	.options {
+		padding: 15px 0;
+		.option {
+			height: 40px;
+			padding: 0 27px;
+			display: flex;
+			align-items: center;
+			justify-content: space-between;
+			cursor: pointer;
+			&:hover {
+				background-color: rgba(210, 210, 210, 0.3);
+			}
+			.title {
+				font-size: 14px;
+				display: flex;
+				align-items: center;
+			}
+			.pro-plan-wrapper {
+				padding: 0 5px;
+			}
+		}
+		.divider {
+			border-bottom: 1px solid #c9c9c9;
+			padding-bottom: 16px;
+			margin-bottom: 10px;
+		}
+	}
 }

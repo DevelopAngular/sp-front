@@ -1,137 +1,133 @@
 <div class="date-wrapper">
-    <div class="divider">
-      <div class="header-background"
-           [attr.data-motion-opacity]="(frameMotion$ | async).direction"
-           [style.background]="gradient"></div>
-      <img [ngClass]="isPortableDevice ? 'ios-back-button' : 'back-button'" [src]="'./assets/Back Button (Light-Gray).svg' | resolveAsset" (click)="back()">
-      <div class="divider-header"
-           [ngClass]="{'divider-header':!mock, 'divider-header-mock': mock}"
-           [attr.data-motion-translate]="(frameMotion$ | async).direction">
-          <img class="divider-icon" [src]="'./assets/Future (White).svg' | resolveAsset">
-          <div class="divider-text ds-dialog-title-white">{{ (formState?.forInput ? 'Select': 'Change') }} Date & Time</div>
-      </div>
+	<div class="divider">
+		<div class="header-background" [attr.data-motion-opacity]="(frameMotion$ | async).direction" [style.background]="gradient"></div>
+		<img
+			[ngClass]="isPortableDevice ? 'ios-back-button' : 'back-button'"
+			[src]="'./assets/Back Button (Light-Gray).svg' | resolveAsset"
+			(click)="back()" />
+		<div
+			class="divider-header"
+			[ngClass]="{ 'divider-header': !mock, 'divider-header-mock': mock }"
+			[attr.data-motion-translate]="(frameMotion$ | async).direction">
+			<img class="divider-icon" [src]="'./assets/Future (White).svg' | resolveAsset" />
+			<div class="divider-text ds-dialog-title-white">{{ formState?.forInput ? 'Select' : 'Change' }} Date & Time</div>
+		</div>
+	</div>
+	<div [ngClass]="{ 'date-content': !mock, 'date-content-mock': mock }">
+		<div class="content-background" [attr.data-motion-opacity]="(frameMotion$ | async).direction"></div>
+		<div [attr.data-motion-translate]="(frameMotion$ | async).direction">
+			<ng-container *ngIf="isStaff; else studentTemplate">
+				<div *ngIf="showTeacherIosCalendar; else dialogCalendar" style="height: 180px">
+					<app-ios-calendar [ignoreWeekends]="true" (selectedEvent)="calendarResult($event)"></app-ios-calendar>
+				</div>
 
-    </div>
-    <div [ngClass]="{'date-content':!mock, 'date-content-mock': mock}">
-      <div class="content-background"
-           [attr.data-motion-opacity]="(frameMotion$ | async).direction"></div>
-      <div [attr.data-motion-translate]="(frameMotion$ | async).direction">
-        <ng-container *ngIf="isStaff; else studentTemplate">
-          <div *ngIf="showTeacherIosCalendar; else dialogCalendar" style="height: 180px">
-            <app-ios-calendar [ignoreWeekends]="true" (selectedEvent)="calendarResult($event)"></app-ios-calendar>
-          </div>
+				<ng-template #dialogCalendar>
+					<div [ngClass]="smaller ? 'ds-px-10' : 'ds-px-20'">
+						<div class="accent-background-section ds-flex-center-between">
+							<div class="ds-flex-row ds-flex-center-between">
+								<div style="background: #00b476; padding: 6px; border-radius: 5px; display: flex">
+									<img style="width: 14px; height: 14px" [src]="'./assets/Calendar (White).svg' | resolveAsset" alt="Green Calendar Icon" />
+								</div>
+								<span class="ds-dialog-heading-gray ds-px-10" style="color: #1f195e !important; padding-bottom: 0 !important">Date & Time</span>
+							</div>
 
-          <ng-template #dialogCalendar>
-            <div [ngClass]="smaller ? 'ds-px-10' : 'ds-px-20'">
-              <div class="accent-background-section ds-flex-center-between">
-                <div class="ds-flex-row ds-flex-center-between">
-                  <div style="background: #00B476; padding: 6px; border-radius: 5px; display: flex">
-                    <img style="width: 14px; height: 14px;" [src]="'./assets/Calendar (White).svg' | resolveAsset" alt="Green Calendar Icon">
-                  </div>
-                  <span class="ds-dialog-heading-gray ds-px-10" style="color: #1F195E !important; padding-bottom: 0 !important;">Date & Time</span>
-                </div>
+							<div #calendarButtonWrapper>
+								<app-gradient-button (buttonClick)="openCalendarDialog()" textColor="#7083A0" gradient="#F0F2F5" border="#E2E6EC">
+									<div class="ds-flex-center-center">
+										<span>{{ formatDate }}</span>
+										<img class="ds-px-10" style="width: 8px; height: 6px" [src]="'./assets/Rect (Blue-Gray).svg'" alt="Down Arrow" />
+									</div>
+								</app-gradient-button>
+							</div>
+						</div>
+					</div>
+				</ng-template>
 
-                <div #calendarButtonWrapper>
-                  <app-gradient-button
-                    (buttonClick)="openCalendarDialog()"
-                    textColor="#7083A0"
-                    gradient="#F0F2F5"
-                    border="#E2E6EC">
-                    <div class="ds-flex-center-center">
-                      <span>{{formatDate}}</span>
-                      <img class="ds-px-10" style="width: 8px; height: 6px" [src]="'./assets/Rect (Blue-Gray).svg'" alt="Down Arrow">
-                    </div>
-                  </app-gradient-button>
-                </div>
-              </div>
-            </div>
-          </ng-template>
+				<div [ngClass]="smaller ? 'ds-px-10' : 'ds-px-20'">
+					<div class="accent-background-section ds-flex-center-between">
+						<div class="ds-flex-row ds-flex-center-between">
+							<img [src]="'./assets/Repeat (Blue-Gray).svg' | resolveAsset" alt="Refresh Icon" />
+							<span class="ds-dialog-heading-gray ds-px-10" style="color: #1f195e !important; padding-bottom: 0 !important">Repeat</span>
+						</div>
 
-          <div [ngClass]="smaller ? 'ds-px-10' : 'ds-px-20'">
-            <div class="accent-background-section ds-flex-center-between">
-              <div class="ds-flex-row ds-flex-center-between">
-                <img [src]="'./assets/Repeat (Blue-Gray).svg' | resolveAsset" alt="Refresh Icon">
-                <span class="ds-dialog-heading-gray ds-px-10" style="color: #1F195E !important; padding-bottom: 0 !important;">Repeat</span>
-              </div>
+						<div #recurrenceButtonWrapper>
+							<app-gradient-button
+								[disabled]="form.value.declinable"
+								(buttonClick)="openRecurrenceDropdown()"
+								[customToolTip]="'To schedule a recurring future pass, turn off Declinable.'"
+								[showToolTip]="form.value.declinable"
+								textColor="#7083A0"
+								gradient="#F0F2F5"
+								border="#E2E6EC">
+								<div class="ds-flex-center-center">
+									<span>{{ selectedRecurrenceFrequency.title }}</span>
+									<img class="ds-px-10" style="width: 8px; height: 6px" [src]="'./assets/Rect (Blue-Gray).svg'" alt="Down Arrow" />
+								</div>
+							</app-gradient-button>
+						</div>
+					</div>
+				</div>
 
-              <div #recurrenceButtonWrapper>
-                <app-gradient-button
-                  [disabled]="form.value.declinable"
-                  (buttonClick)="openRecurrenceDropdown()"
-                  [customToolTip]="'To schedule a recurring future pass, turn off Declinable.'"
-                  [showToolTip]="form.value.declinable"
-                  textColor="#7083A0"
-                  gradient="#F0F2F5"
-                  border="#E2E6EC">
-                  <div class="ds-flex-center-center">
-                    <span>{{selectedRecurrenceFrequency.title}}</span>
-                    <img class="ds-px-10" style="width: 8px; height: 6px" [src]="'./assets/Rect (Blue-Gray).svg'" alt="Down Arrow">
-                  </div>
-                </app-gradient-button>
-              </div>
-            </div>
-          </div>
+				<div [ngClass]="smaller ? 'ds-px-10' : 'ds-px-20'">
+					<div class="accent-background-section ds-flex-center-between">
+						<div class="toggle-text">
+							<div class="toggle-title">Declinable</div>
+							<div class="info-text-1" *ngIf="!isPortableDevice">
+								<span>The student {{ form.get('declinable').value ? 'has the option to decline' : 'cannot decline' }} the pass.</span>
+							</div>
+						</div>
+						<div class="toggle">
+							<app-toggle-input [form]="form" [delimiter]="false" [controlName]="'declinable'" [controlSize]="'small'"></app-toggle-input>
+						</div>
+					</div>
+				</div>
+			</ng-container>
 
-          <div [ngClass]="smaller ? 'ds-px-10' : 'ds-px-20'">
-            <div class="accent-background-section ds-flex-center-between">
-              <div class="toggle-text">
-                <div class="toggle-title">Declinable</div>
-                <div class="info-text-1" *ngIf="!isPortableDevice">
-                  <span>The student {{form.get('declinable').value ? 'has the option to decline' : 'cannot decline'}} the pass.</span>
-                </div>
-              </div>
-              <div class="toggle">
-                <app-toggle-input [form]="form" [delimiter]="false" [controlName]="'declinable'" [controlSize]="'small'"></app-toggle-input>
-              </div>
-            </div>
-          </div>
+			<ng-template #studentTemplate>
+				<div class="student">
+					<div [ngClass]="isPortableDevice ? 'ios-time-picker' : 'time-picker'">
+						<app-calendar-picker
+							[width]="240"
+							[min]="startTime"
+							[selectedColor]="selectedColor"
+							[selectedDates]="[requestTime]"
+							[showYear]="false"
+							(onSelectDate)="calendarResult($event)">
+						</app-calendar-picker>
+					</div>
+					<div *ngIf="isPortableDevice">
+						<app-ios-calendar [ignoreWeekends]="true" (selectedEvent)="calendarResult($event)"></app-ios-calendar>
+					</div>
+					<!--          <app-date-time-picker [min]="startTime" [_selectedMoment]="requestTime" (onUpdate)="requestTime=$event"></app-date-time-picker>-->
+				</div>
+			</ng-template>
 
-        </ng-container>
-
-        <ng-template #studentTemplate>
-          <div class="student">
-            <div [ngClass]="isPortableDevice ? 'ios-time-picker' : 'time-picker'">
-              <app-calendar-picker
-                [width]="240"
-                [min]="startTime"
-                [selectedColor]="selectedColor"
-                [selectedDates]="[requestTime]"
-                [showYear]="false"
-                (onSelectDate)="calendarResult($event)">
-              </app-calendar-picker>
-            </div>
-            <div *ngIf="isPortableDevice">
-              <app-ios-calendar [ignoreWeekends]="true" (selectedEvent)="calendarResult($event)"></app-ios-calendar>
-            </div>
-            <!--          <app-date-time-picker [min]="startTime" [_selectedMoment]="requestTime" (onUpdate)="requestTime=$event"></app-date-time-picker>-->
-          </div>
-        </ng-template>
-
-        <div class="next-button">
-          <app-gradient-button
-            [gradient]="colorProfile ? colorProfile.gradient_color : '#03CF31, #00B476'"
-            [cursor]="'pointer'"
-            [hoverColor]="(colorProfile ? colorProfile.solid_color : '#00B476')"
-            [minWidth]="'101px'"
-            [minHeight]="'40px'"
-            [fontSize]="'14px'"
-            (buttonClick)="next()"
-            [style.margin]="'15px auto'"
-          >{{ (formState.resendRequest ? 'Resend Request' : 'Next') }}</app-gradient-button>
-        </div>
-      </div>
-    </div>
+			<div class="next-button">
+				<app-gradient-button
+					[gradient]="colorProfile ? colorProfile.gradient_color : '#03CF31, #00B476'"
+					[cursor]="'pointer'"
+					[hoverColor]="colorProfile ? colorProfile.solid_color : '#00B476'"
+					[minWidth]="'101px'"
+					[minHeight]="'40px'"
+					[fontSize]="'14px'"
+					(buttonClick)="next()"
+					[style.margin]="'15px auto'"
+					>{{ formState.resendRequest ? 'Resend Request' : 'Next' }}</app-gradient-button
+				>
+			</div>
+		</div>
+	</div>
 </div>
 
 <ng-template #calenderPicker>
-  <div class="ds-px-20 ds-py-10">
-    <app-calendar-picker
-      [width]="240"
-      [min]="startTime"
-      [selectedColor]="selectedColor"
-      [selectedDates]="[requestTime]"
-      (onSelectDate)="calendarResult($event)"
-      [showYear]="false">
-    </app-calendar-picker>
-  </div>
+	<div class="ds-px-20 ds-py-10">
+		<app-calendar-picker
+			[width]="240"
+			[min]="startTime"
+			[selectedColor]="selectedColor"
+			[selectedDates]="[requestTime]"
+			(onSelectDate)="calendarResult($event)"
+			[showYear]="false">
+		</app-calendar-picker>
+	</div>
 </ng-template>

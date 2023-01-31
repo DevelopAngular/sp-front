@@ -6,16 +6,16 @@ import { State } from './state';
  * A wrapper for external events.
  */
 export interface ExternalEvent<E> {
-  type: 'external-event';
-  event: E;
+	type: 'external-event';
+	event: E;
 }
 
 /**
  * A wrapper for transformation functions that directly modify the State object.
  */
 export interface TransformFunc<ModelType extends BaseModel> {
-  type: 'transform-func';
-  func: (s: State<ModelType>) => State<ModelType>;
+	type: 'transform-func';
+	func: (s: State<ModelType>) => State<ModelType>;
 }
 
 /**
@@ -23,32 +23,27 @@ export interface TransformFunc<ModelType extends BaseModel> {
  * scheduling future transformation functions to run.
  */
 export interface PollingEventContext<ModelType extends BaseModel> {
-  type: 'polling-event';
-  event: PollingEvent;
+	type: 'polling-event';
+	event: PollingEvent;
 
-  postDelayed(ms: number, func: (s: State<ModelType>) => State<ModelType>);
+	postDelayed(ms: number, func: (s: State<ModelType>) => State<ModelType>);
 }
 
 /**
  * All possible actions to be handled.
  */
-export type Action<ModelType extends BaseModel, E> =
-  PollingEventContext<ModelType>
-  | ExternalEvent<E>
-  | TransformFunc<ModelType>
-  | 'reload';
+export type Action<ModelType extends BaseModel, E> = PollingEventContext<ModelType> | ExternalEvent<E> | TransformFunc<ModelType> | 'reload';
 
 export function isPollingEvent(x: Action<any, any>): x is PollingEventContext<any> {
-  return (<PollingEventContext<any>>x).type === 'polling-event';
+	return (<PollingEventContext<any>>x).type === 'polling-event';
 }
 
 export function isExternalEvent(x: Action<any, any>): x is ExternalEvent<any> {
-  return (<ExternalEvent<any>>x).type === 'external-event';
+	return (<ExternalEvent<any>>x).type === 'external-event';
 }
 
 export function isTransformFunc(x: Action<any, any>): x is TransformFunc<any> {
-  return (<TransformFunc<any>>x).type === 'transform-func';
+	return (<TransformFunc<any>>x).type === 'transform-func';
 }
 
-export type PollingEventHandler<ModelType extends BaseModel> =
-  (state: State<ModelType>, e: PollingEventContext<ModelType>) => State<ModelType>;
+export type PollingEventHandler<ModelType extends BaseModel> = (state: State<ModelType>, e: PollingEventContext<ModelType>) => State<ModelType>;

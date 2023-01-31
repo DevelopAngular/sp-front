@@ -1,51 +1,48 @@
 <div id="form" [formGroup]="form">
-  <div #schoolContainer
-       class="schools"
-       formArrayName="schools"
-       *ngFor="let school of schools.controls; let i = index">
-    <ng-container [formGroupName]="i" class="row">
-      <div class="mini-row">
-        <app-school-autocomplete [inputLabel]="i == 0 ? 'School name' : null"
-                                 [width]="getSchoolInputWidth()"
-                                 [tabIndex]="startTabIndex != -1 ? startTabIndex + 2 * i : null"
-                                 [fGroup]="school"
-                                 [fControl]="school.controls.name"
-                                 [forceError]="showErrors && !school.controls.name.valid"
-                                 [useLargeFormWhenNotFound]="useLargeFormWhenNotFound"
-        ></app-school-autocomplete>
-      </div>
-      <div class="input-wrapper approx-students-wrapper">
-        <app-input [input_label]="(i == 0 || mobile) ? 'Approx. # of students' : ''"
-                   [width]="getApproxInputWidth()"
-                   [tabIndex]="startTabIndex != -1 ? startTabIndex + 2 * i : null"
-                   tabAttentive="true"
-                   placeholder="1656"
-                   [formGroup]="school"
-                   [forceError]="showErrors && !school.controls.population.valid"
-                   [controlName]="school.controls.population"></app-input>
-      </div>
-    </ng-container>
-    <div class="remove-wrapper" *ngIf="showRemove()" [style.padding-top]="mobile ? '0' : (i == 0 ? '20px' : '2px')">
-      <button class="remove" mat-icon-button
-              (click)="removeSchool(i)">
-        <mat-icon svgIcon="minus"></mat-icon>
-      </button>
-    </div>
-  </div>
-  <div id="add-school-wrapper">
-    <app-gradient-button
-      id="add-school"
-      textColor="#7f879d"
-      fontSize="14px"
-      size="editable"
-      customBackground="#f1f1f1"
-      minWidth="100px"
-      padding="4px 12px"
-      [withShadow]="false"
-      leftImageWidth="12px"
-      [leftIcon]="'./assets/Plus (Blue-Gray).svg' | resolveAsset"
-      (buttonClick)="addSchool()"
-    >Add another school
-    </app-gradient-button>
-  </div>
+	<div #schoolContainer class="schools" formArrayName="schools" *ngFor="let school of schools.controls; let i = index">
+		<ng-container [formGroupName]="i" class="row">
+			<div class="mini-row">
+				<app-school-autocomplete
+					[inputLabel]="i == 0 ? 'School name' : null"
+					[width]="getSchoolInputWidth()"
+					[tabIndex]="startTabIndex != -1 ? startTabIndex + 2 * i : null"
+					[fGroup]="school"
+					[fControl]="school.controls.name"
+					[forceError]="showErrors && !school.controls.name.valid"
+					[useLargeFormWhenNotFound]="useLargeFormWhenNotFound"></app-school-autocomplete>
+			</div>
+			<div class="input-wrapper approx-students-wrapper">
+				<app-input
+					[input_label]="i == 0 || mobile ? 'Approx. # of students' : ''"
+					[width]="getApproxInputWidth()"
+					[tabIndex]="startTabIndex != -1 ? startTabIndex + 2 * i : null"
+					tabAttentive="true"
+					placeholder="1656"
+					[formGroup]="school"
+					[forceError]="showErrors && !school.controls.population.valid"
+					[controlName]="school.controls.population"></app-input>
+			</div>
+		</ng-container>
+		<div class="remove-wrapper" *ngIf="showRemove()" [style.padding-top]="mobile ? '0' : i == 0 ? '20px' : '2px'">
+			<button class="remove" mat-icon-button (click)="removeSchool(i)">
+				<mat-icon svgIcon="minus"></mat-icon>
+			</button>
+		</div>
+	</div>
+	<div id="add-school-wrapper">
+		<app-gradient-button
+			id="add-school"
+			textColor="#7f879d"
+			fontSize="14px"
+			size="editable"
+			customBackground="#f1f1f1"
+			minWidth="100px"
+			padding="4px 12px"
+			[withShadow]="false"
+			leftImageWidth="12px"
+			[leftIcon]="'./assets/Plus (Blue-Gray).svg' | resolveAsset"
+			(buttonClick)="addSchool()"
+			>Add another school
+		</app-gradient-button>
+	</div>
 </div>

@@ -9,25 +9,10 @@ export const getStudentGroupsCollection = groupsAdapter.getSelectors(getStudentG
 
 export const getStudentGroupsEntities = groupsAdapter.getSelectors(getStudentGroupsState).selectEntities;
 
-export const getCurrentStudentGroupId = createSelector(
-  getStudentGroupsState,
-  (state: GroupsStates) => state.currentGroupId
-);
+export const getCurrentStudentGroupId = createSelector(getStudentGroupsState, (state: GroupsStates) => state.currentGroupId);
 
-export const getCurrentStudentGroup = createSelector(
-  getStudentGroupsEntities,
-  getCurrentStudentGroupId,
-  (entities, id) => entities[id]
-);
+export const getCurrentStudentGroup = createSelector(getStudentGroupsEntities, getCurrentStudentGroupId, (entities, id) => entities[id]);
 
-export const getLoadingGroups = createSelector(
-  getStudentGroupsState,
-  (state: GroupsStates) => state.loading
-);
+export const getLoadingGroups = createSelector(getStudentGroupsState, (state: GroupsStates) => state.loading);
 
-export const getLoadedGroups = createSelector(
-  getStudentGroupsState,
-  (state: GroupsStates) => state.loaded
-);
-
-
+export const getLoadedGroups = createSelector(getStudentGroupsState, (state: GroupsStates) => state.loaded);

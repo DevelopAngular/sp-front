@@ -6,13 +6,7 @@ import { IntroRouteComponent } from './intro-route.component';
 import { SharedModule } from '../shared/shared.module';
 
 @NgModule({
-  declarations: [
-    IntroRouteComponent
-  ],
-  imports: [
-    CommonModule,
-    IntroRouteRoutingModule,
-    SharedModule
-  ]
+	declarations: [IntroRouteComponent],
+	imports: [CommonModule, IntroRouteRoutingModule, SharedModule],
 })
-export class IntroRouteModule { }
+export class IntroRouteModule {}

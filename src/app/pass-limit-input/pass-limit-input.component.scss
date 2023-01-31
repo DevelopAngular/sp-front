@@ -1,26 +1,26 @@
 .pass-limit-input-template {
-  display: flex;
-  column-gap: 2px;
-  flex-wrap: wrap;
-  position: relative;
-  //background: #F0F2F5;
-  //border: 1px solid $gray200;
+	display: flex;
+	column-gap: 2px;
+	flex-wrap: wrap;
+	position: relative;
+	//background: #F0F2F5;
+	//border: 1px solid $gray200;
 
-  div.per-day-wrapper {
-    height: 45px;
-    display: flex;
-    align-items: flex-end;
-    left: 110px;
-    top: 0;
+	div.per-day-wrapper {
+		height: 45px;
+		display: flex;
+		align-items: flex-end;
+		left: 110px;
+		top: 0;
 
-    span {
-      display: inline-flex;
-      align-items: center;
-      height: 45px;
-      padding: 0 15px;
-      //color: $gray500;
-      font-size: 15px;
-      font-weight: 500;
-    }
-  }
+		span {
+			display: inline-flex;
+			align-items: center;
+			height: 45px;
+			padding: 0 15px;
+			//color: $gray500;
+			font-size: 15px;
+			font-weight: 500;
+		}
+	}
 }

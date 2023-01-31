@@ -1,72 +1,77 @@
-<div [ngClass]="isIOSTablet ? 'ios-form' : 'form'"
-     [style.width]="formSize.containerWidth"
-     [style.height]="formSize.containerHeight">
+<div [ngClass]="isIOSTablet ? 'ios-form' : 'form'" [style.width]="formSize.containerWidth" [style.height]="formSize.containerHeight">
+	<!--  <div class="white-background"-->
+	<!--       [style.width]="formSize.width"-->
+	<!--       [style.height]="formSize.height">-->
+	<!--  </div>-->
 
-<!--  <div class="white-background"-->
-<!--       [style.width]="formSize.width"-->
-<!--       [style.height]="formSize.height">-->
-<!--  </div>-->
+	<div
+		*ngIf="FORM_STATE.step === 1"
+		[ngClass]="isIOSTablet ? 'ios-fixed-card' : 'fixed-card'"
+		[style.z-index]="1"
+		[style.width]="formSize.width"
+		[style.height]="formSize.height"
+		[@NextStep]="{ value: '', params: frameMotion$ | async }"
+		(@NextStep.start)="setFormSize(); setContainerSize('end')"
+		(@NextStep.done)="setContainerSize('start')">
+		<div [attr.data-motion-compress]="'calendar:' + (frameMotion$ | async).direction" class="calendar">
+			<app-date-time-container [FORM_STATE]="FORM_STATE" (nextStepEvent)="onNextStep($event)"></app-date-time-container>
+			<app-pass-limit-info *ngIf="!dialogData.forLater" [passLimitInfo]="dialogData?.passLimitInfo"></app-pass-limit-info>
+		</div>
+	</div>
 
-  <div *ngIf="FORM_STATE.step === 1"
-       [ngClass]="isIOSTablet ? 'ios-fixed-card' : 'fixed-card'"
-       [style.z-index]="1"
-       [style.width]="formSize.width"
-       [style.height]="formSize.height"
-       [@NextStep]="{ value: '', params: frameMotion$ | async}"
-       (@NextStep.start)="setFormSize();setContainerSize('end')"
-       (@NextStep.done)="setContainerSize('start')">
-    <div [attr.data-motion-compress]="'calendar:' + (frameMotion$ | async).direction"
-         class="calendar"
-    >
-      <app-date-time-container [FORM_STATE]="FORM_STATE" (nextStepEvent)="onNextStep($event)" ></app-date-time-container>
-      <app-pass-limit-info *ngIf="!dialogData.forLater" [passLimitInfo]="dialogData?.passLimitInfo"></app-pass-limit-info>
-    </div>
-  </div>
+	<div
+		*ngIf="FORM_STATE.step === 2"
+		[ngClass]="isIOSTablet ? 'ios-fixed-card' : 'fixed-card'"
+		[style.z-index]="0"
+		[style.width]="formSize.width"
+		[style.height]="formSize.height"
+		[@NextStep]="{ value: '', params: frameMotion$ | async }"
+		(@NextStep.start)="setFormSize(); setContainerSize('end')"
+		(@NextStep.done)="setContainerSize('start')">
+		<div
+			[attr.data-motion-compress]="'students:' + (frameMotion$ | async).direction"
+			[attr.data-motion-opacity]="(frameMotion$ | async).direction"
+			class="student-groups">
+			<app-groups-container [FORM_STATE]="FORM_STATE" (nextStepEvent)="onNextStep($event)"></app-groups-container>
+			<app-pass-limit-info *ngIf="!dialogData.forLater" [passLimitInfo]="dialogData?.passLimitInfo"></app-pass-limit-info>
+		</div>
+	</div>
 
-  <div *ngIf="FORM_STATE.step === 2"
-       [ngClass]="isIOSTablet ? 'ios-fixed-card' : 'fixed-card'"
-       [style.z-index]="0"
-       [style.width]="formSize.width"
-       [style.height]="formSize.height"
-       [@NextStep]="{ value: '', params: frameMotion$ | async}"
-       (@NextStep.start)="setFormSize();setContainerSize('end')"
-       (@NextStep.done)="setContainerSize('start')">
-    <div [attr.data-motion-compress]="'students:' + (frameMotion$ | async).direction"
-         [attr.data-motion-opacity]="(frameMotion$ | async).direction"
-         class="student-groups"
-    >
-      <app-groups-container [FORM_STATE]="FORM_STATE" (nextStepEvent)="onNextStep($event)"></app-groups-container>
-      <app-pass-limit-info *ngIf="!dialogData.forLater" [passLimitInfo]="dialogData?.passLimitInfo"></app-pass-limit-info>
-    </div>
-  </div>
+	<div
+		*ngIf="FORM_STATE.step === 3"
+		[ngClass]="isIOSTablet ? 'ios-fixed-card' : 'fixed-card'"
+		[style.z-index]="1"
+		[style.width]="formSize.width"
+		[style.height]="formSize.height"
+		[@NextStep]="{ value: '', params: frameMotion$ | async }"
+		(@NextStep.start)="setFormSize(); setContainerSize('end')"
+		(@NextStep.done)="setContainerSize('start')">
+		<div
+			[attr.data-motion-compress]="'locations:' + (frameMotion$ | async).direction"
+			[attr.data-motion-opacity]="(frameMotion$ | async).direction + 2"
+			[attr.data-motion-scale]="isScaled | async"
+			class="locations">
+			<app-locations-group-container [FORM_STATE]="FORM_STATE" (nextStepEvent)="onNextStep($event)"></app-locations-group-container>
+			<app-pass-limit-info
+				*ngIf="!dialogData.forLater"
+				[passLimitInfo]="FORM_STATE?.passLimitInfo"
+				[ngClass]="{ 'from-where': FORM_STATE.fromState === 4 }"></app-pass-limit-info>
+		</div>
+	</div>
 
-  <div *ngIf="FORM_STATE.step === 3"
-       [ngClass]="isIOSTablet ? 'ios-fixed-card' : 'fixed-card'"
-       [style.z-index]="1"
-       [style.width]="formSize.width"
-       [style.height]="formSize.height"
-       [@NextStep]="{ value: '', params: frameMotion$ | async}"
-       (@NextStep.start)="setFormSize();setContainerSize('end')"
-       (@NextStep.done)="setContainerSize('start')">
-    <div [attr.data-motion-compress]="'locations:' + (frameMotion$ | async).direction"
-         [attr.data-motion-opacity]="(frameMotion$ | async).direction + 2"
-         [attr.data-motion-scale]="(isScaled | async)"
-         class="locations"
-    >
-      <app-locations-group-container [FORM_STATE]="FORM_STATE" (nextStepEvent)="onNextStep($event)"></app-locations-group-container>
-      <app-pass-limit-info *ngIf="!dialogData.forLater" [passLimitInfo]="FORM_STATE?.passLimitInfo" [ngClass]="{ 'from-where': FORM_STATE.fromState === 4 }"></app-pass-limit-info>
-    </div>
-  </div>
-
-  <div *ngIf="FORM_STATE.step === 4"
-       [ngClass]="isIOSTablet ? 'ios-fixed-card' : 'fixed-card'"
-       [style.width]="formSize.width"
-       [style.height]="formSize.height"
-       [attr.data-motion-scale]="true"
-       [@NextStep]="{ value: '', params: frameMotion$ | async}"
-       (@NextStep.start)="setFormSize();setContainerSize('end')"
-       (@NextStep.done)="setContainerSize('start')">
-    <app-form-factor-container [passLimitInfo]="dialogData?.passLimitInfo" [FORM_STATE]="FORM_STATE" [forStaff]="isStaff"
-                               (nextStepEvent)="onNextStep($event)"></app-form-factor-container>
-  </div>
+	<div
+		*ngIf="FORM_STATE.step === 4"
+		[ngClass]="isIOSTablet ? 'ios-fixed-card' : 'fixed-card'"
+		[style.width]="formSize.width"
+		[style.height]="formSize.height"
+		[attr.data-motion-scale]="true"
+		[@NextStep]="{ value: '', params: frameMotion$ | async }"
+		(@NextStep.start)="setFormSize(); setContainerSize('end')"
+		(@NextStep.done)="setContainerSize('start')">
+		<app-form-factor-container
+			[passLimitInfo]="dialogData?.passLimitInfo"
+			[FORM_STATE]="FORM_STATE"
+			[forStaff]="isStaff"
+			(nextStepEvent)="onNextStep($event)"></app-form-factor-container>
+	</div>
 </div>

@@ -1,88 +1,91 @@
-<div *ngIf="!mock" class="clickRipple"
-     [@pressState]="buttonState"
-     [style.box-shadow]="shadow"
-     [style.cursor]="disabled ? 'default' : 'pointer'"
-     [style.width]="width"
+<div
+	*ngIf="!mock"
+	class="clickRipple"
+	[@pressState]="buttonState"
+	[style.box-shadow]="shadow"
+	[style.cursor]="disabled ? 'default' : 'pointer'"
+	[style.width]="width"
+	appCrossPointerEventTarget
+	(pointerClickEvent)="onPress(false); onSelect()"
+	(pointerDownEvent)="onPress(true)"
+	[ngClass]="{ isSameRoom: isSameRoom }"
+	(mouseenter)="hovered = true; tooltipDelay(true, 0)"
+	(mouseleave)="onPress(false); hovered = false; tooltipDelay(false)"
+	customToolTip
+	[contentTemplate]="tooltip"
+	[showToolTip]="showTooltip || isSameRoom"
+	[editable]="true"
+	[nonDisappearing]="false">
+	<ng-template #tooltip>
+		<app-pass-limit-tooltip
+			[isHand]="pinnable.location && pinnable.location.enable"
+			*ngIf="showTooltipWithDelay"
+			[description]="
+				!isSameRoom || passLimit?.max_passes_to_active ? tooltipDescription : 'You selected ' + pinnable.title + ' as the origin (where you are now)!'
+			"></app-pass-limit-tooltip>
+	</ng-template>
 
-     appCrossPointerEventTarget
-     (pointerClickEvent)="onPress(false); onSelect()"
-     (pointerDownEvent)="onPress(true);"
-     [ngClass]="{'isSameRoom': isSameRoom}"
-
-     (mouseenter)="hovered = true; tooltipDelay(true, 0)"
-     (mouseleave)="onPress(false); hovered = false; tooltipDelay(false)"
-     customToolTip [contentTemplate]="tooltip" [showToolTip]="showTooltip || isSameRoom"
-     [editable]="true" [nonDisappearing]="false"
->
-
-  <ng-template #tooltip>
-    <app-pass-limit-tooltip [isHand]="pinnable.location && pinnable.location.enable" *ngIf="showTooltipWithDelay" [description]="(!isSameRoom || passLimit?.max_passes_to_active) ? tooltipDescription : 'You selected ' + pinnable.title + ' as the origin (where you are now)!'"></app-pass-limit-tooltip>
-  </ng-template>
-
-  <div *ngIf="selected" class="selected-overlay"></div>
-  <div class="pinnable-card"
-       [style.background]="getGradient()"
-       [style.cursor]="valid ? (disabled ? 'default' : 'pointer') : 'not-allowed'"
-       [style.height]="height"
-       [style.opacity]="valid ? 1 : 0.5"
-  >
-    <div class="disabled" *ngIf="pinnable.location && !pinnable.location.enable"></div>
-    <div class="disable-room-block" *ngIf="disabledRoom">Closed</div>
-    <img draggable="false" *ngIf="!selected" [style.width]="iconWidth" [style.height]="iconWidth" [src]="pinnable.icon | resolveAsset" alt="ICON">
-    <div *ngIf="selected" class="selected-icon-wrapper">
-      <img class="selected-icon" [src]="'./assets/Check (Navy).svg' | resolveAsset" alt="ICON">
-    </div>
-    <div class="ds-flex-center-center ds-w-100 ds-border-box ds-px-10 ds-mt-5">
-      <div *ngIf="pinnable && pinnable.title.length > 14 && pinnable.type === 'location' || pinnable.title.length > 10 && pinnable.type === 'category'; else old" class="title-bar" #title>
-        <div class="title"
-             (mouseover)="onHover($event, title)"
-             (mouseleave)="onLeave($event)"
-        >
-          {{pinnable.title}}
-        </div>
-      </div>
-      <ng-template #old>
-        <div class="title-bar" style="flex: none" #title>
-          <div class="title" style="text-align: center; position: static;">
-            {{pinnable.title}}
-          </div>
-        </div>
-      </ng-template>
-      <img *ngIf="pinnable.type === 'category'" class="category-icon" [src]="'./assets/Chevron Right (White).svg' | resolveAsset" alt="ARROW">
-    </div>
-    <div *ngIf="show_max_passes" class="overlay-container">
-      <div class="overlay"></div>
-      <div class="pass-count">{{ currentPage === 'to' ? passLimit.to_count : passLimit.from_count }}</div>
-    </div>
-    <img *ngIf="restricted && !forStaff" class="lock" [src]="'./assets/Locked (White).svg' | resolveAsset" alt="LOCK">
-  </div>
+	<div *ngIf="selected" class="selected-overlay"></div>
+	<div
+		class="pinnable-card"
+		[style.background]="getGradient()"
+		[style.cursor]="valid ? (disabled ? 'default' : 'pointer') : 'not-allowed'"
+		[style.height]="height"
+		[style.opacity]="valid ? 1 : 0.5">
+		<div class="disabled" *ngIf="pinnable.location && !pinnable.location.enable"></div>
+		<div class="disable-room-block" *ngIf="disabledRoom">Closed</div>
+		<img draggable="false" *ngIf="!selected" [style.width]="iconWidth" [style.height]="iconWidth" [src]="pinnable.icon | resolveAsset" alt="ICON" />
+		<div *ngIf="selected" class="selected-icon-wrapper">
+			<img class="selected-icon" [src]="'./assets/Check (Navy).svg' | resolveAsset" alt="ICON" />
+		</div>
+		<div class="ds-flex-center-center ds-w-100 ds-border-box ds-px-10 ds-mt-5">
+			<div
+				*ngIf="
+					(pinnable && pinnable.title.length > 14 && pinnable.type === 'location') || (pinnable.title.length > 10 && pinnable.type === 'category');
+					else old
+				"
+				class="title-bar"
+				#title>
+				<div class="title" (mouseover)="onHover($event, title)" (mouseleave)="onLeave($event)">
+					{{ pinnable.title }}
+				</div>
+			</div>
+			<ng-template #old>
+				<div class="title-bar" style="flex: none" #title>
+					<div class="title" style="text-align: center; position: static">
+						{{ pinnable.title }}
+					</div>
+				</div>
+			</ng-template>
+			<img *ngIf="pinnable.type === 'category'" class="category-icon" [src]="'./assets/Chevron Right (White).svg' | resolveAsset" alt="ARROW" />
+		</div>
+		<div *ngIf="show_max_passes" class="overlay-container">
+			<div class="overlay"></div>
+			<div class="pass-count">{{ currentPage === 'to' ? passLimit.to_count : passLimit.from_count }}</div>
+		</div>
+		<img *ngIf="restricted && !forStaff" class="lock" [src]="'./assets/Locked (White).svg' | resolveAsset" alt="LOCK" />
+	</div>
 </div>
-
 
 <!-- Needs for Intro page -->
 
-<div *ngIf="mock" mat-raised-button class="clickRipple"
-     [style.box-shadow]="shadow"
-     [style.width]="width"
->
-  <div class="pinnable-card"
-       [style.background]="'radial-gradient(circle at 73% 71%,' + mock.gradient + ')'"
-       [style.height]="height">
-    <div style="width: inherit">
-      <img *ngIf="!selected" [style.width]="iconWidth" [style.height]="iconWidth" [src]="mock.content | resolveAsset" alt="ICON">
-      <div class="title-bar">
-        <div class="title">
-          {{mock.header}}
-        </div>
-        <img draggable="false" *ngIf="mock.arrow === true" class="category-icon" [src]="'./assets/SP Arrow (White).svg' | resolveAsset" alt="ARROW">
-      </div>
-    </div>
+<div *ngIf="mock" mat-raised-button class="clickRipple" [style.box-shadow]="shadow" [style.width]="width">
+	<div class="pinnable-card" [style.background]="'radial-gradient(circle at 73% 71%,' + mock.gradient + ')'" [style.height]="height">
+		<div style="width: inherit">
+			<img *ngIf="!selected" [style.width]="iconWidth" [style.height]="iconWidth" [src]="mock.content | resolveAsset" alt="ICON" />
+			<div class="title-bar">
+				<div class="title">
+					{{ mock.header }}
+				</div>
+				<img draggable="false" *ngIf="mock.arrow === true" class="category-icon" [src]="'./assets/SP Arrow (White).svg' | resolveAsset" alt="ARROW" />
+			</div>
+		</div>
 
-    <div *ngIf="mock.restricted" class="overlay-container">
-      <div class="overlay"></div>
-      <img draggable="false" class="lock" [src]="'./assets/Lock (White).svg' | resolveAsset" alt="LOCK">
-    </div>
-  </div>
+		<div *ngIf="mock.restricted" class="overlay-container">
+			<div class="overlay"></div>
+			<img draggable="false" class="lock" [src]="'./assets/Lock (White).svg' | resolveAsset" alt="LOCK" />
+		</div>
+	</div>
 </div>
 
 <!-- End -->

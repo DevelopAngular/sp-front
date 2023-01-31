@@ -1,176 +1,168 @@
-import {HttpClient} from '@angular/common/http';
-import {AfterViewInit, Component, ElementRef, HostListener, NgZone, OnDestroy, OnInit, ViewChild} from '@angular/core';
-import {MatDialog} from '@angular/material/dialog';
-import {ActivatedRoute, NavigationEnd, Router} from '@angular/router';
-import {filter as _filter} from 'lodash';
-import {BehaviorSubject, interval, Observable, ReplaySubject, Subject, zip} from 'rxjs';
+import { HttpClient } from '@angular/common/http';
+import { AfterViewInit, Component, ElementRef, HostListener, NgZone, OnDestroy, OnInit, ViewChild } from '@angular/core';
+import { MatDialog } from '@angular/material/dialog';
+import { ActivatedRoute, NavigationEnd, Router } from '@angular/router';
+import { filter as _filter } from 'lodash';
+import { BehaviorSubject, interval, Observable, ReplaySubject, Subject, zip } from 'rxjs';
 
 import { concatMap, filter, map, mergeMap, switchMap, take, takeUntil, withLatestFrom } from 'rxjs/operators';
-import {BUILD_INFO_REAL} from '../build-info';
-import {DarkThemeSwitch} from './dark-theme-switch';
+import { BUILD_INFO_REAL } from '../build-info';
+import { DarkThemeSwitch } from './dark-theme-switch';
 
-import {DeviceDetection} from './device-detection.helper';
-import {School} from './models/School';
-import {AdminService} from './services/admin.service';
-import {GoogleLoginService} from './services/google-login.service';
-import {HttpService} from './services/http-service';
-import {KioskModeService} from './services/kiosk-mode.service';
-import {StorageService} from './services/storage.service';
-import {OverlayContainer} from '@angular/cdk/overlay';
-import {APPLY_ANIMATED_CONTAINER, ConsentMenuOverlay} from './consent-menu-overlay';
-import {Meta} from '@angular/platform-browser';
-import {NotificationService} from './services/notification-service';
-import {GoogleAnalyticsService} from './services/google-analytics.service';
-import {ShortcutInput} from 'ng-keyboard-shortcuts';
-import {KeyboardShortcutsService} from './services/keyboard-shortcuts.service';
-import {NextReleaseComponent, Update} from './next-release/next-release.component';
-import {User} from './models/User';
-import {UserService} from './services/user.service';
-import {NextReleaseService} from './next-release/services/next-release.service';
-import {ScreenService} from './services/screen.service';
-import {ToastService} from './services/toast.service';
+import { DeviceDetection } from './device-detection.helper';
+import { School } from './models/School';
+import { AdminService } from './services/admin.service';
+import { GoogleLoginService } from './services/google-login.service';
+import { HttpService } from './services/http-service';
+import { KioskModeService } from './services/kiosk-mode.service';
+import { StorageService } from './services/storage.service';
+import { OverlayContainer } from '@angular/cdk/overlay';
+import { APPLY_ANIMATED_CONTAINER, ConsentMenuOverlay } from './consent-menu-overlay';
+import { Meta } from '@angular/platform-browser';
+import { NotificationService } from './services/notification-service';
+import { GoogleAnalyticsService } from './services/google-analytics.service';
+import { ShortcutInput } from 'ng-keyboard-shortcuts';
+import { KeyboardShortcutsService } from './services/keyboard-shortcuts.service';
+import { NextReleaseComponent, Update } from './next-release/next-release.component';
+import { User } from './models/User';
+import { UserService } from './services/user.service';
+import { NextReleaseService } from './next-release/services/next-release.service';
+import { ScreenService } from './services/screen.service';
+import { ToastService } from './services/toast.service';
 import _refiner from 'refiner-js';
-import {CheckForUpdateService} from './services/check-for-update.service';
-import {LocalizejsService} from './services/localizejs.service';
-import {ColorProfile} from './models/ColorProfile';
-import {Util} from '../Util';
+import { CheckForUpdateService } from './services/check-for-update.service';
+import { LocalizejsService } from './services/localizejs.service';
+import { ColorProfile } from './models/ColorProfile';
+import { Util } from '../Util';
 
 declare const window;
 
-export const INITIAL_LOCATION_PATHNAME =  new ReplaySubject<string>(1);
-
+export const INITIAL_LOCATION_PATHNAME = new ReplaySubject<string>(1);
 
 /**
  * @title Autocomplete overview
  */
 @Component({
-  selector: 'app-root',
-  templateUrl: './app.component.html',
-  styleUrls: ['./app.component.scss']
+	selector: 'app-root',
+	templateUrl: './app.component.html',
+	styleUrls: ['./app.component.scss'],
 })
-
 export class AppComponent implements OnInit, AfterViewInit, OnDestroy {
+	shortcuts: ShortcutInput[];
+	currentRoute: string;
 
-  shortcuts: ShortcutInput[];
-  currentRoute: string;
+	needToUpdateApp$: Subject<{ active: boolean; color: ColorProfile }>;
 
-  needToUpdateApp$: Subject<{active: boolean, color: ColorProfile}>;
+	private dialogContainer: HTMLElement;
+	@ViewChild('dialogContainer', { static: true }) set content(content: ElementRef) {
+		this.dialogContainer = content.nativeElement;
+	}
 
-  private dialogContainer: HTMLElement;
-  @ViewChild('dialogContainer', { static: true }) set content(content: ElementRef) {
-    this.dialogContainer = content.nativeElement;
-  }
+	public isAuthenticated = null;
+	public hideScroll = true;
+	public hideSchoolToggleBar = false;
+	public showUISubject: BehaviorSubject<boolean> = new BehaviorSubject<boolean>(false);
+	public showUI: Observable<boolean> = this.showUISubject.asObservable();
+	public schools: School[] = [];
+	public darkThemeEnabled: boolean;
+	public isKioskMode: boolean;
+	public showSupportButton: boolean;
+	public customToastOpen$: Observable<boolean>;
+	public toasts$: Observable<any>;
+	hasCustomBackdrop: boolean;
+	customStyle: Record<string, any>;
+	public hasCustomBackdrop$: Observable<boolean>;
+	public customBackdropStyle$: Observable<any>;
+	public user$: Observable<User>;
+	intercomLauncherAdded$: BehaviorSubject<HTMLDivElement> = new BehaviorSubject<HTMLDivElement>(null);
+	intercomObserver: MutationObserver;
 
-  public isAuthenticated = null;
-  public hideScroll = true;
-  public hideSchoolToggleBar = false;
-  public showUISubject: BehaviorSubject<boolean> = new BehaviorSubject<boolean>(false);
-  public showUI: Observable<boolean> = this.showUISubject.asObservable();
-  public schools: School[] = [];
-  public darkThemeEnabled: boolean;
-  public isKioskMode: boolean;
-  public showSupportButton: boolean;
-  public customToastOpen$: Observable<boolean>;
-  public toasts$: Observable<any>;
-  hasCustomBackdrop: boolean;
-  customStyle: Record<string, any>;
-  public hasCustomBackdrop$: Observable<boolean>;
-  public customBackdropStyle$: Observable<any>;
-  public user$: Observable<User>;
-  intercomLauncherAdded$: BehaviorSubject<HTMLDivElement> = new BehaviorSubject<HTMLDivElement>(null);
-  intercomObserver: MutationObserver;
+	private subscriber$ = new Subject();
 
-  private subscriber$ = new Subject();
+	trialEndDate$ = this.http.currentSchoolSubject.pipe(
+		takeUntil(this.subscriber$),
+		filter((s) => !!s?.trial_end_date),
+		map((s) => {
+			const endDate = new Date(s.trial_end_date);
+			// We want the trial to end at the end of the day specified by |trial_end_date|
+			const day = 60 * 60 * 24 * 1000 - 1;
+			const realEndDate = new Date(endDate.getTime() + day);
+			return realEndDate;
+		})
+	);
 
-  trialEndDate$ = this.http.currentSchoolSubject.pipe(
-    takeUntil(this.subscriber$),
-    filter(s => !!s?.trial_end_date),
-    map(s => {
-      const endDate = new Date(s.trial_end_date);
-      // We want the trial to end at the end of the day specified by |trial_end_date|
-      const day = (60 * 60 * 24 * 1000) - 1;
-      const realEndDate = new Date(endDate.getTime() + day);
-      return realEndDate;
-    }),
-  );
+	isAdmin$ = this.userService.userData.pipe(
+		filter((u) => !!u),
+		map((u) => u.isAdmin())
+	);
 
-  isAdmin$ = this.userService.userData.pipe(
-    filter(u => !!u),
-    map(u => u.isAdmin()),
-  );
+	private todayDate = (() => {
+		const date = new Date();
+		return Date.UTC(date.getUTCFullYear(), date.getUTCMonth(), date.getUTCDate(), date.getUTCHours(), date.getUTCMinutes(), date.getUTCSeconds());
+	})();
 
-  private todayDate = (() => {
-    const date = new Date();
-    return Date.UTC(date.getUTCFullYear(), date.getUTCMonth(),
-      date.getUTCDate(), date.getUTCHours(),
-      date.getUTCMinutes(), date.getUTCSeconds());
-  })();
+	@HostListener('window:popstate', ['$event'])
+	back(event) {
+		if (DeviceDetection.isAndroid() || DeviceDetection.isIOSMobile()) {
+			window.history.pushState({}, '');
+		}
+	}
 
-  @HostListener('window:popstate', ['$event'])
-  back(event) {
-    if (DeviceDetection.isAndroid() || DeviceDetection.isIOSMobile()) {
-      window.history.pushState({}, '');
-    }
-  }
+	constructor(
+		public darkTheme: DarkThemeSwitch,
+		public loginService: GoogleLoginService,
+		private userService: UserService,
+		private nextReleaseService: NextReleaseService,
+		private http: HttpService,
+		private httpNative: HttpClient,
+		private adminService: AdminService,
+		private _zone: NgZone,
+		private activatedRoute: ActivatedRoute,
+		private router: Router,
+		private dialog: MatDialog,
+		private overlayContainer: OverlayContainer,
+		private storageService: StorageService,
+		private kms: KioskModeService,
+		private meta: Meta,
+		private notifService: NotificationService,
+		private googleAnalytics: GoogleAnalyticsService,
+		private shortcutsService: KeyboardShortcutsService,
+		private screen: ScreenService,
+		private toastService: ToastService,
+		private localize: LocalizejsService,
+		private updateService: CheckForUpdateService
+	) {}
 
-  constructor(
-    public darkTheme: DarkThemeSwitch,
-    public loginService: GoogleLoginService,
-    private userService: UserService,
-    private nextReleaseService: NextReleaseService,
-    private http: HttpService,
-    private httpNative: HttpClient,
-    private adminService: AdminService,
-    private _zone: NgZone,
-    private activatedRoute: ActivatedRoute,
-    private router: Router,
-    private dialog: MatDialog,
-    private overlayContainer: OverlayContainer,
-    private storageService: StorageService,
-    private kms: KioskModeService,
-    private meta: Meta,
-    private notifService: NotificationService,
-    private googleAnalytics: GoogleAnalyticsService,
-    private shortcutsService: KeyboardShortcutsService,
-    private screen: ScreenService,
-    private toastService: ToastService,
-    private localize: LocalizejsService,
-    private updateService: CheckForUpdateService,
-  ) {}
+	get isMobile() {
+		return DeviceDetection.isMobile();
+	}
 
-  get isMobile() {
-    return DeviceDetection.isMobile();
-  }
+	ngOnInit() {
+		this.updateService.check();
+		this.customToastOpen$ = this.toastService.isOpen$;
+		this.toasts$ = this.toastService.toasts$;
+		this.user$ = this.userService.user$.pipe(map((user) => User.fromJSON(user)));
+		this.screen.customBackdropEvent$.asObservable().subscribe({
+			next: (hasBackdrop: boolean) => (this.hasCustomBackdrop = hasBackdrop),
+		});
+		this.screen.customBackdropStyle$.asObservable().subscribe({
+			next: (customStyle: Record<string, any>) => (this.customStyle = customStyle),
+		});
 
-  ngOnInit() {
-    this.updateService.check();
-    this.customToastOpen$ = this.toastService.isOpen$;
-    this.toasts$ = this.toastService.toasts$;
-    this.user$ = this.userService.user$.pipe(map(user => User.fromJSON(user)));
-    this.screen.customBackdropEvent$.asObservable().subscribe({
-      next: (hasBackdrop: boolean) => this.hasCustomBackdrop = hasBackdrop
-    });
-    this.screen.customBackdropStyle$.asObservable().subscribe({
-      next: (customStyle: Record<string, any>) => this.customStyle = customStyle
-    });
+		this.hasCustomBackdrop$ = this.screen.customBackdropEvent$.asObservable();
+		this.customBackdropStyle$ = this.screen.customBackdropStyle$;
 
+		this.router.events.pipe(filter(() => DeviceDetection.isAndroid() || DeviceDetection.isIOSMobile())).subscribe((event) => {
+			if (event instanceof NavigationEnd) {
+				window.history.pushState({}, '');
+			}
+		});
 
-    this.hasCustomBackdrop$ = this.screen.customBackdropEvent$.asObservable();
-    this.customBackdropStyle$ = this.screen.customBackdropStyle$;
+		this.needToUpdateApp$ = this.updateService.needToUpdate$;
 
-    this.router.events.pipe(
-      filter(() => DeviceDetection.isAndroid() || DeviceDetection.isIOSMobile())
-    ).subscribe(event => {
-      if (event instanceof NavigationEnd) {
-        window.history.pushState({}, '');
-      }
-    });
-
-    this.needToUpdateApp$ = this.updateService.needToUpdate$;
-
-    // set only an already set up language is found
-    // otherwise let the language component try to translate
-    /*const savedLang = this.storageService.getItem('codelang');
+		// set only an already set up language is found
+		// otherwise let the language component try to translate
+		/*const savedLang = this.storageService.getItem('codelang');
     if (!!savedLang) {
       this.http.currentLang$.pipe(
         takeUntil(this.subscriber$),
@@ -190,375 +182,368 @@ export class AppComponent implements OnInit, AfterViewInit, OnDestroy {
       });
     }*/
 
-    this.userService.loadedUser$
-      .pipe(
-        filter(l => l),
-        switchMap(l => this.userService.user$.pipe(take(1))),
-        filter(user => !!user),
-        map(user => User.fromJSON(user)),
-        concatMap(user => {
-          return this.intercomLauncherAdded$.pipe(map(intercomWrapper => [user, intercomWrapper]));
-        }),
-        switchMap(([user, intercomWrapper]: [User, HTMLDivElement]) => {
-          this.currentRoute = window.location.pathname;
-          const urlBlackList = [
-            '/forms',
-            '/kioskMode',
-            // '/login'
-          ];
-          const isAllowed = urlBlackList.every(route => !this.currentRoute.includes(route));
-          if ((!user.isStudent()) && !this.currentRoute.includes('/forms')) {
-            this.registerRefiner(user);
-          }
+		this.userService.loadedUser$
+			.pipe(
+				filter((l) => l),
+				switchMap((l) => this.userService.user$.pipe(take(1))),
+				filter((user) => !!user),
+				map((user) => User.fromJSON(user)),
+				concatMap((user) => {
+					return this.intercomLauncherAdded$.pipe(map((intercomWrapper) => [user, intercomWrapper]));
+				}),
+				switchMap(([user, intercomWrapper]: [User, HTMLDivElement]) => {
+					this.currentRoute = window.location.pathname;
+					const urlBlackList = [
+						'/forms',
+						'/kioskMode',
+						// '/login'
+					];
+					const isAllowed = urlBlackList.every((route) => !this.currentRoute.includes(route));
+					if (!user.isStudent() && !this.currentRoute.includes('/forms')) {
+						this.registerRefiner(user);
+					}
 
-          if (intercomWrapper) {
-            intercomWrapper.style.display = user.isStudent()
-              ? 'none'
-              : 'block';
-          }
+					if (intercomWrapper) {
+						intercomWrapper.style.display = user.isStudent() ? 'none' : 'block';
+					}
 
+					if (isAllowed && !this.isMobile) {
+						this.registerIntercom(user);
+					}
+					return this.nextReleaseService.getLastReleasedUpdates(DeviceDetection.platform()).pipe(
+						map((release: Array<Update>): Array<Update> => {
+							return release.filter((update) => {
+								const allowUpdate: boolean = !!update.groups.find((group) => {
+									return user.roles.includes(`_profile_${group}`);
+								});
+								return allowUpdate;
+							});
+						})
+					);
+				}),
+				filter((release: Array<Update>) => !!release.length),
+				switchMap((release) => {
+					let config;
+					if (DeviceDetection.isMobile()) {
+						config = {
+							panelClass: 'main-form-dialog-container-mobile',
+							width: '100%',
+							maxWidth: '100%',
+							height: '100%',
+							data: {
+								isStudent: false,
+								isTeacher: true,
+								releaseUpdates: release,
+							},
+						};
+					} else {
+						config = {
+							panelClass: 'main-form-dialog-container',
+							width: '425px',
+							maxHeight: '450px',
+							data: {
+								isStudent: false,
+								isTeacher: true,
+								releaseUpdates: release,
+							},
+						};
+					}
+					const dialogRef = this.dialog.open(NextReleaseComponent, config);
+					return dialogRef
+						.afterClosed()
+						.pipe(
+							switchMap(() => zip(...release.map((update: Update) => this.nextReleaseService.dismissUpdate(update.id, DeviceDetection.platform()))))
+						);
+				})
+			)
+			.subscribe();
 
-          if (isAllowed && !this.isMobile) {
-            this.registerIntercom(user);
-          }
-          return this.nextReleaseService
-            .getLastReleasedUpdates(DeviceDetection.platform())
-            .pipe(
-              map((release: Array<Update>): Array<Update> => {
-                return release.filter((update) => {
-                  const allowUpdate: boolean = !!update.groups.find((group) => {
-                    return user.roles.includes(`_profile_${group}`);
-                  });
-                  return allowUpdate;
-                });
-              })
-            );
-        }),
-        filter((release: Array<Update>) => !!release.length),
-        switchMap((release) => {
-          let config;
-          if (DeviceDetection.isMobile()) {
-            config = {
-              panelClass: 'main-form-dialog-container-mobile',
-              width: '100%',
-              maxWidth: '100%',
-              height: '100%',
-              data: {
-                isStudent: false,
-                isTeacher: true,
-                releaseUpdates: release
-              }
-            };
-          } else {
-            config = {
-              panelClass: 'main-form-dialog-container',
-              width: '425px',
-              maxHeight: '450px',
-              data: {
-                isStudent: false,
-                isTeacher: true,
-                releaseUpdates: release
-              }
-            };
-          }
-          const dialogRef = this.dialog.open(NextReleaseComponent, config);
-          return dialogRef.afterClosed().pipe(
-            switchMap(() => zip(
-              ...release.map((update: Update) => this.nextReleaseService.dismissUpdate(update.id, DeviceDetection.platform()))
-            ))
-          );
-        })
-      )
-      .subscribe();
+		this.shortcutsService.initialize();
+		this.shortcuts = this.shortcutsService.shortcuts;
 
-    this.shortcutsService.initialize();
-    this.shortcuts = this.shortcutsService.shortcuts;
+		// this.googleAnalytics.init();
+		const fcm_sw = localStorage.getItem('fcm_sw_registered');
+		if (fcm_sw === 'true') {
+			this.notifService.initNotifications(true);
+		}
 
-    // this.googleAnalytics.init();
-    const fcm_sw = localStorage.getItem('fcm_sw_registered');
-    if (fcm_sw === 'true') {
-      this.notifService.initNotifications(true);
-    }
+		INITIAL_LOCATION_PATHNAME.next(window.location.pathname);
 
-    INITIAL_LOCATION_PATHNAME.next(window.location.pathname);
+		this.darkTheme.isEnabled$.subscribe((val) => {
+			this.darkThemeEnabled = val;
+			document.documentElement.style.background = val ? '#0F171E' : '#FBFEFF';
+			document.body.style.boxShadow = `0px 0px 100px 100px ${val ? '#0F171E' : '#FBFEFF'}`;
+		});
 
-    this.darkTheme.isEnabled$.subscribe((val) => {
-      this.darkThemeEnabled = val;
-      document.documentElement.style.background = val ? '#0F171E' : '#FBFEFF';
-      document.body.style.boxShadow = `0px 0px 100px 100px ${val ? '#0F171E' : '#FBFEFF'}`;
-    });
+		if (!DeviceDetection.isIOSTablet() && !DeviceDetection.isMacOS()) {
+			const link = document.createElement('link');
+			link.setAttribute('rel', 'stylesheet');
+			link.setAttribute('href', './assets/css/custom_scrollbar.css');
+			document.head.appendChild(link);
+		}
 
-    if (!DeviceDetection.isIOSTablet() && !DeviceDetection.isMacOS()) {
-      const link = document.createElement('link');
-      link.setAttribute('rel', 'stylesheet');
-      link.setAttribute('href', './assets/css/custom_scrollbar.css');
-      document.head.appendChild(link);
-    }
+		this.loginService.isAuthenticated$.pipe(takeUntil(this.subscriber$)).subscribe((isAuth) => {
+			this._zone.run(() => {
+				this.showUISubject.next(true);
+				this.isAuthenticated = isAuth;
+				const path = window.location.pathname;
 
-    this.loginService.isAuthenticated$.pipe(
-      takeUntil(this.subscriber$),
-    )
-    .subscribe(isAuth => {
-      this._zone.run(() => {
-        this.showUISubject.next(true);
-        this.isAuthenticated = isAuth;
-        const path = window.location.pathname;
+				if (isAuth && path.includes('parent-sign-up')) {
+					this.router.navigate(['parent']);
+				} else if (!isAuth && (path.includes('admin') || path.includes('main'))) {
+					if (path.includes('main/student')) {
+						this.storageService.setItem('initialUrl', path);
+					}
+					this.router.navigate(['/']);
+				}
+			});
+		});
 
-        if (isAuth && path.includes('parent-sign-up')) {
-          this.router.navigate(['parent']);
-        } else if (!isAuth && (path.includes('admin') ||  path.includes('main'))) {
-          if (path.includes('main/student')) {
-            this.storageService.setItem('initialUrl', path);
-          }
-          this.router.navigate(['/']);
-        }
-      });
-    });
+		this.http.schoolsCollection$
+			.pipe(
+				map((schools) => _filter(schools, (school) => school.my_roles.length > 0)),
+				withLatestFrom(this.http.currentSchool$),
+				takeUntil(this.subscriber$)
+			)
+			.subscribe(([schools, currentSchool]) => {
+				this.schools = schools;
+				const isCurrentSchoolInList = schools.find((s) => s.id === currentSchool.id);
+				if (currentSchool && !isCurrentSchoolInList) {
+					this.http.setSchool(schools[0]);
+				}
+			});
 
-    this.http.schoolsCollection$.pipe(
-      map(schools => _filter(schools, (school => school.my_roles.length > 0))),
-      withLatestFrom(this.http.currentSchool$),
-      takeUntil(this.subscriber$))
-      .subscribe(([schools, currentSchool]) => {
-        this.schools = schools;
-        const isCurrentSchoolInList = schools.find(s => s.id === currentSchool.id);
-        if (currentSchool && !isCurrentSchoolInList) {
-          this.http.setSchool(schools[0]);
-        }
-      });
+		this.http.currentSchool$.pipe(takeUntil(this.subscriber$)).subscribe((value) => {
+			if (!value) {
+				this.schools = [];
+			}
+		});
+		this.router.events
+			.pipe(
+				takeUntil(this.subscriber$),
+				filter((event) => event instanceof NavigationEnd),
+				map(() => this.activatedRoute),
+				map((route) => {
+					if (this.isMobile) {
+						window.Intercom('update', { hide_default_launcher: true });
+					}
+					this.isKioskMode = this.router.url.includes('kioskMode');
+					if (route.firstChild) {
+						route = route.firstChild;
+					}
+					return route;
+				}),
+				mergeMap((route) => route.data)
+			)
+			.subscribe((data) => {
+				const existingHub: any = document.querySelector('#hubspot-messages-iframe-container');
+				let newHub: any;
 
-    this.http.currentSchool$.pipe(takeUntil(this.subscriber$))
-      .subscribe((value => {
-        if (!value) {
-          this.schools = [];
-        }
-      }));
-    this.router.events
-      .pipe(
-        takeUntil(this.subscriber$),
-        filter(event => event instanceof NavigationEnd),
-        map(() => this.activatedRoute),
-        map((route) => {
-          if (this.isMobile) {
-            window.Intercom('update', {'hide_default_launcher': true});
-          }
-          this.isKioskMode = this.router.url.includes('kioskMode');
-          if (route.firstChild) {
-            route = route.firstChild;
-          }
-          return route;
-        }),
-        mergeMap((route) => route.data)
-      )
-      .subscribe((data) => {
-        const existingHub: any = document.querySelector('#hubspot-messages-iframe-container');
-        let newHub: any;
+				if (!existingHub) {
+					newHub = document.createElement('script');
+					newHub.type = 'text/javascript';
+					newHub.id = 'hs-script-loader';
+					newHub.setAttribute('id', 'hs-script-loader');
+					newHub.src = '//js.hs-scripts.com/5943240.js';
+				}
 
-        if (!existingHub) {
-          newHub = document.createElement('script');
-          newHub.type = 'text/javascript';
-          newHub.id = 'hs-script-loader';
-          newHub.setAttribute('id', 'hs-script-loader');
-          newHub.src = '//js.hs-scripts.com/5943240.js';
-        }
+				if (data.currentUser) {
+					this.hubSpotSettings(data.currentUser);
+				}
 
-        if (data.currentUser) {
-          this.hubSpotSettings(data.currentUser);
-        }
+				if (
+					data.hubspot &&
+					((data.currentUser && !data.currentUser.isStudent() && data.authFree) ||
+						(!this.http.kioskTokenSubject$.value && !this.kms.getCurrentRoom().value)) &&
+					!this.screen.isDeviceLargeExtra
+				) {
+					if (!existingHub) {
+						this.showSupportButton = true;
+						document.body.appendChild(newHub);
+						const dst = new Subject<any>();
+						interval(100)
+							.pipe(takeUntil(dst))
+							.subscribe(() => {
+								if (window._hsq) {
+									dst.next();
+									dst.complete();
+								}
+							});
+					} else {
+						(existingHub as HTMLElement).setAttribute('style', 'display: block !important;width: 100px;height: 100px');
+					}
+				} else {
+					if (existingHub) {
+						(existingHub as HTMLElement).setAttribute('style', 'display: none !important');
+					}
+				}
 
-        if (data.hubspot &&
-          ((data.currentUser && !data.currentUser.isStudent()) &&
-            data.authFree || (!this.http.kioskTokenSubject$.value && !this.kms.getCurrentRoom().value)) && !this.screen.isDeviceLargeExtra
-        ) {
-          if (!existingHub) {
-            this.showSupportButton = true;
-            document.body.appendChild(newHub);
-            const dst = new Subject<any>();
-            interval(100)
-              .pipe(
-                takeUntil(dst)
-              ).subscribe(() => {
-              if (window._hsq) {
-                dst.next();
-                dst.complete();
-              }
-            });
-          } else {
-            (existingHub as HTMLElement).setAttribute('style', 'display: block !important;width: 100px;height: 100px');
-          }
-        } else {
-          if (existingHub) {
-            (existingHub as HTMLElement).setAttribute('style', 'display: none !important');
-          }
-        }
+				this.hideSchoolToggleBar = data.hideSchoolToggleBar;
+				this.hideScroll = data.hideScroll;
+			});
+	}
 
-        this.hideSchoolToggleBar = data.hideSchoolToggleBar;
-        this.hideScroll = data.hideScroll;
-      });
-  }
+	registerRefiner(user: User) {
+		_refiner('setProject', 'e832a600-7fe2-11ec-9b7a-cd5d0014e33d');
+		_refiner('identifyUser', {
+			id: user.id,
+			email: user.primary_email,
+			created_at: user.created,
+			last_login_at: user.last_login,
+			last_active_at: user.last_active,
+			first_login_at: user.first_login,
+			first_name: user.first_name,
+			last_name: user.last_name,
+			type: user.isAdmin() ? 'admin' : 'teacher',
+			status: user.status,
+			sync_types: !user.sync_types.length ? 'password' : user.sync_types.length === 1 ? user.sync_types[0] : user.sync_types,
+			name: user.display_name,
+			account: {
+				id: this.http.getSchool().id, // <- School Id
+				name: this.http.getSchool().name,
+			},
+		});
+		// _refiner('showForm', '31b6c030-820a-11ec-9c99-8b41a98d875d');
+	}
 
-  registerRefiner(user: User) {
-    _refiner('setProject', 'e832a600-7fe2-11ec-9b7a-cd5d0014e33d');
-    _refiner('identifyUser', {
-      id: user.id,
-      email: user.primary_email,
-      created_at: user.created,
-      last_login_at: user.last_login,
-      last_active_at: user.last_active,
-      first_login_at: user.first_login,
-      first_name: user.first_name,
-      last_name: user.last_name,
-      type: user.isAdmin() ? 'admin' : 'teacher',
-      status: user.status,
-      sync_types: !user.sync_types.length ? 'password' : user.sync_types.length === 1 ? user.sync_types[0] : user.sync_types,
-      name: user.display_name,
-      account: {
-        id: this.http.getSchool().id, // <- School Id
-        name: this.http.getSchool().name
-      }
-    });
-    // _refiner('showForm', '31b6c030-820a-11ec-9c99-8b41a98d875d');
-  }
+	registerIntercom(user: User) {
+		// const intercomLauncher = document.querySelector<HTMLDivElement>('div.intercom-lightweight-app');
+		// if (user.isStudent() && intercomLauncher) {
+		//   intercomLauncher.style.display = 'none';
+		// } else {
+		//   intercomLauncher.style.display = 'block';
+		// }
+		console.log('registering intercom');
+		setTimeout(() => {
+			const now = new Date();
+			const school: School = this.http.getSchool();
+			window.intercomSettings = {
+				user_id: user.id,
+				name: user.display_name,
+				email: user.primary_email,
+				created: new Date(user.created),
+				type: this.getUserType(user),
+				status: user.status,
+				account_type: user.sync_types[0] === 'google' ? 'Google' : user.sync_types[0] === 'clever' ? 'Clever' : 'Standard',
+				first_login_at: user.first_login,
+				company: {
+					id: school.id,
+					name: school.name,
+					'Id Card Access': school.feature_flag_digital_id,
+					'Plus Access': school.feature_flag_encounter_detection,
+					Trialing: !!school.trial_end_date && school.trial_end_date > now ? 'Yes' : 'No',
+					'Trial End Date': !!school.trial_end_date ? new Date(school.trial_end_date).toDateString() : 'N/A',
+				},
+				hide_default_launcher: false,
+			};
+			window.Intercom('update');
+		}, 3000);
+	}
 
-  registerIntercom(user: User) {
-    // const intercomLauncher = document.querySelector<HTMLDivElement>('div.intercom-lightweight-app');
-    // if (user.isStudent() && intercomLauncher) {
-    //   intercomLauncher.style.display = 'none';
-    // } else {
-    //   intercomLauncher.style.display = 'block';
-    // }
-    console.log('registering intercom');
-    setTimeout(() => {
-      const now = new Date();
-      const school: School = this.http.getSchool();
-      window.intercomSettings = {
-        user_id: user.id,
-        name: user.display_name,
-        email: user.primary_email,
-        created: new Date(user.created),
-        type: this.getUserType(user),
-        status: user.status,
-        account_type: user.sync_types[0] === 'google' ? 'Google' : (user.sync_types[0] === 'clever' ? 'Clever' : 'Standard'),
-        first_login_at: user.first_login,
-        company: {
-          id: school.id,
-          name: school.name,
-          'Id Card Access': school.feature_flag_digital_id,
-          'Plus Access': school.feature_flag_encounter_detection,
-          'Trialing': (!!school.trial_end_date && (school.trial_end_date > now)) ? 'Yes' : 'No',
-          'Trial End Date': !!school.trial_end_date ? new Date(school.trial_end_date).toDateString() : 'N/A'
-        },
-        hide_default_launcher: false
-      };
-      window.Intercom('update');
-    }, 3000);
-  }
+	getDaysUntil(date: Date): number {
+		const oneDay = 24 * 60 * 60 * 1000; // hours*minutes*seconds*milliseconds
+		// @ts-ignore
+		const diffDays = Math.round(Math.abs((date - this.todayDate) / oneDay));
+		return diffDays;
+	}
 
-  getDaysUntil(date: Date): number {
-    const oneDay = 24 * 60 * 60 * 1000; // hours*minutes*seconds*milliseconds
-    // @ts-ignore
-    const diffDays = Math.round(Math.abs((date - this.todayDate) / oneDay));
-    return diffDays;
-  }
+	getDayText(days: number): string {
+		return days === 1 ? 'day' : 'days';
+	}
 
-  getDayText(days: number): string {
-    return days === 1 ? 'day' : 'days';
-  }
+	getUserType(user: User): string {
+		if (user.isAdmin()) {
+			return 'Admin';
+		} else if (user.isTeacher()) {
+			return 'Teacher';
+		} else if (user.isAssistant()) {
+			return 'Assistant';
+		} else if (user.isStudent()) {
+			return 'Student';
+		}
+		return 'unknown user';
+	}
 
-  getUserType(user: User): string {
-    if (user.isAdmin()) {
-      return 'Admin';
-    } else if (user.isTeacher()) {
-      return 'Teacher';
-    } else if (user.isAssistant()) {
-      return 'Assistant';
-    } else if (user.isStudent()) {
-      return 'Student';
-    }
-    return 'unknown user';
-  }
+	hubSpotSettings(user) {
+		const _hsq = (window._hsq = window._hsq || []);
 
-  hubSpotSettings(user) {
-    const _hsq = window._hsq = window._hsq || [];
+		const myPush = function (a) {
+			if (!BUILD_INFO_REAL) {
+				// console.log('Pushed:', a);
+			}
+			_hsq.push(a);
+		};
 
-    const myPush = function (a) {
-      if (!BUILD_INFO_REAL) {
-        // console.log('Pushed:', a);
-      }
-      _hsq.push(a);
-    };
+		myPush([
+			'identify',
+			{
+				email: user.primary_email,
+				firstname: user.first_name,
+				lastname: user.last_name,
+			},
+		]);
 
-    myPush(['identify', {
-      email: user.primary_email,
-      firstname: user.first_name,
-      lastname: user.last_name,
-    }]);
+		myPush(['setPath', '/admin/dashboard']);
+		myPush(['trackPageView']);
+	}
 
-    myPush(['setPath', '/admin/dashboard']);
-    myPush(['trackPageView']);
+	getBarBg(color, hovered, pressed) {
+		if (hovered) {
+			if (pressed) {
+				return Util.convertHex(color, 20);
+			}
+			return Util.convertHex(color, 15);
+		}
+		return Util.convertHex(color, 10);
+	}
 
-  }
+	ngOnDestroy() {
+		this.subscriber$.next(null);
+		this.subscriber$.complete();
+	}
 
-  getBarBg(color, hovered, pressed) {
-    if (hovered) {
-      if (pressed) {
-        return Util.convertHex(color, 20);
-      }
-      return Util.convertHex(color, 15);
-    }
-    return Util.convertHex(color, 10);
-  }
+	ngAfterViewInit() {
+		if (this.isMobile) {
+			window.Intercom('update', { hide_default_launcher: true });
+		}
+		APPLY_ANIMATED_CONTAINER.subscribe((v: boolean) => {
+			if (v) {
+				const zIndexForContainer = (this.dialog.openDialogs.length + 1) * 1000;
+				this.dialogContainer.classList.add('unanimated-dialog-container');
+				this.dialogContainer.style.zIndex = `${zIndexForContainer}`;
+				(this.overlayContainer as ConsentMenuOverlay).setContainer(this.dialogContainer);
+			} else {
+				this.dialogContainer.style.zIndex = '-1';
+				this.dialogContainer.classList.remove('unanimated-dialog-container');
+				(this.overlayContainer as ConsentMenuOverlay).restoreContainer();
+			}
+		});
 
-  ngOnDestroy() {
-    this.subscriber$.next(null);
-    this.subscriber$.complete();
-  }
+		// listen for existence of Intercom wrapper
+		// stop listening when the Intercom wrapper is found
+		const targetNode = document.body;
+		const listenerConfig = { childList: true, subtree: true };
+		this.intercomObserver = new MutationObserver((mutationList, observer) => {
+			for (const m of mutationList) {
+				// @ts-ignore
+				if ((m.target as HTMLElement).tagName !== 'BODY') {
+					return;
+				}
+				m.addedNodes.forEach((node) => {
+					if (node.nodeType === node.COMMENT_NODE) {
+						return;
+					}
+					if ((node as HTMLElement).classList.contains('intercom-lightweight-app')) {
+						this.intercomLauncherAdded$.next(node as HTMLDivElement);
+						this.intercomObserver.disconnect();
+					}
+				});
+			}
+		});
+		this.intercomObserver.observe(targetNode, listenerConfig);
+	}
 
-  ngAfterViewInit() {
-    if (this.isMobile) {
-      window.Intercom('update', {'hide_default_launcher': true});
-    }
-    APPLY_ANIMATED_CONTAINER
-      .subscribe((v: boolean) => {
-        if (v) {
-          const zIndexForContainer = (this.dialog.openDialogs.length + 1) * 1000;
-          this.dialogContainer.classList.add('unanimated-dialog-container');
-          this.dialogContainer.style.zIndex = `${zIndexForContainer}`;
-          (this.overlayContainer as ConsentMenuOverlay).setContainer(this.dialogContainer);
-        } else {
-          this.dialogContainer.style.zIndex = '-1';
-          this.dialogContainer.classList.remove('unanimated-dialog-container');
-          (this.overlayContainer as ConsentMenuOverlay).restoreContainer();
-        }
-      });
-
-    // listen for existence of Intercom wrapper
-    // stop listening when the Intercom wrapper is found
-    const targetNode = document.body;
-    const listenerConfig = { childList: true, subtree: true };
-    this.intercomObserver = new MutationObserver((mutationList, observer) => {
-      for (const m of mutationList) {
-        // @ts-ignore
-        if ((m.target as HTMLElement).tagName !== 'BODY') {
-          return;
-        }
-        m.addedNodes.forEach(node => {
-          if (node.nodeType === node.COMMENT_NODE) {
-            return;
-          }
-          if ((node as HTMLElement).classList.contains('intercom-lightweight-app')) {
-            this.intercomLauncherAdded$.next(node as HTMLDivElement);
-            this.intercomObserver.disconnect();
-          }
-        });
-      }
-
-    });
-    this.intercomObserver.observe(targetNode, listenerConfig);
-  }
-
-  updateApp() {
-    this.updateService.update();
-  }
-
+	updateApp() {
+		this.updateService.update();
+	}
 }

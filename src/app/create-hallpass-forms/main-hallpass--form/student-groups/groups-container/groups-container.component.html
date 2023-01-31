@@ -1,41 +1,39 @@
 <div class="groups-container">
-  <div *ngIf="currentState === states.SelectStudents">
-    <app-groups-step1
-      [selectedGroup]="FORM_STATE.data.selectedGroup"
-      [selectedStudents]="FORM_STATE.data.selectedStudents ? FORM_STATE.data.selectedStudents : []"
-      [formState]="FORM_STATE"
-      [groups]="groups"
-      [hasBackArrow]="FORM_STATE.formMode.formFactor === 2 || FORM_STATE.formMode.formFactor === 3"
-      (createGroupEmit)="groupNextStep($event)"
-      (stateChangeEvent)="onStateChange($event)">
-    </app-groups-step1>
-  </div>
-  <!--<br>-->
-  <div *ngIf="currentState === states.CreateGroup">
-    <app-groups-step2
-      [selectedStudents]="selectedStudents"
-      [form]="groupDTO"
-      (stateChangeEvent)="groupNextStep($event)">
+	<div *ngIf="currentState === states.SelectStudents">
+		<app-groups-step1
+			[selectedGroup]="FORM_STATE.data.selectedGroup"
+			[selectedStudents]="FORM_STATE.data.selectedStudents ? FORM_STATE.data.selectedStudents : []"
+			[formState]="FORM_STATE"
+			[groups]="groups"
+			[hasBackArrow]="FORM_STATE.formMode.formFactor === 2 || FORM_STATE.formMode.formFactor === 3"
+			(createGroupEmit)="groupNextStep($event)"
+			(stateChangeEvent)="onStateChange($event)">
+		</app-groups-step1>
+	</div>
+	<!--<br>-->
+	<div *ngIf="currentState === states.CreateGroup">
+		<app-groups-step2 [selectedStudents]="selectedStudents" [form]="groupDTO" (stateChangeEvent)="groupNextStep($event)"> </app-groups-step2>
+	</div>
+	<!--<br>-->
+	<div *ngIf="currentState === states.EditGroup">
+		<app-groups-step3 [groupToEdit]="selectedGroup" [form]="groupDTO" (stateChangeEvent)="groupNextStep($event)"> </app-groups-step3>
+	</div>
 
-    </app-groups-step2>
-  </div>
-  <!--<br>-->
-  <div *ngIf="currentState === states.EditGroup">
-    <app-groups-step3
-      [groupToEdit]="selectedGroup"
-      [form]="groupDTO"
-      (stateChangeEvent)="groupNextStep($event)">
-    </app-groups-step3>
-  </div>
-
-  <div *ngIf="currentState === states.WhoAreYou">
-    <app-who-you-are
-      [formState]="FORM_STATE"
-      (stateChangeEvent)="onStateChange($event)">
-    </app-who-you-are>
-  </div>
+	<div *ngIf="currentState === states.WhoAreYou">
+		<app-who-you-are [formState]="FORM_STATE" (stateChangeEvent)="onStateChange($event)"> </app-who-you-are>
+	</div>
 </div>
 
-<div *ngIf="pwaBackBtnVisibility" appCrossPointerEventTarget [ngClass]="isIOSTablet ? 'ios-back-btn-bottom' : 'back-btn-bottom'" class="back-button back-button-grey">
-  <app-icon-button (clickEvent)="stepBack()" [srcString]="'Back Button'" [size]="28" [onDarkShade]="false" [blueWhite]="true" [hasShadow]="false"></app-icon-button>
+<div
+	*ngIf="pwaBackBtnVisibility"
+	appCrossPointerEventTarget
+	[ngClass]="isIOSTablet ? 'ios-back-btn-bottom' : 'back-btn-bottom'"
+	class="back-button back-button-grey">
+	<app-icon-button
+		(clickEvent)="stepBack()"
+		[srcString]="'Back Button'"
+		[size]="28"
+		[onDarkShade]="false"
+		[blueWhite]="true"
+		[hasShadow]="false"></app-icon-button>
 </div>

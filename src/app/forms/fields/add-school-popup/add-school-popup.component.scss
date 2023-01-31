@@ -1,33 +1,33 @@
-@import "../../../../design-system";
+@import '../../../../design-system';
 
 .add-school-popup-title p {
-  @include textSize(20px, bold, $navy);
-  margin: 18px;
+	@include textSize(20px, bold, $navy);
+	margin: 18px;
 }
 
 .add-school-popup-title hr {
-  border-top: 1px solid $light-gray;
+	border-top: 1px solid $light-gray;
 }
 
 form {
-  margin: 18px;
-  display: flex;
-  flex-direction: column;
-  justify-content: space-around;
+	margin: 18px;
+	display: flex;
+	flex-direction: column;
+	justify-content: space-around;
 
-  @media (min-width: 425px) {
-    width: 380px;
-  }
+	@media (min-width: 425px) {
+		width: 380px;
+	}
 }
 
 .row {
-  display: flex;
-  width: 100%;
-  justify-content: space-between;
+	display: flex;
+	width: 100%;
+	justify-content: space-between;
 }
 
 .confirm-wrapper {
-  display: flex;
-  width: 100%;
-  justify-content: center;
+	display: flex;
+	width: 100%;
+	justify-content: center;
 }

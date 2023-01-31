@@ -1,11 +1,11 @@
 export interface PassStatsState {
-  data: any;
-  loading: boolean;
-  loaded: boolean;
+	data: any;
+	loading: boolean;
+	loaded: boolean;
 }
 
 export const passStatsInitialState: PassStatsState = {
-  data: {},
-  loading: false,
-  loaded: false
+	data: {},
+	loading: false,
+	loaded: false,
 };

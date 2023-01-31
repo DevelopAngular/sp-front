@@ -1,459 +1,455 @@
-import { Component, ElementRef, HostListener, OnDestroy, OnInit, ViewChild } from '@angular/core'
-import { MatDialog } from '@angular/material/dialog'
+import { Component, ElementRef, HostListener, OnDestroy, OnInit, ViewChild } from '@angular/core';
+import { MatDialog } from '@angular/material/dialog';
 
-import {
-  BehaviorSubject,
-  combineLatest,
-  forkJoin,
-  interval,
-  Observable,
-  of,
-  ReplaySubject,
-  Subject,
-  Subscription,
-  zip
-} from 'rxjs'
-import { debounceTime, filter, map, switchMap, take, takeUntil, tap } from 'rxjs/operators'
+import { BehaviorSubject, combineLatest, forkJoin, interval, Observable, of, ReplaySubject, Subject, Subscription, zip } from 'rxjs';
+import { debounceTime, filter, map, switchMap, take, takeUntil, tap } from 'rxjs/operators';
 
-import { HttpService } from '../../services/http-service'
-import { Pinnable } from '../../models/Pinnable'
-import { OverlayContainerComponent } from '../overlay-container/overlay-container.component'
-import { PinnableCollectionComponent } from '../pinnable-collection/pinnable-collection.component'
-import { isArray } from 'lodash'
-import { HallPassesService } from '../../services/hall-passes.service'
-import { SchoolSettingDialogComponent } from '../school-setting-dialog/school-setting-dialog.component'
-import { Location } from '../../models/Location'
-import { ActivatedRoute, Router } from '@angular/router'
-import { LocationsService } from '../../services/locations.service'
-import { DarkThemeSwitch } from '../../dark-theme-switch'
-import { ConsentMenuComponent } from '../../consent-menu/consent-menu.component'
-import { AdminService } from '../../services/admin.service'
-import { UNANIMATED_CONTAINER } from '../../consent-menu-overlay'
-import { ScrollPositionService } from '../../scroll-position.service'
-import { Onboard } from '../../models/Onboard'
-import { SupportService } from '../../services/support.service'
-import { UserService } from '../../services/user.service'
-import * as moment from 'moment/moment'
-import { FeatureFlagService, FLAGS } from '../../services/feature-flag.service'
+import { HttpService } from '../../services/http-service';
+import { Pinnable } from '../../models/Pinnable';
+import { OverlayContainerComponent } from '../overlay-container/overlay-container.component';
+import { PinnableCollectionComponent } from '../pinnable-collection/pinnable-collection.component';
+import { isArray } from 'lodash';
+import { HallPassesService } from '../../services/hall-passes.service';
+import { SchoolSettingDialogComponent } from '../school-setting-dialog/school-setting-dialog.component';
+import { Location } from '../../models/Location';
+import { ActivatedRoute, Router } from '@angular/router';
+import { LocationsService } from '../../services/locations.service';
+import { DarkThemeSwitch } from '../../dark-theme-switch';
+import { ConsentMenuComponent } from '../../consent-menu/consent-menu.component';
+import { AdminService } from '../../services/admin.service';
+import { UNANIMATED_CONTAINER } from '../../consent-menu-overlay';
+import { ScrollPositionService } from '../../scroll-position.service';
+import { Onboard } from '../../models/Onboard';
+import { SupportService } from '../../services/support.service';
+import { UserService } from '../../services/user.service';
+import * as moment from 'moment/moment';
+import { FeatureFlagService, FLAGS } from '../../services/feature-flag.service';
 
 @Component({
-  selector: 'app-pass-congif',
-  templateUrl: './pass-config.component.html',
-  styleUrls: ['./pass-config.component.scss']
+	selector: 'app-pass-congif',
+	templateUrl: './pass-config.component.html',
+	styleUrls: ['./pass-config.component.scss'],
 })
 export class PassConfigComponent implements OnInit, OnDestroy {
+	private scrollableAreaName = 'PassConfig';
+	private scrollableArea: HTMLElement;
 
+	@ViewChild('scrollableArea') set scrollable(scrollable: ElementRef) {
+		if (scrollable) {
+			this.scrollableArea = scrollable.nativeElement;
 
-  private scrollableAreaName = 'PassConfig';
-  private scrollableArea: HTMLElement;
+			const updatePosition = function () {
+				const scrollObserver = new Subject();
+				const initialHeight = this.scrollableArea.scrollHeight;
+				const scrollOffset = this.scrollPosition.getComponentScroll(this.scrollableAreaName);
 
-  @ViewChild('scrollableArea') set scrollable(scrollable: ElementRef) {
-    if (scrollable) {
-      this.scrollableArea = scrollable.nativeElement;
+				/**
+				 * If the scrollable area has static height, call `scrollTo` immediately,
+				 * otherwise additional subscription will perform once if the height changes
+				 */
 
-      const updatePosition = function () {
+				if (scrollOffset) {
+					this.scrollableArea.scrollTo({ top: scrollOffset });
+				}
 
-        const scrollObserver = new Subject();
-        const initialHeight = this.scrollableArea.scrollHeight;
-        const scrollOffset = this.scrollPosition.getComponentScroll(this.scrollableAreaName);
+				interval(50)
+					.pipe(
+						filter(() => {
+							return initialHeight < (scrollable.nativeElement as HTMLElement).scrollHeight && scrollOffset;
+						}),
+						takeUntil(scrollObserver)
+					)
+					.subscribe((v) => {
+						// console.log(scrollOffset);
+						if (v) {
+							this.scrollableArea.scrollTo({ top: scrollOffset });
+							scrollObserver.next();
+							scrollObserver.complete();
+							updatePosition();
+						}
+					});
+			}.bind(this);
+			updatePosition();
+		}
+	}
 
-        /**
-         * If the scrollable area has static height, call `scrollTo` immediately,
-         * otherwise additional subscription will perform once if the height changes
-         */
+	@ViewChild(PinnableCollectionComponent) pinColComponent;
 
-        if (scrollOffset) {
-          this.scrollableArea.scrollTo({top: scrollOffset});
-        }
+	public pinnableCollectionBlurEvent$: BehaviorSubject<boolean> = new BehaviorSubject<boolean>(false);
 
-        interval(50)
-          .pipe(
-            filter(() => {
-              return initialHeight < ((scrollable.nativeElement as HTMLElement).scrollHeight) && scrollOffset;
-            }),
-            takeUntil(scrollObserver)
-          )
-          .subscribe((v) => {
-            // console.log(scrollOffset);
-            if (v) {
-              this.scrollableArea.scrollTo({top: scrollOffset});
-              scrollObserver.next();
-              scrollObserver.complete();
-              updatePosition();
-            }
-          });
-      }.bind(this);
-      updatePosition();
-    }
-  }
+	private pendingSubject = new ReplaySubject<boolean>(1);
+	public pending$ = this.pendingSubject.asObservable();
 
-    @ViewChild(PinnableCollectionComponent) pinColComponent;
+	selectedPinnables: Pinnable[] = [];
+	pinnable: Pinnable;
+	pinnables$: Observable<Pinnable[]>;
+	pinnables: Pinnable[] = [];
+	onboardProcess$: Observable<{ [id: string]: Onboard }>;
+	onboardLoading$: Observable<boolean>;
 
+	arrangedOrderForUpdating: number[];
 
-    public pinnableCollectionBlurEvent$: BehaviorSubject<boolean> = new BehaviorSubject<boolean>(false);
+	buttonMenuOpen: boolean;
+	bulkSelect: boolean;
+	bottomShadow: boolean = true;
 
-    private pendingSubject = new ReplaySubject<boolean>(1);
-    public pending$ = this.pendingSubject.asObservable();
+	// // Needs for OverlayContainer opening if an admin comes from teachers profile card on Accounts&Profiles tab
+	private forceSelectedLocation: Location;
 
-    selectedPinnables: Pinnable[] = [];
-    pinnable: Pinnable;
-    pinnables$: Observable<Pinnable[]>;
-    pinnables: Pinnable[] = [];
-    onboardProcess$: Observable<{[id: string]: Onboard}>;
-    onboardLoading$: Observable<boolean>;
+	private isLoadingArranged$: Observable<boolean>;
 
-    arrangedOrderForUpdating: number[];
+	public loading$: Observable<boolean>;
+	public loaded$: Observable<boolean>;
 
-    buttonMenuOpen: boolean;
-    bulkSelect: boolean;
-    bottomShadow: boolean = true;
+	destroy$ = new Subject();
+	showRooms: boolean;
+	globalReloadSubs: Subscription;
+	showWaitInLineNux = new Subject<boolean>();
+	showNuxTooltip: Subject<boolean> = new Subject();
+	introsData: any;
 
-    // // Needs for OverlayContainer opening if an admin comes from teachers profile card on Accounts&Profiles tab
-    private forceSelectedLocation: Location;
+	@HostListener('window:scroll', ['$event'])
+	scroll(event) {
+		if (event.currentTarget.offsetHeight + event.currentTarget.scrollTop >= event.currentTarget.scrollHeight) {
+			this.bottomShadow = false;
+		} else {
+			this.bottomShadow = true;
+		}
+	}
 
-    private isLoadingArranged$: Observable<boolean>;
+	constructor(
+		private dialog: MatDialog,
+		private httpService: HttpService,
+		public hallPassService: HallPassesService,
+		private elRef: ElementRef,
+		private activatedRoute: ActivatedRoute,
+		private locationsService: LocationsService,
+		private router: Router,
+		public darkTheme: DarkThemeSwitch,
+		private adminService: AdminService,
+		private scrollPosition: ScrollPositionService,
+		private supportService: SupportService,
+		private userService: UserService,
+		private features: FeatureFlagService
+	) {}
 
-    public loading$: Observable<boolean>;
-    public loaded$: Observable<boolean>;
+	get headerButtonText() {
+		return this.selectedPinnables.length < 1 || !this.bulkSelect ? 'Add' : 'Bulk Edit Rooms';
+	}
 
-    destroy$ = new Subject();
-    showRooms: boolean;
-    globalReloadSubs: Subscription;
-    showWaitInLineNux = new Subject<boolean>();
-    showNuxTooltip: Subject<boolean> = new Subject();
-    introsData: any;
+	get headerButtonIcon() {
+		return this.selectedPinnables.length < 1 || !this.bulkSelect ? './assets/Plus (White).svg' : null;
+	}
 
-    @HostListener('window:scroll', ['$event'])
-    scroll(event) {
-      if (event.currentTarget.offsetHeight + event.currentTarget.scrollTop >= event.currentTarget.scrollHeight) {
-        this.bottomShadow = false;
-      } else {
-        this.bottomShadow = true;
-      }
-    }
+	get isSelected() {
+		return this.bulkSelect;
+	}
 
-  constructor(
-      private dialog: MatDialog,
-      private httpService: HttpService,
-      public hallPassService: HallPassesService,
-      private elRef: ElementRef,
-      private activatedRoute: ActivatedRoute,
-      private locationsService: LocationsService,
-      private router: Router,
-      public darkTheme: DarkThemeSwitch,
-      private adminService: AdminService,
-      private scrollPosition: ScrollPositionService,
-      private supportService: SupportService,
-      private userService: UserService,
-      private features: FeatureFlagService
-  ) { }
+	ngOnInit() {
+		this.loading$ = this.hallPassService.isLoadingPinnables$;
+		this.loaded$ = this.hallPassService.loadedPinnables$;
+		this.isLoadingArranged$ = this.hallPassService.isLoadingArranged$;
+		this.onboardLoading$ = this.adminService.loadingOnboardProcess$;
 
-  get headerButtonText() {
-    return (this.selectedPinnables.length < 1 || !this.bulkSelect ? 'Add' : 'Bulk Edit Rooms');
-  }
+		this.globalReloadSubs = this.httpService.globalReload$
+			.pipe(
+				takeUntil(this.destroy$),
+				tap(() => (this.onboardProcess$ = this.adminService.getOnboardProcessRequest().pipe(filter((res) => !!res)))),
+				switchMap((res) => {
+					return (this.pinnables$ = this.hallPassService.getPinnablesRequest().pipe(filter((r: Pinnable[]) => !!r.length)));
+				}),
+				map((pinnables) => {
+					this.pinnables = pinnables;
+				})
+			)
+			.subscribe();
 
-  get headerButtonIcon() {
-    return (this.selectedPinnables.length < 1 || !this.bulkSelect ? './assets/Plus (White).svg' : null);
-  }
+		this.activatedRoute.queryParams
+			.pipe(
+				filter((qp) => Object.keys(qp).length > 0 && Object.keys(qp).length === Object.values(qp).length),
+				takeUntil(this.destroy$),
+				switchMap((qp: any): any => {
+					const { locationId } = qp;
+					this.router.navigate(['admin/passconfig']);
+					return this.locationsService.getLocation(locationId);
+				}),
+				switchMap((location: Location) => {
+					return zip(this.pinnables$.pipe(filter((res) => !!res.length)), of(location));
+				})
+			)
+			.subscribe(([pinnables, location]) => {
+				this.forceSelectedLocation = location;
+				this.pinnable = pinnables.find((pnbl: Pinnable) => {
+					if (pnbl.type === 'location') {
+						return pnbl.location.id + '' === location.id + '';
+					} else {
+						return pnbl.category === location.category.substring(0, location.category.length - 8);
+					}
+				});
 
-  get isSelected() {
-    return this.bulkSelect;
-  }
+				this.selectPinnable({ action: 'room/folder_edit', selection: this.pinnable });
+			});
 
-  ngOnInit() {
-    this.loading$ = this.hallPassService.isLoadingPinnables$;
-    this.loaded$ = this.hallPassService.loadedPinnables$;
-    this.isLoadingArranged$ = this.hallPassService.isLoadingArranged$;
-    this.onboardLoading$ = this.adminService.loadingOnboardProcess$;
+		combineLatest(
+			this.userService.introsData$.pipe(filter((res) => !!res)),
+			this.userService.nuxDates$.pipe(filter((r) => !!r)),
+			this.userService.user$.pipe(filter((r) => !!r))
+		)
+			.pipe(debounceTime(1000), takeUntil(this.destroy$))
+			.subscribe(([intros, nuxDates, user]) => {
+				this.introsData = intros;
+				const showNux = moment(user.first_login).isBefore(moment(nuxDates[0].created), 'day');
+				this.showNuxTooltip.next(!this.introsData.encounter_reminder.universal.seen_version && showNux);
 
-    this.globalReloadSubs = this.httpService.globalReload$
-      .pipe(
-        takeUntil(this.destroy$),
-        tap(() => this.onboardProcess$ = this.adminService.getOnboardProcessRequest().pipe(filter(res => !!res))),
-        switchMap((res) => {
-          return this.pinnables$ = this.hallPassService.getPinnablesRequest().pipe(
-            filter((r: Pinnable[]) => !!r.length));
-        }),
-        map((pinnables) => {
-          this.pinnables = pinnables;
-        }),
-      ).subscribe();
+				if (this.features.isFeatureEnabled(FLAGS.WaitInLine)) {
+					this.showWaitInLineNux.next(!intros?.wait_in_line?.universal?.seen_version);
+				}
+			});
+	}
 
-    this.activatedRoute.queryParams.pipe(
-      filter((qp) => Object.keys(qp).length > 0 && Object.keys(qp).length === Object.values(qp).length),
-      takeUntil(this.destroy$),
-      switchMap((qp: any): any => {
-        const {locationId} = qp;
-        this.router.navigate( ['admin/passconfig']);
-        return this.locationsService.getLocation(locationId);
-      }),
-      switchMap((location: Location) => {
-        return zip(this.pinnables$.pipe(filter(res => !!res.length)), of(location));
-      })
-    ).subscribe(([pinnables, location]) => {
-      this.forceSelectedLocation = location;
-      this.pinnable = pinnables.find((pnbl: Pinnable) => {
-        if (pnbl.type === 'location') {
-          return (pnbl.location.id + '') === (location.id + '');
-        } else {
-          return pnbl.category === location.category.substring(0, location.category.length - 8);
-        }
-      });
+	ngOnDestroy() {
+		this.scrollPosition.saveComponentScroll(this.scrollableAreaName, this.scrollableArea.scrollTop);
+		this.destroy$.next();
+		this.destroy$.complete();
+		if (this.globalReloadSubs) {
+			this.globalReloadSubs.unsubscribe();
+		}
+	}
 
-      this.selectPinnable({ action: 'room/folder_edit', selection: this.pinnable });
-    });
+	setNewArrangedOrder(newOrder) {
+		this.arrangedOrderForUpdating = newOrder.map((pin) => pin.id);
+		this.updatePinnablesOrder().subscribe();
+	}
 
-    combineLatest(
-      this.userService.introsData$.pipe(filter(res => !!res)),
-      this.userService.nuxDates$.pipe(filter(r => !!r)),
-      this.userService.user$.pipe(filter(r => !!r))
-    )
-      .pipe(
-        debounceTime(1000),
-        takeUntil(this.destroy$)
-      ).subscribe(([intros, nuxDates, user]) => {
-      this.introsData = intros;
-      const showNux = moment(user.first_login).isBefore(moment(nuxDates[0].created), 'day');
-      this.showNuxTooltip.next(!this.introsData.encounter_reminder.universal.seen_version && showNux);
+	private updatePinnablesOrder() {
+		return this.isLoadingArranged$.pipe(
+			take(1),
+			switchMap((value) => {
+				if (!value) {
+					return this.hallPassService.createArrangedPinnableRequest({ order: this.arrangedOrderForUpdating.join(',') });
+				} else {
+					return of(null);
+				}
+			})
+		);
+	}
 
-      if (this.features.isFeatureEnabled(FLAGS.WaitInLine)) {
-        this.showWaitInLineNux.next(!intros?.wait_in_line?.universal?.seen_version);
-      }
-    });
-  }
+	openSettings() {
+		this.dialog.open(SchoolSettingDialogComponent, {
+			panelClass: 'overlay-dialog',
+			backdropClass: 'custom-bd',
+		});
+	}
 
-  ngOnDestroy() {
-    this.scrollPosition.saveComponentScroll(this.scrollableAreaName, this.scrollableArea.scrollTop);
-    this.destroy$.next();
-    this.destroy$.complete();
-    if (this.globalReloadSubs) {
-      this.globalReloadSubs.unsubscribe();
-    }
-  }
+	toggleBulk() {
+		this.bulkSelect = !this.bulkSelect;
+		this.selectedPinnables = [];
+	}
 
-  setNewArrangedOrder(newOrder) {
-    this.arrangedOrderForUpdating = newOrder.map(pin => pin.id);
-    this.updatePinnablesOrder().subscribe();
-  }
+	buttonClicked(evnt: MouseEvent) {
+		if (!this.buttonMenuOpen) {
+			const target = new ElementRef(evnt.currentTarget);
+			const options = [];
+			options.push(
+				this.genOption(
+					'New Room',
+					this.darkTheme.getColor({ dark: '#FFFFFF', white: '#7f879d' }),
+					'newRoom',
+					this.darkTheme.getIcon({ iconName: 'Room', darkFill: 'White', lightFill: 'Blue-Gray' })
+				)
+			);
+			options.push(
+				this.genOption(
+					'New Folder',
+					this.darkTheme.getColor({ dark: '#FFFFFF', white: '#7f879d' }),
+					'newFolder',
+					this.darkTheme.getIcon({ iconName: 'Folder', darkFill: 'White', lightFill: 'Blue-Gray' })
+				)
+			);
 
-  private updatePinnablesOrder() {
-    return this.isLoadingArranged$.pipe(
-      take(1),
-      switchMap(value => {
-        if (!value) {
-          return this.hallPassService
-            .createArrangedPinnableRequest({order: this.arrangedOrderForUpdating.join(',')});
-        } else {
-          return of(null);
-        }
-      })
-    );
-  }
+			UNANIMATED_CONTAINER.next(true);
+			this.buttonMenuOpen = true;
 
-  openSettings() {
-    this.dialog.open(SchoolSettingDialogComponent, {
-        panelClass: 'overlay-dialog',
-        backdropClass: 'custom-bd',
-    });
-  }
+			const cancelDialog = this.dialog.open(ConsentMenuComponent, {
+				panelClass: 'consent-dialog-container',
+				backdropClass: 'invis-backdrop',
+				data: { options: options, trigger: target },
+			});
 
-  toggleBulk() {
-      this.bulkSelect = !this.bulkSelect;
-      this.selectedPinnables = [];
-  }
+			cancelDialog
+				.afterClosed()
+				.pipe(tap(() => UNANIMATED_CONTAINER.next(false)))
+				.subscribe((action) => {
+					this.buttonMenuOpen = false;
+					if (action) {
+						this.selectPinnable({ action, selection: this.selectedPinnables });
+					}
+				});
+		}
+	}
 
-  buttonClicked(evnt: MouseEvent) {
-   if (!this.buttonMenuOpen) {
-    const target = new ElementRef(evnt.currentTarget);
-    const options = [];
-    options.push(this.genOption('New Room', this.darkTheme.getColor({dark: '#FFFFFF', white: '#7f879d'}), 'newRoom', this.darkTheme.getIcon({iconName: 'Room', darkFill: 'White', lightFill: 'Blue-Gray'})));
-    options.push(this.genOption('New Folder', this.darkTheme.getColor({dark: '#FFFFFF', white: '#7f879d'}), 'newFolder', this.darkTheme.getIcon({iconName: 'Folder', darkFill: 'White', lightFill: 'Blue-Gray'})));
+	genOption(display, color, action, icon?) {
+		return { display, color, action, icon };
+	}
 
-    UNANIMATED_CONTAINER.next(true);
-    this.buttonMenuOpen = true;
+	selectPinnable({ action, selection }) {
+		if (action === 'room/folder_edit' && !isArray(selection)) {
+			this.pinnable = selection;
+			return this.buildData(this.pinnable.type === 'location' ? 'editRoom' : 'editFolder');
+		} else if (action === 'simple') {
+			this.selectedPinnables = selection;
+		} else {
+			this.selectedPinnables = selection;
+			this.buildData(action);
+		}
+	}
 
-    const cancelDialog = this.dialog.open(ConsentMenuComponent, {
-        panelClass: 'consent-dialog-container',
-        backdropClass: 'invis-backdrop',
-        data: {'options': options, 'trigger': target}
-    });
+	buildData(action) {
+		let data;
+		const component = OverlayContainerComponent;
+		switch (action) {
+			case 'newRoom':
+				data = {
+					type: action,
+				};
+				break;
+			case 'newFolder':
+				data = {
+					type: action,
+					pinnables$: this.pinnables$,
+					rooms: this.selectedPinnables,
+				};
+				break;
+			case 'editRoom':
+				data = {
+					type: action,
+					pinnable: this.pinnable,
+				};
+				break;
+			case 'editFolder':
+				data = {
+					type: 'newFolder',
+					pinnable: this.pinnable,
+					pinnables$: this.pinnables$,
+					isEditFolder: true,
+				};
+				if (this.forceSelectedLocation) {
+					data.forceSelectedLocation = this.forceSelectedLocation;
+				}
+				break;
+			case 'edit':
+				if (this.selectedPinnables.length === 1) {
+					if (this.selectedPinnables[0].type === 'location') {
+						data = {
+							type: 'editRoom',
+							pinnable: this.selectedPinnables[0],
+						};
+						break;
+					}
+					if (this.selectedPinnables[0].type === 'category') {
+						data = {
+							type: 'newFolder',
+							pinnable: this.selectedPinnables[0],
+							pinnables$: this.pinnables$,
+							isEditFolder: true,
+						};
+						break;
+					}
+				} else {
+					data = {
+						type: action,
+						rooms: this.selectedPinnables,
+					};
+					break;
+				}
+				break;
+			case 'newFolderWithSelections':
+				data = {
+					type: 'newFolder',
+					rooms: this.selectedPinnables,
+				};
+				break;
+		}
+		return this.dialogContainer(data, component);
+	}
 
-    cancelDialog.afterClosed()
-      .pipe(tap(() => UNANIMATED_CONTAINER.next(false)))
-      .subscribe(action => {
-        this.buttonMenuOpen = false;
-        if (action) {
-            this.selectPinnable({action, selection: this.selectedPinnables});
-        }
-    });
+	dialogContainer(data, component) {
+		this.forceSelectedLocation = null;
+		const overlayDialog = this.dialog.open(component, {
+			panelClass: 'overlay-dialog-no-background',
+			backdropClass: 'custom-backdrop',
+			disableClose: true,
+			minWidth: '800px',
+			maxWidth: '100vw',
+			width: '800px',
+			height: '500px',
+			data: data,
+		});
+		overlayDialog.afterClosed().subscribe((res) => {
+			this.selectedPinnables = [];
+			this.bulkSelect = false;
+			this.pendingSubject.next(false);
+		});
+	}
 
-   }
-  }
+	onboard({ createPack, pinnables }) {
+		if (createPack) {
+			const requests$ = pinnables.map((pin) => {
+				const location = {
+					title: pin.title,
+					room: pin.room,
+					restricted: pin.restricted,
+					scheduling_restricted: pin.scheduling_restricted,
+					travel_types: pin.travel_types,
+					max_allowed_time: pin.max_allowed_time,
+				};
+				return this.locationsService.createLocation(location);
+			});
 
-  genOption(display, color, action, icon?) {
-    return { display, color, action, icon };
-  }
+			forkJoin(requests$)
+				.pipe(
+					switchMap((locations: Location[]) => {
+						const pinnables$ = locations.map((location: Location, index) => {
+							const pinnable = {
+								title: pinnables[index].title,
+								color_profile: pinnables[index].color_profile_id,
+								icon: pinnables[index].icon,
+								location: location.id,
+							};
+							return this.hallPassService.createPinnable(pinnable);
+						});
+						return forkJoin(pinnables$);
+					}),
+					filter(() => navigator.onLine),
+					takeUntil(this.destroy$),
+					switchMap((res) => {
+						const order = res.map((v: any) => v.id).join(',');
+						return this.hallPassService.createArrangedPinnable({ order });
+					}),
+					take(1),
+					switchMap((res) => {
+						return this.hallPassService.getPinnables();
+					})
+				)
+				.subscribe((res: Pinnable[]) => {
+					this.pinnables.push(...res);
+				});
+		} else {
+			this.showRooms = true;
+		}
+		this.adminService.updateOnboardProgressRequest('2.landing:first_room');
+	}
 
-  selectPinnable({action, selection}) {
-      if (action === 'room/folder_edit' && !isArray(selection)) {
-          this.pinnable = selection;
-        return this.buildData(this.pinnable.type === 'location' ? 'editRoom' : 'editFolder');
-      } else if (action === 'simple') {
-          this.selectedPinnables = selection;
-      } else {
-          this.selectedPinnables = selection;
-          this.buildData(action);
-      }
-  }
+	openChat(event) {
+		this.supportService.openChat(event);
+	}
 
-  buildData(action) {
-      let data;
-      const component = OverlayContainerComponent;
-      switch (action) {
-          case 'newRoom':
-              data = {
-                  type: action,
-              };
-              break;
-          case 'newFolder':
-              data = {
-                  type: action,
-                  pinnables$: this.pinnables$,
-                  rooms: this.selectedPinnables,
-              };
-              break;
-          case 'editRoom':
-              data = {
-                  type: action,
-                  pinnable: this.pinnable,
-              };
-              break;
-          case 'editFolder':
-              data = {
-                  type: 'newFolder',
-                  pinnable: this.pinnable,
-                  pinnables$: this.pinnables$,
-                  isEditFolder: true
-              };
-              if (this.forceSelectedLocation) {
-                data.forceSelectedLocation = this.forceSelectedLocation;
-              }
-              break;
-          case 'edit':
-              if (this.selectedPinnables.length === 1) {
-                  if (this.selectedPinnables[0].type === 'location') {
-                      data = {
-                          type: 'editRoom',
-                          pinnable: this.selectedPinnables[0]
-                      };
-                      break;
-                  }
-                  if (this.selectedPinnables[0].type === 'category') {
-                      data = {
-                          type: 'newFolder',
-                          pinnable: this.selectedPinnables[0],
-                          pinnables$: this.pinnables$,
-                          isEditFolder: true
-                      };
-                      break;
-                  }
+	closeChat(event) {
+		this.supportService.closeChat(event);
+	}
 
-              } else {
-                  data = {
-                      type: action,
-                      rooms: this.selectedPinnables,
-                  };
-                  break;
-              }
-              break;
-          case 'newFolderWithSelections':
-              data = {
-                  type: 'newFolder',
-                  rooms: this.selectedPinnables,
-              };
-              break;
-      }
-      return this.dialogContainer(data, component);
-  }
-
-  dialogContainer(data, component) {
-    this.forceSelectedLocation = null;
-      const overlayDialog =  this.dialog.open(component, {
-        panelClass: 'overlay-dialog-no-background',
-        backdropClass: 'custom-backdrop',
-        disableClose: true,
-        minWidth: '800px',
-        maxWidth: '100vw',
-        width: '800px',
-        height: '500px',
-        data: data
-      });
-      overlayDialog.afterClosed()
-        .subscribe(res => {
-          this.selectedPinnables = [];
-          this.bulkSelect = false;
-          this.pendingSubject.next(false);
-        });
-  }
-
-  onboard({createPack, pinnables}) {
-    if (createPack) {
-      const requests$ = pinnables.map(pin => {
-        const location =  {
-          title: pin.title,
-          room: pin.room,
-          restricted: pin.restricted,
-          scheduling_restricted: pin.scheduling_restricted,
-          travel_types: pin.travel_types,
-          max_allowed_time: pin.max_allowed_time
-        };
-        return this.locationsService.createLocation(location);
-      });
-
-      forkJoin(requests$)
-        .pipe(
-          switchMap((locations: Location[]) => {
-            const pinnables$ = locations.map((location: Location, index) => {
-              const pinnable = {
-                title: pinnables[index].title,
-                color_profile: pinnables[index].color_profile_id,
-                icon: pinnables[index].icon,
-                location: location.id,
-              };
-              return this.hallPassService.createPinnable(pinnable);
-            });
-            return forkJoin(pinnables$);
-          }),
-          filter(() => navigator.onLine),
-          takeUntil(this.destroy$),
-          switchMap((res) => {
-            const order = res.map((v: any) => v.id).join(',');
-            return this.hallPassService.createArrangedPinnable({order});
-          }),
-          take(1),
-          switchMap((res) => {
-            return this.hallPassService.getPinnables();
-          }),
-        )
-        .subscribe((res: Pinnable[]) => {
-          this.pinnables.push(...res);
-        });
-      } else {
-        this.showRooms = true;
-    }
-    this.adminService.updateOnboardProgressRequest('2.landing:first_room');
-  }
-
-  openChat(event) {
-    this.supportService.openChat(event);
-  }
-
-  closeChat(event) {
-    this.supportService.closeChat(event);
-  }
-
-  dismissWaitInLineNux() {
-    this.showWaitInLineNux.next(false);
-    this.userService.updateIntrosWaitInLineRequest(this.introsData, 'universal', '1');
-  }
+	dismissWaitInLineNux() {
+		this.showWaitInLineNux.next(false);
+		this.userService.updateIntrosWaitInLineRequest(this.introsData, 'universal', '1');
+	}
 }

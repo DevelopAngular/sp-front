@@ -2,63 +2,61 @@
 @import '../../../sp-colors';
 
 :host {
-  //height: 100%;
-  overflow: hidden;
+	//height: 100%;
+	overflow: hidden;
 }
 
 ::ng-deep app-sp-data-table .student {
-  background-color: #F7F7F7;
-  border-radius: 8px;
-  height: 31px;
-  display: flex;
-  align-items: center;
-  justify-content: space-around;
-  margin: 5px;
-  color: #1F194E;
-  white-space: nowrap;
-  position: relative;
+	background-color: #f7f7f7;
+	border-radius: 8px;
+	height: 31px;
+	display: flex;
+	align-items: center;
+	justify-content: space-around;
+	margin: 5px;
+	color: #1f194e;
+	white-space: nowrap;
+	position: relative;
 }
 
 .host {
-  padding: 0 25px;
+	padding: 0 25px;
 }
 
 .tooltip-container {
-  position: relative;
-  height: 100%;
-  .arrow-down-container{
-    opacity: 0;
-    transition: .25s ease;
-    position: absolute;
-    bottom: -8px;
-    width: 25px;
-    height: 10px;
-    margin-left: 5px;
-    overflow: hidden;
-    .arrow-down {
-      position: absolute;
-      width: 25px;
-      height: 25px;
-      top: 4px;
-      background-color: white;
-      box-shadow: 0px 0px 4px 0px rgba(0, 0, 0, 0.1);
-      -webkit-transform: rotate(-45deg);
-      transform: rotate(-45deg);
-    }
-  }
-
-
+	position: relative;
+	height: 100%;
+	.arrow-down-container {
+		opacity: 0;
+		transition: 0.25s ease;
+		position: absolute;
+		bottom: -8px;
+		width: 25px;
+		height: 10px;
+		margin-left: 5px;
+		overflow: hidden;
+		.arrow-down {
+			position: absolute;
+			width: 25px;
+			height: 25px;
+			top: 4px;
+			background-color: white;
+			box-shadow: 0px 0px 4px 0px rgba(0, 0, 0, 0.1);
+			-webkit-transform: rotate(-45deg);
+			transform: rotate(-45deg);
+		}
+	}
 }
 
 ::ng-deep .tooltip {
-  padding: 15px;
-  color: #7f879d !important;
-  background-color: white;
-  text-align: center;
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  font-size: 16px;
-  border-radius: 10px !important;
-  box-shadow: 0 2px 4px 0 rgba(0, 0, 0, 0.1);
+	padding: 15px;
+	color: #7f879d !important;
+	background-color: white;
+	text-align: center;
+	display: flex;
+	justify-content: center;
+	align-items: center;
+	font-size: 16px;
+	border-radius: 10px !important;
+	box-shadow: 0 2px 4px 0 rgba(0, 0, 0, 0.1);
 }

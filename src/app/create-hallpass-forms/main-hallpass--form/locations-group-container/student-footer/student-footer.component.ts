@@ -2,131 +2,130 @@ import { Component, EventEmitter, Input, OnDestroy, OnInit, Output } from '@angu
 import { Navigation } from '../../main-hall-pass-form.component';
 import { Location } from '../../../../models/Location';
 import { CreateFormService } from '../../../create-form.service';
-import {Subject, BehaviorSubject, Observable} from 'rxjs';
-import {StorageService} from '../../../../services/storage.service';
-import {takeUntil} from 'rxjs/operators';
+import { Subject, BehaviorSubject, Observable } from 'rxjs';
+import { StorageService } from '../../../../services/storage.service';
+import { takeUntil } from 'rxjs/operators';
 
 @Component({
-  selector: 'app-student-footer',
-  templateUrl: './student-footer.component.html',
-  styleUrls: ['./student-footer.component.scss']
+	selector: 'app-student-footer',
+	templateUrl: './student-footer.component.html',
+	styleUrls: ['./student-footer.component.scss'],
 })
 export class StudentFooterComponent implements OnInit, OnDestroy {
+	@Input() formState: Navigation;
 
-  @Input() formState: Navigation;
+	@Input() date;
 
-  @Input() date;
+	@Input() state;
 
-  @Input() state;
+	@Output() changeAnimationDirectionEvent: EventEmitter<any> = new EventEmitter<any>();
+	@Output() changeLocation: EventEmitter<Navigation> = new EventEmitter<Navigation>();
+	@Output() locsViewEvent: EventEmitter<boolean> = new EventEmitter<boolean>();
 
-  @Output() changeAnimationDirectionEvent: EventEmitter<any> = new EventEmitter<any>();
-  @Output() changeLocation: EventEmitter<Navigation> = new EventEmitter<Navigation>();
-  @Output() locsViewEvent: EventEmitter<boolean> = new EventEmitter<boolean>();
+	fromLocation: Location;
+	toLocation: Location;
+	forInput: boolean;
+	frameMotion$: BehaviorSubject<any>;
 
-  fromLocation: Location;
-  toLocation: Location;
-  forInput: boolean;
-  frameMotion$: BehaviorSubject<any>;
+	isGrid: boolean;
 
-  isGrid: boolean;
+	destroy$: Subject<any> = new Subject<any>();
 
-  destroy$: Subject<any> = new Subject<any>();
+	constructor(private formService: CreateFormService, private storage: StorageService) {}
 
-  constructor(
-    private formService: CreateFormService,
-    private storage: StorageService,
-  ) { }
+	private _fromLocationText$: BehaviorSubject<string>;
+	public fromLocationText$: Observable<string>;
+	fromLocationText() {
+		return this.fromLocation ? this.fromLocation.title : 'Origin';
+	}
 
-  private _fromLocationText$: BehaviorSubject<string>;
-  public fromLocationText$: Observable<string>;
-  fromLocationText() {
-    return this.fromLocation ? this.fromLocation.title : 'Origin';
-  }
+	get toLocationText() {
+		return this.toLocation && this.state !== 'to' && this.state !== 'category' ? this.toLocation.title : 'Destination';
+	}
 
-  get toLocationText() {
-    return this.toLocation && (this.state !== 'to' && this.state !== 'category') ? this.toLocation.title : 'Destination';
-  }
+	get fromCursor() {
+		return this.state !== 'from' && this.forInput;
+	}
 
-  get fromCursor() {
-    return this.state !== 'from' && this.forInput;
-  }
+	get toCursor() {
+		return this.state !== 'to' && this.state !== 'from' && this.forInput;
+	}
 
-  get toCursor() {
-    return this.state !== 'to' && this.state !== 'from' && this.forInput;
-  }
+	ngOnInit() {
+		this.isGrid = JSON.parse(this.storage.getItem('isGrid'));
+		this.frameMotion$ = this.formService.getFrameMotionDirection();
 
-  ngOnInit() {
-    this.isGrid = JSON.parse(this.storage.getItem('isGrid'));
-    this.frameMotion$ = this.formService.getFrameMotionDirection();
+		if (this.formState) {
+			this.forInput = this.formState.forInput;
+			this.fromLocation = this.formState.data.direction.from;
+			this.toLocation = this.formState.data.direction.to;
+		}
 
-    if (this.formState) {
-      this.forInput = this.formState.forInput;
-      this.fromLocation = this.formState.data.direction.from;
-      this.toLocation = this.formState.data.direction.to;
-    }
+		this._fromLocationText$ = new BehaviorSubject(this.fromLocationText());
+		this.fromLocationText$ = this._fromLocationText$.asObservable().pipe(takeUntil(this.destroy$));
+		this.formService
+			.getUpdatedChoice()
+			.pipe(takeUntil(this.destroy$))
+			.subscribe((loc) => {
+				if (!this.formState.data.direction.to) {
+					this.formState.data.direction.from = loc;
+					this.fromLocation = loc;
+					this._fromLocationText$.next(this.fromLocationText());
+				}
+			});
+	}
 
-    this._fromLocationText$ = new BehaviorSubject(this.fromLocationText());
-    this.fromLocationText$ = this._fromLocationText$.asObservable().pipe(takeUntil(this.destroy$));
-    this.formService.getUpdatedChoice().pipe(takeUntil(this.destroy$)).subscribe(loc => {
-      if(!this.formState.data.direction.to) {
-        this.formState.data.direction.from = loc;
-        this.fromLocation = loc;
-        this._fromLocationText$.next(this.fromLocationText());
-      } 
-    });
-  }
+	ngOnDestroy() {
+		this.destroy$.next();
+		this.destroy$.complete();
+	}
 
-  ngOnDestroy() {
-    this.destroy$.next();
-    this.destroy$.complete();
-  }
+	switchLocsView(evt: Event) {
+		this.isGrid = !this.isGrid;
+		evt.stopPropagation();
+		this.locsViewEvent.emit(this.isGrid);
+	}
 
-  switchLocsView(evt: Event) {
-    this.isGrid = !this.isGrid;
-    evt.stopPropagation();
-    this.locsViewEvent.emit(this.isGrid);
-  }
+	goToFromWhere() {
+		this.changeAnimationDirection();
+		setTimeout(() => {
+			if (this.state === 'from' || !this.forInput) {
+				return false;
+			}
+			this.formState.previousState = this.formState.state;
+			this.formState.fromState = this.formState.state;
+			this.formState.state = 1;
+			this.changeLocation.emit(this.formState);
+		}, 100);
+	}
 
-  goToFromWhere() {
-    this.changeAnimationDirection();
-    setTimeout(() => {
-      if (this.state === 'from' || !this.forInput) {
-        return false;
-      }
-      this.formState.previousState = this.formState.state;
-      this.formState.fromState = this.formState.state;
-      this.formState.state = 1;
-      this.changeLocation.emit(this.formState);
-    }, 100);
-  }
+	goToToWhere() {
+		this.changeAnimationDirection();
+		setTimeout(() => {
+			if (this.state === 'to' || this.state === 'from' || !this.forInput) {
+				return false;
+			}
+			this.formState.previousState = this.formState.state;
+			this.formState.state = 2;
+			this.changeLocation.emit(this.formState);
+		}, 100);
+	}
 
-  goToToWhere() {
-    this.changeAnimationDirection();
-    setTimeout(() => {
-      if (this.state === 'to' || this.state === 'from' || !this.forInput) {
-        return false;
-      }
-      this.formState.previousState = this.formState.state;
-      this.formState.state = 2;
-      this.changeLocation.emit(this.formState);
-    }, 100);
-  }
+	goToDate() {
+		this.changeAnimationDirection();
+		setTimeout(() => {
+			this.formState.previousState = this.formState.state;
+			this.formState.step = 1;
+			this.formState.state = 1;
+			this.formState.previousStep = 3;
+			this.formState.quickNavigator = true;
+			this.changeLocation.emit(this.formState);
+		}, 100);
+	}
 
-  goToDate() {
-    this.changeAnimationDirection();
-    setTimeout(() => {
-      this.formState.previousState = this.formState.state;
-      this.formState.step = 1;
-      this.formState.state = 1;
-      this.formState.previousStep = 3;
-      this.formState.quickNavigator = true;
-      this.changeLocation.emit(this.formState);
-    }, 100);
-  }
-
-  private changeAnimationDirection() {
-    this.formService.scalableBoxController.next(false);
-    this.formService.setFrameMotionDirection('back');
-    this.changeAnimationDirectionEvent.emit(true);
-  }
+	private changeAnimationDirection() {
+		this.formService.scalableBoxController.next(false);
+		this.formService.setFrameMotionDirection('back');
+		this.changeAnimationDirectionEvent.emit(true);
+	}
 }

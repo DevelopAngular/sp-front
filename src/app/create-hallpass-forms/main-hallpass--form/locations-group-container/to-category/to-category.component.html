@@ -1,57 +1,68 @@
 <div class="category-wrapper">
-  <div [ngClass]="headerTransition" #header>
-    <div class="header-background" [attr.data-motion-opacity]="(frameMotion$ | async).direction" [style.background-image]="headerGradient"></div>
+	<div [ngClass]="headerTransition" #header>
+		<div class="header-background" [attr.data-motion-opacity]="(frameMotion$ | async).direction" [style.background-image]="headerGradient"></div>
 
-    <div [ngClass]="isIOSTablet ? 'ios-back-btn-top' : 'back-btn-top'"  class="back-button back-button-white">
-      <app-icon-button (clickEvent)="back()" [srcString]="'Back Button (Blue-White).svg '" [size]="28" [onDarkShade]="true" [blueWhite]="true" [hasShadow]="false"></app-icon-button>
-    </div>
+		<div [ngClass]="isIOSTablet ? 'ios-back-btn-top' : 'back-btn-top'" class="back-button back-button-white">
+			<app-icon-button
+				(clickEvent)="back()"
+				[srcString]="'Back Button (Blue-White).svg '"
+				[size]="28"
+				[onDarkShade]="true"
+				[blueWhite]="true"
+				[hasShadow]="false"></app-icon-button>
+		</div>
 
-    <div class="category-header-text"
-         [attr.data-motion-translate]="(frameMotion$ | async).direction"
-    >
-      <img class="search-icon" [src]="pinnable.icon | resolveAsset">
-      <div class="text ds-dialog-title-white">{{pinnable.title}}</div>
-    </div>
-  </div>
+		<div class="category-header-text" [attr.data-motion-translate]="(frameMotion$ | async).direction">
+			<img class="search-icon" [src]="pinnable.icon | resolveAsset" />
+			<div class="text ds-dialog-title-white">{{ pinnable.title }}</div>
+		</div>
+	</div>
 
-  <div class="content-background"
-     [attr.data-motion-opacity]="(frameMotion$ | async).direction"></div>
-  <div class="category-content"
-     [attr.data-motion-translate]="(frameMotion$ | async).direction"
-     [style.height]="date ? '74%' : '78%'" (scroll)="tableScroll($event)" #rc>
-      <app-location-table
-        #locationTable
-        class="center"
-        (onSelect)="locationChosen($event)"
-        [forStaff]="isStaff"
-        [forLater]="formState.forLater"
-        [originLocation]="fromLocation"
-        [hasLocks]="true"
-        [inputWidth]="'240px'"
-        [category]="pinnable.category"
-        [forKioskMode]="!!dialogData.kioskModeRoom"
-        [invalidLocation]="(fromLocation ? +fromLocation.id : '')"
-        [type]="'location'"
-        [placeholder]="'Search ' + pinnable.title"
-        [dummyString]="'No rooms found'"
-        [currentPage]="'to'"
-        [selectedStudents]="selectedStudents"
-        [passLimitInfo]="formState?.passLimitInfo"
-      >
-      </app-location-table>
-    </div>
-    <app-student-footer *ngIf="!isStaff" [formState]="formState" [state]="'category'" [date]="date"></app-student-footer>
-    <app-teacher-footer [fromLocation]="fromLocation" [formState]="formState" *ngIf="isStaff" [state]="'category'" [date]="date" [studentText]="studentText"></app-teacher-footer>
+	<div class="content-background" [attr.data-motion-opacity]="(frameMotion$ | async).direction"></div>
+	<div
+		class="category-content"
+		[attr.data-motion-translate]="(frameMotion$ | async).direction"
+		[style.height]="date ? '74%' : '78%'"
+		(scroll)="tableScroll($event)"
+		#rc>
+		<app-location-table
+			#locationTable
+			class="center"
+			(onSelect)="locationChosen($event)"
+			[forStaff]="isStaff"
+			[forLater]="formState.forLater"
+			[originLocation]="fromLocation"
+			[hasLocks]="true"
+			[inputWidth]="'240px'"
+			[category]="pinnable.category"
+			[forKioskMode]="!!dialogData.kioskModeRoom"
+			[invalidLocation]="fromLocation ? +fromLocation.id : ''"
+			[type]="'location'"
+			[placeholder]="'Search ' + pinnable.title"
+			[dummyString]="'No rooms found'"
+			[currentPage]="'to'"
+			[selectedStudents]="selectedStudents"
+			[passLimitInfo]="formState?.passLimitInfo">
+		</app-location-table>
+	</div>
+	<app-student-footer *ngIf="!isStaff" [formState]="formState" [state]="'category'" [date]="date"></app-student-footer>
+	<app-teacher-footer
+		[fromLocation]="fromLocation"
+		[formState]="formState"
+		*ngIf="isStaff"
+		[state]="'category'"
+		[date]="date"
+		[studentText]="studentText"></app-teacher-footer>
 </div>
 
 <ng-template let-alerts="alerts" #confirmDialogBodyVisibility>
-  <ng-container *ngFor="let a of alerts">
-  <div class="ds-dialog-title">
-    <span>{{a.title}}</span>
-  </div>
+	<ng-container *ngFor="let a of alerts">
+		<div class="ds-dialog-title">
+			<span>{{ a.title }}</span>
+		</div>
 
-  <div class="ds-dialog-normal-text ds-mb-10">
-      <p>{{a.text}}</p>
-  </div>
-  </ng-container>
+		<div class="ds-dialog-normal-text ds-mb-10">
+			<p>{{ a.text }}</p>
+		</div>
+	</ng-container>
 </ng-template>

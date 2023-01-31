@@ -3,14 +3,14 @@ import { TestBed } from '@angular/core/testing';
 import { FeatureFlagService } from './feature-flag.service';
 
 describe('FeatureFlagService', () => {
-  let service: FeatureFlagService;
+	let service: FeatureFlagService;
 
-  beforeEach(() => {
-    TestBed.configureTestingModule({});
-    service = TestBed.inject(FeatureFlagService);
-  });
+	beforeEach(() => {
+		TestBed.configureTestingModule({});
+		service = TestBed.inject(FeatureFlagService);
+	});
 
-  it('should be created', () => {
-    expect(service).toBeTruthy();
-  });
+	it('should be created', () => {
+		expect(service).toBeTruthy();
+	});
 });

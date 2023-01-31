@@ -1,78 +1,75 @@
-<div class="global-container" [ngClass]="{'ds-dark-theme': darkThemeEnabled }" *ngIf="(showUI | async)" ondragstart="return false" [style.height]="'100%'" [style.min-height]="!hideScroll ? '100%' : 'auto'">
-  <ng-keyboard-shortcuts [shortcuts]="shortcuts"></ng-keyboard-shortcuts>
-  <div class="toasts-wrapper" *ngIf="(toasts$ | async).length">
-    <div class="toasts">
-      <div class="toast" *ngFor="let toast index as i of toasts$ | async">
-        <app-custom-toast [user]="user$ | async" [toast]="toast" [indexPosition]="i"></app-custom-toast>
-      </div>
-    </div>
-  </div>
+<div
+	class="global-container"
+	[ngClass]="{ 'ds-dark-theme': darkThemeEnabled }"
+	*ngIf="showUI | async"
+	ondragstart="return false"
+	[style.height]="'100%'"
+	[style.min-height]="!hideScroll ? '100%' : 'auto'">
+	<ng-keyboard-shortcuts [shortcuts]="shortcuts"></ng-keyboard-shortcuts>
+	<div class="toasts-wrapper" *ngIf="(toasts$ | async).length">
+		<div class="toasts">
+			<div class="toast" *ngFor="let toast; index as i; of: toasts$ | async">
+				<app-custom-toast [user]="user$ | async" [toast]="toast" [indexPosition]="i"></app-custom-toast>
+			</div>
+		</div>
+	</div>
 
-  <div
-    class="update-bar"
-    #updateBar
-    *ngIf="needToUpdateApp$ | async as update"
-    [style.background-color]="getBarBg(update.color.solid_color, updateBar.hover, updateBar.pressed)"
-    (mouseenter)="updateBar.hover = true"
-    (mouseleave)="updateBar.hover = false; updateBar.pressed = false"
-    appCrossPointerEventTarget
-    (pointerClickEvent)="updateApp(); updateBar.pressed = false"
-    (pointerDownEvent)="updateBar.pressed = true"
-    [style.border-bottom]="'1px solid ' + getBarBg(update.color.solid_color, true, true)"
-  >
-    <div class="circle" [style.background-color]="update.color.solid_color"></div>
-    <div class="title" [style.color]="update.color.solid_color">Update available.
-      <span style="font-weight: 600">Click to update</span>
-    </div>
-  </div>
+	<div
+		class="update-bar"
+		#updateBar
+		*ngIf="needToUpdateApp$ | async as update"
+		[style.background-color]="getBarBg(update.color.solid_color, updateBar.hover, updateBar.pressed)"
+		(mouseenter)="updateBar.hover = true"
+		(mouseleave)="updateBar.hover = false; updateBar.pressed = false"
+		appCrossPointerEventTarget
+		(pointerClickEvent)="updateApp(); updateBar.pressed = false"
+		(pointerDownEvent)="updateBar.pressed = true"
+		[style.border-bottom]="'1px solid ' + getBarBg(update.color.solid_color, true, true)">
+		<div class="circle" [style.background-color]="update.color.solid_color"></div>
+		<div class="title" [style.color]="update.color.solid_color">
+			Update available.
+			<span style="font-weight: 600">Click to update</span>
+		</div>
+	</div>
 
-  <div
-    class="trial-bar"
-    *ngIf="isAuthenticated && !isKioskMode && (isAdmin$ | async) && trialEndDate$ | async as trialEndDate"
-  >
-    <div
-      class="trialing"
-      *ngIf="trialEndDate >= todayDate; else ended">
-      <div class="daysLeft">
-        You have
-        <div class="daysContainer">
-          <div class="daysRect"></div>
-          <div class="days">{{getDaysUntil(trialEndDate)}}</div>
-        </div>
-        {{getDayText(getDaysUntil(trialEndDate))}} left in your SmartPass trial.
-      </div>
-      <button class="purchase">
-        Ready to purchase?
-      </button>
-      <div class="helpContainer">
-        <div class="daysRect"></div>
-        <button class="help">Need Help?</button>
-      </div>
-    </div>
+	<div class="trial-bar" *ngIf="isAuthenticated && !isKioskMode && (isAdmin$ | async) && trialEndDate$ | async as trialEndDate">
+		<div class="trialing" *ngIf="trialEndDate >= todayDate; else ended">
+			<div class="daysLeft">
+				You have
+				<div class="daysContainer">
+					<div class="daysRect"></div>
+					<div class="days">{{ getDaysUntil(trialEndDate) }}</div>
+				</div>
+				{{ getDayText(getDaysUntil(trialEndDate)) }} left in your SmartPass trial.
+			</div>
+			<button class="purchase">Ready to purchase?</button>
+			<div class="helpContainer">
+				<div class="daysRect"></div>
+				<button class="help">Need Help?</button>
+			</div>
+		</div>
 
-    <ng-template #ended>
-      <div class="trial-ended">
-        <img class="icon" [src]="'./assets/admin-images/hourglass.svg' | resolveAsset" >
-        <div class="text">
-          <span style="font-weight: 700">Free Trial Ended:</span>
-          We hope you've loved your SmartPass trial and are planning on moving forward.<br/>
-          Please contact your sales rep to purchase SmartPass!
-        </div>
-        <button class="contactSales">Contact sales</button>
-      </div>
-    </ng-template>
-  </div>
+		<ng-template #ended>
+			<div class="trial-ended">
+				<img class="icon" [src]="'./assets/admin-images/hourglass.svg' | resolveAsset" />
+				<div class="text">
+					<span style="font-weight: 700">Free Trial Ended:</span>
+					We hope you've loved your SmartPass trial and are planning on moving forward.<br />
+					Please contact your sales rep to purchase SmartPass!
+				</div>
+				<button class="contactSales">Contact sales</button>
+			</div>
+		</ng-template>
+	</div>
 
-  <app-school-toggle-bar
-    *ngIf="isAuthenticated && ( schools && schools.length > 1 ) && !hideSchoolToggleBar && !isKioskMode"
-    [schools]="schools">
-  </app-school-toggle-bar>
-<!--  <app-support-button *ngIf="showSupportButton"></app-support-button>-->
-<!--  style="height: 100%; overflow: hidden !important;"-->
-  <div class="router-outlet">
-    <router-outlet></router-outlet>
-  </div>
-  <div class="notification-backdrop" *ngIf="hasCustomBackdrop" [ngStyle]="customStyle"></div>
+	<app-school-toggle-bar *ngIf="isAuthenticated && schools && schools.length > 1 && !hideSchoolToggleBar && !isKioskMode" [schools]="schools">
+	</app-school-toggle-bar>
+	<!--  <app-support-button *ngIf="showSupportButton"></app-support-button>-->
+	<!--  style="height: 100%; overflow: hidden !important;"-->
+	<div class="router-outlet">
+		<router-outlet></router-outlet>
+	</div>
+	<div class="notification-backdrop" *ngIf="hasCustomBackdrop" [ngStyle]="customStyle"></div>
 </div>
 
 <div #dialogContainer [@.disabled]="true"></div>

@@ -1,170 +1,170 @@
 @media all and (max-width: 335px) {
-  div.inline-pass-card-wrapper {
-    width: 300px;
-  }
+	div.inline-pass-card-wrapper {
+		width: 300px;
+	}
 }
 
 @media all and (max-width: 425px) {
-  div.inline-pass-card-wrapper {
-    margin: auto;
-  }
-  div.header-content {
-    //padding: 3% !important;
-  }
+	div.inline-pass-card-wrapper {
+		margin: auto;
+	}
+	div.header-content {
+		//padding: 3% !important;
+	}
 }
 
 .inline-pass-card-wrapper {
-  width: 335px;
-  border-radius: 14px;
-  display: flex;
-  flex-direction: column;
-  position: relative;
-  .resize-icon {
-    position: absolute;
-    right: -13px;
-    top: -13px;
-    width: 48px;
-    height: 48px;
-    border-radius: 50%;
-    cursor: pointer;
-    background-color: white;
-    box-shadow: 0 5px 20px rgba(0, 0, 0, 0.1);
-    display: flex;
-    justify-content: center;
-    align-items: center;
-  }
-  .pass-card-header {
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    justify-content: space-evenly;
-    height: 86px;
-    .header-content {
-      display: flex;
-      justify-content: space-between;
-      align-items: center;
-      padding: 20px;
-      width: 291px;
-      .header-info {
-        display: flex;
-        align-items: center;
-      }
-    }
-    .pass-card-header-icon {
-      width: 34px;
-      height: 34px;
-    }
-    .pass-card-header-text {
-      color: white;
-      font-size: 22px;
-      margin-left: 15px;
-      font-weight: bold;
-    }
-  }
-  .inline-pass-card-content {
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    .button {
-      color: white;
-      font-size: 22px;
-      font-weight: normal;
-    }
-  }
-  mat-divider {
-    background-color: white;
-    width: 291px;
-    opacity: 0.4;
-  }
+	width: 335px;
+	border-radius: 14px;
+	display: flex;
+	flex-direction: column;
+	position: relative;
+	.resize-icon {
+		position: absolute;
+		right: -13px;
+		top: -13px;
+		width: 48px;
+		height: 48px;
+		border-radius: 50%;
+		cursor: pointer;
+		background-color: white;
+		box-shadow: 0 5px 20px rgba(0, 0, 0, 0.1);
+		display: flex;
+		justify-content: center;
+		align-items: center;
+	}
+	.pass-card-header {
+		display: flex;
+		flex-direction: column;
+		align-items: center;
+		justify-content: space-evenly;
+		height: 86px;
+		.header-content {
+			display: flex;
+			justify-content: space-between;
+			align-items: center;
+			padding: 20px;
+			width: 291px;
+			.header-info {
+				display: flex;
+				align-items: center;
+			}
+		}
+		.pass-card-header-icon {
+			width: 34px;
+			height: 34px;
+		}
+		.pass-card-header-text {
+			color: white;
+			font-size: 22px;
+			margin-left: 15px;
+			font-weight: bold;
+		}
+	}
+	.inline-pass-card-content {
+		display: flex;
+		flex-direction: column;
+		align-items: center;
+		.button {
+			color: white;
+			font-size: 22px;
+			font-weight: normal;
+		}
+	}
+	mat-divider {
+		background-color: white;
+		width: 291px;
+		opacity: 0.4;
+	}
 }
 
 .card-body-right {
-  display: flex;
-  flex-direction: column;
-  justify-content: space-around;
-  align-items: center;
-  margin-top: 26px;
-  //height: 90px;
+	display: flex;
+	flex-direction: column;
+	justify-content: space-around;
+	align-items: center;
+	margin-top: 26px;
+	//height: 90px;
 }
 
 .button-content {
-  width: 269px;
-  height: 81px;
-  display: flex;
-  flex-direction: row;
-  justify-content: center;
-  align-items: center;
-  user-select: none;
-  cursor: pointer;
-  font-size: 20px;
-  position: relative;
-  margin: -79px 0 0 0%;
-  font-weight: bold;
+	width: 269px;
+	height: 81px;
+	display: flex;
+	flex-direction: row;
+	justify-content: center;
+	align-items: center;
+	user-select: none;
+	cursor: pointer;
+	font-size: 20px;
+	position: relative;
+	margin: -79px 0 0 0%;
+	font-weight: bold;
 }
 
 .inline-card-container {
-  -webkit-user-select: none;
-  -moz-user-select: none;
-  -ms-user-select: none;
-  width: 335px;
-  height: 412px;
+	-webkit-user-select: none;
+	-moz-user-select: none;
+	-ms-user-select: none;
+	width: 335px;
+	height: 412px;
 }
 
 .start-pass-content {
-  @extend .button-content;
+	@extend .button-content;
 }
 
 .end-pass-content {
-  @extend .button-content;
-  .lock {
-    margin: 0 16px 6px 0;
-  }
+	@extend .button-content;
+	.lock {
+		margin: 0 16px 6px 0;
+	}
 }
 
 .button-icon-right {
-  width: 17px;
-  height: 17px;
-  position: absolute;
-  right: 10px;
+	width: 17px;
+	height: 17px;
+	position: absolute;
+	right: 10px;
 }
 
 .bottom-divider-wreapper {
-  width: 80%;
-  margin: 80px 0 20px;
-  display: flex;
-  justify-content: space-between;
-  color: white;
-  .bottom-divider {
-    width: 40%;
-    background-color: white;
-    opacity: 0.4;
-  }
+	width: 80%;
+	margin: 80px 0 20px;
+	display: flex;
+	justify-content: space-between;
+	color: white;
+	.bottom-divider {
+		width: 40%;
+		background-color: white;
+		opacity: 0.4;
+	}
 }
 
 .pin-info {
-  color: white;
-  cursor: pointer;
-  // margin-top: 165px;
+	color: white;
+	cursor: pointer;
+	// margin-top: 165px;
 }
 
 .student-footer-info {
-  position: relative;
-  margin-top: 110px;
+	position: relative;
+	margin-top: 110px;
 }
 
 .teacher-details {
-  width: 100%;
-  height: 70px !important;
-  align-items: center;
-  justify-content: center;
-  text-align: center;
+	width: 100%;
+	height: 70px !important;
+	align-items: center;
+	justify-content: center;
+	text-align: center;
 }
 
 .bold {
-  font-size: 22px;
-  font-weight: bold;
+	font-size: 22px;
+	font-weight: bold;
 }
 
 .smaller {
-  font-size: 16px;
+	font-size: 16px;
 }

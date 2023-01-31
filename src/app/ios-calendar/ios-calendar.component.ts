@@ -1,97 +1,87 @@
-import {ChangeDetectionStrategy, Component, EventEmitter, Input, OnInit, Output} from '@angular/core';
+import { ChangeDetectionStrategy, Component, EventEmitter, Input, OnInit, Output } from '@angular/core';
 import { cloneDeep } from 'lodash';
 import * as moment from 'moment';
-import {Moment} from 'moment';
-import {IosDateSingleton, SWIPE_BLOCKER} from './ios-date.singleton';
-import {HttpClient} from '@angular/common/http';
+import { Moment } from 'moment';
+import { IosDateSingleton, SWIPE_BLOCKER } from './ios-date.singleton';
+import { HttpClient } from '@angular/common/http';
 
 @Component({
-  selector: 'app-ios-calendar',
-  templateUrl: './ios-calendar.component.html',
-  styleUrls: ['./ios-calendar.component.scss'],
-  changeDetection: ChangeDetectionStrategy.OnPush
-
+	selector: 'app-ios-calendar',
+	templateUrl: './ios-calendar.component.html',
+	styleUrls: ['./ios-calendar.component.scss'],
+	changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class IosCalendarComponent implements OnInit {
+	@Input() ignoreWeekends = false;
+	@Output() selectedEvent: EventEmitter<Moment[]> = new EventEmitter<Moment[]>();
 
-  @Input() ignoreWeekends = false;
-  @Output() selectedEvent: EventEmitter<Moment[]> = new EventEmitter<Moment[]>();
+	private _minDate: Moment = moment().add(5, 'minutes');
 
-  private _minDate: Moment = moment().add(5, 'minutes');
+	private _date: Moment;
+	private _hour: number;
+	private _minute: number;
+	private _half: 'AM' | 'PM';
+	private _selected: Moment;
 
-  private _date: Moment;
-  private _hour: number;
-  private _minute: number;
-  private _half: 'AM' | 'PM';
-  private _selected: Moment;
+	constructor(private iosDate: IosDateSingleton, private http: HttpClient) {}
 
-  constructor(
-    private iosDate: IosDateSingleton,
-    private http: HttpClient
-  ) { }
+	ngOnInit() {
+		// this.date = moment();
+		this.iosDate.getDate().subscribe((d: Moment) => {
+			this._date = d;
+			this._selected = d;
+		});
+	}
 
+	getDate(): moment.Moment {
+		return this._date;
+	}
 
-  ngOnInit() {
-    // this.date = moment();
-    this.iosDate
-      .getDate()
-      .subscribe((d: Moment) => {
-        this._date = d;
-        this._selected = d;
-      });
-  }
+	getSelected(): moment.Moment {
+		// console.log(this._hour, this._half);
 
-  getDate(): moment.Moment {
-    return this._date;
-  }
+		if (this._half === 'PM' && this._hour < 12) {
+			this._hour += 12;
+		} else if (this._half === 'AM' && this._hour >= 12) {
+			this._hour -= 12;
+		}
 
-  getSelected(): moment.Moment {
-    // console.log(this._hour, this._half);
+		this._date.hour(this._hour);
+		this._date.minute(this._minute);
+		// console.log(this._date.valueOf());
+		if (this._date.valueOf() < this._minDate.valueOf()) {
+			// console.log(true);
+			SWIPE_BLOCKER.next(true);
+		} else {
+			// console.log(false);
+			SWIPE_BLOCKER.next(false);
+			// this._selected = this._date;
+		}
+		this._selected = cloneDeep(this._date);
+		return this._selected;
+	}
 
-    if (this._half === 'PM' && this._hour < 12) {
-      this._hour += 12;
-    } else if (this._half === 'AM' && this._hour >= 12) {
-      this._hour -= 12;
-    }
+	setHalf(value: 'AM' | 'PM') {
+		this._half = value;
+		this.iosDate.setDate(this.getSelected());
+		this.selectedEvent.emit([this.getSelected()]);
+	}
 
-    this._date.hour(this._hour);
-    this._date.minute(this._minute);
-    // console.log(this._date.valueOf());
-    if (this._date.valueOf() < this._minDate.valueOf()) {
-      // console.log(true);
-      SWIPE_BLOCKER
-        .next(true);
-    } else {
-      // console.log(false);
-      SWIPE_BLOCKER
-        .next(false);
-      // this._selected = this._date;
-    }
-    this._selected = cloneDeep( this._date);
-    return this._selected;
-  }
+	setMinute(value: number) {
+		this._minute = value;
+		this.iosDate.setDate(this.getSelected());
+		this.selectedEvent.emit([this.getSelected()]);
+	}
 
-  setHalf(value: 'AM' | 'PM') {
-    this._half = value;
-    this.iosDate.setDate(this.getSelected());
-    this.selectedEvent.emit([this.getSelected()]);
-  }
+	setHour(value: number) {
+		this._hour = value;
+		this.iosDate.setDate(this.getSelected());
+		this.selectedEvent.emit([this.getSelected()]);
+	}
 
-  setMinute(value: number) {
-    this._minute = value;
-    this.iosDate.setDate(this.getSelected());
-    this.selectedEvent.emit([this.getSelected()]);
-  }
-
-  setHour(value: number) {
-    this._hour = value;
-    this.iosDate.setDate(this.getSelected());
-    this.selectedEvent.emit([this.getSelected()]);
-  }
-
-  setDate(value: moment.Moment) {
-    this._date = value;
-    this.iosDate.setDate(this.getSelected());
-    this.selectedEvent.emit([this.getSelected()]);
-  }
+	setDate(value: moment.Moment) {
+		this._date = value;
+		this.iosDate.setDate(this.getSelected());
+		this.selectedEvent.emit([this.getSelected()]);
+	}
 }

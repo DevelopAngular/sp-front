@@ -1,80 +1,70 @@
 <div class="settings-wrapper" *ngIf="data" [style.background-color]="darkTheme.getBackground('high', true)">
+	<div class="title" [ngStyle]="{ color: darkTheme.isEnabled$.value ? '#FFFFFF' : '#1F195E' }">Settings</div>
+	<div class="settings-content">
+		<div class="profile-switch">
+			<div
+				class="option"
+				*ngIf="isSwitchOption"
+				#switch
+				[style.background]="switch.pressed ? 'rgba(127, 135, 157, .15)' : hoveredProfile ? 'rgba(127, 135, 157, .1)' : 'transparent'"
+				(mouseenter)="hoveredProfile = true"
+				(mouseleave)="hoveredProfile = false; switch.pressed = false"
+				appCrossPointerEventTarget
+				(pointerClickEvent)="hoveredProfile = false; dialogRef.close('switch')"
+				(pointerDownEvent)="switch.pressed = true; hoveredProfile = true"
+				(pointerCancelEvent)="switch.pressed = false; hoveredProfile = false">
+				<img class="switch-icon" [src]="getIcon('Profile Switch', null) | resolveAsset" />
+				<div class="option-title" [style.color]="getColor('#FFFFFF', '#7f879d')">Teacher View</div>
+				<img class="arrow-icon" [src]="getIcon('Chevron Right', null) | resolveAsset" />
+			</div>
 
-    <div class="title" [ngStyle]="{'color': darkTheme.isEnabled$.value ? '#FFFFFF' : '#1F195E'}">Settings</div>
-    <div class="settings-content">
-      <div class="profile-switch">
-        <div class="option"  *ngIf="isSwitchOption"
-              #switch
-             [style.background]="switch.pressed ? 'rgba(127, 135, 157, .15)' : (hoveredProfile ? 'rgba(127, 135, 157, .1)' : 'transparent')"
-             (mouseenter)="hoveredProfile = true"
-             (mouseleave)="hoveredProfile = false; switch.pressed = false"
-             appCrossPointerEventTarget
-             (pointerClickEvent)="hoveredProfile = false; dialogRef.close('switch')"
-             (pointerDownEvent)="switch.pressed = true; hoveredProfile = true"
-             (pointerCancelEvent)="switch.pressed = false; hoveredProfile = false"
-        >
-          <img class="switch-icon" [src]="getIcon('Profile Switch', null) | resolveAsset">
-          <div class="option-title" [style.color]="getColor('#FFFFFF', '#7f879d')">Teacher View</div>
-          <img class="arrow-icon" [src]="getIcon('Chevron Right', null) | resolveAsset">
+			<div
+				class="option"
+				*ngFor="let setting of settings"
+				#option
+				[style.background]="option.pressed ? 'rgba(127, 135, 157, .15)' : option.hovered ? 'rgba(127, 135, 157, .1)' : 'transparent'"
+				(mouseenter)="option.hovered = true"
+				(mouseleave)="option.hovered = false; option.pressed = false"
+				appCrossPointerEventTarget
+				(pointerClickEvent)="dialogRef.close(setting.action)"
+				(pointerDownEvent)="option.pressed = true"
+				(pointerCancelEvent)="option.pressed = false; option.hovered = false">
+				<img class="switch-icon" [src]="getIcon(setting.icon, null) | resolveAsset" />
+				<div class="option-title" [style.color]="getColor('#FFFFFF', '#7f879d')">
+					<div>
+						<span>{{ setting.title }}</span>
+					</div>
+					<div class="release" [class.release-language]="setting.action === 'language'" *ngIf="setting.isNew">NEW</div>
+				</div>
+			</div>
+		</div>
+	</div>
+	<div class="footer">
+		<div style="padding: 0 10px">
+			<div
+				class="sign-out"
+				#out
+				[style.background]="out.pressed ? 'rgba(127, 135, 157, .15)' : hoveredSignout ? 'rgba(127, 135, 157, .1)' : 'transparent'"
+				[style.color]="getColor('#FFFFFF', '#7f879d')"
+				(mouseenter)="hoveredSignout = true"
+				(mouseleave)="hoveredSignout = false; out.pressed = false"
+				appCrossPointerEventTarget
+				(pointerClickEvent)="hoveredSignout = false; signOut()"
+				(pointerDownEvent)="out.pressed = true; hoveredSignout = true"
+				(pointerCancelEvent)="out.pressed = false; hoveredSignout = false">
+				<span>Sign out</span>
+			</div>
+		</div>
 
-        </div>
-
-          <div class="option"
-               *ngFor="let setting of settings"
-               #option
-               [style.background]="option.pressed ? 'rgba(127, 135, 157, .15)' : (option.hovered ? 'rgba(127, 135, 157, .1)' : 'transparent')"
-               (mouseenter)="option.hovered = true"
-               (mouseleave)="option.hovered = false; option.pressed = false"
-               appCrossPointerEventTarget
-               (pointerClickEvent)="dialogRef.close(setting.action)"
-               (pointerDownEvent)="option.pressed = true"
-               (pointerCancelEvent)="option.pressed = false; option.hovered = false;"
-          >
-            <img class="switch-icon" [src]="getIcon(setting.icon, null) | resolveAsset">
-            <div class="option-title" [style.color]="getColor('#FFFFFF', '#7f879d')">
-              <div>
-                <span>{{ setting.title }}</span>
-              </div>
-              <div class="release" [class.release-language]="setting.action === 'language'" *ngIf="setting.isNew">NEW</div>
-            </div>
-
-          </div>
-
-      </div>
-    </div>
-    <div class="footer">
-      <div style="padding: 0 10px">
-        <div class="sign-out"
-             #out
-             [style.background]="out.pressed ? 'rgba(127, 135, 157, .15)' : (hoveredSignout ? 'rgba(127, 135, 157, .1)' : 'transparent')"
-             [style.color]="getColor('#FFFFFF', '#7f879d')"
-             (mouseenter)="hoveredSignout = true"
-             (mouseleave)="hoveredSignout = false; out.pressed = false;"
-             appCrossPointerEventTarget
-             (pointerClickEvent)="hoveredSignout = false; signOut()"
-             (pointerDownEvent)="out.pressed = true; hoveredSignout = true"
-             (pointerCancelEvent)="out.pressed = false; hoveredSignout = false"
-        >
-          <span>Sign out</span>
-        </div>
-      </div>
-
-      <div class="options" [style.color]="getColor('#FFFFFF', '#7f879d')">
-        <span class="option"
-              appCrossPointerEventTarget
-              (pointerClickEvent)="dialogRef.close('privacy')"
-        >Privacy</span>
-        <span class="option"
-              appCrossPointerEventTarget
-              (pointerClickEvent)="dialogRef.close('terms')"
-        >Terms</span>
-      </div>
-    </div>
-<!--    <div class="bottom-arrow-container"-->
-<!--         appCrossPointerEventTarget-->
-<!--         (pointerClickEvent)="dialogRef.close()"-->
-<!--    >-->
-<!--      <div class="bottom-arrow" [style.background-color]="darkTheme.getBackground('high', true)"></div>-->
-<!--    </div>-->
+		<div class="options" [style.color]="getColor('#FFFFFF', '#7f879d')">
+			<span class="option" appCrossPointerEventTarget (pointerClickEvent)="dialogRef.close('privacy')">Privacy</span>
+			<span class="option" appCrossPointerEventTarget (pointerClickEvent)="dialogRef.close('terms')">Terms</span>
+		</div>
+	</div>
+	<!--    <div class="bottom-arrow-container"-->
+	<!--         appCrossPointerEventTarget-->
+	<!--         (pointerClickEvent)="dialogRef.close()"-->
+	<!--    >-->
+	<!--      <div class="bottom-arrow" [style.background-color]="darkTheme.getBackground('high', true)"></div>-->
+	<!--    </div>-->
 </div>
-

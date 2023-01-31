@@ -1,21 +1,21 @@
 .wrapper {
-  position: relative;
-  display: flex;
-  justify-content: center;
+	position: relative;
+	display: flex;
+	justify-content: center;
 
-  &.before {
-    &:before {
-      content: '';
-      position: absolute;
-      //background-color: red;
-      top: -55px;
-      height: 55px;
-      width: 50px;
-      pointer-events: none;
-      cursor: help;
-    }
-  }
-  .tooltip-container {
-    box-shadow: 0 5px 20px rgba(255, 255, 255, 0.1);
-  }
+	&.before {
+		&:before {
+			content: '';
+			position: absolute;
+			//background-color: red;
+			top: -55px;
+			height: 55px;
+			width: 50px;
+			pointer-events: none;
+			cursor: help;
+		}
+	}
+	.tooltip-container {
+		box-shadow: 0 5px 20px rgba(255, 255, 255, 0.1);
+	}
 }

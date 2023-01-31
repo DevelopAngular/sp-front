@@ -1,65 +1,56 @@
 <div class="toast-container">
-  <div class="backdrop" *ngIf="data.hasBackdrop"></div>
-  <div class="content-wrapper"
-       #wrapper
-       [@toastSlideInOut]="toggleToast ? 'open' : 'close'"
-       [style.top]="!indexPosition ? '15px' : ((wrapper.clientHeight * (indexPosition) + 15) + (indexPosition * 15)) + 'px'"
-       (mouseover)="over()"
-       (mouseleave)="leave()"
-  >
-    <div class="content">
-      <div class="type-line" [style.background-color]="lineColor(data.type)"></div>
-      <div class="info" style="display: flex; align-items: center" *ngIf="data.encounterPrevention">
-        <div class="exclusion-pass">
-          <app-pass-tile
-            [forStaff]="true"
-            [pass]="data.exclusionPass"
-            [profileImage]="false"
-            [encounterPreventionCard]="true"
-          ></app-pass-tile>
-        </div>
-        <div class="text" style="margin-left: 20px">
-          <div class="text_header">{{ data.title }}</div>
-          <div class="text_message">{{ data.subtitle }}
-            <br/>
-            <span
-              style="text-decoration: underline"
-              *ngIf="!user.isStudent() && !isKioskMode"
-              customToolTip
-              [contentTemplate]="tooltip"
-            >See details</span>
-            <ng-template #tooltip>
-              <app-encounter-prevention-tooltip [user]="user" [groups]="data.exclusionGroups"></app-encounter-prevention-tooltip>
-            </ng-template>
-          </div>
-<!--          <ng-template #info>-->
-<!--            <div class="text_message" *ngIf="data.issuer; else info">{{ data.subtitle }}</div>-->
-<!--          </ng-template>-->
-        </div>
-      </div>
+	<div class="backdrop" *ngIf="data.hasBackdrop"></div>
+	<div
+		class="content-wrapper"
+		#wrapper
+		[@toastSlideInOut]="toggleToast ? 'open' : 'close'"
+		[style.top]="!indexPosition ? '15px' : wrapper.clientHeight * indexPosition + 15 + indexPosition * 15 + 'px'"
+		(mouseover)="over()"
+		(mouseleave)="leave()">
+		<div class="content">
+			<div class="type-line" [style.background-color]="lineColor(data.type)"></div>
+			<div class="info" style="display: flex; align-items: center" *ngIf="data.encounterPrevention">
+				<div class="exclusion-pass">
+					<app-pass-tile [forStaff]="true" [pass]="data.exclusionPass" [profileImage]="false" [encounterPreventionCard]="true"></app-pass-tile>
+				</div>
+				<div class="text" style="margin-left: 20px">
+					<div class="text_header">{{ data.title }}</div>
+					<div class="text_message">
+						{{ data.subtitle }}
+						<br />
+						<span style="text-decoration: underline" *ngIf="!user.isStudent() && !isKioskMode" customToolTip [contentTemplate]="tooltip"
+							>See details</span
+						>
+						<ng-template #tooltip>
+							<app-encounter-prevention-tooltip [user]="user" [groups]="data.exclusionGroups"></app-encounter-prevention-tooltip>
+						</ng-template>
+					</div>
+					<!--          <ng-template #info>-->
+					<!--            <div class="text_message" *ngIf="data.issuer; else info">{{ data.subtitle }}</div>-->
+					<!--          </ng-template>-->
+				</div>
+			</div>
 
-      <div class="info" *ngIf="!data.encounterPrevention">
-        <div class="text">
-          <div class="text_header">{{ data.title }}</div>
-          <div class="text_message">{{ data.subtitle }}</div>
-        </div>
-        <div class="button">
-          <app-gradient-button
-            *ngIf="data.showButton"
-            [gradient]="'#F4F4F4, #F4F4F4'"
-            [leftIcon]="data.icon ? data.icon  : null"
-            [textColor]="'#1F195E'"
-            (buttonClick)="download(data.action)">
-            {{ data.buttonText ? data.buttonText : 'Download' }}
-          </app-gradient-button>
-        </div>
-      </div>
+			<div class="info" *ngIf="!data.encounterPrevention">
+				<div class="text">
+					<div class="text_header">{{ data.title }}</div>
+					<div class="text_message">{{ data.subtitle }}</div>
+				</div>
+				<div class="button">
+					<app-gradient-button
+						*ngIf="data.showButton"
+						[gradient]="'#F4F4F4, #F4F4F4'"
+						[leftIcon]="data.icon ? data.icon : null"
+						[textColor]="'#1F195E'"
+						(buttonClick)="download(data.action)">
+						{{ data.buttonText ? data.buttonText : 'Download' }}
+					</app-gradient-button>
+				</div>
+			</div>
 
-      <div class="close-btn" *ngIf="!data.hideCloseButton" (click)="close($event)">
-        <img [src]="'./assets/Close.svg' | resolveAsset" alt="Cancel (Blue-Gray).svg">
-      </div>
-    </div>
-
-  </div>
-
+			<div class="close-btn" *ngIf="!data.hideCloseButton" (click)="close($event)">
+				<img [src]="'./assets/Close.svg' | resolveAsset" alt="Cancel (Blue-Gray).svg" />
+			</div>
+		</div>
+	</div>
 </div>

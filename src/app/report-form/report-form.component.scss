@@ -1,252 +1,250 @@
 @import '../../sp-colors';
 
 .ios {
-  &-button-next {
-    margin-right: 0;
-    align-self: center;
-  }
+	&-button-next {
+		margin-right: 0;
+		align-self: center;
+	}
 
-  &-back-button {
-    display: none;
-  }
+	&-back-button {
+		display: none;
+	}
 }
 
 @media all and (max-width: 940px) {
-  div.student-select .student-select_button-next {
-    margin-right: 0;
-    align-self: center;
-  }
+	div.student-select .student-select_button-next {
+		margin-right: 0;
+		align-self: center;
+	}
 
-  img.back-button {
-    display: none;
-  }
+	img.back-button {
+		display: none;
+	}
 }
 
 @media all and (max-width: 425px) {
-  div.message-entry {
-    width: initial;
-  }
+	div.message-entry {
+		width: initial;
+	}
 
-  div.message-wrapper {
-    width: 87%;
-  }
+	div.message-wrapper {
+		width: 87%;
+	}
 }
 
 @media all and (max-width: 375px) {
-  div.message-entry .message-box {
-    height: 100%;
-  }
+	div.message-entry .message-box {
+		height: 100%;
+	}
 
-  div.message-entry .message-wrapper {
-    height: 203px;
-  }
+	div.message-entry .message-wrapper {
+		height: 203px;
+	}
 }
 
 @media all and (max-width: 320px) {
-  div.report-form-wrapper {
-    width: 300px;
-    margin: 0 auto;
-  }
+	div.report-form-wrapper {
+		width: 300px;
+		margin: 0 auto;
+	}
 }
 
-
 :host {
-  height: 100%;
+	height: 100%;
 }
 
 .report-form-wrapper {
-  width: inherit;
-  height: inherit;
-  display: flex;
-  flex-direction: column;
-  position: relative;
+	width: inherit;
+	height: inherit;
+	display: flex;
+	flex-direction: column;
+	position: relative;
 }
 
 .divider {
-  background-color: $red500;
-  width: 100%;
-  height: 70px;
-  min-height: 64px;
-  box-shadow: 0 1px 5px 0 rgba(0, 0, 0, 0.2);
-  position: relative;
-  z-index: 1;
-  border-top-left-radius: 15px;
-  border-top-right-radius: 15px;
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
+	background-color: $red500;
+	width: 100%;
+	height: 70px;
+	min-height: 64px;
+	box-shadow: 0 1px 5px 0 rgba(0, 0, 0, 0.2);
+	position: relative;
+	z-index: 1;
+	border-top-left-radius: 15px;
+	border-top-right-radius: 15px;
+	display: flex;
+	align-items: center;
+	justify-content: space-between;
 }
 
 .back-button {
-  width: 28px;
-  display: flex;
-  align-items: center;
-  height: 28px;
-  position: absolute;
-  z-index: 1;
-  left: 20px;
-  top: 0;
-  bottom: 0;
-  margin: auto;
-  font-size: 1em;
-  font-weight: bold;
-  color: #999999;
-  cursor: pointer;
+	width: 28px;
+	display: flex;
+	align-items: center;
+	height: 28px;
+	position: absolute;
+	z-index: 1;
+	left: 20px;
+	top: 0;
+	bottom: 0;
+	margin: auto;
+	font-size: 1em;
+	font-weight: bold;
+	color: #999999;
+	cursor: pointer;
 }
 
 .divider-icon {
-  margin-right: 12px;
-  width: 21px;
-  height: 21px;
+	margin-right: 12px;
+	width: 21px;
+	height: 21px;
 }
 
-.divider-text-students, .divider-text-message {
-  position: absolute;
-  top: 0;
-  bottom: 0;
-  left: 0;
-  right: 0;
-  color: white;
-  font-size: 16px;
-  font-weight: bold;
-  font-style: normal;
-  font-stretch: normal;
-  line-height: 1.08;
-  letter-spacing: 0.3px;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  box-shadow: 0 1px 5px 0 rgba(0, 0, 0, 0.2);
-
+.divider-text-students,
+.divider-text-message {
+	position: absolute;
+	top: 0;
+	bottom: 0;
+	left: 0;
+	right: 0;
+	color: white;
+	font-size: 16px;
+	font-weight: bold;
+	font-style: normal;
+	font-stretch: normal;
+	line-height: 1.08;
+	letter-spacing: 0.3px;
+	display: flex;
+	align-items: center;
+	justify-content: center;
+	box-shadow: 0 1px 5px 0 rgba(0, 0, 0, 0.2);
 }
 
 .student-select {
-  width: 100%;
-  max-width: 376px;
+	width: 100%;
+	max-width: 376px;
 
-  .student-select_button-next {
-    align-self: flex-end;
-    margin-right: 25px;
-  }
+	.student-select_button-next {
+		align-self: flex-end;
+		margin-right: 25px;
+	}
 
-  .report-content {
-    //width: 100%;
-    //display: flex;
-    //width: 100%;
-    //max-width: 376px;
-    //top: 0px;
-    //left: 0px;
-    //position: absolute;
-  }
+	.report-content {
+		//width: 100%;
+		//display: flex;
+		//width: 100%;
+		//max-width: 376px;
+		//top: 0px;
+		//left: 0px;
+		//position: absolute;
+	}
 
-  .student-list {
-    width: 215px;
-    margin-top: 35px;
+	.student-list {
+		width: 215px;
+		margin-top: 35px;
 
-    &_header {
-      margin: 30px 0 5px 0;
-      text-align: center;
-    }
+		&_header {
+			margin: 30px 0 5px 0;
+			text-align: center;
+		}
 
-    &_scrollable {
-      max-height: 190px;
-      overflow: auto;
-    }
+		&_scrollable {
+			max-height: 190px;
+			overflow: auto;
+		}
 
-    &_item {
-      border-top: 1px solid #D8D8D8;
-      display: flex;
-      align-items: center;
-      justify-content: space-between;
-      padding: 9px 5px;
-      color: #555558;
-      font-size: 14px;
-      cursor: pointer;
+		&_item {
+			border-top: 1px solid #d8d8d8;
+			display: flex;
+			align-items: center;
+			justify-content: space-between;
+			padding: 9px 5px;
+			color: #555558;
+			font-size: 14px;
+			cursor: pointer;
 
-      img {
-        cursor: pointer;
-      }
-    }
-  }
+			img {
+				cursor: pointer;
+			}
+		}
+	}
 }
 
 .wrap-groups {
-  position: relative;
-  box-sizing: border-box;
-  background-color: white;
-  width: 425px; // it's needed to mantain a decent width along situations where a report form can be used 
-  height: 430px;// parent is 500px parent = header + me = 70 + 430
-  padding: 0px 25px; 
-  overflow: scroll;
-  display: flex;
-  flex-flow: column;
-  justify-content: space-evenly;
+	position: relative;
+	box-sizing: border-box;
+	background-color: white;
+	width: 425px; // it's needed to mantain a decent width along situations where a report form can be used
+	height: 430px; // parent is 500px parent = header + me = 70 + 430
+	padding: 0px 25px;
+	overflow: scroll;
+	display: flex;
+	flex-flow: column;
+	justify-content: space-evenly;
 }
 
 label {
-  //margin-top: 30px;// ensure distance between the other input
-  margin-bottom: 8px; // ensure distance for own input
-  color: $navy500;
-  font-weight: 700;
-  font-size: 15px;
-  display: block;
+	//margin-top: 30px;// ensure distance between the other input
+	margin-bottom: 8px; // ensure distance for own input
+	color: $navy500;
+	font-weight: 700;
+	font-size: 15px;
+	display: block;
 }
 
-img[rel="back-button"]{
-  opacity: .4; 
-  &:hover {
-    opacity: .6;
-}
+img[rel='back-button'] {
+	opacity: 0.4;
+	&:hover {
+		opacity: 0.6;
+	}
 }
 
 textarea {
-  resize: none;
-  border: 0px;
-  box-sizing: border-box;
-  padding: 10px 10px 0 10px;
-  outline: none;
+	resize: none;
+	border: 0px;
+	box-sizing: border-box;
+	padding: 10px 10px 0 10px;
+	outline: none;
 }
 
-
 .message-entry {
-  width: 100%;
-  max-width: 376px;
-  overflow: visible;
+	width: 100%;
+	max-width: 376px;
+	overflow: visible;
 
-  .message-box {
-    width: 100%;
-    height: 100px;
-    background-color: $gray100;
-    border: 1px solid $gray200;
-    border-radius: 10px;
-    //box-shadow: 0 0 6px 0 rgba(0, 0, 0, 0.1);
-    font-size: 14px;
-    font-style: normal;
-    font-stretch: normal;
-    line-height: 1.08;
-    letter-spacing: 0.3px;
-  }
+	.message-box {
+		width: 100%;
+		height: 100px;
+		background-color: $gray100;
+		border: 1px solid $gray200;
+		border-radius: 10px;
+		//box-shadow: 0 0 6px 0 rgba(0, 0, 0, 0.1);
+		font-size: 14px;
+		font-style: normal;
+		font-stretch: normal;
+		line-height: 1.08;
+		letter-spacing: 0.3px;
+	}
 }
 
 .message-wrapper {
-  width: 100%;
+	width: 100%;
 }
 
 .tile {
-  max-width: 150px;
+	max-width: 150px;
 }
 
 .chip {
-  background-color: $gray100;
-  border-radius: 8px;
-  height: 31px;
-  line-height: 31px;
-  padding: 0px 10px;
-  //display: flex;
-  //align-items: center;
-  color: $gray900;
-  width: min-content;
-  white-space:nowrap;
-  overflow:hidden;
-  text-overflow:ellipsis;
+	background-color: $gray100;
+	border-radius: 8px;
+	height: 31px;
+	line-height: 31px;
+	padding: 0px 10px;
+	//display: flex;
+	//align-items: center;
+	color: $gray900;
+	width: min-content;
+	white-space: nowrap;
+	overflow: hidden;
+	text-overflow: ellipsis;
 }

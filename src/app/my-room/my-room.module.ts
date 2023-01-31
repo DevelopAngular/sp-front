@@ -7,14 +7,7 @@ import { SharedModule } from '../shared/shared.module';
 import { RoomCheckinCodeDialogComponent } from './room-checkin-code-dialog/room-checkin-code-dialog.component';
 
 @NgModule({
-  declarations: [
-    MyRoomComponent,
-    RoomCheckinCodeDialogComponent
-  ],
-  imports: [
-    CommonModule,
-    MyRoomRoutingModule,
-    SharedModule
-  ]
+	declarations: [MyRoomComponent, RoomCheckinCodeDialogComponent],
+	imports: [CommonModule, MyRoomRoutingModule, SharedModule],
 })
-export class MyRoomModule { }
+export class MyRoomModule {}

@@ -1,19 +1,18 @@
-import {NgModule} from '@angular/core';
-import {RouterModule, Routes} from '@angular/router';
+import { NgModule } from '@angular/core';
+import { RouterModule, Routes } from '@angular/router';
 
-import {PredemoComponent} from './predemo/predemo.component';
-import {QuoteRequestComponent} from './quote-request/quote-request.component';
-import {AddSchoolComponent} from './add-school/add-school.component';
+import { PredemoComponent } from './predemo/predemo.component';
+import { QuoteRequestComponent } from './quote-request/quote-request.component';
+import { AddSchoolComponent } from './add-school/add-school.component';
 
 const routes: Routes = [
-  {path: 'predemo', component: PredemoComponent},
-  {path: 'quoterequest', component: QuoteRequestComponent},
-  {path: 'addschool', component: AddSchoolComponent},
+	{ path: 'predemo', component: PredemoComponent },
+	{ path: 'quoterequest', component: QuoteRequestComponent },
+	{ path: 'addschool', component: AddSchoolComponent },
 ];
 
-
 @NgModule({
-  imports: [RouterModule.forChild(routes)],
-  exports: [RouterModule]
+	imports: [RouterModule.forChild(routes)],
+	exports: [RouterModule],
 })
-export class FormsRoutingModule { }
+export class FormsRoutingModule {}

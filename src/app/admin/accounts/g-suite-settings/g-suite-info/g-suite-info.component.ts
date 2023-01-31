@@ -1,27 +1,25 @@
-import {Component, EventEmitter, OnInit, Output} from '@angular/core';
-import {BehaviorSubject} from 'rxjs';
-import {CreateFormService} from '../../../../create-hallpass-forms/create-form.service';
+import { Component, EventEmitter, OnInit, Output } from '@angular/core';
+import { BehaviorSubject } from 'rxjs';
+import { CreateFormService } from '../../../../create-hallpass-forms/create-form.service';
 
 @Component({
-  selector: 'app-g-suite-info',
-  templateUrl: './g-suite-info.component.html',
-  styleUrls: ['./g-suite-info.component.scss']
+	selector: 'app-g-suite-info',
+	templateUrl: './g-suite-info.component.html',
+	styleUrls: ['./g-suite-info.component.scss'],
 })
 export class GSuiteInfoComponent implements OnInit {
+	@Output() back: EventEmitter<any> = new EventEmitter<any>();
+	@Output() nextPage: EventEmitter<any> = new EventEmitter<any>();
 
-  @Output() back: EventEmitter<any> = new EventEmitter<any>();
-  @Output() nextPage: EventEmitter<any> = new EventEmitter<any>();
+	frameMotion$: BehaviorSubject<any>;
 
-  frameMotion$: BehaviorSubject<any>;
+	constructor(private formService: CreateFormService) {}
 
-  constructor(private formService: CreateFormService) { }
+	get gradient() {
+		return 'radial-gradient(circle at 73% 71%, #4274F6, #4274F6)';
+	}
 
-  get gradient() {
-    return 'radial-gradient(circle at 73% 71%, #4274F6, #4274F6)';
-  }
-
-  ngOnInit() {
-    this.frameMotion$ = this.formService.getFrameMotionDirection();
-  }
-
+	ngOnInit() {
+		this.frameMotion$ = this.formService.getFrameMotionDirection();
+	}
 }

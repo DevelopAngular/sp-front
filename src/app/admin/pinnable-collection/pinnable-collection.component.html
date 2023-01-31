@@ -1,36 +1,34 @@
 <div class="collection-wrapper" *ngIf="pinnables" [style.min-width]="width">
-  <div
-    class="pinnables"
-   [style.width]="width"
-   style="display: flex; flex-wrap: wrap"
-   dragula="pinnables"
-   *ngIf="pinnables?.length"
-   [dragula]="'pinnables'"
-   [dragulaModel]="pinnables"
-   (dragulaModelChange)="onPinablesOrderChanged($event)">
-
-    <div *ngFor="let pinnable of pinnables; let i = index" style="padding: 7.5px">
-      <div class="pinnable-item-container" >
-<!--        <div class="disable-room-block" *ngIf="pinnable.location && !pinnable.location.enable"></div>-->
-        <!--[style.animation-delay]="(i * .1) + 's'"-->
-        <div [ngClass]="{'pinnable-item': this.bulkSelect}">
-          <app-pinnable
-            [forStaff]="true"
-            [width]="'143px'"
-            [height]="'86.5px'"
-            [selected]="isSelected(pinnable)"
-            [forBulk]="bulkSelect"
-            [disabledRoom]="pinnable.location && !pinnable.location.enable"
-            [forCollection]="true"
-            [pinnable]="pinnable"
-            (clampedEvent)="toggleBulk()"
-            (onSelectEvent)="updatePinnables($event)"
-          ></app-pinnable>
-        </div>
-      </div>
-    </div>
-  </div>
-  <div class="empty-state" style="width: 560px" *ngIf="!pinnables?.length && passesService.loadedPinnables$ | async">
-    <img style="width: 575px" [src]="'./assets/emptyStates/No Rooms Pass Config.svg' | resolveAsset">
-  </div>
+	<div
+		class="pinnables"
+		[style.width]="width"
+		style="display: flex; flex-wrap: wrap"
+		dragula="pinnables"
+		*ngIf="pinnables?.length"
+		[dragula]="'pinnables'"
+		[dragulaModel]="pinnables"
+		(dragulaModelChange)="onPinablesOrderChanged($event)">
+		<div *ngFor="let pinnable of pinnables; let i = index" style="padding: 7.5px">
+			<div class="pinnable-item-container">
+				<!--        <div class="disable-room-block" *ngIf="pinnable.location && !pinnable.location.enable"></div>-->
+				<!--[style.animation-delay]="(i * .1) + 's'"-->
+				<div [ngClass]="{ 'pinnable-item': this.bulkSelect }">
+					<app-pinnable
+						[forStaff]="true"
+						[width]="'143px'"
+						[height]="'86.5px'"
+						[selected]="isSelected(pinnable)"
+						[forBulk]="bulkSelect"
+						[disabledRoom]="pinnable.location && !pinnable.location.enable"
+						[forCollection]="true"
+						[pinnable]="pinnable"
+						(clampedEvent)="toggleBulk()"
+						(onSelectEvent)="updatePinnables($event)"></app-pinnable>
+				</div>
+			</div>
+		</div>
+	</div>
+	<div class="empty-state" style="width: 560px" *ngIf="!pinnables?.length && passesService.loadedPinnables$ | async">
+		<img style="width: 575px" [src]="'./assets/emptyStates/No Rooms Pass Config.svg' | resolveAsset" />
+	</div>
 </div>

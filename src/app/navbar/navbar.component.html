@@ -1,193 +1,277 @@
 <ng-container *ngIf="user">
-    <div class="host" [style.background]="darkTheme.getColor({dark: '#0F171E', white: ((isStaff || isAssistant) && !isKioskMode ? '#FFFFFF' : 'transparent' )})" *ngIf="showNav && !isHallMonitorRoute && showNav && !isMyRoomRoute || showNav && !islargeDeviceWidth"
-        [style.border-bottom]="(darkTheme.isEnabled$ | async) && !user.isStudent() ? '1px solid #7083A0' : 'none'">
-        <div class="bar" appNavbarElementSender [ngClass]="{shadow: ((isStaff || isAssistant) && !isKioskMode && !isKioskModeSettingsPage()) || screenService.isDeviceLargeExtra}" [ngStyle]="{
-    padding: (user && user.isStudent()) || isKioskMode ? '0 16px' : '0 16px 0 0'
-   }" #navbar>
-            <div class="logo" *ngIf="(user && user.isStudent()) || isKioskMode || isParent; else staffLogo">
-                <div class="logo-icon" appCrossPointerEventTarget (pointerClickEvent)="updateTab('passes')">
-                    <img width="40px" height="40px" [src]="'./assets/Smartpass Logo (Green).svg'" alt="logo">
-                </div>
-                <div class="kiosk-title" *ngIf="isKioskMode">Kiosk</div>
-            </div>
+	<div
+		class="host"
+		[style.background]="darkTheme.getColor({ dark: '#0F171E', white: (isStaff || isAssistant) && !isKioskMode ? '#FFFFFF' : 'transparent' })"
+		*ngIf="(showNav && !isHallMonitorRoute && showNav && !isMyRoomRoute) || (showNav && !islargeDeviceWidth)"
+		[style.border-bottom]="(darkTheme.isEnabled$ | async) && !user.isStudent() ? '1px solid #7083A0' : 'none'">
+		<div
+			class="bar"
+			appNavbarElementSender
+			[ngClass]="{ shadow: ((isStaff || isAssistant) && !isKioskMode && !isKioskModeSettingsPage()) || screenService.isDeviceLargeExtra }"
+			[ngStyle]="{
+				padding: (user && user.isStudent()) || isKioskMode ? '0 16px' : '0 16px 0 0'
+			}"
+			#navbar>
+			<div class="logo" *ngIf="(user && user.isStudent()) || isKioskMode || isParent; else staffLogo">
+				<div class="logo-icon" appCrossPointerEventTarget (pointerClickEvent)="updateTab('passes')">
+					<img width="40px" height="40px" [src]="'./assets/Smartpass Logo (Green).svg'" alt="logo" />
+				</div>
+				<div class="kiosk-title" *ngIf="isKioskMode">Kiosk</div>
+			</div>
 
-            <ng-template #staffLogo>
-                <div class="search" *ngIf="!isMobile && !isKioskModeSettingsPage()">
-                    <app-smartpass-search #smartpassSearch [width]="'242px'"></app-smartpass-search>
-                </div>
-            </ng-template>
-            <div #navButtonsContainer class="nav-buttons" *ngIf="!hideButtons">
+			<ng-template #staffLogo>
+				<div class="search" *ngIf="!isMobile && !isKioskModeSettingsPage()">
+					<app-smartpass-search #smartpassSearch [width]="'242px'"></app-smartpass-search>
+				</div>
+			</ng-template>
+			<div #navButtonsContainer class="nav-buttons" *ngIf="!hideButtons">
+				<div *ngIf="isStaff && !this.screenService.isDeviceLargeExtra && user && !user.isAssistant()" class="teacherNav">
+					<div *ngFor="let button of buttons; let i = index" class="teacherNav_tab">
+						<ng-container *ngIf="buttonVisibility(button)">
+							<div #tabRef [style.transition]="'transform .4s ease'">
+								<app-nav-button [selected]="tab === button.route" [content]="button.title" [icon]="button.imgUrl" (onClick)="updateTab(button.route)">
+								</app-nav-button>
+							</div>
+						</ng-container>
+					</div>
+					<!--        <div class="selected-tab-pointer" #tabPointer [style.left]="pointerTopSpace"></div>-->
+				</div>
 
-                <div *ngIf="isStaff && !this.screenService.isDeviceLargeExtra && user && !user.isAssistant() " class="teacherNav">
-                    <div *ngFor="let button of buttons; let i = index" class="teacherNav_tab">
-                        <ng-container *ngIf="buttonVisibility(button)">
-                            <div #tabRef [style.transition]="'transform .4s ease'">
-                                <app-nav-button [selected]="tab === button.route" [content]="button.title" [icon]="button.imgUrl" (onClick)="updateTab(button.route);">
-                                </app-nav-button>
-                            </div>
-                        </ng-container>
-                    </div>
-                    <!--        <div class="selected-tab-pointer" #tabPointer [style.left]="pointerTopSpace"></div>-->
-                </div>
+				<div *ngIf="user && user.isAssistant() && effectiveUser?.roles && !this.screenService.isDeviceLargeExtra" class="teacherNav">
+					<div *ngFor="let button of buttons" class="teacherNav_tab">
+						<ng-container *ngIf="buttonVisibility(button)">
+							<div
+								#tabRef
+								[style.transition]="'transform .4s ease'"
+								appCrossPointerEventTarget
+								(pointerClickEvent)="tabRef.style.transform = 'unset'"
+								(pointerDownEvent)="tabRef.style.transform = 'scale(.96)'"
+								(pointerCancelEvent)="tabRef.style.transform = 'unset'">
+								<div></div>
+								<app-nav-button [selected]="tab === button.route" [content]="button.title" [icon]="button.imgUrl" (onClick)="updateTab(button.route)">
+								</app-nav-button>
+							</div>
+						</ng-container>
+					</div>
+					<!--        <div class="selected-tab-pointer" #tabPointer [style.left]="pointerTopSpace"></div>-->
+				</div>
+			</div>
+			<div
+				[ngClass]="{ 'ios-user-info': isIOSTablet, 'user-info': !isIOSTablet, 'setting-ryt-align': isKioskModeSettingsPage() }"
+				[style.flexDirection]="flexDirection">
+				<div
+					class="ds-mx-10"
+					style="cursor: pointer; display: flex; align-items: center"
+					*ngIf="user && user.isAssistant() && !screenService.isDeviceLargeExtra; else notAssistant">
+					<div class="feedback" *ngIf="!user.isStudent() && !isKioskMode && !isMobile && !isParent">
+						<app-feedback-button></app-feedback-button>
+					</div>
+					<div
+						[ngClass]="isIOSTablet ? 'ios-name' : 'name'"
+						[style.color]="darkTheme.getColor({ dark: '#FFFFFF', white: '#1F195E' })"
+						*ngIf="effectiveUser"
+						appCrossPointerEventTarget
+						(pointerClickEvent)="showTeaches($event)">
+						<span style="font-size: 13px; font-weight: 400; color: #b7c1cf; margin-right: 7px">Acting on <br />behalf of</span>
+						<span>
+							<div class="profile-image avatar-animate" *ngIf="(isEnabledProfilePictures$ | async) && !isKioskMode">
+								<div
+									*ngIf="effectiveUser.user.profile_picture; else d"
+									[ngStyle]="{
+										background: 'url(' + effectiveUser.user.profile_picture + ') no-repeat left center/cover',
+										width: '34px',
+										height: '34px'
+									}"></div>
+								<ng-template #d>
+									<img width="32" height="32" [src]="'./assets/Avatar Default.svg' | resolveAsset" alt="Avatar" />
+								</ng-template>
+							</div>
+						</span>
+						<span notranslate>
+							{{ effectiveUser ? effectiveUser.user.first_name : '' }}
+						</span>
+						<img
+							*ngIf="effectiveUser.user && effectiveUser.user.badge"
+							style="margin-left: 8px"
+							width="25"
+							height="25"
+							[src]="'./assets/Badge.png' | resolveAsset" />
+						<img width="10" class="ds-ml-5" [src]="getIcon('Rect', 'White', 'Navy')" alt="Rect" />
+					</div>
+				</div>
 
-                <div *ngIf="user && user.isAssistant() && effectiveUser?.roles && !this.screenService.isDeviceLargeExtra" class="teacherNav">
-                    <div *ngFor="let button of buttons" class="teacherNav_tab">
-                        <ng-container *ngIf="buttonVisibility(button)">
-                            <div #tabRef [style.transition]="'transform .4s ease'" appCrossPointerEventTarget (pointerClickEvent)="tabRef.style.transform = 'unset'" (pointerDownEvent)="tabRef.style.transform = 'scale(.96)'" (pointerCancelEvent)="tabRef.style.transform = 'unset'">
-                                <div>
-                                </div>
-                                <app-nav-button [selected]="tab === button.route" [content]="button.title" [icon]="button.imgUrl" (onClick)="updateTab(button.route);">
-                                </app-nav-button>
-                            </div>
-                        </ng-container>
-                    </div>
-                    <!--        <div class="selected-tab-pointer" #tabPointer [style.left]="pointerTopSpace"></div>-->
-                </div>
+				<ng-template #notAssistant>
+					<div class="feedback" *ngIf="isStaff && !isKioskMode && !isParent && !isMobile && !isKioskModeSettingsPage()">
+						<app-feedback-button></app-feedback-button>
+					</div>
+					<ng-template #referSuccess>
+						<div class="ds-tooltip">
+							<span>
+								Thank you for referring a school to SmartPass! If you want to refer another school,
+								<a style="color: white" href="https://www.smartpass.app/referrals">click here</a>.
+							</span>
+						</div>
+					</ng-template>
 
-            </div>
-            <div [ngClass]="{'ios-user-info': isIOSTablet, 'user-info' : !isIOSTablet, 'setting-ryt-align':isKioskModeSettingsPage() }" [style.flexDirection]="flexDirection">
-                <div class="ds-mx-10" style="cursor: pointer; display: flex; align-items: center;" *ngIf="user && user.isAssistant() && !screenService.isDeviceLargeExtra; else notAssistant">
-                    <div class="feedback" *ngIf="!user.isStudent() && !isKioskMode && !isMobile && !isParent">
-                        <app-feedback-button></app-feedback-button>
-                    </div>
-                    <div [ngClass]="isIOSTablet ? 'ios-name' : 'name'" [style.color]="darkTheme.getColor({dark: '#FFFFFF', white : '#1F195E'})" *ngIf="effectiveUser" appCrossPointerEventTarget (pointerClickEvent)="showTeaches($event)">
-                        <span style="font-size: 13px; font-weight: 400; color: #B7C1CF; margin-right: 7px">Acting on <br/>behalf of</span>
-                        <span>
-            <div class="profile-image avatar-animate" *ngIf="(isEnabledProfilePictures$ | async) && !isKioskMode">
-              <div *ngIf="effectiveUser.user.profile_picture; else d" [ngStyle]="{'background': 'url(' + effectiveUser.user.profile_picture + ') no-repeat left center/cover', width: '34px', height: '34px'}"></div>
-              <ng-template #d>
-               <img width="32" height="32" [src]="'./assets/Avatar Default.svg' | resolveAsset" alt="Avatar">
-              </ng-template>
-          </div>
-          </span>
-                        <span notranslate>
-            {{ effectiveUser ? effectiveUser.user.first_name : '' }}
-          </span>
-                        <img *ngIf="(effectiveUser.user && effectiveUser.user.badge)" style="margin-left: 8px" width="25" height="25" [src]="'./assets/Badge.png' | resolveAsset">
-                        <img width="10" class="ds-ml-5" [src]="getIcon('Rect', 'White', 'Navy')" alt="Rect">
-                    </div>
-                </div>
+					<div
+						*ngIf="!isMobile && !isKioskModeSettingsPage()"
+						[ngClass]="isIOSTablet ? 'ios-name' : 'name'"
+						[style.color]="darkTheme.getColor({ dark: '#FFFFFF', white: '#1F195E' })"
+						customToolTip
+						[contentTemplate]="referSuccess"
+						[showToolTip]="user && user.badge && !isKioskMode && !isParent">
+						<span *ngIf="!isParent">
+							<div class="profile-image avatar-animate" *ngIf="(isEnabledProfilePictures$ | async) && !isKioskMode">
+								<div
+									*ngIf="user && user.profile_picture; else d"
+									[ngStyle]="{ background: 'url(' + user.profile_picture + ') no-repeat left center/cover', width: '34px', height: '34px' }"></div>
+								<ng-template #d>
+									<img width="32" height="32" [src]="'./assets/Avatar Default.svg' | resolveAsset" alt="Avatar" />
+								</ng-template>
+							</div>
+						</span>
+						<span notranslate>
+							{{ isKioskMode ? (kioskModeLocation ? kioskModeLocation.title : '') : user ? user.first_name : '' }}
+						</span>
+						<img
+							*ngIf="user && user.badge && !isKioskMode"
+							style="margin-left: 8px"
+							width="25"
+							height="25"
+							[src]="'./assets/Badge.png' | resolveAsset" />
+					</div>
+				</ng-template>
 
-                <ng-template #notAssistant>
-                    <div class="feedback" *ngIf="isStaff && !isKioskMode && !isParent && !isMobile && !isKioskModeSettingsPage()">
-                        <app-feedback-button></app-feedback-button>
-                    </div>
-                  <ng-template #referSuccess>
-                    <div class="ds-tooltip">
-                      <span>
-                        Thank you for referring a school to SmartPass! If you want to refer another school,
-                        <a style="color: white" href="https://www.smartpass.app/referrals">click here</a>.
-                      </span>
-                    </div>
-                  </ng-template>
+				<div
+					class="inbox-wrapper"
+					*ngIf="user && islargeDeviceWidth && !isKioskMode && !isParent"
+					[style.background-color]="
+						inboxVisibility && !islargeDeviceWidth ? (darkTheme.isEnabled$.value && !islargeDeviceWidth ? '#134482' : '#E4EBFF') : 'transparent'
+					"
+					appCrossPointerEventTarget
+					(pointerClickEvent)="inboxClick()">
+					<app-icon-button [eventBubbling]="true" [srcString]="'Notifications'" [size]="20"></app-icon-button>
+					<div class="inbox-modifiers" *ngIf="(notificationBadge$ | async) > 0">
+						<!--          <img class="inbox-badge" [src]="'./assets/Inbox Notification (Red).svg' | resolveAsset">-->
+						<!--          <div class="inbox-number">{{ notificationBadge$ | async }}</div>-->
+						<img
+							class="inbox-front"
+							[src]="darkTheme.getIcon({ iconName: 'Notifications', darkFill: 'White', lightFill: 'Blue-Gray' }) | resolveAsset" />
+					</div>
+				</div>
 
-                    <div
-                      *ngIf="!isMobile && !isKioskModeSettingsPage()"
-                      [ngClass]="isIOSTablet ? 'ios-name' : 'name'"
-                      [style.color]="darkTheme.getColor({dark: '#FFFFFF', white : '#1F195E'})"
-                      customToolTip
-                      [contentTemplate]="referSuccess"
-                      [showToolTip]="(user && user.badge) && !isKioskMode && !isParent">
-                      <span *ngIf="!isParent">
-                        <div class="profile-image avatar-animate" *ngIf="(isEnabledProfilePictures$ | async) && !isKioskMode">
-                          <div *ngIf="user && user.profile_picture; else d" [ngStyle]="{'background': 'url(' + user.profile_picture + ') no-repeat left center/cover', width: '34px', height: '34px'}"></div>
-                          <ng-template #d>
-                            <img width="32" height="32" [src]="'./assets/Avatar Default.svg' | resolveAsset" alt="Avatar">
-                          </ng-template>
-                        </div>
-                      </span>
-                        <span notranslate>
-            {{ isKioskMode ? (kioskModeLocation ? kioskModeLocation.title : '') : (user? user.first_name:'')}}
-          </span>
-                        <img *ngIf="(user && user.badge) && !isKioskMode" style="margin-left: 8px" width="25" height="25" [src]="'./assets/Badge.png' | resolveAsset">
-                    </div>
-                </ng-template>
+				<div
+					*ngIf="(user && !isStaff && !isKioskMode && !isParent) || (islargeDeviceWidth && !isKioskMode)"
+					class="inbox-wrapper-sm"
+					appCrossPointerEventTarget
+					(pointerClickEvent)="inboxClick()">
+					<!--        <img [@inboxAppearance] *ngIf="!isInboxClicked" class="inbox-icon" [src]="darkTheme.getIcon({iconName: 'Inbox', darkFill: 'White', lightFill: 'Blue-Gray'}) | resolveAsset">-->
+					<app-icon-button
+						[@inboxAppearance]
+						[eventBubbling]="true"
+						*ngIf="!isInboxClicked"
+						[srcString]="'Notifications'"
+						[size]="20"></app-icon-button>
+					<div class="inbox-icon inbox-icon-arrow" [@inboxAppearance] *ngIf="isInboxClicked">
+						<app-icon-button [srcString]="'Arrow Down'" [eventBubbling]="true" [size]="20"></app-icon-button>
+					</div>
+					<!--        <img [@arrowAppearance] *ngIf="isInboxClicked" class="inbox-icon inbox-icon-arrow" [src]="darkTheme.getIcon({iconName: 'SP Arrow', darkFill: 'White', lightFill: 'Blue-Gray'}) | resolveAsset">-->
+					<div [@inboxAppearance] class="inbox-modifiers" *ngIf="(notificationBadge$ | async) > 0 && !isInboxClicked">
+						<!--          <img class="inbox-badge" [src]="'./assets/Inbox Notification (Red).svg' | resolveAsset">-->
+						<!--          <div class="inbox-number">{{ notificationBadge$ | async }}</div>-->
+						<img
+							class="inbox-front"
+							[src]="darkTheme.getIcon({ iconName: 'Notifications', darkFill: 'White', lightFill: 'Blue-Gray' }) | resolveAsset" />
+					</div>
+				</div>
 
-                <div class="inbox-wrapper" *ngIf="user && islargeDeviceWidth && !isKioskMode && !isParent" [style.background-color]="(inboxVisibility && !islargeDeviceWidth ? darkTheme.isEnabled$.value && !islargeDeviceWidth ? '#134482' : '#E4EBFF' : 'transparent')"
-                    appCrossPointerEventTarget (pointerClickEvent)="inboxClick()">
-                    <app-icon-button [eventBubbling]="true" [srcString]="'Notifications'" [size]="20"></app-icon-button>
-                    <div class="inbox-modifiers" *ngIf="(notificationBadge$ | async) > 0">
-                        <!--          <img class="inbox-badge" [src]="'./assets/Inbox Notification (Red).svg' | resolveAsset">-->
-                        <!--          <div class="inbox-number">{{ notificationBadge$ | async }}</div>-->
-                        <img class="inbox-front" [src]="darkTheme.getIcon({iconName: 'Notifications', darkFill: 'White', lightFill: 'Blue-Gray'}) | resolveAsset">
-                    </div>
-                </div>
+				<div
+					class="id-card"
+					(click)="openIDCard()"
+					*ngIf="!user.isAssistant() && IDCardEnabled && !isKioskModeSettingsPage() && !isKioskMode && !isParent">
+					<div class="wrapper" [style.background-color]="IDCARDDETAILS.color">
+						<img width="18px" [src]="'./assets/Digital ID Card (White).svg'" alt="" />
+						<div class="title" notranslate>ID</div>
+					</div>
+				</div>
 
-                <div *ngIf="user && !isStaff && !isKioskMode && !isParent || islargeDeviceWidth && !isKioskMode" class="inbox-wrapper-sm" appCrossPointerEventTarget (pointerClickEvent)="inboxClick()">
-                    <!--        <img [@inboxAppearance] *ngIf="!isInboxClicked" class="inbox-icon" [src]="darkTheme.getIcon({iconName: 'Inbox', darkFill: 'White', lightFill: 'Blue-Gray'}) | resolveAsset">-->
-                    <app-icon-button [@inboxAppearance] [eventBubbling]="true" *ngIf="!isInboxClicked" [srcString]="'Notifications'" [size]="20"></app-icon-button>
-                    <div class="inbox-icon inbox-icon-arrow" [@inboxAppearance] *ngIf="isInboxClicked">
-                        <app-icon-button [srcString]="'Arrow Down'" [eventBubbling]="true" [size]="20"></app-icon-button>
-                    </div>
-                    <!--        <img [@arrowAppearance] *ngIf="isInboxClicked" class="inbox-icon inbox-icon-arrow" [src]="darkTheme.getIcon({iconName: 'SP Arrow', darkFill: 'White', lightFill: 'Blue-Gray'}) | resolveAsset">-->
-                    <div [@inboxAppearance] class="inbox-modifiers" *ngIf="(notificationBadge$ | async) > 0 && !isInboxClicked">
-                        <!--          <img class="inbox-badge" [src]="'./assets/Inbox Notification (Red).svg' | resolveAsset">-->
-                        <!--          <div class="inbox-number">{{ notificationBadge$ | async }}</div>-->
-                        <img class="inbox-front" [src]="darkTheme.getIcon({iconName: 'Notifications', darkFill: 'White', lightFill: 'Blue-Gray'}) | resolveAsset">
-                    </div>
-                </div>
+				<div class="options-wrapper" #setButton>
+					<app-icon-button
+						*ngIf="isStaff && !isKioskMode; else whiteButton"
+						[newIconButton]="true"
+						[srcString]="'Settings'"
+						[color]="'Navy'"
+						[size]="20"
+						(clickEvent)="showOptions($event)"
+						[notificationBadge]="
+							isStaff && introsData?.referral_reminder ? !introsData?.referral_reminder.universal.seen_version && showNotificationBadge : false
+						"
+						[notificationCount]="1"></app-icon-button>
 
-                <div class="id-card" (click)="openIDCard()" *ngIf="!user.isAssistant() && IDCardEnabled && !isKioskModeSettingsPage() && !isKioskMode && !isParent">
-                    <div class="wrapper" [style.background-color]="IDCARDDETAILS.color">
-                        <img width="18px" [src]="'./assets/Digital ID Card (White).svg'" alt="">
-                        <div class="title" notranslate>ID</div>
-                    </div>
-                </div>
+					<ng-template #whiteButton>
+						<app-white-round-button [size]="'regular'" [icon]="'Settings'" (buttonClick)="showOptions($event)"></app-white-round-button>
+					</ng-template>
+				</div>
+			</div>
+		</div>
+	</div>
 
-                <div class="options-wrapper " #setButton>
-                    <app-icon-button *ngIf="isStaff && !isKioskMode; else whiteButton" [newIconButton]="true" [srcString]="'Settings'" [color]="'Navy'" [size]="20" (clickEvent)="showOptions($event)" [notificationBadge]="isStaff && introsData?.referral_reminder ? (!introsData?.referral_reminder.universal.seen_version && showNotificationBadge) : false"
-                        [notificationCount]="1"></app-icon-button>
+	<div
+		class="host"
+		*ngIf="
+			(isStaff && !isAdminRoute && !hideButtons && this.screenService.isDeviceLargeExtra) ||
+			(isAssistant && !isAdminRoute && !hideButtons && this.screenService.isDeviceLargeExtra)
+		"
+		[ngClass]="isIOSTablet ? 'ios-teacherNav-mobile' : 'teacherNav-mobile'"
+		[style.background-color]="darkTheme.getBackground('low', false)">
+		<div [ngClass]="isIOSTablet ? 'ios-teacherNav-mobile-wrapper' : 'teacherNav-mobile-wrapper'" #navButtonsContainerMobile>
+			<div
+				*ngFor="let button of buttons"
+				class="teacherNav_tab"
+				#tabRefMobile
+				appCrossPointerEventTarget
+				(pointerClickEvent)="updateTab(button.route)">
+				<ng-container *ngIf="(isStaff && buttonVisibility(button)) || (user.isAssistant() && buttonVisibility(button))">
+					<div
+						[style.transition]="'transform .4s ease'"
+						appCrossPointerEventTarget
+						(pointerClickEvent)="changeTabOpacity(tabRefMobile, false)"
+						(pointerDownEvent)="changeTabOpacity(tabRefMobile, true)">
+						<div></div>
+						<app-nav-button [selected]="tab === button.route" [content]="button.title" [icon]="button.imgUrl"> </app-nav-button>
+					</div>
+				</ng-container>
+			</div>
+			<!--    <div [ngClass]="isIOSTablet ? 'ios-selected-tab-pointer' : 'selected-tab-pointer'" #tabPointer [style.left]="pointerTopSpace" [style.width]="'58px'"></div>-->
+		</div>
+	</div>
 
-                    <ng-template #whiteButton>
-                        <app-white-round-button [size]="'regular'" [icon]="'Settings'" (buttonClick)="showOptions($event)"></app-white-round-button>
-                    </ng-template>
-                </div>
-            </div>
-
-        </div>
-    </div>
-
-    <div class="host" *ngIf="isStaff && !isAdminRoute && !hideButtons && this.screenService.isDeviceLargeExtra ||
-      isAssistant && !isAdminRoute && !hideButtons && this.screenService.isDeviceLargeExtra" [ngClass]="isIOSTablet ? 'ios-teacherNav-mobile' : 'teacherNav-mobile'" [style.background-color]="darkTheme.getBackground('low', false)">
-        <div [ngClass]="isIOSTablet ? 'ios-teacherNav-mobile-wrapper' : 'teacherNav-mobile-wrapper'" #navButtonsContainerMobile>
-            <div *ngFor="let button of buttons" class="teacherNav_tab" #tabRefMobile appCrossPointerEventTarget (pointerClickEvent)="updateTab(button.route);">
-                <ng-container *ngIf="isStaff && buttonVisibility(button) || user.isAssistant() && buttonVisibility(button)">
-                    <div [style.transition]="'transform .4s ease'" appCrossPointerEventTarget (pointerClickEvent)="changeTabOpacity(tabRefMobile, false)" (pointerDownEvent)="changeTabOpacity(tabRefMobile, true)">
-                        <div>
-                        </div>
-                        <app-nav-button [selected]="tab === button.route" [content]="button.title" [icon]="button.imgUrl">
-                        </app-nav-button>
-                    </div>
-                </ng-container>
-            </div>
-            <!--    <div [ngClass]="isIOSTablet ? 'ios-selected-tab-pointer' : 'selected-tab-pointer'" #tabPointer [style.left]="pointerTopSpace" [style.width]="'58px'"></div>-->
-        </div>
-    </div>
-
-    <svg style="display: none;">
-    <defs>
-      <symbol id="SP Arrow">
-        <g stroke="none" stroke-width="1" fill="none" fill-rule="evenodd">
-          <g id="icons8-school_building" transform="translate(9.000000, 0.000000)" fill="currentColor" fill-rule="nonzero">
-            <path d="M72,0 C68.688,0 66,2.688 66,6 C66,9.312 68.688,12 72,12 L90,12 C93.312,12 96,9.312 96,6 C96,2.688 93.312,0 90,0 L72,0 Z M66,18 C64.4655,18 62.930814,18.5848122 61.757814,19.7578128 L31.7578128,49.7578128 C30.6298122,50.8798128 30,52.41 30,54 L12,54 C5.37,54 0,59.37 0,66 L0,138 C0,144.63 5.37,150 12,150 L48,150 L48,126 C48,116.058 56.058,108 66,108 C75.942,108 84,116.058 84,126 L84,150 L120,150 C126.63,150 132,144.63 132,138 L132,66 C132,59.37 126.63,54 120,54 L102,54 C102,52.41 101.370186,50.8798128 100.242186,49.7578128 L70.242186,19.7578128 C69.069186,18.5848122 67.5345,18 66,18 Z M66,48 C75.942,48 84,56.058 84,66 C84,75.942 75.942,84 66,84 C56.058,84 48,75.942 48,66 C48,56.058 56.058,48 66,48 Z M18,72 L30,72 L30,84 L18,84 L18,72 Z M102,72 L114,72 L114,84 L102,84 L102,72 Z M18,96 L30,96 L30,108 L18,108 L18,96 Z M102,96 L114,96 L114,108 L102,108 L102,96 Z M18,120 L30,120 L30,132 L18,132 L18,120 Z M102,120 L114,120 L114,132 L102,132 L102,120 Z" id="Shape"></path>
-          </g>
-        </g>
-      </symbol>
-      <symbol id="Walking">
-        <g stroke="none" fill="currentColor" stroke-width="1" fill-rule="evenodd">
-          <path d="M6.37304688 2.70833302C6.37304688 1.21256256 7.59503174 0 9.10235596 0c.72387695 0 1.41809082.28534126 1.92993164.79325294.51184082.50791073.79937744 1.19678593.79937744 1.91508008 0 1.4957714-1.22192383 2.70833301-2.72930908 2.70833301-1.50732422 0-2.72930909-1.2125616-2.72930909-2.70833301zM21.6572876 7.58333397c0-1.19661713.97753906-2.16666699 2.18347168-2.16666699 1.20587158 0 2.18347168.97004986 2.18347168 2.16666699S25.04663086 9.75 23.84075928 9.75c-1.20593262 0-2.18347168-.9700489-2.18347168-2.16666603zM2.54986572 6.48518753c-.51898193.00219536-.96472168.36664772-1.06610107.87174606l-1.4520874 6.72851563c-.09515381.383564.02764892.78810882.32037353 1.05575561.29278565.2676468.70916748.3559761 1.08660889.23051072.3774414-.12546158.65618896-.44483185.72741699-.83346749l1.45422363-6.72851562c.07415772-.322464-.00415039-.66088867-.21264648-.91892624-.20855713-.25803757-.52441406-.4074192-.85778809-.40561867zM5.31970215 9.8430996c.22070312-1.3041439 1.35827637-2.25943374 2.69091797-2.25976562 1.4199829.0007553 2.60217285 1.08184051 2.71868896 2.486166l.75482178 3.22037697 2.19622803 2.66390037c.25543213.29850197.32867431.71053696.19152832 1.07772446-.137146.3671875-.46325684.63237381-.85302735.6936264-.3897705.0612526-.78253173-.09096527-1.02728271-.39814186L9.63330078 14.4663086c-.00653076-.00906944-.01293945-.01823997-.01916504-.02750587l-.58001709 1.99104881 2.71014405 8.06152344c.22851562.53425217-.00775147 1.15229797-.5357666 1.40182114-.52807618.24952697-1.16052247.04193878-1.43444825-.47083283l-.13433838-.25390625L4.6203003 16.453125c-.27856445-.37206459-.4295044-.8229599-.4307251-1.28645706.00079346-.21748543.0345459-.43361283.10021973-.64111328l1.02990723-4.68245507zm11.85339355.97542191c-.47857666-.00247574-.90301513.30459404-1.04693603.75748634l-1.44146729 4.33333397c-.1305542.36950493-.05004883.78017807.2105713 1.07417488.2606201.2939949.66082763.4255581 1.04681396.34412384.38598632-.08143425.69763183-.36319542.81518554-.73698425l1.44360352-4.33333397c.11566162-.33063507.06329346-.69636154-.14068604-.98190307-.20397949-.28553963-.53436279-.455719-.88708496-.45689774zm4.2666626 1.1087265c.0793457-.01517677.16015625-.02156448.2409668-.01904297.0522461.00193787.10424804.00759316.15563965.01692581.81610107.06715012 1.52575683.58180237 1.83807373 1.33300782.0357666.07081604.06365966.14531707.08312988.22216797l.6140747 2.5030918 1.41375733 1.75830079c.26239014.30050278.33776856.71948624.19647217 1.09155655-.14129639.37207031-.47662354.63744163-.8735962.69136238-.39703368.05392074-.79187011-.11227608-1.02874755-.4329834l-1.2857666-1.59749222-.34326172 1.17219925 2.36468506 5.76155663c.26098633.52797317.05010986 1.16614914-.47521973 1.43828964-.52532959.2721405-1.17358398.07896805-1.46087646-.43535996l-.09387207-.17138671-3.88073731-6.52116013c-.33685303-.39181519-.52209473-.88990211-.5223999-1.40494728.0010376-.30192375.06567383-.60029411.1897583-.87597656l.980896-2.9537754c.0079956-.02625466.01654052-.05235482.02557373-.07828904l.00213623-.00211525c.26452636-.82137108.99475097-1.4088688 1.85931396-1.49592972zM3.58831787 19.0323887l-.24945068 1.18912887-1.859375 4.18310356c-.28387451.5265007-.0838623 1.18567658.44781494 1.46842575C2.09210205 25.95971298 2.26757813 26 2.4411621 26c.3897705 0 .76617432-.20620728.96380615-.57128906l1.953125-3.32405472-1.76977539-3.07226753zm13.67218018 2.9326191l.3262329-1.17854882 1.52459718 2.56022072-2.07470704 2.26399994C16.82043457 25.86742783 16.51086426 26 16.1986084 26c-.24780273 0-.49523925-.081707-.69934081-.2517891-.46289063-.38241576-.52508545-1.06621932-.13861084-1.52555465l1.8998413-2.25764847z"/>
-        </g>
-      </symbol>
-      <symbol id="Room">
-        <g stroke="none" stroke-width="1" fill="currentColor"  fill-rule="evenodd">
-          <g id="icons8-classroom" transform="translate(3.000000, 6.000000)" fill-rule="nonzero">
-            <path d="M18.770985,5.571301e-15 C8.40405623,0 0,8.42518698 0,18.8181818 C0,29.2111767 8.40405623,37.6363636 18.770985,37.6363636 C29.1379137,37.6363636 37.54197,29.2111767 37.54197,18.8181818 C37.54197,8.42518698 29.1379137,0 18.770985,0 L18.770985,5.571301e-15 Z M50.0559599,6.27272727 L50.0559599,18.8181818 L125.1399,18.8181818 L125.1399,87.8181818 L50.0559599,87.8181818 L50.0559599,93.0372854 C49.9442785,93.7146862 49.9442785,94.4058725 50.0559599,95.0832734 L50.0559599,100.363636 L131.396895,100.363636 L137.65389,100.363636 C139.910387,100.395629 142.009267,99.2071004 143.146829,97.2531612 C144.28439,95.299222 144.28439,92.8825962 143.146829,90.928657 C142.009267,88.9747178 139.910387,87.7861891 137.65389,87.8181818 L137.65389,12.5454545 C137.653544,9.08126641 134.852395,6.27307364 131.396895,6.27272727 L50.0559599,6.27272727 Z M12.51399,50.1818182 C5.60001052,50.1818182 0,55.7959091 0,62.7272727 L0,100.363636 L37.54197,100.363636 L37.54197,69 C37.54197,65.5374545 40.3451037,62.7272727 43.7989649,62.7272727 L50.0559599,62.7272727 L75.0839399,62.7272727 C77.340437,62.7592655 79.4393175,61.5707368 80.576879,59.6167976 C81.7144404,57.6628584 81.7144404,55.2462325 80.576879,53.2922933 C79.4393175,51.3383541 77.340437,50.1498255 75.0839399,50.1818182 L50.0559599,50.1818182 L31.284975,50.1818182 L12.51399,50.1818182 Z M12.51399,112.909091 C5.60270416,112.909091 0,118.525882 0,125.454545 C0,132.383209 5.60270416,138 12.51399,138 C19.4252758,138 25.02798,132.383209 25.02798,125.454545 C25.02798,118.525882 19.4252758,112.909091 12.51399,112.909091 Z M50.0559599,112.909091 C43.1446741,112.909091 37.54197,118.525882 37.54197,125.454545 C37.54197,132.383209 43.1446741,138 50.0559599,138 C56.9672458,138 62.5699499,132.383209 62.5699499,125.454545 C62.5699499,118.525882 56.9672458,112.909091 50.0559599,112.909091 Z M87.5979299,112.909091 C80.6866441,112.909091 75.0839399,118.525882 75.0839399,125.454545 C75.0839399,132.383209 80.6866441,138 87.5979299,138 C94.5092157,138 100.11192,132.383209 100.11192,125.454545 C100.11192,118.525882 94.5092157,112.909091 87.5979299,112.909091 Z M125.1399,112.909091 C118.228614,112.909091 112.62591,118.525882 112.62591,125.454545 C112.62591,132.383209 118.228614,138 125.1399,138 C132.051186,138 137.65389,132.383209 137.65389,125.454545 C137.65389,118.525882 132.051186,112.909091 125.1399,112.909091 Z" id="Shape"></path>
-          </g>
-        </g>
-      </symbol>
-    </defs>
-  </svg>
-
-
-
+	<svg style="display: none">
+		<defs>
+			<symbol id="SP Arrow">
+				<g stroke="none" stroke-width="1" fill="none" fill-rule="evenodd">
+					<g id="icons8-school_building" transform="translate(9.000000, 0.000000)" fill="currentColor" fill-rule="nonzero">
+						<path
+							d="M72,0 C68.688,0 66,2.688 66,6 C66,9.312 68.688,12 72,12 L90,12 C93.312,12 96,9.312 96,6 C96,2.688 93.312,0 90,0 L72,0 Z M66,18 C64.4655,18 62.930814,18.5848122 61.757814,19.7578128 L31.7578128,49.7578128 C30.6298122,50.8798128 30,52.41 30,54 L12,54 C5.37,54 0,59.37 0,66 L0,138 C0,144.63 5.37,150 12,150 L48,150 L48,126 C48,116.058 56.058,108 66,108 C75.942,108 84,116.058 84,126 L84,150 L120,150 C126.63,150 132,144.63 132,138 L132,66 C132,59.37 126.63,54 120,54 L102,54 C102,52.41 101.370186,50.8798128 100.242186,49.7578128 L70.242186,19.7578128 C69.069186,18.5848122 67.5345,18 66,18 Z M66,48 C75.942,48 84,56.058 84,66 C84,75.942 75.942,84 66,84 C56.058,84 48,75.942 48,66 C48,56.058 56.058,48 66,48 Z M18,72 L30,72 L30,84 L18,84 L18,72 Z M102,72 L114,72 L114,84 L102,84 L102,72 Z M18,96 L30,96 L30,108 L18,108 L18,96 Z M102,96 L114,96 L114,108 L102,108 L102,96 Z M18,120 L30,120 L30,132 L18,132 L18,120 Z M102,120 L114,120 L114,132 L102,132 L102,120 Z"
+							id="Shape"></path>
+					</g>
+				</g>
+			</symbol>
+			<symbol id="Walking">
+				<g stroke="none" fill="currentColor" stroke-width="1" fill-rule="evenodd">
+					<path
+						d="M6.37304688 2.70833302C6.37304688 1.21256256 7.59503174 0 9.10235596 0c.72387695 0 1.41809082.28534126 1.92993164.79325294.51184082.50791073.79937744 1.19678593.79937744 1.91508008 0 1.4957714-1.22192383 2.70833301-2.72930908 2.70833301-1.50732422 0-2.72930909-1.2125616-2.72930909-2.70833301zM21.6572876 7.58333397c0-1.19661713.97753906-2.16666699 2.18347168-2.16666699 1.20587158 0 2.18347168.97004986 2.18347168 2.16666699S25.04663086 9.75 23.84075928 9.75c-1.20593262 0-2.18347168-.9700489-2.18347168-2.16666603zM2.54986572 6.48518753c-.51898193.00219536-.96472168.36664772-1.06610107.87174606l-1.4520874 6.72851563c-.09515381.383564.02764892.78810882.32037353 1.05575561.29278565.2676468.70916748.3559761 1.08660889.23051072.3774414-.12546158.65618896-.44483185.72741699-.83346749l1.45422363-6.72851562c.07415772-.322464-.00415039-.66088867-.21264648-.91892624-.20855713-.25803757-.52441406-.4074192-.85778809-.40561867zM5.31970215 9.8430996c.22070312-1.3041439 1.35827637-2.25943374 2.69091797-2.25976562 1.4199829.0007553 2.60217285 1.08184051 2.71868896 2.486166l.75482178 3.22037697 2.19622803 2.66390037c.25543213.29850197.32867431.71053696.19152832 1.07772446-.137146.3671875-.46325684.63237381-.85302735.6936264-.3897705.0612526-.78253173-.09096527-1.02728271-.39814186L9.63330078 14.4663086c-.00653076-.00906944-.01293945-.01823997-.01916504-.02750587l-.58001709 1.99104881 2.71014405 8.06152344c.22851562.53425217-.00775147 1.15229797-.5357666 1.40182114-.52807618.24952697-1.16052247.04193878-1.43444825-.47083283l-.13433838-.25390625L4.6203003 16.453125c-.27856445-.37206459-.4295044-.8229599-.4307251-1.28645706.00079346-.21748543.0345459-.43361283.10021973-.64111328l1.02990723-4.68245507zm11.85339355.97542191c-.47857666-.00247574-.90301513.30459404-1.04693603.75748634l-1.44146729 4.33333397c-.1305542.36950493-.05004883.78017807.2105713 1.07417488.2606201.2939949.66082763.4255581 1.04681396.34412384.38598632-.08143425.69763183-.36319542.81518554-.73698425l1.44360352-4.33333397c.11566162-.33063507.06329346-.69636154-.14068604-.98190307-.20397949-.28553963-.53436279-.455719-.88708496-.45689774zm4.2666626 1.1087265c.0793457-.01517677.16015625-.02156448.2409668-.01904297.0522461.00193787.10424804.00759316.15563965.01692581.81610107.06715012 1.52575683.58180237 1.83807373 1.33300782.0357666.07081604.06365966.14531707.08312988.22216797l.6140747 2.5030918 1.41375733 1.75830079c.26239014.30050278.33776856.71948624.19647217 1.09155655-.14129639.37207031-.47662354.63744163-.8735962.69136238-.39703368.05392074-.79187011-.11227608-1.02874755-.4329834l-1.2857666-1.59749222-.34326172 1.17219925 2.36468506 5.76155663c.26098633.52797317.05010986 1.16614914-.47521973 1.43828964-.52532959.2721405-1.17358398.07896805-1.46087646-.43535996l-.09387207-.17138671-3.88073731-6.52116013c-.33685303-.39181519-.52209473-.88990211-.5223999-1.40494728.0010376-.30192375.06567383-.60029411.1897583-.87597656l.980896-2.9537754c.0079956-.02625466.01654052-.05235482.02557373-.07828904l.00213623-.00211525c.26452636-.82137108.99475097-1.4088688 1.85931396-1.49592972zM3.58831787 19.0323887l-.24945068 1.18912887-1.859375 4.18310356c-.28387451.5265007-.0838623 1.18567658.44781494 1.46842575C2.09210205 25.95971298 2.26757813 26 2.4411621 26c.3897705 0 .76617432-.20620728.96380615-.57128906l1.953125-3.32405472-1.76977539-3.07226753zm13.67218018 2.9326191l.3262329-1.17854882 1.52459718 2.56022072-2.07470704 2.26399994C16.82043457 25.86742783 16.51086426 26 16.1986084 26c-.24780273 0-.49523925-.081707-.69934081-.2517891-.46289063-.38241576-.52508545-1.06621932-.13861084-1.52555465l1.8998413-2.25764847z" />
+				</g>
+			</symbol>
+			<symbol id="Room">
+				<g stroke="none" stroke-width="1" fill="currentColor" fill-rule="evenodd">
+					<g id="icons8-classroom" transform="translate(3.000000, 6.000000)" fill-rule="nonzero">
+						<path
+							d="M18.770985,5.571301e-15 C8.40405623,0 0,8.42518698 0,18.8181818 C0,29.2111767 8.40405623,37.6363636 18.770985,37.6363636 C29.1379137,37.6363636 37.54197,29.2111767 37.54197,18.8181818 C37.54197,8.42518698 29.1379137,0 18.770985,0 L18.770985,5.571301e-15 Z M50.0559599,6.27272727 L50.0559599,18.8181818 L125.1399,18.8181818 L125.1399,87.8181818 L50.0559599,87.8181818 L50.0559599,93.0372854 C49.9442785,93.7146862 49.9442785,94.4058725 50.0559599,95.0832734 L50.0559599,100.363636 L131.396895,100.363636 L137.65389,100.363636 C139.910387,100.395629 142.009267,99.2071004 143.146829,97.2531612 C144.28439,95.299222 144.28439,92.8825962 143.146829,90.928657 C142.009267,88.9747178 139.910387,87.7861891 137.65389,87.8181818 L137.65389,12.5454545 C137.653544,9.08126641 134.852395,6.27307364 131.396895,6.27272727 L50.0559599,6.27272727 Z M12.51399,50.1818182 C5.60001052,50.1818182 0,55.7959091 0,62.7272727 L0,100.363636 L37.54197,100.363636 L37.54197,69 C37.54197,65.5374545 40.3451037,62.7272727 43.7989649,62.7272727 L50.0559599,62.7272727 L75.0839399,62.7272727 C77.340437,62.7592655 79.4393175,61.5707368 80.576879,59.6167976 C81.7144404,57.6628584 81.7144404,55.2462325 80.576879,53.2922933 C79.4393175,51.3383541 77.340437,50.1498255 75.0839399,50.1818182 L50.0559599,50.1818182 L31.284975,50.1818182 L12.51399,50.1818182 Z M12.51399,112.909091 C5.60270416,112.909091 0,118.525882 0,125.454545 C0,132.383209 5.60270416,138 12.51399,138 C19.4252758,138 25.02798,132.383209 25.02798,125.454545 C25.02798,118.525882 19.4252758,112.909091 12.51399,112.909091 Z M50.0559599,112.909091 C43.1446741,112.909091 37.54197,118.525882 37.54197,125.454545 C37.54197,132.383209 43.1446741,138 50.0559599,138 C56.9672458,138 62.5699499,132.383209 62.5699499,125.454545 C62.5699499,118.525882 56.9672458,112.909091 50.0559599,112.909091 Z M87.5979299,112.909091 C80.6866441,112.909091 75.0839399,118.525882 75.0839399,125.454545 C75.0839399,132.383209 80.6866441,138 87.5979299,138 C94.5092157,138 100.11192,132.383209 100.11192,125.454545 C100.11192,118.525882 94.5092157,112.909091 87.5979299,112.909091 Z M125.1399,112.909091 C118.228614,112.909091 112.62591,118.525882 112.62591,125.454545 C112.62591,132.383209 118.228614,138 125.1399,138 C132.051186,138 137.65389,132.383209 137.65389,125.454545 C137.65389,118.525882 132.051186,112.909091 125.1399,112.909091 Z"
+							id="Shape"></path>
+					</g>
+				</g>
+			</symbol>
+		</defs>
+	</svg>
 </ng-container>

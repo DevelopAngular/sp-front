@@ -1,94 +1,94 @@
-import {Component, EventEmitter, Input, OnInit, Output} from '@angular/core';
-import {FormGroup} from '@angular/forms';
-import {RoomData} from '../overlay-data.service';
-import {BehaviorSubject, Subject} from 'rxjs';
-import {ValidButtons} from '../advanced-options/advanced-options.component';
-import {DEFAULT_VISIBILITY_STUDENTS} from '../visibility-room/visibility-room.type';
-import {slideOpacity } from '../../../animations';
+import { Component, EventEmitter, Input, OnInit, Output } from '@angular/core';
+import { FormGroup } from '@angular/forms';
+import { RoomData } from '../overlay-data.service';
+import { BehaviorSubject, Subject } from 'rxjs';
+import { ValidButtons } from '../advanced-options/advanced-options.component';
+import { DEFAULT_VISIBILITY_STUDENTS } from '../visibility-room/visibility-room.type';
+import { slideOpacity } from '../../../animations';
 
 @Component({
-  selector: 'app-new-room-in-folder',
-  templateUrl: './new-room-in-folder.component.html',
-  styleUrls: ['./new-room-in-folder.component.scss'],
-  animations: [slideOpacity],
+	selector: 'app-new-room-in-folder',
+	templateUrl: './new-room-in-folder.component.html',
+	styleUrls: ['./new-room-in-folder.component.scss'],
+	animations: [slideOpacity],
 })
 export class NewRoomInFolderComponent implements OnInit {
+	@Input() form: FormGroup;
 
-  @Input() form: FormGroup;
+	@Input() visibilityForm: FormGroup;
 
-  @Input() visibilityForm: FormGroup;
+	@Input() passLimitForm: FormGroup;
 
-  @Input() passLimitForm: FormGroup;
+	@Input() isEnableRoomTrigger$: Subject<boolean>;
 
-  @Input() isEnableRoomTrigger$: Subject<boolean>;
+	@Input() showErrors: boolean;
 
-  @Input() showErrors: boolean;
+	@Output() back = new EventEmitter();
 
-  @Output() back = new EventEmitter();
+	@Output() roomDataResult: EventEmitter<{ data: RoomData; buttonState: ValidButtons }> = new EventEmitter<{
+		data: RoomData;
+		buttonState: ValidButtons;
+	}>();
 
-  @Output() roomDataResult: EventEmitter<{data: RoomData, buttonState: ValidButtons}> = new EventEmitter<{data: RoomData, buttonState: ValidButtons}>();
+	@Output() add: EventEmitter<RoomData> = new EventEmitter<RoomData>();
 
-  @Output() add: EventEmitter<RoomData> = new EventEmitter<RoomData>();
+	@Output() errorsEmit: EventEmitter<any> = new EventEmitter<any>();
 
-  @Output() errorsEmit: EventEmitter<any> = new EventEmitter<any>();
+	roomValidButtons = new BehaviorSubject<ValidButtons>({
+		publish: false,
+		incomplete: false,
+		cancel: false,
+	});
 
-  roomValidButtons = new BehaviorSubject<ValidButtons>({
-      publish: false,
-      incomplete: false,
-      cancel: false
-  });
+	roomInFolderData: RoomData = {
+		id: '',
+		roomName: '',
+		roomNumber: '',
+		timeLimit: '',
+		selectedTeachers: [],
+		travelType: [],
+		restricted: null,
+		scheduling_restricted: null,
+		needs_check_in: null,
+		advOptState: {
+			now: { state: '', data: { all_teach_assign: null, any_teach_assign: null, selectedTeachers: [] } },
+			future: { state: '', data: { all_teach_assign: null, any_teach_assign: null, selectedTeachers: [] } },
+		},
+		visibility: DEFAULT_VISIBILITY_STUDENTS,
+		enable: true,
+	};
 
-  roomInFolderData: RoomData = {
-      id: '',
-      roomName: '',
-      roomNumber: '',
-      timeLimit: '',
-      selectedTeachers: [],
-      travelType: [],
-      restricted: null,
-      scheduling_restricted: null,
-      needs_check_in: null,
-      advOptState: {
-          now: { state: '', data: { all_teach_assign: null, any_teach_assign: null, selectedTeachers: [] } },
-          future: { state: '', data: { all_teach_assign: null, any_teach_assign: null, selectedTeachers: [] } }
-      },
-      visibility: DEFAULT_VISIBILITY_STUDENTS,
-      enable: true
-  };
+	constructor() {}
 
-  constructor() { }
+	get showPubish() {
+		return this.roomValidButtons.getValue().publish && this.visibilityForm.valid;
+	}
 
-  get showPubish() {
-      return this.roomValidButtons.getValue().publish && this.visibilityForm.valid;
-  }
+	get showIncomplete() {
+		return this.roomValidButtons.getValue().incomplete && this.visibilityForm.invalid;
+	}
 
-  get showIncomplete() {
-      return this.roomValidButtons.getValue().incomplete && this.visibilityForm.invalid;
-  }
+	get showCancel() {
+		return this.roomValidButtons.getValue().cancel;
+	}
 
-  get showCancel() {
-      return this.roomValidButtons.getValue().cancel;
-  }
+	ngOnInit() {}
 
-  ngOnInit() {
-  }
+	goBack() {
+		this.back.emit();
+	}
 
-  goBack() {
-    this.back.emit();
-  }
+	addInFolder() {
+		if (this.roomValidButtons.getValue().incomplete) {
+			this.errorsEmit.emit();
+			return;
+		}
+		this.add.emit(this.roomInFolderData);
+	}
 
-  addInFolder() {
-    if (this.roomValidButtons.getValue().incomplete) {
-      this.errorsEmit.emit();
-      return;
-    }
-    this.add.emit(this.roomInFolderData);
-  }
-
-  roomResult({data, buttonState}) {
-    this.roomInFolderData = data;
-    this.roomValidButtons.next(buttonState);
-    this.roomDataResult.emit({data, buttonState});
-  }
-
+	roomResult({ data, buttonState }) {
+		this.roomInFolderData = data;
+		this.roomValidButtons.next(buttonState);
+		this.roomDataResult.emit({ data, buttonState });
+	}
 }

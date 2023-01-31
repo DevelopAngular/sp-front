@@ -1,177 +1,178 @@
-﻿import {Component, ElementRef, EventEmitter, Input, OnChanges, OnDestroy, OnInit, Output, SimpleChanges, ViewChild} from '@angular/core';
-import {MatDialog} from '@angular/material/dialog';
-import {merge, of, Subject} from 'rxjs';
-import {filter, takeUntil} from 'rxjs/operators';
-import {FormControl, FormGroup} from '@angular/forms';
+﻿import { Component, ElementRef, EventEmitter, Input, OnChanges, OnDestroy, OnInit, Output, SimpleChanges, ViewChild } from '@angular/core';
+import { MatDialog } from '@angular/material/dialog';
+import { merge, of, Subject } from 'rxjs';
+import { filter, takeUntil } from 'rxjs/operators';
+import { FormControl, FormGroup } from '@angular/forms';
 
 @Component({
-  selector: 'app-input',
-  templateUrl: './app-input.component.html',
-  styleUrls: ['./app-input.component.scss']
+	selector: 'app-input',
+	templateUrl: './app-input.component.html',
+	styleUrls: ['./app-input.component.scss'],
 })
 export class AppInputComponent implements OnInit, OnChanges, OnDestroy {
+	@Input() input_type: string = 'text';
+	@Input() input_value: string | number;
+	@Input() input_label: string;
+	@Input() placeholder: string = '';
+	@Input() maxLength: string = '100';
+	@Input() width: string = '0px';
+	@Input() height: string = '40px';
+	@Input() padding: string = '8px';
+	@Input() fieldSpace: string = '0px';
+	@Input() rightIcon: string;
+	@Input() tooltipText: string;
+	@Input() textAlign: string;
+	@Input() isErrorIcon: boolean = true;
+	@Input() isFocus: boolean;
+	@Input() forcedFocus: boolean;
+	@Input() errorIconTop: number = 8;
+	@Input() disabled: boolean = false;
+	@Input() isSuccessIcon: boolean;
+	@Input() forceFocus$: Subject<boolean> = new Subject<boolean>();
+	@Input() autocomplete: string = 'off';
+	@Input() showPasswordButton: boolean;
+	@Input() timeInput: boolean;
+	@Input() pattern: string;
+	@Input() tabIndex: number = 1;
+	@Input() tabAttentive: boolean = false;
+	@Input() forceError: boolean = false;
+	@Input() showUnits: boolean;
+	@Input() units: string;
+	@Input() color = 'black';
 
-  @Input() input_type: string = 'text';
-  @Input() input_value: string | number;
-  @Input() input_label: string;
-  @Input() placeholder: string = '';
-  @Input() maxLength: string = '100';
-  @Input() width: string = '0px';
-  @Input() height: string = '40px';
-  @Input() padding: string = '8px';
-  @Input() fieldSpace: string = '0px';
-  @Input() rightIcon: string;
-  @Input() tooltipText: string;
-  @Input() textAlign: string;
-  @Input() isErrorIcon: boolean = true;
-  @Input() isFocus: boolean;
-  @Input() forcedFocus: boolean;
-  @Input() errorIconTop: number = 8;
-  @Input() disabled: boolean = false;
-  @Input() isSuccessIcon: boolean;
-  @Input() forceFocus$: Subject<boolean> = new Subject<boolean>();
-  @Input() autocomplete: string = 'off';
-  @Input() showPasswordButton: boolean;
-  @Input() timeInput: boolean;
-  @Input() pattern: string;
-  @Input() tabIndex: number = 1;
-  @Input() tabAttentive: boolean = false;
-  @Input() forceError: boolean = false;
-  @Input() showUnits: boolean;
-  @Input() units: string;
-  @Input() color = 'black';
+	@Input() formGroup: FormGroup;
+	@Input() controlName: FormControl;
 
-  @Input() formGroup: FormGroup;
-  @Input() controlName: FormControl;
+	@Output() onUpdate = new EventEmitter<string | number>();
+	@Output() over = new EventEmitter();
+	@Output() leave = new EventEmitter();
+	@Output() blurEvent = new EventEmitter();
+	@Output() focusEvent = new EventEmitter();
 
-  @Output() onUpdate = new EventEmitter<string | number>();
-  @Output() over = new EventEmitter();
-  @Output() leave = new EventEmitter();
-  @Output() blurEvent = new EventEmitter();
-  @Output() focusEvent = new EventEmitter();
+	@ViewChild('inp', { static: true }) input: ElementRef<HTMLInputElement>;
 
-  @ViewChild('inp', {static: true}) input: ElementRef<HTMLInputElement>;
+	private initialValue: string | number;
 
-  private initialValue: string | number;
+	public hovered: boolean;
+	public pressed: boolean;
+	public left;
+	private destroy$ = new Subject();
 
-  public hovered: boolean;
-  public pressed: boolean;
-  public left;
-  private destroy$ = new Subject();
+	constructor(public dialog: MatDialog) {}
 
+	get containerWidth() {
+		return this.width ? parseFloat(this.width) + 16 + 'px' : 0;
+	}
 
-  constructor(public dialog: MatDialog) {
-  }
+	get minLeftMargin() {
+		if (this.controlName.value === 'Unlimited') {
+			// TODO: Remove in future, since this is specific to pass limits
+			return 94;
+		}
+		const value = parseFloat(this.controlName.value);
+		if (Number.isNaN(value)) {
+			return 32;
+		}
+		const absoluteValue = Math.abs(value);
+		let margin: number;
 
-  get containerWidth() {
-    return this.width ? parseFloat(this.width) + 16 + 'px' : 0;
-  }
+		if (absoluteValue < 10) {
+			margin = 32;
+		} else if (absoluteValue >= 10 && absoluteValue < 100) {
+			margin = 41;
+		} else if (absoluteValue >= 100 && absoluteValue < 1000) {
+			margin = 50;
+		} else if (absoluteValue >= 1000) {
+			margin = 59;
+		}
 
-  get minLeftMargin() {
-    if (this.controlName.value === 'Unlimited') { // TODO: Remove in future, since this is specific to pass limits
-      return 94;
-    }
-    const value = parseFloat(this.controlName.value);
-    if (Number.isNaN(value)) {
-      return 32;
-    }
-    const absoluteValue = Math.abs(value);
-    let margin: number;
+		if (value < 0) {
+			margin += 7;
+		}
 
-    if (absoluteValue < 10) {
-      margin = 32;
-    } else if (absoluteValue >= 10 && absoluteValue < 100) {
-      margin = 41;
-    } else if (absoluteValue >= 100 && absoluteValue < 1000) {
-      margin = 50;
-    } else if (absoluteValue >= 1000) {
-      margin = 59;
-    }
+		return margin;
+	}
 
-    if (value < 0) {
-      margin += 7;
-    }
+	ngOnInit() {
+		merge(of(''), this.forceFocus$)
+			.pipe(takeUntil(this.destroy$))
+			.subscribe(() => {
+				setTimeout(() => {
+					if (this.isFocus) {
+						this.input.nativeElement.focus();
+					} else {
+						this.input.nativeElement.blur();
+					}
+				}, 50);
+			});
 
-    return margin;
-  }
+		setTimeout(() => {
+			if (this.controlName.value !== undefined) {
+				this.controlName.setValue(this.input_value);
+			}
+		}, 50);
 
-  ngOnInit() {
-    merge(of(''), this.forceFocus$).pipe(takeUntil(this.destroy$))
-      .subscribe(() => {
-        setTimeout(() => {
-          if (this.isFocus) {
-            this.input.nativeElement.focus();
-          } else {
-            this.input.nativeElement.blur();
-          }
-        }, 50);
-      });
+		this.controlName.valueChanges
+			.pipe(
+				takeUntil(this.destroy$),
+				filter((res) => res !== undefined)
+			)
+			.subscribe((res) => {
+				this.onUpdate.emit(res);
+			});
+	}
 
-    setTimeout(() => {
-      if (this.controlName.value !== undefined) {
-        this.controlName.setValue(this.input_value);
-      }
-    }, 50);
+	ngOnDestroy(): void {
+		this.destroy$.next();
+		this.destroy$.complete();
+	}
 
-    this.controlName.valueChanges
-      .pipe(takeUntil(this.destroy$), filter(res => res !== undefined))
-      .subscribe(res => {
-        this.onUpdate.emit(res);
-      });
-  }
+	ngOnChanges(sc: SimpleChanges) {
+		// if ('forcedFocus' in sc && !sc.forcedFocus.isFirstChange() && sc.forcedFocus.currentValue) {
+		//   this.input.nativeElement.focus();
+		// }
+	}
 
-  ngOnDestroy(): void {
-    this.destroy$.next();
-    this.destroy$.complete();
-  }
+	updateFocus(el) {
+		if (this.tabAttentive) {
+			this.isFocus = true;
+		}
 
-  ngOnChanges(sc: SimpleChanges) {
-    // if ('forcedFocus' in sc && !sc.forcedFocus.isFirstChange() && sc.forcedFocus.currentValue) {
-    //   this.input.nativeElement.focus();
-    // }
-  }
+		this.initialValue = this.input_value;
 
-  updateFocus(el) {
+		if (this.isFocus) {
+			el.focus();
+			this.focusEvent.emit();
+		} else if (!this.forcedFocus) {
+			el.blur();
+		}
+	}
 
-    if (this.tabAttentive) {
-      this.isFocus = true;
-    }
+	forceFocus() {
+		this.isFocus = true;
+		this.input.nativeElement.focus();
+		this.focusEvent.emit();
+	}
 
-    this.initialValue = this.input_value;
+	onBlur(value) {
+		this.hovered = false;
+		this.isFocus = false;
+		if (!this.initialValue || value !== this.initialValue) {
+			this.blurEvent.emit(value);
+		}
+	}
 
-    if (this.isFocus) {
-      el.focus();
-      this.focusEvent.emit();
-    } else if (!this.forcedFocus) {
-      el.blur();
-    }
-  }
+	changeInput() {
+		if (this.input_type === 'password') {
+			this.input_type = 'text';
+		} else {
+			this.input_type = 'password';
+		}
+	}
 
-  forceFocus() {
-    this.isFocus = true;
-    this.input.nativeElement.focus();
-    this.focusEvent.emit();
-  }
-
-  onBlur(value) {
-    this.hovered = false;
-    this.isFocus = false;
-    if (!this.initialValue || (value !== this.initialValue)) {
-      this.blurEvent.emit(value);
-    }
-  }
-
-  changeInput() {
-    if (this.input_type === 'password') {
-      this.input_type = 'text';
-    } else {
-      this.input_type = 'password';
-    }
-  }
-
-  errorTooltipToggleMobile(element) {
-    if (window.innerWidth <= 425) {
-      element.toggle();
-    }
-  }
+	errorTooltipToggleMobile(element) {
+		if (window.innerWidth <= 425) {
+			element.toggle();
+		}
+	}
 }

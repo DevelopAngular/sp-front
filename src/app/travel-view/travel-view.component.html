@@ -1,10 +1,13 @@
 <div class="travel-view-wrapper" [style.height]="height">
-  <div>
-    {{ originRoomName }}
-  </div>
-  <img class="arrow" [src]="'./assets/' +(pass?.travel_type==='one_way'?'SP Arrow':'SP Arrow Double') +' (White).svg' | resolveAsset"
-      [style.height]="'55px'" [style.width]="(pass?.travel_type==='one_way'?'56px':'125px')">
-  <div>
-    {{ destinationRoomName }}
-  </div>
+	<div>
+		{{ originRoomName }}
+	</div>
+	<img
+		class="arrow"
+		[src]="'./assets/' + (pass?.travel_type === 'one_way' ? 'SP Arrow' : 'SP Arrow Double') + ' (White).svg' | resolveAsset"
+		[style.height]="'55px'"
+		[style.width]="pass?.travel_type === 'one_way' ? '56px' : '125px'" />
+	<div>
+		{{ destinationRoomName }}
+	</div>
 </div>

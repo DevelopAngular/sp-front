@@ -1,43 +1,41 @@
 <div
-    #but
-    class="button-wrapper"
-    [style.background]="backgroundGradient()"
-    [style.box-shadow]="boxShadow"
-    [ngClass]="{'disabled': disabled}"
-    [@pressState]="buttonState"
-    (mouseenter)="hovered = true"
-    (mouseleave)="buttonDown = false; hovered = false"
+	#but
+	class="button-wrapper"
+	[style.background]="backgroundGradient()"
+	[style.box-shadow]="boxShadow"
+	[ngClass]="{ disabled: disabled }"
+	[@pressState]="buttonState"
+	(mouseenter)="hovered = true"
+	(mouseleave)="buttonDown = false; hovered = false"
+	appCrossPointerEventTarget
+	(pointerClickEvent)="buttonDown = false; buttonClick()"
+	(pointerDownEvent)="buttonDown = true"
+	(pointerCancelEvent)="buttonDown = false">
+	<div nuxTooltip [contentTemplate]="nuxTemplate" [showToolTip$]="showPassLimitNux" [position]="nuxWrapperPosition" class="pass-limit-nux-wrapper">
+		<ng-container *ngIf="title === 'Now' && passLimitInfo.showPasses" [ngSwitch]="passLimitInfo.current">
+			<div *ngSwitchCase="'0'" class="pass-limit-counter pass-limit-locked" customToolTip [contentTemplate]="passLimitToolTip">
+				<img [src]="'assets/Pass Limit Lock (White).svg' | resolveAsset" style="width: 85%" />
+			</div>
 
-    appCrossPointerEventTarget
-    (pointerClickEvent)="buttonDown = false; buttonClick()"
-    (pointerDownEvent)="buttonDown = true"
-    (pointerCancelEvent)="buttonDown = false"
->
-  <div nuxTooltip [contentTemplate]="nuxTemplate" [showToolTip$]="showPassLimitNux" [position]="nuxWrapperPosition" class="pass-limit-nux-wrapper">
-    <ng-container *ngIf="title === 'Now' && passLimitInfo.showPasses" [ngSwitch]="passLimitInfo.current">
-      <div *ngSwitchCase="'0'" class="pass-limit-counter pass-limit-locked" customToolTip [contentTemplate]="passLimitToolTip">
-        <img [src]="'assets/Pass Limit Lock (White).svg' | resolveAsset" style="width: 85%">
-      </div>
+			<div *ngSwitchCase="'1'" class="pass-limit-counter pass-limit-one-remaining">
+				<span customToolTip [contentTemplate]="passLimitToolTip">{{ passLimitInfo.current }}</span>
+			</div>
 
-      <div *ngSwitchCase="'1'" class="pass-limit-counter pass-limit-one-remaining">
-        <span customToolTip [contentTemplate]="passLimitToolTip">{{passLimitInfo.current}}</span>
-      </div>
+			<div *ngSwitchDefault class="pass-limit-counter">
+				<span customToolTip [contentTemplate]="passLimitToolTip">{{ passLimitInfo.current }}</span>
+			</div>
 
-      <div *ngSwitchDefault class="pass-limit-counter">
-        <span customToolTip [contentTemplate]="passLimitToolTip">{{passLimitInfo.current}}</span>
-      </div>
+			<ng-template #passLimitToolTip>
+				<div class="ds-tooltip" style="width: 200px">
+					<span>{{ passLimitInfo.current }}/{{ passLimitInfo.max }} passes remaining today.</span>
+					<span *ngIf="passLimitInfo.current === 0"> You must request a pass from a teacher.</span>
+				</div>
+			</ng-template>
+		</ng-container>
+	</div>
+	<div class="title">{{ title }}</div>
 
-      <ng-template #passLimitToolTip>
-        <div class="ds-tooltip" style="width: 200px">
-          <span>{{passLimitInfo.current}}/{{passLimitInfo.max}} passes remaining today.</span>
-          <span *ngIf="passLimitInfo.current === 0"> You must request a pass from a teacher.</span>
-        </div>
-      </ng-template>
-    </ng-container>
-  </div>
-  <div class="title">{{ title }}</div>
-
-  <ng-template #nuxTemplate>
-    <app-nux-universal [showBadge]="false" [description]="passLimitNuxDesc" (gotItEvent)="dismissNux()"></app-nux-universal>
-  </ng-template>
+	<ng-template #nuxTemplate>
+		<app-nux-universal [showBadge]="false" [description]="passLimitNuxDesc" (gotItEvent)="dismissNux()"></app-nux-universal>
+	</ng-template>
 </div>

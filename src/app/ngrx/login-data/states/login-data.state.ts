@@ -1,4 +1,4 @@
 export interface ILoginDataState {
-  queryParams: any;
-  urlAfterLogin: string;
+	queryParams: any;
+	urlAfterLogin: string;
 }

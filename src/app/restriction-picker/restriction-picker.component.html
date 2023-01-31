@@ -1,29 +1,28 @@
-<div class="picker-wrapper"
->
-  <div class="disabled" *ngIf="disabled"></div>
-  <div class="choices"
-       [style.background-color]="'rgba(247,247,247,1)'"
-       [style.height.px]="height">
-
-    <div *ngFor="let choice of choices; let i=index;"
-         [style.flex]="'1 1 auto'" [style.height.%]="100"
-         [class.divider]="choices.length > 1 && i < choices.length - 1 && selectedChoice !== choice ">
-      <div class="choice"
-           [customToolTip]="tooltipText && isDisabled(choice) ? tooltipText : null"
-           [style.opacity]="isDisabled(choice) ? 0.5 : 1"
-           [style.cursor]="isDisabled(choice) ? 'default' : 'pointer'"
-           [style.color]="selectedChoice === choice ? selectedColor : color"
-           [style.font-size]="fontSize + 'px'"
-           [style.width]="width ? (width / choices.length + 'px') : 'auto' "
-           appCrossPointerEventTarget
-           (pointerClickEvent)="onClick(choice)"
-           [@Select]="{ value: selectedChoice === choice ? 'selected' : 'unselected', params: {background: backgroundColor}}"
-      >
-
-        <div [style.padding-left]="choice === 'All teachers in room' ? '10px' : padding + 'px'" [style.padding-right]="choice === 'All teachers in room' ? '10px' : padding + 'px'">
-          <span style="line-height: 1">{{ choice }}</span>
-        </div>
-      </div>
-    </div>
-  </div>
+<div class="picker-wrapper">
+	<div class="disabled" *ngIf="disabled"></div>
+	<div class="choices" [style.background-color]="'rgba(247,247,247,1)'" [style.height.px]="height">
+		<div
+			*ngFor="let choice of choices; let i = index"
+			[style.flex]="'1 1 auto'"
+			[style.height.%]="100"
+			[class.divider]="choices.length > 1 && i < choices.length - 1 && selectedChoice !== choice">
+			<div
+				class="choice"
+				[customToolTip]="tooltipText && isDisabled(choice) ? tooltipText : null"
+				[style.opacity]="isDisabled(choice) ? 0.5 : 1"
+				[style.cursor]="isDisabled(choice) ? 'default' : 'pointer'"
+				[style.color]="selectedChoice === choice ? selectedColor : color"
+				[style.font-size]="fontSize + 'px'"
+				[style.width]="width ? width / choices.length + 'px' : 'auto'"
+				appCrossPointerEventTarget
+				(pointerClickEvent)="onClick(choice)"
+				[@Select]="{ value: selectedChoice === choice ? 'selected' : 'unselected', params: { background: backgroundColor } }">
+				<div
+					[style.padding-left]="choice === 'All teachers in room' ? '10px' : padding + 'px'"
+					[style.padding-right]="choice === 'All teachers in room' ? '10px' : padding + 'px'">
+					<span style="line-height: 1">{{ choice }}</span>
+				</div>
+			</div>
+		</div>
+	</div>
 </div>

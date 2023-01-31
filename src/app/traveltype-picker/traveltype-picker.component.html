@@ -1,23 +1,26 @@
-<div class="wrapper"
-     [style.width]="width"
-     [style.height]="height"
-     [style.left]="choice2 ? '78px' : '104px'"
-     [style.cursor]="choice2 ? 'pointer' : 'default'"
->
-  <div class="option"
-      [style.width]="choice2?'50%':'inherit'" (click)="updateTravelType(choice1)"
-      [style.color]="getFontColor(choice1)"
-      [style.background-color]="getBackgroundColor(choice1)"
-      [@Select]="{ value: selectedChoice === choice1 ? 'selected' : 'unselected', params: {background: 'white'}}"
-
-  >
-      {{choice1}}</div>
-  <div *ngIf="choice2" [style.width]="'50%'" class="option"
-       [style.color]="getFontColor(choice2)"
-       [style.background-color]="getBackgroundColor(choice2)"
-       (click)="updateTravelType(choice2)"
-       [@Select]="{ value: selectedChoice === choice2 ? 'selected' : 'unselected', params: {background: 'white'}}"
-
-  >
-      {{choice2}}</div>
+<div
+	class="wrapper"
+	[style.width]="width"
+	[style.height]="height"
+	[style.left]="choice2 ? '78px' : '104px'"
+	[style.cursor]="choice2 ? 'pointer' : 'default'">
+	<div
+		class="option"
+		[style.width]="choice2 ? '50%' : 'inherit'"
+		(click)="updateTravelType(choice1)"
+		[style.color]="getFontColor(choice1)"
+		[style.background-color]="getBackgroundColor(choice1)"
+		[@Select]="{ value: selectedChoice === choice1 ? 'selected' : 'unselected', params: { background: 'white' } }">
+		{{ choice1 }}
+	</div>
+	<div
+		*ngIf="choice2"
+		[style.width]="'50%'"
+		class="option"
+		[style.color]="getFontColor(choice2)"
+		[style.background-color]="getBackgroundColor(choice2)"
+		(click)="updateTravelType(choice2)"
+		[@Select]="{ value: selectedChoice === choice2 ? 'selected' : 'unselected', params: { background: 'white' } }">
+		{{ choice2 }}
+	</div>
 </div>

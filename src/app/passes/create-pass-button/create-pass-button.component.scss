@@ -1,67 +1,67 @@
 @media all and (max-width: 425px) and (min-width: 360px) {
-  div.button-wrapper {
-    width: 157px;
-    height: 95px;
-  }
+	div.button-wrapper {
+		width: 157px;
+		height: 95px;
+	}
 }
 
 @media all and (max-width: 940px) {
-  div.button-wrapper {
-    .title {
-      font-size: 20px;
-    }
-  }
+	div.button-wrapper {
+		.title {
+			font-size: 20px;
+		}
+	}
 }
 
 .button-wrapper {
-  width: 143px;
-  height: 86.5px;
-  border-radius: 12.75px;
-  display: flex;
-  flex-direction: column;
-  color: white;
-  overflow: visible;
-  font-style: normal;
-  font-stretch: normal;
-  transition: box-shadow .3s ease;
-  justify-content: center;
-  align-items: center;
-  text-align: center;
-  cursor: pointer;
-  position: relative;
+	width: 143px;
+	height: 86.5px;
+	border-radius: 12.75px;
+	display: flex;
+	flex-direction: column;
+	color: white;
+	overflow: visible;
+	font-style: normal;
+	font-stretch: normal;
+	transition: box-shadow 0.3s ease;
+	justify-content: center;
+	align-items: center;
+	text-align: center;
+	cursor: pointer;
+	position: relative;
 
-  &.disabled {
-    opacity: 0.5;
-    cursor: default;
-  }
+	&.disabled {
+		opacity: 0.5;
+		cursor: default;
+	}
 
-  .title {
-    line-height: 1;
-    white-space: nowrap;
-    font-weight: bold;
-    font-size: 20px;
-  }
+	.title {
+		line-height: 1;
+		white-space: nowrap;
+		font-weight: bold;
+		font-size: 20px;
+	}
 }
 
 .pass-limit-nux-wrapper {
-  position: absolute;
-  top: 5px;
-  right: 5px;
+	position: absolute;
+	top: 5px;
+	right: 5px;
 
-  .pass-limit-counter {
-    background: #FFFFFF33;
-    border-radius: 50%;
-    padding: 5px;
-    color: white;
-    height: 20px;
-    width: 20px;
+	.pass-limit-counter {
+		background: #ffffff33;
+		border-radius: 50%;
+		padding: 5px;
+		color: white;
+		height: 20px;
+		width: 20px;
 
-    &.pass-limit-one-remaining {
-      background: #EBBB00
-    }
+		&.pass-limit-one-remaining {
+			background: #ebbb00;
+		}
 
-    &.pass-limit-locked {
-      background: #E32C66
-    }
-  }
+		&.pass-limit-locked {
+			background: #e32c66;
+		}
+	}
 }

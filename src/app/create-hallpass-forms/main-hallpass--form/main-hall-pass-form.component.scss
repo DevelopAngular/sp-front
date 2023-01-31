@@ -1,86 +1,86 @@
 @media screen and (max-width: 335px) {
-  div.fixed-card-wrapper {
-    width: 300px !important;
-  }
+	div.fixed-card-wrapper {
+		width: 300px !important;
+	}
 
-  .form,
-  div.fixed-card {
-    width: 300px !important;
-  }
+	.form,
+	div.fixed-card {
+		width: 300px !important;
+	}
 }
 
 @media screen and (max-width: 940px) and (min-width: 335px) {
-  div.fixed-card {
-    width: 335px !important;
-  }
+	div.fixed-card {
+		width: 335px !important;
+	}
 
-  .form,
-  .fixed-card-wrapper {
-    width: 335px !important;
-  }
+	.form,
+	.fixed-card-wrapper {
+		width: 335px !important;
+	}
 }
 
 @media screen and (max-width: 940px) {
-  div.fixed-card {
-    //left: 50%;
-    //transform: translateX(-50%);
-  }
+	div.fixed-card {
+		//left: 50%;
+		//transform: translateX(-50%);
+	}
 
-  //.form {
-  //  width: initial !important;
-  //}
+	//.form {
+	//  width: initial !important;
+	//}
 
-  div.pretty-replace-box {
-    overflow: visible !important;
-  }
+	div.pretty-replace-box {
+		overflow: visible !important;
+	}
 }
 
 .ios-form,
 .ios-fixed-card-wrapper {
-  width: 335px !important;
+	width: 335px !important;
 }
 
 div.ios-fixed-card {
-  left: 50% !important;
-  width: 335px !important;
-  transform: translateX(-50%) !important;
+	left: 50% !important;
+	width: 335px !important;
+	transform: translateX(-50%) !important;
 }
 
-
 .ios-pretty-replace-box {
-  overflow: visible !important;
+	overflow: visible !important;
 }
 
 .ios-form,
 .form {
-  position: relative;
-  border-radius: 14px;
+	position: relative;
+	border-radius: 14px;
 }
 
 .ios-pretty-replace-box,
 .pretty-replace-box {
-  position: relative;
-  overflow: hidden;
-  border-radius: 14px;
-  height: 100%;
+	position: relative;
+	overflow: hidden;
+	border-radius: 14px;
+	height: 100%;
 }
 
 .ios-fixed-card,
 .fixed-card {
-  position: absolute;
-  top: 0;
-  left: 0;
-  right: 0;
-  bottom: 0;
-  margin: auto;
+	position: absolute;
+	top: 0;
+	left: 0;
+	right: 0;
+	bottom: 0;
+	margin: auto;
 }
 
 .ios-fixed-card-wrapper,
 .fixed-card-wrapper {
-  position: relative
+	position: relative;
 }
 
-.student-groups, .calendar {
-  border-radius: 14px;
-  box-shadow: 0 2px 26px 0px rgba(0, 0, 0, 0.15);
+.student-groups,
+.calendar {
+	border-radius: 14px;
+	box-shadow: 0 2px 26px 0px rgba(0, 0, 0, 0.15);
 }

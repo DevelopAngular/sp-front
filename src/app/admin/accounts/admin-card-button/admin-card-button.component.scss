@@ -1,62 +1,62 @@
 @import '../../../../sp-colors';
 
 .wrapper {
-  width: 350px;
-  height: 100px;
-  background: #FFFFFF;
-  padding: 0 30px 0 20px;
-  box-shadow: 0 5px 20px rgba(0, 0, 0, 0.06);
-  border-radius: 10px;
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  margin-bottom: 12px;
-  position: relative;
-  cursor: pointer;
-  .go {
-    opacity: 0;
-    position: absolute;
-    right: 25px;
-    transition: opacity .25s ease;
-    cursor: pointer;
-  }
-  &:hover > .go {
-    opacity: 1;
-  }
-  .left-content {
-    display: flex;
-    align-items: center;
-    .text {
-      margin-left: 20px;
-      .title {
-        display: flex;
-        font-weight: bold;
-        font-size: 20px;
-        line-height: 24px;
-        color: $navy;
-        display: flex;
+	width: 350px;
+	height: 100px;
+	background: #ffffff;
+	padding: 0 30px 0 20px;
+	box-shadow: 0 5px 20px rgba(0, 0, 0, 0.06);
+	border-radius: 10px;
+	display: flex;
+	align-items: center;
+	justify-content: space-between;
+	margin-bottom: 12px;
+	position: relative;
+	cursor: pointer;
+	.go {
+		opacity: 0;
+		position: absolute;
+		right: 25px;
+		transition: opacity 0.25s ease;
+		cursor: pointer;
+	}
+	&:hover > .go {
+		opacity: 1;
+	}
+	.left-content {
+		display: flex;
+		align-items: center;
+		.text {
+			margin-left: 20px;
+			.title {
+				display: flex;
+				font-weight: bold;
+				font-size: 20px;
+				line-height: 24px;
+				color: $navy;
+				display: flex;
 
-        .new {
-          margin-left: 15px;
-          color: white;
-          background-color: $jade;
-          display: flex;
-          font-size: 14px;
-          align-items: center;
-          justify-content: center;
-          width: 60px;
-          height: 24px;
-          border-radius: 12px;
-        }
-      }
+				.new {
+					margin-left: 15px;
+					color: white;
+					background-color: $jade;
+					display: flex;
+					font-size: 14px;
+					align-items: center;
+					justify-content: center;
+					width: 60px;
+					height: 24px;
+					border-radius: 12px;
+				}
+			}
 
-      .subtitle {
-        display: flex;
-        font-size: 16px;
-        color: $blue-gray;
-        align-items: center;
-        margin-top: 5px;
-      }
-    }
-  }
+			.subtitle {
+				display: flex;
+				font-size: 16px;
+				color: $blue-gray;
+				align-items: center;
+				margin-top: 5px;
+			}
+		}
+	}
 }

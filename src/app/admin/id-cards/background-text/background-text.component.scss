@@ -1,29 +1,29 @@
-@import "../../../../design-system.scss";
-@import "../../../../sp-colors.scss";
+@import '../../../../design-system.scss';
+@import '../../../../sp-colors.scss';
 .dialog-wrapper {
-    height: 265px;
-    width: 400px;
-    padding: 20px;
-    .header {
-        margin-top: 0;
-        margin-bottom: 6px;
-    }
-    .instruction {
-        @include textSize(14px, normal, $gray500);
-        margin-top: 0px;
-    }
-    textarea {
-        background: #F0F2F5;
-        border-color: #E2E6EC;
-        padding: 15px;
-        border-radius: 6px;
-        width: -webkit-fill-available;
-        height: 120px;
-        @include textSize(14px, normal, $navy500);
-        resize: none;
-    }
-    .button {
-        margin: 10px 0;
-        text-align: right;
-    }
+	height: 265px;
+	width: 400px;
+	padding: 20px;
+	.header {
+		margin-top: 0;
+		margin-bottom: 6px;
+	}
+	.instruction {
+		@include textSize(14px, normal, $gray500);
+		margin-top: 0px;
+	}
+	textarea {
+		background: #f0f2f5;
+		border-color: #e2e6ec;
+		padding: 15px;
+		border-radius: 6px;
+		width: -webkit-fill-available;
+		height: 120px;
+		@include textSize(14px, normal, $navy500);
+		resize: none;
+	}
+	.button {
+		margin: 10px 0;
+		text-align: right;
+	}
 }

@@ -1,5 +1,5 @@
 export interface Onboard {
-  done: Date;
-  extras: any;
-  name: string;
+	done: Date;
+	extras: any;
+	name: string;
 }

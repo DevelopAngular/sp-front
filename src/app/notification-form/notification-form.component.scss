@@ -1,206 +1,206 @@
 @import '../../design-system';
 
 .notif-wrapper {
-  background-color: white;
-  height: 100%;
-  display: flex;
-  flex-direction: column;
+	background-color: white;
+	height: 100%;
+	display: flex;
+	flex-direction: column;
 
-  .notif-top-wrapper {
-    padding: 21px 28px 15px 28px;
-    border-bottom: 1px solid $gray200;
-  }
+	.notif-top-wrapper {
+		padding: 21px 28px 15px 28px;
+		border-bottom: 1px solid $gray200;
+	}
 
-  .notif-bottom-wrapper-wrapper {
-    padding: 29px 28px 56px 28px;
-    overflow-y: scroll;
-    display: flex;
-    justify-content: center;
-    align-items: flex-start;
-    height: 100%;
-  }
+	.notif-bottom-wrapper-wrapper {
+		padding: 29px 28px 56px 28px;
+		overflow-y: scroll;
+		display: flex;
+		justify-content: center;
+		align-items: flex-start;
+		height: 100%;
+	}
 
-  .notif-bottom-wrapper {
-    display: flex;
-    flex-direction: column;
-    gap: 14px;
-  }
+	.notif-bottom-wrapper {
+		display: flex;
+		flex-direction: column;
+		gap: 14px;
+	}
 
-  .notif-header {
-    width: 100%;
-    height: 53px;
-    display: flex;
-    justify-content: space-between;
-    @include textSize(22px, bold);
-  }
+	.notif-header {
+		width: 100%;
+		height: 53px;
+		display: flex;
+		justify-content: space-between;
+		@include textSize(22px, bold);
+	}
 
-  .notif-title-wrapper {
-    display: flex;
-    align-items: center;
-  }
+	.notif-title-wrapper {
+		display: flex;
+		align-items: center;
+	}
 
-  .notif-exit-wrapper {
-    cursor: pointer;
+	.notif-exit-wrapper {
+		cursor: pointer;
 
-    img {
-      width: 14px;
-      height: 14px;
-    }
-  }
+		img {
+			width: 14px;
+			height: 14px;
+		}
+	}
 
-  .notif-big-text {
-    padding-top: 31px;
-    @include textSize(17px, bold);
-  }
+	.notif-big-text {
+		padding-top: 31px;
+		@include textSize(17px, bold);
+	}
 
-  .notif-no-top-pad {
-    padding-top: 0 !important;
-  }
+	.notif-no-top-pad {
+		padding-top: 0 !important;
+	}
 
-  .notif-helper-wrapper {
-    width: 100%;
-    min-height: 10px;
-  }
+	.notif-helper-wrapper {
+		width: 100%;
+		min-height: 10px;
+	}
 
-  .notif-pass-requests {
-    padding: 0 16px 10px 16px;
-    display: flex;
-    flex-direction: column;
-    gap: 20px;
-  }
+	.notif-pass-requests {
+		padding: 0 16px 10px 16px;
+		display: flex;
+		flex-direction: column;
+		gap: 20px;
+	}
 
-  .notif-pass-requests-option {
-    display: flex;
-    flex-direction: row;
-    justify-content: space-between;
-  }
+	.notif-pass-requests-option {
+		display: flex;
+		flex-direction: row;
+		justify-content: space-between;
+	}
 
-  .notif-pass-requests-option-info {
-    display: flex;
-    gap: 8px;
+	.notif-pass-requests-option-info {
+		display: flex;
+		gap: 8px;
 
-    img {
-      width: 22px;
-    }
-  }
+		img {
+			width: 22px;
+		}
+	}
 
-  .notif-pass-requests-option-toggle {
-    width: 42px;
-  }
+	.notif-pass-requests-option-toggle {
+		width: 42px;
+	}
 
-  .notif-scheduled-passes {
-    padding: 0 16px 10px 16px;
-  }
+	.notif-scheduled-passes {
+		padding: 0 16px 10px 16px;
+	}
 
-  .div {
-    border-bottom: 1px solid $gray300;
-    margin: 20px 0;
-  }
+	.div {
+		border-bottom: 1px solid $gray300;
+		margin: 20px 0;
+	}
 
-  .room-list {
-    display: flex;
-    flex-direction: column;
-    gap: 10px;
+	.room-list {
+		display: flex;
+		flex-direction: column;
+		gap: 10px;
 
-    .room-wrapper {
-      padding: 5px;
-      border-radius: 10px;
+		.room-wrapper {
+			padding: 5px;
+			border-radius: 10px;
 
-      &:hover {
-        background-color: #e5e8ee;
-      }
-    }
+			&:hover {
+				background-color: #e5e8ee;
+			}
+		}
 
-    .room {
-      display: flex;
-      height: 40px;
+		.room {
+			display: flex;
+			height: 40px;
 
-      .room-image {
-        box-shadow: 0 1px 1px 0 rgba(0, 0, 0, 0.10);
-        border-radius: 4.19px;
-        width: 48px;
-        height: 28px;
-        margin: 8px 8px 8px 0;
-        display: flex;
-        align-items: center;
-        justify-content: center;
+			.room-image {
+				box-shadow: 0 1px 1px 0 rgba(0, 0, 0, 0.1);
+				border-radius: 4.19px;
+				width: 48px;
+				height: 28px;
+				margin: 8px 8px 8px 0;
+				display: flex;
+				align-items: center;
+				justify-content: center;
 
-        img {
-          width: 18px;
-        }
-      }
+				img {
+					width: 18px;
+				}
+			}
 
-      .room-info {
-        display: flex;
-        flex-direction: column;
-        justify-content: space-around;
+			.room-info {
+				display: flex;
+				flex-direction: column;
+				justify-content: space-around;
 
-        .room-name {
-          @include textSize(15px, 600);
-        }
+				.room-name {
+					@include textSize(15px, 600);
+				}
 
-        .room-events {
-          @include textSize(14px, normal, $gray500);
-        }
-      }
-    }
-  }
+				.room-events {
+					@include textSize(14px, normal, $gray500);
+				}
+			}
+		}
+	}
 
-  .app-notif-select-students {
-    padding: 0 18px 18px 18px;
-  }
+	.app-notif-select-students {
+		padding: 0 18px 18px 18px;
+	}
 
-  .setting-info {
-    @include textSize(14px, normal, $gray500);
-  }
+	.setting-info {
+		@include textSize(14px, normal, $gray500);
+	}
 
-  .unwrapped {
-    padding: 0 16px 10px 16px;
-    display: inline-block;
-  }
+	.unwrapped {
+		padding: 0 16px 10px 16px;
+		display: inline-block;
+	}
 
-  a {
-    color: $jade;
-  }
+	a {
+		color: $jade;
+	}
 }
 
 .notif-student-info {
-  width: 100%;
-  height: 100%;
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  gap: 14px;
+	width: 100%;
+	height: 100%;
+	display: flex;
+	flex-direction: column;
+	align-items: center;
+	gap: 14px;
 
-  .notif-student-bell {
-    width: 78px;
-    height: 78px;
-    border-radius: 15px;
-    background-color: $red500;
-    margin: 8px;
+	.notif-student-bell {
+		width: 78px;
+		height: 78px;
+		border-radius: 15px;
+		background-color: $red500;
+		margin: 8px;
 
-    img {
-      width: 40px;
-      height: 40px;
-      margin: 19px;
-    }
-  }
+		img {
+			width: 40px;
+			height: 40px;
+			margin: 19px;
+		}
+	}
 
-  .notif-student-title {
-    @include textSize(17px, bold);
-  }
+	.notif-student-title {
+		@include textSize(17px, bold);
+	}
 
-  .notif-student-body {
-    @include textSize(14px, normal, $gray500);
-    text-align: center;
-  }
+	.notif-student-body {
+		@include textSize(14px, normal, $gray500);
+		text-align: center;
+	}
 
-  .notif-student-bottom {
-    height: 100%;
-    display: flex;
+	.notif-student-bottom {
+		height: 100%;
+		display: flex;
 
-    span {
-      @include textSize(14px, normal, $gray500);
-    }
-  }
+		span {
+			@include textSize(14px, normal, $gray500);
+		}
+	}
 }

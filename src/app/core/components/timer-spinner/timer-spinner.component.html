@@ -1,10 +1,20 @@
-<div class="wrapper" style="position:relative;">
-  <div class="timer">
-    <svg class="back-svg" preserveAspectRatio="xMidYMid meet" focusable="false" ng-reflect-ng-switch="false" viewBox="0 0 72.5 72.5" style="width: 40px; height: 40px;">
-      <circle cx="50%" cy="50%" r="32.5" class="ng-star-inserted" style="stroke-dashoffset: 6.28319px; stroke-dasharray: 210.496px; stroke-width: 10%;"></circle>
-    </svg>
-    <mat-spinner class="example-margin" [diameter]="40" mode='determinate' [value]="remainingPercentage"></mat-spinner>
-  </div>
-  <span class="timer-number" *ngIf="showNumber">{{countdown}}</span>
+<div class="wrapper" style="position: relative">
+	<div class="timer">
+		<svg
+			class="back-svg"
+			preserveAspectRatio="xMidYMid meet"
+			focusable="false"
+			ng-reflect-ng-switch="false"
+			viewBox="0 0 72.5 72.5"
+			style="width: 40px; height: 40px">
+			<circle
+				cx="50%"
+				cy="50%"
+				r="32.5"
+				class="ng-star-inserted"
+				style="stroke-dashoffset: 6.28319px; stroke-dasharray: 210.496px; stroke-width: 10%"></circle>
+		</svg>
+		<mat-spinner class="example-margin" [diameter]="40" mode="determinate" [value]="remainingPercentage"></mat-spinner>
+	</div>
+	<span class="timer-number" *ngIf="showNumber">{{ countdown }}</span>
 </div>
-

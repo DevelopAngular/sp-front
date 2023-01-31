@@ -7,14 +7,7 @@ import { RoomsSetUpComponent } from './rooms-set-up/rooms-set-up.component';
 import { AdminSharedModule } from '../shared/admin-shared.module';
 
 @NgModule({
-  declarations: [
-    PassConfigComponent,
-    RoomsSetUpComponent
-  ],
-  imports: [
-    CommonModule,
-    PassConfigRoutingModule,
-    AdminSharedModule
-  ]
+	declarations: [PassConfigComponent, RoomsSetUpComponent],
+	imports: [CommonModule, PassConfigRoutingModule, AdminSharedModule],
 })
-export class PassConfigModule { }
+export class PassConfigModule {}

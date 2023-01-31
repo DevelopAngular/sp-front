@@ -1,23 +1,20 @@
-import {Component, EventEmitter, Input, OnInit, Output} from '@angular/core';
+import { Component, EventEmitter, Input, OnInit, Output } from '@angular/core';
 
 @Component({
-  selector: 'app-start-card',
-  templateUrl: './start-card.component.html',
-  styleUrls: ['./start-card.component.scss']
+	selector: 'app-start-card',
+	templateUrl: './start-card.component.html',
+	styleUrls: ['./start-card.component.scss'],
 })
 export class StartCardComponent implements OnInit {
+	@Input() title: string;
+	@Input() subtitle: string;
+	@Input() buttonText: string;
+	@Input() buttonIcon: string;
 
-  @Input() title: string;
-  @Input() subtitle: string;
-  @Input() buttonText: string;
-  @Input() buttonIcon: string;
+	@Output() onClick: EventEmitter<any> = new EventEmitter<any>();
+	@Output() close: EventEmitter<any> = new EventEmitter<any>();
 
-  @Output() onClick: EventEmitter<any> = new EventEmitter<any>();
-  @Output() close: EventEmitter<any> = new EventEmitter<any>();
+	constructor() {}
 
-  constructor() { }
-
-  ngOnInit() {
-  }
-
+	ngOnInit() {}
 }

@@ -1,144 +1,135 @@
-import {AfterViewInit, ChangeDetectorRef, Component, ElementRef, HostListener, Input, OnInit, ViewChild} from '@angular/core';
-import {BehaviorSubject} from 'rxjs';
-import {NextStep} from '../animations';
-import {CreateFormService} from '../create-hallpass-forms/create-form.service';
-import {SwiperConfigInterface} from 'ngx-swiper-wrapper';
-import {ScreenService} from '../services/screen.service';
-import {DeviceDetection} from '../device-detection.helper';
+import { AfterViewInit, ChangeDetectorRef, Component, ElementRef, HostListener, Input, OnInit, ViewChild } from '@angular/core';
+import { BehaviorSubject } from 'rxjs';
+import { NextStep } from '../animations';
+import { CreateFormService } from '../create-hallpass-forms/create-form.service';
+import { SwiperConfigInterface } from 'ngx-swiper-wrapper';
+import { ScreenService } from '../services/screen.service';
+import { DeviceDetection } from '../device-detection.helper';
 
 export enum KEY_CODE {
-    RIGHT_ARROW = 39,
-    LEFT_ARROW = 37
+	RIGHT_ARROW = 39,
+	LEFT_ARROW = 37,
 }
 
 @Component({
-  selector: 'app-pager',
-  templateUrl: './pager.component.html',
-  styleUrls: ['./pager.component.scss'],
-  animations: [NextStep]
+	selector: 'app-pager',
+	templateUrl: './pager.component.html',
+	styleUrls: ['./pager.component.scss'],
+	animations: [NextStep],
 })
 export class PagerComponent implements OnInit, AfterViewInit {
+	@ViewChild('pageContent') pageContent: ElementRef;
+	@ViewChild('left') left: ElementRef;
 
-  @ViewChild('pageContent') pageContent: ElementRef;
-  @ViewChild('left') left: ElementRef;
+	@Input() page: number = 1;
+	@Input() pages = 2;
 
-  @Input() page: number = 1;
-  @Input() pages = 2;
+	@Input() arrowPosition: string = '-27px';
+	@Input() isStaff: boolean;
 
-  @Input() arrowPosition: string = '-27px';
-  @Input() isStaff: boolean;
+	hideRightButton = new BehaviorSubject(false);
+	hideLeftButton = new BehaviorSubject(true);
+	frameMotion$: BehaviorSubject<any>;
 
-  hideRightButton = new BehaviorSubject(false);
-  hideLeftButton = new BehaviorSubject(true);
-  frameMotion$: BehaviorSubject<any>;
+	config: SwiperConfigInterface;
 
-  config: SwiperConfigInterface;
+	swiperInitialized: boolean;
 
-  swiperInitialized: boolean;
+	@HostListener('window:keyup', ['$event'])
+	onKeyUp(event: KeyboardEvent) {
+		if (event.keyCode === KEY_CODE.LEFT_ARROW && this.hideLeftButton.value) {
+			this.leftPaginator();
+		} else if (event.keyCode === KEY_CODE.RIGHT_ARROW && this.hideRightButton.value) {
+			this.RightPaginator();
+		}
+	}
 
-  @HostListener('window:keyup', ['$event'])
-    onKeyUp(event: KeyboardEvent) {
-      if (event.keyCode === KEY_CODE.LEFT_ARROW && this.hideLeftButton.value) {
-        this.leftPaginator();
-      } else if (event.keyCode === KEY_CODE.RIGHT_ARROW && this.hideRightButton.value) {
-        this.RightPaginator();
-      }
-    }
+	constructor(private formService: CreateFormService, private cdr: ChangeDetectorRef, public screenService: ScreenService) {}
 
-  constructor(
-    private formService: CreateFormService,
-    private cdr: ChangeDetectorRef,
-    public screenService: ScreenService
-  ) {}
+	get isMobile() {
+		return DeviceDetection.isMobile();
+	}
 
-  get isMobile() {
-    return DeviceDetection.isMobile();
-  }
+	get $pages() {
+		return Array(this.pages)
+			.fill(1)
+			.map((x, i) => i + 1);
+	}
 
-  get $pages() {
-    return Array(this.pages).fill(1).map((x, i) => (i + 1));
-  }
+	ngOnInit() {
+		this.frameMotion$ = this.formService.getFrameMotionDirection();
 
-  ngOnInit() {
-    this.frameMotion$ = this.formService.getFrameMotionDirection();
+		if (this.page === 1 && this.pages === 1) {
+			this.hideLeftButton.next(false);
+		}
+		if (this.page === 1 && this.pages === 2) {
+			this.hideLeftButton.next(false);
+			this.hideRightButton.next(true);
+		}
+	}
 
-    if (this.page === 1 && this.pages === 1) {
-          this.hideLeftButton.next(false);
-      }
-      if (this.page === 1 && this.pages === 2) {
-        this.hideLeftButton.next(false);
-        this.hideRightButton.next(true);
-      }
+	ngAfterViewInit(): void {
+		this.config = {
+			direction: 'horizontal',
+			slidesPerView: 'auto',
+		};
+		this.cdr.detectChanges();
+	}
 
-  }
+	leftPaginator() {
+		this.formService.setFrameMotionDirection('back');
 
-  ngAfterViewInit(): void {
-    this.config = {
-      direction: 'horizontal',
-      slidesPerView: 'auto',
-    };
-    this.cdr.detectChanges();
-  }
+		this.hideRightButton.next(true);
+		if (this.page === 2) {
+			this.hideLeftButton.next(false);
+		}
+		if (this.page >= 1) {
+			this.page -= 1;
+		}
+	}
 
-  leftPaginator() {
+	RightPaginator() {
+		this.formService.setFrameMotionDirection('forward');
 
-    this.formService.setFrameMotionDirection('back');
+		this.hideLeftButton.next(true);
+		if ((this.page === 1 && this.pages === 2) || (this.page === 2 && this.pages === 3) || (this.page === 3 && this.pages === 4)) {
+			this.hideRightButton.next(false);
+		}
+		this.page += 1;
+	}
+	DotPagination(dot) {
+		if (dot > this.page) {
+			this.formService.setFrameMotionDirection('forward');
+		} else {
+			this.formService.setFrameMotionDirection('back');
+		}
 
-      this.hideRightButton.next(true);
-      if (this.page === 2) {
-        this.hideLeftButton.next(false);
-      }
-      if (this.page >= 1) {
-        this.page -= 1;
-      }
-  }
+		setTimeout(() => {
+			this.page = dot;
+			if (dot === 1) {
+				this.hideLeftButton.next(false);
+				this.hideRightButton.next(true);
+			}
+			if (dot > 1 && dot < this.$pages.length + 1) {
+				this.hideLeftButton.next(true);
+				this.hideRightButton.next(true);
+			}
+			if (dot === this.$pages.length) {
+				this.hideLeftButton.next(true);
+				this.hideRightButton.next(false);
+			}
+		}, 100);
+	}
 
-  RightPaginator() {
-    this.formService.setFrameMotionDirection('forward');
+	next() {
+		this.page += 1;
+	}
 
-      this.hideLeftButton.next(true);
-      if (this.page === 1 && this.pages === 2
-        || this.page === 2 && this.pages === 3
-        || this.page === 3 && this.pages === 4) {
-        this.hideRightButton.next(false);
-      }
-      this.page += 1;
+	onSlideChange(event) {
+		this.page = event + 1;
+	}
 
-  }
-  DotPagination(dot) {
-    if (dot > this.page) {
-      this.formService.setFrameMotionDirection('forward');
-    } else {
-      this.formService.setFrameMotionDirection('back');
-    }
-
-    setTimeout(() => {
-      this.page = dot;
-      if (dot === 1) {
-        this.hideLeftButton.next(false);
-        this.hideRightButton.next(true);
-      }
-      if (dot > 1 && dot < this.$pages.length + 1) {
-        this.hideLeftButton.next(true);
-        this.hideRightButton.next(true);
-      }
-      if (dot === this.$pages.length) {
-        this.hideLeftButton.next(true);
-        this.hideRightButton.next(false);
-      }
-    }, 100);
-
-  }
-
-  next() {
-    this.page += 1;
-  }
-
-  onSlideChange(event) {
-    this.page = event + 1;
-  }
-
-  swiperInit($event: any) {
-    this.swiperInitialized = true;
-  }
+	swiperInit($event: any) {
+		this.swiperInitialized = true;
+	}
 }

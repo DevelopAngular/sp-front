@@ -1,36 +1,32 @@
-import {Injectable} from '@angular/core';
-import {HttpService} from './http-service';
-import {Store} from '@ngrx/store';
-import {AppState} from '../ngrx/app-state/app-state';
-import {clearContactTraceData, getContacts} from '../ngrx/contact-trace/actions';
-import {Observable} from 'rxjs';
-import {ContactTrace} from '../models/ContactTrace';
-import {getContactTraceCollection, getContactTraceLoaded, getContactTraceLoading, getContactTraceTotal} from '../ngrx/contact-trace/states';
+import { Injectable } from '@angular/core';
+import { HttpService } from './http-service';
+import { Store } from '@ngrx/store';
+import { AppState } from '../ngrx/app-state/app-state';
+import { clearContactTraceData, getContacts } from '../ngrx/contact-trace/actions';
+import { Observable } from 'rxjs';
+import { ContactTrace } from '../models/ContactTrace';
+import { getContactTraceCollection, getContactTraceLoaded, getContactTraceLoading, getContactTraceTotal } from '../ngrx/contact-trace/states';
 
 @Injectable({
-  providedIn: 'root'
+	providedIn: 'root',
 })
 export class ContactTraceService {
+	contactTraceData$: Observable<ContactTrace[]> = this.store.select(getContactTraceCollection);
+	contactTraceLoading$: Observable<boolean> = this.store.select(getContactTraceLoading);
+	contactTraceLoaded$: Observable<boolean> = this.store.select(getContactTraceLoaded);
+	contactTraceTotalLength$: Observable<number> = this.store.select(getContactTraceTotal);
 
-  contactTraceData$: Observable<ContactTrace[]> = this.store.select(getContactTraceCollection);
-  contactTraceLoading$: Observable<boolean> = this.store.select(getContactTraceLoading);
-  contactTraceLoaded$: Observable<boolean> = this.store.select(getContactTraceLoaded);
-  contactTraceTotalLength$: Observable<number> = this.store.select(getContactTraceTotal);
+	constructor(private http: HttpService, private store: Store<AppState>) {}
 
-  constructor(
-    private http: HttpService,
-    private store: Store<AppState>
-  ) { }
+	getContacts(studentIds: number[] | string[], start_time: string, end_time: string) {
+		return this.http.post('v1/stats/contact_tracing', { students: studentIds, start_time, end_time });
+	}
 
-  getContacts(studentIds: number[] | string[], start_time: string, end_time: string) {
-    return this.http.post('v1/stats/contact_tracing', {students: studentIds, start_time, end_time});
-  }
+	getContactsRequest(studentsIds: string[], start_time: string, end_time: string) {
+		this.store.dispatch(getContacts({ studentsIds, start_time, end_time }));
+	}
 
-  getContactsRequest(studentsIds: string[], start_time: string, end_time: string) {
-    this.store.dispatch(getContacts({studentsIds, start_time, end_time}));
-  }
-
-  clearContactTraceDataRequest() {
-    this.store.dispatch(clearContactTraceData());
-  }
+	clearContactTraceDataRequest() {
+		this.store.dispatch(clearContactTraceData());
+	}
 }

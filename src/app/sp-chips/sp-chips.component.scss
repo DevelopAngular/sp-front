@@ -1,39 +1,38 @@
 :host {
-
-  .assigned-teachers {
-    display: flex;
-    flex-wrap: wrap;
-    .teacher {
-      background-color: #F7F7F7;
-      border-radius: 8px;
-      padding: 5px 10px;
-      display: flex;
-      align-items: center;
-      justify-content: space-between;
-      margin-right: 10px;
-      margin-bottom: 10px;
-      color: #1F194E;
-      position: relative;
-      word-break: break-word;
-      .chip-field{
-        display: flex;
-        align-items: center;
-        opacity: 0.5;
-        .material-icons{
-          margin-right: 5px;
-          font-size: 22px;
-        }
-      }
-      .delete {
-        width: 16px;
-        height: 16px;
-        cursor: pointer;
-        position: absolute;
-        right: -6px;
-        background-color: #F8F8F8;
-        box-shadow: -6px 1px 6px #f8f8f8;
-        top: -8px;
-      }
-    }
-  }
+	.assigned-teachers {
+		display: flex;
+		flex-wrap: wrap;
+		.teacher {
+			background-color: #f7f7f7;
+			border-radius: 8px;
+			padding: 5px 10px;
+			display: flex;
+			align-items: center;
+			justify-content: space-between;
+			margin-right: 10px;
+			margin-bottom: 10px;
+			color: #1f194e;
+			position: relative;
+			word-break: break-word;
+			.chip-field {
+				display: flex;
+				align-items: center;
+				opacity: 0.5;
+				.material-icons {
+					margin-right: 5px;
+					font-size: 22px;
+				}
+			}
+			.delete {
+				width: 16px;
+				height: 16px;
+				cursor: pointer;
+				position: absolute;
+				right: -6px;
+				background-color: #f8f8f8;
+				box-shadow: -6px 1px 6px #f8f8f8;
+				top: -8px;
+			}
+		}
+	}
 }

@@ -1,32 +1,30 @@
-import {ChangeDetectionStrategy, ChangeDetectorRef, Component, ElementRef, Input, OnInit, ViewChild} from '@angular/core';
-import {resizeReportDescription} from '../../../../animations';
-import {SafeHtml} from '@angular/platform-browser';
+import { ChangeDetectionStrategy, ChangeDetectorRef, Component, ElementRef, Input, OnInit, ViewChild } from '@angular/core';
+import { resizeReportDescription } from '../../../../animations';
+import { SafeHtml } from '@angular/platform-browser';
 
 @Component({
-  selector: 'app-report-description',
-  templateUrl: './report-description.component.html',
-  styleUrls: ['./report-description.component.scss'],
-  animations: [resizeReportDescription],
-  changeDetection: ChangeDetectionStrategy.OnPush
+	selector: 'app-report-description',
+	templateUrl: './report-description.component.html',
+	styleUrls: ['./report-description.component.scss'],
+	animations: [resizeReportDescription],
+	changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class ReportDescriptionComponent implements OnInit {
+	@Input() date: string;
+	@Input() description: string | SafeHtml;
 
-  @Input() date: string;
-  @Input() description: string | SafeHtml;
+	@ViewChild('wrapper') wrapper: ElementRef;
 
-  @ViewChild('wrapper') wrapper: ElementRef;
+	animationTrigger: any;
+	isOpen: boolean = true;
 
-  animationTrigger: any;
-  isOpen: boolean = true;
+	constructor(private cdr: ChangeDetectorRef) {}
 
-  constructor(private cdr: ChangeDetectorRef) {}
+	ngOnInit() {}
 
-  ngOnInit() {
-  }
-
-  setStartHeight() {
-    this.isOpen = !this.isOpen;
-    this.animationTrigger = {value: this.isOpen ? 'open' : 'close', params: {startHeight: this.wrapper.nativeElement.clientHeight}};
-    this.cdr.detectChanges();
-  }
+	setStartHeight() {
+		this.isOpen = !this.isOpen;
+		this.animationTrigger = { value: this.isOpen ? 'open' : 'close', params: { startHeight: this.wrapper.nativeElement.clientHeight } };
+		this.cdr.detectChanges();
+	}
 }

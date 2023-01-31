@@ -1,71 +1,88 @@
 <div class="profile-wrapper">
-    <div class="header-container">
-        <div class="background-header" [attr.data-motion-opacity]="(frameMotion$ | async).direction"></div>
-        <img class="back-button" appCrossPointerEventTarget (pointerClickEvent)="dialogRef.close()" *ngIf="true" [src]="'./assets/Back Button (Blue-White).svg' | resolveAsset">
-        <div class="profile-header-text" [attr.data-motion-translate]="(frameMotion$ | async).direction">
-            <img width="21" height="21" [src]="'./assets/Username (Navy).svg' | resolveAsset" alt="Options">
-            <div [style.margin-left]="'12px'">My Profile</div>
-        </div>
-    </div>
+	<div class="header-container">
+		<div class="background-header" [attr.data-motion-opacity]="(frameMotion$ | async).direction"></div>
+		<img
+			class="back-button"
+			appCrossPointerEventTarget
+			(pointerClickEvent)="dialogRef.close()"
+			*ngIf="true"
+			[src]="'./assets/Back Button (Blue-White).svg' | resolveAsset" />
+		<div class="profile-header-text" [attr.data-motion-translate]="(frameMotion$ | async).direction">
+			<img width="21" height="21" [src]="'./assets/Username (Navy).svg' | resolveAsset" alt="Options" />
+			<div [style.margin-left]="'12px'">My Profile</div>
+		</div>
+	</div>
 
-    <div class="profile-content" [attr.data-motion-translate]="(frameMotion$ | async).direction">
-        <div class="page-1">
-<!--            <div class="profile-image avatar-animate">-->
-<!--                <div *ngIf="user?.profile_picture; else d" [ngStyle]="{'background': 'url(' + user?.profile_picture + ') no-repeat left center/cover', width: '88px', height: '88px'}"></div>-->
-<!--                <ng-template #d>-->
-<!--                    <img width="88" height="88" [src]="'./assets/Avatar Default.svg' | resolveAsset" alt="Avatar">-->
-<!--                </ng-template>-->
-<!--            </div>-->
-          <div class="avatar-info">
-            <div class="avatar" #avatarContainer (mouseenter)="avatarContainer.hover = true" (mouseleave)="avatarContainer.hover = false">
-              <div class="loading-theme_blue-gray spinner" *ngIf="loadingProfilePicture | async">
-                <mat-spinner style="color: #7f879d" [diameter]="30"></mat-spinner>
-              </div>
-              <div *ngIf="user?.profile_picture; else d" [ngStyle]="{'background': 'url(' + user?.profile_picture + ') no-repeat left center/cover', width: '88px', height: '88px'}"></div>
-              <ng-template #d>
-                <img width="88" height="88" [src]="'./assets/Avatar Default.svg' | resolveAsset" alt="Avatar">
-              </ng-template>
-              <div *ngIf="avatarContainer.hover" class="hover-backdrop" (click)="!user.profile_picture ? editWindow($event) : null" [style.cursor]="!user.profile_picture ? 'pointer' : 'normal'"></div>
-              <div class="buttons" *ngIf="!(loadingProfilePicture | async) && isStaff">
-                <img #editIcon (click)="openEditAvatar($event)" *ngIf="avatarContainer.hover || isOpenAvatarDialog" class="add-avatar" [style.top]="'15px'" [src]="'./assets/' + (user.profile_picture ? 'Edit' : 'Add') + ' Avatar (White).svg' | resolveAsset"
-                     alt="add">
-              </div>
-
-            </div>
-          </div>
-            <div class="block-item">
-                <div class="label">Name</div>
-                <div class="item-content" notranslate>{{ user.display_name }}</div>
-            </div>
-            <div class="block-item">
-                <div class="label">Email/username</div>
-                <div class="item-content" notranslate>{{ user.primary_email }}</div>
-            </div>
-            <div class="block-item">
-                <div class="label">Grade</div>
-                <div class="item-content" notranslate>{{ user.grade_level || '-' }}</div>
-            </div>
-            <div class="block-item">
-                <div class="label">ID</div>
-                <div class="item-content" notranslate>{{ user.custom_id || '-' }}</div>
-            </div>
-            <div class="block-item">
-                <div class="label">School</div>
-                <div class="item-content" *ngFor="let school of schools" style="white-space: pre">
-                    <span notranslate>{{ school.name }}</span> {{ '(' + checkUserRoles(school.my_roles) + ')' }}
-                </div>
-            </div>
-            <div class="block-item" style="margin-bottom: 15px">
-                <div class="label">Account type</div>
-                <div class="item-content">{{ checkAccountType(user) }}</div>
-            </div>
-            <div class="block-item" *ngIf="userAuthType === 'password'" style="margin-bottom: 15px">
-                <div class="label">Password</div>
-                <div class="item-content">
-                    <app-gradient-button [size]="'medium'" [gradient]="'#7F879D, #7F879D'" (buttonClick)="nextPage.emit()">Change password
-                    </app-gradient-button>
-                </div>
-            </div>
-        </div>
-    </div>
+	<div class="profile-content" [attr.data-motion-translate]="(frameMotion$ | async).direction">
+		<div class="page-1">
+			<!--            <div class="profile-image avatar-animate">-->
+			<!--                <div *ngIf="user?.profile_picture; else d" [ngStyle]="{'background': 'url(' + user?.profile_picture + ') no-repeat left center/cover', width: '88px', height: '88px'}"></div>-->
+			<!--                <ng-template #d>-->
+			<!--                    <img width="88" height="88" [src]="'./assets/Avatar Default.svg' | resolveAsset" alt="Avatar">-->
+			<!--                </ng-template>-->
+			<!--            </div>-->
+			<div class="avatar-info">
+				<div class="avatar" #avatarContainer (mouseenter)="avatarContainer.hover = true" (mouseleave)="avatarContainer.hover = false">
+					<div class="loading-theme_blue-gray spinner" *ngIf="loadingProfilePicture | async">
+						<mat-spinner style="color: #7f879d" [diameter]="30"></mat-spinner>
+					</div>
+					<div
+						*ngIf="user?.profile_picture; else d"
+						[ngStyle]="{ background: 'url(' + user?.profile_picture + ') no-repeat left center/cover', width: '88px', height: '88px' }"></div>
+					<ng-template #d>
+						<img width="88" height="88" [src]="'./assets/Avatar Default.svg' | resolveAsset" alt="Avatar" />
+					</ng-template>
+					<div
+						*ngIf="avatarContainer.hover"
+						class="hover-backdrop"
+						(click)="!user.profile_picture ? editWindow($event) : null"
+						[style.cursor]="!user.profile_picture ? 'pointer' : 'normal'"></div>
+					<div class="buttons" *ngIf="!(loadingProfilePicture | async) && isStaff">
+						<img
+							#editIcon
+							(click)="openEditAvatar($event)"
+							*ngIf="avatarContainer.hover || isOpenAvatarDialog"
+							class="add-avatar"
+							[style.top]="'15px'"
+							[src]="'./assets/' + (user.profile_picture ? 'Edit' : 'Add') + ' Avatar (White).svg' | resolveAsset"
+							alt="add" />
+					</div>
+				</div>
+			</div>
+			<div class="block-item">
+				<div class="label">Name</div>
+				<div class="item-content" notranslate>{{ user.display_name }}</div>
+			</div>
+			<div class="block-item">
+				<div class="label">Email/username</div>
+				<div class="item-content" notranslate>{{ user.primary_email }}</div>
+			</div>
+			<div class="block-item">
+				<div class="label">Grade</div>
+				<div class="item-content" notranslate>{{ user.grade_level || '-' }}</div>
+			</div>
+			<div class="block-item">
+				<div class="label">ID</div>
+				<div class="item-content" notranslate>{{ user.custom_id || '-' }}</div>
+			</div>
+			<div class="block-item">
+				<div class="label">School</div>
+				<div class="item-content" *ngFor="let school of schools" style="white-space: pre">
+					<span notranslate>{{ school.name }}</span> {{ '(' + checkUserRoles(school.my_roles) + ')' }}
+				</div>
+			</div>
+			<div class="block-item" style="margin-bottom: 15px">
+				<div class="label">Account type</div>
+				<div class="item-content">{{ checkAccountType(user) }}</div>
+			</div>
+			<div class="block-item" *ngIf="userAuthType === 'password'" style="margin-bottom: 15px">
+				<div class="label">Password</div>
+				<div class="item-content">
+					<app-gradient-button [size]="'medium'" [gradient]="'#7F879D, #7F879D'" (buttonClick)="nextPage.emit()"
+						>Change password
+					</app-gradient-button>
+				</div>
+			</div>
+		</div>
+	</div>
 </div>

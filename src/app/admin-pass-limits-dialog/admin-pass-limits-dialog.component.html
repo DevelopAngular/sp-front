@@ -1,264 +1,274 @@
-<div class="wrapper" *ngIf="page === 1" [@NextStep]="{ value: '', params: frameMotion$ | async}">
-  <div class="header" *ngIf="!(passLimitFormChanged | async); else changedFormHeader">
-    <div class="background-header"></div>
-    <img class="back-button" (click)="dialogRef.close()" [src]="'./assets/Back Button (Blue-White).svg' | resolveAsset">
-    <div class="title-header ds-flex-center-center" style="z-index: 10" [attr.data-motion-translate]="(frameMotion$ | async).direction">
-      <div class="pass-limit-white ds-flex-center-center" style="background: rgb(102, 81, 241); border-radius: 6px; padding: 7px">
-        <img style="width: 25px" [src]="'./assets/Pass Limit (White).svg' | resolveAsset" alt="">
-      </div>
-      <div class="ds-dialog-title" [style.margin-left]="'12px'">Pass Limits</div>
-    </div>
-  </div>
+<div class="wrapper" *ngIf="page === 1" [@NextStep]="{ value: '', params: frameMotion$ | async }">
+	<div class="header" *ngIf="!(passLimitFormChanged | async); else changedFormHeader">
+		<div class="background-header"></div>
+		<img class="back-button" (click)="dialogRef.close()" [src]="'./assets/Back Button (Blue-White).svg' | resolveAsset" />
+		<div class="title-header ds-flex-center-center" style="z-index: 10" [attr.data-motion-translate]="(frameMotion$ | async).direction">
+			<div class="pass-limit-white ds-flex-center-center" style="background: rgb(102, 81, 241); border-radius: 6px; padding: 7px">
+				<img style="width: 25px" [src]="'./assets/Pass Limit (White).svg' | resolveAsset" alt="" />
+			</div>
+			<div class="ds-dialog-title" [style.margin-left]="'12px'">Pass Limits</div>
+		</div>
+	</div>
 
-  <ng-template #changedFormHeader>
-    <div class="header" style="justify-content: space-around">
-      <div class="background-header"></div>
-      <app-gradient-button (buttonClick)="resetPassLimitsForm()" customBackground="#7083A0">Cancel</app-gradient-button>
-      <div class="title-header" style="z-index: 10; display: flex">
-        <div class="ds-dialog-title" [style.margin-left]="'12px'">Pass Limits</div>
-      </div>
-      <app-gradient-button (buttonClick)="updatePassLimits()" customBackground="#00B476" textColor="white" [disabled]="passLimitForm.invalid">
-        <ng-template [ngTemplateOutlet]="buttonLoading" [ngTemplateOutletContext]="{loading: requestLoading, text: 'Save'}"></ng-template>
-      </app-gradient-button>
-    </div>
-  </ng-template>
+	<ng-template #changedFormHeader>
+		<div class="header" style="justify-content: space-around">
+			<div class="background-header"></div>
+			<app-gradient-button (buttonClick)="resetPassLimitsForm()" customBackground="#7083A0">Cancel</app-gradient-button>
+			<div class="title-header" style="z-index: 10; display: flex">
+				<div class="ds-dialog-title" [style.margin-left]="'12px'">Pass Limits</div>
+			</div>
+			<app-gradient-button (buttonClick)="updatePassLimits()" customBackground="#00B476" textColor="white" [disabled]="passLimitForm.invalid">
+				<ng-template [ngTemplateOutlet]="buttonLoading" [ngTemplateOutletContext]="{ loading: requestLoading, text: 'Save' }"></ng-template>
+			</app-gradient-button>
+		</div>
+	</ng-template>
 
-  <ng-template #contentSpinner>
-    <div class="ds-w-100 ds-flex-center-center" style="height: 150px">
-      <mat-spinner [diameter]="75" class="content-spinner"></mat-spinner>
-    </div>
-  </ng-template>
+	<ng-template #contentSpinner>
+		<div class="ds-w-100 ds-flex-center-center" style="height: 150px">
+			<mat-spinner [diameter]="75" class="content-spinner"></mat-spinner>
+		</div>
+	</ng-template>
 
-  <div class="content ds-p-20" *ngIf="!contentLoading; else contentSpinner" [attr.data-motion-translate]="(frameMotion$ | async).direction">
-    <ng-container *ngIf="showPassLimitNux" [ngTemplateOutlet]="passLimitNux"></ng-container>
-    <div class="accent-background-section ds-flex-column">
-      <div style="display: flex" class="ds-flex-row ds-flex-center-between">
-             <span class="ds-dialog-heading" style="padding-bottom: 0 !important;">
-               School Pass Limit
-               <div style="display: inline" customToolTip [contentTemplate]="passLimitLearnMore">
-                  <img
-                    class="support-icon"
-                    [src]="'./assets/Support (Gray-200).svg' | resolveAsset">
-               </div>
-               <ng-template #passLimitLearnMore>
-                 <div class="ds-tooltip">
-                    <span>
-                      Limit the number of passes all students can have per day.
-                      <a href="https://www.smartpass.app/passlimits" style="color: white" target="_blank"> Learn more</a>
-                    </span>
-                 </div>
-               </ng-template>
-            </span>
-        <app-toggle-input
-          style="width: auto"
-          controlSize="small"
-          [form]="passLimitForm"
-          controlName="limitEnabled"
-          [delimiter]="false"
-          (pushOutValue)="onEnabledToggle($event)"
-        ></app-toggle-input>
-      </div>
+	<div class="content ds-p-20" *ngIf="!contentLoading; else contentSpinner" [attr.data-motion-translate]="(frameMotion$ | async).direction">
+		<ng-container *ngIf="showPassLimitNux" [ngTemplateOutlet]="passLimitNux"></ng-container>
+		<div class="accent-background-section ds-flex-column">
+			<div style="display: flex" class="ds-flex-row ds-flex-center-between">
+				<span class="ds-dialog-heading" style="padding-bottom: 0 !important">
+					School Pass Limit
+					<div style="display: inline" customToolTip [contentTemplate]="passLimitLearnMore">
+						<img class="support-icon" [src]="'./assets/Support (Gray-200).svg' | resolveAsset" />
+					</div>
+					<ng-template #passLimitLearnMore>
+						<div class="ds-tooltip">
+							<span>
+								Limit the number of passes all students can have per day.
+								<a href="https://www.smartpass.app/passlimits" style="color: white" target="_blank"> Learn more</a>
+							</span>
+						</div>
+					</ng-template>
+				</span>
+				<app-toggle-input
+					style="width: auto"
+					controlSize="small"
+					[form]="passLimitForm"
+					controlName="limitEnabled"
+					[delimiter]="false"
+					(pushOutValue)="onEnabledToggle($event)"></app-toggle-input>
+			</div>
 
-      <ng-container *ngIf="passLimitForm.value['limitEnabled']">
-        <app-pass-limit-input
-          #schoolPassLimitInput
-          [formGroup]="passLimitForm"
-          [control]="passLimitForm.get('passLimit')"
-          [isIndividual]="false"
-        ></app-pass-limit-input>
-      </ng-container>
-    </div>
+			<ng-container *ngIf="passLimitForm.value['limitEnabled']">
+				<app-pass-limit-input
+					#schoolPassLimitInput
+					[formGroup]="passLimitForm"
+					[control]="passLimitForm.get('passLimit')"
+					[isIndividual]="false"></app-pass-limit-input>
+			</ng-container>
+		</div>
 
-    <div *ngIf="individualStudentLimits.length === 0" class="accent-background-section ds-flex-column ds-flex-center-between">
-          <span class="ds-dialog-heading" style="align-self: flex-start; padding-bottom: 0 !important;">
-            Limits for Individual Students
-            <div class="tooltip-container" style="display: inline">
-              <div style="display: inline" customToolTip [contentTemplate]="individualLimitLearnMore">
-                <img
-                  class="support-icon"
-                  style="width: 17px"
-                  [src]="'./assets/Support (Gray-200).svg' | resolveAsset">
-              </div>
-            </div>
-            <ng-template #individualLimitLearnMore>
-              <div class="ds-tooltip">
-                <span>
-                  Limit the number of passes certain individual students can have per day. This overrides the school limit if set.
-                  <a href="https://www.smartpass.app/passlimits" style="color: white" target="_blank"> Learn more</a>
-                </span>
-              </div>
-            </ng-template>
-          </span>
+		<div *ngIf="individualStudentLimits.length === 0" class="accent-background-section ds-flex-column ds-flex-center-between">
+			<span class="ds-dialog-heading" style="align-self: flex-start; padding-bottom: 0 !important">
+				Limits for Individual Students
+				<div class="tooltip-container" style="display: inline">
+					<div style="display: inline" customToolTip [contentTemplate]="individualLimitLearnMore">
+						<img class="support-icon" style="width: 17px" [src]="'./assets/Support (Gray-200).svg' | resolveAsset" />
+					</div>
+				</div>
+				<ng-template #individualLimitLearnMore>
+					<div class="ds-tooltip">
+						<span>
+							Limit the number of passes certain individual students can have per day. This overrides the school limit if set.
+							<a href="https://www.smartpass.app/passlimits" style="color: white" target="_blank"> Learn more</a>
+						</span>
+					</div>
+				</ng-template>
+			</span>
 
-      <div class="individual-limits-list ds-py-20" style="text-align: center">
-        <p class="ds-details-text-bold" style="color: #B7C1CF !important; font-weight: 500 !important">
-          No individual limits set
-        </p>
+			<div class="individual-limits-list ds-py-20" style="text-align: center">
+				<p class="ds-details-text-bold" style="color: #b7c1cf !important; font-weight: 500 !important">No individual limits set</p>
 
-        <app-gradient-button
-          size="medium"
-          gradient="#00B476"
-          textColor="#FFFFFF"
-          text="Add Limit"
-          leftIcon="assets/Plus (White).svg"
-          (buttonClick)="goToIndividualLimitPage()">
-          Add Limit
-        </app-gradient-button>
-      </div>
-    </div>
+				<app-gradient-button
+					size="medium"
+					gradient="#00B476"
+					textColor="#FFFFFF"
+					text="Add Limit"
+					leftIcon="assets/Plus (White).svg"
+					(buttonClick)="goToIndividualLimitPage()">
+					Add Limit
+				</app-gradient-button>
+			</div>
+		</div>
 
-    <div *ngIf="individualStudentLimits.length > 0" class="accent-background-section">
-      <div class="ds-flex-row ds-flex-center-between ds-mb-20">
-            <span class="ds-dialog-heading" style="align-self: flex-start; padding-bottom: 0 !important;">
-              Limits for Individual Students
-              <div class="tooltip-container" style="display: inline">
-                <div style="display: inline" customToolTip [contentTemplate]="individualLimitLearnMore">
-                  <img
-                    class="support-icon"
-                    style="width: 17px"
-                    [src]="'./assets/Support (Gray-200).svg' | resolveAsset">
-                </div>
-              </div>
-              <ng-template #individualLimitLearnMore>
-                <div class="ds-tooltip">
-                  <span>
-                    Limit the number of passes certain individual students can have per day. This overrides the school limit if set.
-                    <a href="https://www.smartpass.app/passlimits" style="color: white" target="_blank"> Learn more</a>
-                  </span>
-                </div>
-              </ng-template>
-            </span>
-        <app-gradient-button
-          size="editable" width="70px" minHeight="30px" (buttonClick)="goToIndividualLimitPage()"
-          fontSize="16px" fontWeight="400" cornerRadius="4px"
-          leftIcon="assets/Plus (White).svg" leftImageWidth="15px" leftImageHeight="15px">
-          <span>Add</span>
-        </app-gradient-button>
-      </div>
+		<div *ngIf="individualStudentLimits.length > 0" class="accent-background-section">
+			<div class="ds-flex-row ds-flex-center-between ds-mb-20">
+				<span class="ds-dialog-heading" style="align-self: flex-start; padding-bottom: 0 !important">
+					Limits for Individual Students
+					<div class="tooltip-container" style="display: inline">
+						<div style="display: inline" customToolTip [contentTemplate]="individualLimitLearnMore">
+							<img class="support-icon" style="width: 17px" [src]="'./assets/Support (Gray-200).svg' | resolveAsset" />
+						</div>
+					</div>
+					<ng-template #individualLimitLearnMore>
+						<div class="ds-tooltip">
+							<span>
+								Limit the number of passes certain individual students can have per day. This overrides the school limit if set.
+								<a href="https://www.smartpass.app/passlimits" style="color: white" target="_blank"> Learn more</a>
+							</span>
+						</div>
+					</ng-template>
+				</span>
+				<app-gradient-button
+					size="editable"
+					width="70px"
+					minHeight="30px"
+					(buttonClick)="goToIndividualLimitPage()"
+					fontSize="16px"
+					fontWeight="400"
+					cornerRadius="4px"
+					leftIcon="assets/Plus (White).svg"
+					leftImageWidth="15px"
+					leftImageHeight="15px">
+					<span>Add</span>
+				</app-gradient-button>
+			</div>
 
-      <div
-        #individualItem
-        (mousedown)="individualItem.classList.add('pressed')"
-        (mouseup)="individualItem.classList.remove('pressed')"
-        (mouseleave)="individualItem.classList.remove('pressed')"
-        class="individual-list-item ds-flex-column"
-        *ngFor="let i of individualStudentLimits"
-        style="font-size: 14px; display: flex; row-gap: 5px"
-        [ngClass]="{ 'no-padding-y': !i.description }"
-        (click)="goToIndividualLimitPage(i)">
-          <div class="ds-flex-row ds-flex-center-between">
-            <span class="ds-dialog-heading" style="padding-bottom: 0 !important;" ignore>{{i.student.display_name}}</span>
-            <span>{{i.passLimit === -2 ? 'Unlimited' : i.passLimit}} {{i.passLimit === 1 ? 'pass' : 'passes'}}/day</span>
-          </div>
+			<div
+				#individualItem
+				(mousedown)="individualItem.classList.add('pressed')"
+				(mouseup)="individualItem.classList.remove('pressed')"
+				(mouseleave)="individualItem.classList.remove('pressed')"
+				class="individual-list-item ds-flex-column"
+				*ngFor="let i of individualStudentLimits"
+				style="font-size: 14px; display: flex; row-gap: 5px"
+				[ngClass]="{ 'no-padding-y': !i.description }"
+				(click)="goToIndividualLimitPage(i)">
+				<div class="ds-flex-row ds-flex-center-between">
+					<span class="ds-dialog-heading" style="padding-bottom: 0 !important" ignore>{{ i.student.display_name }}</span>
+					<span>{{ i.passLimit === -2 ? 'Unlimited' : i.passLimit }} {{ i.passLimit === 1 ? 'pass' : 'passes' }}/day</span>
+				</div>
 
-        <span class="ds-dialog-normal-text" *ngIf="i.description">{{i.description}}</span>
-      </div>
-    </div>
-  </div>
+				<span class="ds-dialog-normal-text" *ngIf="i.description">{{ i.description }}</span>
+			</div>
+		</div>
+	</div>
 </div>
 
-<div class="wrapper" *ngIf="page === 2" [@NextStep]="{ value: '', params: frameMotion$ | async}">
-  <div class="header" *ngIf="!(individualFormChanged | async); else changeIndividualForm">
-    <div class="background-header"></div>
-    <img class="back-button" (click)="goToHomePage()" [src]="'./assets/Back Button (Blue-White).svg' | resolveAsset">
-    <div class="title-header ds-flex-center-center" style="z-index: 10">
-      <div class="ds-dialog-title" [style.margin-left]="'12px'">{{selectedExistingIndividualLimit ? "Edit" : "New"}} Individual Limit</div>
-    </div>
-  </div>
+<div class="wrapper" *ngIf="page === 2" [@NextStep]="{ value: '', params: frameMotion$ | async }">
+	<div class="header" *ngIf="!(individualFormChanged | async); else changeIndividualForm">
+		<div class="background-header"></div>
+		<img class="back-button" (click)="goToHomePage()" [src]="'./assets/Back Button (Blue-White).svg' | resolveAsset" />
+		<div class="title-header ds-flex-center-center" style="z-index: 10">
+			<div class="ds-dialog-title" [style.margin-left]="'12px'">{{ selectedExistingIndividualLimit ? 'Edit' : 'New' }} Individual Limit</div>
+		</div>
+	</div>
 
-  <ng-template #changeIndividualForm>
-    <div class="header" style="justify-content: space-around">
-      <div class="background-header"></div>
-      <app-gradient-button [disabled]="requestLoading" (buttonClick)="resetIndividualForm()" customBackground="#7083A0">Cancel</app-gradient-button>
-      <div class="title-header" style="z-index: 10; display: flex">
-        <div class="ds-dialog-title">{{selectedExistingIndividualLimit ? "Edit" : "New"}} Individual Limit</div>
-      </div>
-      <app-gradient-button (buttonClick)="submitIndividualLimits()" customBackground="#00B476" textColor="white" [disabled]="!!(individualOverrideForm?.invalid)">
-        <ng-template [ngTemplateOutlet]="buttonLoading" [ngTemplateOutletContext]="{ loading: individualLoading, text: 'Save' }"></ng-template>
-      </app-gradient-button>
-    </div>
-  </ng-template>
+	<ng-template #changeIndividualForm>
+		<div class="header" style="justify-content: space-around">
+			<div class="background-header"></div>
+			<app-gradient-button [disabled]="requestLoading" (buttonClick)="resetIndividualForm()" customBackground="#7083A0">Cancel</app-gradient-button>
+			<div class="title-header" style="z-index: 10; display: flex">
+				<div class="ds-dialog-title">{{ selectedExistingIndividualLimit ? 'Edit' : 'New' }} Individual Limit</div>
+			</div>
+			<app-gradient-button
+				(buttonClick)="submitIndividualLimits()"
+				customBackground="#00B476"
+				textColor="white"
+				[disabled]="!!individualOverrideForm?.invalid">
+				<ng-template [ngTemplateOutlet]="buttonLoading" [ngTemplateOutletContext]="{ loading: individualLoading, text: 'Save' }"></ng-template>
+			</app-gradient-button>
+		</div>
+	</ng-template>
 
-  <div class="content ds-p-20" #individualContent>
-    <div>
-      <section class="individual-name ds-mb-15">
-        <p class="ds-dialog-heading ds-blue-gray" style="padding: 0 !important; margin-top: 0px !important;">Student</p>
-        <app-sp-search *ngIf="!selectedExistingIndividualLimit" #studentSearch (onUpdate)="updateStudentList($event)" [chipsMode]="true"></app-sp-search>
-        <div class="selected-name" *ngIf="selectedExistingIndividualLimit as iLimit">
-          <div class="student-picture">
-            <div *ngIf="iLimit.student.profile_picture; else d"
-                 [ngStyle]="{'background': 'url(' + iLimit.student.profile_picture + ') no-repeat left center/cover', width: '23px', height: '23px'}"></div>
-            <ng-template #d>
-              <img width="23" height="23" [src]="'./assets/Avatar Default.svg' | resolveAsset" alt="">
-            </ng-template>
-          </div>
-          <div class="name" ignore>{{ iLimit.student.display_name }}</div>
-        </div>
-      </section>
+	<div class="content ds-p-20" #individualContent>
+		<div>
+			<section class="individual-name ds-mb-15">
+				<p class="ds-dialog-heading ds-blue-gray" style="padding: 0 !important; margin-top: 0px !important">Student</p>
+				<app-sp-search
+					*ngIf="!selectedExistingIndividualLimit"
+					#studentSearch
+					(onUpdate)="updateStudentList($event)"
+					[chipsMode]="true"></app-sp-search>
+				<div class="selected-name" *ngIf="selectedExistingIndividualLimit as iLimit">
+					<div class="student-picture">
+						<div
+							*ngIf="iLimit.student.profile_picture; else d"
+							[ngStyle]="{
+								background: 'url(' + iLimit.student.profile_picture + ') no-repeat left center/cover',
+								width: '23px',
+								height: '23px'
+							}"></div>
+						<ng-template #d>
+							<img width="23" height="23" [src]="'./assets/Avatar Default.svg' | resolveAsset" alt="" />
+						</ng-template>
+					</div>
+					<div class="name" ignore>{{ iLimit.student.display_name }}</div>
+				</div>
+			</section>
 
-      <section class="individual-limit-override ds-mb-15">
-        <span class="ds-dialog-heading ds-blue-gray" style="padding: 0 !important">Limit</span>
-        <p class="ds-dialog-normal-text" style="margin-top: 4px">This limit overrides the School Pass Limit of {{passLimit?.passLimit}} {{passLimit?.passLimit === 1 ? 'pass' : 'passes'}}/day</p>
-        <app-pass-limit-input
-          #individualPassLimitInput
-          [formGroup]="individualOverrideForm"
-          [control]="individualOverrideForm.get('passLimit')"
-          [isIndividual]="true"
-        ></app-pass-limit-input>
-      </section>
+			<section class="individual-limit-override ds-mb-15">
+				<span class="ds-dialog-heading ds-blue-gray" style="padding: 0 !important">Limit</span>
+				<p class="ds-dialog-normal-text" style="margin-top: 4px">
+					This limit overrides the School Pass Limit of {{ passLimit?.passLimit }} {{ passLimit?.passLimit === 1 ? 'pass' : 'passes' }}/day
+				</p>
+				<app-pass-limit-input
+					#individualPassLimitInput
+					[formGroup]="individualOverrideForm"
+					[control]="individualOverrideForm.get('passLimit')"
+					[isIndividual]="true"></app-pass-limit-input>
+			</section>
 
-      <section class="individual-limit-description" style="margin-bottom: 10px">
-        <span class="ds-dialog-heading ds-blue-gray" style="padding: 0 !important">Description</span>
-        <p class="ds-dialog-normal-text" style="margin-top: 4px">This description is only visible to staff.</p>
-        <app-textarea width="85%" [control]="individualOverrideForm.get('description')" placeholder="Ex. Parents requested"></app-textarea>
-      </section>
-    </div>
+			<section class="individual-limit-description" style="margin-bottom: 10px">
+				<span class="ds-dialog-heading ds-blue-gray" style="padding: 0 !important">Description</span>
+				<p class="ds-dialog-normal-text" style="margin-top: 4px">This description is only visible to staff.</p>
+				<app-textarea width="85%" [control]="individualOverrideForm.get('description')" placeholder="Ex. Parents requested"></app-textarea>
+			</section>
+		</div>
 
-    <div class="delete-button ds-flex-center-center" *ngIf="selectedExistingIndividualLimit">
-      <app-gradient-button
-        [disabled]="requestLoading"
-        size="editable"
-        minHeight="40px"
-        minWidth="190px"
-        fontSize="14px"
-        cornerRadius="8px"
-        padding="0px 16px"
-        (buttonClick)="openDeleteDialog()"
-        gradient="#E32C66"
-        textColor="#FFFFFF">
-        <ng-template [ngTemplateOutlet]="buttonLoading" [ngTemplateOutletContext]="{loading: deleteLoading, text: 'Remove individual limit'}"></ng-template>
-      </app-gradient-button>
-    </div>
-  </div>
+		<div class="delete-button ds-flex-center-center" *ngIf="selectedExistingIndividualLimit">
+			<app-gradient-button
+				[disabled]="requestLoading"
+				size="editable"
+				minHeight="40px"
+				minWidth="190px"
+				fontSize="14px"
+				cornerRadius="8px"
+				padding="0px 16px"
+				(buttonClick)="openDeleteDialog()"
+				gradient="#E32C66"
+				textColor="#FFFFFF">
+				<ng-template
+					[ngTemplateOutlet]="buttonLoading"
+					[ngTemplateOutletContext]="{ loading: deleteLoading, text: 'Remove individual limit' }"></ng-template>
+			</app-gradient-button>
+		</div>
+	</div>
 </div>
 
 <ng-template #buttonLoading let-loading="loading" let-text="text">
-  <span *ngIf="!loading">{{text}}</span>
-  <mat-spinner class="request-loading" *ngIf="loading" [diameter]="25"></mat-spinner>
+	<span *ngIf="!loading">{{ text }}</span>
+	<mat-spinner class="request-loading" *ngIf="loading" [diameter]="25"></mat-spinner>
 </ng-template>
 
 <ng-template #passLimitNux>
-  <div class="accent-background-section ds-flex-row" style="position:relative">
-    <div style="width: 50px">
-      <img [src]="'./assets/Pass Limit (Purple).svg' | resolveAsset" alt="Options">
-    </div>
-    <div style="width: 80%">
-      <p class="ds-dialog-heading ds-mb-5" style="margin-top: 0">Limit the number of passes students can have per day</p>
-      <p class="ds-dialog-normal-text" style="margin-top: 0">
-        Set them school-wide, or just for individual students. Teachers can override it if the pass limit has been reached.
-        <a href="https://www.smartpass.app/passlimits" target="_blank">Learn more.</a>
-      </p>
-    </div>
+	<div class="accent-background-section ds-flex-row" style="position: relative">
+		<div style="width: 50px">
+			<img [src]="'./assets/Pass Limit (Purple).svg' | resolveAsset" alt="Options" />
+		</div>
+		<div style="width: 80%">
+			<p class="ds-dialog-heading ds-mb-5" style="margin-top: 0">Limit the number of passes students can have per day</p>
+			<p class="ds-dialog-normal-text" style="margin-top: 0">
+				Set them school-wide, or just for individual students. Teachers can override it if the pass limit has been reached.
+				<a href="https://www.smartpass.app/passlimits" target="_blank">Learn more.</a>
+			</p>
+		</div>
 
-    <button id="closePassLimitsIntro" (click)="dismissPassLimitNux()">
-      <img style="width: 14px; height: 14px" [src]="'./assets/Close (Grey).svg' | resolveAsset">
-    </button>
-  </div>
+		<button id="closePassLimitsIntro" (click)="dismissPassLimitNux()">
+			<img style="width: 14px; height: 14px" [src]="'./assets/Close (Grey).svg' | resolveAsset" />
+		</button>
+	</div>
 </ng-template>
 
 <ng-template #deleteDialogBody>
-  <p class="ds-dialog-normal-text" style="font-size: 15px !important; margin: 4px 0">
-    When you remove the individual limit, the student's pass limit will be restored to the
-    school limit if turned on.
-  </p>
+	<p class="ds-dialog-normal-text" style="font-size: 15px !important; margin: 4px 0">
+		When you remove the individual limit, the student's pass limit will be restored to the school limit if turned on.
+	</p>
 </ng-template>

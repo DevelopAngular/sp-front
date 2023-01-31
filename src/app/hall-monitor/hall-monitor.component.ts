@@ -1,333 +1,319 @@
-import {Component, ElementRef, HostListener, NgZone, OnDestroy, OnInit, ViewChild} from '@angular/core';
-import {MatDialog} from '@angular/material/dialog';
-import {BehaviorSubject, combineLatest, interval, merge, Observable, of, ReplaySubject, Subject} from 'rxjs';
-import {DataService} from '../services/data-service';
-import {mergeObject} from '../live-data/helpers';
-import {HallPassFilter, LiveDataService} from '../live-data/live-data.service';
-import {LoadingService} from '../services/loading.service';
-import {User} from '../models/User';
-import {ReportFormComponent} from '../report-form/report-form.component';
-import {Report} from '../models/Report';
-import {delay, filter, map, switchMap, take, takeUntil, tap} from 'rxjs/operators';
-import {DarkThemeSwitch} from '../dark-theme-switch';
-import {UserService} from '../services/user.service';
-import {ScreenService} from '../services/screen.service';
-import {RepresentedUser} from '../navbar/navbar.component';
-import {SortMenuComponent} from '../sort-menu/sort-menu.component';
-import {ButtonRestriction} from '../models/button-restrictions/ButtonRestriction';
-import {ReportButtonRestriction} from '../models/button-restrictions/ReportButtonRestriction';
-import {SortBtnRestriction} from '../models/button-restrictions/SortBtnRestriction';
-import {InputRestriction} from '../models/input-restrictions/InputRestriction';
-import {InputRestriciontSm} from '../models/input-restrictions/InputRestriciontSm';
-import {CollectionRestriction} from '../models/collection-restrictions/CollectionRestriction';
-import {HallMonitorCollectionRestriction} from '../models/collection-restrictions/HallMonitorCollectionRestriction';
-import {ScrollPositionService} from '../scroll-position.service';
-import {DeviceDetection} from '../device-detection.helper';
-import {HttpService} from '../services/http-service';
-import {HallPass} from '../models/HallPass';
-import {PdfGeneratorService} from '../admin/pdf-generator.service';
+import { Component, ElementRef, HostListener, NgZone, OnDestroy, OnInit, ViewChild } from '@angular/core';
+import { MatDialog } from '@angular/material/dialog';
+import { BehaviorSubject, combineLatest, interval, merge, Observable, of, ReplaySubject, Subject } from 'rxjs';
+import { DataService } from '../services/data-service';
+import { mergeObject } from '../live-data/helpers';
+import { HallPassFilter, LiveDataService } from '../live-data/live-data.service';
+import { LoadingService } from '../services/loading.service';
+import { User } from '../models/User';
+import { ReportFormComponent } from '../report-form/report-form.component';
+import { Report } from '../models/Report';
+import { delay, filter, map, switchMap, take, takeUntil, tap } from 'rxjs/operators';
+import { DarkThemeSwitch } from '../dark-theme-switch';
+import { UserService } from '../services/user.service';
+import { ScreenService } from '../services/screen.service';
+import { RepresentedUser } from '../navbar/navbar.component';
+import { SortMenuComponent } from '../sort-menu/sort-menu.component';
+import { ButtonRestriction } from '../models/button-restrictions/ButtonRestriction';
+import { ReportButtonRestriction } from '../models/button-restrictions/ReportButtonRestriction';
+import { SortBtnRestriction } from '../models/button-restrictions/SortBtnRestriction';
+import { InputRestriction } from '../models/input-restrictions/InputRestriction';
+import { InputRestriciontSm } from '../models/input-restrictions/InputRestriciontSm';
+import { CollectionRestriction } from '../models/collection-restrictions/CollectionRestriction';
+import { HallMonitorCollectionRestriction } from '../models/collection-restrictions/HallMonitorCollectionRestriction';
+import { ScrollPositionService } from '../scroll-position.service';
+import { DeviceDetection } from '../device-detection.helper';
+import { HttpService } from '../services/http-service';
+import { HallPass } from '../models/HallPass';
+import { PdfGeneratorService } from '../admin/pdf-generator.service';
 import * as moment from 'moment';
-import {CheckForUpdateService} from '../services/check-for-update.service';
-import {Title} from '@angular/platform-browser';
+import { CheckForUpdateService } from '../services/check-for-update.service';
+import { Title } from '@angular/platform-browser';
 
 @Component({
-  selector: 'app-hall-monitor',
-  templateUrl: './hall-monitor.component.html',
-  styleUrls: ['./hall-monitor.component.scss']
+	selector: 'app-hall-monitor',
+	templateUrl: './hall-monitor.component.html',
+	styleUrls: ['./hall-monitor.component.scss'],
 })
 export class HallMonitorComponent implements OnInit, OnDestroy {
+	private scrollableAreaName = 'HallMonitorTeacher';
+	private scrollableArea: HTMLElement;
 
-  private scrollableAreaName = 'HallMonitorTeacher';
-  private scrollableArea: HTMLElement;
+	@ViewChild('scrollableArea') set scrollable(scrollable: ElementRef) {
+		if (scrollable) {
+			this.scrollableArea = scrollable.nativeElement;
 
-  @ViewChild('scrollableArea') set scrollable(scrollable: ElementRef) {
-    if (scrollable) {
-      this.scrollableArea = scrollable.nativeElement;
+			const updatePosition = function () {
+				const scrollObserver = new Subject();
+				const initialHeight = this.scrollableArea.scrollHeight;
+				const scrollOffset = this.scrollPosition.getComponentScroll(this.scrollableAreaName);
 
-      const updatePosition = function () {
+				/**
+				 * If the scrollable area has static height, call `scrollTo` immediately,
+				 * otherwise additional subscription will perform once if the height changes
+				 */
 
-        const scrollObserver = new Subject();
-        const initialHeight = this.scrollableArea.scrollHeight;
-        const scrollOffset = this.scrollPosition.getComponentScroll(this.scrollableAreaName);
+				if (scrollOffset) {
+					this.scrollableArea.scrollTo({ top: scrollOffset });
+				}
 
-        /**
-         * If the scrollable area has static height, call `scrollTo` immediately,
-         * otherwise additional subscription will perform once if the height changes
-         */
+				interval(50)
+					.pipe(
+						filter(() => {
+							return initialHeight < (scrollable.nativeElement as HTMLElement).scrollHeight && scrollOffset;
+						}),
+						takeUntil(scrollObserver)
+					)
+					.subscribe((v) => {
+						console.log(scrollOffset);
+						if (v) {
+							this.scrollableArea.scrollTo({ top: scrollOffset });
+							scrollObserver.next();
+							scrollObserver.complete();
+							updatePosition();
+						}
+					});
+			}.bind(this);
+			updatePosition();
+		}
+	}
 
-        if (scrollOffset) {
-          this.scrollableArea.scrollTo({top: scrollOffset});
-        }
+	activePassProvider: any;
 
-        interval(50)
-          .pipe(
-            filter(() => {
-              return initialHeight < ((scrollable.nativeElement as HTMLElement).scrollHeight) && scrollOffset;
-            }),
-            takeUntil(scrollObserver)
-          )
-          .subscribe((v) => {
-            console.log(scrollOffset);
-            if (v) {
-              this.scrollableArea.scrollTo({top: scrollOffset});
-              scrollObserver.next();
-              scrollObserver.complete();
-              updatePosition();
-            }
-          });
-      }.bind(this);
-      updatePosition();
-    }
-  }
+	inputValue = '';
 
-  activePassProvider: any;
+	user: User;
+	effectiveUser: RepresentedUser;
+	isStaff = false;
+	canView = false;
+	sendReports: Report[] = [];
+	isActiveMessage: boolean;
 
-  inputValue = '';
+	searchQuery$ = new BehaviorSubject('');
+	passesLoaded: Observable<boolean> = of(false);
 
-  user: User;
-  effectiveUser: RepresentedUser;
-  isStaff = false;
-  canView = false;
-  sendReports: Report[] = [];
-  isActiveMessage: boolean;
+	hasPasses: Observable<boolean> = of(false);
+	searchPending$: Subject<boolean> = new Subject<boolean>();
 
-  searchQuery$ = new BehaviorSubject('');
-  passesLoaded: Observable<boolean> = of(false);
+	isReportFormOpened: boolean;
+	reportFormInstance: ReportFormComponent;
+	isSearchClicked: boolean;
+	resetvalue = new Subject();
 
-  hasPasses: Observable<boolean> = of(false);
-  searchPending$: Subject<boolean> = new Subject<boolean>();
+	isIpadWidth: boolean;
+	isIpadSearchBar: boolean;
+	isDeviceLargeExtra: boolean;
+	randomStringForSearchInput: string;
 
-  isReportFormOpened: boolean;
-  reportFormInstance: ReportFormComponent;
-  isSearchClicked: boolean;
-  resetvalue = new Subject();
+	reportBtn: ButtonRestriction = new ReportButtonRestriction();
+	sortBtn: ButtonRestriction = new SortBtnRestriction();
+	inputRestrictionSm: InputRestriction = new InputRestriciontSm();
+	hallMonitorCollection: CollectionRestriction = new HallMonitorCollectionRestriction();
 
-  isIpadWidth: boolean;
-  isIpadSearchBar: boolean;
-  isDeviceLargeExtra: boolean;
-  randomStringForSearchInput: string;
+	isEnableProfilePictures$: Observable<boolean>;
 
-  reportBtn: ButtonRestriction = new ReportButtonRestriction();
-  sortBtn: ButtonRestriction = new SortBtnRestriction();
-  inputRestrictionSm: InputRestriction = new InputRestriciontSm();
-  hallMonitorCollection: CollectionRestriction = new HallMonitorCollectionRestriction();
+	schoolsLength$: Observable<number>;
 
-  isEnableProfilePictures$: Observable<boolean>;
+	selectedSortOption: any = { id: 1, title: 'pass expiration time', action: 'expiration_time' };
+	sortMode: string = '';
 
-  schoolsLength$: Observable<number>;
+	isUpdateBar$: Subject<any>;
 
-  selectedSortOption: any = {id: 1, title: 'pass expiration time', action: 'expiration_time'};
-  sortMode: string = '';
+	destroy$: Subject<any> = new Subject();
 
-  isUpdateBar$: Subject<any>;
+	constructor(
+		private userService: UserService,
+		public dataService: DataService,
+		private _zone: NgZone,
+		private loadingService: LoadingService,
+		public dialog: MatDialog,
+		private liveDataService: LiveDataService,
+		public darkTheme: DarkThemeSwitch,
+		public screenService: ScreenService,
+		private scrollPosition: ScrollPositionService,
+		private http: HttpService,
+		private pdf: PdfGeneratorService,
+		private updateService: CheckForUpdateService,
+		private titleService: Title
+	) {
+		this.activePassProvider = this.liveDataService.hallMonitorPasses$;
+	}
 
-  destroy$: Subject<any> = new Subject();
+	get isMobile() {
+		return DeviceDetection.isMobile();
+	}
 
-  constructor(
-    private userService: UserService,
-    public dataService: DataService,
-    private _zone: NgZone,
-    private loadingService: LoadingService,
-    public dialog: MatDialog,
-    private liveDataService: LiveDataService,
-    public darkTheme: DarkThemeSwitch,
-    public screenService: ScreenService,
-    private scrollPosition: ScrollPositionService,
-    private http: HttpService,
-    private pdf: PdfGeneratorService,
-    private updateService: CheckForUpdateService,
-    private titleService: Title
-  ) {
-    this.activePassProvider = this.liveDataService.hallMonitorPasses$;
-  }
+	get isIOSTablet() {
+		return DeviceDetection.isIOSTablet();
+	}
 
-  get isMobile() {
-    return DeviceDetection.isMobile();
-  }
+	ngOnInit() {
+		this.titleService.setTitle('Hall Monitor | SmartPass');
+		this.isUpdateBar$ = this.updateService.needToUpdate$;
+		this.detectDevice();
+		this.schoolsLength$ = this.http.schoolsLength$;
 
-  get isIOSTablet() {
-    return DeviceDetection.isIOSTablet();
-  }
+		combineLatest(this.userService.user$.pipe(filter((u) => !!u)), this.userService.effectiveUser, (cu: User, eu: RepresentedUser) => {
+			return { cu, eu };
+		})
+			.pipe(this.loadingService.watchFirst, takeUntil(this.destroy$))
+			.subscribe((v) => {
+				this.user = v.cu;
+				this.effectiveUser = v.eu;
+				this.isStaff = v.cu.roles.includes('_profile_teacher');
+				this.canView = this.user.roles.includes('access_hall_monitor');
+			});
 
-  ngOnInit() {
-    this.titleService.setTitle('Hall Monitor | SmartPass');
-    this.isUpdateBar$ = this.updateService.needToUpdate$;
-    this.detectDevice();
-    this.schoolsLength$ = this.http.schoolsLength$;
+		this.isEnableProfilePictures$ = this.userService.isEnableProfilePictures$;
 
-    combineLatest(
-      this.userService.user$.pipe(filter(u => !!u)),
-      this.userService.effectiveUser,
-      (cu: User, eu: RepresentedUser) => {
-        return {cu, eu};
-      }
-    )
-    .pipe(
-      this.loadingService.watchFirst,
-      takeUntil(this.destroy$)
-    )
-    .subscribe((v) => {
-        this.user = v.cu;
-        this.effectiveUser = v.eu;
-        this.isStaff = v.cu.roles.includes('_profile_teacher');
-        this.canView = this.user.roles.includes('access_hall_monitor');
-    });
+		this.hasPasses = combineLatest(this.liveDataService.hallMonitorPassesTotalNumber$, (l1) => l1 > 0);
 
-    this.isEnableProfilePictures$ = this.userService.isEnableProfilePictures$;
+		this.passesLoaded = combineLatest(this.liveDataService.hallMonitorPassesLoaded$, (l1) => l1).pipe(
+			filter((v) => v),
+			tap((res) => this.searchPending$.next(!res))
+		);
 
-    this.hasPasses = combineLatest(
-        this.liveDataService.hallMonitorPassesTotalNumber$,
-        (l1) => l1 > 0
-      );
+		this.dialog.afterAllClosed.subscribe(() => {
+			this.isReportFormOpened = false;
+		});
+	}
 
-      this.passesLoaded = combineLatest(
-        this.liveDataService.hallMonitorPassesLoaded$,
-        (l1) => l1
-      ).pipe(
-        filter(v => v),
-        tap((res) => this.searchPending$.next(!res))
-      );
+	ngOnDestroy() {
+		if (this.scrollableArea && this.scrollableAreaName) {
+			this.scrollPosition.saveComponentScroll(this.scrollableAreaName, this.scrollableArea.scrollTop);
+		}
+		this.destroy$.next();
+		this.destroy$.complete();
+	}
 
-      this.dialog.afterAllClosed.subscribe( () => {
-        this.isReportFormOpened = false;
-      });
-  }
+	openReportForm() {
+		this.isReportFormOpened = true;
+		const dialogRef = this.dialog.open(ReportFormComponent, {
+			panelClass: ['form-dialog-container', this.isIOSTablet ? 'ios-report-dialog' : 'report-dialog'],
+			backdropClass: 'custom-backdrop',
+			data: { useChipMode: false },
+		});
 
-  ngOnDestroy() {
-    if (this.scrollableArea && this.scrollableAreaName) {
-      this.scrollPosition.saveComponentScroll(this.scrollableAreaName, this.scrollableArea.scrollTop);
-    }
-    this.destroy$.next();
-    this.destroy$.complete();
-  }
+		dialogRef
+			.afterClosed()
+			.pipe(
+				filter((res) => !!res),
+				map((res) => {
+					this.sendReports = res;
+					this.isActiveMessage = true;
+					return res;
+				}),
+				delay(3000)
+			)
+			.subscribe((dialog) => {
+				this.isActiveMessage = false;
+				this.isReportFormOpened = false;
+			});
 
-  openReportForm() {
-    this.isReportFormOpened = true;
-    const dialogRef = this.dialog.open(ReportFormComponent, {
-      panelClass: ['form-dialog-container', this.isIOSTablet ? 'ios-report-dialog' : 'report-dialog'],
-      backdropClass: 'custom-backdrop',
-      data: {useChipMode: false},
-    });
+		this.reportFormInstance = dialogRef.componentInstance;
+	}
 
-    dialogRef.afterClosed().pipe(
-      filter(res => !!res),
-      map(res => {
-        this.sendReports = res;
-        this.isActiveMessage = true;
-        return res;
-    }), delay(3000)).subscribe((dialog) => {
-      this.isActiveMessage = false;
-      this.isReportFormOpened = false;
-    });
+	getInputPlaceholder() {
+		return this.randomStringForSearchInput ? `Filter (ex. "${this.randomStringForSearchInput}")` : `Filter active passes`;
+	}
 
-    this.reportFormInstance = dialogRef.componentInstance;
-  }
+	openSortMenu() {
+		const SM = this.dialog.open(SortMenuComponent, {
+			position: { bottom: '1px' },
+			panelClass: 'sort-dialog',
+			data: {
+				title: 'sort by',
+				items: [
+					{ id: 1, title: 'pass expiration time', action: 'expiration_time' },
+					{ id: 2, title: 'student name', action: 'student_name' },
+					{ id: 3, title: 'destination', action: 'destination_name' },
+				],
+				selectedItem: this.selectedSortOption,
+			},
+		});
 
-  getInputPlaceholder() {
-    return this.randomStringForSearchInput ? `Filter (ex. "${this.randomStringForSearchInput}")` : `Filter active passes`;
-  }
+		SM.componentInstance.onListItemClick.subscribe((item) => {
+			this.dataService.sort$.next(item.action);
+			this.selectedSortOption = item;
+		});
+	}
 
-  openSortMenu() {
-      const SM = this.dialog.open(SortMenuComponent, {
-        position: { bottom: '1px' },
-        panelClass: 'sort-dialog',
-        data: {
-          title: 'sort by',
-          items: [
-            {id: 1, title: 'pass expiration time', action: 'expiration_time'},
-            {id: 2, title: 'student name', action: 'student_name'},
-            {id: 3, title: 'destination', action: 'destination_name'},
-          ],
-          selectedItem: this.selectedSortOption
-        }
-      });
+	onSearch(search: string) {
+		this.inputValue = search;
+		this.searchPending$.next(true);
+		this.searchQuery$.next(search);
+		this.updatePassCollection(this.sortMode);
+	}
 
-      SM.componentInstance.onListItemClick.subscribe((item) =>  {
-          this.dataService.sort$.next(item.action);
-          this.selectedSortOption = item;
-      });
-  }
+	updatePassCollection(sort) {
+		this.sortMode = sort;
+		const sort$ = of(this.sortMode).pipe(map((s) => ({ sort: s })));
+		const search$ = this.searchQuery$.pipe(map((s) => ({ search_query: s })));
+		const merged$ = mergeObject({ sort: '-created', search_query: '' }, merge(sort$, search$));
 
-  onSearch(search: string) {
-    this.inputValue = search;
-    this.searchPending$.next(true);
-    this.searchQuery$.next(search);
-    this.updatePassCollection(this.sortMode);
-  }
+		const mergedReplay = new ReplaySubject<HallPassFilter>(1);
+		merged$.subscribe(mergedReplay);
+		this.liveDataService.updateHallMonitorPassesRequest(merged$);
+	}
 
-  updatePassCollection(sort) {
-    this.sortMode = sort;
-    const sort$ = of(this.sortMode).pipe(map(s => ({sort: s})));
-    const search$ = this.searchQuery$.pipe(map(s => ({search_query: s})));
-    const merged$ = mergeObject({sort: '-created', search_query: ''}, merge(sort$, search$));
+	back() {
+		this.reportFormInstance.back();
+	}
 
-    const mergedReplay = new ReplaySubject<HallPassFilter>(1);
-    merged$.subscribe(mergedReplay);
-    this.liveDataService.updateHallMonitorPassesRequest(merged$);
-  }
+	detectDevice() {
+		this.isIpadWidth = this.screenService.isIpadWidth;
+		this.isDeviceLargeExtra = this.screenService.isDeviceLargeExtra;
 
-  back() {
-    this.reportFormInstance.back();
-  }
+		// if (this.screenService.isDeviceLargeExtra) {
+		//   this.hallMonitorCollection.hasSort = false;
+		// }
 
-  detectDevice() {
-    this.isIpadWidth = this.screenService.isIpadWidth;
-    this.isDeviceLargeExtra = this.screenService.isDeviceLargeExtra;
+		// if (this.screenService.isDesktopWidth) {
+		//   this.hallMonitorCollection.hasSort = true;
+		// }
+	}
 
-    // if (this.screenService.isDeviceLargeExtra) {
-    //   this.hallMonitorCollection.hasSort = false;
-    // }
+	@HostListener('window:resize')
+	checkDeviceWidth() {
+		this.detectDevice();
+	}
 
-    // if (this.screenService.isDesktopWidth) {
-    //   this.hallMonitorCollection.hasSort = true;
-    // }
-  }
+	toggleSearchBar() {
+		if (this.screenService.isDeviceLargeExtra) {
+			this.isIpadSearchBar = !this.isIpadSearchBar;
+		}
+	}
 
-  @HostListener('window:resize')
-  checkDeviceWidth() {
-    this.detectDevice();
-  }
+	cleanSearchValue() {
+		this.resetvalue.next('');
+		this.inputValue = '';
+		this.isIpadSearchBar = false;
+	}
 
-  toggleSearchBar() {
-    if (this.screenService.isDeviceLargeExtra) {
-      this.isIpadSearchBar = !this.isIpadSearchBar;
-    }
-  }
-
-  cleanSearchValue() {
-    this.resetvalue.next('');
-    this.inputValue = '';
-    this.isIpadSearchBar = false;
-  }
-
-  previewPDF() {
-    this.activePassProvider
-      .pipe(
-        take(1),
-        map((hp_list: HallPass[]) => {
-          return hp_list.map(hp => {
-            return {
-              'Student Name': hp.student.display_name,
-              'Email': hp.student.primary_email,
-              'Origin': hp.origin.title,
-              'Destination': hp.destination.title,
-              'Travel Type': hp.travel_type
-                .split('_')
-                .map(chunk => chunk.slice(0, 1).toUpperCase()).join('')
-            };
-          });
-        }),
-        switchMap((active_hp: any[]) => {
-          if (active_hp.length) {
-            return this.pdf.generateReport(
-              active_hp,
-              'p',
-              'hallMonitor',
-              '',
-              `Active Passes at ${moment().format('DD/MM hh:mm A')} - SmartPass`
-            );
-          }
-        })
-      ).subscribe();
-  }
+	previewPDF() {
+		this.activePassProvider
+			.pipe(
+				take(1),
+				map((hp_list: HallPass[]) => {
+					return hp_list.map((hp) => {
+						return {
+							'Student Name': hp.student.display_name,
+							Email: hp.student.primary_email,
+							Origin: hp.origin.title,
+							Destination: hp.destination.title,
+							'Travel Type': hp.travel_type
+								.split('_')
+								.map((chunk) => chunk.slice(0, 1).toUpperCase())
+								.join(''),
+						};
+					});
+				}),
+				switchMap((active_hp: any[]) => {
+					if (active_hp.length) {
+						return this.pdf.generateReport(active_hp, 'p', 'hallMonitor', '', `Active Passes at ${moment().format('DD/MM hh:mm A')} - SmartPass`);
+					}
+				})
+			)
+			.subscribe();
+	}
 }

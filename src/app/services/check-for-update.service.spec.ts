@@ -1,16 +1,16 @@
-import {TestBed} from '@angular/core/testing';
+import { TestBed } from '@angular/core/testing';
 
-import {CheckForUpdateService} from './check-for-update.service';
+import { CheckForUpdateService } from './check-for-update.service';
 
 describe('CheckForUpdateService', () => {
-  let service: CheckForUpdateService;
+	let service: CheckForUpdateService;
 
-  beforeEach(() => {
-    TestBed.configureTestingModule({});
-    service = TestBed.inject(CheckForUpdateService);
-  });
+	beforeEach(() => {
+		TestBed.configureTestingModule({});
+		service = TestBed.inject(CheckForUpdateService);
+	});
 
-  it('should be created', () => {
-    expect(service).toBeTruthy();
-  });
+	it('should be created', () => {
+		expect(service).toBeTruthy();
+	});
 });

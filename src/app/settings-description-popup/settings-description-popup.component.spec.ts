@@ -1,25 +1,24 @@
-import {ComponentFixture, TestBed} from '@angular/core/testing';
+import { ComponentFixture, TestBed } from '@angular/core/testing';
 
-import {SettingsDescriptionPopupComponent} from './settings-description-popup.component';
+import { SettingsDescriptionPopupComponent } from './settings-description-popup.component';
 
 describe('SettingsDescriptionPopupComponent', () => {
-  let component: SettingsDescriptionPopupComponent;
-  let fixture: ComponentFixture<SettingsDescriptionPopupComponent>;
+	let component: SettingsDescriptionPopupComponent;
+	let fixture: ComponentFixture<SettingsDescriptionPopupComponent>;
 
-  beforeEach(async () => {
-    await TestBed.configureTestingModule({
-      declarations: [ SettingsDescriptionPopupComponent ]
-    })
-    .compileComponents();
-  });
+	beforeEach(async () => {
+		await TestBed.configureTestingModule({
+			declarations: [SettingsDescriptionPopupComponent],
+		}).compileComponents();
+	});
 
-  beforeEach(() => {
-    fixture = TestBed.createComponent(SettingsDescriptionPopupComponent);
-    component = fixture.componentInstance;
-    fixture.detectChanges();
-  });
+	beforeEach(() => {
+		fixture = TestBed.createComponent(SettingsDescriptionPopupComponent);
+		component = fixture.componentInstance;
+		fixture.detectChanges();
+	});
 
-  it('should create', () => {
-    expect(component).toBeTruthy();
-  });
+	it('should create', () => {
+		expect(component).toBeTruthy();
+	});
 });

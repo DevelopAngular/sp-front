@@ -1,90 +1,90 @@
-@import "../../sp-colors";
+@import '../../sp-colors';
 
 :host {
-  .toast-container{
-    //display: flex;
-    //justify-content: flex-end;
-    //height: 100vh;
-    //width: 100vw;
-    //z-index: 1002;
-    position: relative;
-    pointer-events: all;
-    .backdrop {
-      background-color: rgba(0, 0, 0, .3);
-      top: 0;
-      left: 0;
-      bottom: 0;
-      right: 0;
-      position: absolute;
-      z-index: 999999999;
-    }
-      .content-wrapper {
-        position: absolute;
-        z-index: 1002;
-        transition: top .4s ease;
-        border-radius: 10px;
-        box-shadow: 0 5px 20px rgba(0,0,0,.13);
-        background-color: #FFFFFF;
-        box-sizing: border-box;
-        //transition: all .3s ease;
-        overflow: hidden;
-        .content {
-          position: relative;
-          overflow: hidden;
-          width: 378px;
-          padding: 0 35px;
+	.toast-container {
+		//display: flex;
+		//justify-content: flex-end;
+		//height: 100vh;
+		//width: 100vw;
+		//z-index: 1002;
+		position: relative;
+		pointer-events: all;
+		.backdrop {
+			background-color: rgba(0, 0, 0, 0.3);
+			top: 0;
+			left: 0;
+			bottom: 0;
+			right: 0;
+			position: absolute;
+			z-index: 999999999;
+		}
+		.content-wrapper {
+			position: absolute;
+			z-index: 1002;
+			transition: top 0.4s ease;
+			border-radius: 10px;
+			box-shadow: 0 5px 20px rgba(0, 0, 0, 0.13);
+			background-color: #ffffff;
+			box-sizing: border-box;
+			//transition: all .3s ease;
+			overflow: hidden;
+			.content {
+				position: relative;
+				overflow: hidden;
+				width: 378px;
+				padding: 0 35px;
 
-          .type-line {
-            position: absolute;
-            left: 0;
-            width: 12px;
-            height: 100%;
-          }
+				.type-line {
+					position: absolute;
+					left: 0;
+					width: 12px;
+					height: 100%;
+				}
 
-          .info {
-            padding: 15px 0;
-            .text {
-              &_header {
-                font-weight: bold;
-                color: $navy;
-                font-size: 17px;
-              }
-              &_message {
-                color: $blue-gray;
-                font-size: 15px;
-                margin-top: 9px;
-                font-weight: normal;
-              }
-            }
-            .button {
-              margin-top: 9px;
-            }
+				.info {
+					padding: 15px 0;
+					.text {
+						&_header {
+							font-weight: bold;
+							color: $navy;
+							font-size: 17px;
+						}
+						&_message {
+							color: $blue-gray;
+							font-size: 15px;
+							margin-top: 9px;
+							font-weight: normal;
+						}
+					}
+					.button {
+						margin-top: 9px;
+					}
 
-            .learn-more {
-              color: $blue-gray;
-            }
-          }
-          .close-btn {
-            position: absolute;
-            top: 15px;
-            right: 15px;
-            cursor: pointer;
-            img {
-              width: 11px;
-            }
-          }
-        }
-      }
+					.learn-more {
+						color: $blue-gray;
+					}
+				}
+				.close-btn {
+					position: absolute;
+					top: 15px;
+					right: 15px;
+					cursor: pointer;
+					img {
+						width: 11px;
+					}
+				}
+			}
+		}
 
-    @keyframes slide {
-      0% {
-        opacity: 0;
-        left: 450px;
-      }
-      100% {
-        opacity: 1;
-        left: 0;
-      }
-    }
-  }
+		@keyframes slide {
+			0% {
+				opacity: 0;
+				left: 450px;
+			}
+			100% {
+				opacity: 1;
+				left: 0;
+			}
+		}
+	}
 }

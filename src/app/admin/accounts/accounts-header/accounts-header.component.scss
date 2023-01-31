@@ -1,174 +1,174 @@
-@import "../../../../sp-colors";
+@import '../../../../sp-colors';
 
 .wrapper {
-  width: 100%;
+	width: 100%;
 
-  .accounts-header {
-    //height: 99px;
-    box-sizing: border-box;
-    border-radius: 12px;
-    box-shadow: 0 5px 20px rgba(0, 0, 0, 0.06);
-    background-color: #FFFFFF;
-    display: flex;
-    flex-direction: column;
-    justify-content: space-between;
-    position: relative;
+	.accounts-header {
+		//height: 99px;
+		box-sizing: border-box;
+		border-radius: 12px;
+		box-shadow: 0 5px 20px rgba(0, 0, 0, 0.06);
+		background-color: #ffffff;
+		display: flex;
+		flex-direction: column;
+		justify-content: space-between;
+		position: relative;
 
-    .selected {
-      position: absolute;
-      left: 0;
-      right: 0;
-      top: 0;
-      bottom: 50px;
-      border-radius: 12px 12px 0 0;
-      background-color: #ECF1FF;
-      display: flex;
-      align-items: center;
-      z-index: 11;
+		.selected {
+			position: absolute;
+			left: 0;
+			right: 0;
+			top: 0;
+			bottom: 50px;
+			border-radius: 12px 12px 0 0;
+			background-color: #ecf1ff;
+			display: flex;
+			align-items: center;
+			z-index: 11;
 
-      .selected-content {
-        display: flex;
-        justify-content: space-between;
-        align-items: center;
-        padding: 0 30px;
-        width: 100%;
-        .count {
-          font-size: 24px;
-          color: $navy;
-          font-weight: bold;
-        }
-      }
-    }
+			.selected-content {
+				display: flex;
+				justify-content: space-between;
+				align-items: center;
+				padding: 0 30px;
+				width: 100%;
+				.count {
+					font-size: 24px;
+					color: $navy;
+					font-weight: bold;
+				}
+			}
+		}
 
-    .header-content {
-      height: 80px;
-      display: flex;
-      //width: 100%;
-      justify-content: space-between;
-      align-items: center;
-      //margin-bottom: 15px;
-      .header-title {
-        color: $navy;
-        font-size: 24px;
-        font-weight: bold;
-        margin-left: 30px;
+		.header-content {
+			height: 80px;
+			display: flex;
+			//width: 100%;
+			justify-content: space-between;
+			align-items: center;
+			//margin-bottom: 15px;
+			.header-title {
+				color: $navy;
+				font-size: 24px;
+				font-weight: bold;
+				margin-left: 30px;
 
-        .count {
-          display: flex;
-          align-items: center;
-          margin-top: 7px;
-          .text {
-            font-size: 16px;
-            color: $blue-gray;
-            font-weight: normal;
-            //margin-left: 7px;
-          }
-        }
-      }
+				.count {
+					display: flex;
+					align-items: center;
+					margin-top: 7px;
+					.text {
+						font-size: 16px;
+						color: $blue-gray;
+						font-weight: normal;
+						//margin-left: 7px;
+					}
+				}
+			}
 
-      .header-buttons {
-        display: flex;
-        align-items: center;
-        margin-right: 30px;
-        width: 100%;
-        justify-content: space-between;
-        .go-accounts {
-          width: 34px;
-          height: 34px;
-          border-radius: 50%;
-          background-color: #F4F4F4;
-          display: flex;
-          outline: none;
-          justify-content: center;
-          align-items: center;
-          margin-left: 22px;
-          cursor: pointer;
-        }
+			.header-buttons {
+				display: flex;
+				align-items: center;
+				margin-right: 30px;
+				width: 100%;
+				justify-content: space-between;
+				.go-accounts {
+					width: 34px;
+					height: 34px;
+					border-radius: 50%;
+					background-color: #f4f4f4;
+					display: flex;
+					outline: none;
+					justify-content: center;
+					align-items: center;
+					margin-left: 22px;
+					cursor: pointer;
+				}
 
-        .buttons {
-          display: flex;
+				.buttons {
+					display: flex;
 
-          app-square-button:not(:first-of-type) {
-            margin-left: 10px
-          }
-        }
+					app-square-button:not(:first-of-type) {
+						margin-left: 10px;
+					}
+				}
 
-        .button-content {
-          display: flex;
+				.button-content {
+					display: flex;
 
-          .value {
-            position: absolute;
-            z-index: 10;
-          }
+					.value {
+						position: absolute;
+						z-index: 10;
+					}
 
-          .text {
-            color: #FFF;
-            font-size: 15px;
-            margin-left: 8px;
-          }
-        }
-      }
-    }
+					.text {
+						color: #fff;
+						font-size: 15px;
+						margin-left: 8px;
+					}
+				}
+			}
+		}
 
-    .tabs {
-      display: flex;
-      //margin-top: 15px;
-      position: relative;
-      padding: 0 15px;
+		.tabs {
+			display: flex;
+			//margin-top: 15px;
+			position: relative;
+			padding: 0 15px;
 
-      .selected-tab-pointer {
-        transition: all 0.4s ease;
-        position: absolute;
-        bottom: 0;
-        height: 5px;
-        width: 80px;
-        border-radius: 4px 4px 0 0;
-      }
-    }
-  }
+			.selected-tab-pointer {
+				transition: all 0.4s ease;
+				position: absolute;
+				bottom: 0;
+				height: 5px;
+				width: 80px;
+				border-radius: 4px 4px 0 0;
+			}
+		}
+	}
 }
 
 .filter-dialog-wrapper {
-  background-color: #FFFFFF;
-  border-radius: 12px;
+	background-color: #ffffff;
+	border-radius: 12px;
 
-  .options {
-    //padding: 15px 0;
+	.options {
+		//padding: 15px 0;
 
-    .option {
-      height: 40px;
-      display: flex;
-      align-items: center;
-      justify-content: space-between;
-      cursor: pointer;
-      width: 180px;
+		.option {
+			height: 40px;
+			display: flex;
+			align-items: center;
+			justify-content: space-between;
+			cursor: pointer;
+			width: 180px;
 
-      &:hover {
-        background-color: rgba(210, 210, 210, 0.3);
-      }
+			&:hover {
+				background-color: rgba(210, 210, 210, 0.3);
+			}
 
-      .title {
-        font-size: 14px;
-        display: flex;
-        align-items: center;
-      }
-    }
-  }
+			.title {
+				font-size: 14px;
+				display: flex;
+				align-items: center;
+			}
+		}
+	}
 }
 
 .filter-chip {
-  background-color: $navy100;
-  color: $navy500;
-  padding: 10px;
-  border-radius: 20px;
+	background-color: $navy100;
+	color: $navy500;
+	padding: 10px;
+	border-radius: 20px;
 
-  span {
-    font-size: 14px;
-    font-weight: 500;
-  }
+	span {
+		font-size: 14px;
+		font-weight: 500;
+	}
 }
 
 .filter-disabled {
-  pointer-events: none;
-  opacity: 0.5;
+	pointer-events: none;
+	opacity: 0.5;
 }

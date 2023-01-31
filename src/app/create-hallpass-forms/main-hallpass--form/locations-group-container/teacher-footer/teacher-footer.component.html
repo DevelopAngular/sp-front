@@ -1,34 +1,44 @@
-<div class="from-footer"
-     [attr.data-motion-opacity]="(frameMotion$ | async).direction"
-     [style.height]="!showFullFooter ? '43px' : '89px'"
-     (click)="showFullFooter = !showFullFooter"
-     [ngClass]="{'target-shadow': state !== 'to'}"
->
-  <div class="switch-locs-view" *ngIf="state === 'to'" (click)="switchLocsView($event)">
-    <img [src]="(!isGrid ? './assets/List (Blue-Gray).svg' : './assets/Grid (Blue-Gray).svg') | resolveAsset" width="20" height="20">
-  </div>
-    <div class="footer-from-teacher-text">
-      <div class="default-footer" *ngIf="!showFullFooter">
-        <div class="default-text">
-          Expand Pass Details
-        </div>
-        <img class="arrow-icon" [src]="'./assets/Chevron Up (Navy).svg' | resolveAsset">
-      </div>
-      <div class="new-footer" *ngIf="showFullFooter">
-        <div class="cursor" (click)="goToDate()" *ngIf="date">
-          {{ date }}
-        </div>
-        <div class="center">
-          <div class="center-text">
-            <div class="footer-left-text" [ngClass]="{'cursor': fromCursor}" (click)="goToFromWhere($event)" [style.font-weight]="(!fromLocation ? 'bold' : 'normal')">{{ fromLocationText$ | async }}</div>
-            <img class="footer-icon" [src]="'./assets/Arrow (Navy).svg' | resolveAsset">
-            <div class="footer-right-text" [ngClass]="{'cursor': toCursor}" (click)="goToToWhere($event)" [style.font-weight]="(!toLocation && state !== 'from' ? 'bold' : 'normal')">{{ toLocationText }}</div>
-          </div>
-          <img class="arrow-icon" [src]="'./assets/Chevron Down (Navy).svg' | resolveAsset">
-        </div>
-        <div [ngClass]="{cursor: studentsCursor}" (click)="goToStudents($event)" *ngIf="showFullFooter && studentText">
-          {{ studentText }}
-        </div>
-      </div>
-    </div>
+<div
+	class="from-footer"
+	[attr.data-motion-opacity]="(frameMotion$ | async).direction"
+	[style.height]="!showFullFooter ? '43px' : '89px'"
+	(click)="showFullFooter = !showFullFooter"
+	[ngClass]="{ 'target-shadow': state !== 'to' }">
+	<div class="switch-locs-view" *ngIf="state === 'to'" (click)="switchLocsView($event)">
+		<img [src]="(!isGrid ? './assets/List (Blue-Gray).svg' : './assets/Grid (Blue-Gray).svg') | resolveAsset" width="20" height="20" />
+	</div>
+	<div class="footer-from-teacher-text">
+		<div class="default-footer" *ngIf="!showFullFooter">
+			<div class="default-text">Expand Pass Details</div>
+			<img class="arrow-icon" [src]="'./assets/Chevron Up (Navy).svg' | resolveAsset" />
+		</div>
+		<div class="new-footer" *ngIf="showFullFooter">
+			<div class="cursor" (click)="goToDate()" *ngIf="date">
+				{{ date }}
+			</div>
+			<div class="center">
+				<div class="center-text">
+					<div
+						class="footer-left-text"
+						[ngClass]="{ cursor: fromCursor }"
+						(click)="goToFromWhere($event)"
+						[style.font-weight]="!fromLocation ? 'bold' : 'normal'">
+						{{ fromLocationText$ | async }}
+					</div>
+					<img class="footer-icon" [src]="'./assets/Arrow (Navy).svg' | resolveAsset" />
+					<div
+						class="footer-right-text"
+						[ngClass]="{ cursor: toCursor }"
+						(click)="goToToWhere($event)"
+						[style.font-weight]="!toLocation && state !== 'from' ? 'bold' : 'normal'">
+						{{ toLocationText }}
+					</div>
+				</div>
+				<img class="arrow-icon" [src]="'./assets/Chevron Down (Navy).svg' | resolveAsset" />
+			</div>
+			<div [ngClass]="{ cursor: studentsCursor }" (click)="goToStudents($event)" *ngIf="showFullFooter && studentText">
+				{{ studentText }}
+			</div>
+		</div>
+	</div>
 </div>
