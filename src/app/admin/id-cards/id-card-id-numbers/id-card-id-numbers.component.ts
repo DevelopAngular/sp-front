@@ -11,8 +11,9 @@ import { UserService } from '../../../services/user.service';
 export class IdCardIdNumbersComponent implements OnInit {
 	isUploadedIDNumbers: boolean = false;
 
-	constructor(public dialogRef: MatDialogRef<IdCardIdNumbersComponent>) // private userService: UserService,
-	{}
+	constructor(
+		public dialogRef: MatDialogRef<IdCardIdNumbersComponent> // private userService: UserService,
+	) {}
 
 	ngOnInit(): void {
 		// this.userService.getStatusOfIDNumber().subscribe({
