@@ -148,7 +148,6 @@ deploy_staging:
     - ls -l / ; pwd
     - "[ -d /mem_fs ] && cp -r /notify-messenger/hall-pass-web /mem_fs/hall-pass-web && cd /mem_fs/hall-pass-web || echo 'Not using mem disk!'"
     - pwd
-    - yarn lint:ci
     - source scripts/auto_devops.sh
     - scripts/build.sh
     - install_dependencies
@@ -162,6 +161,7 @@ deploy_staging:
   environment:
       name: staging
       url: "https://notify-messenger-notify-server-staging.lavanote.com"
+  needs: [lint]
   only:
     refs:
       - master
