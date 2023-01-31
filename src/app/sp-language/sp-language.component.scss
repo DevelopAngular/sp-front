@@ -1,81 +1,80 @@
-@import "../../design-system";
-@import "../../util";
-@import "../../sp-colors";
+@import '../../design-system';
+@import '../../util';
+@import '../../sp-colors';
 
-  .host {
-    font-family: $primaryFont;
-    @include wh(425, 500);
-    border-radius: 14px;
-    background: $white;
-    .language-header {
-      @extend .ds-flex-center-center;
-      @include wh(426, 73);
-      border-bottom: 1px solid $gray200;
-      position: relative;
-      .back-button {
-        position: absolute;
-        left: 20px;
-        @include wh(34,34);
-        cursor: pointer;
-      }
-    }
-    .language-content {
-         @include textSize(15px, bold, $blue-gray);
-        display: flex;
-        flex-flow: column;
-        overflow: auto;
-        box-sizing: border-box;
-         align-items: center;
-        .language-content-picker {
-            box-sizing: border-box;
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            @include wh(388,76);
-            background-color: $gray050;
-            border-radius: 10px;
-            margin: 0px auto;
-        }
-        .language-content-hint {
-          @include textSize(14px, normal, $gray500);
-        }
-        .theme {
-            font-size: 16px;
-            font-weight: 500;
-            color: $navy;
-        }
+.host {
+	font-family: $primaryFont;
+	@include wh(425, 500);
+	border-radius: 14px;
+	background: $white;
+	.language-header {
+		@extend .ds-flex-center-center;
+		@include wh(426, 73);
+		border-bottom: 1px solid $gray200;
+		position: relative;
+		.back-button {
+			position: absolute;
+			left: 20px;
+			@include wh(34, 34);
+			cursor: pointer;
+		}
+	}
+	.language-content {
+		@include textSize(15px, bold, $blue-gray);
+		display: flex;
+		flex-flow: column;
+		overflow: auto;
+		box-sizing: border-box;
+		align-items: center;
+		.language-content-picker {
+			box-sizing: border-box;
+			display: flex;
+			justify-content: space-between;
+			align-items: center;
+			@include wh(388, 76);
+			background-color: $gray050;
+			border-radius: 10px;
+			margin: 0px auto;
+		}
+		.language-content-hint {
+			@include textSize(14px, normal, $gray500);
+		}
+		.theme {
+			font-size: 16px;
+			font-weight: 500;
+			color: $navy;
+		}
 
-         .lang-toggle-bar-wrapper {
-          z-index: 111;
-          font-weight: normal;
-          font-size: 14px;
-          .selected-lang {
-            display: flex;
-            align-items: center;
-            cursor: pointer;
-            .lang-name {
-              padding-right: 7px;
-              color: $navy500 !important;
-              text-transform: capitalize;
-            }
-            .disclosure-icon {
-              width: 5px;
-              height: 9px;;
-            }
-          }
-         }
-
-    }
-  }
+		.lang-toggle-bar-wrapper {
+			z-index: 111;
+			font-weight: normal;
+			font-size: 14px;
+			.selected-lang {
+				display: flex;
+				align-items: center;
+				cursor: pointer;
+				.lang-name {
+					padding-right: 7px;
+					color: $navy500 !important;
+					text-transform: capitalize;
+				}
+				.disclosure-icon {
+					width: 5px;
+					height: 9px;
+				}
+			}
+		}
+	}
+}
 
 @media all and (max-width: 475px) {
-  .host {
-    .language-content {
-      padding: 30px 15px;
+	.host {
+		.language-content {
+			padding: 30px 15px;
 
-        .theme {
-          margin-bottom: 7px;
-        }
-    }
-  }
+			.theme {
+				margin-bottom: 7px;
+			}
+		}
+	}
 }

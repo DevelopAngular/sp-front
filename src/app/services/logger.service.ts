@@ -1,19 +1,19 @@
 import { Injectable } from '@angular/core';
-import {StorageService} from './storage.service';
+import { StorageService } from './storage.service';
 
 export enum Level {
-  OFF = 0,
-  ERROR = 1,
-  WARN = 2,
-  INFO = 3,
-  DEBUG = 4,
-  LOG = 5,
+	OFF = 0,
+	ERROR = 1,
+	WARN = 2,
+	INFO = 3,
+	DEBUG = 4,
+	LOG = 5,
 }
 
 interface IArgs {
-  [index: number]: any;
+	[index: number]: any;
 
-  length: number;
+	length: number;
 }
 
 const consoleLogFunctions = [];
@@ -25,83 +25,80 @@ consoleLogFunctions[Level.DEBUG] = console['debug'] || console.log;
 consoleLogFunctions[Level.LOG] = console.log;
 
 function logConsole(level: Level, args: IArgs) {
-  if (consoleLogFunctions[level]) {
-    consoleLogFunctions[level].apply(console, args);
-  }
+	if (consoleLogFunctions[level]) {
+		consoleLogFunctions[level].apply(console, args);
+	}
 }
 
-
 @Injectable({
-  providedIn: 'root'
+	providedIn: 'root',
 })
 export class Logger {
+	constructor(private storage: StorageService) {
+		console.log('Logging level: ' + Level[this.level]);
 
-  constructor(private storage: StorageService) {
-    console.log('Logging level: ' + Level[this.level]);
+		// Pre-bind logging functions.
+		// This allows use such as .subscribe(_logger.warn) or .then(_logger.warn)
+		const my_this = this;
+		for (const key of ['error', 'warn', 'info', 'debug', 'log']) {
+			this[key] = function () {
+				Logger.prototype[key].apply(my_this, arguments);
+			};
+		}
 
-    // Pre-bind logging functions.
-    // This allows use such as .subscribe(_logger.warn) or .then(_logger.warn)
-    const my_this = this;
-    for (const key of ['error', 'warn', 'info', 'debug', 'log']) {
-      this[key] = function () {
-        Logger.prototype[key].apply(my_this, arguments);
-      };
-    }
+		(window as any)['setLoggingLevel'] = function (level: string) {
+			level = level.toUpperCase();
+			if (Level.hasOwnProperty(level)) {
+				my_this.level = Level[level] as any as Level;
+				console.log(`Logging level set to ${level}`);
+			} else {
+				console.log(`Invalid logging level: ${level}`);
+			}
+		};
+	}
 
-    (window as any)['setLoggingLevel'] = function (level: string) {
-      level = level.toUpperCase();
-      if (Level.hasOwnProperty(level)) {
-        my_this.level = Level[level] as any as Level;
-        console.log(`Logging level set to ${level}`);
-      } else {
-        console.log(`Invalid logging level: ${level}`);
-      }
-    };
+	isEnabled(level: Level): boolean {
+		return level <= this.level;
+	}
 
-  }
+	private _logInternal(level: Level, args: IArgs) {
+		if (this.isEnabled(level)) {
+			logConsole(level, args);
+		}
+	}
 
-  isEnabled(level: Level): boolean {
-    return level <= this.level;
-  }
+	get level(): Level {
+		const savedLevel = this.storage.getItem('logger_service_level');
+		if (savedLevel) {
+			return +savedLevel;
+		} else {
+			return Level.WARN;
+		}
+	}
 
-  private _logInternal(level: Level, args: IArgs) {
-    if (this.isEnabled(level)) {
-      logConsole(level, args);
-    }
-  }
+	set level(l: Level) {
+		this.storage.setItem('logger_service_level', '' + l);
+	}
 
-  get level(): Level {
-    const savedLevel = this.storage.getItem('logger_service_level');
-    if (savedLevel) {
-      return +savedLevel;
-    } else {
-      return Level.WARN;
-    }
-  }
+	// Proxy log methods
 
-  set level(l: Level) {
-    this.storage.setItem('logger_service_level', '' + l);
-  }
+	error(...args: any[]) {
+		this._logInternal(Level.ERROR, args as IArgs);
+	}
 
-  // Proxy log methods
+	warn(...args: any[]) {
+		this._logInternal(Level.WARN, args as IArgs);
+	}
 
-  error(...args: any[]) {
-    this._logInternal(Level.ERROR, args as IArgs);
-  }
+	info(...args: any[]) {
+		this._logInternal(Level.INFO, args as IArgs);
+	}
 
-  warn(...args: any[]) {
-    this._logInternal(Level.WARN, args as IArgs);
-  }
+	debug(...args: any[]) {
+		this._logInternal(Level.DEBUG, args as IArgs);
+	}
 
-  info(...args: any[]) {
-    this._logInternal(Level.INFO, args as IArgs);
-  }
-
-  debug(...args: any[]) {
-    this._logInternal(Level.DEBUG, args as IArgs);
-  }
-
-  log(...args: any[]) {
-    this._logInternal(Level.LOG, args as IArgs);
-  }
+	log(...args: any[]) {
+		this._logInternal(Level.LOG, args as IArgs);
+	}
 }

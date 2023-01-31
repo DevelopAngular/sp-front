@@ -1,117 +1,80 @@
 <div class="background" tabindex="0">
-    
-  <img 
-    class="head-icon"
-    [src]="'./assets/Eye (Green-White).svg' | resolveAsset"
-    alt="Room Visibility"
-  />
+	<img class="head-icon" [src]="'./assets/Eye (Green-White).svg' | resolveAsset" alt="Room Visibility" />
 
-  <div class="label">Visibility</div>
-  <img 
-    class="support-icon"
-    [src]="'./assets/Support (Gray).svg' | resolveAsset"
-    alt="Support"
-    customToolTip [contentTemplate]="learnmore"
-  />
-  <ng-template #learnmore>
-    <div class="ds-tooltip" style="width: 200px">Hide or show room for certain students. <a href="http://smartpass.app/roomvisibility"  target="_blank" class="link">Learn more</a></div>
-  </ng-template>
+	<div class="label">Visibility</div>
+	<img class="support-icon" [src]="'./assets/Support (Gray).svg' | resolveAsset" alt="Support" customToolTip [contentTemplate]="learnmore" />
+	<ng-template #learnmore>
+		<div class="ds-tooltip" style="width: 200px">
+			Hide or show room for certain students. <a href="http://smartpass.app/roomvisibility" target="_blank" class="link">Learn more</a>
+		</div>
+	</ng-template>
 
-  <span 
-    #opener
-    class="chip with-triangle"
-    [ngClass]="modeView.classname"
-    (click)="handleOpenClose()"
-  >
-    {{ modeView.text }}
-    <div class="after"></div>
-  </span>
+	<span #opener class="chip with-triangle" [ngClass]="modeView.classname" (click)="handleOpenClose()">
+		{{ modeView.text }}
+		<div class="after"></div>
+	</span>
 
-    <div class="chip grades">
-      <app-sp-chips
-        *ngIf="isShowSearch"
-        [preventRemovingLast]="false"
-        [hideAddButton]="true"
-        [selectedProfiles]="visibilityForm.value.visibility.grade"
-        [selectedTarget]="null"
-        [textPrepend]="'Grade:'"
-        (updateSelectedEvent)="updateGradeLevel($event)"
-      ></app-sp-chips>
-    </div>
-    <div class="students-search">
-      <app-sp-search
-        *ngIf="isShowSearch"
-        [overrideChipsInputField]="true"
-        [chipsMode]="true"
-        [focused]="searchInputFocused"
-        [cancelButton]="false"
-        [textAddButton]="'Add student, grade level'"
-        [selectedOptions]="selectedStudents"
-        (onUpdate)="addFoundStudents($event)"
-        (focusEvent)="onSearchComponentFocus()"
-        (blurEvent)="onSearchComponentBlur()"
-        (chipsAddEvent)="triggerInputFieldFocus()"
-        [formGroup]="visibilityForm"
-      >
-      </app-sp-search>
-      <ul class="error" 
-        *ngIf="showErrorsVisibility && visibilityForm.invalid"
-          [@slideOpacityAnimate]="{value: ':enter', params: {delta: -5}}"
-      >
-        <li 
-          *ngFor="let error of visibilityForm.get('visibility').errors | keyvalue"
-        >
-          {{error.value}}
-        </li>
-      </ul>
-    </div>
+	<div class="chip grades">
+		<app-sp-chips
+			*ngIf="isShowSearch"
+			[preventRemovingLast]="false"
+			[hideAddButton]="true"
+			[selectedProfiles]="visibilityForm.value.visibility.grade"
+			[selectedTarget]="null"
+			[textPrepend]="'Grade:'"
+			(updateSelectedEvent)="updateGradeLevel($event)"></app-sp-chips>
+	</div>
+	<div class="students-search">
+		<app-sp-search
+			*ngIf="isShowSearch"
+			[overrideChipsInputField]="true"
+			[chipsMode]="true"
+			[focused]="searchInputFocused"
+			[cancelButton]="false"
+			[textAddButton]="'Add student, grade level'"
+			[selectedOptions]="selectedStudents"
+			(onUpdate)="addFoundStudents($event)"
+			(focusEvent)="onSearchComponentFocus()"
+			(blurEvent)="onSearchComponentBlur()"
+			(chipsAddEvent)="triggerInputFieldFocus()"
+			[formGroup]="visibilityForm">
+		</app-sp-search>
+		<ul class="error" *ngIf="showErrorsVisibility && visibilityForm.invalid" [@slideOpacityAnimate]="{ value: ':enter', params: { delta: -5 } }">
+			<li *ngFor="let error of visibilityForm.get('visibility').errors | keyvalue">
+				{{ error.value }}
+			</li>
+		</ul>
+	</div>
 
-    <ng-template
-      #panel
-      let-data
-    >
-      <ul
-        class="panel"
-        *ngIf="didOpen"
-      >
-        <li
-            (mouseenter)="onEnter(entry.key)"
-            (mouseleave)="onLeave(entry.key)"
-            [ngClass]="{ 'selected': entry.key === mode ? true : null, 'grayed': hoveredNonSelected }"
-            *ngFor="let entry of modes | keyvalue: asIs"
-            (click)="handleModeSelected(entry.key)"
-        >
-          {{entry.value.textmenu}}
-          <div class="after"></div>
-        </li>
-      </ul>
-    </ng-template>
+	<ng-template #panel let-data>
+		<ul class="panel" *ngIf="didOpen">
+			<li
+				(mouseenter)="onEnter(entry.key)"
+				(mouseleave)="onLeave(entry.key)"
+				[ngClass]="{ selected: entry.key === mode ? true : null, grayed: hoveredNonSelected }"
+				*ngFor="let entry of modes | keyvalue : asIs"
+				(click)="handleModeSelected(entry.key)">
+				{{ entry.value.textmenu }}
+				<div class="after"></div>
+			</li>
+		</ul>
+	</ng-template>
 
-    <ng-template
-      #gradeLevel
-    >
-        <ul class="panel grade-level"
-          [ngStyle]="{'max-height': panelMaxHeight, 'overflow-y': panelMaxHeight ? 'auto' : 'initial'}"
-        >
-          <li class="title">by grade</li>
-          <ng-container *ngIf="grades$ | async as vm; else loading">
-            <li
-                *ngFor="let grade of vm['grade_level']"
-                (click)="handleGradeLevelSelected(grade)"
-            >
-              {{grade}}
-            </li>
-          <li class="upload"
-            (click)="openStudentListDialog()"
-          >Upload a list of students</li>
-          </ng-container>
-        </ul>
-    </ng-template>
+	<ng-template #gradeLevel>
+		<ul class="panel grade-level" [ngStyle]="{ 'max-height': panelMaxHeight, 'overflow-y': panelMaxHeight ? 'auto' : 'initial' }">
+			<li class="title">by grade</li>
+			<ng-container *ngIf="grades$ | async as vm; else loading">
+				<li *ngFor="let grade of vm['grade_level']" (click)="handleGradeLevelSelected(grade)">
+					{{ grade }}
+				</li>
+				<li class="upload" (click)="openStudentListDialog()">Upload a list of students</li>
+			</ng-container>
+		</ul>
+	</ng-template>
 
-    <ng-template #loading>
-      <li class="selected">
-        <mat-spinner [color]="'accent'" [diameter]="30"></mat-spinner>
-      </li>
-    </ng-template>
-
+	<ng-template #loading>
+		<li class="selected">
+			<mat-spinner [color]="'accent'" [diameter]="30"></mat-spinner>
+		</li>
+	</ng-template>
 </div>

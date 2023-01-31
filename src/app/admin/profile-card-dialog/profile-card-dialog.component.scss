@@ -1,17 +1,17 @@
 @import '../../../sp-colors';
 
 .card-container {
-  color: $blue-gray;
-  font-size: 14px;
-  background-color: #ffffFF;
+	color: $blue-gray;
+	font-size: 14px;
+	background-color: #ffffff;
 
-  .next-step {
-    position: absolute;
-    height: 100%;
-    width: 425px;
-  }
+	.next-step {
+		position: absolute;
+		height: 100%;
+		width: 425px;
+	}
 }
 
 ::ng-deep .mat-dialog-container .sp-dialog .content {
-  height: auto !important;
-} 
+	height: auto !important;
+}

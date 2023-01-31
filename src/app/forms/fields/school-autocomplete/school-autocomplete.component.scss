@@ -1,51 +1,50 @@
-@import "../../../../design-system";
+@import '../../../../design-system';
 
 .search-autocomplete-container {
-  width: 0px;
-  height: 0px;
-  position: relative;
+	width: 0px;
+	height: 0px;
+	position: relative;
 }
 
 .search-autocomplete-wrapper {
-  margin-top: 12px;
-  position: fixed;
-  z-index: 10 !important;
-  border-radius: 8px;
-  min-width: 306px;
-  background-color: white;
-  box-shadow: 0 0 7px rgba(0, 0, 0, 0.17);
+	margin-top: 12px;
+	position: fixed;
+	z-index: 10 !important;
+	border-radius: 8px;
+	min-width: 306px;
+	background-color: white;
+	box-shadow: 0 0 7px rgba(0, 0, 0, 0.17);
 }
 
 .search-autocomplete {
-  position: relative;
-  max-height: 256px;
-  overflow: scroll;
+	position: relative;
+	max-height: 256px;
+	overflow: scroll;
 }
 
 .search-autocomplete-scrollable {
-  padding: 6px;
+	padding: 6px;
 }
 
 .search-autocomplete-item {
-  border-radius: 8px;
-  padding: 6px;
-  display: flex;
-  align-items: center;
+	border-radius: 8px;
+	padding: 6px;
+	display: flex;
+	align-items: center;
 }
 
 .search-autocomplete-item-name {
-  @include textSize(14px, normal, $jade);
-  text-transform: capitalize;
-  white-space: nowrap;
+	@include textSize(14px, normal, $jade);
+	text-transform: capitalize;
+	white-space: nowrap;
 }
 
 .search-autocomplete-item-place {
-  @include textSize(12px, normal, $navy);
-  margin-left: 10px;
-  white-space: nowrap;
+	@include textSize(12px, normal, $navy);
+	margin-left: 10px;
+	white-space: nowrap;
 }
 
 search-autocomplete-notfound {
-  @include textSize(12px, normal, $light-gray);
+	@include textSize(12px, normal, $light-gray);
 }
-

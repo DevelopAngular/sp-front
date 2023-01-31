@@ -1,62 +1,62 @@
 @import '../../../../sp-colors';
 @import '../../../../util';
 
-:host ::ng-deep .mat-progress-spinner circle, .mat-spinner circle {   
-  stroke: $navy200;
+:host ::ng-deep .mat-progress-spinner circle,
+.mat-spinner circle {
+	stroke: $navy200;
 }
 
 %chip-format {
-  @extend %first-letter-up;
-  // TODO: investigate first-letter
-  text-transform: capitalize;
-  box-sizing: border-box;
-  padding: 7px;
-  border-radius: 17px;
-  font-size: 14px;
-  font-weight: 500;
-  line-height: 14px;
-  @include wh(63, 30);
-  text-align: center;
-  cursor: pointer;
+	@extend %first-letter-up;
+	// TODO: investigate first-letter
+	text-transform: capitalize;
+	box-sizing: border-box;
+	padding: 7px;
+	border-radius: 17px;
+	font-size: 14px;
+	font-weight: 500;
+	line-height: 14px;
+	@include wh(63, 30);
+	text-align: center;
+	cursor: pointer;
 }
 
 .active {
-  @extend %chip-format;
-  color: $green500;
-  &:hover {
-    background-color: $green100;
-  }
+	@extend %chip-format;
+	color: $green500;
+	&:hover {
+		background-color: $green100;
+	}
 }
 
 .closed {
-  @extend %chip-format;
-  color: $navy500;
-  &:hover {
-    background-color: $navy100;
-  }
+	@extend %chip-format;
+	color: $navy500;
+	&:hover {
+		background-color: $navy100;
+	}
 }
 
-
 .wrapper {
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  box-sizing: border-box;
-  padding: 5px;
-  padding-right: 10px;
-  @include wh(95, 40);
-  &:hover {
-    background-color: $gray100;
-    cursor: pointer;
-  }
-  & > span[rel="lookActiveHovered"]:hover {
-    cursor: pointer;
-  }
-  &.lookActiveHovered {
-    background-color: $gray100;
-    & > span[rel="lookActiveHovered"] {
-      background-color: $green100;
-    }
-  }
-  border-radius: 8px;
+	display: flex;
+	align-items: center;
+	justify-content: space-between;
+	box-sizing: border-box;
+	padding: 5px;
+	padding-right: 10px;
+	@include wh(95, 40);
+	&:hover {
+		background-color: $gray100;
+		cursor: pointer;
+	}
+	& > span[rel='lookActiveHovered']:hover {
+		cursor: pointer;
+	}
+	&.lookActiveHovered {
+		background-color: $gray100;
+		& > span[rel='lookActiveHovered'] {
+			background-color: $green100;
+		}
+	}
+	border-radius: 8px;
 }

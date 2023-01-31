@@ -6,13 +6,7 @@ import { HallMonitorComponent } from './hall-monitor.component';
 import { SharedModule } from '../shared/shared.module';
 
 @NgModule({
-  declarations: [
-    HallMonitorComponent
-  ],
-  imports: [
-    CommonModule,
-    HallMonitorRoutingModule,
-    SharedModule
-  ]
+	declarations: [HallMonitorComponent],
+	imports: [CommonModule, HallMonitorRoutingModule, SharedModule],
 })
-export class HallMonitorModule { }
+export class HallMonitorModule {}

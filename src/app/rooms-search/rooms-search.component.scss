@@ -1,43 +1,42 @@
-@import "../../sp-colors";
-@import "../../design-system";
+@import '../../sp-colors';
+@import '../../design-system';
 
 .wrapper {
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  margin-top: 20px;
+	display: flex;
+	flex-direction: column;
+	align-items: center;
+	margin-top: 20px;
 
-  .content {
-    width: 205px;
-    margin-top: 15px;
-    .header {
-      .title {
-        text-align: center;
-        margin-bottom: 5px;
-        font-size: 16px;
-        color: $dark-slate-gray;
-        font-weight: bold;
-      }
-    }
+	.content {
+		width: 205px;
+		margin-top: 15px;
+		.header {
+			.title {
+				text-align: center;
+				margin-bottom: 5px;
+				font-size: 16px;
+				color: $dark-slate-gray;
+				font-weight: bold;
+			}
+		}
 
-    .locations {
+		.locations {
+			.room-container:focus {
+				outline: none;
+				background-color: #ecf1ff !important;
+				color: $navy !important;
+			}
 
-      .room-container:focus {
-          outline: none;
-          background-color: #ECF1FF !important;
-          color: $navy !important;
-      }
-
-      .location {
-        display: flex;
-        justify-content: space-between;
-        padding: 10px 5px 10px 5px;
-        cursor: pointer;
-      }
-    }
-  }
+			.location {
+				display: flex;
+				justify-content: space-between;
+				padding: 10px 5px 10px 5px;
+				cursor: pointer;
+			}
+		}
+	}
 }
 
 .mb-10 {
-  margin-bottom: 20px;
+	margin-bottom: 20px;
 }

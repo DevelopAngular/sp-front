@@ -1,70 +1,69 @@
-@import "../../../../design-system";
+@import '../../../../design-system';
 
 #form {
-  width: 100%;
-  margin-bottom: 20px;
+	width: 100%;
+	margin-bottom: 20px;
 }
 
 @media only screen and (min-width: 560px) {
-  .schools {
-    display: flex;
-    align-items: flex-start;
-    justify-content: flex-start;
-    margin-top: 6px;
+	.schools {
+		display: flex;
+		align-items: flex-start;
+		justify-content: flex-start;
+		margin-top: 6px;
 
-    .mini-row {
-      margin-right: 20px;
-    }
-  }
+		.mini-row {
+			margin-right: 20px;
+		}
+	}
 }
 
 @media only screen and (max-width: 559px) {
-  .schools {
-    margin-top: 6px;
+	.schools {
+		margin-top: 6px;
 
-    .mini-row {
-      display: flex;
-      align-items: flex-start;
-      justify-content: flex-start;
-    }
+		.mini-row {
+			display: flex;
+			align-items: flex-start;
+			justify-content: flex-start;
+		}
 
-    .approx-students-wrapper {
-      display: inline-block;
-      width: min-content;
-      overflow: clip;
-    }
+		.approx-students-wrapper {
+			display: inline-block;
+			width: min-content;
+			overflow: clip;
+		}
 
-    .remove-wrapper {
-      width: 40px;
-      height: 60px;
-      display: inline-flex;
-      padding: 0 8px;
-      float: right;
-      padding-bottom: 4px;
-      align-items: flex-end;
-    }
+		.remove-wrapper {
+			width: 40px;
+			height: 60px;
+			display: inline-flex;
+			padding: 0 8px;
+			float: right;
+			padding-bottom: 4px;
+			align-items: flex-end;
+		}
 
-    .remove {
-      width: auto;
-    }
-  }
+		.remove {
+			width: auto;
+		}
+	}
 }
 
 #add-school-wrapper {
-  display: flex;
-  justify-content: flex-end;
+	display: flex;
+	justify-content: flex-end;
 
-  #add-school {
-    color: $blue-gray;
-    font-size: 12px;
+	#add-school {
+		color: $blue-gray;
+		font-size: 12px;
 
-    margin-top: 12px;
-    padding-left: 8px;
-    padding-right: 8px;
-  }
+		margin-top: 12px;
+		padding-left: 8px;
+		padding-right: 8px;
+	}
 }
 
 .search-wrapper {
-  position: relative;
+	position: relative;
 }
-

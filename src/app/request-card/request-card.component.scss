@@ -2,486 +2,480 @@
 @import 'src/sp-colors';
 
 @media all and (max-width: 940px) {
-  div.message {
-    margin-left: 50px;
-  }
+	div.message {
+		margin-left: 50px;
+	}
 }
 
 .ios-margin-left {
-  margin-left: 50px;
+	margin-left: 50px;
 }
 
 @media all and (max-width: 320px) {
-  div.request-card-wrapper {
-    width: 300px;
-  }
+	div.request-card-wrapper {
+		width: 300px;
+	}
 }
 
 .request-container {
-  position: relative;
-  width: 335px;
-  display: flex;
-  align-items: center;
-  flex-direction: column;
+	position: relative;
+	width: 335px;
+	display: flex;
+	align-items: center;
+	flex-direction: column;
 
-  .request-card-wrapper {
-    width: 335px;
-    border-radius: 14px;
-    display: flex;
-    flex-direction: column;
-    position: relative;
+	.request-card-wrapper {
+		width: 335px;
+		border-radius: 14px;
+		display: flex;
+		flex-direction: column;
+		position: relative;
 
-    .resize-icon {
-      position: absolute;
-      right: -13px;
-      top: -13px;
-      width: 48px;
-      height: 48px;
-      border-radius: 50%;
-      cursor: pointer;
-      background-color: white;
-      box-shadow: 0 5px 20px rgba(0, 0, 0, 0.1);
-      display: flex;
-      justify-content: center;
-      align-items: center;
-    }
+		.resize-icon {
+			position: absolute;
+			right: -13px;
+			top: -13px;
+			width: 48px;
+			height: 48px;
+			border-radius: 50%;
+			cursor: pointer;
+			background-color: white;
+			box-shadow: 0 5px 20px rgba(0, 0, 0, 0.1);
+			display: flex;
+			justify-content: center;
+			align-items: center;
+		}
 
+		.pass-card-header {
+			display: flex;
+			flex-direction: column;
+			align-items: center;
 
-    .pass-card-header {
-      display: flex;
-      flex-direction: column;
-      align-items: center;
+			.header-content {
+				display: flex;
+				justify-content: space-between;
+				align-items: center;
+				padding: 20px;
+				width: 291px;
 
-      .header-content {
-        display: flex;
-        justify-content: space-between;
-        align-items: center;
-        padding: 20px;
-        width: 291px;
+				.header-info {
+					display: flex;
+					align-items: center;
+				}
+			}
 
+			.pass-card-header-icon {
+				width: 34px;
+				height: 34px;
+			}
 
-        .header-info {
-          display: flex;
-          align-items: center;
-        }
-      }
+			.pass-card-header-text {
+				color: white;
+				font-size: 22px;
+				font-weight: bold;
+				margin-left: 15px;
 
-      .pass-card-header-icon {
-        width: 34px;
-        height: 34px;
-      }
+				.card-subtitle {
+					font-size: 15px;
+					font-weight: normal;
+				}
+			}
 
-      .pass-card-header-text {
-        color: white;
-        font-size: 22px;
-        font-weight: bold;
-        margin-left: 15px;
+			.pass-card-header-close {
+				width: 29px;
+				height: 29px;
+				cursor: pointer;
+			}
+		}
 
-        .card-subtitle {
-          font-size: 15px;
-          font-weight: normal;
-        }
-      }
+		.request-card-content {
+			height: 325px;
+			display: flex;
+			flex-direction: column;
+			justify-content: space-evenly;
+			align-items: center;
 
-      .pass-card-header-close {
-        width: 29px;
-        height: 29px;
-        cursor: pointer;
-      }
-    }
+			.duration-picker {
+				height: 175px;
+				display: flex;
+				position: relative;
+				flex-direction: column;
+				justify-content: flex-end;
+			}
 
-    .request-card-content {
-      height: 325px;
-      display: flex;
-      flex-direction: column;
-      justify-content: space-evenly;
-      align-items: center;
+			.button {
+				.request-pass-content-text {
+					color: white;
+					font-size: 22px;
+					font-weight: bold;
+				}
+			}
+		}
 
-      .duration-picker {
-        height: 175px;
-        display: flex;
-        position: relative;
-        flex-direction: column;
-        justify-content: flex-end
-      }
+		.request-card-content-modal {
+			display: flex;
+			flex-direction: column;
+			align-items: center;
+			flex: 1 1 auto;
 
-      .button {
+			.student-view {
+				display: flex;
+				flex-direction: column;
+				align-items: center;
+			}
 
-        .request-pass-content-text {
-          color: white;
-          font-size: 22px;
-          font-weight: bold;
-        }
-      }
+			.center-block {
+				display: flex;
+				align-items: center;
+				height: 213px;
+				//position: relative;
 
-    }
+				.page-1 {
+					height: 174px;
+					display: flex;
+					align-items: center;
+				}
 
-    .request-card-content-modal {
-      display: flex;
-      flex-direction: column;
-      align-items: center;
-      flex: 1 1 auto;
+				//.page-1, .page-2 {
+				//  position: absolute;
+				//  top: 0;
+				//  left: 0;
+				//  right: 0;
+				//  bottom: 0;
+				//}
+			}
 
-      .student-view {
-        display: flex;
-        flex-direction: column;
-        align-items: center;
-      }
+			.bottom-block {
+				height: 91px;
+				color: white;
+				text-align: center;
+				position: relative;
+				display: flex;
+				flex-direction: column;
+				justify-content: center;
+				align-items: center;
+				overflow: auto;
 
-      .center-block {
-        display: flex;
-        align-items: center;
-        height: 213px;
-        //position: relative;
+				.request-description {
+					display: flex;
+					align-items: center;
+					padding: 0 30px;
 
-        .page-1 {
-          height: 174px;
-          display: flex;
-          align-items: center;
-        }
+					.request-description-icon {
+						width: 29px;
+					}
 
-        //.page-1, .page-2 {
-        //  position: absolute;
-        //  top: 0;
-        //  left: 0;
-        //  right: 0;
-        //  bottom: 0;
-        //}
-      }
+					.request-description-text {
+						text-align: left;
+						max-height: 102px;
+					}
+				}
+			}
 
-      .bottom-block {
-        height: 91px;
-        color: white;
-        text-align: center;
-        position: relative;
-        display: flex;
-        flex-direction: column;
-        justify-content: center;
-        align-items: center;
-        overflow: auto;
+			.request-card-footer {
+				position: relative;
+				height: 51px;
+				width: 100%;
+				display: flex;
+				align-items: center;
+				justify-content: center;
 
-        .request-description {
-          display: flex;
-          align-items: center;
-          padding: 0 30px;
+				.student-footer {
+					background: rgba(200, 200, 200, 0.7);
+					mix-blend-mode: soft-light;
+					border-bottom-left-radius: 15px;
+					border-bottom-right-radius: 15px;
+					overflow: hidden;
+					width: 100%;
+					height: 100%;
+				}
 
-          .request-description-icon {
-            width: 29px;
-          }
+				.student-text {
+					position: absolute;
+					z-index: 10;
+					top: 0;
+					bottom: 0;
+					right: 0;
+					left: 0;
+					color: white;
+					display: flex;
+					justify-content: center;
+					align-items: center;
+					font-size: 17px;
+					text-align: center;
+				}
+			}
 
-          .request-description-text {
-            text-align: left;
-            max-height: 102px;
-          }
-        }
-      }
+			.teacher-view {
+				flex: 1 1 auto;
+				display: flex;
+				flex-direction: column;
+				justify-content: center;
+				align-items: center;
+			}
+		}
 
-      .request-card-footer {
-        position: relative;
-        height: 51px;
-        width: 100%;
-        display: flex;
-        align-items: center;
-        justify-content: center;
+		mat-divider {
+			background-color: white;
+			width: 291px;
+			opacity: 0.4;
+		}
 
-        .student-footer {
-          background: rgba(200, 200, 200, .7);
-          mix-blend-mode: soft-light;
-          border-bottom-left-radius: 15px;
-          border-bottom-right-radius: 15px;
-          overflow: hidden;
-          width: 100%;
-          height: 100%;
-        }
+		.teacher-pin {
+			position: absolute;
+			z-index: 100;
+			top: 82px;
+		}
 
-        .student-text {
-          position: absolute;
-          z-index: 10;
-          top: 0;
-          bottom: 0;
-          right: 0;
-          left: 0;
-          color: white;
-          display: flex;
-          justify-content: center;
-          align-items: center;
-          font-size: 17px;
-          text-align: center;
-        }
-      }
+		.content-container {
+			//position: absolute;
+		}
+	}
 
-      .teacher-view {
-        flex: 1 1 auto;
-        display: flex;
-        flex-direction: column;
-        justify-content: center;
-        align-items: center;
-      }
-    }
-
-    mat-divider {
-      background-color: white;
-      width: 291px;
-      opacity: 0.4;
-    }
-
-    .teacher-pin {
-      position: absolute;
-      z-index: 100;
-      top: 82px
-    }
-
-    .content-container {
-      //position: absolute;
-    }
-
-  }
-
-  .student-footer-info {
-    min-height: 95px;
-    margin-top: 8px;
-  }
+	.student-footer-info {
+		min-height: 95px;
+		margin-top: 8px;
+	}
 }
 
-
 .button-content {
-  width: 110px;
-  height: 35px;
-  display: flex;
-  flex-direction: row;
-  justify-content: center;
-  align-items: center;
-  user-select: none;
-  cursor: pointer;
-  position: relative;
-  margin: -35px 0 0 0%;
-  font-weight: bold;
-  font-size: 22px;
+	width: 110px;
+	height: 35px;
+	display: flex;
+	flex-direction: row;
+	justify-content: center;
+	align-items: center;
+	user-select: none;
+	cursor: pointer;
+	position: relative;
+	margin: -35px 0 0 0%;
+	font-weight: bold;
+	font-size: 22px;
 }
 
 .request-card-container {
-  -webkit-user-select: none;
-  -moz-user-select: none;
-  -ms-user-select: none;
-  -webkit-user-drag: none;
-  width: 100%;
-  height: 100%;
+	-webkit-user-select: none;
+	-moz-user-select: none;
+	-ms-user-select: none;
+	-webkit-user-drag: none;
+	width: 100%;
+	height: 100%;
 }
 
 .card-body-right {
-  height: inherit;
-  display: flex;
-  flex-direction: column;
-  justify-content: space-around;
-  align-items: center;
-  //margin-top: 26px;
+	height: inherit;
+	display: flex;
+	flex-direction: column;
+	justify-content: space-around;
+	align-items: center;
+	//margin-top: 26px;
 }
 
 .request-description {
-  font-weight: bold;
-  font-size: 20px;
+	font-weight: bold;
+	font-size: 20px;
 }
 
 .request-description-icon {
-  margin-right: 10px;
+	margin-right: 10px;
 }
 
 .request-button-content {
-  width: 269px;
-  height: 81px;
-  display: flex;
-  flex-direction: row;
-  justify-content: center;
-  align-items: center;
-  user-select: none;
-  cursor: pointer;
-  position: relative;
-  margin: -79px 0 0 0%;
-  font-weight: bold;
+	width: 269px;
+	height: 81px;
+	display: flex;
+	flex-direction: row;
+	justify-content: center;
+	align-items: center;
+	user-select: none;
+	cursor: pointer;
+	position: relative;
+	margin: -79px 0 0 0%;
+	font-weight: bold;
 }
 
 .button-icon-right {
-  width: 30px;
-  height: 30px;
-  position: absolute;
-  right: 20px;
+	width: 30px;
+	height: 30px;
+	position: absolute;
+	right: 20px;
 }
 
 .button-icon-left {
-  width: 17px;
-  height: 17px;
-  position: absolute;
-  left: 10px;
+	width: 17px;
+	height: 17px;
+	position: absolute;
+	left: 10px;
 }
 
 .resend-button-content {
-  width: 297px;
-  height: 81px;
-  display: flex;
-  flex-direction: column;
-  justify-content: center;
-  align-items: center;
-  user-select: none;
-  cursor: pointer;
-  position: relative;
-  margin: -79px 0 0 0%;
+	width: 297px;
+	height: 81px;
+	display: flex;
+	flex-direction: column;
+	justify-content: center;
+	align-items: center;
+	user-select: none;
+	cursor: pointer;
+	position: relative;
+	margin: -79px 0 0 0%;
 
-  .center-content {
-    width: 100%;
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    flex-direction: column;
-  }
+	.center-content {
+		width: 100%;
+		display: flex;
+		justify-content: center;
+		align-items: center;
+		flex-direction: column;
+	}
 }
 
 .resend-button-content-title {
-  font-size: 22px;
-  color: white;
-  font-weight: bold;
-  padding-bottom: 5px;
+	font-size: 22px;
+	color: white;
+	font-weight: bold;
+	padding-bottom: 5px;
 }
 
 .description-container {
-  position: relative;
-  overflow: hidden;
-  display: flex;
-  z-index: 2;
-  height: 25px;
-  width: 92%;
-  //box-shadow: -5px 0px 5px 0px rgba(54, 50, 50, 0.1) inset;
+	position: relative;
+	overflow: hidden;
+	display: flex;
+	z-index: 2;
+	height: 25px;
+	width: 92%;
+	//box-shadow: -5px 0px 5px 0px rgba(54, 50, 50, 0.1) inset;
 
-  .description-title {
-    width: auto;
-    overflow: hidden;
-    white-space: nowrap;
-    display: flex;
-    position: absolute;
-  }
+	.description-title {
+		width: auto;
+		overflow: hidden;
+		white-space: nowrap;
+		display: flex;
+		position: absolute;
+	}
 
-  .shadow {
-    position: absolute;
-    top: 2px;
-    //width: 1px;
-    z-index: 100;
-    //background-color: rgba(255, 255, 255, .3);
-    //mix-blend-mode: soft-light;
-    //filter: blur(15px);
-    transform: rotate(45deg);
-    opacity: .6;
-    height: 60%;
-  }
+	.shadow {
+		position: absolute;
+		top: 2px;
+		//width: 1px;
+		z-index: 100;
+		//background-color: rgba(255, 255, 255, .3);
+		//mix-blend-mode: soft-light;
+		//filter: blur(15px);
+		transform: rotate(45deg);
+		opacity: 0.6;
+		height: 60%;
+	}
 
-  .left-radius {
-    border-bottom-left-radius: 5px;
-    border-top-left-radius: 5px;
-  }
+	.left-radius {
+		border-bottom-left-radius: 5px;
+		border-top-left-radius: 5px;
+	}
 
-  .right-radius {
-    border-bottom-right-radius: 5px;
-    border-top-right-radius: 5px;
-    filter: blur(20px);
-  }
+	.right-radius {
+		border-bottom-right-radius: 5px;
+		border-top-right-radius: 5px;
+		filter: blur(20px);
+	}
 }
 
 .resend-button-content-subtitle {
-  font-size: 15px;
-  font-weight: normal;
-  color: white;
+	font-size: 15px;
+	font-weight: normal;
+	color: white;
 }
 
 .message {
-  font-size: 16px;
-  width: 225px;
-  text-align: left;
-  padding-top: 20px;
-  overflow: auto;
-  overflow-wrap: break-word;
+	font-size: 16px;
+	width: 225px;
+	text-align: left;
+	padding-top: 20px;
+	overflow: auto;
+	overflow-wrap: break-word;
 }
 
 .student-with-edit {
-  height: 70px;
-  max-height: 70px;
+	height: 70px;
+	max-height: 70px;
 }
 
 .student-without-edit {
-  margin-bottom: 10px;
+	margin-bottom: 10px;
 }
 
 .student-pending {
-  height: 110px;
-  max-height: 110px;
+	height: 110px;
+	max-height: 110px;
 }
 
 /* width */
 ::-webkit-scrollbar {
-  width: 4px;
+	width: 4px;
 }
 
 /* Track */
 ::-webkit-scrollbar-track {
-  background: white;
-  border-radius: 2px;
+	background: white;
+	border-radius: 2px;
 }
 
 /* Handle */
 ::-webkit-scrollbar-thumb {
-  background: #D6D6D6;
-  border-radius: 2px;
+	background: #d6d6d6;
+	border-radius: 2px;
 }
 
 /* Handle on hover */
 ::-webkit-scrollbar-thumb:hover {
-  background: #B6B6B6;
+	background: #b6b6b6;
 }
 
 .teacher-details {
-  width: 100%;
-  align-items: center;
-  justify-content: center;
-  text-align: center;
-  padding-bottom: 20px;
-  margin-top: 70px;
+	width: 100%;
+	align-items: center;
+	justify-content: center;
+	text-align: center;
+	padding-bottom: 20px;
+	margin-top: 70px;
 }
 
 .bold {
-  font-weight: bold;
-  font-size: 19px;
+	font-weight: bold;
+	font-size: 19px;
 }
 
 .smaller {
-  font-weight: 400;
-  font-size: 17px;
+	font-weight: 400;
+	font-size: 17px;
 }
 
 .student-wrapper {
-  width: 334px;
-  height: 51px;
-  background: rgba(200, 200, 200, .7);
-  mix-blend-mode: soft-light;
-  position: relative;
-  bottom: 51px;
-  border-radius: 0 0 15px 15px;
+	width: 334px;
+	height: 51px;
+	background: rgba(200, 200, 200, 0.7);
+	mix-blend-mode: soft-light;
+	position: relative;
+	bottom: 51px;
+	border-radius: 0 0 15px 15px;
 }
 
 .student-text-wrapper {
-  width: 335px;
-  height: 51px;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  position: relative;
-  bottom: 100px;
-  border-radius: 0 0 10px 10px;
-  color: white;
-  font-size: 13px;
+	width: 335px;
+	height: 51px;
+	display: flex;
+	align-items: center;
+	justify-content: center;
+	position: relative;
+	bottom: 100px;
+	border-radius: 0 0 10px 10px;
+	color: white;
+	font-size: 13px;
 }
 
 .main-text {
-  @include textSize(17px, bold);
+	@include textSize(17px, bold);
 }
 
 .supporting-text {
-  @include textSize(15px, normal, $blue-gray);
-  padding-bottom: 20px;
+	@include textSize(15px, normal, $blue-gray);
+	padding-bottom: 20px;
 }

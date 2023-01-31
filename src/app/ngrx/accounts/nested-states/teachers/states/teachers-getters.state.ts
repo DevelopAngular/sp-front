@@ -1,47 +1,23 @@
-import {createSelector} from '@ngrx/store';
-import {getAccountsState, IAccountsState} from '../../../states';
-import {adapter} from '../../admins/reducers';
-import {TeachersStates} from './teachers.states';
+import { createSelector } from '@ngrx/store';
+import { getAccountsState, IAccountsState } from '../../../states';
+import { adapter } from '../../admins/reducers';
+import { TeachersStates } from './teachers.states';
 
-export const getTeachersAccountsProfiles = createSelector(
-  getAccountsState,
-  (state: IAccountsState) => state.teachersAccounts
-);
+export const getTeachersAccountsProfiles = createSelector(getAccountsState, (state: IAccountsState) => state.teachersAccounts);
 
-export const getLoadedTeachers = createSelector(
-  getTeachersAccountsProfiles,
-  (state: TeachersStates) => state.loaded
-);
+export const getLoadedTeachers = createSelector(getTeachersAccountsProfiles, (state: TeachersStates) => state.loaded);
 
-export const getLoadingTeachers = createSelector(
-  getTeachersAccountsProfiles,
-  (state: TeachersStates) => state.loading
-);
+export const getLoadingTeachers = createSelector(getTeachersAccountsProfiles, (state: TeachersStates) => state.loading);
 
-export const getNextRequestTeachers = createSelector(
-  getTeachersAccountsProfiles,
-  (state: TeachersStates) => state.nextRequest
-);
+export const getNextRequestTeachers = createSelector(getTeachersAccountsProfiles, (state: TeachersStates) => state.nextRequest);
 
-export const getLastAddedTeachers = createSelector(
-  getTeachersAccountsProfiles,
-  (state: TeachersStates) => state.lastAddedTeachers
-);
+export const getLastAddedTeachers = createSelector(getTeachersAccountsProfiles, (state: TeachersStates) => state.lastAddedTeachers);
 
-export const getTeacherSort = createSelector(
-  getTeachersAccountsProfiles,
-  (state: TeachersStates) => state.sortValue
-);
+export const getTeacherSort = createSelector(getTeachersAccountsProfiles, (state: TeachersStates) => state.sortValue);
 
-export const getAddedTeacher = createSelector(
-  getTeachersAccountsProfiles,
-  (state: TeachersStates) => state.addedUser
-);
+export const getAddedTeacher = createSelector(getTeachersAccountsProfiles, (state: TeachersStates) => state.addedUser);
 
-export const getCurrentUpdatedTeacher = createSelector(
-  getTeachersAccountsProfiles,
-  (state: TeachersStates) => state.currentUpdatedAccount
-);
+export const getCurrentUpdatedTeacher = createSelector(getTeachersAccountsProfiles, (state: TeachersStates) => state.currentUpdatedAccount);
 
 export const getCountTeachers = adapter.getSelectors(getTeachersAccountsProfiles).selectTotal;
 export const getTeachersAccountsEntities = adapter.getSelectors(getTeachersAccountsProfiles).selectEntities;

@@ -1,14 +1,13 @@
 :host {
-
-  .message {
-    margin: 0 auto;
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    width: 320px;
-    height: 62px;
-    background-color: white;
-    border-radius: 15px;
-    box-shadow: 0 1px 16px rgba(0, 0, 0, 0.2);
-  }
+	.message {
+		margin: 0 auto;
+		display: flex;
+		justify-content: center;
+		align-items: center;
+		width: 320px;
+		height: 62px;
+		background-color: white;
+		border-radius: 15px;
+		box-shadow: 0 1px 16px rgba(0, 0, 0, 0.2);
+	}
 }

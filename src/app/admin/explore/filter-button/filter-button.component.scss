@@ -1,35 +1,35 @@
 .wrapper {
-  height: 40px;
-  border-radius: 8px;
-  overflow: hidden;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  padding: 0 15px 0 12px;
-  cursor: pointer;
-  position: relative;
+	height: 40px;
+	border-radius: 8px;
+	overflow: hidden;
+	display: flex;
+	align-items: center;
+	justify-content: center;
+	padding: 0 15px 0 12px;
+	cursor: pointer;
+	position: relative;
 
-  &.disabled {
-    cursor: progress;
-    .content-button {
-      pointer-events: none;
-    }
-  }
+	&.disabled {
+		cursor: progress;
+		.content-button {
+			pointer-events: none;
+		}
+	}
 
-  .content-button {
-    display: flex;
-    align-items: center;
+	.content-button {
+		display: flex;
+		align-items: center;
 
-    .title {
-      margin-right: 8px;
-      font-size: 14px;
-      font-weight: 500;
-    }
+		.title {
+			margin-right: 8px;
+			font-size: 14px;
+			font-weight: 500;
+		}
 
-    .close-button {
-      width: 10px;
-      height: 10px;
-      margin-left: 8px;
-    }
-  }
+		.close-button {
+			width: 10px;
+			height: 10px;
+			margin-left: 8px;
+		}
+	}
 }

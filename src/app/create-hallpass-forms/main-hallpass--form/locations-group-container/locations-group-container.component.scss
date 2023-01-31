@@ -1,72 +1,72 @@
 :host {
-  //div.ng-trigger-NextStep {
-  //  right: 0;
-  //  left: 50%;
-  //  transform: translateX(-50%);
-  //  width: 100% !important;
-  //}
+	//div.ng-trigger-NextStep {
+	//  right: 0;
+	//  left: 50%;
+	//  transform: translateX(-50%);
+	//  width: 100% !important;
+	//}
 
-  div.ios-back-btn-bottom {
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    position: absolute;
-    width: 50px;
-    height: 46px;
-    left: 50%;
-    transform: translateX(-50%);
-    bottom: -45px;
-  }
+	div.ios-back-btn-bottom {
+		display: flex;
+		align-items: center;
+		justify-content: center;
+		position: absolute;
+		width: 50px;
+		height: 46px;
+		left: 50%;
+		transform: translateX(-50%);
+		bottom: -45px;
+	}
 
-  @media all and (max-width: 940px) {
-    div.back-btn-top {
-      display: none;
-    }
+	@media all and (max-width: 940px) {
+		div.back-btn-top {
+			display: none;
+		}
 
-    div.back-btn-bottom {
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      position: absolute;
-      width: 50px;
-      height: 46px;
-      left: 50%;
-      transform: translateX(-50%);
-      bottom: -45px;
-    }
-  }
+		div.back-btn-bottom {
+			display: flex;
+			align-items: center;
+			justify-content: center;
+			position: absolute;
+			width: 50px;
+			height: 46px;
+			left: 50%;
+			transform: translateX(-50%);
+			bottom: -45px;
+		}
+	}
 
-  @media all and (max-width: 335px) {
-    div.back-btn-bottom {
-      bottom: -35px;
-    }
-  }
+	@media all and (max-width: 335px) {
+		div.back-btn-bottom {
+			bottom: -35px;
+		}
+	}
 
-  .locations-group-wrapper {
-    //background-color: #fff;
-    position: relative;
-    height: 500px;
-    width: 100%;
-    max-width: 100%;
-    border-radius: 14px;
-    overflow: hidden;
-    //z-index: 50;
-  }
+	.locations-group-wrapper {
+		//background-color: #fff;
+		position: relative;
+		height: 500px;
+		width: 100%;
+		max-width: 100%;
+		border-radius: 14px;
+		overflow: hidden;
+		//z-index: 50;
+	}
 
-  .next-step {
-    width: 100%;
-    position: absolute;
-  }
+	.next-step {
+		width: 100%;
+		position: absolute;
+	}
 
-  .back-button {
-    width: 28px;
-    height: 28px;
-    position: absolute;
-    user-select: none;
-    cursor: pointer;
-  }
+	.back-button {
+		width: 28px;
+		height: 28px;
+		position: absolute;
+		user-select: none;
+		cursor: pointer;
+	}
 
-  .back-btn-bottom {
-    //display: none;
-  }
+	.back-btn-bottom {
+		//display: none;
+	}
 }

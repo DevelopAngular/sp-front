@@ -1,29 +1,29 @@
-<ng-container *ngIf="editable else presentational">
-  <div class="wrapper"
-       #button
-       [class.lookActiveHovered]="forceLookHovered"
-       [style.background]="didOpen === true ? '#F0F2F5' : null"
-       (mouseenter)="button.hover = true"
-       (mouseleave)="button.hover = false; button.pressed = false"
-       appCrossPointerEventTarget
-       (pointerDownEvent)="button.pressed = true"
-       (pointerCancelEvent)="button.pressed = false"
-       (click)="blink($event)"  
-  >
-        <ng-container *ngTemplateOutlet="isLoading ? loading : presentational"></ng-container>
-        <img *ngIf="(isLoading === false) && (button.hover || didOpen || forceLookHovered)" width="8" height="6" [src]="'./assets/Rect (' + (filter ? 'Navy' : 'Blue-Gray') + ').svg' | resolveAsset" alt="Rect">
-  </div>
+<ng-container *ngIf="editable; else presentational">
+	<div
+		class="wrapper"
+		#button
+		[class.lookActiveHovered]="forceLookHovered"
+		[style.background]="didOpen === true ? '#F0F2F5' : null"
+		(mouseenter)="button.hover = true"
+		(mouseleave)="button.hover = false; button.pressed = false"
+		appCrossPointerEventTarget
+		(pointerDownEvent)="button.pressed = true"
+		(pointerCancelEvent)="button.pressed = false"
+		(click)="blink($event)">
+		<ng-container *ngTemplateOutlet="isLoading ? loading : presentational"></ng-container>
+		<img
+			*ngIf="isLoading === false && (button.hover || didOpen || forceLookHovered)"
+			width="8"
+			height="6"
+			[src]="'./assets/Rect (' + (filter ? 'Navy' : 'Blue-Gray') + ').svg' | resolveAsset"
+			alt="Rect" />
+	</div>
 </ng-container>
 
 <ng-template #presentational>
-  <span 
-    #element
-    [ngClass]="classname"
-    (click)="blink($event)"
-    rel="lookActiveHovered"
-    >{{ label }}</span>
+	<span #element [ngClass]="classname" (click)="blink($event)" rel="lookActiveHovered">{{ label }}</span>
 </ng-template>
 
 <ng-template #loading>
-  <mat-spinner [diameter]="25"></mat-spinner>
+	<mat-spinner [diameter]="25"></mat-spinner>
 </ng-template>

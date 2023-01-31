@@ -4,22 +4,13 @@ import { EncounterDetectionState } from './encounter-detection.state';
 
 export const getEncounterdetectionState = (state: AppState) => state.encounterDetection;
 
-export const getEncounterDetectionLoading = createSelector(
-    getEncounterdetectionState,
-    (state: EncounterDetectionState) => state.loading
-);
+export const getEncounterDetectionLoading = createSelector(getEncounterdetectionState, (state: EncounterDetectionState) => state.loading);
 
-export const getEncounterDetectionErrored = createSelector(
-  getEncounterdetectionState,
-  (state: EncounterDetectionState) =>  state.error
-);
+export const getEncounterDetectionErrored = createSelector(getEncounterdetectionState, (state: EncounterDetectionState) => state.error);
 
 export const getEncounterDetectionCollection = createSelector(
-    getEncounterdetectionState,
-    (state: EncounterDetectionState) => state.encounterDetection
+	getEncounterdetectionState,
+	(state: EncounterDetectionState) => state.encounterDetection
 );
 
-export const getEncounterDetectionDate = createSelector(
-  getEncounterdetectionState,
-  (state: EncounterDetectionState) => state.createdAt
-);
+export const getEncounterDetectionDate = createSelector(getEncounterdetectionState, (state: EncounterDetectionState) => state.createdAt);

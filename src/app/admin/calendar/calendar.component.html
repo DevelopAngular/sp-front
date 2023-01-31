@@ -1,15 +1,14 @@
 <div class="calendar-wrapper">
-  <div class="top-arrow-container" [style.left]="elementPosition ? 0 : '165px'">
-    <div class="top-arrow"></div>
-  </div>
-  <div class="date-container">
-    <app-calendar-picker
-        [selectedDates]="previousSelectedDate ? [previousSelectedDate] : []"
-        [min]="minDate"
-        [showYear]="false"
-        [showTime]="false"
-        [dotsDates]="passDates"
-        (onSelectDate)="setSearchDate($event)"
-    ></app-calendar-picker>
-  </div>
+	<div class="top-arrow-container" [style.left]="elementPosition ? 0 : '165px'">
+		<div class="top-arrow"></div>
+	</div>
+	<div class="date-container">
+		<app-calendar-picker
+			[selectedDates]="previousSelectedDate ? [previousSelectedDate] : []"
+			[min]="minDate"
+			[showYear]="false"
+			[showTime]="false"
+			[dotsDates]="passDates"
+			(onSelectDate)="setSearchDate($event)"></app-calendar-picker>
+	</div>
 </div>

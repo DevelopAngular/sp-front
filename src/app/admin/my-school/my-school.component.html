@@ -1,86 +1,79 @@
 <div class="host" appSafariScroll (click)="closeChat($event)">
-    <div class="wrapper">
-      <div class="header-container">
-        <div class="header-wrapper">
-          <div class="school-header" [style.background-color]="darkTheme.getBackground('high', true)">
-            <div class="school-title" *ngIf="currentSchool" [style.color]="darkTheme.getColor({white: '#1E194F', dark: '#FFFFFF'})">{{ currentSchool.name }}</div>
-            <app-gradient-button
-              [cursor]="'pointer'"
-              (buttonClick)="openSettings()"
-              [gradient]="'#F4F4F4, #F4F4F4'"
-              [hoverColor]="'#F5F5F5'"
-              [textColor]="'#1F195E'"
-              [size]="'medium'"
-              [leftIcon]="'./assets/Settings (Navy).svg'">
-              Settings
-            </app-gradient-button>
-          </div>
+	<div class="wrapper">
+		<div class="header-container">
+			<div class="header-wrapper">
+				<div class="school-header" [style.background-color]="darkTheme.getBackground('high', true)">
+					<div class="school-title" *ngIf="currentSchool" [style.color]="darkTheme.getColor({ white: '#1E194F', dark: '#FFFFFF' })">
+						{{ currentSchool.name }}
+					</div>
+					<app-gradient-button
+						[cursor]="'pointer'"
+						(buttonClick)="openSettings()"
+						[gradient]="'#F4F4F4, #F4F4F4'"
+						[hoverColor]="'#F5F5F5'"
+						[textColor]="'#1F195E'"
+						[size]="'medium'"
+						[leftIcon]="'./assets/Settings (Navy).svg'">
+						Settings
+					</app-gradient-button>
+				</div>
+			</div>
+		</div>
 
-        </div>
-      </div>
+		<div class="content">
+			<div class="left">
+				<div class="title" [style.color]="darkTheme.getColor({ white: '#1E194F', dark: '#FFFFFF' })">Prep Guides</div>
+				<div class="button">
+					<app-link-card
+						[title]="'Community Letter'"
+						[subtitle]="'Perfect for school community announcements.'"
+						[buttonText]="'Open'"
+						[buttonColor]="'#7F879D, #7F879D'"
+						[rightIcon]="'./assets/External Link (White).svg'"
+						(buttonClick)="redirect('https://www.smartpass.app/support/communityletter')"></app-link-card>
+				</div>
+				<div class="button">
+					<app-link-card
+						[title]="'Hallway Posters'"
+						[subtitle]="'Printable posters to remind students to use SmartPass.'"
+						[buttonText]="'Open'"
+						[buttonColor]="'#7F879D, #7F879D'"
+						[rightIcon]="'./assets/External Link (White).svg'"
+						(buttonClick)="redirect('https://www.smartpass.app/support/hallwayposters')"></app-link-card>
+				</div>
+				<div class="button">
+					<app-link-card
+						[title]="'Launchpad Logo'"
+						[subtitle]="'Put a link to SmartPass on your student launchpad.'"
+						[buttonText]="'Open'"
+						[buttonColor]="'#7F879D, #7F879D'"
+						[rightIcon]="'./assets/External Link (White).svg'"
+						(buttonClick)="redirect('https://www.smartpass.app/support/launchpadlogo')"></app-link-card>
+				</div>
+			</div>
 
-
-      <div class="content">
-        <div class="left">
-          <div class="title" [style.color]="darkTheme.getColor({white: '#1E194F', dark: '#FFFFFF'})">Prep Guides</div>
-          <div class="button">
-            <app-link-card
-              [title]="'Community Letter'"
-              [subtitle]="'Perfect for school community announcements.'"
-              [buttonText]="'Open'"
-              [buttonColor]="'#7F879D, #7F879D'"
-              [rightIcon]="'./assets/External Link (White).svg'"
-              (buttonClick)="redirect('https://www.smartpass.app/support/communityletter')"
-            ></app-link-card>
-          </div>
-          <div class="button">
-            <app-link-card
-              [title]="'Hallway Posters'"
-              [subtitle]="'Printable posters to remind students to use SmartPass.'"
-              [buttonText]="'Open'"
-              [buttonColor]="'#7F879D, #7F879D'"
-              [rightIcon]="'./assets/External Link (White).svg'"
-              (buttonClick)="redirect('https://www.smartpass.app/support/hallwayposters')"
-            ></app-link-card>
-          </div>
-          <div class="button">
-            <app-link-card
-              [title]="'Launchpad Logo'"
-              [subtitle]="'Put a link to SmartPass on your student launchpad.'"
-              [buttonText]="'Open'"
-              [buttonColor]="'#7F879D, #7F879D'"
-              [rightIcon]="'./assets/External Link (White).svg'"
-              (buttonClick)="redirect('https://www.smartpass.app/support/launchpadlogo')"
-            ></app-link-card>
-          </div>
-
-        </div>
-
-        <div class="right">
-          <div class="title" [style.color]="darkTheme.getColor({white: '#1E194F', dark: '#FFFFFF'})">Support</div>
-          <div class="button">
-            <app-link-card
-              [title]="'Free support call'"
-              [subtitle]="'Need help setting up a room? Want to know how to use a feature?'"
-              [buttonText]="'Schedule'"
-              [buttonColor]="'#00B476, #00B476'"
-              [rightIcon]="'./assets/External Link (White).svg'"
-              [buttonId]="'freeSupportCall'"
-            ></app-link-card>
-          </div>
-          <div class="button">
-            <app-link-card
-              [title]="'Live chat'"
-              [subtitle]="'Have a quick question or need more info?'"
-              [buttonText]="'Open chat'"
-              [buttonColor]="'#00B476, #00B476'"
-              [leftIcon]="'./assets/Chat (White).svg'"
-              (buttonClick)="openChat($event)"
-              [buttonId]="'liveChat'"
-            ></app-link-card>
-          </div>
-        </div>
-      </div>
-    </div>
-
+			<div class="right">
+				<div class="title" [style.color]="darkTheme.getColor({ white: '#1E194F', dark: '#FFFFFF' })">Support</div>
+				<div class="button">
+					<app-link-card
+						[title]="'Free support call'"
+						[subtitle]="'Need help setting up a room? Want to know how to use a feature?'"
+						[buttonText]="'Schedule'"
+						[buttonColor]="'#00B476, #00B476'"
+						[rightIcon]="'./assets/External Link (White).svg'"
+						[buttonId]="'freeSupportCall'"></app-link-card>
+				</div>
+				<div class="button">
+					<app-link-card
+						[title]="'Live chat'"
+						[subtitle]="'Have a quick question or need more info?'"
+						[buttonText]="'Open chat'"
+						[buttonColor]="'#00B476, #00B476'"
+						[leftIcon]="'./assets/Chat (White).svg'"
+						(buttonClick)="openChat($event)"
+						[buttonId]="'liveChat'"></app-link-card>
+				</div>
+			</div>
+		</div>
+	</div>
 </div>

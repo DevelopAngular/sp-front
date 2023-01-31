@@ -1,24 +1,24 @@
 <div class="notification-form-info" [class]="classes">
-  <div class="top-bar" [ngStyle]="{'cursor': content.children.length > 1 ? 'pointer' : null }" (click)="toggleDropdown()">
-    <div *ngIf="showImage()" class="image-wrapper">
-      <div class="image" [style]="{background: iconBackground}">
-        <img alt="" [src]="image | resolveAsset">
-      </div>
-    </div>
-    <div class="top-bar-text" [class.left-pad]="!showImage()">
-      <div class="title">
-        <ng-content select="[title]"></ng-content>
-      </div>
-      <div class="byline">
-        <ng-content select="[byline]"></ng-content>
-      </div>
-    </div>
-    <div *ngIf="content.children.length > 1" class="icon-wrapper">
-      <img alt=""  [src]="dropdownImage() | resolveAsset">
-    </div>
-  </div>
-  <div #content [ngClass]="{'dropped': dropped, 'not-dropped' : !dropped, 'has-content': content.children.length > 1}">
-    <div class="div"></div>
-    <ng-content></ng-content>
-  </div>
+	<div class="top-bar" [ngStyle]="{ cursor: content.children.length > 1 ? 'pointer' : null }" (click)="toggleDropdown()">
+		<div *ngIf="showImage()" class="image-wrapper">
+			<div class="image" [style]="{ background: iconBackground }">
+				<img alt="" [src]="image | resolveAsset" />
+			</div>
+		</div>
+		<div class="top-bar-text" [class.left-pad]="!showImage()">
+			<div class="title">
+				<ng-content select="[title]"></ng-content>
+			</div>
+			<div class="byline">
+				<ng-content select="[byline]"></ng-content>
+			</div>
+		</div>
+		<div *ngIf="content.children.length > 1" class="icon-wrapper">
+			<img alt="" [src]="dropdownImage() | resolveAsset" />
+		</div>
+	</div>
+	<div #content [ngClass]="{ dropped: dropped, 'not-dropped': !dropped, 'has-content': content.children.length > 1 }">
+		<div class="div"></div>
+		<ng-content></ng-content>
+	</div>
 </div>

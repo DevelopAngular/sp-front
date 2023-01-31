@@ -1,19 +1,13 @@
 import { async, TestBed } from '@angular/core/testing';
 
 describe('PassListComponent', () => {
+	beforeEach(async(() => {
+		TestBed.configureTestingModule({
+			declarations: [],
+		}).compileComponents();
+	}));
 
-  beforeEach(async(() => {
-    TestBed.configureTestingModule({
-      declarations: []
-    })
-      .compileComponents();
-  }));
+	beforeEach(() => {});
 
-  beforeEach(() => {
-
-  });
-
-  it('should create', () => {
-
-  });
+	it('should create', () => {});
 });

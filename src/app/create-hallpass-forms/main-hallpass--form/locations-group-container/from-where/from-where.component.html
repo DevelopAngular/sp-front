@@ -1,59 +1,62 @@
-<div [ngClass]="{ 'from-wrapper-to-date': formState.forLater, 'from-wrapper': !formState.forLater}">
-  <div [ngClass]="headerTransition" #header>
-    <div class="header-background"
-         [attr.data-motion-opacity]="(frameMotion$ | async).direction"
-         [style.background-image]="'radial-gradient(circle at 98% 97%, #FFFFFF, #FFFFFF)'"></div>
-    <div *ngIf="!screenService.isDeviceLargeExtra"  class="back-button back-button-grey">
-      <app-icon-button (clickEvent)="back()" [srcString]="'Back Button (Blue-White).svg '" [size]="28" [onDarkShade]="false" [blueWhite]="true" [hasShadow]="false"></app-icon-button>
-    </div>
-    <div class="from-header-text" [attr.data-motion-translate]="(frameMotion$ | async).direction">
-      <img class="search-icon" [src]="'./assets/Home (Navy).svg' | resolveAsset">
-      <div class="text ds-dialog-title">From where?</div>
-    </div>
-  </div>
-  <div class="content-background"
-       [attr.data-motion-opacity]="(frameMotion$ | async).direction"></div>
-  <div class="from-content"
-       [attr.data-motion-translate]="(frameMotion$ | async).direction"
-       (scroll)="tableScroll($event)" #rc>
-    <div class="location-tables">
-      <app-location-table
-        class="locations"
-        [forStaff]="isStaff"
-        [height]="'107px'"
-        [heightLeftTable]="'153px'"
-        [rightHeaderText]="true"
-        [inputWidth]="'240px'"
-        [forLater]="true"
-        [showStars]="true"
-        [noRightStar]="true"
-        [showFavorites]="true"
-        [type]="'location'"
-        [searchTeacherLocations]="true"
-        [placeholder]="'Search rooms'"
-        [dummyString]="'No rooms found'"
-        [currentPage]="'from'"
-        [updatedLocation$]="updatedLocation$"
-        (onSelect)="locationChosen($event)"
-        [mergedAllRooms]="true"
-      >
-      </app-location-table>
-    </div>
-  </div>
-  <ng-container *ngIf="!displayFooters">
-    <app-student-footer [date]="date" [formState]="formState" [state]="'from'" *ngIf="!isStaff"></app-student-footer>
-    <app-teacher-footer *ngIf="isStaff" [formState]="formState" [date]="date" [studentText]="studentText" [state]="'from'"></app-teacher-footer>
-  </ng-container>
+<div [ngClass]="{ 'from-wrapper-to-date': formState.forLater, 'from-wrapper': !formState.forLater }">
+	<div [ngClass]="headerTransition" #header>
+		<div
+			class="header-background"
+			[attr.data-motion-opacity]="(frameMotion$ | async).direction"
+			[style.background-image]="'radial-gradient(circle at 98% 97%, #FFFFFF, #FFFFFF)'"></div>
+		<div *ngIf="!screenService.isDeviceLargeExtra" class="back-button back-button-grey">
+			<app-icon-button
+				(clickEvent)="back()"
+				[srcString]="'Back Button (Blue-White).svg '"
+				[size]="28"
+				[onDarkShade]="false"
+				[blueWhite]="true"
+				[hasShadow]="false"></app-icon-button>
+		</div>
+		<div class="from-header-text" [attr.data-motion-translate]="(frameMotion$ | async).direction">
+			<img class="search-icon" [src]="'./assets/Home (Navy).svg' | resolveAsset" />
+			<div class="text ds-dialog-title">From where?</div>
+		</div>
+	</div>
+	<div class="content-background" [attr.data-motion-opacity]="(frameMotion$ | async).direction"></div>
+	<div class="from-content" [attr.data-motion-translate]="(frameMotion$ | async).direction" (scroll)="tableScroll($event)" #rc>
+		<div class="location-tables">
+			<app-location-table
+				class="locations"
+				[forStaff]="isStaff"
+				[height]="'107px'"
+				[heightLeftTable]="'153px'"
+				[rightHeaderText]="true"
+				[inputWidth]="'240px'"
+				[forLater]="true"
+				[showStars]="true"
+				[noRightStar]="true"
+				[showFavorites]="true"
+				[type]="'location'"
+				[searchTeacherLocations]="true"
+				[placeholder]="'Search rooms'"
+				[dummyString]="'No rooms found'"
+				[currentPage]="'from'"
+				[updatedLocation$]="updatedLocation$"
+				(onSelect)="locationChosen($event)"
+				[mergedAllRooms]="true">
+			</app-location-table>
+		</div>
+	</div>
+	<ng-container *ngIf="!displayFooters">
+		<app-student-footer [date]="date" [formState]="formState" [state]="'from'" *ngIf="!isStaff"></app-student-footer>
+		<app-teacher-footer *ngIf="isStaff" [formState]="formState" [date]="date" [studentText]="studentText" [state]="'from'"></app-teacher-footer>
+	</ng-container>
 </div>
 
 <ng-template let-alerts="alerts" #confirmDialogBodyVisibility>
-  <ng-container *ngFor="let a of alerts">
-  <div class="ds-dialog-title">
-    <span>{{a.title}}</span>
-  </div>
+	<ng-container *ngFor="let a of alerts">
+		<div class="ds-dialog-title">
+			<span>{{ a.title }}</span>
+		</div>
 
-  <div class="ds-dialog-normal-text ds-mb-10">
-      <p style="margin: 10px 0px 0px">{{a.text}}</p>
-  </div>
-  </ng-container>
+		<div class="ds-dialog-normal-text ds-mb-10">
+			<p style="margin: 10px 0px 0px">{{ a.text }}</p>
+		</div>
+	</ng-container>
 </ng-template>

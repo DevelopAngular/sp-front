@@ -1,34 +1,34 @@
-
-  <div [ngClass]=" isIOSTablet ? 'ios-favorite-form-wrapper' : 'favorite-form-wrapper'">
-    <div class="divider" [style.background-image]="'radial-gradient(circle at 73% 71%, #E7A700,#EFCE00)'">
-      <img  [ngClass]=" isIOSTablet ? 'ios-back-button' : 'back-button'" [src]="'./assets/Back Button (Light-Gray).svg' | resolveAsset" (click)="back()">
-      <div class="center">
-        <img draggable="false" class="divider-icon" [src]="'./assets/Star (White).svg' | resolveAsset">
-        <div class="ds-dialog-title-white">Favorites</div>
-      </div>
-    </div>
-      <div class="content">
-        <app-location-table
-          class="locations"
-          [rightHeaderText]="true"
-          [isEdit]="true"
-          [inputWidth]="'240px'"
-          (onStar)="onStar($event)"
-          [showFavorites]="true"
-          [type]="'location'"
-          [allowOnStar]="true"
-          [placeholder]="'Search rooms'"
-          [isFavoriteForm]="true"
-          [searchExceptFavourites]="true"
-          [showStars]="true"
-          [forStaff]="data['isStaff'] ? data.isStaff : null"
-          (onUpdate)="this.starChanges = $event"
-        >
-        </app-location-table>
-      </div>
-  </div>
-
-<div [ngClass]="isIOSTablet ? 'ios-back-button-wrapper' : 'back-button-wrapper'" (click)="back()">
-  <img [ngClass]="isIOSTablet ? 'ios-back-button-bottom' : 'back-button-bottom'" [src]="'./assets/Back Button (Light-Gray).svg' | resolveAsset">
+<div [ngClass]="isIOSTablet ? 'ios-favorite-form-wrapper' : 'favorite-form-wrapper'">
+	<div class="divider" [style.background-image]="'radial-gradient(circle at 73% 71%, #E7A700,#EFCE00)'">
+		<img
+			[ngClass]="isIOSTablet ? 'ios-back-button' : 'back-button'"
+			[src]="'./assets/Back Button (Light-Gray).svg' | resolveAsset"
+			(click)="back()" />
+		<div class="center">
+			<img draggable="false" class="divider-icon" [src]="'./assets/Star (White).svg' | resolveAsset" />
+			<div class="ds-dialog-title-white">Favorites</div>
+		</div>
+	</div>
+	<div class="content">
+		<app-location-table
+			class="locations"
+			[rightHeaderText]="true"
+			[isEdit]="true"
+			[inputWidth]="'240px'"
+			(onStar)="onStar($event)"
+			[showFavorites]="true"
+			[type]="'location'"
+			[allowOnStar]="true"
+			[placeholder]="'Search rooms'"
+			[isFavoriteForm]="true"
+			[searchExceptFavourites]="true"
+			[showStars]="true"
+			[forStaff]="data['isStaff'] ? data.isStaff : null"
+			(onUpdate)="this.starChanges = $event">
+		</app-location-table>
+	</div>
 </div>
 
+<div [ngClass]="isIOSTablet ? 'ios-back-button-wrapper' : 'back-button-wrapper'" (click)="back()">
+	<img [ngClass]="isIOSTablet ? 'ios-back-button-bottom' : 'back-button-bottom'" [src]="'./assets/Back Button (Light-Gray).svg' | resolveAsset" />
+</div>

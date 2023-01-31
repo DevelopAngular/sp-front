@@ -1,22 +1,17 @@
 <div class="privacy-card" [style.background-color]="darkTheme.getBackground('high', true)">
-  <div class="privacy-card_header">
-    <img class="privacy-card_header-image" [src]="leftIcon" alt="Shield (Blue-Gray).svg">
-    <span [style.color]="darkTheme.getColor({white: '#1E194F', dark: '#FFFFFF'})">{{ title }}</span>
-  </div>
-  <div class="privacy-card_content">
-    <div class="ds-mt-15" [style.color]="darkTheme.getColor({dark: '#FFFFFF', white: '#7f879d'})">
-      {{ infoText }}
-    </div>
-    <div class="ds-mt-15" [style.margin-top]="rightLogo ? '35px' : '15px'">
-      <app-gradient-button
-              [gradient]="buttonColor"
-              [linkType]="'_blank'"
-              [buttonLink]="buttonLink"
-              [text]="buttonText">
-      </app-gradient-button>
-    </div>
-  </div>
-  <div class="right-logo" *ngIf="rightLogo">
-    <img [src]="'./assets/google/Group 6.png' | resolveAsset" width="150" height="60">
-  </div>
+	<div class="privacy-card_header">
+		<img class="privacy-card_header-image" [src]="leftIcon" alt="Shield (Blue-Gray).svg" />
+		<span [style.color]="darkTheme.getColor({ white: '#1E194F', dark: '#FFFFFF' })">{{ title }}</span>
+	</div>
+	<div class="privacy-card_content">
+		<div class="ds-mt-15" [style.color]="darkTheme.getColor({ dark: '#FFFFFF', white: '#7f879d' })">
+			{{ infoText }}
+		</div>
+		<div class="ds-mt-15" [style.margin-top]="rightLogo ? '35px' : '15px'">
+			<app-gradient-button [gradient]="buttonColor" [linkType]="'_blank'" [buttonLink]="buttonLink" [text]="buttonText"> </app-gradient-button>
+		</div>
+	</div>
+	<div class="right-logo" *ngIf="rightLogo">
+		<img [src]="'./assets/google/Group 6.png' | resolveAsset" width="150" height="60" />
+	</div>
 </div>

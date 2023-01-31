@@ -1,317 +1,315 @@
 <div *ngIf="user" class="intro-wrapper" (swipeleft)="slide('forward')" (swiperight)="slide('back')">
+	<div *ngIf="!usedAsEntryComponent" class="navbar" [ngClass]="{ shadow: isStaff }">
+		<div class="logo ds-flex-center-center">
+			<app-smartpass-logo></app-smartpass-logo>
+		</div>
+		<div *ngIf="isStaff" class="navbar-tabs">
+			<div class="tab">
+				<img width="25" height="25" style="margin-right: 5px" [src]="'./assets/Passes (Blue-Gray).svg'" alt="SP Arrow (Navy).svg" /><span
+					>Passes</span
+				>
+			</div>
+			<div class="tab">
+				<img width="25" height="25" style="margin-right: 5px" [src]="'./assets/Walking (Navy).svg'" alt="Walking (Navy).svg" /><span
+					>Hall Monitor</span
+				>
+			</div>
+			<div class="tab">
+				<img width="25" height="25" style="margin-right: 5px" [src]="'./assets/Room (Navy).svg'" alt="Room (Navy).svg" /><span>My Room</span>
+			</div>
+		</div>
+		<div class="user-panel">
+			<div class="user-name" notranslate>
+				<span>{{ user.display_name }}</span>
+			</div>
+			<div class="options-wrapper">
+				<app-icon-button [srcString]="'Settings'" [size]="20"></app-icon-button>
+			</div>
+		</div>
+	</div>
 
-  <div *ngIf="!usedAsEntryComponent" class="navbar" [ngClass]="{shadow: isStaff}">
-    <div class="logo ds-flex-center-center">
-      <app-smartpass-logo></app-smartpass-logo>
-    </div>
-    <div *ngIf="isStaff" class="navbar-tabs">
-      <div class="tab"><img width="25" height="25" style="margin-right: 5px;" [src]="'./assets/Passes (Blue-Gray).svg'" alt="SP Arrow (Navy).svg"><span>Passes</span></div>
-      <div class="tab"><img width="25" height="25" style="margin-right: 5px;" [src]="'./assets/Walking (Navy).svg'" alt="Walking (Navy).svg"><span>Hall Monitor</span></div>
-      <div class="tab"><img width="25" height="25" style="margin-right: 5px;" [src]="'./assets/Room (Navy).svg'" alt="Room (Navy).svg"><span>My Room</span></div>
-    </div>
-    <div class="user-panel">
-      <div class="user-name" notranslate>
-        <span>{{user.display_name}}</span>
-      </div>
-      <div class="options-wrapper">
-        <app-icon-button  [srcString]="'Settings'" [size]="20"></app-icon-button>
-      </div>
-    </div>
-  </div>
+	<div style="position: absolute; top: 0; bottom: 0; display: flex; align-items: center">
+		<div
+			*ngIf="slideIndex !== 1"
+			class="button-left"
+			[@pressState]="getButtonState('left')"
+			(mousedown)="onPress(true, 'left')"
+			(mouseup)="onPress(false, 'left')">
+			<app-icon-button [switchColor]="false" [srcString]="'Chevron Left'" (clickEvent)="slide('back')"></app-icon-button>
+		</div>
+		<div class="box">
+			<div class="next-step-animation-trigger" *ngIf="slideIndex === 5" [@NextStep]="{ value: '', params: frameMotion$ | async }">
+				<div class="slide slide_5" [attr.data-motion-translate]="(frameMotion$ | async).direction">
+					<div class="logo ds-flex-center-center">
+						<img width="225" [src]="'./assets/intro/Logo Green.png' | resolveAsset" />
+					</div>
+					<div class="end">
+						<span>You're all set!</span>
+					</div>
+					<div class="ds-mt-25" style="position: relative; z-index: 10">
+						<app-gradient-button
+							class="end-button"
+							[size]="'medium'"
+							[gradient]="'#03CF31, #00B476'"
+							[hoverColor]="'#00B476'"
+							[minWidth]="'150px'"
+							[minHeight]="'50px'"
+							[cursor]="'pointer'"
+							[fontSize]="'18px'"
+							(buttonClick)="endIntro()"
+							>Get Started</app-gradient-button
+						>
+					</div>
+				</div>
+			</div>
 
-  <div style="position: absolute; top: 0; bottom: 0; display: flex; align-items: center;">
-    <div *ngIf="slideIndex!==1" class="button-left"
-         [@pressState]="getButtonState('left')" (mousedown)="onPress(true, 'left')" (mouseup)="onPress(false, 'left')">
-      <app-icon-button [switchColor]="false" [srcString]="'Chevron Left'" (clickEvent)="slide('back')"></app-icon-button>
-    </div>
-    <div class="box">
-      <div class="next-step-animation-trigger" *ngIf="slideIndex === 5" [@NextStep]="{ value: '', params: frameMotion$ | async} ">
+			<div class="next-step-animation-trigger" *ngIf="slideIndex === 4" [@NextStep]="{ value: '', params: frameMotion$ | async }">
+				<div class="slide slide_4" [attr.data-motion-translate]="(frameMotion$ | async).direction">
+					<div class="ds-mx-25">
+						<div><img [src]="'./assets/intro/Student/notification.svg' | resolveAsset" alt="" /></div>
+						<div class="ds-big-heading ds-mb-10 ds-mt-25">Allow Notifications</div>
+						<p *ngIf="!isStaff">
+							Get notifications when passes are about to expire, when you get passes from teachers, and when pass requests are approved.
+						</p>
+						<p *ngIf="isStaff">
+							Get notifications when there are upcoming scheduled passes, when you get pass requests from students, and when passes are created for
+							your room.
+						</p>
+						<div class="ds-mt-25 ds-mb-20"><span>Notifications are configurable in settings.</span></div>
+						<div class="ds-flex-center-between ds-flex-column" style="position: relative; z-index: 10">
+							<div class="ds-mt-5">
+								<app-gradient-button
+									[size]="'editable'"
+									[cornerRadius]="'8px'"
+									[padding]="'0 16px'"
+									[leftImageWidth]="'16px'"
+									[leftImageHeight]="'16px'"
+									[fontSize]="'14px'"
+									[minHeight]="'40px'"
+									[width]="'120px'"
+									(buttonClick)="allowNotifications()"
+									>Allow</app-gradient-button
+								>
+							</div>
+							<div class="ds-mt-20">
+								<app-gradient-button
+									[size]="'editable'"
+									[cornerRadius]="'8px'"
+									[padding]="'0 16px'"
+									[leftImageWidth]="'16px'"
+									[leftImageHeight]="'16px'"
+									[fontSize]="'14px'"
+									[minHeight]="'40px'"
+									[width]="'120px'"
+									[gradient]="'#DA2370,#FB434A'"
+									(buttonClick)="allowNotificationsLater()"
+									>Maybe Later</app-gradient-button
+								>
+							</div>
+						</div>
+					</div>
+				</div>
+			</div>
 
-        <div class="slide slide_5" [attr.data-motion-translate]="(frameMotion$ | async).direction">
+			<div class="next-step-animation-trigger" *ngIf="slideIndex === 3" [@NextStep]="{ value: '', params: frameMotion$ | async }">
+				<div class="slide slide_3" [attr.data-motion-translate]="(frameMotion$ | async).direction">
+					<ng-container *ngIf="isStaff; else forStudent_3">
+						<div class="for-staff_3">
+							<div class="title">
+								<span>Create hall passes for now or for the future</span>
+							</div>
+							<div class="display-card">
+								<app-display-card [intro]="true" [title]="'Create Pass'" [hasDivider]="true" [fontSize]="'15pt'" [icon]="'./assets/Plus (Navy).svg'">
+									<div class="pass-buttons">
+										<app-create-pass-button [title]="'Now'"></app-create-pass-button>
+										<app-create-pass-button [title]="'Future'"></app-create-pass-button>
+									</div>
+								</app-display-card>
+							</div>
+							<div class="ds-flex-center-between ds-w-100">
+								<span class="ds-dialog-subtitle">Declinable</span>
+								<app-toggle-input [controlSize]="'small'" [mock]="true"></app-toggle-input>
+							</div>
+							<div style="text-align: left">When creating a future pass, you have the option to make a pass declinable.</div>
+						</div>
+					</ng-container>
 
-          <div class="logo ds-flex-center-center">
-            <img width="225" [src]="'./assets/intro/Logo Green.png' | resolveAsset">
-          </div>
-          <div class="end">
-            <span>You're all set!</span>
-          </div>
-          <div class="ds-mt-25" style="position: relative; z-index: 10;">
-            <app-gradient-button
-              class="end-button"
-              [size]="'medium'"
-              [gradient]="'#03CF31, #00B476'"
-              [hoverColor]="'#00B476'"
-              [minWidth]="'150px'"
-              [minHeight]="'50px'"
-              [cursor]="'pointer'"
-              [fontSize]="'18px'"
-              (buttonClick)="endIntro()"
-            >Get Started</app-gradient-button>
-          </div>
-        </div>
-      </div>
+					<ng-template #forStudent_3>
+						<div class="for-student_3">
+							<div class="title">
+								<span>Change how long you need the pass to be.</span>
+							</div>
 
-      <div class="next-step-animation-trigger" *ngIf="slideIndex === 4" [@NextStep]="{ value: '', params: frameMotion$ | async} ">
-        <div class="slide slide_4" [attr.data-motion-translate]="(frameMotion$ | async).direction">
-          <div class="ds-mx-25">
-            <div><img [src]="'./assets/intro/Student/notification.svg' | resolveAsset" alt=""></div>
-            <div class="ds-big-heading ds-mb-10 ds-mt-25">Allow Notifications</div>
-            <p *ngIf="!isStaff">
-              Get notifications when passes are about to expire, when you get passes from teachers, and when pass requests are approved.
-            </p>
-            <p *ngIf="isStaff">
-              Get notifications when there are upcoming scheduled passes, when you get pass requests from students, and when passes are created for your room.
-            </p>
-            <div class="ds-mt-25 ds-mb-20"><span>Notifications are configurable in settings.</span></div>
-            <div class="ds-flex-center-between ds-flex-column" style="position: relative; z-index: 10">
-              <div class="ds-mt-5">
-                <app-gradient-button
-                  [size]="'editable'"
-                  [cornerRadius]="'8px'"
-                  [padding]="'0 16px'"
-                  [leftImageWidth]="'16px'"
-                  [leftImageHeight]="'16px'"
-                  [fontSize]="'14px'"
-                  [minHeight]="'40px'"
-                  [width]="'120px'"
-                  (buttonClick)="allowNotifications()"
-                >Allow</app-gradient-button>
-              </div>
-              <div class="ds-mt-20">
+							<div class="pass-card">
+								<div class="pass-card_header">
+									<div class="pass-card-header-content">
+										<div class="left-box">
+											<img class="picture" [src]="'https://storage.googleapis.com/courier-static/release-icons/Bathroom%20(White).png'" alt="" />
+											<span class="text">Bathroom</span>
+										</div>
+										<div>
+											<img class="arrow" [src]="'./assets/Back Button (Transparent).svg' | resolveAsset" alt="" />
+										</div>
+									</div>
+								</div>
+								<div class="pass-card_body">
+									<div class="top-side">
+										<div class="duration-picker">
+											<app-traveltype-picker
+												[choices]="['round_trip']"
+												[width]="'96px'"
+												[height]="'32px'"
+												[altColor]="'#5352E4'"></app-traveltype-picker>
+											<app-duration-picker [plural]="false" [maxDuration]="10"></app-duration-picker>
+										</div>
+										<div></div>
+									</div>
+									<div class="bottom-side">
+										<div class="start-pass-content">
+											<div class="start-pass-content-text"></div>
+											<div></div>
+											<b style="font-size: 22px">Start Pass</b>
+											<img width="20" [src]="'./assets/SP Arrow (White).svg' | resolveAsset" />
+										</div>
+									</div>
+								</div>
+							</div>
+							<div style="width: 100%; box-shadow: 0 0px 3px 2px rgba(0, 0, 0, 0.2); position: absolute; bottom: 0"></div>
+						</div>
+						<div class="ds-mt-25 ds-pt-10">
+							<span>When time runs out, pass time counts upward.</span>
+						</div>
+					</ng-template>
+				</div>
+			</div>
 
-                <app-gradient-button
-                  [size]="'editable'"
-                  [cornerRadius]="'8px'"
-                  [padding]="'0 16px'"
-                  [leftImageWidth]="'16px'"
-                  [leftImageHeight]="'16px'"
-                  [fontSize]="'14px'"
-                  [minHeight]="'40px'"
-                  [width]="'120px'"
-                  [gradient]="'#DA2370,#FB434A'"
-                  (buttonClick)="allowNotificationsLater()"
-                >Maybe Later</app-gradient-button>
-              </div>
-            </div>
-          </div>
+			<div class="next-step-animation-trigger" *ngIf="slideIndex === 2" [@NextStep]="{ value: '', params: frameMotion$ | async }">
+				<div class="slide slide_2" [attr.data-motion-translate]="(frameMotion$ | async).direction">
+					<ng-container *ngIf="isStaff; else forStudent_2">
+						<div class="for-staff_2">
+							<div class="top-header"><span>Three tabs</span></div>
+							<div class="tab">
+								<div class="tab_image"><img [src]="'./assets/SP Arrow (Navy).svg' | resolveAsset" alt="SP Arrow (Navy).svg" /></div>
+								<div>
+									<div class="tab_heading">
+										<span>Passes</span>
+									</div>
+									<div class="tab_description">
+										<p>Create hall passes for students.</p>
+										<p>
+											See all hall passes that you’ve created <br />
+											and sent.
+										</p>
+									</div>
+								</div>
+							</div>
+							<div class="tab">
+								<div class="tab_image"><img [src]="'./assets/Walking (Navy).svg' | resolveAsset" alt="Walking (Navy).svg" /></div>
+								<div>
+									<div class="tab_heading">
+										<span>Hall monitor</span>
+									</div>
+									<div class="tab_description">
+										<p>See all currently active passes in the school.</p>
+										<p>Report students for not having a pass.</p>
+									</div>
+								</div>
+							</div>
+							<div class="tab">
+								<div class="tab_image"><img [src]="'./assets/Room (Navy).svg' | resolveAsset" alt="Room (Navy).svg" /></div>
+								<div>
+									<div class="tab_heading">
+										<span>My Room</span>
+									</div>
+									<div class="tab_description">
+										<p>See all passes that are created to and from your room(s).</p>
+										<p>View scheduled passes for your room.</p>
+									</div>
+								</div>
+							</div>
+						</div>
+					</ng-container>
 
-        </div>
+					<ng-template #forStudent_2>
+						<div class="for-student_2">
+							<div class="title">
+								<span>Create hall passes for now or for the future</span>
+							</div>
+							<app-display-card [intro]="true" [title]="'Create Pass'" [hasDivider]="true" [fontSize]="'15pt'" [icon]="'./assets/Plus (Navy).svg'">
+								<div class="pass-buttons">
+									<app-create-pass-button [title]="'Now'"></app-create-pass-button>
+									<app-create-pass-button [title]="'Future'"></app-create-pass-button>
+								</div>
+							</app-display-card>
+							<div class="ds-flex-center-between ds-mt-25 ds-pt-15">
+								<div class="ds-mr-25 ds-mt-25">
+									Rooms with locks need <br />
+									digital teacher approval.
+								</div>
+								<div class="ds-mt-25">
+									<app-pinnable [mock]="slides['#4'][3]"></app-pinnable>
+								</div>
+							</div>
+						</div>
+					</ng-template>
+				</div>
+			</div>
 
-      </div>
+			<div class="next-step-animation-trigger" *ngIf="slideIndex === 1" [@NextStep]="{ value: '', params: frameMotion$ | async }">
+				<div class="slide slide_1" [attr.data-motion-translate]="(frameMotion$ | async).direction">
+					<div class="logo">
+						<img width="225" [src]="'./assets/intro/Logo Green.png' | resolveAsset" />
+						<!--<app-smartpass-logo [introLogo]="true" [scale]="1.25"></app-smartpass-logo>-->
+					</div>
+					<div class="greeting">
+						<div>
+							<span ignore>Welcome {{ user.first_name }}!</span>
+						</div>
+						<div>
+							<span>Let's show you around.</span>
+						</div>
+					</div>
+					<div class="tiles-wrapper">
+						<app-mooving-tiles></app-mooving-tiles>
+					</div>
+				</div>
+			</div>
 
-
-
-      <div class="next-step-animation-trigger" *ngIf="slideIndex === 3" [@NextStep]="{ value: '', params: frameMotion$ | async} ">
-
-        <div class="slide slide_3" [attr.data-motion-translate]="(frameMotion$ | async).direction">
-
-          <ng-container *ngIf="isStaff; else forStudent_3">
-            <div class="for-staff_3">
-
-              <div class="title">
-                <span>Create hall passes for now or for the future</span>
-              </div>
-              <div class="display-card">
-                <app-display-card [intro]="true" [title]="'Create Pass'" [hasDivider]="true" [fontSize]="'15pt'" [icon]="'./assets/Plus (Navy).svg'">
-                  <div class="pass-buttons">
-                    <app-create-pass-button [title]="'Now'"></app-create-pass-button>
-                    <app-create-pass-button [title]="'Future'"></app-create-pass-button>
-                  </div>
-                </app-display-card>
-              </div>
-              <div class="ds-flex-center-between ds-w-100">
-                <span class="ds-dialog-subtitle">Declinable</span>
-                <app-toggle-input
-                  [controlSize]="'small'"
-                  [mock]="true"
-                ></app-toggle-input>
-              </div>
-              <div style="text-align: left;">When creating a future pass, you have the option to make a pass declinable.</div>
-            </div>
-          </ng-container>
-
-
-          <ng-template #forStudent_3>
-            <div class="for-student_3">
-              <div class="title">
-                <span>Change how long you need the pass to be.</span>
-              </div>
-
-              <div class="pass-card">
-                <div class="pass-card_header">
-                  <div class="pass-card-header-content">
-                    <div class="left-box">
-                      <img class="picture" [src]="'https://storage.googleapis.com/courier-static/release-icons/Bathroom%20(White).png'" alt="">
-                      <span class="text">Bathroom</span>
-                    </div>
-                    <div>
-                      <img class="arrow" [src]="'./assets/Back Button (Transparent).svg' | resolveAsset" alt="">
-                    </div>
-                  </div>
-                </div>
-                <div class="pass-card_body">
-                  <div class="top-side">
-                    <div class="duration-picker">
-                      <app-traveltype-picker [choices]="['round_trip']" [width]="'96px'" [height]="'32px'" [altColor]="'#5352E4'"></app-traveltype-picker>
-                      <app-duration-picker [plural]="false" [maxDuration]="10"></app-duration-picker>
-                    </div>
-                    <div>
-                    </div>
-                  </div>
-                  <div class="bottom-side">
-                    <div class="start-pass-content">
-                      <div class="start-pass-content-text"></div>
-                      <div></div>
-                      <b style="font-size: 22px">Start Pass</b>
-                      <img width="20" [src]="'./assets/SP Arrow (White).svg' | resolveAsset">
-                    </div>
-                  </div>
-                </div>
-              </div>
-              <div style="width: 100%;box-shadow: 0 0px 3px 2px rgba(0, 0, 0, 0.2);position: absolute;bottom: 0;"></div>
-            </div>
-            <div class="ds-mt-25 ds-pt-10">
-              <span>When time runs out, pass time counts upward.</span>
-            </div>
-          </ng-template>
-
-        </div>
-      </div>
-
-
-      <div class="next-step-animation-trigger" *ngIf="slideIndex === 2" [@NextStep]="{ value: '', params: frameMotion$ | async} ">
-
-        <div class="slide slide_2" [attr.data-motion-translate]="(frameMotion$ | async).direction">
-
-          <ng-container *ngIf="isStaff; else forStudent_2">
-            <div class="for-staff_2">
-              <div class="top-header"><span>Three tabs</span></div>
-              <div class="tab">
-                <div class="tab_image"><img [src]="'./assets/SP Arrow (Navy).svg' | resolveAsset" alt="SP Arrow (Navy).svg"></div>
-                <div>
-                  <div class="tab_heading">
-                    <span>Passes</span>
-                  </div>
-                  <div class="tab_description">
-                    <p>
-                      Create hall passes for students.
-                    </p>
-                    <p>
-                      See all hall passes that you’ve created <br> and sent.</p>
-                  </div>
-                </div>
-              </div>
-              <div class="tab">
-                <div class="tab_image"><img [src]="'./assets/Walking (Navy).svg' | resolveAsset" alt="Walking (Navy).svg"></div>
-                <div>
-                  <div class="tab_heading">
-                    <span>Hall monitor</span>
-                  </div>
-                  <div class="tab_description">
-
-                    <p>See all currently active passes in the school.</p>
-                    <p>Report students for not having a pass.</p>
-                  </div>
-                </div>
-              </div>
-              <div class="tab">
-                <div class="tab_image"><img [src]="'./assets/Room (Navy).svg' | resolveAsset" alt="Room (Navy).svg"></div>
-                <div>
-                  <div class="tab_heading">
-                    <span>My Room</span>
-                  </div>
-                  <div class="tab_description">
-
-                    <p>See all passes that are created to and from your room(s).</p>
-                    <p>  View scheduled passes for your room.</p>
-                  </div>
-                </div>
-              </div>
-            </div>
-
-          </ng-container>
-
-          <ng-template #forStudent_2>
-            <div class="for-student_2">
-              <div class="title">
-                <span>Create hall passes for now or for the future</span>
-              </div>
-              <app-display-card [intro]="true" [title]="'Create Pass'" [hasDivider]="true" [fontSize]="'15pt'" [icon]="'./assets/Plus (Navy).svg'">
-                <div class="pass-buttons">
-                  <app-create-pass-button [title]="'Now'"></app-create-pass-button>
-                  <app-create-pass-button [title]="'Future'"></app-create-pass-button>
-                </div>
-              </app-display-card>
-              <div class="ds-flex-center-between ds-mt-25 ds-pt-15">
-                <div class="ds-mr-25 ds-mt-25">
-                  Rooms with locks need <br>
-                  digital teacher approval.
-                </div>
-                <div class="ds-mt-25">
-                  <app-pinnable [mock]="slides['#4'][3]"></app-pinnable>
-                </div>
-              </div>
-            </div>
-          </ng-template>
-        </div>
-      </div>
-
-
-      <div class="next-step-animation-trigger" *ngIf="slideIndex === 1" [@NextStep]="{ value: '', params: frameMotion$ | async} ">
-
-        <div class="slide slide_1" [attr.data-motion-translate]="(frameMotion$ | async).direction">
-
-          <div class="logo">
-            <img width="225" [src]="'./assets/intro/Logo Green.png' | resolveAsset">
-            <!--<app-smartpass-logo [introLogo]="true" [scale]="1.25"></app-smartpass-logo>-->
-          </div>
-          <div class="greeting">
-            <div>
-              <span ignore>Welcome {{user.first_name}}!</span>
-            </div>
-            <div>
-              <span>Let's show you around.</span>
-            </div>
-          </div>
-          <div class="tiles-wrapper">
-            <app-mooving-tiles></app-mooving-tiles>
-          </div>
-        </div>
-      </div>
-
-      <div class="slide-paginator">
-        <div class="slide-paginator_item"
-             [style.background-color]="slideIndex === 1 ? 'rgba(127,135,157,1)' : 'rgba(127,135,157,.3)'"
-             (click)="clickDots(1)"
-        ></div>
-        <div class="slide-paginator_item"
-             [style.background-color]="slideIndex === 2 ? 'rgba(127,135,157,1)' : 'rgba(127,135,157,.3)'"
-             (click)="clickDots(2)"
-        ></div>
-        <div class="slide-paginator_item"
-             [style.background-color]="slideIndex === 3 ? 'rgba(127,135,157,1)' : 'rgba(127,135,157,.3)'"
-             (click)="clickDots(3)"
-        ></div>
-        <div class="slide-paginator_item"
-             [style.background-color]="slideIndex === 4 ? 'rgba(127,135,157,1)' : 'rgba(127,135,157,.3)'"
-             (click)="clickDots(4)"
-             *ngIf="!alreadySeen && !isSafari"
-        ></div>
-        <div class="slide-paginator_item"
-             [style.background-color]="slideIndex === 5 ? 'rgba(127,135,157,1)' : 'rgba(127,135,157,.3)'"
-             (click)="clickDots(5)"
-        ></div>
-      </div>
-
-    </div>
-    <div *ngIf="slideIndex !==4 && slideIndex!==5" class="button-right"
-         [@pressState]="getButtonState('right')" (mousedown)="onPress(true, 'right')" (mouseup)="onPress(false, 'right')">
-      <app-icon-button [switchColor]="false" [srcString]="'Chevron Right'" (clickEvent)="slide('forward')"></app-icon-button>
-    </div>
-  </div>
-  <!-- It needs in order to all the components will be disabled-->
-  <!--<div class="anti-click"></div>-->
-  <!-- End -->
-  <div *ngIf="usedAsEntryComponent" class="dismiss-button" (click)="endIntro()">Dismiss</div>
-
+			<div class="slide-paginator">
+				<div
+					class="slide-paginator_item"
+					[style.background-color]="slideIndex === 1 ? 'rgba(127,135,157,1)' : 'rgba(127,135,157,.3)'"
+					(click)="clickDots(1)"></div>
+				<div
+					class="slide-paginator_item"
+					[style.background-color]="slideIndex === 2 ? 'rgba(127,135,157,1)' : 'rgba(127,135,157,.3)'"
+					(click)="clickDots(2)"></div>
+				<div
+					class="slide-paginator_item"
+					[style.background-color]="slideIndex === 3 ? 'rgba(127,135,157,1)' : 'rgba(127,135,157,.3)'"
+					(click)="clickDots(3)"></div>
+				<div
+					class="slide-paginator_item"
+					[style.background-color]="slideIndex === 4 ? 'rgba(127,135,157,1)' : 'rgba(127,135,157,.3)'"
+					(click)="clickDots(4)"
+					*ngIf="!alreadySeen && !isSafari"></div>
+				<div
+					class="slide-paginator_item"
+					[style.background-color]="slideIndex === 5 ? 'rgba(127,135,157,1)' : 'rgba(127,135,157,.3)'"
+					(click)="clickDots(5)"></div>
+			</div>
+		</div>
+		<div
+			*ngIf="slideIndex !== 4 && slideIndex !== 5"
+			class="button-right"
+			[@pressState]="getButtonState('right')"
+			(mousedown)="onPress(true, 'right')"
+			(mouseup)="onPress(false, 'right')">
+			<app-icon-button [switchColor]="false" [srcString]="'Chevron Right'" (clickEvent)="slide('forward')"></app-icon-button>
+		</div>
+	</div>
+	<!-- It needs in order to all the components will be disabled-->
+	<!--<div class="anti-click"></div>-->
+	<!-- End -->
+	<div *ngIf="usedAsEntryComponent" class="dismiss-button" (click)="endIntro()">Dismiss</div>
 </div>

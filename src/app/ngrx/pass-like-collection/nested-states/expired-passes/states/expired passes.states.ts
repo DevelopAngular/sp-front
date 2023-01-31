@@ -1,8 +1,8 @@
-import {EntityState} from '@ngrx/entity';
-import {HallPass} from '../../../../../models/HallPass';
+import { EntityState } from '@ngrx/entity';
+import { HallPass } from '../../../../../models/HallPass';
 
 export interface IExpiredPassesState extends EntityState<HallPass> {
-  loading: boolean;
-  loaded: boolean;
-  lastAddedPasses: HallPass[];
+	loading: boolean;
+	loaded: boolean;
+	lastAddedPasses: HallPass[];
 }

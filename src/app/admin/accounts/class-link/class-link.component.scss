@@ -1,80 +1,75 @@
 @import '../../../../sp-colors';
 .wrapper {
-    .heading {
-        min-height: 70px;
-        display: flex;
-        justify-content: center;
-        align-items: center;
-        background: $navy500;
-        color: #FFFFFF;
-        font-size: 17px;
-        font-weight: bold;
-        position: relative;
-        box-shadow: 0 1px 5px 0 rgba(0, 0, 0, .2);
-        border-top-right-radius: 14px;
-        border-top-left-radius: 14px;
-        .back-button {
-            position: absolute;
-            top: 0;
-            bottom: 0;
-            left: 25px;
-            margin: auto 0;
-            display: flex;
-            align-items: center;
-            cursor: pointer;
-            color: grey;
-            img {
-                width: 28px;
-                height: 28px;
-            }
-        }
-    }
-    .content {
-        height: 430px;
-        position: relative;
-        overflow: auto;
-        border-bottom-right-radius: 14px;
-        border-bottom-left-radius: 14px;
+	.heading {
+		min-height: 70px;
+		display: flex;
+		justify-content: center;
+		align-items: center;
+		background: $navy500;
+		color: #ffffff;
+		font-size: 17px;
+		font-weight: bold;
+		position: relative;
+		box-shadow: 0 1px 5px 0 rgba(0, 0, 0, 0.2);
+		border-top-right-radius: 14px;
+		border-top-left-radius: 14px;
+		.back-button {
+			position: absolute;
+			top: 0;
+			bottom: 0;
+			left: 25px;
+			margin: auto 0;
+			display: flex;
+			align-items: center;
+			cursor: pointer;
+			color: grey;
+			img {
+				width: 28px;
+				height: 28px;
+			}
+		}
+	}
+	.content {
+		height: 430px;
+		position: relative;
+		overflow: auto;
+		border-bottom-right-radius: 14px;
+		border-bottom-left-radius: 14px;
 
-        .page {
-            height: 360px;
-            overflow: auto;
-            
-            &.class-link-block{
-                display: flex;
-                align-items: center;
-                justify-content: center;
-                text-align: center;
-                .page-info{
-                    background: transparent;
-                    .title{
-                        font-weight: bold;
-                        color: #0A4D7F;
-                    }
-                    p{
-                        text-align: center;
-                        color: #0A4D7F;
-                        font-size: 15px;
-                        margin: 0;
-                        margin-top: 8px;
-                        a{
-                            color: #0A4D7F;
-                            text-decoration: underline;
-                        }
-                    }
-                }
-            }
-        }
+		.page {
+			height: 360px;
+			overflow: auto;
 
-        
-    }
+			&.class-link-block {
+				display: flex;
+				align-items: center;
+				justify-content: center;
+				text-align: center;
+				.page-info {
+					background: transparent;
+					.title {
+						font-weight: bold;
+						color: #0a4d7f;
+					}
+					p {
+						text-align: center;
+						color: #0a4d7f;
+						font-size: 15px;
+						margin: 0;
+						margin-top: 8px;
+						a {
+							color: #0a4d7f;
+							text-decoration: underline;
+						}
+					}
+				}
+			}
+		}
+	}
 }
 
 @keyframes rotate {
-    100% {
-        transform: rotate(360deg);
-    }
+	100% {
+		transform: rotate(360deg);
+	}
 }
-
-
-

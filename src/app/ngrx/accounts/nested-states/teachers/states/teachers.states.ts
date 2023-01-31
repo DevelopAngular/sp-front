@@ -1,13 +1,12 @@
-import {EntityState} from '@ngrx/entity';
-import {User} from '../../../../../models/User';
+import { EntityState } from '@ngrx/entity';
+import { User } from '../../../../../models/User';
 
 export interface TeachersStates extends EntityState<User> {
-  loading: boolean;
-  loaded: boolean;
-  nextRequest: string;
-  lastAddedTeachers: User[];
-  sortValue: string;
-  addedUser: User;
-  currentUpdatedAccount: User;
+	loading: boolean;
+	loaded: boolean;
+	nextRequest: string;
+	lastAddedTeachers: User[];
+	sortValue: string;
+	addedUser: User;
+	currentUpdatedAccount: User;
 }
-

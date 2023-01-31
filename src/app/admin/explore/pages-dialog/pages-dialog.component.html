@@ -1,20 +1,34 @@
 <div class="wrapper">
-    <div class="options">
-        <div #option *ngFor="let page of pages" (mouseenter)="option.hover = true" (mouseleave)="option.hover = false" appCrossPointerEventTarget (pointerClickEvent)="dialogRef.close(page.action)" [ngClass]="{divider: page.title === 'Report Submissions'}">
-            <div class="option" [style.background-color]="(selectedPage.id === page.id && isActive) ? page.color : option.hover ? 'rgba(210, 210, 210, 0.3)' : '#FFFFFF'">
-                <div class="title" [style.color]="(selectedPage.id === page.id && isActive) ? '#FFFFFF' : '#7f879d'">
-                    <img width="20" [src]="'./assets/' + page.icon + ((selectedPage.id === page.id && isActive) ? ' (White)' : ' (Blue-Gray)') + '.svg' | resolveAsset" alt="Icon" style="margin-right: 15px"> {{ page.title }}
-                </div>
-                <div class="pro-plan-wrapper" *ngIf="page.isPro">
-                    <img customToolTip [contentTemplate]="plusPlanText" [src]="'./assets/Plus Plan (Gray-Yellow).svg' | resolveAsset" alt="">
-                    <ng-template #plusPlanText>
-                        <div class="ds-tooltip" style="width: 200px">This feature is included in the Plus Plan.</div>
-                    </ng-template>
-                </div>
-                <div class="check-icon">
-                    <img *ngIf="(selectedPage.id === page.id && isActive)" width="16" [src]="'./assets/Check (White).svg' | resolveAsset" alt="Check">
-                </div>
-            </div>
-        </div>
-    </div>
+	<div class="options">
+		<div
+			#option
+			*ngFor="let page of pages"
+			(mouseenter)="option.hover = true"
+			(mouseleave)="option.hover = false"
+			appCrossPointerEventTarget
+			(pointerClickEvent)="dialogRef.close(page.action)"
+			[ngClass]="{ divider: page.title === 'Report Submissions' }">
+			<div
+				class="option"
+				[style.background-color]="selectedPage.id === page.id && isActive ? page.color : option.hover ? 'rgba(210, 210, 210, 0.3)' : '#FFFFFF'">
+				<div class="title" [style.color]="selectedPage.id === page.id && isActive ? '#FFFFFF' : '#7f879d'">
+					<img
+						width="20"
+						[src]="'./assets/' + page.icon + (selectedPage.id === page.id && isActive ? ' (White)' : ' (Blue-Gray)') + '.svg' | resolveAsset"
+						alt="Icon"
+						style="margin-right: 15px" />
+					{{ page.title }}
+				</div>
+				<div class="pro-plan-wrapper" *ngIf="page.isPro">
+					<img customToolTip [contentTemplate]="plusPlanText" [src]="'./assets/Plus Plan (Gray-Yellow).svg' | resolveAsset" alt="" />
+					<ng-template #plusPlanText>
+						<div class="ds-tooltip" style="width: 200px">This feature is included in the Plus Plan.</div>
+					</ng-template>
+				</div>
+				<div class="check-icon">
+					<img *ngIf="selectedPage.id === page.id && isActive" width="16" [src]="'./assets/Check (White).svg' | resolveAsset" alt="Check" />
+				</div>
+			</div>
+		</div>
+	</div>
 </div>

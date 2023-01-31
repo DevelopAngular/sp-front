@@ -1,25 +1,24 @@
-import {async, ComponentFixture, TestBed} from '@angular/core/testing';
+import { async, ComponentFixture, TestBed } from '@angular/core/testing';
 
-import {ColumnOptionsComponent} from './column-options.component';
+import { ColumnOptionsComponent } from './column-options.component';
 
 describe('ColumnOptionsComponent', () => {
-  let component: ColumnOptionsComponent;
-  let fixture: ComponentFixture<ColumnOptionsComponent>;
+	let component: ColumnOptionsComponent;
+	let fixture: ComponentFixture<ColumnOptionsComponent>;
 
-  beforeEach(async(() => {
-    TestBed.configureTestingModule({
-      declarations: [ ColumnOptionsComponent ]
-    })
-    .compileComponents();
-  }));
+	beforeEach(async(() => {
+		TestBed.configureTestingModule({
+			declarations: [ColumnOptionsComponent],
+		}).compileComponents();
+	}));
 
-  beforeEach(() => {
-    fixture = TestBed.createComponent(ColumnOptionsComponent);
-    component = fixture.componentInstance;
-    fixture.detectChanges();
-  });
+	beforeEach(() => {
+		fixture = TestBed.createComponent(ColumnOptionsComponent);
+		component = fixture.componentInstance;
+		fixture.detectChanges();
+	});
 
-  it('should create', () => {
-    expect(component).toBeTruthy();
-  });
+	it('should create', () => {
+		expect(component).toBeTruthy();
+	});
 });

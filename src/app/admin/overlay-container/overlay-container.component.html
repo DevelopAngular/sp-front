@@ -1,189 +1,187 @@
-<form [formGroup]="form"
-      (dragenter)="handleDragEvent($event, '#00B476')"
-      (dragover)="handleDragEvent($event, '#00B476')"
-      (dragleave)="handleDragEvent($event, '#7F879D')"
-      (drop)="catchFile($event)"
->
-<div class="wrapper">
-  <div class="header" [ngStyle]="{'background-image': gradientColor}">
-    <div class="left-button">
-      <img class="back-button" draggable="false"
-           *ngIf="!showCancelButton && !disabledRightBlock"
-           alt="Go Back"
-           [src]="'./assets/' + (titleColor === 'white' ? 'Back Button (Light-Gray).svg' : 'Back Button (Blue-White).svg') | resolveAsset"
-           (click)="back()"
-      >
-      <div class="cancel-button" [style.color]="titleColor" *ngIf="showCancelButton" (click)="back()">Cancel</div>
-    </div>
+<form
+	[formGroup]="form"
+	(dragenter)="handleDragEvent($event, '#00B476')"
+	(dragover)="handleDragEvent($event, '#00B476')"
+	(dragleave)="handleDragEvent($event, '#7F879D')"
+	(drop)="catchFile($event)">
+	<div class="wrapper">
+		<div class="header" [ngStyle]="{ 'background-image': gradientColor }">
+			<div class="left-button">
+				<img
+					class="back-button"
+					draggable="false"
+					*ngIf="!showCancelButton && !disabledRightBlock"
+					alt="Go Back"
+					[src]="'./assets/' + (titleColor === 'white' ? 'Back Button (Light-Gray).svg' : 'Back Button (Blue-White).svg') | resolveAsset"
+					(click)="back()" />
+				<div class="cancel-button" [style.color]="titleColor" *ngIf="showCancelButton" (click)="back()">Cancel</div>
+			</div>
 
-    <div class="title" [style.color]="titleColor">
-      <img draggable="false" class="title-icon" *ngIf="titleIcon" [src]="titleIcon | resolveAsset">
-      {{ roomTitle }}
-    </div>
-    <div class="right-button">
-      <app-gradient-button *ngIf="isAllowedSave && (showCancelButton || currentPage === 1 || currentPage === 3)"
-       [disabled]="isFormIncomplete || isSaveButtonDisabled"
-       [minHeight]="'40px'"
-       [style.width]="'120px'"
-       [gradient]="!color_profile || currentPage === 9 ? '#00B476, #00B476' : '#FFFFFF, #FFFFFF'"
-       [textColor]="color_profile ? color_profile.solid_color : 'White'"
-       [cursor]="'pointer'"
-       [fontSize]="'14px'"
-       (buttonClick)="onPublish()"
-       (disabledButtonClick)="showFormErrors()"
-       [customToolTip]="saveButtonToolTip"
-       [editable]="true"
-       [nonDisappearing]="false"
-      >
-        <span *ngIf="!showPublishSpinner">Save</span>
-        <div class="loading-theme_blue-gray" [style.color]="'red'" *ngIf="showPublishSpinner" >
-          <mat-spinner  [diameter]="30"></mat-spinner>
-        </div>
-      </app-gradient-button>
+			<div class="title" [style.color]="titleColor">
+				<img draggable="false" class="title-icon" *ngIf="titleIcon" [src]="titleIcon | resolveAsset" />
+				{{ roomTitle }}
+			</div>
+			<div class="right-button">
+				<app-gradient-button
+					*ngIf="isAllowedSave && (showCancelButton || currentPage === 1 || currentPage === 3)"
+					[disabled]="isFormIncomplete || isSaveButtonDisabled"
+					[minHeight]="'40px'"
+					[style.width]="'120px'"
+					[gradient]="!color_profile || currentPage === 9 ? '#00B476, #00B476' : '#FFFFFF, #FFFFFF'"
+					[textColor]="color_profile ? color_profile.solid_color : 'White'"
+					[cursor]="'pointer'"
+					[fontSize]="'14px'"
+					(buttonClick)="onPublish()"
+					(disabledButtonClick)="showFormErrors()"
+					[customToolTip]="saveButtonToolTip"
+					[editable]="true"
+					[nonDisappearing]="false">
+					<span *ngIf="!showPublishSpinner">Save</span>
+					<div class="loading-theme_blue-gray" [style.color]="'red'" *ngIf="showPublishSpinner">
+						<mat-spinner [diameter]="30"></mat-spinner>
+					</div>
+				</app-gradient-button>
 
-      <div *ngIf="showIncompleteButton" [style.color]="titleColor">Incomplete</div>
+				<div *ngIf="showIncompleteButton" [style.color]="titleColor">Incomplete</div>
+			</div>
+		</div>
 
-    </div>
-  </div>
+		<div class="content">
+			<div class="left-block">
+				<div class="block" #block cdkScrollable>
+					<app-room
+						[form]="form"
+						*ngIf="currentPage === 1 || currentPage === 2"
+						[passLimitForm]="passLimitForm"
+						[visibilityForm]="visibilityForm"
+						[isEnableRoomTrigger$]="enableRoomTrigger"
+						[showErrors]="showErrors"
+						(roomDataResult)="roomResult($event)"></app-room>
 
-  <div class="content">
-    <div class="left-block">
-      <div class="block" #block cdkScrollable>
-        <app-room
-          [form]="form"
-          *ngIf="currentPage === 1 || currentPage === 2"
-          [passLimitForm]="passLimitForm"
-          [visibilityForm]="visibilityForm"
-          [isEnableRoomTrigger$]="enableRoomTrigger"
-          [showErrors]="showErrors"
-          (roomDataResult)="roomResult($event)"
-        ></app-room>
+					<app-folder [form]="form" *ngIf="currentPage === 3 || currentPage === 4" (folderDataResult)="folderResult($event)"></app-folder>
 
-        <app-folder
-          [form]="form"
-          *ngIf="currentPage === 3 || currentPage === 4"
-          (folderDataResult)="folderResult($event)"
-        ></app-folder>
+					<app-new-room-in-folder
+						[form]="form"
+						*ngIf="currentPage === 5"
+						[visibilityForm]="visibilityForm"
+						[passLimitForm]="passLimitForm"
+						[isEnableRoomTrigger$]="enableRoomTrigger"
+						[showErrors]="showErrors"
+						(errorsEmit)="showFormErrors()"
+						(roomDataResult)="roomResult($event)"
+						(add)="newRoomInFolder($event)"
+						(back)="back(false)"></app-new-room-in-folder>
 
-        <app-new-room-in-folder
-          [form]="form" *ngIf="currentPage === 5"
-          [visibilityForm]="visibilityForm"
-          [passLimitForm]="passLimitForm"
-          [isEnableRoomTrigger$]="enableRoomTrigger"
-          [showErrors]="showErrors"
-          (errorsEmit)="showFormErrors()"
-          (roomDataResult)="roomResult($event)"
-          (add)="newRoomInFolder($event)"
-          (back)="back(false)"
-        ></app-new-room-in-folder>
+					<app-edit-room-in-folder
+						*ngIf="currentPage === 6"
+						(deleteRoom)="deleteRoomInFolder($event)"
+						(errorsEmit)="showFormErrors()"
+						[form]="form"
+						[passLimitForm]="passLimitForm"
+						[visibilityForm]="visibilityForm"
+						[isEnableRoomTrigger$]="enableRoomTrigger"
+						[showErrors]="showErrors"
+						(roomDataResult)="roomResult($event)"
+						(save)="editRoomFolder($event)"
+						(back)="back(false)"></app-edit-room-in-folder>
 
-        <app-edit-room-in-folder
-          *ngIf="currentPage === 6"
-          (deleteRoom)="deleteRoomInFolder($event)"
-          (errorsEmit)="showFormErrors()"
-          [form]="form"
-          [passLimitForm]="passLimitForm"
-          [visibilityForm]="visibilityForm"
-          [isEnableRoomTrigger$]="enableRoomTrigger"
-          [showErrors]="showErrors"
-          (roomDataResult)="roomResult($event)"
-          (save)="editRoomFolder($event)"
-          (back)="back(false)"
-        ></app-edit-room-in-folder>
+					<div class="existing-rooms" *ngIf="currentPage === 8">
+						<app-add-existing-room
+							[data]="pinnables$ | async"
+							[roomName]="folderData.folderName"
+							[roomsInFolder]="folderData.selectedRoomsInFolder"
+							(back)="back(false)"
+							(save)="addToFolder($event)">
+						</app-add-existing-room>
+					</div>
 
-        <div class="existing-rooms" *ngIf="currentPage === 8">
-          <app-add-existing-room
-            [data]="pinnables$ | async"
-            [roomName]="folderData.folderName"
-            [roomsInFolder]="folderData.selectedRoomsInFolder"
-            (back)="back(false);"
-            (save)="addToFolder($event)">
-          </app-add-existing-room>
-        </div>
+					<app-bulk-edit-rooms
+						*ngIf="currentPage === 9"
+						(bulkEditResult)="bulkEditResult($event)"
+						[form]="form"
+						[passLimitForm]="passLimitForm"
+						[visibilityForm]="visibilityForm"
+						[showErrors]="showErrors"></app-bulk-edit-rooms>
 
-        <app-bulk-edit-rooms
-          *ngIf="currentPage === 9"
-          (bulkEditResult)="bulkEditResult($event)"
-          [form]="form"
-          [passLimitForm]="passLimitForm"
-          [visibilityForm]="visibilityForm"
-          [showErrors]="showErrors"
-        ></app-bulk-edit-rooms>
+					<app-bulk-edit-rooms-in-folder
+						*ngIf="currentPage === 10"
+						[form]="form"
+						[passLimitForm]="passLimitForm"
+						[visibilityForm]="visibilityForm"
+						[showErrors]="showErrors"
+						[isEnableRoomTrigger$]="enableRoomTrigger"
+						(bulkEditResult)="bulkEditInFolder($event)"
+						(errorsEmit)="showFormErrors()"
+						(back)="back(false)"></app-bulk-edit-rooms-in-folder>
 
-        <app-bulk-edit-rooms-in-folder
-          *ngIf="currentPage === 10" [form]="form"
-          [passLimitForm]="passLimitForm"
-          [visibilityForm]="visibilityForm"
-          [showErrors]="showErrors"
-          [isEnableRoomTrigger$]="enableRoomTrigger"
-          (bulkEditResult)="bulkEditInFolder($event)"
-          (errorsEmit)="showFormErrors()"
-          (back)="back(false)"
-        ></app-bulk-edit-rooms-in-folder>
+					<app-import-rooms [form]="form" *ngIf="currentPage === 7" (back)="back(false)"></app-import-rooms>
+				</div>
+				<div class="shadow" *ngIf="showBottomShadow"></div>
+			</div>
 
-        <app-import-rooms
-          [form]="form" *ngIf="currentPage === 7"
-          (back)="back(false)"
-        ></app-import-rooms>
+			<mat-divider [vertical]="true"></mat-divider>
 
-      </div>
-      <div class="shadow" *ngIf="showBottomShadow"></div>
-    </div>
+			<div class="right-block">
+				<div class="right-content">
+					<div class="appearance-content" *ngIf="currentPage !== 9">
+						<div class="inactive" *ngIf="disabledRightBlock" [style.top]="currentPage === 5 || currentPage === 6 ? '64px' : 0"></div>
+						<div class="enable-room" *ngIf="currentPage === 1 || currentPage === 2 || currentPage === 5 || currentPage === 6">
+							<div class="info">Availability</div>
+							<div class="toggle" nuxTooltip [contentTemplate]="tooltip" [showToolTip$]="showNuxTooltip">
+								<div
+									class="toggle-button"
+									#toggle
+									appCrossPointerEventTarget
+									[ngClass]="{ disabled: !isOpenRoom }"
+									(pointerDownEvent)="toggle.pressed = true"
+									(pointerClickEvent)="toggle.pressed = false; openCloseRoomToggle($event)"
+									(mouseleave)="toggle.pressed = false"
+									[@pressState]="toggle.pressed ? 'down' : 'up'">
+									{{ isOpenRoom ? 'Open' : 'Closed' }}
+									<img
+										width="8px"
+										height="6px"
+										style="margin-left: 6px"
+										[src]="'./assets/Rect (' + (isOpenRoom ? 'Green500' : 'Red500') + ').svg'"
+										alt="" />
+								</div>
 
-    <mat-divider [vertical]="true"></mat-divider>
+								<ng-template #tooltip>
+									<app-nux-universal
+										[link]="'https://www.smartpass.app/close-room'"
+										[description]="'Temporarily close or “shut down” a room.'"
+										(gotItEvent)="closeDisableRoomNux()"></app-nux-universal>
+								</ng-template>
+							</div>
+						</div>
+						<!--          <div class="right-content-title" [ngStyle]="{'color':  color_profile && selectedIcon ? '#1F195E' : '#8e8e93' }">Appearance</div>-->
+						<div class="color-picker">
+							<app-color-pallet-picker
+								[selectedColorProfile]="color_profile"
+								[showError]="showErrors"
+								(selectedEvent)="changeColor($event)"></app-color-pallet-picker>
+						</div>
+						<div class="icon-picker">
+							<app-icon-picker
+								[roomName]="roomData?.roomName || folderData?.folderName"
+								[icons$]="icons$"
+								[selectedIconPicker]="selectedIcon"
+								[changeTextResult]="iconTextResult$"
+								[showError]="showErrors"
+								(selectedEvent)="changeIcon($event)"></app-icon-picker>
+						</div>
+					</div>
 
-    <div class="right-block">
-      <div class="right-content">
-        <div class="appearance-content" *ngIf="currentPage !== 9">
-          <div class="inactive" *ngIf="disabledRightBlock" [style.top]="(currentPage === 5 || currentPage === 6 ? '64px' : 0)"></div>
-          <div class="enable-room" *ngIf="currentPage === 1 || currentPage === 2 || currentPage === 5 || currentPage === 6">
-            <div class="info">Availability</div>
-            <div class="toggle" nuxTooltip
-                 [contentTemplate]="tooltip"
-                 [showToolTip$]="showNuxTooltip">
-              <div class="toggle-button"
-                   #toggle
-                   appCrossPointerEventTarget
-                   [ngClass]="{disabled: !isOpenRoom}"
-                   (pointerDownEvent)="toggle.pressed = true"
-                   (pointerClickEvent)="toggle.pressed = false; openCloseRoomToggle($event)"
-                   (mouseleave)="toggle.pressed = false"
-                   [@pressState]="toggle.pressed ? 'down' : 'up'"
-              >{{ isOpenRoom ? 'Open' : 'Closed' }}
-                <img width="8px" height="6px" style="margin-left: 6px" [src]="'./assets/Rect (' + (isOpenRoom ? 'Green500' : 'Red500') + ').svg'" alt="">
-              </div>
-
-              <ng-template #tooltip>
-                <app-nux-universal [link]="'https://www.smartpass.app/close-room'" [description]="'Temporarily close or “shut down” a room.'" (gotItEvent)="closeDisableRoomNux()"></app-nux-universal>
-              </ng-template>
-            </div>
-          </div>
-<!--          <div class="right-content-title" [ngStyle]="{'color':  color_profile && selectedIcon ? '#1F195E' : '#8e8e93' }">Appearance</div>-->
-          <div class="color-picker">
-            <app-color-pallet-picker [selectedColorProfile]="color_profile" [showError]="showErrors" (selectedEvent)="changeColor($event)"></app-color-pallet-picker>
-          </div>
-          <div class="icon-picker">
-            <app-icon-picker
-              [roomName]="roomData?.roomName || folderData?.folderName"
-              [icons$]="icons$"
-              [selectedIconPicker]="selectedIcon"
-              [changeTextResult]="iconTextResult$"
-              [showError]="showErrors"
-              (selectedEvent)="changeIcon($event)"
-            ></app-icon-picker>
-          </div>
-        </div>
-
-        <div class="edit-right-content" *ngIf="currentPage === 9">
-          <div class="edit-right-title">Rooms Editing</div>
-          <div class="selected-rooms">
-            <div class="selected-room" *ngFor="let room of selectedRooms">
-              <app-pinnable [disabled]="true" [pinnable]="room" [forStaff]="true"></app-pinnable>
-            </div>
-          </div>
-        </div>
-      </div>
-    </div>
-  </div>
-</div>
+					<div class="edit-right-content" *ngIf="currentPage === 9">
+						<div class="edit-right-title">Rooms Editing</div>
+						<div class="selected-rooms">
+							<div class="selected-room" *ngFor="let room of selectedRooms">
+								<app-pinnable [disabled]="true" [pinnable]="room" [forStaff]="true"></app-pinnable>
+							</div>
+						</div>
+					</div>
+				</div>
+			</div>
+		</div>
+	</div>
 </form>

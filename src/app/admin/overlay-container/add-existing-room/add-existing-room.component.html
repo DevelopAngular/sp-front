@@ -1,35 +1,26 @@
 <div class="wrapper">
-  <div class="existing-room-header">
-    <div
-      class="back-button"
-      *ngIf="!roomsInFolder.length"
-    >
-      <app-icon-button [size]="20" [srcString]="'Chevron Left'" (clickEvent)="goBack()"></app-icon-button>
-    </div>
-    <div class="cancel-button" (click)="goBack()" *ngIf="roomsInFolder.length">Cancel</div>
-    <div class="header-title" [style.font-weight]="'bold'" [style.color]="roomsInFolder.length ? '#1F195E' : '#7F879D'">
-      {{(roomsInFolder.length ? roomsInFolder.length + ' Room' + (roomsInFolder.length > 1 ? 's' : '') : 'Add Existing Room to Folder')}}
-    </div>
-    <div class="add-button" *ngIf="roomsInFolder.length">
-      <app-gradient-button
-              [minHeight]="'40px'"
-              [cursor]="'pointer'"
-              (buttonClick)="addRooms()"
-      >
-        Add</app-gradient-button>
-    </div>
-  </div>
-  <div class="info-text">
-    Choose existing rooms to add to the {{ roomName }} folder.<br/>
-    Note: appearance settings will be lost
-  </div>
-  <div class="pinnable-collection">
-    <app-pinnable-collection
-            [isEmptyState]="false"
-            [width]="'474px'"
-            [header]="false"
-            [pinnables]="pinnables"
-            (roomEvent)="roomsInFolder=$event"
-    ></app-pinnable-collection>
-  </div>
+	<div class="existing-room-header">
+		<div class="back-button" *ngIf="!roomsInFolder.length">
+			<app-icon-button [size]="20" [srcString]="'Chevron Left'" (clickEvent)="goBack()"></app-icon-button>
+		</div>
+		<div class="cancel-button" (click)="goBack()" *ngIf="roomsInFolder.length">Cancel</div>
+		<div class="header-title" [style.font-weight]="'bold'" [style.color]="roomsInFolder.length ? '#1F195E' : '#7F879D'">
+			{{ roomsInFolder.length ? roomsInFolder.length + ' Room' + (roomsInFolder.length > 1 ? 's' : '') : 'Add Existing Room to Folder' }}
+		</div>
+		<div class="add-button" *ngIf="roomsInFolder.length">
+			<app-gradient-button [minHeight]="'40px'" [cursor]="'pointer'" (buttonClick)="addRooms()"> Add</app-gradient-button>
+		</div>
+	</div>
+	<div class="info-text">
+		Choose existing rooms to add to the {{ roomName }} folder.<br />
+		Note: appearance settings will be lost
+	</div>
+	<div class="pinnable-collection">
+		<app-pinnable-collection
+			[isEmptyState]="false"
+			[width]="'474px'"
+			[header]="false"
+			[pinnables]="pinnables"
+			(roomEvent)="roomsInFolder = $event"></app-pinnable-collection>
+	</div>
 </div>

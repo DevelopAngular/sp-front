@@ -1,19 +1,32 @@
 <div class="host">
-<!--    <div class="selected">-->
-<!--      {{getSelected().format('dddd DD hh:mm a')}}-->
-<!--    </div>-->
-  <div class="container">
-    <div class="wheel" style="width: 40%;">
-      <app-ios-calendar-wheel [ignoreWeekends]="ignoreWeekends" [wheelData]="'date'" [leftShift]="0" [align]="'flex-end'" (selectedUnit)="setDate($event.data)"></app-ios-calendar-wheel>
-    </div>
-    <div class="wheel" style="width: 15%;">
-      <app-ios-calendar-wheel [wheelData]="'hour'" [leftShift]="0"  (selectedUnit)="setHour($event.data)"></app-ios-calendar-wheel>
-    </div>
-    <div class="wheel" style="width: 15%;">
-      <app-ios-calendar-wheel [wheelData]="'minute'" [leftShift]="0" [align]="'flex-start'" (selectedUnit)="setMinute($event.data)"></app-ios-calendar-wheel>
-    </div>
-    <div class="wheel" style="width: 15%;">
-      <app-ios-calendar-wheel [wheelData]="'half'" [leftShift]="-15" [align]="'flex-start'" (selectedUnit)="setHalf($event.data)"></app-ios-calendar-wheel>
-    </div>
-  </div>
+	<!--    <div class="selected">-->
+	<!--      {{getSelected().format('dddd DD hh:mm a')}}-->
+	<!--    </div>-->
+	<div class="container">
+		<div class="wheel" style="width: 40%">
+			<app-ios-calendar-wheel
+				[ignoreWeekends]="ignoreWeekends"
+				[wheelData]="'date'"
+				[leftShift]="0"
+				[align]="'flex-end'"
+				(selectedUnit)="setDate($event.data)"></app-ios-calendar-wheel>
+		</div>
+		<div class="wheel" style="width: 15%">
+			<app-ios-calendar-wheel [wheelData]="'hour'" [leftShift]="0" (selectedUnit)="setHour($event.data)"></app-ios-calendar-wheel>
+		</div>
+		<div class="wheel" style="width: 15%">
+			<app-ios-calendar-wheel
+				[wheelData]="'minute'"
+				[leftShift]="0"
+				[align]="'flex-start'"
+				(selectedUnit)="setMinute($event.data)"></app-ios-calendar-wheel>
+		</div>
+		<div class="wheel" style="width: 15%">
+			<app-ios-calendar-wheel
+				[wheelData]="'half'"
+				[leftShift]="-15"
+				[align]="'flex-start'"
+				(selectedUnit)="setHalf($event.data)"></app-ios-calendar-wheel>
+		</div>
+	</div>
 </div>

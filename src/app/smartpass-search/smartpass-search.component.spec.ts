@@ -1,25 +1,24 @@
-import {ComponentFixture, TestBed} from '@angular/core/testing';
+import { ComponentFixture, TestBed } from '@angular/core/testing';
 
-import {SmartpassSearchComponent} from './smartpass-search.component';
+import { SmartpassSearchComponent } from './smartpass-search.component';
 
 describe('StudentSearchComponent', () => {
-  let component: SmartpassSearchComponent;
-  let fixture: ComponentFixture<SmartpassSearchComponent>;
+	let component: SmartpassSearchComponent;
+	let fixture: ComponentFixture<SmartpassSearchComponent>;
 
-  beforeEach(async () => {
-    await TestBed.configureTestingModule({
-      declarations: [ SmartpassSearchComponent ]
-    })
-    .compileComponents();
-  });
+	beforeEach(async () => {
+		await TestBed.configureTestingModule({
+			declarations: [SmartpassSearchComponent],
+		}).compileComponents();
+	});
 
-  beforeEach(() => {
-    fixture = TestBed.createComponent(SmartpassSearchComponent);
-    component = fixture.componentInstance;
-    fixture.detectChanges();
-  });
+	beforeEach(() => {
+		fixture = TestBed.createComponent(SmartpassSearchComponent);
+		component = fixture.componentInstance;
+		fixture.detectChanges();
+	});
 
-  it('should create', () => {
-    expect(component).toBeTruthy();
-  });
+	it('should create', () => {
+		expect(component).toBeTruthy();
+	});
 });

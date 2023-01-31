@@ -1,416 +1,387 @@
-import {Injectable} from '@angular/core';
-import {Actions, createEffect, ofType} from '@ngrx/effects';
+import { Injectable } from '@angular/core';
+import { Actions, createEffect, ofType } from '@ngrx/effects';
 import * as accountsActions from '../actions/accounts.actions';
 import * as nestedStates from '../actions';
 import * as roleActions from '../actions';
-import {catchError, concatMap, map, mapTo, switchMap, take} from 'rxjs/operators';
-import {UserService} from '../../../services/user.service';
-import {PostRoleProps} from '../states';
-import {getCountAccounts} from '../nested-states/count-accounts/actions';
-import {User} from '../../../models/User';
-import {forkJoin, of} from 'rxjs';
-import {openToastAction} from '../../toast/actions';
-import {Toast} from '../../../models/Toast';
-import {ProfilePicture} from '../../../models/ProfilePicture';
-import {PollingService} from '../../../services/polling-service';
+import { catchError, concatMap, map, mapTo, switchMap, take } from 'rxjs/operators';
+import { UserService } from '../../../services/user.service';
+import { PostRoleProps } from '../states';
+import { getCountAccounts } from '../nested-states/count-accounts/actions';
+import { User } from '../../../models/User';
+import { forkJoin, of } from 'rxjs';
+import { openToastAction } from '../../toast/actions';
+import { Toast } from '../../../models/Toast';
+import { ProfilePicture } from '../../../models/ProfilePicture';
+import { PollingService } from '../../../services/polling-service';
 
 @Injectable()
 export class AccountsEffects {
-  getAccounts$ = createEffect(() => {
-    return this.actions$
-      .pipe(
-        ofType(accountsActions.getAccounts),
-        map((action: any) => {
-          if (action.role === '' || action.role === '_all') {
-            return roleActions.getAllAccounts({role: action.role, search: action.search, limit: action.limit})
-          } else if (action.role === '_profile_admin') {
-            return roleActions.getAdmins({role: action.role, search: action.search, limit: action.limit});
-          } else if (action.role === '_profile_teacher') {
-            return roleActions.getTeachers({role: action.role, search: action.search, limit: action.limit});
-          } else if (action.role === '_profile_assistant') {
-            return roleActions.getAssistants({role: action.role, search: action.search, limit: action.limit});
-          } else if (action.role === '_profile_student') {
-            return roleActions.getStudents({role: action.role, search: action.search, limit: action.limit});
-          } else if (action.role === '_profile_parent') {
-            return roleActions.getParents({role: action.role, search: action.search, limit: action.limit});
-          }
-          return action;
-        })
-      );
-  });
+	getAccounts$ = createEffect(() => {
+		return this.actions$.pipe(
+			ofType(accountsActions.getAccounts),
+			map((action: any) => {
+				if (action.role === '' || action.role === '_all') {
+					return roleActions.getAllAccounts({ role: action.role, search: action.search, limit: action.limit });
+				} else if (action.role === '_profile_admin') {
+					return roleActions.getAdmins({ role: action.role, search: action.search, limit: action.limit });
+				} else if (action.role === '_profile_teacher') {
+					return roleActions.getTeachers({ role: action.role, search: action.search, limit: action.limit });
+				} else if (action.role === '_profile_assistant') {
+					return roleActions.getAssistants({ role: action.role, search: action.search, limit: action.limit });
+				} else if (action.role === '_profile_student') {
+					return roleActions.getStudents({ role: action.role, search: action.search, limit: action.limit });
+				} else if (action.role === '_profile_parent') {
+					return roleActions.getParents({ role: action.role, search: action.search, limit: action.limit });
+				}
+				return action;
+			})
+		);
+	});
 
-  getMoreAccounts$ = createEffect(() => {
-    return this.actions$
-      .pipe(
-        ofType(accountsActions.getMoreAccounts),
-        map((action: any) => {
-          if (action.role === '' || action.role === '_all') {
-            return roleActions.getMoreAccounts({role: action.role});
-          } else if (action.role === '_profile_admin') {
-            return roleActions.getMoreAdmins();
-          } else if (action.role === '_profile_teacher') {
-            return roleActions.getMoreTeachers();
-          } else if (action.role === '_profile_assistant') {
-            return roleActions.getMoreAssistants();
-          } else if (action.role === '_profile_student') {
-            return roleActions.getMoreStudents({role: action.role});
-          } else if (action.role === '_profile_parent') {
-            return roleActions.getMoreParents({role: action.role});
-          }
-          return action;
-        })
-      );
-  });
+	getMoreAccounts$ = createEffect(() => {
+		return this.actions$.pipe(
+			ofType(accountsActions.getMoreAccounts),
+			map((action: any) => {
+				if (action.role === '' || action.role === '_all') {
+					return roleActions.getMoreAccounts({ role: action.role });
+				} else if (action.role === '_profile_admin') {
+					return roleActions.getMoreAdmins();
+				} else if (action.role === '_profile_teacher') {
+					return roleActions.getMoreTeachers();
+				} else if (action.role === '_profile_assistant') {
+					return roleActions.getMoreAssistants();
+				} else if (action.role === '_profile_student') {
+					return roleActions.getMoreStudents({ role: action.role });
+				} else if (action.role === '_profile_parent') {
+					return roleActions.getMoreParents({ role: action.role });
+				}
+				return action;
+			})
+		);
+	});
 
-  postAccounts$ = createEffect(() => {
-    return this.actions$
-      .pipe(
-        ofType(accountsActions.postAccounts),
-        map((action: any) => {
-          let props: PostRoleProps = {
-            school_id: action.school_id,
-            user: action.user,
-            userType: action.userType,
-            roles: action.roles
-          };
-          if (action.role === '' || action.role === '_all') {
-            return accountsActions.postSelectedAccounts(props);
-          } else if (action.role === '_profile_admin') {
-            props = {...props, behalf: action.behalf};
-            return roleActions.postAdmin(props);
-          } else if (action.role === '_profile_teacher') {
-            props = {...props, behalf: action.behalf};
-            return roleActions.postTeacher(props);
-          } else if (action.role === '_profile_student') {
-            return roleActions.postStudent(props);
-          } else if (action.role === '_profile_assistant') {
-            props = {...props, behalf: action.behalf};
-            return roleActions.postAssistant(props);
-          } else if (action.role === '_profile_parent') {
-            props = {...props, behalf: action.behalf};
-            return roleActions.postParent(props);
-          }
+	postAccounts$ = createEffect(() => {
+		return this.actions$.pipe(
+			ofType(accountsActions.postAccounts),
+			map((action: any) => {
+				let props: PostRoleProps = {
+					school_id: action.school_id,
+					user: action.user,
+					userType: action.userType,
+					roles: action.roles,
+				};
+				if (action.role === '' || action.role === '_all') {
+					return accountsActions.postSelectedAccounts(props);
+				} else if (action.role === '_profile_admin') {
+					props = { ...props, behalf: action.behalf };
+					return roleActions.postAdmin(props);
+				} else if (action.role === '_profile_teacher') {
+					props = { ...props, behalf: action.behalf };
+					return roleActions.postTeacher(props);
+				} else if (action.role === '_profile_student') {
+					return roleActions.postStudent(props);
+				} else if (action.role === '_profile_assistant') {
+					props = { ...props, behalf: action.behalf };
+					return roleActions.postAssistant(props);
+				} else if (action.role === '_profile_parent') {
+					props = { ...props, behalf: action.behalf };
+					return roleActions.postParent(props);
+				}
 
-          return action;
-        })
-      );
-  });
+				return action;
+			})
+		);
+	});
 
-  updateAccounts$ = createEffect(() => {
-    return this.actions$
-      .pipe(
-        ofType(accountsActions.updateAccounts),
-        switchMap((action) => {
-          const account = User.fromJSON(action.account);
-          if (account.isAdmin() && account.isTeacher()) {
-            return [
-              nestedStates.updateAdminAccount({profile: action.account}),
-              nestedStates.updateTeacherAccount({profile: action.account})
-            ];
-          } else if (account.isAdmin()) {
-            return [nestedStates.updateAdminAccount({profile: action.account})];
-          } else if (account.isTeacher()) {
-            return [nestedStates.updateTeacherAccount({profile: action.account})];
-          } else if (account.isStudent()) {
-            return [nestedStates.updateStudentAccount({profile: action.account})];
-          } else if (account.isAssistant()) {
-            return [nestedStates.updateAssistantAccount({profile: action.account})];
-          }
-        })
-      );
-  });
+	updateAccounts$ = createEffect(() => {
+		return this.actions$.pipe(
+			ofType(accountsActions.updateAccounts),
+			switchMap((action) => {
+				const account = User.fromJSON(action.account);
+				if (account.isAdmin() && account.isTeacher()) {
+					return [nestedStates.updateAdminAccount({ profile: action.account }), nestedStates.updateTeacherAccount({ profile: action.account })];
+				} else if (account.isAdmin()) {
+					return [nestedStates.updateAdminAccount({ profile: action.account })];
+				} else if (account.isTeacher()) {
+					return [nestedStates.updateTeacherAccount({ profile: action.account })];
+				} else if (account.isStudent()) {
+					return [nestedStates.updateStudentAccount({ profile: action.account })];
+				} else if (account.isAssistant()) {
+					return [nestedStates.updateAssistantAccount({ profile: action.account })];
+				}
+			})
+		);
+	});
 
-  postSelectedAccounts$ = createEffect(() => {
-    return this.actions$
-      .pipe(
-        ofType(accountsActions.postSelectedAccounts),
-        concatMap((action: any) => {
-          return this.userService.addAccountToSchool(action.school_id, action.user, action.userType, action.roles)
-            .pipe(
-              map(() => {
-                return accountsActions.postSelectedAccountsSuccess();
-              })
-            );
-        })
-      );
-  });
+	postSelectedAccounts$ = createEffect(() => {
+		return this.actions$.pipe(
+			ofType(accountsActions.postSelectedAccounts),
+			concatMap((action: any) => {
+				return this.userService.addAccountToSchool(action.school_id, action.user, action.userType, action.roles).pipe(
+					map(() => {
+						return accountsActions.postSelectedAccountsSuccess();
+					})
+				);
+			})
+		);
+	});
 
-  postSelectedAccountsSuccess$ = createEffect(() => {
-    return this.actions$
-      .pipe(
-        ofType(accountsActions.postSelectedAccountsSuccess),
-        map(() => {
-          return getCountAccounts();
-        })
-      );
-  });
+	postSelectedAccountsSuccess$ = createEffect(() => {
+		return this.actions$.pipe(
+			ofType(accountsActions.postSelectedAccountsSuccess),
+			map(() => {
+				return getCountAccounts();
+			})
+		);
+	});
 
-  removeAccount$ = createEffect(() => {
-    return this.actions$
-      .pipe(
-        ofType(accountsActions.removeAccount),
-        map((action: any) => {
-          if (action.role === '' || action.role === '_all') {
-            return roleActions.removeAllAccount({id: action.user.id});
-          } else if (action.role === '_profile_admin') {
-            return roleActions.removeAdminAccount({id: action.user.id});
-          } else if (action.role === '_profile_teacher') {
-            return roleActions.removeTeacher({id: action.user.id});
-          } else if (action.role === '_profile_student') {
-            return roleActions.removeStudent({id: action.user.id});
-          } else if (action.role === '_profile_assistant') {
-            return roleActions.removeAssistant({id: action.user.id});
-          } else if (action.role === '_profile_parent') {
-            return roleActions.removeParent({id: action.user.id});
-          }
+	removeAccount$ = createEffect(() => {
+		return this.actions$.pipe(
+			ofType(accountsActions.removeAccount),
+			map((action: any) => {
+				if (action.role === '' || action.role === '_all') {
+					return roleActions.removeAllAccount({ id: action.user.id });
+				} else if (action.role === '_profile_admin') {
+					return roleActions.removeAdminAccount({ id: action.user.id });
+				} else if (action.role === '_profile_teacher') {
+					return roleActions.removeTeacher({ id: action.user.id });
+				} else if (action.role === '_profile_student') {
+					return roleActions.removeStudent({ id: action.user.id });
+				} else if (action.role === '_profile_assistant') {
+					return roleActions.removeAssistant({ id: action.user.id });
+				} else if (action.role === '_profile_parent') {
+					return roleActions.removeParent({ id: action.user.id });
+				}
 
-          return action;
-        })
-      );
-  });
+				return action;
+			})
+		);
+	});
 
-  updateAccountActivity$ = createEffect(() => {
-    return this.actions$
-      .pipe(
-        ofType(accountsActions.updateAccountActivity),
-        map((action: any) => {
-          if (action.role === '_profile_teacher') {
-            return roleActions.updateTeacherActivity({profile: action.profile, active: action.active});
-          } else if (action.role === '_profile_student') {
-            return roleActions.updateStudentActivity({profile: action.profile, active: action.active});
-          } else if (action.role === '_profile_assistant') {
-            return roleActions.updateAssistantActivity({profile: action.profile, active: action.active});
-          } else if (action.role === '_profile_admin') {
-            return roleActions.updateAdminActivity({profile: action.profile, active: action.active});
-          } else if (action.role === '_profile_parent') {
-            return roleActions.updateParentActivity({profile: action.profile, active: action.active});
-          }
+	updateAccountActivity$ = createEffect(() => {
+		return this.actions$.pipe(
+			ofType(accountsActions.updateAccountActivity),
+			map((action: any) => {
+				if (action.role === '_profile_teacher') {
+					return roleActions.updateTeacherActivity({ profile: action.profile, active: action.active });
+				} else if (action.role === '_profile_student') {
+					return roleActions.updateStudentActivity({ profile: action.profile, active: action.active });
+				} else if (action.role === '_profile_assistant') {
+					return roleActions.updateAssistantActivity({ profile: action.profile, active: action.active });
+				} else if (action.role === '_profile_admin') {
+					return roleActions.updateAdminActivity({ profile: action.profile, active: action.active });
+				} else if (action.role === '_profile_parent') {
+					return roleActions.updateParentActivity({ profile: action.profile, active: action.active });
+				}
 
-          return action;
-        })
-      );
-  });
+				return action;
+			})
+		);
+	});
 
-  updateAccountPermissions$ = createEffect(() => {
-    return this.actions$
-      .pipe(
-        ofType(accountsActions.updateAccountPermissions),
-        map((action: any) => {
-          if (action.role === '_profile_teacher') {
-            return roleActions.updateTeacherPermissions({profile: action.profile, permissions: action.permissions});
-          } else if (action.role === '_profile_admin') {
-            return roleActions.updateAdminPermissions({profile: action.profile, permissions: action.permissions});
-          } else if (action.role === '_profile_assistant') {
-            return roleActions.updateAssistantPermissions({profile: action.profile, permissions: action.permissions});
-          }
-        })
-      );
-  });
+	updateAccountPermissions$ = createEffect(() => {
+		return this.actions$.pipe(
+			ofType(accountsActions.updateAccountPermissions),
+			map((action: any) => {
+				if (action.role === '_profile_teacher') {
+					return roleActions.updateTeacherPermissions({ profile: action.profile, permissions: action.permissions });
+				} else if (action.role === '_profile_admin') {
+					return roleActions.updateAdminPermissions({ profile: action.profile, permissions: action.permissions });
+				} else if (action.role === '_profile_assistant') {
+					return roleActions.updateAssistantPermissions({ profile: action.profile, permissions: action.permissions });
+				}
+			})
+		);
+	});
 
-  addUserToProfiles$ = createEffect(() => {
-    return this.actions$
-      .pipe(
-        ofType(accountsActions.addUserToProfiles),
-        concatMap((action) => this.userService.addUserToProfiles(action.user.id, action.roles)
-          .pipe(
-            map(updatedUser => accountsActions.addUserToProfilesSuccess({updatedUser})),
-            catchError(error => of(accountsActions.addUserToProfilesError({errorMessage: error.message})))
-          ))
-      );
-  });
+	addUserToProfiles$ = createEffect(() => {
+		return this.actions$.pipe(
+			ofType(accountsActions.addUserToProfiles),
+			concatMap((action) =>
+				this.userService.addUserToProfiles(action.user.id, action.roles).pipe(
+					map((updatedUser) => accountsActions.addUserToProfilesSuccess({ updatedUser })),
+					catchError((error) => of(accountsActions.addUserToProfilesError({ errorMessage: error.message })))
+				)
+			)
+		);
+	});
 
-   addUserToProfile$ = createEffect(() => {
-     return this.actions$
-       .pipe(
-         ofType(accountsActions.addUserToProfile),
-         map((action: any) => {
-            if (action.role === 'admin') {
-              return nestedStates.addUserToAdminProfile({user: action.user, role: action.role});
-            } else if (action.role === 'teacher') {
-              return nestedStates.addUserToTeacherProfile({user: action.user, role: action.role});
-            } else if (action.role === 'student') {
-              return nestedStates.addUserToStudentProfile({user: action.user, role: action.role});
-            } else if (action.role === 'assistant') {
-              return nestedStates.addUserToAssistantProfile({user: action.user, role: action.role});
-            }
-         })
-       );
-   });
+	addUserToProfile$ = createEffect(() => {
+		return this.actions$.pipe(
+			ofType(accountsActions.addUserToProfile),
+			map((action: any) => {
+				if (action.role === 'admin') {
+					return nestedStates.addUserToAdminProfile({ user: action.user, role: action.role });
+				} else if (action.role === 'teacher') {
+					return nestedStates.addUserToTeacherProfile({ user: action.user, role: action.role });
+				} else if (action.role === 'student') {
+					return nestedStates.addUserToStudentProfile({ user: action.user, role: action.role });
+				} else if (action.role === 'assistant') {
+					return nestedStates.addUserToAssistantProfile({ user: action.user, role: action.role });
+				}
+			})
+		);
+	});
 
-   bulkAddAccounts$ = createEffect(() => {
-     return this.actions$
-       .pipe(
-         ofType(accountsActions.bulkAddAccounts),
-         concatMap((action: any) => {
-           return this.userService.addBulkAccounts(action.accounts)
-             .pipe(
-               switchMap((users: User[]) => {
-                 const toastData: Toast = {title: 'Success', subtitle: `${users.length} accounts added`, type: 'success'};
-                 return [accountsActions.bulkAddAccountsSuccess({accounts: users}), openToastAction({data: toastData})];
-               }),
-              catchError(error => of(accountsActions.bulkAddAccountsFailure({errorMessage: error.message})))
-             );
-         })
-       );
-   });
+	bulkAddAccounts$ = createEffect(() => {
+		return this.actions$.pipe(
+			ofType(accountsActions.bulkAddAccounts),
+			concatMap((action: any) => {
+				return this.userService.addBulkAccounts(action.accounts).pipe(
+					switchMap((users: User[]) => {
+						const toastData: Toast = { title: 'Success', subtitle: `${users.length} accounts added`, type: 'success' };
+						return [accountsActions.bulkAddAccountsSuccess({ accounts: users }), openToastAction({ data: toastData })];
+					}),
+					catchError((error) => of(accountsActions.bulkAddAccountsFailure({ errorMessage: error.message })))
+				);
+			})
+		);
+	});
 
-   bulkAddAccountsSuccess$ = createEffect(() => {
-     return this.actions$
-       .pipe(
-         ofType(accountsActions.bulkAddAccountsSuccess),
-         switchMap((action: any) => {
-           const accounts: {admins: User[], teachers: User[], students: User[], assistants: User[]} = {
-             admins: [],
-             teachers: [],
-             students: [],
-             assistants: []
-           };
-           action.accounts.forEach(account => {
-             if (User.fromJSON(account).isAdmin()) {
-               accounts.admins.push(account);
-             }
-             if (User.fromJSON(account).isTeacher()) {
-               accounts.teachers.push(account);
-             }
-             if (User.fromJSON(account).isStudent()) {
-               accounts.students.push(account);
-             }
-             if (User.fromJSON(account).isAssistant()) {
-               accounts.assistants.push(account);
-             }
-           });
-           return [
-             nestedStates.bulkAddAdminAccounts({admins: accounts.admins}),
-             nestedStates.bulkAddTeacherAccounts({teachers: accounts.teachers}),
-             nestedStates.bulkAddStudentAccounts({students: accounts.students}),
-             nestedStates.bulkAddAssistantAccounts({assistants: accounts.assistants})
-           ];
-         })
-       );
-   });
+	bulkAddAccountsSuccess$ = createEffect(() => {
+		return this.actions$.pipe(
+			ofType(accountsActions.bulkAddAccountsSuccess),
+			switchMap((action: any) => {
+				const accounts: { admins: User[]; teachers: User[]; students: User[]; assistants: User[] } = {
+					admins: [],
+					teachers: [],
+					students: [],
+					assistants: [],
+				};
+				action.accounts.forEach((account) => {
+					if (User.fromJSON(account).isAdmin()) {
+						accounts.admins.push(account);
+					}
+					if (User.fromJSON(account).isTeacher()) {
+						accounts.teachers.push(account);
+					}
+					if (User.fromJSON(account).isStudent()) {
+						accounts.students.push(account);
+					}
+					if (User.fromJSON(account).isAssistant()) {
+						accounts.assistants.push(account);
+					}
+				});
+				return [
+					nestedStates.bulkAddAdminAccounts({ admins: accounts.admins }),
+					nestedStates.bulkAddTeacherAccounts({ teachers: accounts.teachers }),
+					nestedStates.bulkAddStudentAccounts({ students: accounts.students }),
+					nestedStates.bulkAddAssistantAccounts({ assistants: accounts.assistants }),
+				];
+			})
+		);
+	});
 
-   sortAccounts$ = createEffect(() => {
-     return this.actions$
-       .pipe(
-         ofType(accountsActions.sortAccounts),
-         switchMap(action => {
-           return forkJoin({
-             action: of(action),
-             limit: this.userService.countAccounts$[action.role].pipe(take(1))
-           });
-         }),
-         concatMap(({action, limit}) => {
-           const queryParams = {...action.queryParams, limit};
-           return this.userService.sortTableHeader(queryParams)
-             .pipe(
-               map(({next, results}) => {
-                 const sortValue = action.queryParams.sort ? action.queryParams.sort.includes('-') ? 'desc' : 'asc' : '';
-                 return accountsActions.sortAccountsSuccess({users: results, role: action.role, next, sortValue});
-               }),
-               catchError(error => of(accountsActions.sortAccountsFailure({errorMessage: error.message})))
-             );
-         })
-       );
-   });
+	sortAccounts$ = createEffect(() => {
+		return this.actions$.pipe(
+			ofType(accountsActions.sortAccounts),
+			switchMap((action) => {
+				return forkJoin({
+					action: of(action),
+					limit: this.userService.countAccounts$[action.role].pipe(take(1)),
+				});
+			}),
+			concatMap(({ action, limit }) => {
+				const queryParams = { ...action.queryParams, limit };
+				return this.userService.sortTableHeader(queryParams).pipe(
+					map(({ next, results }) => {
+						const sortValue = action.queryParams.sort ? (action.queryParams.sort.includes('-') ? 'desc' : 'asc') : '';
+						return accountsActions.sortAccountsSuccess({ users: results, role: action.role, next, sortValue });
+					}),
+					catchError((error) => of(accountsActions.sortAccountsFailure({ errorMessage: error.message })))
+				);
+			})
+		);
+	});
 
-   sortAccountsSuccess$ = createEffect(() => {
-     return this.actions$
-       .pipe(
-         ofType(accountsActions.sortAccountsSuccess),
-         map(({users, role, next, sortValue}) => {
-           const nextUrl = next ? next.substring(next.search('v1')) : null;
-           if (role === '_profile_admin') {
-             return nestedStates.sortAdminAccounts({admins: users, next: nextUrl, sortValue});
-           } else if (role === '_profile_teacher') {
-             return nestedStates.sortTeacherAccounts({teachers: users, next: nextUrl, sortValue});
-           } else if (role === '_profile_student') {
-             return nestedStates.sortStudentAccounts({students: users, next: nextUrl, sortValue});
-           } else if (role === '_profile_assistant') {
-             return nestedStates.sortAssistantAccounts({assistants: users, next: nextUrl, sortValue});
-           } else if (role === '_profile_parent') {
-            return nestedStates.sortParentAccounts({parents: users, next: nextUrl, sortValue});
-          }
-         })
-       );
-   });
+	sortAccountsSuccess$ = createEffect(() => {
+		return this.actions$.pipe(
+			ofType(accountsActions.sortAccountsSuccess),
+			map(({ users, role, next, sortValue }) => {
+				const nextUrl = next ? next.substring(next.search('v1')) : null;
+				if (role === '_profile_admin') {
+					return nestedStates.sortAdminAccounts({ admins: users, next: nextUrl, sortValue });
+				} else if (role === '_profile_teacher') {
+					return nestedStates.sortTeacherAccounts({ teachers: users, next: nextUrl, sortValue });
+				} else if (role === '_profile_student') {
+					return nestedStates.sortStudentAccounts({ students: users, next: nextUrl, sortValue });
+				} else if (role === '_profile_assistant') {
+					return nestedStates.sortAssistantAccounts({ assistants: users, next: nextUrl, sortValue });
+				} else if (role === '_profile_parent') {
+					return nestedStates.sortParentAccounts({ parents: users, next: nextUrl, sortValue });
+				}
+			})
+		);
+	});
 
-   updateAccountPicture$ = createEffect(() => {
-     return this.actions$
-       .pipe(
-         ofType(accountsActions.updateAccountPicture),
-         switchMap(({profile, role, file}) => {
-            return this.userService.bulkAddProfilePictures([file])
-              .pipe(
-                switchMap((images: ProfilePicture[]) => {
-                  return this.userService.setProfilePictureToGoogle(images[0].upload_url, file, images[0].content_type)
-                    .pipe(mapTo(images[0]));
-                }),
-                switchMap((image) => {
-                  return this.userService.uploadProfilePictures([+image.id], [profile.id]);
-                }),
-                switchMap(jobId => {
-                  return this.pollingService.listen('admin.profile_pictures.attach_profile_pics_end');
-                }),
-                map(({data}) => {
-                  return { ...profile, profile_picture: data.attached_pictures[0].photo_url};
-                }),
-                map((user: User) => {
-                  if (role === '_profile_admin') {
-                    return nestedStates.updateAdminAccount({profile: user});
-                  } else if (role === '_profile_teacher') {
-                    return nestedStates.updateTeacherAccount({profile: user});
-                  } else if (role === '_profile_student') {
-                    return nestedStates.updateStudentAccount({profile: user});
-                  } else if (role === '_profile_assistant') {
-                    return nestedStates.updateAssistantAccount({profile: user});
-                  } else if (role === '_profile_parent') {
-                    return nestedStates.updateParentAccount({profile: user});
-                  }
-                }),
-                catchError(error => of(accountsActions.updateAccountPictureFailure({errorMessage: error.message})))
-              );
-         })
-       );
-   });
+	updateAccountPicture$ = createEffect(() => {
+		return this.actions$.pipe(
+			ofType(accountsActions.updateAccountPicture),
+			switchMap(({ profile, role, file }) => {
+				return this.userService.bulkAddProfilePictures([file]).pipe(
+					switchMap((images: ProfilePicture[]) => {
+						return this.userService.setProfilePictureToGoogle(images[0].upload_url, file, images[0].content_type).pipe(mapTo(images[0]));
+					}),
+					switchMap((image) => {
+						return this.userService.uploadProfilePictures([+image.id], [profile.id]);
+					}),
+					switchMap((jobId) => {
+						return this.pollingService.listen('admin.profile_pictures.attach_profile_pics_end');
+					}),
+					map(({ data }) => {
+						return { ...profile, profile_picture: data.attached_pictures[0].photo_url };
+					}),
+					map((user: User) => {
+						if (role === '_profile_admin') {
+							return nestedStates.updateAdminAccount({ profile: user });
+						} else if (role === '_profile_teacher') {
+							return nestedStates.updateTeacherAccount({ profile: user });
+						} else if (role === '_profile_student') {
+							return nestedStates.updateStudentAccount({ profile: user });
+						} else if (role === '_profile_assistant') {
+							return nestedStates.updateAssistantAccount({ profile: user });
+						} else if (role === '_profile_parent') {
+							return nestedStates.updateParentAccount({ profile: user });
+						}
+					}),
+					catchError((error) => of(accountsActions.updateAccountPictureFailure({ errorMessage: error.message })))
+				);
+			})
+		);
+	});
 
-   deleteAccountPicture$ = createEffect(() => {
-     return this.actions$
-       .pipe(
-         ofType(accountsActions.deleteAccountPicture),
-         map(({user, role}) => {
-           if (role === '_profile_admin') {
-             return nestedStates.updateAdminAccount({profile: user});
-           } else if (role === '_profile_teacher') {
-             return nestedStates.updateTeacherAccount({profile: user});
-           } else if (role === '_profile_student') {
-             return nestedStates.updateStudentAccount({profile: user});
-           } else if (role === '_profile_assistant') {
-             return nestedStates.updateAssistantAccount({profile: user});
-           } else if (role === '_profile_parent') {
-            return nestedStates.updateParentAccount({profile: user});
-          }
-         })
-       );
-   });
+	deleteAccountPicture$ = createEffect(() => {
+		return this.actions$.pipe(
+			ofType(accountsActions.deleteAccountPicture),
+			map(({ user, role }) => {
+				if (role === '_profile_admin') {
+					return nestedStates.updateAdminAccount({ profile: user });
+				} else if (role === '_profile_teacher') {
+					return nestedStates.updateTeacherAccount({ profile: user });
+				} else if (role === '_profile_student') {
+					return nestedStates.updateStudentAccount({ profile: user });
+				} else if (role === '_profile_assistant') {
+					return nestedStates.updateAssistantAccount({ profile: user });
+				} else if (role === '_profile_parent') {
+					return nestedStates.updateParentAccount({ profile: user });
+				}
+			})
+		);
+	});
 
-   clearCurrentUpdated$ = createEffect(() => {
-     return this.actions$
-       .pipe(
-         ofType(accountsActions.clearCurrentUpdatedAccount),
-         switchMap(() => {
-           return [
-             nestedStates.clearCurrentUpdatedStudent(),
-             nestedStates.clearCurrentUpdatedTeacher(),
-             nestedStates.clearCurrentUpdatedAdmin(),
-             nestedStates.clearCurrentUpdatedAssistant()
-           ];
-         })
-       );
-   });
+	clearCurrentUpdated$ = createEffect(() => {
+		return this.actions$.pipe(
+			ofType(accountsActions.clearCurrentUpdatedAccount),
+			switchMap(() => {
+				return [
+					nestedStates.clearCurrentUpdatedStudent(),
+					nestedStates.clearCurrentUpdatedTeacher(),
+					nestedStates.clearCurrentUpdatedAdmin(),
+					nestedStates.clearCurrentUpdatedAssistant(),
+				];
+			})
+		);
+	});
 
-  constructor(
-    private actions$: Actions,
-    private userService: UserService,
-    private pollingService: PollingService
-  ) {}
+	constructor(private actions$: Actions, private userService: UserService, private pollingService: PollingService) {}
 }

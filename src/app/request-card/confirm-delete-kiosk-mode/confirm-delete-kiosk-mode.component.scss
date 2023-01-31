@@ -1,24 +1,24 @@
-@import "../../../sp-colors";
+@import '../../../sp-colors';
 
 .wrapper {
-  width: 400px;
-  background-color: white;
-  padding: 25px;
+	width: 400px;
+	background-color: white;
+	padding: 25px;
 
-  .content {
-    .title {
-      color: $navy500;
-      font-weight: bold;
-      font-size: 16px;
-    }
-    .subtitle {
-      color: $blue-gray;
-      font-size: 14px;
-      margin: 10px 0;
-    }
-    .buttons {
-      display: flex;
-      justify-content: flex-end;
-    }
-  }
+	.content {
+		.title {
+			color: $navy500;
+			font-weight: bold;
+			font-size: 16px;
+		}
+		.subtitle {
+			color: $blue-gray;
+			font-size: 14px;
+			margin: 10px 0;
+		}
+		.buttons {
+			display: flex;
+			justify-content: flex-end;
+		}
+	}
 }

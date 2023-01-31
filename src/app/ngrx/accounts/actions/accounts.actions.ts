@@ -1,43 +1,43 @@
-import {createAction, props} from '@ngrx/store';
-import {PostRoleProps, RoleProps} from '../states';
-import {User} from '../../../models/User';
+import { createAction, props } from '@ngrx/store';
+import { PostRoleProps, RoleProps } from '../states';
+import { User } from '../../../models/User';
 
 export const getAccounts = createAction(`[Accounts] Get Accounts`, props<RoleProps>());
 
-export const getMoreAccounts = createAction(`[Accounts] Get More Accounts`, props<{role: string}>());
+export const getMoreAccounts = createAction(`[Accounts] Get More Accounts`, props<{ role: string }>());
 
 export const postAccounts = createAction(`[Accounts] Post Accounts`, props<PostRoleProps>());
 
 export const postSelectedAccounts = createAction(`[Accounts] Post Selected Accounts`, props<PostRoleProps>());
 export const postSelectedAccountsSuccess = createAction(`[Accounts] Post Selected Accounts Success`);
 
-export const removeAccount = createAction(`[Accounts] Remove Account`, props<{user: User, role: string}>());
+export const removeAccount = createAction(`[Accounts] Remove Account`, props<{ user: User; role: string }>());
 
-export const updateAccounts = createAction(`[Accounts] Update Account`, props<{account: User}>());
+export const updateAccounts = createAction(`[Accounts] Update Account`, props<{ account: User }>());
 
-export const addUserToProfile = createAction(`[Accounts] Add User To Profile`, props<{user: User, role: string}>());
-export const addUserToProfiles = createAction(`[Accounts] Add User To Profiles`, props<{user: User, roles: string[]}>());
-export const addUserToProfilesSuccess = createAction(`[Accounts] Add User To Profiles Success`, props<{updatedUser: User}>());
-export const addUserToProfilesError = createAction(`[Accounts] Add User To Profiles Error`, props<{errorMessage: string}>());
+export const addUserToProfile = createAction(`[Accounts] Add User To Profile`, props<{ user: User; role: string }>());
+export const addUserToProfiles = createAction(`[Accounts] Add User To Profiles`, props<{ user: User; roles: string[] }>());
+export const addUserToProfilesSuccess = createAction(`[Accounts] Add User To Profiles Success`, props<{ updatedUser: User }>());
+export const addUserToProfilesError = createAction(`[Accounts] Add User To Profiles Error`, props<{ errorMessage: string }>());
 
-export const updateAccountActivity = createAction(`[Accounts] Update Account Activity`,
-  props<{profile: User, active: boolean, role: string}>());
+export const updateAccountActivity = createAction(`[Accounts] Update Account Activity`, props<{ profile: User; active: boolean; role: string }>());
 
-export const updateAccountPermissions =
-  createAction(`[Accounts] Update Permissions`, props<{profile: User, permissions: any, role: string}>());
+export const updateAccountPermissions = createAction(`[Accounts] Update Permissions`, props<{ profile: User; permissions: any; role: string }>());
 
-export const bulkAddAccounts = createAction('[Accounts] Bulk Add Accounts', props<{accounts: any[]}>());
-export const bulkAddAccountsSuccess = createAction('[Accounts] Bulk Add Accounts Success', props<{accounts: User[]}>());
-export const bulkAddAccountsFailure = createAction('[Accounts] Bulk Add Accounts Failure', props<{errorMessage: string}>());
+export const bulkAddAccounts = createAction('[Accounts] Bulk Add Accounts', props<{ accounts: any[] }>());
+export const bulkAddAccountsSuccess = createAction('[Accounts] Bulk Add Accounts Success', props<{ accounts: User[] }>());
+export const bulkAddAccountsFailure = createAction('[Accounts] Bulk Add Accounts Failure', props<{ errorMessage: string }>());
 
-export const sortAccounts = createAction('[Accounts] Sort Accounts', props<{role: string, queryParams: any}>());
-export const sortAccountsSuccess = createAction('[Accounts] Sort Accounts Success', props<{users: User[], role: string, next: string, sortValue: string}>());
-export const sortAccountsFailure = createAction('[Accounts] Sort Accounts Failure', props<{errorMessage: string}>());
+export const sortAccounts = createAction('[Accounts] Sort Accounts', props<{ role: string; queryParams: any }>());
+export const sortAccountsSuccess = createAction(
+	'[Accounts] Sort Accounts Success',
+	props<{ users: User[]; role: string; next: string; sortValue: string }>()
+);
+export const sortAccountsFailure = createAction('[Accounts] Sort Accounts Failure', props<{ errorMessage: string }>());
 
-export const updateAccountPicture = createAction(`[Accounts] Update Account Picture`, props<{profile, role: string, file: File}>());
-export const updateAccountPictureFailure = createAction(`[Account] Update Account Picture Failure`, props<{errorMessage: string}>());
+export const updateAccountPicture = createAction(`[Accounts] Update Account Picture`, props<{ profile; role: string; file: File }>());
+export const updateAccountPictureFailure = createAction(`[Account] Update Account Picture Failure`, props<{ errorMessage: string }>());
 
-export const deleteAccountPicture = createAction(`[Accounts] Delete Account Picture`, props<{user: User, role: string}>());
+export const deleteAccountPicture = createAction(`[Accounts] Delete Account Picture`, props<{ user: User; role: string }>());
 
 export const clearCurrentUpdatedAccount = createAction(`[Account] Clear Current Updated`);
-

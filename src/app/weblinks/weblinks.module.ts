@@ -6,11 +6,7 @@ import { AuthGuardCallbackComponent } from './auth-guard-callback/auth-guard-cal
 import { SharedModule } from '../shared/shared.module';
 
 @NgModule({
-  declarations: [AuthGuardCallbackComponent],
-  imports: [
-    CommonModule,
-    SharedModule,
-    WeblinksRoutingModule
-  ]
+	declarations: [AuthGuardCallbackComponent],
+	imports: [CommonModule, SharedModule, WeblinksRoutingModule],
 })
-export class WeblinksModule { }
+export class WeblinksModule {}

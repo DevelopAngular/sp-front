@@ -1,83 +1,80 @@
-@import "../../../sp-colors";
+@import '../../../sp-colors';
 
-.collection-wrapper{
-
+.collection-wrapper {
 }
 .pinnables {
-  opacity: 0;
-  animation: appearing .5s ease .1s forwards;
+	opacity: 0;
+	animation: appearing 0.5s ease 0.1s forwards;
 }
 @keyframes appearing {
-  0% {
-    opacity: 0;
-  }
-  100% {
-    opacity: 1;
-  }
+	0% {
+		opacity: 0;
+	}
+	100% {
+		opacity: 1;
+	}
 }
 
-
-.collection-header{
-    display: flex;
-    flex-direction: row;
-    align-items: center;
-    justify-content: space-between;
-    opacity: 0;
-    animation: appearing .5s ease .1s forwards;
+.collection-header {
+	display: flex;
+	flex-direction: row;
+	align-items: center;
+	justify-content: space-between;
+	opacity: 0;
+	animation: appearing 0.5s ease 0.1s forwards;
 }
 
-.collection-divider{
-    height: 1px;
-    margin: 10px 0 14px 0;
-    width: 100%;
-    background-color: #B5B7BA;
+.collection-divider {
+	height: 1px;
+	margin: 10px 0 14px 0;
+	width: 100%;
+	background-color: #b5b7ba;
 }
 
-.collection-title{
-    font-size: 24px;
-    color: #1F195E;
-    font-weight: bold;
+.collection-title {
+	font-size: 24px;
+	color: #1f195e;
+	font-weight: bold;
 }
 
-.selected-counter{
-    margin-left: auto;
-    margin-right: 15px;
-    font-size: 15px;
-    cursor: pointer;
-    -webkit-touch-callout: none; /* iOS Safari */
-    -webkit-user-select: none; /* Safari */
-    -khtml-user-select: none; /* Konqueror HTML */
-    -moz-user-select: none; /* Firefox */
-    -ms-user-select: none; /* Internet Explorer/Edge */
-    user-select: none;
+.selected-counter {
+	margin-left: auto;
+	margin-right: 15px;
+	font-size: 15px;
+	cursor: pointer;
+	-webkit-touch-callout: none; /* iOS Safari */
+	-webkit-user-select: none; /* Safari */
+	-khtml-user-select: none; /* Konqueror HTML */
+	-moz-user-select: none; /* Firefox */
+	-ms-user-select: none; /* Internet Explorer/Edge */
+	user-select: none;
 }
 .pinnable-item-container {
-  position: relative;
-  .pinnable-item {
-    width: auto;
-    animation: wiggle .3s ease infinite;
-  }
+	position: relative;
+	.pinnable-item {
+		width: auto;
+		animation: wiggle 0.3s ease infinite;
+	}
 
-  .disable-room-block {
-    position: absolute;
-    top: 0;
-    right: 0;
-    bottom: 0;
-    left: 0;
-    z-index: 10;
-    background-color: #000000;
-    opacity: 0.5;
-  }
+	.disable-room-block {
+		position: absolute;
+		top: 0;
+		right: 0;
+		bottom: 0;
+		left: 0;
+		z-index: 10;
+		background-color: #000000;
+		opacity: 0.5;
+	}
 }
 @keyframes wiggle {
-  0%{
-    transform: rotate(2deg);
-  }
-  50%{
-    transform: rotate(-2deg);
-  }
-  100%{
-    transform: rotate(2deg);
-  }
-
+	0% {
+		transform: rotate(2deg);
+	}
+	50% {
+		transform: rotate(-2deg);
+	}
+	100% {
+		transform: rotate(2deg);
+	}
 }

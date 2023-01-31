@@ -1,238 +1,237 @@
-import {ChangeDetectorRef, Component, EventEmitter, Input, OnChanges, OnInit, Output, SimpleChanges} from '@angular/core';
-import {bumpIn} from '../animations';
-import {Pinnable} from '../models/Pinnable';
-import {DomSanitizer} from '@angular/platform-browser';
-import {interval, of, Subject} from 'rxjs';
-import {delay, takeUntil} from 'rxjs/operators';
-import {cloneDeep} from 'lodash';
-import {PassLimit} from '../models/PassLimit';
-import {HttpService} from '../services/http-service';
-import {School} from '../models/School';
-import { LocationsService } from '../services/locations.service'
+import { ChangeDetectorRef, Component, EventEmitter, Input, OnChanges, OnInit, Output, SimpleChanges } from '@angular/core';
+import { bumpIn } from '../animations';
+import { Pinnable } from '../models/Pinnable';
+import { DomSanitizer } from '@angular/platform-browser';
+import { interval, of, Subject } from 'rxjs';
+import { delay, takeUntil } from 'rxjs/operators';
+import { cloneDeep } from 'lodash';
+import { PassLimit } from '../models/PassLimit';
+import { HttpService } from '../services/http-service';
+import { School } from '../models/School';
+import { LocationsService } from '../services/locations.service';
 
 @Component({
-  selector: 'app-pinnable',
-  templateUrl: './pinnable.component.html',
-  styleUrls: ['./pinnable.component.scss'],
-  animations: [
-    bumpIn
-  ]
+	selector: 'app-pinnable',
+	templateUrl: './pinnable.component.html',
+	styleUrls: ['./pinnable.component.scss'],
+	animations: [bumpIn],
 })
 export class PinnableComponent implements OnInit, OnChanges {
+	@Input() mock = null;
 
-  @Input() mock = null;
+	@Input()
+	pinnable: Pinnable;
 
-  @Input()
-  pinnable: Pinnable;
+	@Input()
+	width: string = '120px';
 
-  @Input()
-  width: string = '120px';
+	@Input()
+	height: string = '70px';
 
-  @Input()
-  height: string = '70px';
+	@Input()
+	iconWidth: string = '30px';
 
-  @Input()
-  iconWidth: string = '30px';
+	@Input()
+	forLater: boolean = false;
 
-  @Input()
-  forLater: boolean = false;
+	@Input()
+	forStaff: boolean = false;
 
-  @Input()
-  forStaff: boolean = false;
+	@Input()
+	forCollection: boolean = false;
 
-  @Input()
-  forCollection: boolean = false;
+	@Input()
+	forBulk: boolean = false;
 
-  @Input()
-  forBulk: boolean = false;
+	@Input()
+	valid: boolean = true;
 
-  @Input()
-  valid: boolean = true;
+	@Input()
+	selected: boolean = false;
 
-  @Input()
-  selected: boolean = false;
+	@Input() disabled: boolean = false;
 
-  @Input() disabled: boolean = false;
+	@Input() currentPage: string;
 
-  @Input() currentPage: string;
+	@Input() passLimit: PassLimit;
 
-  @Input() passLimit: PassLimit;
+	@Input() isSameRoom: boolean;
 
-  @Input() isSameRoom: boolean;
+	@Input() disabledRoom: boolean;
 
-  @Input() disabledRoom: boolean;
+	@Output()
+	onSelectEvent: EventEmitter<Pinnable> = new EventEmitter();
 
-  @Output()
-  onSelectEvent: EventEmitter<Pinnable> = new EventEmitter();
+	@Output() clampedEvent: EventEmitter<boolean> = new EventEmitter<boolean>();
 
-  @Output() clampedEvent: EventEmitter<boolean> = new EventEmitter<boolean>();
+	restricted: boolean = false;
+	buttonDown = false;
+	hovered: boolean;
+	intervalId;
+	currentSchool: School;
 
-  restricted: boolean = false;
-  buttonDown = false;
-  hovered: boolean;
-  intervalId;
-  currentSchool: School;
+	showTooltipWithDelay: boolean;
 
-  showTooltipWithDelay: boolean;
+	hoverDestroyer$: Subject<any>;
 
-  hoverDestroyer$: Subject<any>;
+	constructor(
+		private sanitizer: DomSanitizer,
+		private changeDetector: ChangeDetectorRef,
+		private locationsService: LocationsService,
+		private http: HttpService
+	) {
+		this.currentSchool = this.http.getSchool();
+	}
 
-  constructor(
-    private sanitizer: DomSanitizer,
-    private changeDetector: ChangeDetectorRef,
-    private locationsService: LocationsService,
-    private http: HttpService
-  ) {
-    this.currentSchool = this.http.getSchool();
-  }
+	get shadow() {
+		let i = 0;
+		const hexColors = [];
+		const rawHex = this.mock ? this.mock.solid.slice(1) : this.pinnable.color_profile.solid_color.slice(1);
+		do {
+			hexColors.push(rawHex.slice(i, i + 2));
+			i += 2;
+		} while (i < rawHex.length);
+		const rgbString = hexColors.map((color) => parseInt(color, 16)).join(', ');
 
-  get shadow() {
+		if (this.hovered && this.valid && !this.disabled) {
+			return this.sanitizer.bypassSecurityTrustStyle(`0px 3px 10px rgba(${rgbString}, 0.2)`);
+		} else {
+			return this.sanitizer.bypassSecurityTrustStyle(' 0px 3px 5px rgba(0, 0, 0, 0.1)');
+		}
+	}
 
-    let i = 0;
-    const hexColors = [];
-    const rawHex = this.mock ? this.mock.solid.slice(1) : this.pinnable.color_profile.solid_color.slice(1);
-    do {
-      hexColors.push(rawHex.slice(i, i + 2));
-      i += 2;
-    } while (i < rawHex.length);
-    const rgbString = hexColors.map(color => parseInt(color, 16)).join(', ');
+	get show_max_passes() {
+		if (this.passLimit && this.passLimit.to_count) {
+			return this.currentSchool.show_active_passes_number;
+			// &&
+			// ((this.currentPage === 'from' && this.passLimit.max_passes_from_active) ||
+			//   (this.currentPage === 'to' && this.passLimit && this.passLimit.max_passes_to_active));
+		}
+	}
 
-    if (this.hovered && this.valid && !this.disabled) {
-      return this.sanitizer.bypassSecurityTrustStyle(`0px 3px 10px rgba(${rgbString}, 0.2)`);
-    } else {
-      return this.sanitizer.bypassSecurityTrustStyle(' 0px 3px 5px rgba(0, 0, 0, 0.1)');
-    }
-  }
+	get showTooltip() {
+		if (this.passLimit && this.passLimit.to_count) {
+			return (
+				this.currentSchool.show_active_passes_number ||
+				(this.currentPage === 'from' &&
+					this.passLimit &&
+					this.passLimit.max_passes_from_active &&
+					this.passLimit.from_count === this.passLimit.max_passes_from) ||
+				(this.currentPage === 'to' &&
+					this.passLimit &&
+					this.passLimit.max_passes_to_active &&
+					this.passLimit.to_count === this.passLimit.max_passes_to)
+			);
+		}
+		if (this.pinnable.location && !this.pinnable.location.enable && this.currentPage === 'to') {
+			return true;
+		}
+	}
 
-  get show_max_passes() {
-    if (this.passLimit && this.passLimit.to_count) {
-      return (this.currentSchool.show_active_passes_number);
-        // &&
-        // ((this.currentPage === 'from' && this.passLimit.max_passes_from_active) ||
-        //   (this.currentPage === 'to' && this.passLimit && this.passLimit.max_passes_to_active));
-    }
-  }
+	get tooltipDescription(): string {
+		if (this.pinnable.location && !this.pinnable.location.enable && this.currentPage === 'to') {
+			return 'This room has been closed by an admin.';
+		}
+		if (this.passLimit?.max_passes_to_active) {
+			return this.passLimit && this.locationsService.tooltipDescription('to', this.passLimit);
+		}
+	}
 
-  get showTooltip() {
-    if (this.passLimit && this.passLimit.to_count) {
-      return this.currentSchool.show_active_passes_number ||
-        (
-          (this.currentPage === 'from' && this.passLimit && this.passLimit.max_passes_from_active && this.passLimit.from_count === this.passLimit.max_passes_from) ||
-          (this.currentPage === 'to' && this.passLimit && this.passLimit.max_passes_to_active && this.passLimit.to_count === this.passLimit.max_passes_to)
-        );
-    }
-    if (this.pinnable.location && !this.pinnable.location.enable && this.currentPage === 'to') {
-      return true;
-    }
-  }
+	get buttonState() {
+		return this.valid && !this.disabled ? (this.buttonDown ? 'down' : 'up') : 'up';
+	}
 
-  get tooltipDescription(): string {
-    if (this.pinnable.location && !this.pinnable.location.enable && this.currentPage === 'to') {
-      return 'This room has been closed by an admin.';
-    }
-    if (this.passLimit?.max_passes_to_active) {
-      return this.passLimit && this.locationsService.tooltipDescription('to', this.passLimit);
-    }
-  }
+	ngOnInit() {
+		if (!this.mock) {
+			if (!!this.pinnable.location) {
+				this.restricted = (this.pinnable.location.restricted && !this.forLater) || (this.pinnable.location.scheduling_restricted && this.forLater);
+			}
+		}
+		if (this.disabledRoom && this.currentPage === 'to') {
+			this.disabled = true;
+			// this.valid = false;
+		}
+	}
+	ngOnChanges(changes: SimpleChanges): void {
+		this.changeDetector.detectChanges();
+	}
 
-  get buttonState() {
-    return this.valid && !this.disabled ? this.buttonDown ? 'down' : 'up' : 'up';
-  }
+	tooltipDelay(hover, delayValue?) {
+		if (hover) {
+			of('')
+				.pipe(delay(delayValue))
+				.subscribe((res) => {
+					this.showTooltipWithDelay = true;
+				});
+		} else {
+			this.showTooltipWithDelay = false;
+		}
+	}
 
-  ngOnInit() {
-    if (!this.mock) {
-      if (!!this.pinnable.location) {
-        this.restricted = ((this.pinnable.location.restricted && !this.forLater) || (this.pinnable.location.scheduling_restricted && this.forLater));
-      }
-    }
-    if (this.disabledRoom && this.currentPage === 'to') {
-      this.disabled = true;
-      // this.valid = false;
-    }
-  }
-  ngOnChanges(changes: SimpleChanges): void {
-    this.changeDetector.detectChanges();
-  }
+	onHover(evt: Event, container: HTMLElement) {
+		this.hoverDestroyer$ = new Subject<any>();
+		const target = evt.target as HTMLElement;
+		target.style.width = `auto`;
+		target.style.transition = `none`;
 
-  tooltipDelay(hover, delayValue?) {
-    if (hover) {
-      of('').pipe(
-        delay(delayValue),
-      ).subscribe(res => {
-        this.showTooltipWithDelay = true;
-      });
-    } else {
-      this.showTooltipWithDelay = false;
-    }
-  }
+		const targetWidth = target.getBoundingClientRect().width;
+		const containerWidth = container.getBoundingClientRect().width;
 
-  onHover(evt: Event, container: HTMLElement) {
-    this.hoverDestroyer$ = new Subject<any>();
-    const target = (evt.target as HTMLElement);
-    target.style.width = `auto`;
-    target.style.transition = `none`;
+		let margin = 0;
+		interval(35)
+			.pipe(takeUntil(this.hoverDestroyer$))
+			.subscribe(() => {
+				if (targetWidth - margin > containerWidth) {
+					target.style.marginLeft = `-${margin}px`;
+					margin++;
+				}
+			});
+	}
 
-    const targetWidth = target.getBoundingClientRect().width;
-    const containerWidth = container.getBoundingClientRect().width;
+	onLeave({ target: target }) {
+		target.style.marginLeft = '0px';
+		target.style.transition = `margin-left .4s ease`;
+		target.style.width = `100%`;
 
-    let margin = 0;
-    interval(35)
-      .pipe(
-        takeUntil(this.hoverDestroyer$)
-      )
-      .subscribe(() => {
-        if ((targetWidth - margin) > containerWidth) {
-          target.style.marginLeft = `-${margin}px`;
-          margin++;
-        }
-      });
-  }
+		this.hoverDestroyer$.next();
+		this.hoverDestroyer$.complete();
+	}
 
-  onLeave({target: target}) {
-    target.style.marginLeft = '0px';
-    target.style.transition = `margin-left .4s ease`;
-    target.style.width = `100%`;
+	onSelect() {
+		if (this.valid && !this.disabled) {
+			this.onSelectEvent.emit(cloneDeep(this.pinnable));
+		}
+	}
 
-    this.hoverDestroyer$.next();
-    this.hoverDestroyer$.complete();
-  }
+	getGradient() {
+		if (this.buttonDown) {
+			if (this.pinnable.color_profile.pressed_color) {
+				return this.pinnable.color_profile.pressed_color;
+			} else {
+				return this.pinnable.color_profile.gradient_color.split(',')[0];
+			}
+		} else {
+			const gradient: string[] = this.pinnable.color_profile.gradient_color.split(',');
+			return this.sanitizer.bypassSecurityTrustStyle('radial-gradient(circle at 73% 71%, ' + gradient[0] + ', ' + gradient[1] + ')');
+		}
+	}
 
-  onSelect() {
-    if (this.valid && !this.disabled) {
-      this.onSelectEvent.emit(cloneDeep(this.pinnable));
-    }
-  }
-
-  getGradient() {
-    if (this.buttonDown) {
-      if (this.pinnable.color_profile.pressed_color) {
-        return this.pinnable.color_profile.pressed_color;
-      } else {
-        return this.pinnable.color_profile.gradient_color.split(',')[0];
-      }
-    } else {
-      const gradient: string[] = this.pinnable.color_profile.gradient_color.split(',');
-      return this.sanitizer.bypassSecurityTrustStyle('radial-gradient(circle at 73% 71%, ' + gradient[0] + ', ' + gradient[1] + ')');
-    }
-  }
-
-  onPress(press: boolean) {
-    if (!this.disabled) {
-      this.buttonDown = press;
-      let count = 100;
-      if (press) {
-        this.intervalId = setInterval(() => {
-          if (count <= 1000) {
-              count += 100;
-          } else {
-            this.clampedEvent.emit(true);
-            clearInterval(this.intervalId);
-          }
-        }, 100);
-      } else {
-        clearInterval(this.intervalId);
-      }
-    }
-  }
-
+	onPress(press: boolean) {
+		if (!this.disabled) {
+			this.buttonDown = press;
+			let count = 100;
+			if (press) {
+				this.intervalId = setInterval(() => {
+					if (count <= 1000) {
+						count += 100;
+					} else {
+						this.clampedEvent.emit(true);
+						clearInterval(this.intervalId);
+					}
+				}, 100);
+			} else {
+				clearInterval(this.intervalId);
+			}
+		}
+	}
 }

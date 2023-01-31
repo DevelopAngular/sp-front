@@ -3,13 +3,13 @@ import { inject, TestBed } from '@angular/core/testing';
 import { PollingService } from './polling-service';
 
 describe('PollingService', () => {
-  beforeEach(() => {
-    TestBed.configureTestingModule({
-      providers: [PollingService]
-    });
-  });
+	beforeEach(() => {
+		TestBed.configureTestingModule({
+			providers: [PollingService],
+		});
+	});
 
-  it('should be created', inject([PollingService], (service: PollingService) => {
-    expect(service).toBeTruthy();
-  }));
+	it('should be created', inject([PollingService], (service: PollingService) => {
+		expect(service).toBeTruthy();
+	}));
 });

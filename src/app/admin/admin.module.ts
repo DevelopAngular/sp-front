@@ -27,45 +27,35 @@ import { ViewProfileComponent } from './profile-card-dialog/view-profile/view-pr
 import { ModelFilterComponent } from '../student-info-card/model-filter/model-filter.component';
 import { PagesDialogComponent } from './explore/pages-dialog/pages-dialog.component';
 import { VisibilityRoomComponent } from './overlay-container/visibility-room/visibility-room.component';
-import { ImportStudentListComponent } from './overlay-container/visibility-room/import-student-list/import-student-list.component'
+import { ImportStudentListComponent } from './overlay-container/visibility-room/import-student-list/import-student-list.component';
 @NgModule({
-    imports: [
-        CommonModule,
-        SharedModule,
-        AdminRoutingModule,
-        FormsModule,
-        AdminSharedModule,
-        AccountsModule,
-    ],
-    declarations: [
-        AdminPageComponent,
-        SettingsComponent,
-        SchoolSettingDialogComponent,
-        SearchFilterDialogComponent,
-        RoomsSearchComponent,
-        AdvancedOptionsComponent,
-        AddExistingRoomComponent,
-        RoomComponent,
-        FolderComponent,
-        NewRoomInFolderComponent,
-        EditRoomInFolderComponent,
-        BulkEditRoomsComponent,
-        BulkEditRoomsInFolderComponent,
-        ImportRoomsComponent,
-        OverlayContainerComponent,
-        GeneratedTableDialogComponent,
-        ProfileCardDialogComponent,
-        AddUserDialogComponent,
-        ViewProfileComponent,
-        ModelFilterComponent,
-        PagesDialogComponent,
-        VisibilityRoomComponent,
-        ImportStudentListComponent],
-    providers: [
-        [Location, { provide: LocationStrategy, useClass: PathLocationStrategy }],
-    ],
-    entryComponents: [
-        PagesDialogComponent
-    ]
+	imports: [CommonModule, SharedModule, AdminRoutingModule, FormsModule, AdminSharedModule, AccountsModule],
+	declarations: [
+		AdminPageComponent,
+		SettingsComponent,
+		SchoolSettingDialogComponent,
+		SearchFilterDialogComponent,
+		RoomsSearchComponent,
+		AdvancedOptionsComponent,
+		AddExistingRoomComponent,
+		RoomComponent,
+		FolderComponent,
+		NewRoomInFolderComponent,
+		EditRoomInFolderComponent,
+		BulkEditRoomsComponent,
+		BulkEditRoomsInFolderComponent,
+		ImportRoomsComponent,
+		OverlayContainerComponent,
+		GeneratedTableDialogComponent,
+		ProfileCardDialogComponent,
+		AddUserDialogComponent,
+		ViewProfileComponent,
+		ModelFilterComponent,
+		PagesDialogComponent,
+		VisibilityRoomComponent,
+		ImportStudentListComponent,
+	],
+	providers: [[Location, { provide: LocationStrategy, useClass: PathLocationStrategy }]],
+	entryComponents: [PagesDialogComponent],
 })
-export class AdminModule { }
+export class AdminModule {}
