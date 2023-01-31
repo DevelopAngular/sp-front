@@ -1,16 +1,33 @@
 <div class="dialog-wrapper">
-    <p class="ds-dialog-title header">Connect to your student</p>
-    <p class="instruction">To connect to your students' SmartPass, you'll need their parent invite code. <a class="link" (click)="openLink('https://www.smartpass.app/parenthelp')">Where can I find this?</a></p>
-    <div class="input-wrapper">
-        <app-input width="250px" height="50px" placeholder="eg. P123456" [formGroup]="inviteCodeForm" [controlName]="inviteCodeForm.get('student_code')">
-        </app-input>
-    </div>
-    <div class="buttons">
-        <app-gradient-button [size]="'editable'" [fontSize]="'12px'" [fontWeight]="'normal'" [width]="'50px'" textColor="#7083A0" [gradient]="'#FFFFFF'" [hoverColor]="'#00B476'" [cursor]="'pointer'" (buttonClick)="dialogRef.close()">
-            Skip
-        </app-gradient-button>
-        <app-gradient-button [disabled]="!inviteCodeForm.get('student_code')" [hoverColor]="'#00B476'" [gradient]="'#00B476'" [cursor]="'pointer'" (buttonClick)="addStudent()">
-            Add student
-        </app-gradient-button>
-    </div>
+	<p class="ds-dialog-title header">Connect to your student</p>
+	<p class="instruction">
+		To connect to your students' SmartPass, you'll need their parent invite code.
+		<a class="link" (click)="openLink('https://www.smartpass.app/parenthelp')">Where can I find this?</a>
+	</p>
+	<div class="input-wrapper">
+		<app-input width="250px" height="50px" placeholder="eg. P123456" [formGroup]="inviteCodeForm" [controlName]="inviteCodeForm.get('student_code')">
+		</app-input>
+	</div>
+	<div class="buttons">
+		<app-gradient-button
+			[size]="'editable'"
+			[fontSize]="'12px'"
+			[fontWeight]="'normal'"
+			[width]="'50px'"
+			textColor="#7083A0"
+			[gradient]="'#FFFFFF'"
+			[hoverColor]="'#00B476'"
+			[cursor]="'pointer'"
+			(buttonClick)="dialogRef.close()">
+			Skip
+		</app-gradient-button>
+		<app-gradient-button
+			[disabled]="!inviteCodeForm.get('student_code')"
+			[hoverColor]="'#00B476'"
+			[gradient]="'#00B476'"
+			[cursor]="'pointer'"
+			(buttonClick)="addStudent()">
+			Add student
+		</app-gradient-button>
+	</div>
 </div>

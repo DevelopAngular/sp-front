@@ -1,178 +1,177 @@
-@import "../../sp-colors";
+@import '../../sp-colors';
 
 .pinnable-card {
-  width: inherit;
-  //height: 70px;
-  border-radius: 12.75px;
-  color: white;
-  position: relative;
-  overflow: hidden;
-  display: flex;
-  flex-direction: column;
-  justify-content: center;
-  align-items: center;
+	width: inherit;
+	//height: 70px;
+	border-radius: 12.75px;
+	color: white;
+	position: relative;
+	overflow: hidden;
+	display: flex;
+	flex-direction: column;
+	justify-content: center;
+	align-items: center;
 
-  .disabled {
-    position: absolute;
-    top: 0;
-    left: 0;
-    right: 0;
-    bottom: 0;
-    background-color: #000000;
-    opacity: 0.5;
-    z-index: 10;
-  }
+	.disabled {
+		position: absolute;
+		top: 0;
+		left: 0;
+		right: 0;
+		bottom: 0;
+		background-color: #000000;
+		opacity: 0.5;
+		z-index: 10;
+	}
 
-  .disable-room-block {
-    position: absolute;
-    top: 5px;
-    right: 5px;
-    z-index: 10;
-    padding: 3px 5px;
-    border-radius: 14px;
-    font-size: 14px;
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    background-color: $red500;
-    color: #FFFFFF;
-    font-weight: bold;
-  }
+	.disable-room-block {
+		position: absolute;
+		top: 5px;
+		right: 5px;
+		z-index: 10;
+		padding: 3px 5px;
+		border-radius: 14px;
+		font-size: 14px;
+		display: flex;
+		justify-content: center;
+		align-items: center;
+		background-color: $red500;
+		color: #ffffff;
+		font-weight: bold;
+	}
 }
 
 .icon {
-  width: 30px;
-  height: 30px;
+	width: 30px;
+	height: 30px;
 }
 
-.title-bar{
-  //display: flex;
-  //flex-direction: row;
-  //justify-content: flex-end;
-  position: relative;
-  overflow: hidden;
-  z-index: 2;
-  //width: 85%;
-  flex: 1 1 auto;
-  height: 16px;
-  //border: 1px solid white;
+.title-bar {
+	//display: flex;
+	//flex-direction: row;
+	//justify-content: flex-end;
+	position: relative;
+	overflow: hidden;
+	z-index: 2;
+	//width: 85%;
+	flex: 1 1 auto;
+	height: 16px;
+	//border: 1px solid white;
 }
 
 .title {
-  width: 100%;
-  overflow: hidden;
-  white-space: nowrap;
-  text-decoration: none;
-  text-overflow: ellipsis;
-  font-style: normal;
-  font-stretch: normal;
-  line-height: 1.08;
-  letter-spacing: 0.3px;
-  font-size: 14px;
-  position: absolute;
-  font-weight: bold;
+	width: 100%;
+	overflow: hidden;
+	white-space: nowrap;
+	text-decoration: none;
+	text-overflow: ellipsis;
+	font-style: normal;
+	font-stretch: normal;
+	line-height: 1.08;
+	letter-spacing: 0.3px;
+	font-size: 14px;
+	position: absolute;
+	font-weight: bold;
 }
 
-
-.category-icon{
-  margin-left: 5px;
-  width: 15px;
-  height: 15px;
+.category-icon {
+	margin-left: 5px;
+	width: 15px;
+	height: 15px;
 }
 
 .overlay-container {
-  position: absolute;
-  top: 0;
-  left: 0;
+	position: absolute;
+	top: 0;
+	left: 0;
 
-  .pass-count {
-    position: absolute;
-    left: 7px;
-    top: 4px;
-    font-size: 13px;
-  }
+	.pass-count {
+		position: absolute;
+		left: 7px;
+		top: 4px;
+		font-size: 13px;
+	}
 }
 
 .overlay-container .overlay {
-  width: 50px;
-  height: 60px;
-  position: absolute;
-  top: 0;
-  right: 0;
-  transform: translate(50%, -50%) rotate(45deg);
-  background: rgba(255, 255, 255, 0.3);
+	width: 50px;
+	height: 60px;
+	position: absolute;
+	top: 0;
+	right: 0;
+	transform: translate(50%, -50%) rotate(45deg);
+	background: rgba(255, 255, 255, 0.3);
 }
 
 //.overlay-container
 .lock {
-  position: absolute;
-  width: 12px;
-  height: 13px;
-  top: 5px;
-  right: 6px;
+	position: absolute;
+	width: 12px;
+	height: 13px;
+	top: 5px;
+	right: 6px;
 }
 
 .clickRipple {
-  //width: 120px;
-  border-radius: 12.75px;
-  //cursor: pointer;
-  user-select: none;
-  transition: box-shadow .3s ease;
+	//width: 120px;
+	border-radius: 12.75px;
+	//cursor: pointer;
+	user-select: none;
+	transition: box-shadow 0.3s ease;
 }
 
 .selected-overlay {
-  content: "";
-  position: absolute;
-  z-index: 1;
-  top: 0;
-  left: 0;
-  right: 0;
-  bottom: 0;
-  width: 100%;
-  height: 100%;
-  border-radius: 7px;
-  background-color: rgba(255, 255 , 255, .25);
+	content: '';
+	position: absolute;
+	z-index: 1;
+	top: 0;
+	left: 0;
+	right: 0;
+	bottom: 0;
+	width: 100%;
+	height: 100%;
+	border-radius: 7px;
+	background-color: rgba(255, 255, 255, 0.25);
 }
 
 .mat-button {
-  line-height: inherit;
-  padding: 0px;
-  font-family: inherit;
+	line-height: inherit;
+	padding: 0px;
+	font-family: inherit;
 }
 
-.selected-icon-wrapper{
-  width: 30px;
-  height: 30px;
-  border-radius: 15px;
-  background-color: white;
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  position: relative;
-  z-index: 2;
-  //position: relative;
-  img {
-    //width: inherit;
-    //height: inherit;
-    //position: absolute;
-    //left: 0;
-    //right: 0;
-    //margin: auto;
-    animation: selectedPinnable .2s ease forwards;
-  }
+.selected-icon-wrapper {
+	width: 30px;
+	height: 30px;
+	border-radius: 15px;
+	background-color: white;
+	display: flex;
+	justify-content: center;
+	align-items: center;
+	position: relative;
+	z-index: 2;
+	//position: relative;
+	img {
+		//width: inherit;
+		//height: inherit;
+		//position: absolute;
+		//left: 0;
+		//right: 0;
+		//margin: auto;
+		animation: selectedPinnable 0.2s ease forwards;
+	}
 }
 @keyframes selectedPinnable {
-  0% {
-    opacity: .6;
-    transform: scale(2);
-  }
-  100% {
-    opacity: 1;
-    transform: scale(1);
-  }
+	0% {
+		opacity: 0.6;
+		transform: scale(2);
+	}
+	100% {
+		opacity: 1;
+		transform: scale(1);
+	}
 }
 
-.selected-icon{
-  width: 26px;
-  height: 26px;
+.selected-icon {
+	width: 26px;
+	height: 26px;
 }

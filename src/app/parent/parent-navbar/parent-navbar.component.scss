@@ -1,81 +1,81 @@
-@import "../../../design-system.scss";
-@import "../../../sp-colors.scss";
+@import '../../../design-system.scss';
+@import '../../../sp-colors.scss';
 
 ::ng-deep app-settings div.settings-wrapper {
-  height: 160px !important;
-  padding-top: 0 !important;
+	height: 160px !important;
+	padding-top: 0 !important;
 
-  .title {
-    padding: 20px 0 5px 25px !important;
-  }
+	.title {
+		padding: 20px 0 5px 25px !important;
+	}
 }
 
 .sticky {
-    width: 100%;
-    .host {
-        width: 100%;
-        z-index: 100;
-        .bar {
-            height: 64px;
-            display: flex;
-            flex-direction: row;
-            justify-content: space-between;
-            align-items: center;
-            padding: 0px 16px 0px 0px;
-            -webkit-user-select: none;
-            -moz-user-select: none;
-            -ms-user-select: none;
-            user-select: none;
-            .logo {
-                display: flex;
-                align-items: center;
-                .logo-icon {
-                    width: 40px;
-                    height: 40px;
-                    box-shadow: 0 2px 5px rgba(112, 131, 160, .1);
-                    border-radius: 50%;
-                    cursor: pointer;
-                    padding-left: 10px;
-                }
-            }
-            .user-info {
-                display: flex;
-                flex-direction: row;
-                justify-content: flex-end;
-                align-items: center;
-                .acting-behalf {
-                    font-size: 12px;
-                }
-            }
-            .user-info .name {
-                margin: auto 0 auto auto;
-                display: flex;
-                align-items: center;
-                white-space: nowrap;
-                font-size: 16px;
-                font-weight: bold;
-                font-style: normal;
-                font-stretch: normal;
-                line-height: normal;
-                letter-spacing: normal;
-                color: $navy500;
-                text-transform: capitalize;
-            }
-        }
-    }
+	width: 100%;
+	.host {
+		width: 100%;
+		z-index: 100;
+		.bar {
+			height: 64px;
+			display: flex;
+			flex-direction: row;
+			justify-content: space-between;
+			align-items: center;
+			padding: 0px 16px 0px 0px;
+			-webkit-user-select: none;
+			-moz-user-select: none;
+			-ms-user-select: none;
+			user-select: none;
+			.logo {
+				display: flex;
+				align-items: center;
+				.logo-icon {
+					width: 40px;
+					height: 40px;
+					box-shadow: 0 2px 5px rgba(112, 131, 160, 0.1);
+					border-radius: 50%;
+					cursor: pointer;
+					padding-left: 10px;
+				}
+			}
+			.user-info {
+				display: flex;
+				flex-direction: row;
+				justify-content: flex-end;
+				align-items: center;
+				.acting-behalf {
+					font-size: 12px;
+				}
+			}
+			.user-info .name {
+				margin: auto 0 auto auto;
+				display: flex;
+				align-items: center;
+				white-space: nowrap;
+				font-size: 16px;
+				font-weight: bold;
+				font-style: normal;
+				font-stretch: normal;
+				line-height: normal;
+				letter-spacing: normal;
+				color: $navy500;
+				text-transform: capitalize;
+			}
+		}
+	}
 }
 
 .options-wrapper,
 .support-wrapper,
 .admin-view-wrapper {
-    width: 50px;
-    height: 50px;
-    border-radius: 25px;
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    cursor: pointer;
-    user-select: none;
-    position: relative;
-    margin-left: 4px;
+	width: 50px;
+	height: 50px;
+	border-radius: 25px;
+	display: flex;
+	justify-content: center;
+	align-items: center;
+	cursor: pointer;
+	user-select: none;
+	position: relative;
+	margin-left: 4px;
 }

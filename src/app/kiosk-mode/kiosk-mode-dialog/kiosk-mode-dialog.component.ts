@@ -4,46 +4,42 @@ import { MatDialogRef, MAT_DIALOG_DATA } from '@angular/material/dialog';
 import { KioskModeService } from '../../services/kiosk-mode.service';
 
 @Component({
-  selector: 'app-kiosk-mode-dialog',
-  templateUrl: './kiosk-mode-dialog.component.html',
-  styleUrls: ['./kiosk-mode-dialog.component.scss']
+	selector: 'app-kiosk-mode-dialog',
+	templateUrl: './kiosk-mode-dialog.component.html',
+	styleUrls: ['./kiosk-mode-dialog.component.scss'],
 })
 export class KioskModeDialogComponent implements OnInit {
+	loginInfoForm: FormGroup;
+	kioskData: any;
 
-  loginInfoForm: FormGroup;
-  kioskData: any;
+	constructor(
+		public dialogRef: MatDialogRef<KioskModeDialogComponent>,
+		@Inject(MAT_DIALOG_DATA) private data: any,
+		private kioskMode: KioskModeService
+	) {}
 
-  constructor(
-    public dialogRef: MatDialogRef<KioskModeDialogComponent>,
-    @Inject(MAT_DIALOG_DATA) private data: any,
-    private kioskMode: KioskModeService,
-  ) { }
+	ngOnInit(): void {
+		this.kioskData = this.data;
+		this.loginInfoForm = new FormGroup({
+			username: new FormControl({ value: this.data.loginData.username, disabled: true }),
+			password: new FormControl({ value: this.data.loginData.password, disabled: true }),
+		});
+	}
 
-  ngOnInit(): void {
-    this.kioskData = this.data;
-    this.loginInfoForm = new FormGroup({
-      username: new FormControl({value: this.data.loginData.username, disabled: true}),
-      password: new FormControl({value: this.data.loginData.password, disabled: true})
-    });
-  }
+	fetchLoginData() {}
 
-  fetchLoginData(){
-    
-  }
+	resetPassword() {
+		this.kioskMode.resetPassword(this.data.selectedRoom).subscribe({
+			next: (result: any) => {
+				this.loginInfoForm = new FormGroup({
+					username: new FormControl({ value: result.results.username, disabled: true }),
+					password: new FormControl({ value: result.results.password, disabled: true }),
+				});
+			},
+		});
+	}
 
-  resetPassword(){
-    this.kioskMode.resetPassword(this.data.selectedRoom).subscribe({
-      next: (result: any) => {
-        this.loginInfoForm = new FormGroup({
-          username: new FormControl({value: result.results.username, disabled: true}),
-          password: new FormControl({value: result.results.password, disabled: true})
-        });
-      }
-    })
-  }
-
-  back() {
-      this.dialogRef.close();
-  }
-
+	back() {
+		this.dialogRef.close();
+	}
 }

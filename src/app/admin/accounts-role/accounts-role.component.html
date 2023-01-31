@@ -1,24 +1,25 @@
 <div class="host">
-  <div class="accounts-role-wrapper">
-    <div class="table">
-        <app-sp-data-table
-          [data$]="accountRoleData$"
-          [loading$]="isLoading$.asObservable()"
-          [height]="(schools$ | async).length > 1 ? 'calc(100vh - 250px)' : 'calc(100vh - 205px)'"
-          [currentPage]="(route.params | async).role"
-          [isRowClick]="true"
-          [sort]="sort$ | async"
-          [sortColumn]="sortingColumn"
-          [sortLoading$]="sortLoading$.asObservable()"
-          [showPrintButtons]="false"
-          (rowClickEvent)="showProfileCard($event)"
-          (loadMoreData)="loadMore()"
-          (sortClickEvent)="sortingTable($event)"
-          [showEmptyState]="userEmptyState && (isLoaded$.asObservable() | async)"
-          [emptyIcon]="'./assets/Users (Blue-Gray).svg' | resolveAsset"
-          [emptyText]="getCountAccounts(accounts$ | async) > 1 ? 'No ' + role.substring(9) + ' accounts found' : 'There are no students in this school yet'"
-          [disabledInfinityScroll]="!(accountRoleNextUrl$ | async)"
-        ></app-sp-data-table>
-    </div>
-  </div>
+	<div class="accounts-role-wrapper">
+		<div class="table">
+			<app-sp-data-table
+				[data$]="accountRoleData$"
+				[loading$]="isLoading$.asObservable()"
+				[height]="(schools$ | async).length > 1 ? 'calc(100vh - 250px)' : 'calc(100vh - 205px)'"
+				[currentPage]="(route.params | async).role"
+				[isRowClick]="true"
+				[sort]="sort$ | async"
+				[sortColumn]="sortingColumn"
+				[sortLoading$]="sortLoading$.asObservable()"
+				[showPrintButtons]="false"
+				(rowClickEvent)="showProfileCard($event)"
+				(loadMoreData)="loadMore()"
+				(sortClickEvent)="sortingTable($event)"
+				[showEmptyState]="userEmptyState && (isLoaded$.asObservable() | async)"
+				[emptyIcon]="'./assets/Users (Blue-Gray).svg' | resolveAsset"
+				[emptyText]="
+					getCountAccounts(accounts$ | async) > 1 ? 'No ' + role.substring(9) + ' accounts found' : 'There are no students in this school yet'
+				"
+				[disabledInfinityScroll]="!(accountRoleNextUrl$ | async)"></app-sp-data-table>
+		</div>
+	</div>
 </div>

@@ -6,13 +6,12 @@ import { KioskModeComponent } from './kiosk-mode.component';
 import { KioskSettingsComponent } from './kiosk-settings/kiosk-settings.component';
 
 const routes: Routes = [
-  { path: '', component: KioskModeComponent },
-  { path: 'settings', component: KioskSettingsComponent,canActivate:[NotKioskModeGuard,KioskSettingsGuard]  }
+	{ path: '', component: KioskModeComponent },
+	{ path: 'settings', component: KioskSettingsComponent, canActivate: [NotKioskModeGuard, KioskSettingsGuard] },
 ];
 
-
 @NgModule({
-  imports: [RouterModule.forChild(routes)],
-  exports: [RouterModule]
+	imports: [RouterModule.forChild(routes)],
+	exports: [RouterModule],
 })
-export class KioskModeRoutingModule { }
+export class KioskModeRoutingModule {}

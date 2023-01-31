@@ -2,34 +2,34 @@
 @import '../../../../../sp-colors';
 
 .pass-limit-dialog {
-  padding: 25px;
-  //box-shadow: 0 2px 26px 0 rgba(0, 0, 0, .4);
+	padding: 25px;
+	//box-shadow: 0 2px 26px 0 rgba(0, 0, 0, .4);
 
-  .content {
-    display: flex;
-    gap: 20px;
-    height: calc(100% - 50px);
-    .main-wrapper {
-      display: flex;
-      flex-direction: column;
-      justify-content: space-between;
-      height: 100%;
+	.content {
+		display: flex;
+		gap: 20px;
+		height: calc(100% - 50px);
+		.main-wrapper {
+			display: flex;
+			flex-direction: column;
+			justify-content: space-between;
+			height: 100%;
 
-      .main-text {
-        @include textSize(17px, bold);
-      }
+			.main-text {
+				@include textSize(17px, bold);
+			}
 
-      .supporting-text {
-        @include textSize(15px, normal, $blue-gray);
-        padding: 10px 0 20px 0;
-      }
-    }
-  }
+			.supporting-text {
+				@include textSize(15px, normal, $blue-gray);
+				padding: 10px 0 20px 0;
+			}
+		}
+	}
 
-  .buttons {
-    display: flex;
-    flex-direction: row;
-    justify-content: flex-end;
-    gap: 10px;
-  }
+	.buttons {
+		display: flex;
+		flex-direction: row;
+		justify-content: flex-end;
+		gap: 10px;
+	}
 }

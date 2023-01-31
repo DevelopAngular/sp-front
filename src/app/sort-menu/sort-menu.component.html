@@ -1,31 +1,35 @@
 <section class="sort-menu" [style.background-color]="darkTheme.getBackground('low')">
-  <header class="sort-menu-header">
-    <p class="sort-menu-header-text" [style.color]="darkTheme.getColor({dark: '#FFFFFF', white: '#1F195E'})">{{data.title}}</p>
-  </header>
-  <ul class="sort-menu-options">
-    <li *ngIf="showAllRooms"
-        [style.border-bottom-color]="darkTheme.getColor({dark: '#FFFFFF', white: '#7F879D'})"
-        [style.color]="darkTheme.getColor({dark: '#FFFFFF', white: '#1F195E'})"
-        [style.background-color]="_all.pressed ? '#ECF1FF' : darkTheme.getBackground('low')"
-        appCrossPointerEventTarget
-        (pointerClickEvent)="_all.pressed = false; selectSortOption(null)"
-        (pointerDownEvent)="_all.pressed = true"
-        #_all
-    >
-    All Rooms
-      <img *ngIf="!selectedItem" class="selected-option" [src]="darkTheme.getIcon({iconName: 'Check', lightFill: 'Navy'})" alt="Check (Navy).svg" >
-    </li>
-    <li *ngFor="let item of items; let i = index"
-        [style.border-bottom-color]="darkTheme.getColor({dark: '#FFFFFF', white: '#7F879D'})"
-        [style.color]="darkTheme.getColor({dark: '#FFFFFF', white: '#1F195E'})"
-        [style.background-color]="_item.pressed ? '#ECF1FF' : darkTheme.getBackground('low')"
-        appCrossPointerEventTarget
-        (pointerClickEvent)="_item.pressed = false; selectSortOption(item)"
-        (pointerDownEvent)="_item.pressed = true"
-        #_item
-    >
-      {{ item.title }}
-      <img *ngIf="selectedItem && item.id === selectedItem.id" class="selected-option" [src]="darkTheme.getIcon({iconName: 'Check', lightFill: 'Navy'})" alt="Check (Navy).svg" >
-    </li>
-  </ul>
+	<header class="sort-menu-header">
+		<p class="sort-menu-header-text" [style.color]="darkTheme.getColor({ dark: '#FFFFFF', white: '#1F195E' })">{{ data.title }}</p>
+	</header>
+	<ul class="sort-menu-options">
+		<li
+			*ngIf="showAllRooms"
+			[style.border-bottom-color]="darkTheme.getColor({ dark: '#FFFFFF', white: '#7F879D' })"
+			[style.color]="darkTheme.getColor({ dark: '#FFFFFF', white: '#1F195E' })"
+			[style.background-color]="_all.pressed ? '#ECF1FF' : darkTheme.getBackground('low')"
+			appCrossPointerEventTarget
+			(pointerClickEvent)="_all.pressed = false; selectSortOption(null)"
+			(pointerDownEvent)="_all.pressed = true"
+			#_all>
+			All Rooms
+			<img *ngIf="!selectedItem" class="selected-option" [src]="darkTheme.getIcon({ iconName: 'Check', lightFill: 'Navy' })" alt="Check (Navy).svg" />
+		</li>
+		<li
+			*ngFor="let item of items; let i = index"
+			[style.border-bottom-color]="darkTheme.getColor({ dark: '#FFFFFF', white: '#7F879D' })"
+			[style.color]="darkTheme.getColor({ dark: '#FFFFFF', white: '#1F195E' })"
+			[style.background-color]="_item.pressed ? '#ECF1FF' : darkTheme.getBackground('low')"
+			appCrossPointerEventTarget
+			(pointerClickEvent)="_item.pressed = false; selectSortOption(item)"
+			(pointerDownEvent)="_item.pressed = true"
+			#_item>
+			{{ item.title }}
+			<img
+				*ngIf="selectedItem && item.id === selectedItem.id"
+				class="selected-option"
+				[src]="darkTheme.getIcon({ iconName: 'Check', lightFill: 'Navy' })"
+				alt="Check (Navy).svg" />
+		</li>
+	</ul>
 </section>

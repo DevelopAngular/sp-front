@@ -1,41 +1,67 @@
-<div class="wrapper"
-     #cell
-     appCrossPointerEventTarget
-     (pointerClickEvent)="cellSelected(); screen.enabledLocationTableDnD.next(false)"
-     (pointerDownEvent)="onPress(true);"
-     (pointerCancelEvent)="screen.enabledLocationTableDnD.next(false)"
-     (mouseenter)="tooltipDelay(true, 1000)"
-     (mouseleave)="tooltipDelay(false)"
-     [style.color]="textColor"
-     [style.cursor]="cursor"
-     cdkDrag [cdkDragDisabled]="!isFavorite"
->
-  <div *ngIf="type==='location'" class="info" customToolTip [editable]="true" [nonDisappearing]="false" [contentTemplate]="tooltip" [showToolTip]="showTooltip || isSameRoom">
-    <img *ngIf="showStar" (mouseenter)="overStar=true" (mouseleave)="overStar=false" class="star" [src]="'./assets/Star' +(this.value.starred?' (Yellow)':' (Blue-Gray)') +'.svg' | resolveAsset">
-    <div class="title">
-      {{value.title}}
-      <span class="disabled-block" *ngIf="disabledRoom && (currentPage === 'to' || currentPage === 'from')">Closed</span>
-    </div>
-    <div class="room" [style.color]="roomColor">
-      <img style="z-index: 1000" *ngIf="isFavorite" cdkDragHandle appCrossPointerEventTarget (pointerClickEvent)="$event.stopPropagation()" style="margin-left: 5px" width="14" height="14" [src]="'./assets/Burger (Blue-Gray).svg'" alt="">
-      <div class="circle"
-           *ngIf="show_max_passes"
-           [style.background]="gradient"
-           (mouseenter)="tooltipDelay(true, 300)"
-      >{{ currentPage === 'from' ? passLimit.from_count : passLimit.to_count }}</div>
-      <div notranslate>{{value.room}}</div>
-      <img *ngIf="showLock && hasLocks" class="lock" [src]="'./assets/Locked (Blue-Gray).svg' | resolveAsset">
-    </div>
-  </div>
+<div
+	class="wrapper"
+	#cell
+	appCrossPointerEventTarget
+	(pointerClickEvent)="cellSelected(); screen.enabledLocationTableDnD.next(false)"
+	(pointerDownEvent)="onPress(true)"
+	(pointerCancelEvent)="screen.enabledLocationTableDnD.next(false)"
+	(mouseenter)="tooltipDelay(true, 1000)"
+	(mouseleave)="tooltipDelay(false)"
+	[style.color]="textColor"
+	[style.cursor]="cursor"
+	cdkDrag
+	[cdkDragDisabled]="!isFavorite">
+	<div
+		*ngIf="type === 'location'"
+		class="info"
+		customToolTip
+		[editable]="true"
+		[nonDisappearing]="false"
+		[contentTemplate]="tooltip"
+		[showToolTip]="showTooltip || isSameRoom">
+		<img
+			*ngIf="showStar"
+			(mouseenter)="overStar = true"
+			(mouseleave)="overStar = false"
+			class="star"
+			[src]="'./assets/Star' + (this.value.starred ? ' (Yellow)' : ' (Blue-Gray)') + '.svg' | resolveAsset" />
+		<div class="title">
+			{{ value.title }}
+			<span class="disabled-block" *ngIf="disabledRoom && (currentPage === 'to' || currentPage === 'from')">Closed</span>
+		</div>
+		<div class="room" [style.color]="roomColor">
+			<img
+				style="z-index: 1000"
+				*ngIf="isFavorite"
+				cdkDragHandle
+				appCrossPointerEventTarget
+				(pointerClickEvent)="$event.stopPropagation()"
+				style="margin-left: 5px"
+				width="14"
+				height="14"
+				[src]="'./assets/Burger (Blue-Gray).svg'"
+				alt="" />
+			<div class="circle" *ngIf="show_max_passes" [style.background]="gradient" (mouseenter)="tooltipDelay(true, 300)">
+				{{ currentPage === 'from' ? passLimit.from_count : passLimit.to_count }}
+			</div>
+			<div notranslate>{{ value.room }}</div>
+			<img *ngIf="showLock && hasLocks" class="lock" [src]="'./assets/Locked (Blue-Gray).svg' | resolveAsset" />
+		</div>
+	</div>
 
-  <ng-template #tooltip>
-    <app-pass-limit-tooltip [isHand]="value.enable" *ngIf="showTooltipWithDelay" [description]="!isSameRoom ? tooltipDescription : 'You selected ' + value.title + ' as the origin (where you are now)!'"></app-pass-limit-tooltip>
-  </ng-template>
+	<ng-template #tooltip>
+		<app-pass-limit-tooltip
+			[isHand]="value.enable"
+			*ngIf="showTooltipWithDelay"
+			[description]="
+				!isSameRoom ? tooltipDescription : 'You selected ' + value.title + ' as the origin (where you are now)!'
+			"></app-pass-limit-tooltip>
+	</ng-template>
 
-  <div *ngIf="type==='teachers'" class="info">
-    <div class="title">
-      {{value.display_name}}
-    </div>
-  </div>
-  <div class="divider"></div>
+	<div *ngIf="type === 'teachers'" class="info">
+		<div class="title">
+			{{ value.display_name }}
+		</div>
+	</div>
+	<div class="divider"></div>
 </div>

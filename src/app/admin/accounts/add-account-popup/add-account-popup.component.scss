@@ -1,37 +1,37 @@
-@import "../../../../sp-colors";
+@import '../../../../sp-colors';
 
 .wrapper {
-  background-color: #FFFFFF;
-  //width: 244px;
-  border-radius: 9px;
+	background-color: #ffffff;
+	//width: 244px;
+	border-radius: 9px;
 
-  .options {
-    margin: 10px 2px;
-    border-radius: 9px;
+	.options {
+		margin: 10px 2px;
+		border-radius: 9px;
 
-    .option-container {
-      box-sizing: border-box;
-      padding: 0 10px;
+		.option-container {
+			box-sizing: border-box;
+			padding: 0 10px;
 
-      .option {
-        display: flex;
-        padding: 12.5px;
-        border-radius: 7px;
-        color: $blue-gray;
-        cursor: pointer;
-        height: 15px;
-        margin: 3px 0;
+			.option {
+				display: flex;
+				padding: 12.5px;
+				border-radius: 7px;
+				color: $blue-gray;
+				cursor: pointer;
+				height: 15px;
+				margin: 3px 0;
 
-        &:hover {
-          background-color: rgba(127, 135, 157, .1);
-          color: $blue-gray;
-        }
+				&:hover {
+					background-color: rgba(127, 135, 157, 0.1);
+					color: $blue-gray;
+				}
 
-        .title {
-          margin-left: 9px;
-          font-size: 14px;
-        }
-      }
-    }
-  }
+				.title {
+					margin-left: 9px;
+					font-size: 14px;
+				}
+			}
+		}
+	}
 }

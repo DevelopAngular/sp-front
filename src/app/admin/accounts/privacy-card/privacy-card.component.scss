@@ -1,36 +1,36 @@
-@import "../../../../sp-colors";
+@import '../../../../sp-colors';
 
 .privacy-card {
-  width: 371px;
-  height: 219px;
-  background-color: #fff;
-  box-shadow: 0px 5px 20px 5px rgba(0, 0, 0, .06);
-  padding: 40px 30px;
-  -webkit-box-sizing: border-box;
-  -moz-box-sizing: border-box;
-  box-sizing: border-box;
-  border-radius: 12px;
-  position: relative;
-  overflow: hidden;
-  &_header {
-    font-size: 24px;
-    color: $navy;
-    display: flex;
-    align-items: center;
-    font-weight: bold;
-    &-image {
-      width: 28px;
-      margin-right: 10px;
-    }
-  }
-  &_content {
-    font-size: 14px;
-    color: $blue-gray;
-  }
+	width: 371px;
+	height: 219px;
+	background-color: #fff;
+	box-shadow: 0px 5px 20px 5px rgba(0, 0, 0, 0.06);
+	padding: 40px 30px;
+	-webkit-box-sizing: border-box;
+	-moz-box-sizing: border-box;
+	box-sizing: border-box;
+	border-radius: 12px;
+	position: relative;
+	overflow: hidden;
+	&_header {
+		font-size: 24px;
+		color: $navy;
+		display: flex;
+		align-items: center;
+		font-weight: bold;
+		&-image {
+			width: 28px;
+			margin-right: 10px;
+		}
+	}
+	&_content {
+		font-size: 14px;
+		color: $blue-gray;
+	}
 
-  .right-logo {
-    position: absolute;
-    right: 40px;
-    bottom: 20px;
-  }
+	.right-logo {
+		position: absolute;
+		right: 40px;
+		bottom: 20px;
+	}
 }

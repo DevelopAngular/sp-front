@@ -1,15 +1,14 @@
 import { Injectable } from '@angular/core';
-import {Subject} from 'rxjs';
+import { Subject } from 'rxjs';
 import * as moment from 'moment';
 
 @Injectable({
-  providedIn: 'root'
+	providedIn: 'root',
 })
 export class NotificationButtonService {
+	constructor() {}
 
-  constructor() { }
+	dismissButton$: Subject<boolean> = new Subject<boolean>();
 
-  dismissButton$: Subject<boolean> = new Subject<boolean>();
-
-  dismissExpirtationDate = moment().add(10, 'day');
+	dismissExpirtationDate = moment().add(10, 'day');
 }

@@ -1,61 +1,59 @@
 @import '../../../../../sp-colors';
 
 .wrapper {
+	.content {
+		.count {
+			padding: 20px 0 0 20px;
 
-  .content {
+			.info {
+				display: flex;
+				align-items: center;
+			}
+		}
 
-    .count {
-      padding: 20px 0 0 20px;
+		.encounters {
+			padding: 20px;
+			display: flex;
+			flex-direction: column;
+			align-items: center;
 
-      .info {
-        display: flex;
-        align-items: center;
-      }
-    }
+			.encounter {
+				margin-bottom: 7px;
+				width: 100%;
+			}
 
-    .encounters {
-      padding: 20px;
-      display: flex;
-      flex-direction: column;
-      align-items: center;
+			.created {
+				font-size: 13px;
+				color: $blue-gray;
+				opacity: 0.5;
+			}
+		}
+	}
 
-      .encounter {
-        margin-bottom: 7px;
-        width: 100%;
-      }
+	.value {
+		position: absolute;
+		z-index: 10;
+		color: #ffffff;
+		font-size: 14px;
+	}
 
-      .created {
-        font-size: 13px;
-        color: $blue-gray;
-        opacity: 0.5;
-      }
-    }
-  }
+	.empty-state {
+		display: flex;
+		align-items: center;
+		justify-content: center;
+		height: 430px;
+		color: $blue-gray;
+		font-size: 14px;
+		text-align: center;
 
-  .value {
-    position: absolute;
-    z-index: 10;
-    color: #FFFFFF;
-    font-size: 14px;
-  }
-
-  .empty-state {
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    height: 430px;
-    color: $blue-gray;
-    font-size: 14px;
-    text-align: center;
-
-    .container {
-      display: flex;
-      flex-direction: column;
-      align-items: center;
-      width: 245px;
-      .text {
-        margin: 19px 0;
-      }
-    }
-  }
+		.container {
+			display: flex;
+			flex-direction: column;
+			align-items: center;
+			width: 245px;
+			.text {
+				margin: 19px 0;
+			}
+		}
+	}
 }

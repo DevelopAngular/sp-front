@@ -2,186 +2,186 @@
 @import '../shared/shared-styles/feature.cycle';
 
 @media all and (max-width: 940px) {
-  div.top-arrow-container {
-    display: none;
-  }
+	div.top-arrow-container {
+		display: none;
+	}
 
-  div.settings-wrapper {
-    height: 100vh;
-    padding-top: 100px;
-    border-top-right-radius: 14px;
-    border-bottom-right-radius: 14px;
-  }
+	div.settings-wrapper {
+		height: 100vh;
+		padding-top: 100px;
+		border-top-right-radius: 14px;
+		border-bottom-right-radius: 14px;
+	}
 }
 .settings-wrapper {
-  width: 244px;
-  position: relative;
-  border-radius: 10px;
-  display: table;
+	width: 244px;
+	position: relative;
+	border-radius: 10px;
+	display: table;
 
-  .user-info {
-    display: flex;
-    padding: 0 0 10px 30px;
-    white-space: nowrap;
-    font-size: 14px;
-    font-weight: 500;
-    font-style: normal;
-    font-stretch: normal;
-    line-height: normal;
-    letter-spacing: normal;
-    color: $blue-gray;
-  }
+	.user-info {
+		display: flex;
+		padding: 0 0 10px 30px;
+		white-space: nowrap;
+		font-size: 14px;
+		font-weight: 500;
+		font-style: normal;
+		font-stretch: normal;
+		line-height: normal;
+		letter-spacing: normal;
+		color: $blue-gray;
+	}
 
-  .top-arrow-container {
-    position: absolute;
-    top: -50px;
-    right: 26px;
-    margin: 0 auto;
-    width: 100px;
-    height: 50px;
-    overflow: hidden;
-    cursor: pointer;
-    .top-arrow {
-      position: absolute;
-      left: 0;
-      right: 0;
-      margin: 0 auto;
-      top: 35px;
-      width: 30px;
-      height: 30px;
-      background-color: #fff;
-      transform: rotate(45deg);
-      box-shadow: 0 3px 20px 0 rgba(0, 0, 0, 0.15);
-      cursor: default;
-    }
-  }
+	.top-arrow-container {
+		position: absolute;
+		top: -50px;
+		right: 26px;
+		margin: 0 auto;
+		width: 100px;
+		height: 50px;
+		overflow: hidden;
+		cursor: pointer;
+		.top-arrow {
+			position: absolute;
+			left: 0;
+			right: 0;
+			margin: 0 auto;
+			top: 35px;
+			width: 30px;
+			height: 30px;
+			background-color: #fff;
+			transform: rotate(45deg);
+			box-shadow: 0 3px 20px 0 rgba(0, 0, 0, 0.15);
+			cursor: default;
+		}
+	}
 
-  .title {
-    padding: 20px 0 15px 25px;
-    font-size: 24px;
-    font-weight: bold;
-    color: #1F195E;
-  }
+	.title {
+		padding: 20px 0 15px 25px;
+		font-size: 24px;
+		font-weight: bold;
+		color: #1f195e;
+	}
 
-  .settings-content {
-    .divider {
-      margin: 7px 0 7px 0;
-    }
-    .profile-switch {
-      padding: 0 10px;
-      .option {
-        display: flex;
-        align-items: center;
-        height: 40px;
-        padding-left: 20px;
-        cursor: pointer;
-        position: relative;
-        border-radius: 7px;
+	.settings-content {
+		.divider {
+			margin: 7px 0 7px 0;
+		}
+		.profile-switch {
+			padding: 0 10px;
+			.option {
+				display: flex;
+				align-items: center;
+				height: 40px;
+				padding-left: 20px;
+				cursor: pointer;
+				position: relative;
+				border-radius: 7px;
 
-        .option-title {
-          margin: 0 12px 0 12px;
-          font-size: 14px;
-          -webkit-user-select: none;
-          -moz-user-select: none;
-          -ms-user-select: none;
-          user-select: none;
-        }
-        .switch-icon {
-          width: 20px;
-          height: 20px;
-        }
-        .arrow-icon {
-          width: 9px;
-          height: 15px;
-          position: absolute;
-          right: 15px;
-        }
-      }
-    }
-    .setting {
-      padding: 0 10px;
-      .content {
-        display: flex;
-        align-items: center;
-        //padding-left: 25px;
-        border-radius: 7px;
-        height: 40px;
-        cursor: pointer;
+				.option-title {
+					margin: 0 12px 0 12px;
+					font-size: 14px;
+					-webkit-user-select: none;
+					-moz-user-select: none;
+					-ms-user-select: none;
+					user-select: none;
+				}
+				.switch-icon {
+					width: 20px;
+					height: 20px;
+				}
+				.arrow-icon {
+					width: 9px;
+					height: 15px;
+					position: absolute;
+					right: 15px;
+				}
+			}
+		}
+		.setting {
+			padding: 0 10px;
+			.content {
+				display: flex;
+				align-items: center;
+				//padding-left: 25px;
+				border-radius: 7px;
+				height: 40px;
+				cursor: pointer;
 
-        .release {
-          box-sizing: border-box;
-          padding: 0px 4px;
-          min-width: 44px;
-          width: min-content;
-          height: 21px;
-          background-color: #E32C66;
-          border-radius: 11px;
-          display: flex;
-          align-items: center;
-          justify-content: center;
-          color: #FFFFFF;
-          font-size: 13px;
-          margin-left: 20px;
-        }
+				.release {
+					box-sizing: border-box;
+					padding: 0px 4px;
+					min-width: 44px;
+					width: min-content;
+					height: 21px;
+					background-color: #e32c66;
+					border-radius: 11px;
+					display: flex;
+					align-items: center;
+					justify-content: center;
+					color: #ffffff;
+					font-size: 13px;
+					margin-left: 20px;
+				}
 
-        .set-up {
-          width: 53px;
-          height: 21px;
-          border-radius: 11px;
-          display: flex;
-          align-items: center;
-          justify-content: center;
-          color: #FFFFFF;
-          font-size: 13px;
-          margin-left: 20px;
-          background-color: #12C29E;
-        }
-      }
-      .setting-icon {
-        width: 20px;
-        height: 20px;
-        margin-left: 20px;
-      }
-      .setting-title {
-        font-size: 15px;
-        margin-left: 15px;
-        white-space: nowrap;
-        //color: $blue-gray;
-      }
-    }
-  }
-  .footer {
-    display: flex;
-    flex-direction: column;
-    height: 76px;
-    justify-content: space-between;
-    .sign-out {
-      height: 40px;
-      display: flex;
-      align-items: center;
-      padding-left: 20px;
-      color: #7F879D;
-      font-size: 15px;
-      cursor: pointer;
-      border-radius: 7px;
-      //&:hover {
-      //  background-color: rgb(228, 235, 255);
-      //  color: #1F195E;
-      //}
-    }
-    .options {
-      display: flex;
-      color: #7F879D;
-      font-size: 12px;
-      justify-content: center;
-      margin-bottom: 12px;
-      .option {
-        margin-left: 10px;
-        cursor: pointer;
-        &:hover {
-          text-decoration: underline;
-        }
-      }
-    }
-  }
+				.set-up {
+					width: 53px;
+					height: 21px;
+					border-radius: 11px;
+					display: flex;
+					align-items: center;
+					justify-content: center;
+					color: #ffffff;
+					font-size: 13px;
+					margin-left: 20px;
+					background-color: #12c29e;
+				}
+			}
+			.setting-icon {
+				width: 20px;
+				height: 20px;
+				margin-left: 20px;
+			}
+			.setting-title {
+				font-size: 15px;
+				margin-left: 15px;
+				white-space: nowrap;
+				//color: $blue-gray;
+			}
+		}
+	}
+	.footer {
+		display: flex;
+		flex-direction: column;
+		height: 76px;
+		justify-content: space-between;
+		.sign-out {
+			height: 40px;
+			display: flex;
+			align-items: center;
+			padding-left: 20px;
+			color: #7f879d;
+			font-size: 15px;
+			cursor: pointer;
+			border-radius: 7px;
+			//&:hover {
+			//  background-color: rgb(228, 235, 255);
+			//  color: #1F195E;
+			//}
+		}
+		.options {
+			display: flex;
+			color: #7f879d;
+			font-size: 12px;
+			justify-content: center;
+			margin-bottom: 12px;
+			.option {
+				margin-left: 10px;
+				cursor: pointer;
+				&:hover {
+					text-decoration: underline;
+				}
+			}
+		}
+	}
 }

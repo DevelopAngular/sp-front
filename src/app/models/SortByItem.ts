@@ -1,6 +1,6 @@
 export interface SortByItem {
-  name: string;
-  isSelected: boolean;
-  action?: string;
-  selectedItem?: any;
+	name: string;
+	isSelected: boolean;
+	action?: string;
+	selectedItem?: any;
 }

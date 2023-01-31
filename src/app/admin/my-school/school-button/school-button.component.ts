@@ -1,32 +1,28 @@
-import {Component, EventEmitter, Input, OnInit, Output} from '@angular/core';
-import {bumpIn} from '../../../animations';
+import { Component, EventEmitter, Input, OnInit, Output } from '@angular/core';
+import { bumpIn } from '../../../animations';
 
 @Component({
-  selector: 'app-school-button',
-  templateUrl: './school-button.component.html',
-  styleUrls: ['./school-button.component.scss'],
-  animations: [bumpIn]
+	selector: 'app-school-button',
+	templateUrl: './school-button.component.html',
+	styleUrls: ['./school-button.component.scss'],
+	animations: [bumpIn],
 })
 export class SchoolButtonComponent implements OnInit {
+	@Input() button;
 
-  @Input() button;
+	@Output() result: EventEmitter<any> = new EventEmitter<any>();
 
-  @Output() result: EventEmitter<any> = new EventEmitter<any>()
+	buttonDown: boolean;
 
-  buttonDown: boolean;
+	constructor() {}
 
-  constructor() { }
+	get buttonState() {
+		return this.buttonDown ? 'down' : 'up';
+	}
 
-  get buttonState() {
-     return this.buttonDown ? 'down' : 'up';
-  }
+	ngOnInit() {}
 
-  ngOnInit() {
-  }
-
-  onPress(press: boolean) {
-      this.buttonDown = press;
-  }
-
-
+	onPress(press: boolean) {
+		this.buttonDown = press;
+	}
 }

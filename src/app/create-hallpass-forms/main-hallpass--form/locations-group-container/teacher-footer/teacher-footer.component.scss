@@ -1,104 +1,102 @@
-@import "../../../../../design-system.scss";
+@import '../../../../../design-system.scss';
 
 @media all and (max-width: 475px) {
-  div.target-shadow {
-    box-shadow: none;
-  }
+	div.target-shadow {
+		box-shadow: none;
+	}
 }
 
 :host {
-  width: 100%;
-  position: relative;
-  z-index: 1;
+	width: 100%;
+	position: relative;
+	z-index: 1;
 }
 .from-footer {
-  background-color: white;
-  border-top: 1px solid rgba(0, 0, 0, 0.1);
-  display: flex;
-  z-index: 1;
-  align-items: center;
-  width: 100%;
-  border-bottom-left-radius: 14px;
-  border-bottom-right-radius: 14px;
-  overflow: hidden;
-  font-size: 15px;
-  color: $navy;
+	background-color: white;
+	border-top: 1px solid rgba(0, 0, 0, 0.1);
+	display: flex;
+	z-index: 1;
+	align-items: center;
+	width: 100%;
+	border-bottom-left-radius: 14px;
+	border-bottom-right-radius: 14px;
+	overflow: hidden;
+	font-size: 15px;
+	color: $navy;
 
-  .switch-locs-view {
-    position: absolute;
-    left: 10px;
-    width: 45px;
-    height: 45px;
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    z-index: 1000;
-    cursor: pointer;
-  }
+	.switch-locs-view {
+		position: absolute;
+		left: 10px;
+		width: 45px;
+		height: 45px;
+		display: flex;
+		justify-content: center;
+		align-items: center;
+		z-index: 1000;
+		cursor: pointer;
+	}
 
-  .footer-from-teacher-text {
-    width: 100%;
-  }
+	.footer-from-teacher-text {
+		width: 100%;
+	}
 
-  .default-footer {
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    position: relative;
-    cursor: pointer;
-    width: 100%;
+	.default-footer {
+		display: flex;
+		justify-content: center;
+		align-items: center;
+		position: relative;
+		cursor: pointer;
+		width: 100%;
 
-    .default-text {
-
-    }
-  }
+		.default-text {
+		}
+	}
 }
 
 .target-shadow {
-  box-shadow: -50px 0px 35px 14px rgba(255, 255, 255, 1);
+	box-shadow: -50px 0px 35px 14px rgba(255, 255, 255, 1);
 }
 
 .arrow-icon {
-  width: 25px;
-  position: absolute;
-  right: 15px;
-  cursor: pointer;
+	width: 25px;
+	position: absolute;
+	right: 15px;
+	cursor: pointer;
 }
 
 .center {
-  display: flex;
-  align-items: center;
-  width: 100%;
+	display: flex;
+	align-items: center;
+	width: 100%;
 
-  .center-text {
-    width: 100%;
-    display: flex;
-    justify-content: center;
-    align-items: center;
+	.center-text {
+		width: 100%;
+		display: flex;
+		justify-content: center;
+		align-items: center;
 
-    .footer-left-text {
-      flex: 1 1 40%;
-      text-align: right;
-    }
+		.footer-left-text {
+			flex: 1 1 40%;
+			text-align: right;
+		}
 
-    .footer-right-text {
-      flex: 1 1 40%;
-    }
-  }
-
+		.footer-right-text {
+			flex: 1 1 40%;
+		}
+	}
 }
 
 .footer-icon {
-  height: 30px;
-  flex: 1 1 10%;
+	height: 30px;
+	flex: 1 1 10%;
 }
 
 .new-footer {
-  display: flex;
-  flex-direction: column;
-  align-items: center;
+	display: flex;
+	flex-direction: column;
+	align-items: center;
 }
 
 .cursor {
-  cursor: pointer;
+	cursor: pointer;
 }

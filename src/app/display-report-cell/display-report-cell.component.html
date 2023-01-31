@@ -1,23 +1,21 @@
 ﻿<div class="display-report-cell-wrapper">
-  <div class="display-card-header justify-content">
-    <div class="flexCls">
-
-      <div class="display-card-header-title">
-        {{ student_name }}
-      </div>
-      <div class="righticon" [style.color]="color">{{ created}}</div>
-    </div>
-
-  </div>
-  <div  class="card-content">
-    <div class="subtitlecls" [style.color]="color">
-      <div style="font-weight: bold">Reported by {{ issuer }}:</div>
-      <div style="width: 358px;word-wrap: break-word;">{{ message }}</div>
-    </div>
-    <div class="print-icon">
-      <div>
-        <app-icon-button [size]="25" [srcString]="'Print'" (clickEvent)="printReport($event)"></app-icon-button>
-      </div>
-    </div>
-  </div>
+	<div class="display-card-header justify-content">
+		<div class="flexCls">
+			<div class="display-card-header-title">
+				{{ student_name }}
+			</div>
+			<div class="righticon" [style.color]="color">{{ created }}</div>
+		</div>
+	</div>
+	<div class="card-content">
+		<div class="subtitlecls" [style.color]="color">
+			<div style="font-weight: bold">Reported by {{ issuer }}:</div>
+			<div style="width: 358px; word-wrap: break-word">{{ message }}</div>
+		</div>
+		<div class="print-icon">
+			<div>
+				<app-icon-button [size]="25" [srcString]="'Print'" (clickEvent)="printReport($event)"></app-icon-button>
+			</div>
+		</div>
+	</div>
 </div>

@@ -1,17 +1,7 @@
-<div 
-  #panel
-  class="wrapper">
-  <div 
-    class="content"
-  >
-    <ng-container 
-      *ngFor="let status of statuses"
-    >
-      <app-status-chip
-        (statusClick)="chooseStatus($event)"  
-        [status]="status"
-      >
-      </app-status-chip>
-    </ng-container>
-  </div>
+<div #panel class="wrapper">
+	<div class="content">
+		<ng-container *ngFor="let status of statuses">
+			<app-status-chip (statusClick)="chooseStatus($event)" [status]="status"> </app-status-chip>
+		</ng-container>
+	</div>
 </div>

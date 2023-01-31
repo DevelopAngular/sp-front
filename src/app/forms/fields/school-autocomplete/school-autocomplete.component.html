@@ -1,56 +1,58 @@
 <div class="search-wrapper">
-  <div class="input-wrapper">
-    <app-input [width]="width"
-               tabAttentive="true"
-               placeholder="Springfield High School"
-               [input_label]="inputLabel"
-               [tabIndex]="tabIndex"
-               [formGroup]="fGroup"
-               [controlName]="fControl"
-               [forceError]="forceError"
-               (blurEvent)="blur()"
-               (onUpdate)="onSearch($event)"
-               (focusEvent)="focused()"></app-input>
-  </div>
-  <div *ngIf="showSearch()" #searchAutocomplete
-       class="search-autocomplete-container">
-    <div class="search-autocomplete-wrapper">
-      <div class="search-autocomplete"
-           (mouseenter)="mouseIn = true"
-           (mouseleave)="mouseIn = false">
-        <div class="search-autocomplete-scrollable">
-          <div #cell *ngFor="let school of searchSchools; let a = index"
-               class="search-autocomplete-item"
-               (mouseenter)="backgroundColors[a] = '#F4F4F4'"
-               (mouseleave)="backgroundColors[a] = '#FFFFFF'"
-               appCrossPointerEventTarget
-               (pointerDownEvent)="backgroundColors[a] = '#F4F4F4'"
-               (pointerCancelEvent)="backgroundColors[a] = '#FFFFFF'"
-               (pointerClickEvent)="mobileChooseSchool(a, school, i)"
-               (click)="chooseSchool(school, i)"
-               [style.background-color]="backgroundColors[a]"
-               [style.color]="textColor(cell)">
-            <div class="search-autocomplete-item-name" ignore>
-              {{school.name}}
-            </div>
-            <div class="search-autocomplete-item-place">
-              {{school.address}}
-            </div>
-          </div>
-          <div *ngIf="searchSchools.length == 0"
-               class="search-autocomplete-item search-autocomplete-notfound"
-               (mouseenter)="notFoundHover = true"
-               (mouseleave)="notFoundHover = false"
-               appCrossPointerEventTarget
-               (pointerDownEvent)="notFoundHover = true"
-               (pointerCancelEvent)="notFoundHover = false"
-               [style.background-color]="notFoundHover ? '#F4F4F4' : '#FFFFFF'"
-               (pointerClickEvent)="popup(fControl.value)">
-            <div>
-              {{fControl.value}}
-            </div>
-          </div>
-        </div>
-      </div>
-    </div>
-  </div>
+	<div class="input-wrapper">
+		<app-input
+			[width]="width"
+			tabAttentive="true"
+			placeholder="Springfield High School"
+			[input_label]="inputLabel"
+			[tabIndex]="tabIndex"
+			[formGroup]="fGroup"
+			[controlName]="fControl"
+			[forceError]="forceError"
+			(blurEvent)="blur()"
+			(onUpdate)="onSearch($event)"
+			(focusEvent)="focused()"></app-input>
+	</div>
+	<div *ngIf="showSearch()" #searchAutocomplete class="search-autocomplete-container">
+		<div class="search-autocomplete-wrapper">
+			<div class="search-autocomplete" (mouseenter)="mouseIn = true" (mouseleave)="mouseIn = false">
+				<div class="search-autocomplete-scrollable">
+					<div
+						#cell
+						*ngFor="let school of searchSchools; let a = index"
+						class="search-autocomplete-item"
+						(mouseenter)="backgroundColors[a] = '#F4F4F4'"
+						(mouseleave)="backgroundColors[a] = '#FFFFFF'"
+						appCrossPointerEventTarget
+						(pointerDownEvent)="backgroundColors[a] = '#F4F4F4'"
+						(pointerCancelEvent)="backgroundColors[a] = '#FFFFFF'"
+						(pointerClickEvent)="mobileChooseSchool(a, school, i)"
+						(click)="chooseSchool(school, i)"
+						[style.background-color]="backgroundColors[a]"
+						[style.color]="textColor(cell)">
+						<div class="search-autocomplete-item-name" ignore>
+							{{ school.name }}
+						</div>
+						<div class="search-autocomplete-item-place">
+							{{ school.address }}
+						</div>
+					</div>
+					<div
+						*ngIf="searchSchools.length == 0"
+						class="search-autocomplete-item search-autocomplete-notfound"
+						(mouseenter)="notFoundHover = true"
+						(mouseleave)="notFoundHover = false"
+						appCrossPointerEventTarget
+						(pointerDownEvent)="notFoundHover = true"
+						(pointerCancelEvent)="notFoundHover = false"
+						[style.background-color]="notFoundHover ? '#F4F4F4' : '#FFFFFF'"
+						(pointerClickEvent)="popup(fControl.value)">
+						<div>
+							{{ fControl.value }}
+						</div>
+					</div>
+				</div>
+			</div>
+		</div>
+	</div>
+</div>

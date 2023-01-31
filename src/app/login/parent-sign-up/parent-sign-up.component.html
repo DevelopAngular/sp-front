@@ -1,68 +1,98 @@
-<div class="container " (touchmove)="preventTouch($event)">
+<div class="container" (touchmove)="preventTouch($event)">
+	<div class="ds-w-100 ds-h-100 ds-flex-center-between ds-flex-column login">
+		<div class="background"></div>
+		<div style="flex-grow: 0.5"></div>
 
-    <div class="ds-w-100 ds-h-100 ds-flex-center-between ds-flex-column login">
+		<div class="brand">
+			<app-smartpass-logo [logoAsset]="'./assets/Logo (White).svg'"></app-smartpass-logo>
+		</div>
 
-        <div class="background"></div>
-        <div style="flex-grow: 0.5;"></div>
+		<div class="moving-tiles">
+			<div class="shadow"><span style="width: 1px; background-color: white"></span></div>
+			<app-mooving-tiles></app-mooving-tiles>
+			<div class="right-shadow"><span style="width: 1px; background-color: white"></span></div>
+		</div>
 
-        <div class="brand">
-            <app-smartpass-logo [logoAsset]="'./assets/Logo (White).svg'"></app-smartpass-logo>
-        </div>
-
-        <div class="moving-tiles">
-            <div class="shadow"><span style="width: 1px; background-color: white"></span></div>
-            <app-mooving-tiles></app-mooving-tiles>
-            <div class="right-shadow"><span style="width: 1px; background-color: white"></span></div>
-        </div>
-
-        <div class="login-form" [style.margin-top]="formPosition">
-            <div class="wrapper">
-                <div>
-                    <div class="title">
-                        <div>Sign up as a Parent</div>
-                        <div class="school-signin_sub-title">Already have an account?
-                            <span class="sn-link" appCrossPointerEventTarget (pointerClickEvent)="goLogin()">Log in</span>
-                        </div>
-                    </div>
-                    <div class="content">
-                        <div class="ds-mt-20" appCrossPointerEventTarget (pointerClickEvent)="inputIndex = 1">
-                            <app-input [width]="'250px'" [fieldSpace]="'0px'" [formGroup]="signUpForm" [forcedFocus]="inputIndex === 1" [controlName]="signUpForm.get('name')" [input_value]="signUpForm.get('name').value" [input_label]="'Name'" [placeholder]="'Michael Scott'"></app-input>
-                        </div>
-                        <div class="ds-mt-25" appCrossPointerEventTarget (pointerClickEvent)="inputIndex = 2">
-                            <app-input [width]="'250px'" [fieldSpace]="'0px'" [formGroup]="signUpForm" [forcedFocus]="inputIndex === 2" [controlName]="signUpForm.get('email')" [input_value]="signUpForm.get('email').value" [input_label]="'Email'" [placeholder]="'mscott@dundermifflin.com'"></app-input>
-                        </div>
-                        <div class="ds-mt-25" appCrossPointerEventTarget (pointerClickEvent)="inputIndex = 3">
-                            <app-input [input_type]="'password'" [autocomplete]="'new-password'" [width]="'250px'" [fieldSpace]="'0px'" [formGroup]="signUpForm" [forcedFocus]="inputIndex === 3" [controlName]="signUpForm.get('password')" [input_value]="signUpForm.get('password').value"
-                                [input_label]="'Password'" [showPasswordButton]="true" [placeholder]="'8+ characters'"></app-input>
-                        </div>
-                        <!-- <div class="error" [style.position]="passwordError ? 'static' : 'absolute'" *ngIf="error$ | async as errorMessage"> {{ errorMessage }}</div> -->
-                        <!-- <div class="already-message" *ngIf="schoolAlreadyText$ | async as alreadyText">{{ alreadyText }}</div> -->
-                        <div class="ds-w-100 ds-flex-center-center ds-mt-20 ds-pt-10">
-                            <app-gradient-button [size]="'editable'" [minWidth]="'265px'" [fontSize]="'15px'" [fontWeight]="'normal'" [minHeight]="'50px'" [gradient]="'#FFFFFF, #00B476'" [disabled]="signUpForm.invalid" (buttonClick)="registerParent()">
-                                <span style="font-weight: normal;">
-                            Sign up
-                          </span>
-                            </app-gradient-button>
-                            <!-- <app-gradient-button [size]="'editable'" [minWidth]="'265px'" [fontSize]="'15px'" [fontWeight]="'normal'" [minHeight]="'50px'" [gradient]="'#FFFFFF, #00B476'" (buttonClick)="goToDashboard()">
+		<div class="login-form" [style.margin-top]="formPosition">
+			<div class="wrapper">
+				<div>
+					<div class="title">
+						<div>Sign up as a Parent</div>
+						<div class="school-signin_sub-title">
+							Already have an account?
+							<span class="sn-link" appCrossPointerEventTarget (pointerClickEvent)="goLogin()">Log in</span>
+						</div>
+					</div>
+					<div class="content">
+						<div class="ds-mt-20" appCrossPointerEventTarget (pointerClickEvent)="inputIndex = 1">
+							<app-input
+								[width]="'250px'"
+								[fieldSpace]="'0px'"
+								[formGroup]="signUpForm"
+								[forcedFocus]="inputIndex === 1"
+								[controlName]="signUpForm.get('name')"
+								[input_value]="signUpForm.get('name').value"
+								[input_label]="'Name'"
+								[placeholder]="'Michael Scott'"></app-input>
+						</div>
+						<div class="ds-mt-25" appCrossPointerEventTarget (pointerClickEvent)="inputIndex = 2">
+							<app-input
+								[width]="'250px'"
+								[fieldSpace]="'0px'"
+								[formGroup]="signUpForm"
+								[forcedFocus]="inputIndex === 2"
+								[controlName]="signUpForm.get('email')"
+								[input_value]="signUpForm.get('email').value"
+								[input_label]="'Email'"
+								[placeholder]="'mscott@dundermifflin.com'"></app-input>
+						</div>
+						<div class="ds-mt-25" appCrossPointerEventTarget (pointerClickEvent)="inputIndex = 3">
+							<app-input
+								[input_type]="'password'"
+								[autocomplete]="'new-password'"
+								[width]="'250px'"
+								[fieldSpace]="'0px'"
+								[formGroup]="signUpForm"
+								[forcedFocus]="inputIndex === 3"
+								[controlName]="signUpForm.get('password')"
+								[input_value]="signUpForm.get('password').value"
+								[input_label]="'Password'"
+								[showPasswordButton]="true"
+								[placeholder]="'8+ characters'"></app-input>
+						</div>
+						<!-- <div class="error" [style.position]="passwordError ? 'static' : 'absolute'" *ngIf="error$ | async as errorMessage"> {{ errorMessage }}</div> -->
+						<!-- <div class="already-message" *ngIf="schoolAlreadyText$ | async as alreadyText">{{ alreadyText }}</div> -->
+						<div class="ds-w-100 ds-flex-center-center ds-mt-20 ds-pt-10">
+							<app-gradient-button
+								[size]="'editable'"
+								[minWidth]="'265px'"
+								[fontSize]="'15px'"
+								[fontWeight]="'normal'"
+								[minHeight]="'50px'"
+								[gradient]="'#FFFFFF, #00B476'"
+								[disabled]="signUpForm.invalid"
+								(buttonClick)="registerParent()">
+								<span style="font-weight: normal"> Sign up </span>
+							</app-gradient-button>
+							<!-- <app-gradient-button [size]="'editable'" [minWidth]="'265px'" [fontSize]="'15px'" [fontWeight]="'normal'" [minHeight]="'50px'" [gradient]="'#FFFFFF, #00B476'" (buttonClick)="goToDashboard()">
                                 <span style="font-weight: normal;">
                             Sign up
                           </span>
                             </app-gradient-button> -->
-                        </div>
-                    </div>
+						</div>
+					</div>
+				</div>
+			</div>
+			<div>
+				<p class="bottom-text">
+					By signing up, you agree to our
+					<a class="link" appCrossPointerEventTarget (pointerClickEvent)="openLink('https://www.smartpass.app/terms')">Terms</a> and
+					<a class="link" appCrossPointerEventTarget (pointerClickEvent)="openLink('https://www.smartpass.app/privacy')">Privacy Policy</a>.
+				</p>
+			</div>
+		</div>
 
-                </div>
-            </div>
-            <div>
-                <p class="bottom-text">
-                    By signing up, you agree to our <a class="link" appCrossPointerEventTarget (pointerClickEvent)="openLink('https://www.smartpass.app/terms')">Terms</a> and
-                    <a class="link" appCrossPointerEventTarget (pointerClickEvent)="openLink('https://www.smartpass.app/privacy')">Privacy Policy</a>.
-                </p>
-            </div>
-        </div>
-
-        <div class="grow"></div>
-        <div style="flex-grow: 0.5;"></div>
-    </div>
-
+		<div class="grow"></div>
+		<div style="flex-grow: 0.5"></div>
+	</div>
 </div>

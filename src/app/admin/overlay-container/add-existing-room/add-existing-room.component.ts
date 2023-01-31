@@ -3,44 +3,41 @@ import { Pinnable } from '../../../models/Pinnable';
 import { bumpIn } from '../../../animations';
 
 @Component({
-  selector: 'app-add-existing-room',
-  templateUrl: './add-existing-room.component.html',
-  styleUrls: ['./add-existing-room.component.scss'],
-  animations: [bumpIn]
+	selector: 'app-add-existing-room',
+	templateUrl: './add-existing-room.component.html',
+	styleUrls: ['./add-existing-room.component.scss'],
+	animations: [bumpIn],
 })
 export class AddExistingRoomComponent implements OnInit {
+	@Input() roomsInFolder;
+	@Input() set data(items: Pinnable[]) {
+		this.pinnables = items;
+	}
+	@Input() roomName: string;
 
-  @Input() roomsInFolder;
-  @Input() set data(items: Pinnable[]) {
-    this.pinnables = items;
-  }
-  @Input() roomName: string;
+	@Output() back = new EventEmitter();
+	@Output() save = new EventEmitter();
 
-  @Output() back = new EventEmitter();
-  @Output() save = new EventEmitter();
+	buttonDown: boolean;
+	pinnables: Pinnable[];
 
-  buttonDown: boolean;
-  pinnables: Pinnable[];
+	constructor() {}
 
-  constructor() { }
+	get buttonState() {
+		return this.buttonDown ? 'down' : 'up';
+	}
 
-  get buttonState() {
-      return this.buttonDown ? 'down' : 'up';
-  }
+	ngOnInit() {}
 
-  ngOnInit() {
-  }
+	onPress(press: boolean) {
+		this.buttonDown = press;
+	}
 
-  onPress(press: boolean) {
-      this.buttonDown = press;
-  }
+	goBack() {
+		this.back.emit();
+	}
 
-  goBack() {
-    this.back.emit();
-  }
-
-  addRooms() {
-    this.save.emit(this.roomsInFolder);
-  }
-
+	addRooms() {
+		this.save.emit(this.roomsInFolder);
+	}
 }

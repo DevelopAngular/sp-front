@@ -1,32 +1,34 @@
 <div class="wrapper">
-    <div class="header" #header>
-        <div class="background-header"></div>
-        <img class="back-button" (click)="back()" [src]="'./assets/Back Button (Blue-White).svg' | resolveAsset">
-        <div class="title-header" style="z-index: 10; display: flex" [attr.data-motion-translate]="(frameMotion$ | async).direction">
-            <img width="21" height="21" [src]="'./assets/Invite Families (Green).svg' | resolveAsset" alt="Options">
-            <div class="ds-dialog-title" [style.margin-left]="'12px'">Invite Families</div>
-        </div>
-    </div>
-    <div class="content" [attr.data-motion-translate]="(frameMotion$ | async).direction">
-        <div class="page">
-            <div class="block" style="margin-top: 15px;">
-                <div class="inner">
-                    <div class="title"><span>{{parentsMetrics?.percent_connected}}% </span> {{parentsMetrics?.connected}} of {{parentsMetrics?.total}} families connected</div>
-                </div>
-                <mat-divider></mat-divider>
-                <div class="inner" style="display: flex;">
-                    <div style="padding: 6px 10px 0 0;">
-                        <img [src]="'./assets/Warning (Orange).svg'" alt="">
-                    </div>
-                    <!-- <div style="display: flex; align-items: center"> -->
-                    <div class="info">{{parentsMetrics?.unconnected}} students that don’t have a family contact.</div>
-                    <div class="info-icon">
-                        <app-icon-button (clickEvent)="getUnconnectedStudents()" [size]="24" [srcString]="'Circle Download'"></app-icon-button>
-                    </div>
-                    <!-- </div> -->
-                </div>
-            </div>
-            <!-- <div class="block" style="margin-top: 15px;">
+	<div class="header" #header>
+		<div class="background-header"></div>
+		<img class="back-button" (click)="back()" [src]="'./assets/Back Button (Blue-White).svg' | resolveAsset" />
+		<div class="title-header" style="z-index: 10; display: flex" [attr.data-motion-translate]="(frameMotion$ | async).direction">
+			<img width="21" height="21" [src]="'./assets/Invite Families (Green).svg' | resolveAsset" alt="Options" />
+			<div class="ds-dialog-title" [style.margin-left]="'12px'">Invite Families</div>
+		</div>
+	</div>
+	<div class="content" [attr.data-motion-translate]="(frameMotion$ | async).direction">
+		<div class="page">
+			<div class="block" style="margin-top: 15px">
+				<div class="inner">
+					<div class="title">
+						<span>{{ parentsMetrics?.percent_connected }}% </span> {{ parentsMetrics?.connected }} of {{ parentsMetrics?.total }} families connected
+					</div>
+				</div>
+				<mat-divider></mat-divider>
+				<div class="inner" style="display: flex">
+					<div style="padding: 6px 10px 0 0">
+						<img [src]="'./assets/Warning (Orange).svg'" alt="" />
+					</div>
+					<!-- <div style="display: flex; align-items: center"> -->
+					<div class="info">{{ parentsMetrics?.unconnected }} students that don’t have a family contact.</div>
+					<div class="info-icon">
+						<app-icon-button (clickEvent)="getUnconnectedStudents()" [size]="24" [srcString]="'Circle Download'"></app-icon-button>
+					</div>
+					<!-- </div> -->
+				</div>
+			</div>
+			<!-- <div class="block" style="margin-top: 15px;">
                 <div class="inner">
                     <div class="ds-flex-center-between">
                         <div class="title">
@@ -39,24 +41,30 @@
                     <div class="info" style="padding: 14px 0;width: 80%;">Any parent who is not invited will automatically receive invites.</div>
                 </div>
             </div> -->
-            <div class="block" style="margin-top: 15px;margin-bottom: 18px;">
-                <div class="inner">
-                    <div class="ds-flex-center-between">
-                        <div class="title">
-                            Parent Invite Codes
-                        </div>
-                        <div class="c-drop">
-                            <span>All parents</span>
-                            <!-- <span><img width="9px" [src]="'./assets/Chevron Down (Navy).svg' | resolveAsset"
+			<div class="block" style="margin-top: 15px; margin-bottom: 18px">
+				<div class="inner">
+					<div class="ds-flex-center-between">
+						<div class="title">Parent Invite Codes</div>
+						<div class="c-drop">
+							<span>All parents</span>
+							<!-- <span><img width="9px" [src]="'./assets/Chevron Down (Navy).svg' | resolveAsset"
                                     alt=""></span> -->
-                        </div>
-                    </div>
-                    <div class="downlod-btn">
-                        <app-gradient-button [size]="'small'" [gradient]="'#7083A0'" [leftIcon]="'./assets/Download Parent (White).svg'" [leftImageWidth]="'16px'" [leftImageHeight]="'21px'" [cursor]="'pointer'" (buttonClick)="getInviteCodes()">Download Parent Invite Codes
-                        </app-gradient-button>
-                    </div>
-                </div>
-            </div>
-        </div>
-    </div>
+						</div>
+					</div>
+					<div class="downlod-btn">
+						<app-gradient-button
+							[size]="'small'"
+							[gradient]="'#7083A0'"
+							[leftIcon]="'./assets/Download Parent (White).svg'"
+							[leftImageWidth]="'16px'"
+							[leftImageHeight]="'21px'"
+							[cursor]="'pointer'"
+							(buttonClick)="getInviteCodes()"
+							>Download Parent Invite Codes
+						</app-gradient-button>
+					</div>
+				</div>
+			</div>
+		</div>
+	</div>
 </div>

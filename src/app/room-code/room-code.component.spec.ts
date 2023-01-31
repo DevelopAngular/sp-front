@@ -3,23 +3,22 @@ import { ComponentFixture, TestBed } from '@angular/core/testing';
 import { RoomCodeComponent } from './room-code.component';
 
 describe('RoomCodeComponent', () => {
-  let component: RoomCodeComponent;
-  let fixture: ComponentFixture<RoomCodeComponent>;
+	let component: RoomCodeComponent;
+	let fixture: ComponentFixture<RoomCodeComponent>;
 
-  beforeEach(async () => {
-    await TestBed.configureTestingModule({
-      declarations: [ RoomCodeComponent ]
-    })
-    .compileComponents();
-  });
+	beforeEach(async () => {
+		await TestBed.configureTestingModule({
+			declarations: [RoomCodeComponent],
+		}).compileComponents();
+	});
 
-  beforeEach(() => {
-    fixture = TestBed.createComponent(RoomCodeComponent);
-    component = fixture.componentInstance;
-    fixture.detectChanges();
-  });
+	beforeEach(() => {
+		fixture = TestBed.createComponent(RoomCodeComponent);
+		component = fixture.componentInstance;
+		fixture.detectChanges();
+	});
 
-  it('should create', () => {
-    expect(component).toBeTruthy();
-  });
+	it('should create', () => {
+		expect(component).toBeTruthy();
+	});
 });

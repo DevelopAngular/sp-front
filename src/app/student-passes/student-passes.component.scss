@@ -1,244 +1,239 @@
 @import '../../sp-colors';
 
-
 .host {
 }
 .student-wrapper {
-  position: absolute;
-  bottom: 0;
-  left: 0;
-  right: 0;
-  z-index: 10000;
-  background-color: #FFFFFF;
-  border-radius: 13px;
-  box-shadow: 0 5px 20px rgba(0, 0, 0, 0.15);
-  overflow: hidden;
-  transition: background-color .2s ease;
+	position: absolute;
+	bottom: 0;
+	left: 0;
+	right: 0;
+	z-index: 10000;
+	background-color: #ffffff;
+	border-radius: 13px;
+	box-shadow: 0 5px 20px rgba(0, 0, 0, 0.15);
+	overflow: hidden;
+	transition: background-color 0.2s ease;
 
-  &:hover {
-    .open {
-      background-color: #F4F4F4;
-      border-radius: 50%;
-    }
-  }
+	&:hover {
+		.open {
+			background-color: #f4f4f4;
+			border-radius: 50%;
+		}
+	}
 
-  //&.openAnimation {
-  //  animation: fadeIn .4s forwards;
-  //}
-  //
-  //&.out {
-  //  animation: fadeOut .4s forwards;
-  //}
+	//&.openAnimation {
+	//  animation: fadeIn .4s forwards;
+	//}
+	//
+	//&.out {
+	//  animation: fadeOut .4s forwards;
+	//}
 
+	.header-container {
+		position: fixed;
+		width: 335px;
+		z-index: 21;
+		border-radius: 13px 13px 0 0;
+		overflow: hidden;
+		.header {
+			//background-color: #FFFFFF;
+			z-index: 20;
+			padding: 15px 0;
+			cursor: pointer;
+			.profile-info {
+				display: flex;
+				align-items: center;
+				transition: padding 0.2s ease-in;
+				.profile-image {
+					margin-right: 12px;
+					overflow: hidden;
+					border-radius: 50%;
 
-  .header-container {
-    position: fixed;
-    width: 335px;
-    z-index: 21;
-    border-radius: 13px 13px 0 0;
-    overflow: hidden;
-    .header {
-      //background-color: #FFFFFF;
-      z-index: 20;
-      padding: 15px 0;
-      cursor: pointer;
-      .profile-info {
-        display: flex;
-        align-items: center;
-        transition: padding .2s ease-in;
-        .profile-image {
-          margin-right: 12px;
-          overflow: hidden;
-          border-radius: 50%;
+					img {
+						border-radius: 50%;
+					}
+				}
+				.title {
+					transition: height 0.5s ease-in;
+					position: relative;
+					display: flex;
+					align-items: center;
+					width: 200px;
+					height: 50px;
+					.full-name {
+						color: $navy;
+						//font-size: 22px;
+						font-weight: bold;
+						position: absolute;
+						top: 0;
+						display: flex;
+						align-items: center;
+						white-space: nowrap;
 
-          img {
-            border-radius: 50%;
-          }
-        }
-        .title {
-          transition: height .5s ease-in;
-          position: relative;
-          display: flex;
-          align-items: center;
-          width: 200px;
-          height: 50px;
-          .full-name {
-            color: $navy;
-            //font-size: 22px;
-            font-weight: bold;
-            position: absolute;
-            top: 0;
-            display: flex;
-            align-items: center;
-            white-space: nowrap;
+						&:hover {
+							text-decoration: underline;
+						}
+					}
+					.email {
+						color: $blue-gray;
+						font-size: 14px;
+						margin-top: 6px;
+						position: absolute;
+						bottom: 0;
+					}
+				}
+			}
+		}
+	}
 
-            &:hover {
-              text-decoration: underline;
-            }
-          }
-          .email {
-            color: $blue-gray;
-            font-size: 14px;
-            margin-top: 6px;
-            position: absolute;
-            bottom: 0;
-          }
-        }
-      }
+	.open {
+		right: 14px;
+		top: 16px;
+		width: 40px;
+		height: 40px;
+		display: flex;
+		align-items: center;
+		justify-content: center;
+		position: absolute;
+	}
+	.close {
+		position: absolute;
+		right: 10px;
+		top: 10px;
+		cursor: pointer;
+	}
+	.content {
+		display: flex;
+		flex-direction: column;
+		position: relative;
+		overflow: hidden;
+		padding: 0 17px;
+		margin-top: 90px;
+		background-color: #ffffff;
+		cursor: pointer;
 
-    }
-  }
+		.student-info {
+			display: flex;
+			justify-content: space-between;
+			margin: 20px 0;
+		}
+	}
 
-  .open {
-    right: 14px;
-    top: 16px;
-    width: 40px;
-    height: 40px;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    position: absolute;
-  }
-  .close {
-    position: absolute;
-    right: 10px;
-    top: 10px;
-    cursor: pointer;
-  }
-  .content {
-    display: flex;
-    flex-direction: column;
-    position: relative;
-    overflow: hidden;
-    padding: 0 17px;
-    margin-top: 90px;
-    background-color: #FFFFFF;
-    cursor: pointer;
+	.collection-wrapper {
+		background-color: $gray100;
+		overflow: auto;
+		border-radius: 13px;
 
-    .student-info {
-      display: flex;
-      justify-content: space-between;
-      margin: 20px 0;
-    }
-  }
+		.collection {
+			//padding: 17px;
+			display: flex;
+			align-items: center;
+			flex-direction: column;
 
-  .collection-wrapper {
-    background-color: $gray100;
-    overflow: auto;
-    border-radius: 13px;
+			.title {
+				display: flex;
+				align-items: center;
+				color: $navy;
+				font-size: 20px;
+				font-weight: 600;
+			}
 
-    .collection {
-      //padding: 17px;
-      display: flex;
-      align-items: center;
-      flex-direction: column;
+			.passes {
+				display: grid;
+				grid-gap: 10px;
+				margin-top: 15px;
+				grid-template-columns: repeat(auto-fill, 144px);
 
-      .title {
-        display: flex;
-        align-items: center;
-        color: $navy;
-        font-size: 20px;
-        font-weight: 600;
-      }
+				.fake-pass {
+					width: 143px;
+					height: 86.5px;
+					border-radius: 12.75px;
+					background-color: #f4f4f4;
+				}
+			}
 
-      .passes {
-        display: grid;
-        grid-gap: 10px;
-        margin-top: 15px;
-        grid-template-columns: repeat(auto-fill, 144px);
+			.pass-collection {
+				margin-top: 15px;
+			}
 
-        .fake-pass {
-          width: 143px;
-          height: 86.5px;
-          border-radius: 12.75px;
-          background-color: #F4F4F4;
-        }
-      }
+			.emptyState {
+				display: flex;
+				flex-direction: column;
+				align-items: center;
+				justify-content: center;
+				margin-top: 40px;
 
-      .pass-collection {
-        margin-top: 15px;
-      }
-
-      .emptyState {
-        display: flex;
-        flex-direction: column;
-        align-items: center;
-        justify-content: center;
-        margin-top: 40px;
-
-        .empty-title {
-          font-size: 17px;
-          color: $blue-gray;
-        }
-      }
-    }
-  }
+				.empty-title {
+					font-size: 17px;
+					color: $blue-gray;
+				}
+			}
+		}
+	}
 }
 
-
-
 .avatar-animate {
-  animation : avatar-shimmer 3s infinite linear;
-  background: linear-gradient(to right, #eff1f3 4%, #e2e2e2 25%, #eff1f3 36%);
-  background-size: 88px 100%;
+	animation: avatar-shimmer 3s infinite linear;
+	background: linear-gradient(to right, #eff1f3 4%, #e2e2e2 25%, #eff1f3 36%);
+	background-size: 88px 100%;
 }
 
 .action-buttons-wrapper {
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  gap: 10px; 
-  padding:  0px 10px;
-  .action-button {
-    flex-grow: 1;
-    flex-basis: 0;
-  }
+	display: flex;
+	justify-content: center;
+	align-items: center;
+	gap: 10px;
+	padding: 0px 10px;
+	.action-button {
+		flex-grow: 1;
+		flex-basis: 0;
+	}
 }
 
 @keyframes avatar-shimmer {
-  0% {
-    background-position: -88px 0;
-  }
-  100% {
-    background-position: 88px 0;
-  }
+	0% {
+		background-position: -88px 0;
+	}
+	100% {
+		background-position: 88px 0;
+	}
 }
 
 .animate {
-  animation : shimmer 3s infinite linear;
-  background: linear-gradient(to right, #eff1f3 4%, #e2e2e2 25%, #eff1f3 36%);
-  background-size: 143px 100%;
+	animation: shimmer 3s infinite linear;
+	background: linear-gradient(to right, #eff1f3 4%, #e2e2e2 25%, #eff1f3 36%);
+	background-size: 143px 100%;
 }
 
 @keyframes shimmer {
-  0% {
-    background-position: -143px 0;
-  }
-  100% {
-    background-position: 143px 0;
-  }
+	0% {
+		background-position: -143px 0;
+	}
+	100% {
+		background-position: 143px 0;
+	}
 }
 
 @keyframes fadeIn {
-  0% {
-    opacity: 0;
-    transform: translateY(5%);
-  }
+	0% {
+		opacity: 0;
+		transform: translateY(5%);
+	}
 
-  100% {
-    opacity: 1;
-    transform: translateY(0%);
-  }
+	100% {
+		opacity: 1;
+		transform: translateY(0%);
+	}
 }
 
 @keyframes fadeOut {
-  0% {
-    opacity: 1;
-    transform: translateY(0%);
-  }
+	0% {
+		opacity: 1;
+		transform: translateY(0%);
+	}
 
-  100% {
-    opacity: 0;
-    transform: translateY(5%);
-  }
+	100% {
+		opacity: 0;
+		transform: translateY(5%);
+	}
 }

@@ -7,54 +7,50 @@ import { CreateFormService } from '../../create-hallpass-forms/create-form.servi
 import { ParentAccountService } from '../../services/parent-account.service';
 
 @Component({
-  selector: 'app-invite-families-dialog',
-  templateUrl: './invite-families-dialog.component.html',
-  styleUrls: ['./invite-families-dialog.component.scss'],
-  animations: [NextStep]
+	selector: 'app-invite-families-dialog',
+	templateUrl: './invite-families-dialog.component.html',
+	styleUrls: ['./invite-families-dialog.component.scss'],
+	animations: [NextStep],
 })
 export class InviteFamiliesDialogComponent implements OnInit {
+	inviteForm: FormGroup;
+	parentsMetrics: any;
 
-  inviteForm: FormGroup;
-  parentsMetrics: any;
+	frameMotion$: BehaviorSubject<any>;
 
-  frameMotion$: BehaviorSubject<any>;
+	constructor(
+		public dialogRef: MatDialogRef<InviteFamiliesDialogComponent>,
+		@Inject(MAT_DIALOG_DATA) private data: any,
+		public formService: CreateFormService,
+		private parentService: ParentAccountService
+	) {}
 
-  constructor(
-    public dialogRef: MatDialogRef<InviteFamiliesDialogComponent>,
-    @Inject(MAT_DIALOG_DATA) private data: any,
-    public formService: CreateFormService,
-    private parentService: ParentAccountService
-  ) { }
+	ngOnInit(): void {
+		this.inviteForm = new FormGroup({
+			auto_invite: new FormControl(),
+		});
 
-  ngOnInit(): void {
-    this.inviteForm = new FormGroup({
-      auto_invite: new FormControl()
-    });
+		this.frameMotion$ = this.formService.getFrameMotionDirection();
 
-    this.frameMotion$ = this.formService.getFrameMotionDirection();
+		this.parentService.getParentsMetrics().subscribe({
+			next: (result: any) => {
+				this.parentsMetrics = result.results;
+			},
+			error: (error: any) => {
+				console.log('Error : ', error);
+			},
+		});
+	}
 
-    this.parentService.getParentsMetrics().subscribe({
-      next: (result: any) => {
-        this.parentsMetrics = result.results;
-      },
-      error: (error: any) => {
-        console.log("Error : ", error);
+	back() {
+		this.dialogRef.close();
+	}
 
-      }
-    });
+	getUnconnectedStudents() {
+		this.parentService.getUnconnectedStudents();
+	}
 
-  }
-
-  back() {
-    this.dialogRef.close();
-  }
-
-  getUnconnectedStudents() {
-    this.parentService.getUnconnectedStudents();
-  }
-
-  getInviteCodes() {
-    this.parentService.getStudentInviteCode();
-  }
-
+	getInviteCodes() {
+		this.parentService.getStudentInviteCode();
+	}
 }

@@ -1,15 +1,9 @@
-import {AppState} from '../../app-state/app-state';
-import {createSelector} from '@ngrx/store';
-import {ILoginDataState} from './login-data.state';
+import { AppState } from '../../app-state/app-state';
+import { createSelector } from '@ngrx/store';
+import { ILoginDataState } from './login-data.state';
 
 export const getLoginDataState = (state: AppState) => state.loginData;
 
-export const getLoginDataQueryParams = createSelector(
-  getLoginDataState,
-  (state: ILoginDataState) => state.queryParams
-);
+export const getLoginDataQueryParams = createSelector(getLoginDataState, (state: ILoginDataState) => state.queryParams);
 
-export const getUrlAfterLogin = createSelector(
-  getLoginDataState,
-  (state: ILoginDataState) => state.urlAfterLogin
-);
+export const getUrlAfterLogin = createSelector(getLoginDataState, (state: ILoginDataState) => state.urlAfterLogin);

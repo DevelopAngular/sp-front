@@ -1,30 +1,43 @@
 ﻿<div class="overlay">
-  <div class="display-card">
-    <div
-      class="display-card-wrapper"
-      [ngClass]="{'inbox': inbox}"
-      [style.height]="inbox ? (!screenService.isDeviceLargeExtra ? 'calc(100vh - 190px)' : 'calc(100vh - 78px)') : ''"
-      [style.background-color]="backgroundColor"
-    >
-      <div class="display-card-header justify-content" *ngIf="hasHeader" [style.min-height]="(inbox ? '35px' : '')"  [style.margin-bottom]="headerBottomSpace">
-        <div class="flexCls">
-          <img *ngIf="!!icon && !inbox" class="display-card-header-icon" [src]="getIcon(icon) | resolveAsset" [style.height]="iconSize" [style.width]="iconSize">
-          <div *ngIf="(!!icon && inbox)" class="inbox-wrapper">
-            <img class="inbox-icon" [src]="getIcon('./assets/Notifications (Gray-200).svg') | resolveAsset">
-          </div>
-          <div class="display-card-header-title" [style.font-size]="fontSize" [style.color]="titleColor">
-            {{ title }}
-          </div>
-        </div>
-        <img *ngIf="!!righticon" class="display-card-header-icon righticon" [src]="righticon | resolveAsset"  [style.height]="iconSize" [style.width]="iconSize">
-        <div *ngIf="!!righttext && !righticon" class="display-card-header-icon righticon" >{{righttext}}</div>
-      </div>
+	<div class="display-card">
+		<div
+			class="display-card-wrapper"
+			[ngClass]="{ inbox: inbox }"
+			[style.height]="inbox ? (!screenService.isDeviceLargeExtra ? 'calc(100vh - 190px)' : 'calc(100vh - 78px)') : ''"
+			[style.background-color]="backgroundColor">
+			<div
+				class="display-card-header justify-content"
+				*ngIf="hasHeader"
+				[style.min-height]="inbox ? '35px' : ''"
+				[style.margin-bottom]="headerBottomSpace">
+				<div class="flexCls">
+					<img
+						*ngIf="!!icon && !inbox"
+						class="display-card-header-icon"
+						[src]="getIcon(icon) | resolveAsset"
+						[style.height]="iconSize"
+						[style.width]="iconSize" />
+					<div *ngIf="!!icon && inbox" class="inbox-wrapper">
+						<img class="inbox-icon" [src]="getIcon('./assets/Notifications (Gray-200).svg') | resolveAsset" />
+					</div>
+					<div class="display-card-header-title" [style.font-size]="fontSize" [style.color]="titleColor">
+						{{ title }}
+					</div>
+				</div>
+				<img
+					*ngIf="!!righticon"
+					class="display-card-header-icon righticon"
+					[src]="righticon | resolveAsset"
+					[style.height]="iconSize"
+					[style.width]="iconSize" />
+				<div *ngIf="!!righttext && !righticon" class="display-card-header-icon righticon">{{ righttext }}</div>
+			</div>
 
-      <div *ngIf="subtitle!=null" [style.font-size]="subtitle_fontSize" class="subtitlecls">
-        {{subtitle}}
-      </div>
-      <ng-content [style.left]="'35px'" [style.position]="'relative'"></ng-content>
-    </div>
-    <div *ngIf="inbox" class="bottom-shadow"></div>
-  </div>
+			<div *ngIf="subtitle != null" [style.font-size]="subtitle_fontSize" class="subtitlecls">
+				{{ subtitle }}
+			</div>
+			<ng-content [style.left]="'35px'" [style.position]="'relative'"></ng-content>
+		</div>
+		<div *ngIf="inbox" class="bottom-shadow"></div>
+	</div>
 </div>

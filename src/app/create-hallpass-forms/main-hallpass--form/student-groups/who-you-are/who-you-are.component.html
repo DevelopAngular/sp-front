@@ -1,33 +1,31 @@
-<div style="position: relative;">
-  <div class="wya-container">
-    <div class="wya-header" [style.background]="'#FFFFFF'">
-      <img class="back-button back-button-top back-button-white" [src]="'./assets/Back Button (Blue-White).svg' | resolveAsset" (click)="back()">
-      <div class="wya-header-text" [attr.data-motion-translate]="(frameMotion$ | async).direction">
-        <img class="search-icon" [src]="'./assets/Search Eye (Navy).svg' | resolveAsset">
-        <div class="text ds-dialog-title">Who are you?</div>
-      </div>
-    </div>
-    <div class="wya-content ds-mt-25" [attr.data-motion-translate]="(frameMotion$ | async).direction">
-    <ng-container *ngIf="showSearchElseLoading; else loading">
-      <app-sp-search
-        [focused]="true"
-        [width]="'280px'"
-        [role]="'_profile_student'"
-        [placeholder]="placeholder"
-        [list]="false"
-        [emitSingleProfile]="false"
-        [filteringUsersCallback]="getFilteringStudents()"
-        (onUpdate)="setSelectedStudents($event)"
-      ></app-sp-search>
-    </ng-container>
+<div style="position: relative">
+	<div class="wya-container">
+		<div class="wya-header" [style.background]="'#FFFFFF'">
+			<img class="back-button back-button-top back-button-white" [src]="'./assets/Back Button (Blue-White).svg' | resolveAsset" (click)="back()" />
+			<div class="wya-header-text" [attr.data-motion-translate]="(frameMotion$ | async).direction">
+				<img class="search-icon" [src]="'./assets/Search Eye (Navy).svg' | resolveAsset" />
+				<div class="text ds-dialog-title">Who are you?</div>
+			</div>
+		</div>
+		<div class="wya-content ds-mt-25" [attr.data-motion-translate]="(frameMotion$ | async).direction">
+			<ng-container *ngIf="showSearchElseLoading; else loading">
+				<app-sp-search
+					[focused]="true"
+					[width]="'280px'"
+					[role]="'_profile_student'"
+					[placeholder]="placeholder"
+					[list]="false"
+					[emitSingleProfile]="false"
+					[filteringUsersCallback]="getFilteringStudents()"
+					(onUpdate)="setSelectedStudents($event)"></app-sp-search>
+			</ng-container>
 
-    <ng-template #loading>
-      <div class="loading-theme_blue-gray ds-h-100">
-        <mat-spinner [color]="'accent'" [diameter]="30"></mat-spinner>
-      </div>
-    </ng-template>
-
-    </div>
-  </div>
-  <img *ngIf="formState.state === 4" class="back-button-bottom" [src]="'./assets/Back Button (Blue-White).svg' | resolveAsset" (click)="back()">
+			<ng-template #loading>
+				<div class="loading-theme_blue-gray ds-h-100">
+					<mat-spinner [color]="'accent'" [diameter]="30"></mat-spinner>
+				</div>
+			</ng-template>
+		</div>
+	</div>
+	<img *ngIf="formState.state === 4" class="back-button-bottom" [src]="'./assets/Back Button (Blue-White).svg' | resolveAsset" (click)="back()" />
 </div>

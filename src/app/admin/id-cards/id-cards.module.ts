@@ -10,15 +10,8 @@ import { BackgroundTextComponent } from './background-text/background-text.compo
 import { UploadLogoComponent } from './upload-logo/upload-logo.component';
 import { IdCardProfilePictureComponent } from './id-card-profile-picture/id-card-profile-picture.component';
 
-
 @NgModule({
-  declarations: [IdCardsComponent, IdCardEditorComponent, BackgroundTextComponent, UploadLogoComponent, IdCardProfilePictureComponent],
-  imports: [
-    CommonModule,
-    IdCardsRoutingModule,
-    AdminSharedModule,
-    FormsModule,  
-    ReactiveFormsModule 
-  ]
+	declarations: [IdCardsComponent, IdCardEditorComponent, BackgroundTextComponent, UploadLogoComponent, IdCardProfilePictureComponent],
+	imports: [CommonModule, IdCardsRoutingModule, AdminSharedModule, FormsModule, ReactiveFormsModule],
 })
-export class IdCardsModule { }
+export class IdCardsModule {}

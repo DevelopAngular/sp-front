@@ -1,21 +1,20 @@
 .wrapper {
-  position: relative;
-  display: flex;
-  justify-content: center;
-  align-items: center;
+	position: relative;
+	display: flex;
+	justify-content: center;
+	align-items: center;
 
-  .tooltip-container {
-    position: absolute;
-    left: 0;
-    top: 0;
-    bottom: 0;
-    right: 0;
-  }
+	.tooltip-container {
+		position: absolute;
+		left: 0;
+		top: 0;
+		bottom: 0;
+		right: 0;
+	}
 
-  .value {
-    position: absolute;
-    z-index: 10;
-    color: white;
-  }
+	.value {
+		position: absolute;
+		z-index: 10;
+		color: white;
+	}
 }
-

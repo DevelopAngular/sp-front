@@ -1,1 +1,1 @@
-export * from './favorite-locations.effects'
+export * from './favorite-locations.effects';

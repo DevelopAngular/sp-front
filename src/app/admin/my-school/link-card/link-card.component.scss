@@ -1,23 +1,23 @@
 @import '../../../../sp-colors';
 
 .wrapper {
-  width: 344px;
-  padding: 24px 22px;
-  border-radius: 9px;
-  background: #F4F4F4;
+	width: 344px;
+	padding: 24px 22px;
+	border-radius: 9px;
+	background: #f4f4f4;
 
-  .title {
-    color: $navy;
-    font-size: 20px;
-    font-weight: bold;
-  }
-  .subtitle {
-    color: $blue-gray;
-    font-size: 14px;
-    margin-top: 8px;
-  }
+	.title {
+		color: $navy;
+		font-size: 20px;
+		font-weight: bold;
+	}
+	.subtitle {
+		color: $blue-gray;
+		font-size: 14px;
+		margin-top: 8px;
+	}
 
-  .button {
-    margin-top: 13px;
-  }
+	.button {
+		margin-top: 13px;
+	}
 }

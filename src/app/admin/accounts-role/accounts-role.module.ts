@@ -6,14 +6,7 @@ import { AccountsRoleComponent } from './accounts-role.component';
 import { AdminSharedModule } from '../shared/admin-shared.module';
 
 @NgModule({
-  declarations: [
-    AccountsRoleComponent
-  ],
-  imports: [
-    CommonModule,
-    AccountsRoleRoutingModule,
-    AdminSharedModule
-  ]
+	declarations: [AccountsRoleComponent],
+	imports: [CommonModule, AccountsRoleRoutingModule, AdminSharedModule],
 })
-export class AccountsRoleModule {
-}
+export class AccountsRoleModule {}

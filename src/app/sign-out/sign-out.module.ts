@@ -5,12 +5,7 @@ import { SignOutRoutingModule } from './sign-out-routing.module';
 import { SignOutComponent } from './sign-out.component';
 
 @NgModule({
-  declarations: [
-    SignOutComponent
-  ],
-  imports: [
-    CommonModule,
-    SignOutRoutingModule
-  ]
+	declarations: [SignOutComponent],
+	imports: [CommonModule, SignOutRoutingModule],
 })
-export class SignOutModule { }
+export class SignOutModule {}

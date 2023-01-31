@@ -12,127 +12,112 @@ import { ParentAccountService } from '../../services/parent-account.service';
 import { ScreenService } from '../../services/screen.service';
 import { SideNavService } from '../../services/side-nav.service';
 import { SettingsComponent } from '../../settings/settings.component';
-import {SpLanguageComponent} from '../../sp-language/sp-language.component';
+import { SpLanguageComponent } from '../../sp-language/sp-language.component';
 import { ParentSettingComponent } from '../parent-setting/parent-setting.component';
 
 @Component({
-  selector: 'app-parent-navbar',
-  templateUrl: './parent-navbar.component.html',
-  styleUrls: ['./parent-navbar.component.scss'],
-  animations: [
-    NavbarAnimations.inboxAppearance,
-    NavbarAnimations.arrowAppearance,
-  ],
+	selector: 'app-parent-navbar',
+	templateUrl: './parent-navbar.component.html',
+	styleUrls: ['./parent-navbar.component.scss'],
+	animations: [NavbarAnimations.inboxAppearance, NavbarAnimations.arrowAppearance],
 })
 export class ParentNavbarComponent implements OnInit {
+	@Input() hasNav = true;
 
-  @Input() hasNav = true;
+	user: User;
+	representedUsers: RepresentedUser[];
+	effectiveUser: RepresentedUser;
+	isOpenSettings: boolean;
+	showSwitchButton: boolean = false;
 
-  user: User;
-  representedUsers: RepresentedUser[];
-  effectiveUser: RepresentedUser;
-  isOpenSettings: boolean;
-  showSwitchButton: boolean = false;
+	private destroyer$ = new Subject<any>();
 
-  private destroyer$ = new Subject<any>();
+	@ViewChild('navbar') navbar: ElementRef;
+	// @ViewChild("navButtonsContainerMobile") navButtonsContainerMobile: ElementRef;
+	@ViewChild('setButton') settingsButton: ElementRef;
+	@Output() settingsClick: EventEmitter<any> = new EventEmitter<any>();
 
-  @ViewChild("navbar") navbar: ElementRef;
-  // @ViewChild("navButtonsContainerMobile") navButtonsContainerMobile: ElementRef;
-  @ViewChild("setButton") settingsButton: ElementRef;
-  @Output() settingsClick: EventEmitter<any> = new EventEmitter<any>();
+	constructor(
+		public darkTheme: DarkThemeSwitch,
+		public parentService: ParentAccountService,
+		public screenService: ScreenService,
+		public sideNavService: SideNavService,
+		public dialog: MatDialog,
+		public router: Router
+	) {}
 
-  constructor(
-    public darkTheme: DarkThemeSwitch,
-    public parentService: ParentAccountService,
-    public screenService: ScreenService,
-    public sideNavService: SideNavService,
-    public dialog: MatDialog,
-    public router: Router,
-  ) { }
+	ngOnInit(): void {
+		this.parentService.getParentInfo().subscribe({
+			next: (result: any) => {
+				this.user = result;
+			},
+			error: (error: any) => {
+				console.log('Error : ', error);
+			},
+		});
 
-  ngOnInit(): void {
-    this.parentService.getParentInfo().subscribe({
-      next: (result: any) => {
-        this.user = result;
-      },
-      error: (error: any) => {
-        console.log("Error : ", error)
+		this.sideNavService.sideNavAction.pipe(takeUntil(this.destroyer$)).subscribe((action) => {
+			this.settingsAction(action);
+		});
 
-      }
-    });
+		this.sideNavService.openSettingsEvent$
+			.pipe(
+				filter((r) => !!r),
+				takeUntil(this.destroyer$)
+			)
+			.subscribe((res) => this.showOptions(this.settingsButton));
+	}
 
-    this.sideNavService.sideNavAction
-      .pipe(takeUntil(this.destroyer$))
-      .subscribe((action) => {
-        this.settingsAction(action);
-      });
+	showOptions(event) {
+		if (!this.isOpenSettings) {
+			if (this.screenService.isDeviceLargeExtra) {
+				this.sideNavService.toggle$.next(true);
+				this.sideNavService.toggleLeft$.next(true);
+			}
 
-    this.sideNavService.openSettingsEvent$
-      .pipe(
-        filter((r) => !!r),
-        takeUntil(this.destroyer$)
-      )
-      .subscribe((res) => this.showOptions(this.settingsButton));
-  }
+			const target = new ElementRef(event.currentTarget);
+			this.isOpenSettings = true;
+			UNANIMATED_CONTAINER.next(true);
+			const settingRef = this.dialog.open(SettingsComponent, {
+				panelClass: ['calendar-dialog-container', 'animation'],
+				backdropClass: 'invis-backdrop',
+				data: {
+					trigger: target,
+					isSwitch: this.showSwitchButton,
+					settings: [{ hidden: false, background: '#134482', icon: 'Language', action: 'language', title: 'Language', isNew: true }],
+				},
+			});
 
-  showOptions(event) {
-    if (!this.isOpenSettings) {
-      if (this.screenService.isDeviceLargeExtra) {
-        this.sideNavService.toggle$.next(true);
-        this.sideNavService.toggleLeft$.next(true);
-      }
+			settingRef.afterClosed().subscribe((action) => {
+				UNANIMATED_CONTAINER.next(false);
+				this.isOpenSettings = false;
+				this.settingsAction(action);
+			});
+			// if (!this.screenService.isDeviceLargeExtra) {
+			//
+			// }
 
-      const target = new ElementRef(event.currentTarget);
-      this.isOpenSettings = true;
-      UNANIMATED_CONTAINER.next(true);
-      const settingRef = this.dialog.open(SettingsComponent, {
-        panelClass: ["calendar-dialog-container", "animation"],
-        backdropClass: "invis-backdrop",
-        data: {
-          trigger: target,
-          isSwitch: this.showSwitchButton,
-          settings: [
-            { 'hidden': false,
-              'background': '#134482',
-              'icon': 'Language',
-              'action': 'language',
-              'title': 'Language',
-              'isNew': true, },
-          ], 
-        },
-      });
+			this.settingsClick.emit({
+				trigger: target,
+				isSwitch: this.showSwitchButton,
+			});
 
-      settingRef.afterClosed().subscribe((action) => {
-        UNANIMATED_CONTAINER.next(false);
-        this.isOpenSettings = false;
-        this.settingsAction(action);
-      });
-      // if (!this.screenService.isDeviceLargeExtra) {
-      //
-      // }
+			this.sideNavService.sideNavData$.next({
+				trigger: target,
+				isSwitch: this.showSwitchButton,
+			});
 
-      this.settingsClick.emit({
-        trigger: target,
-        isSwitch: this.showSwitchButton,
-      });
+			this.sideNavService.sideNavType$.next('left');
+		}
+	}
 
-      this.sideNavService.sideNavData$.next({
-        trigger: target,
-        isSwitch: this.showSwitchButton,
-      });
-
-      this.sideNavService.sideNavType$.next("left");
-    }
-  }
-
-  settingsAction(action: string) {
-    if (action === "signout") {
-      this.router.navigate(["sign-out"]);
-    } else if (action === "language") {
-      this.dialog.open(SpLanguageComponent, {
-        panelClass: "sp-form-dialog",
-      });
-    }
-  }
-
+	settingsAction(action: string) {
+		if (action === 'signout') {
+			this.router.navigate(['sign-out']);
+		} else if (action === 'language') {
+			this.dialog.open(SpLanguageComponent, {
+				panelClass: 'sp-form-dialog',
+			});
+		}
+	}
 }

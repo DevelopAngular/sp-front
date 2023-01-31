@@ -1,226 +1,226 @@
 .ios-back-btn-top {
-  display: none;
+	display: none;
 }
 
 @media screen and (max-width: 940px) {
-  div.rest-mes-wrapper {
-    overflow: initial;
-  }
+	div.rest-mes-wrapper {
+		overflow: initial;
+	}
 
-  .selected-teacher-header {
-    display: none !important;
-  }
+	.selected-teacher-header {
+		display: none !important;
+	}
 
-  .message-box {
-    border: none !important;
-    box-shadow: none !important;
-  }
+	.message-box {
+		border: none !important;
+		box-shadow: none !important;
+	}
 
-  .buttons {
-    position: absolute;
-    bottom: 25px;
-    //left: 50%;
-    transform: translateX(-50%);
-  }
+	.buttons {
+		position: absolute;
+		bottom: 25px;
+		//left: 50%;
+		transform: translateX(-50%);
+	}
 
-  img.back-btn-top {
-    display: none;
-  }
+	img.back-btn-top {
+		display: none;
+	}
 
-  img.back-btn-bottom {
-    display: block;
-    position: absolute;
-    width: 28px;
-    height: 28px;
-    left: 50%;
-    transform: translateX(-50%);
-  }
+	img.back-btn-bottom {
+		display: block;
+		position: absolute;
+		width: 28px;
+		height: 28px;
+		left: 50%;
+		transform: translateX(-50%);
+	}
 }
 
 .rest-mes-wrapper {
-  height: 500px;
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  justify-content: space-between;
-  position: relative;
-  z-index: 1;
-  //background-color: #ffffff;
-  border-radius: 14px;
-  overflow: hidden;
-  .rest-mes-header, .rest-mes-header_animation-back {
+	height: 500px;
+	display: flex;
+	flex-direction: column;
+	align-items: center;
+	justify-content: space-between;
+	position: relative;
+	z-index: 1;
+	//background-color: #ffffff;
+	border-radius: 14px;
+	overflow: hidden;
+	.rest-mes-header,
+	.rest-mes-header_animation-back {
+		width: 100%;
+		height: 70px;
+		min-height: 70px;
+		display: flex;
+		align-items: center;
+		position: relative;
+		z-index: 10;
+		//box-shadow: 0 2px 4px 0px rgba(0, 0, 0, 0.1);
+		border-top-left-radius: 14px;
+		border-top-right-radius: 14px;
+		//overflow: hidden;
+		.header-background {
+			border-top-left-radius: 14px;
+			border-top-right-radius: 14px;
+			position: absolute;
+			top: 0;
+			bottom: 0;
+			left: 0;
+			right: 0;
+			z-index: -1;
+			//box-shadow: 0 2px 4px 0px rgba(0, 0, 0, 0.1);
+		}
+		.back-button {
+			&-wrapper {
+				position: absolute;
+			}
+			width: 28px;
+			height: 28px;
+			margin-left: 20px;
+			user-select: none;
+			z-index: 11;
+			cursor: pointer;
+		}
 
-    width: 100%;
-    height: 70px;
-    min-height: 70px;
-    display: flex;
-    align-items: center;
-    position: relative;
-    z-index: 10;
-    //box-shadow: 0 2px 4px 0px rgba(0, 0, 0, 0.1);
-    border-top-left-radius: 14px;
-    border-top-right-radius: 14px;
-    //overflow: hidden;
-    .header-background {
-      border-top-left-radius: 14px;
-      border-top-right-radius: 14px;
-      position: absolute;
-      top: 0;
-      bottom: 0;
-      left: 0;
-      right: 0;
-      z-index: -1;
-      //box-shadow: 0 2px 4px 0px rgba(0, 0, 0, 0.1);
-    }
-    .back-button {
-      &-wrapper {
-        position: absolute;
-      }
-      width: 28px;
-      height: 28px;
-      margin-left: 20px;
-      user-select: none;
-      z-index: 11;
-      cursor: pointer;
-    }
+		.rest-mes-header-text {
+			display: flex;
+			align-items: center;
+			margin: 0 auto;
 
-    .rest-mes-header-text {
-      display: flex;
-      align-items: center;
-      margin: 0 auto;
+			.search-icon {
+				width: 21px;
+				height: 21px;
+				margin-right: 12px;
+			}
 
-      .search-icon{
-        width: 21px;
-        height: 21px;
-        margin-right: 12px;
-      }
+			.text {
+				color: white;
+				font-size: 16px;
+				font-weight: bold;
+				font-style: normal;
+				font-stretch: normal;
+				line-height: 1.08;
+				letter-spacing: 0.3px;
+			}
+		}
+	}
 
-      .text {
-        color: white;
-        font-size: 16px;
-        font-weight: bold;
-        font-style: normal;
-        font-stretch: normal;
-        line-height: 1.08;
-        letter-spacing: 0.3px;
-      }
-    }
-  }
+	.selected-teacher-header {
+		width: 100%;
+		min-height: 54px;
+		display: flex;
+		align-items: center;
+		//overflow: auto;
+		//justify-content: center;
+		box-shadow: 0 2px 4px 0 rgba(0, 0, 0, 0.1);
+		box-sizing: border-box;
+		padding: 10px 37px;
+		background-color: #fcfdff;
 
-  .selected-teacher-header {
-    width: 100%;
-    min-height: 54px;
-    display: flex;
-    align-items: center;
-    //overflow: auto;
-    //justify-content: center;
-    box-shadow: 0 2px 4px 0 rgba(0, 0, 0, 0.1);
-    box-sizing: border-box;
-    padding: 10px 37px;
-    background-color: #FCFDFF;
+		.teachers {
+			display: flex;
+			flex-wrap: wrap;
+		}
+	}
 
-    .teachers {
-      display: flex;
-      flex-wrap: wrap;
-    }
-  }
+	.content-wrapper {
+		display: flex;
+		//flex-direction: column;
+		//align-items: center;
+		position: relative;
+		z-index: 1;
+		flex: 1 1 auto;
+		width: 100%;
+		.rest-mes-content {
+			width: 100%;
+			display: flex;
+			flex-direction: column;
+			align-items: flex-end;
+			box-sizing: border-box;
+			//padding: 0 15px;
 
-  .content-wrapper {
-    display: flex;
-    //flex-direction: column;
-    //align-items: center;
-    position: relative;
-    z-index: 1;
-    flex: 1 1 auto;
-    width: 100%;
-    .rest-mes-content {
-      width: 100%;
-      display: flex;
-      flex-direction: column;
-      align-items: flex-end;
-      box-sizing: border-box;
-      //padding: 0 15px;
+			.message-box {
+				margin-top: 25px;
+				border: 1px solid transparent;
+				padding: 10px;
+				position: relative;
+				//box-sizing: border-box;
+				//height: 90px;
+				height: inherit;
+				margin-bottom: 15px;
+				border-radius: 10px;
+				box-shadow: 0 0 6px 0 rgba(0, 0, 0, 0.1);
+				font-size: 16px;
+				font-style: normal;
+				font-stretch: normal;
+				line-height: 1.08;
+				letter-spacing: 0.3px;
+				background: transparent;
+				width: 350px;
+				&:focus {
+					border: 1px solid transparent;
+					transition: border 0.3s ease;
+					outline: none;
+				}
+			}
 
-      .message-box{
-        margin-top: 25px;
-        border: 1px solid transparent;
-        padding: 10px;
-        position: relative;
-        //box-sizing: border-box;
-        //height: 90px;
-        height: inherit;
-        margin-bottom: 15px;
-        border-radius: 10px;
-        box-shadow: 0 0 6px 0 rgba(0, 0, 0, 0.1);
-        font-size: 16px;
-        font-style: normal;
-        font-stretch: normal;
-        line-height: 1.08;
-        letter-spacing: 0.3px;
-        background: transparent;
-        width: 350px;
-        &:focus {
-          border: 1px solid transparent;
-          transition: border .3s ease;
-          outline: none;
-        }
-      }
+			.buttons {
+				margin-right: 35px;
+			}
+		}
+	}
+	.content-background {
+		border-radius: 14px;
+		overflow: hidden;
+		background-color: #fff;
+		position: absolute;
+		top: 0;
+		bottom: 0;
+		left: 0;
+		right: 0;
+		z-index: -2;
+	}
+	.message-footer {
+		width: 100%;
+		display: flex;
+		background-color: white;
+		box-shadow: rgba(0, 0, 0, 0.1) 0px 7px 0px 8px;
+		justify-content: center;
+		align-items: center;
+		z-index: 100;
+		position: absolute;
+		bottom: 0;
 
-      .buttons {
-        margin-right: 35px;
-      }
-    }
-  }
-  .content-background {
-    border-radius: 14px;
-    overflow: hidden;
-    background-color: #fff;
-    position: absolute;
-    top: 0;
-    bottom: 0;
-    left: 0;
-    right: 0;
-    z-index: -2;
-  }
-  .message-footer {
-    width: 100%;
-    display: flex;
-    background-color: white;
-    box-shadow: rgba(0, 0, 0, 0.1) 0px 7px 0px 8px;
-    justify-content: center;
-    align-items: center;
-    z-index: 100;
-    position: absolute;
-    bottom: 0;
+		.footer-from-text {
+			display: flex;
+			align-items: center;
+			flex-direction: column;
 
-    .footer-from-text {
-      display: flex;
-      align-items: center;
-      flex-direction: column;
+			.footer-text {
+				color: #1f195e;
+			}
+		}
 
-      .footer-text {
-        color: #1F195E;
-      }
-    }
+		.footer-icon {
+			width: 48px;
+			height: 10px;
+			margin: 0 15px 0 15px;
+		}
+	}
 
-    .footer-icon {
-      width: 48px;
-      height: 10px;
-      margin: 0 15px 0 15px;
-    }
-  }
-
-  .center-text {
-    display: flex;
-    align-items: center;
-    padding: 7px;
-  }
+	.center-text {
+		display: flex;
+		align-items: center;
+		padding: 7px;
+	}
 }
 
 .back-btn-top {
-  display: block;
+	display: block;
 }
 
 .back-btn-bottom {
-  display: none;
+	display: none;
 }

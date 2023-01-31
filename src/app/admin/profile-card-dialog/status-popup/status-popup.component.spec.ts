@@ -1,25 +1,24 @@
-import {async, ComponentFixture, TestBed} from '@angular/core/testing';
+import { async, ComponentFixture, TestBed } from '@angular/core/testing';
 
-import {StatusPopupComponent} from './status-popup.component';
+import { StatusPopupComponent } from './status-popup.component';
 
 describe('StatusPopupComponent', () => {
-  let component: StatusPopupComponent;
-  let fixture: ComponentFixture<StatusPopupComponent>;
+	let component: StatusPopupComponent;
+	let fixture: ComponentFixture<StatusPopupComponent>;
 
-  beforeEach(async(() => {
-    TestBed.configureTestingModule({
-      declarations: [ StatusPopupComponent ]
-    })
-    .compileComponents();
-  }));
+	beforeEach(async(() => {
+		TestBed.configureTestingModule({
+			declarations: [StatusPopupComponent],
+		}).compileComponents();
+	}));
 
-  beforeEach(() => {
-    fixture = TestBed.createComponent(StatusPopupComponent);
-    component = fixture.componentInstance;
-    fixture.detectChanges();
-  });
+	beforeEach(() => {
+		fixture = TestBed.createComponent(StatusPopupComponent);
+		component = fixture.componentInstance;
+		fixture.detectChanges();
+	});
 
-  it('should create', () => {
-    expect(component).toBeTruthy();
-  });
+	it('should create', () => {
+		expect(component).toBeTruthy();
+	});
 });

@@ -1,25 +1,24 @@
-import {ComponentFixture, TestBed} from '@angular/core/testing';
+import { ComponentFixture, TestBed } from '@angular/core/testing';
 
-import {NuxTeacherViewComponent} from './nux-teacher-view.component';
+import { NuxTeacherViewComponent } from './nux-teacher-view.component';
 
 describe('NuxTeacherViewComponent', () => {
-  let component: NuxTeacherViewComponent;
-  let fixture: ComponentFixture<NuxTeacherViewComponent>;
+	let component: NuxTeacherViewComponent;
+	let fixture: ComponentFixture<NuxTeacherViewComponent>;
 
-  beforeEach(async () => {
-    await TestBed.configureTestingModule({
-      declarations: [ NuxTeacherViewComponent ]
-    })
-    .compileComponents();
-  });
+	beforeEach(async () => {
+		await TestBed.configureTestingModule({
+			declarations: [NuxTeacherViewComponent],
+		}).compileComponents();
+	});
 
-  beforeEach(() => {
-    fixture = TestBed.createComponent(NuxTeacherViewComponent);
-    component = fixture.componentInstance;
-    fixture.detectChanges();
-  });
+	beforeEach(() => {
+		fixture = TestBed.createComponent(NuxTeacherViewComponent);
+		component = fixture.componentInstance;
+		fixture.detectChanges();
+	});
 
-  it('should create', () => {
-    expect(component).toBeTruthy();
-  });
+	it('should create', () => {
+		expect(component).toBeTruthy();
+	});
 });

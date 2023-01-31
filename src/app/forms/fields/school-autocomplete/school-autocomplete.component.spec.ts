@@ -1,25 +1,24 @@
-import {ComponentFixture, TestBed} from '@angular/core/testing';
+import { ComponentFixture, TestBed } from '@angular/core/testing';
 
-import {SchoolAutocompleteComponent} from './school-autocomplete.component';
+import { SchoolAutocompleteComponent } from './school-autocomplete.component';
 
 describe('SchoolAutocompleteComponent', () => {
-  let component: SchoolAutocompleteComponent;
-  let fixture: ComponentFixture<SchoolAutocompleteComponent>;
+	let component: SchoolAutocompleteComponent;
+	let fixture: ComponentFixture<SchoolAutocompleteComponent>;
 
-  beforeEach(async () => {
-    await TestBed.configureTestingModule({
-      declarations: [ SchoolAutocompleteComponent ]
-    })
-    .compileComponents();
-  });
+	beforeEach(async () => {
+		await TestBed.configureTestingModule({
+			declarations: [SchoolAutocompleteComponent],
+		}).compileComponents();
+	});
 
-  beforeEach(() => {
-    fixture = TestBed.createComponent(SchoolAutocompleteComponent);
-    component = fixture.componentInstance;
-    fixture.detectChanges();
-  });
+	beforeEach(() => {
+		fixture = TestBed.createComponent(SchoolAutocompleteComponent);
+		component = fixture.componentInstance;
+		fixture.detectChanges();
+	});
 
-  it('should create', () => {
-    expect(component).toBeTruthy();
-  });
+	it('should create', () => {
+		expect(component).toBeTruthy();
+	});
 });

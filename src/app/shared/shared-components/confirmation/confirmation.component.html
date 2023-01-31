@@ -1,12 +1,24 @@
 <div class="dialog-wrapper">
-    <h3 class="ds-dialog-title title">{{data?.title}}</h3>
-    <p class="message">{{data?.message}}</p>
-    <div class="buttons ds-flex-end-end">
-        <app-gradient-button [style.margin-left]="'15px'" [textColor]="'#7083A0'" [gradient]="'#F0F2F5, #F0F2F5'" [hoverColor]="'#00B476'" [cursor]="'pointer'" (buttonClick)="dialogRef.close(false)">
-            Cancel
-        </app-gradient-button>
-        <app-gradient-button [style.margin-left]="'15px'" [textColor]="'#FFFFFF'" [gradient]="data?.okButtonBackgroundColor ? data?.okButtonBackgroundColor : '#E32C66, #E32C66'" [hoverColor]="'#00B476'" [cursor]="'pointer'" (buttonClick)="dialogRef.close(true)">
-            {{data?.okButtonText}}
-        </app-gradient-button>
-    </div>
+	<h3 class="ds-dialog-title title">{{ data?.title }}</h3>
+	<p class="message">{{ data?.message }}</p>
+	<div class="buttons ds-flex-end-end">
+		<app-gradient-button
+			[style.margin-left]="'15px'"
+			[textColor]="'#7083A0'"
+			[gradient]="'#F0F2F5, #F0F2F5'"
+			[hoverColor]="'#00B476'"
+			[cursor]="'pointer'"
+			(buttonClick)="dialogRef.close(false)">
+			Cancel
+		</app-gradient-button>
+		<app-gradient-button
+			[style.margin-left]="'15px'"
+			[textColor]="'#FFFFFF'"
+			[gradient]="data?.okButtonBackgroundColor ? data?.okButtonBackgroundColor : '#E32C66, #E32C66'"
+			[hoverColor]="'#00B476'"
+			[cursor]="'pointer'"
+			(buttonClick)="dialogRef.close(true)">
+			{{ data?.okButtonText }}
+		</app-gradient-button>
+	</div>
 </div>

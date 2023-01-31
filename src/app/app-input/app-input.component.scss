@@ -1,125 +1,122 @@
 ﻿@import '../../sp-colors';
 
 .InputWrapper {
-  border-radius: 0.5rem;
+	border-radius: 0.5rem;
 }
 
-.InputWrapper label{
-  color: #1D1A5E;
-  font-weight:bold;
+.InputWrapper label {
+	color: #1d1a5e;
+	font-weight: bold;
 }
 
 ::ng-deep .tooltip {
-  padding: 15px;
-  color: #7f879d !important;
-  background-color: white;
-  text-align: center;
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  font-size: 16px;
-  border-radius: 10px !important;
-  box-shadow: 0 2px 4px 0 rgba(0, 0, 0, 0.1);
+	padding: 15px;
+	color: #7f879d !important;
+	background-color: white;
+	text-align: center;
+	display: flex;
+	justify-content: center;
+	align-items: center;
+	font-size: 16px;
+	border-radius: 10px !important;
+	box-shadow: 0 2px 4px 0 rgba(0, 0, 0, 0.1);
 }
 
 .input-container {
-  position: relative;
+	position: relative;
 
-  .success-icon {
-    width: 20px;
-    height: 20px;
-    position: absolute;
-    top: 0;
-    bottom: 0;
-    right: 10px;
-    margin: auto;
-  }
+	.success-icon {
+		width: 20px;
+		height: 20px;
+		position: absolute;
+		top: 0;
+		bottom: 0;
+		right: 10px;
+		margin: auto;
+	}
 }
 
 .support-icon {
-  width: 17px;
-  height: 17px;
-  margin-left: 7px;
-  cursor: help;
+	width: 17px;
+	height: 17px;
+	margin-left: 7px;
+	cursor: help;
 }
 
 .tooltip-container {
-  &__inline {
-    .success-icon:hover + .arrow-down-container {
-      opacity: 1;
-    }
-  }
-  .arrow-down-container{
-    opacity: 0;
-    transition: .25s ease;
-    position: absolute;
-    bottom: -8px;
-    width: 25px;
-    height: 10px;
-    margin-left: 5px;
-    overflow: hidden;
-    .arrow-down {
-      position: absolute;
-      width: 25px;
-      height: 25px;
-      top: 4px;
-      background-color: white;
-      box-shadow: 0px 0px 4px 0px rgba(0, 0, 0, 0.1);
-      -webkit-transform: rotate(-45deg);
-      transform: rotate(-45deg);
-    }
-  }
-
-
+	&__inline {
+		.success-icon:hover + .arrow-down-container {
+			opacity: 1;
+		}
+	}
+	.arrow-down-container {
+		opacity: 0;
+		transition: 0.25s ease;
+		position: absolute;
+		bottom: -8px;
+		width: 25px;
+		height: 10px;
+		margin-left: 5px;
+		overflow: hidden;
+		.arrow-down {
+			position: absolute;
+			width: 25px;
+			height: 25px;
+			top: 4px;
+			background-color: white;
+			box-shadow: 0px 0px 4px 0px rgba(0, 0, 0, 0.1);
+			-webkit-transform: rotate(-45deg);
+			transform: rotate(-45deg);
+		}
+	}
 }
 
 .show-password {
-  width: 72px;
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  position: absolute;
-  right: 0;
-  cursor: pointer;
+	width: 72px;
+	display: flex;
+	align-items: center;
+	justify-content: space-between;
+	position: absolute;
+	right: 0;
+	cursor: pointer;
 
-  .password-text {
-    margin-left: 9px;
-    font-size: 15px;
-    color: $blue-gray;
-  }
-
+	.password-text {
+		margin-left: 9px;
+		font-size: 15px;
+		color: $blue-gray;
+	}
 }
 
 .support-icon:hover + .arrow-down-container {
-  opacity: 1;
+	opacity: 1;
 }
 
 .InputWrapper input {
-  border: 2px solid transparent;
-  display: block;
-  width: 95%;
-  font-size: 1rem;
-  line-height: 1.5;
-  color: #1D1A5E;
-  background-clip: padding-box;
-  border-radius: .5rem;
-  transition: border-color .25s ease-in-out, box-shadow .25s ease-in-out, background-color .25s ease-in-out;
+	border: 2px solid transparent;
+	display: block;
+	width: 95%;
+	font-size: 1rem;
+	line-height: 1.5;
+	color: #1d1a5e;
+	background-clip: padding-box;
+	border-radius: 0.5rem;
+	transition: border-color 0.25s ease-in-out, box-shadow 0.25s ease-in-out, background-color 0.25s ease-in-out;
 }
 
 .InputWrapper input:focus {
-  border: 2px solid $navy;
+	border: 2px solid $navy;
 }
 .clserrorLabel {
-  color: #E32C66 !important;
+	color: #e32c66 !important;
 }
 .clserrorInput {
-  border: 2px solid #E32C66 !important
+	border: 2px solid #e32c66 !important;
 }
 
 .min {
-  position: absolute;
-  top: 10px;
-  color: $navy;
-  width: 100%;
-  white-space: nowrap;
+	position: absolute;
+	top: 10px;
+	color: $navy;
+	width: 100%;
+	white-space: nowrap;
 }

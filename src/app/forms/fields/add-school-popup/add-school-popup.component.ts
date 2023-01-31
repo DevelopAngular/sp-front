@@ -1,71 +1,68 @@
-import {Component, Inject, Input, OnInit} from '@angular/core';
-import {FormBuilder, FormGroup, Validators} from '@angular/forms';
-import {FormsService} from '../../../services/forms.service';
-import {MAT_DIALOG_DATA, MatDialogRef} from '@angular/material/dialog';
+import { Component, Inject, Input, OnInit } from '@angular/core';
+import { FormBuilder, FormGroup, Validators } from '@angular/forms';
+import { FormsService } from '../../../services/forms.service';
+import { MAT_DIALOG_DATA, MatDialogRef } from '@angular/material/dialog';
 
 @Component({
-  selector: 'app-add-school-popup',
-  templateUrl: './add-school-popup.component.html',
-  styleUrls: ['./add-school-popup.component.scss']
+	selector: 'app-add-school-popup',
+	templateUrl: './add-school-popup.component.html',
+	styleUrls: ['./add-school-popup.component.scss'],
 })
 export class AddSchoolPopupComponent implements OnInit {
+	@Input() askForSchoolName: boolean;
 
-  @Input() askForSchoolName: boolean;
+	submitted: boolean = false;
+	showErrors: boolean = false;
+	mobile: boolean;
 
-  submitted: boolean = false;
-  showErrors: boolean = false;
-  mobile: boolean;
+	schoolForm: FormGroup;
 
-  schoolForm: FormGroup;
+	constructor(
+		@Inject(MAT_DIALOG_DATA) public data: string,
+		private dialogRef: MatDialogRef<AddSchoolPopupComponent>,
+		private fb: FormBuilder,
+		private formService: FormsService
+	) {}
 
-  constructor(
-    @Inject(MAT_DIALOG_DATA) public data: string,
-    private dialogRef: MatDialogRef<AddSchoolPopupComponent>,
-    private fb: FormBuilder,
-    private formService: FormsService
-  ) {
-  }
+	ngOnInit(): void {
+		this.schoolForm = this.fb.group({
+			name: [this.data['name'], Validators.required],
+			road: ['', Validators.required],
+			city: ['', Validators.required],
+			state: ['', Validators.required],
+			zip: ['', [Validators.required, Validators.pattern('[0-9]{5}')]],
+			country: ['', [Validators.required, Validators.pattern('[A-Z]{2,3}')]],
+		});
+		this.mobile = window.innerWidth < 425;
+	}
 
-  ngOnInit(): void {
-    this.schoolForm = this.fb.group({
-      name: [this.data['name'], Validators.required],
-      road: ['', Validators.required],
-      city: ['', Validators.required],
-      state: ['', Validators.required],
-      zip: ['', [Validators.required, Validators.pattern('[0-9]{5}')]],
-      country: ['', [Validators.required, Validators.pattern('[A-Z]{2,3}')]],
-    });
-    this.mobile = window.innerWidth < 425;
-  }
+	isValid() {
+		return this.schoolForm.valid;
+	}
 
-  isValid() {
-    return this.schoolForm.valid;
-  }
+	submit() {
+		if (!this.isValid()) {
+			this.showErrors = true;
+		} else {
+			this.submitted = true;
 
-  submit() {
-    if (!this.isValid()) {
-      this.showErrors = true;
-    } else {
-      this.submitted = true;
+			let originalData = this.schoolForm.getRawValue();
+			let data = {
+				name: originalData['name'],
+				school_digger_id: null,
+				address: {
+					road: originalData['road'],
+					city: originalData['city'],
+					state: originalData['state'],
+					zip: originalData['zip'],
+				},
+				contact: null,
+			};
 
-      let originalData = this.schoolForm.getRawValue();
-      let data = {
-        name: originalData['name'],
-        school_digger_id: null,
-        address: {
-          road: originalData['road'],
-          city: originalData['city'],
-          state: originalData['state'],
-          zip: originalData['zip'],
-        },
-        contact: null,
-      };
-
-      this.formService.addSchool(data).subscribe(res => {
-        console.log(res);
-      });
-      this.dialogRef.close();
-    }
-  }
-
+			this.formService.addSchool(data).subscribe((res) => {
+				console.log(res);
+			});
+			this.dialogRef.close();
+		}
+	}
 }

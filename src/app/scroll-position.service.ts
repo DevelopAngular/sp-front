@@ -1,19 +1,17 @@
-import {Injectable} from '@angular/core';
+import { Injectable } from '@angular/core';
 
 @Injectable({
-  providedIn: 'root'
+	providedIn: 'root',
 })
 export class ScrollPositionService {
+	private scrollPositionHash: any = {};
 
-  private scrollPositionHash: any = {};
+	constructor() {}
 
-  constructor() { }
-
-  saveComponentScroll(componentName: string, scrollPosition: number) {
-    this.scrollPositionHash[componentName] = scrollPosition;
-  }
-  getComponentScroll(componentName: string) {
-    return this.scrollPositionHash[componentName];
-  }
-
+	saveComponentScroll(componentName: string, scrollPosition: number) {
+		this.scrollPositionHash[componentName] = scrollPosition;
+	}
+	getComponentScroll(componentName: string) {
+		return this.scrollPositionHash[componentName];
+	}
 }

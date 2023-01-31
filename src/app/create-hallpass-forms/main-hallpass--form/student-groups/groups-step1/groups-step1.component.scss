@@ -1,496 +1,496 @@
-@import "../../../../../sp-colors";
+@import '../../../../../sp-colors';
 
 :host {
-  .ios {
-    &-step-1-container {
-      @extend .step-1-container;
-      min-height: 500px !important;
-    }
-
-    &-back-btn-top {
-      display: none;
-    }
-
-    &-back-btn-bottom {
-      display: block;
-      position: absolute;
-      width: 28px;
-      height: 28px;
-      left: 50%;
-      transform: translateX(-50%);
-      bottom: -45px;
-    }
-
-    &-step-1-container div.content-left {
-      border: none;
-      order: 1;
-    }
-
-    &-step-1-container div.content {
-      flex-direction: column;
-      overflow-y: auto;
-      overflow-x: hidden;
-    }
-
-    &-step-1-container div.content-left_wrapper {
-      padding: 0;
-      overflow: visible;
-      width: 100%;
-      margin: auto;
-    }
-
-    &-step-1-container div.content-right {
-      overflow: visible;
-      padding: 0;
-      flex: 0;
-    }
-
-    &-step-1-container div.content-left_groups {
-      margin: 0;
-    }
-
-    &-step-1-container div.content-right_next {
-      left: 50%;
-      transform: translateX(-50%);
-      bottom: 5px;
-      right: inherit;
-    }
-
-    &-step-1-container div.button-shadow.next-btn-desktop {
-      display: none;
-    }
-
-    &-step-1-container div.button-shadow.next-btn-mobile {
-      display: block;
-      position: absolute;
-      bottom: 21px;
-      left: 50%;
-      transform: translateX(-50%);
-      z-index: 10;
-    }
-
-    &-step-1-container div.incomplete {
-      display: none;
-    }
-
-    &-step-1-container div.new-student-group-btn {
-      display: none;
-    }
-
-    &-step-1-container div.edit-group-btn {
-      display: none;
-    }
-  }
-
-  @media all and (max-width: 940px) {
-    div.step-1-container {
-      min-height: 500px;
-    }
-
-    div.back-btn-top {
-      display: none;
-    }
-
-    div.back-btn-bottom {
-      display: block;
-      position: absolute;
-      width: 28px;
-      height: 28px;
-      left: 50%;
-      transform: translateX(-50%);
-    }
-
-    .step-1-container div.content-left {
-      border: none;
-      order: 1;
-    }
-
-    .step-1-container div.content {
-      flex-direction: column;
-      overflow-y: auto;
-      overflow-x: hidden;
-    }
-
-    .step-1-container div.content-left_wrapper {
-      padding: 0;
-      overflow: visible;
-      width: 100%;
-      margin: auto;
-    }
-
-    .step-1-container div.content-right {
-      overflow: visible;
-      padding: 0;
-      flex: 0;
-    }
-
-    .step-1-container div.content-left_groups {
-      margin: 0;
-    }
-
-    .step-1-container div.content-right_next {
-      left: 50%;
-      transform: translateX(-50%);
-      bottom: 5px;
-      right: inherit;
-    }
-
-    .step-1-container div.button-shadow.next-btn-desktop {
-      display: none;
-    }
-
-    .step-1-container div.button-shadow.next-btn-mobile {
-      display: block;
-      position: absolute;
-      bottom: 21px;
-      left: 50%;
-      transform: translateX(-50%);
-      z-index: 10;
-    }
-
-    .step-1-container div.incomplete {
-      display: none;
-    }
-
-    .step-1-container div.new-student-group-btn {
-      display: none;
-    }
-
-    .step-1-container div.edit-group-btn {
-      display: none;
-    }
-  }
-
-  @media all and (min-width: 360px) and (max-width: 940px) {
-    div.back-btn-bottom {
-      bottom: -45px;
-    }
-  }
-
-  @media all and (max-width: 320px) {
-    div.back-btn-bottom {
-      bottom: -35px;
-    }
-  }
-
-  .step-1-container {
-    $primary-color: #3D396B;
-    $secondary-color: #999999;
-
-
-    min-height: 400px;
-    //background-color: #fff;
-    //border: 1px solid #777;
-    //box-shadow: 0 0 7px 0px rgba(0, 0, 0, .3);
-    border-radius: 14px;
-    overflow: hidden;
-    display: flex;
-    flex-direction: column;
-    justify-content: space-between;
-
-    .header {
-      box-sizing: border-box;
-      padding: 0 20px;
-      //background-color: #fff;
-      height: 70px;
-      //box-shadow: 0 0 6px 0px rgba(0, 0, 0, .3);
-      display: flex;
-      justify-content: center;
-      align-items: center;
-      color: $primary-color;
-      position: relative;
-      z-index: 10;
-      border-top-left-radius: 14px;
-      border-top-right-radius: 14px;
-      .header-background {
-        border-top-left-radius: 14px;
-        border-top-right-radius: 14px;
-        position: absolute;
-        top: 0;
-        bottom: 0;
-        left: 0;
-        right: 0;
-        z-index: -1;
-        box-shadow: 0 2px 4px 0px rgba(0, 0, 0, 0.1);
-      }
-      &_title {
-        display: flex;
-        align-items: center;
-      }
-
-      &_back-button {
-        width: 28px;
-        height: 28px;
-        display: flex;
-        align-items: center;
-        position: absolute;
-        left: 20px;
-        font-size: 1em;
-        font-weight: bold;
-        color: $secondary-color;
-        cursor: pointer;
-
-        &-icon {
-          width: 28px;
-          height: 28px;
-        }
-      }
-
-      &_icon {
-        width: 21px;
-        height: 21px;
-      }
-
-      &_text {
-        padding-left: 12px;
-        padding-bottom: 3px;
-      }
-    }
-
-    .content {
-      width: 100%;
-      height: 330px;
-      flex: 1 1 auto;
-      display: flex;
-      position: relative;
-
-      &-left {
-        &_wrapper {
-          height: 100%;
-          max-height: 330px;
-          display: flex;
-          flex-direction: column;
-          justify-content: space-between;
-          align-items: center;
-          box-sizing: border-box;
-          padding: 15px 0;
-          min-width: 220px;
-          max-width: 220px;
-          width: 220px;
-          overflow: hidden;
-        }
-
-        border-right: 2px solid rgba(0, 0, 0, .1);
-
-        &_groups {
-          width: 100%;
-          box-sizing: border-box;
-          margin: 14px 0;
-          overflow: hidden;
-          flex: 1 1 auto;
-          position: relative;
-          display: flex;
-          flex-direction: column;
-
-          .group {
-            height: 36px;
-            color: #767676;
-            transition: background-color .2s ease;
-
-            &:hover {
-              background-color: #F1F1F1;
-              color: $primary-color;
-            }
-
-            &_selected {
-              background-color: #dce2e7;
-              color: $primary-color;
-            }
-          }
-
-          .group-name {
-            width: 100%;
-            display: flex;
-            align-items: center;
-            justify-content: space-between;
-            cursor: pointer;
-          }
-
-          .group-icon {
-            user-select: none;
-            width: 15px;
-            height: 15px;
-          }
-
-          .shadow-hint-container {
-            width: 96%;
-            height: 30px;
-            position: absolute;
-            left: 0;
-            bottom: 0;
-            overflow-x: hidden;
-            overflow-y: visible;
-
-            .shadow-hint {
-              position: absolute;
-              bottom: 0;
-              box-shadow: 0px 0px 20px 15px #FFFFFF;
-              width: 100%;
-            }
-          }
-
-          .goups-container {
-            padding: 0px 0px 25px 0px;
-            overflow: auto;
-            flex: 1 1 auto;
-
-            .list-of-groups, .content-left_placeholder {
-              opacity: 0;
-              animation: appearing .5s ease .1s forwards;
-            }
-
-            @keyframes appearing {
-              0% {
-                opacity: 0;
-              }
-              100% {
-                opacity: 1;
-              }
-            }
-          }
-        }
-
-        &_create-group {
-          .create-button {
-            display: flex;
-            flex-direction: column;
-
-            &_title {
-            }
-
-            &_back-button {
-              width: 30px;
-              height: 30px;
-              display: flex;
-              align-items: center;
-              position: absolute;
-              left: 20px;
-              font-size: 1.1em;
-              font-weight: bold;
-              color: $secondary-color;
-              cursor: pointer;
-            }
-
-            &_subtitle {
-              color: $secondary-color;
-              font-size: 11px;
-            }
-          }
-        }
-
-        &_placeholder {
-          color: $secondary-color;
-          font-size: 1.1em;
-          text-align: center;
-
-          .no-groups-dummy-image {
-            img {
-              width: 130px;
-              margin: 10px auto;
-            }
-          }
-
-          .no-groups-dummy-text {
-            margin-top: 5px;
-            font-size: 18px;
-            color: #999999;
-          }
-        }
-      }
-
-      &-right {
-        height: 100%;
-        overflow-y: auto;
-        flex: 1 1 auto;
-        box-sizing: border-box;
-        padding: 20px 0px;
-
-        &_sudent-search {
-          display: flex;
-          flex-direction: column;
-          align-items: center;
-
-          .search-wrapper {
-            width: 100%;
-            display: flex;
-            justify-content: center;
-            margin: 5px 0px;
-          }
-
-          .student-list {
-            width: 250px;
-
-            &_header {
-              margin: 15px 0 5px 0;
-              text-align: center;
-              font-weight: bold;
-            }
-
-            &_scrollable {
-              max-height: 190px;
-              overflow: auto;
-            }
-
-            &_item {
-              border-top: 1px solid #D8D8D8;
-              display: flex;
-              align-items: center;
-              justify-content: space-between;
-              padding: 9px 5px;
-              color: #555558;
-              font-size: 14px;
-              cursor: pointer;
-
-              img {
-                cursor: pointer;
-              }
-            }
-          }
-        }
-
-        &_next {
-          position: absolute;
-          z-index: 1;
-          bottom: 15px;
-          right: 15px;
-          display: flex;
-          justify-content: flex-end;
-
-          .button-shadow {
-            box-shadow: 0 0 15px 8px rgba(255, 255, 255, 1);
-            border-radius: 12px;
-          }
-        }
-      }
-    }
-  }
+	.ios {
+		&-step-1-container {
+			@extend .step-1-container;
+			min-height: 500px !important;
+		}
+
+		&-back-btn-top {
+			display: none;
+		}
+
+		&-back-btn-bottom {
+			display: block;
+			position: absolute;
+			width: 28px;
+			height: 28px;
+			left: 50%;
+			transform: translateX(-50%);
+			bottom: -45px;
+		}
+
+		&-step-1-container div.content-left {
+			border: none;
+			order: 1;
+		}
+
+		&-step-1-container div.content {
+			flex-direction: column;
+			overflow-y: auto;
+			overflow-x: hidden;
+		}
+
+		&-step-1-container div.content-left_wrapper {
+			padding: 0;
+			overflow: visible;
+			width: 100%;
+			margin: auto;
+		}
+
+		&-step-1-container div.content-right {
+			overflow: visible;
+			padding: 0;
+			flex: 0;
+		}
+
+		&-step-1-container div.content-left_groups {
+			margin: 0;
+		}
+
+		&-step-1-container div.content-right_next {
+			left: 50%;
+			transform: translateX(-50%);
+			bottom: 5px;
+			right: inherit;
+		}
+
+		&-step-1-container div.button-shadow.next-btn-desktop {
+			display: none;
+		}
+
+		&-step-1-container div.button-shadow.next-btn-mobile {
+			display: block;
+			position: absolute;
+			bottom: 21px;
+			left: 50%;
+			transform: translateX(-50%);
+			z-index: 10;
+		}
+
+		&-step-1-container div.incomplete {
+			display: none;
+		}
+
+		&-step-1-container div.new-student-group-btn {
+			display: none;
+		}
+
+		&-step-1-container div.edit-group-btn {
+			display: none;
+		}
+	}
+
+	@media all and (max-width: 940px) {
+		div.step-1-container {
+			min-height: 500px;
+		}
+
+		div.back-btn-top {
+			display: none;
+		}
+
+		div.back-btn-bottom {
+			display: block;
+			position: absolute;
+			width: 28px;
+			height: 28px;
+			left: 50%;
+			transform: translateX(-50%);
+		}
+
+		.step-1-container div.content-left {
+			border: none;
+			order: 1;
+		}
+
+		.step-1-container div.content {
+			flex-direction: column;
+			overflow-y: auto;
+			overflow-x: hidden;
+		}
+
+		.step-1-container div.content-left_wrapper {
+			padding: 0;
+			overflow: visible;
+			width: 100%;
+			margin: auto;
+		}
+
+		.step-1-container div.content-right {
+			overflow: visible;
+			padding: 0;
+			flex: 0;
+		}
+
+		.step-1-container div.content-left_groups {
+			margin: 0;
+		}
+
+		.step-1-container div.content-right_next {
+			left: 50%;
+			transform: translateX(-50%);
+			bottom: 5px;
+			right: inherit;
+		}
+
+		.step-1-container div.button-shadow.next-btn-desktop {
+			display: none;
+		}
+
+		.step-1-container div.button-shadow.next-btn-mobile {
+			display: block;
+			position: absolute;
+			bottom: 21px;
+			left: 50%;
+			transform: translateX(-50%);
+			z-index: 10;
+		}
+
+		.step-1-container div.incomplete {
+			display: none;
+		}
+
+		.step-1-container div.new-student-group-btn {
+			display: none;
+		}
+
+		.step-1-container div.edit-group-btn {
+			display: none;
+		}
+	}
+
+	@media all and (min-width: 360px) and (max-width: 940px) {
+		div.back-btn-bottom {
+			bottom: -45px;
+		}
+	}
+
+	@media all and (max-width: 320px) {
+		div.back-btn-bottom {
+			bottom: -35px;
+		}
+	}
+
+	.step-1-container {
+		$primary-color: #3d396b;
+		$secondary-color: #999999;
+
+		min-height: 400px;
+		//background-color: #fff;
+		//border: 1px solid #777;
+		//box-shadow: 0 0 7px 0px rgba(0, 0, 0, .3);
+		border-radius: 14px;
+		overflow: hidden;
+		display: flex;
+		flex-direction: column;
+		justify-content: space-between;
+
+		.header {
+			box-sizing: border-box;
+			padding: 0 20px;
+			//background-color: #fff;
+			height: 70px;
+			//box-shadow: 0 0 6px 0px rgba(0, 0, 0, .3);
+			display: flex;
+			justify-content: center;
+			align-items: center;
+			color: $primary-color;
+			position: relative;
+			z-index: 10;
+			border-top-left-radius: 14px;
+			border-top-right-radius: 14px;
+			.header-background {
+				border-top-left-radius: 14px;
+				border-top-right-radius: 14px;
+				position: absolute;
+				top: 0;
+				bottom: 0;
+				left: 0;
+				right: 0;
+				z-index: -1;
+				box-shadow: 0 2px 4px 0px rgba(0, 0, 0, 0.1);
+			}
+			&_title {
+				display: flex;
+				align-items: center;
+			}
+
+			&_back-button {
+				width: 28px;
+				height: 28px;
+				display: flex;
+				align-items: center;
+				position: absolute;
+				left: 20px;
+				font-size: 1em;
+				font-weight: bold;
+				color: $secondary-color;
+				cursor: pointer;
+
+				&-icon {
+					width: 28px;
+					height: 28px;
+				}
+			}
+
+			&_icon {
+				width: 21px;
+				height: 21px;
+			}
+
+			&_text {
+				padding-left: 12px;
+				padding-bottom: 3px;
+			}
+		}
+
+		.content {
+			width: 100%;
+			height: 330px;
+			flex: 1 1 auto;
+			display: flex;
+			position: relative;
+
+			&-left {
+				&_wrapper {
+					height: 100%;
+					max-height: 330px;
+					display: flex;
+					flex-direction: column;
+					justify-content: space-between;
+					align-items: center;
+					box-sizing: border-box;
+					padding: 15px 0;
+					min-width: 220px;
+					max-width: 220px;
+					width: 220px;
+					overflow: hidden;
+				}
+
+				border-right: 2px solid rgba(0, 0, 0, 0.1);
+
+				&_groups {
+					width: 100%;
+					box-sizing: border-box;
+					margin: 14px 0;
+					overflow: hidden;
+					flex: 1 1 auto;
+					position: relative;
+					display: flex;
+					flex-direction: column;
+
+					.group {
+						height: 36px;
+						color: #767676;
+						transition: background-color 0.2s ease;
+
+						&:hover {
+							background-color: #f1f1f1;
+							color: $primary-color;
+						}
+
+						&_selected {
+							background-color: #dce2e7;
+							color: $primary-color;
+						}
+					}
+
+					.group-name {
+						width: 100%;
+						display: flex;
+						align-items: center;
+						justify-content: space-between;
+						cursor: pointer;
+					}
+
+					.group-icon {
+						user-select: none;
+						width: 15px;
+						height: 15px;
+					}
+
+					.shadow-hint-container {
+						width: 96%;
+						height: 30px;
+						position: absolute;
+						left: 0;
+						bottom: 0;
+						overflow-x: hidden;
+						overflow-y: visible;
+
+						.shadow-hint {
+							position: absolute;
+							bottom: 0;
+							box-shadow: 0px 0px 20px 15px #ffffff;
+							width: 100%;
+						}
+					}
+
+					.goups-container {
+						padding: 0px 0px 25px 0px;
+						overflow: auto;
+						flex: 1 1 auto;
+
+						.list-of-groups,
+						.content-left_placeholder {
+							opacity: 0;
+							animation: appearing 0.5s ease 0.1s forwards;
+						}
+
+						@keyframes appearing {
+							0% {
+								opacity: 0;
+							}
+							100% {
+								opacity: 1;
+							}
+						}
+					}
+				}
+
+				&_create-group {
+					.create-button {
+						display: flex;
+						flex-direction: column;
+
+						&_title {
+						}
+
+						&_back-button {
+							width: 30px;
+							height: 30px;
+							display: flex;
+							align-items: center;
+							position: absolute;
+							left: 20px;
+							font-size: 1.1em;
+							font-weight: bold;
+							color: $secondary-color;
+							cursor: pointer;
+						}
+
+						&_subtitle {
+							color: $secondary-color;
+							font-size: 11px;
+						}
+					}
+				}
+
+				&_placeholder {
+					color: $secondary-color;
+					font-size: 1.1em;
+					text-align: center;
+
+					.no-groups-dummy-image {
+						img {
+							width: 130px;
+							margin: 10px auto;
+						}
+					}
+
+					.no-groups-dummy-text {
+						margin-top: 5px;
+						font-size: 18px;
+						color: #999999;
+					}
+				}
+			}
+
+			&-right {
+				height: 100%;
+				overflow-y: auto;
+				flex: 1 1 auto;
+				box-sizing: border-box;
+				padding: 20px 0px;
+
+				&_sudent-search {
+					display: flex;
+					flex-direction: column;
+					align-items: center;
+
+					.search-wrapper {
+						width: 100%;
+						display: flex;
+						justify-content: center;
+						margin: 5px 0px;
+					}
+
+					.student-list {
+						width: 250px;
+
+						&_header {
+							margin: 15px 0 5px 0;
+							text-align: center;
+							font-weight: bold;
+						}
+
+						&_scrollable {
+							max-height: 190px;
+							overflow: auto;
+						}
+
+						&_item {
+							border-top: 1px solid #d8d8d8;
+							display: flex;
+							align-items: center;
+							justify-content: space-between;
+							padding: 9px 5px;
+							color: #555558;
+							font-size: 14px;
+							cursor: pointer;
+
+							img {
+								cursor: pointer;
+							}
+						}
+					}
+				}
+
+				&_next {
+					position: absolute;
+					z-index: 1;
+					bottom: 15px;
+					right: 15px;
+					display: flex;
+					justify-content: flex-end;
+
+					.button-shadow {
+						box-shadow: 0 0 15px 8px rgba(255, 255, 255, 1);
+						border-radius: 12px;
+					}
+				}
+			}
+		}
+	}
 }
 
 .edit-group-btn,
 .next-btn-desktop,
 .back-btn-top {
-  display: block;
+	display: block;
 }
 
 .next-btn-mobile,
 .back-btn-bottom {
-  display: none;
+	display: none;
 }
 
 .student-group-name-wrapper {
-  width: 100%;
+	width: 100%;
 }
 
 .student-group-name {
-  text-align: center;
-  padding: 8px 0;
-  border-bottom: 1.5px solid rgba(0, 0, 0, .1);
+	text-align: center;
+	padding: 8px 0;
+	border-bottom: 1.5px solid rgba(0, 0, 0, 0.1);
 }
 
 .incomplete {
-  display: block;
+	display: block;
 }
 
 .new-student-group-btn {
-  display: block;
+	display: block;
 }

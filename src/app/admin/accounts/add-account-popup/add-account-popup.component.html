@@ -1,38 +1,37 @@
 <div class="wrapper">
-  <div class="options">
-    <div class="option-container" *ngFor="let option of options let i = index">
-      <div class="option"
-           *ngIf="i != 1; else intercomButton"
-           #op
-           (mouseenter)="op.hover = true"
-           (mouseleave)="op.hover = false"
-           appCrossPointerEventTarget
-           (pointerClickEvent)="dialogRef.close(option.action)"
-      >
-        <img *ngIf="i !== 2 && i !== 3; else color" width="20" [src]="option.icon + ' (Blue-Gray).svg' | resolveAsset">
-        <ng-template #color>
-          <img width="20" [src]="option.icon | resolveAsset">
-        </ng-template>
-        <div class="title">{{ option.title }}</div>
-      </div>
+	<div class="options">
+		<div class="option-container" *ngFor="let option of options; let i = index">
+			<div
+				class="option"
+				*ngIf="i != 1; else intercomButton"
+				#op
+				(mouseenter)="op.hover = true"
+				(mouseleave)="op.hover = false"
+				appCrossPointerEventTarget
+				(pointerClickEvent)="dialogRef.close(option.action)">
+				<img *ngIf="i !== 2 && i !== 3; else color" width="20" [src]="option.icon + ' (Blue-Gray).svg' | resolveAsset" />
+				<ng-template #color>
+					<img width="20" [src]="option.icon | resolveAsset" />
+				</ng-template>
+				<div class="title">{{ option.title }}</div>
+			</div>
 
-      <ng-template #intercomButton>
-        <div class="intercom-button">
-          <div class="option" data-intercom-target=".intercom-button">
-              <img [src]="option.icon + ' (Blue-Gray).svg' | resolveAsset" alt="Bulk add">
-              <div class="title">{{ option.title }}</div>
-          </div>
-        </div>
-      </ng-template>
+			<ng-template #intercomButton>
+				<div class="intercom-button">
+					<div class="option" data-intercom-target=".intercom-button">
+						<img [src]="option.icon + ' (Blue-Gray).svg' | resolveAsset" alt="Bulk add" />
+						<div class="title">{{ option.title }}</div>
+					</div>
+				</div>
+			</ng-template>
 
-      <mat-divider *ngIf="i === 1 && options.length > 2"></mat-divider>
-    </div>
-<!--    <div class="option-container" id="bulk-add-users">-->
-<!--      <div class="option" data-intercom-target="#bulk-add-users">-->
-<!--        <img [src]="'./assets/Bulk Accounts (Blue-Gray).svg' | resolveAsset" alt="Bulk add">-->
-<!--        <div class="title">Bulk add standard accounts</div>-->
-<!--      </div>-->
-<!--    </div>-->
-
-  </div>
+			<mat-divider *ngIf="i === 1 && options.length > 2"></mat-divider>
+		</div>
+		<!--    <div class="option-container" id="bulk-add-users">-->
+		<!--      <div class="option" data-intercom-target="#bulk-add-users">-->
+		<!--        <img [src]="'./assets/Bulk Accounts (Blue-Gray).svg' | resolveAsset" alt="Bulk add">-->
+		<!--        <div class="title">Bulk add standard accounts</div>-->
+		<!--      </div>-->
+		<!--    </div>-->
+	</div>
 </div>

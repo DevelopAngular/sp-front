@@ -1,25 +1,22 @@
-import {Component, EventEmitter, Input, OnInit, Output} from '@angular/core';
+import { Component, EventEmitter, Input, OnInit, Output } from '@angular/core';
 
 @Component({
-  selector: 'app-integration-card',
-  templateUrl: './integration-card.component.html',
-  styleUrls: ['./integration-card.component.scss']
+	selector: 'app-integration-card',
+	templateUrl: './integration-card.component.html',
+	styleUrls: ['./integration-card.component.scss'],
 })
 export class IntegrationCardComponent implements OnInit {
+	@Input() icon: string;
+	@Input() title: string;
+	@Input() subtitle: string;
+	@Input() learnMoreLink: string;
+	@Input() status: 'disconnect' | 'approved' | 'done' = 'disconnect';
+	@Input() isIntegration: boolean = true;
 
-  @Input() icon: string;
-  @Input() title: string;
-  @Input() subtitle: string;
-  @Input() learnMoreLink: string;
-  @Input() status: 'disconnect' | 'approved' | 'done' = 'disconnect';
-  @Input() isIntegration: boolean = true;
+	@Output() setUp: EventEmitter<any> = new EventEmitter<any>();
+	@Output() clickButton: EventEmitter<any> = new EventEmitter<any>();
 
-  @Output() setUp: EventEmitter<any> = new EventEmitter<any>();
-  @Output() clickButton: EventEmitter<any> = new EventEmitter<any>();
+	constructor() {}
 
-  constructor() { }
-
-  ngOnInit() {
-  }
-
+	ngOnInit() {}
 }

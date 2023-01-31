@@ -1,55 +1,65 @@
 <div class="id-card-main-wrapper">
-    <!-- <p class="ds-dialog-title" [style.color]="darkTheme.getColor({white: '#1F195E', dark: '#FFFFFF'})">Preview</p> -->
-    <div class="id-card-wrapper flip-box" [ngStyle]="{'height': selectedBarcodeType == 'qr-code' ? '388px' : '348px'}">
-        <div class="flip-box-inner" id="flip-box-inner">
-            <div class="flip-box-front">
-                <div class="top" [ngStyle]="{'background': backgroundColor}">
-                    <div class="details-wrapper">
-                        <div class="school-name-wrapper">
-                            <p class="school-name" ignore>{{schoolName}}</p>
-                            <p class="year">2022-23</p>
-                        </div>
-                        <div>
-                            <div class="avatar-info">
-                                <div class="avatar" #avatarContainer>
-                                    <div *ngIf="profile_picture; else d" [ngStyle]="{'background': 'url(' + profile_picture + ') no-repeat left center/cover', width: '88px', height: '88px'}"></div>
-                                    <ng-template #d>
-                                        <img width="88" height="88" [src]="'./assets/Avatar Default.svg' | resolveAsset" alt="Avatar">
-                                    </ng-template>
-                                </div>
-                                <div class="logo">
-                                    <img [src]="logoURL" alt="">
-                                </div>
-                            </div>
-                            <!-- <p class="card-holder-name">{{userDetails.display_name}}</p> -->
-                            <p class="card-holder-name" notranslate>{{userName}}</p>
-                            <div class="ds-flex-center-start role-grade">
-                                <p>{{userRole}}
-                                    <!-- <span *ngIf="userDetails.isStudent()">Student</span>
+	<!-- <p class="ds-dialog-title" [style.color]="darkTheme.getColor({white: '#1F195E', dark: '#FFFFFF'})">Preview</p> -->
+	<div class="id-card-wrapper flip-box" [ngStyle]="{ height: selectedBarcodeType == 'qr-code' ? '388px' : '348px' }">
+		<div class="flip-box-inner" id="flip-box-inner">
+			<div class="flip-box-front">
+				<div class="top" [ngStyle]="{ background: backgroundColor }">
+					<div class="details-wrapper">
+						<div class="school-name-wrapper">
+							<p class="school-name" ignore>{{ schoolName }}</p>
+							<p class="year">2022-23</p>
+						</div>
+						<div>
+							<div class="avatar-info">
+								<div class="avatar" #avatarContainer>
+									<div
+										*ngIf="profile_picture; else d"
+										[ngStyle]="{ background: 'url(' + profile_picture + ') no-repeat left center/cover', width: '88px', height: '88px' }"></div>
+									<ng-template #d>
+										<img width="88" height="88" [src]="'./assets/Avatar Default.svg' | resolveAsset" alt="Avatar" />
+									</ng-template>
+								</div>
+								<div class="logo">
+									<img [src]="logoURL" alt="" />
+								</div>
+							</div>
+							<!-- <p class="card-holder-name">{{userDetails.display_name}}</p> -->
+							<p class="card-holder-name" notranslate>{{ userName }}</p>
+							<div class="ds-flex-center-start role-grade">
+								<p>
+									{{ userRole }}
+									<!-- <span *ngIf="userDetails.isStudent()">Student</span>
                                     <span *ngIf="userDetails.isAdmin() || userDetails.isAssistant()">Staff</span> -->
-                                </p>
-                                <ul *ngIf="(isDummyCard && greadLevel) || (greadLevel && userRole == 'Student')">
-                                    <li>Grade {{greadLevel}}</li>
-                                </ul>
-                            </div>
-                        </div>
-                    </div>
-                    <div *ngIf="IDNumberData.barcodeURL && IDNumberData.idNumber && showCustomID" class="id-detail-wrapper">
-                        <img [src]="IDNumberData.barcodeURL" alt="">
-                        <p class="id-number">{{IDNumberData.idNumber}}</p>
-                    </div>
-                </div>
-            </div>
-            <div class="flip-box-back">
-                <pre [innerHTML]="urlify(backsideText)"></pre>
-            </div>
-        </div>
-        <img class="design" [src]="'./assets/DIgital ID Card Design.svg' | resolveAsset" alt="">
-    </div>
-    <div class="button flip-btn">
-        <app-gradient-button [style.margin-left]="'15px'" [hoverColor]="'#00B476'" [textColor]="'#7083A0'" [border]="'#D4D9E2'" [gradient]="buttonBackColor" [rightIcon]="'./assets/Undo.svg'" [rightIconWidth]="'13px'" (buttonClick)="toggleFlip()">
-            {{getButtonText}}
-        </app-gradient-button>
-    </div>
-
+								</p>
+								<ul *ngIf="(isDummyCard && greadLevel) || (greadLevel && userRole == 'Student')">
+									<li>Grade {{ greadLevel }}</li>
+								</ul>
+							</div>
+						</div>
+					</div>
+					<div *ngIf="IDNumberData.barcodeURL && IDNumberData.idNumber && showCustomID" class="id-detail-wrapper">
+						<img [src]="IDNumberData.barcodeURL" alt="" />
+						<p class="id-number">{{ IDNumberData.idNumber }}</p>
+					</div>
+				</div>
+			</div>
+			<div class="flip-box-back">
+				<pre [innerHTML]="urlify(backsideText)"></pre>
+			</div>
+		</div>
+		<img class="design" [src]="'./assets/DIgital ID Card Design.svg' | resolveAsset" alt="" />
+	</div>
+	<div class="button flip-btn">
+		<app-gradient-button
+			[style.margin-left]="'15px'"
+			[hoverColor]="'#00B476'"
+			[textColor]="'#7083A0'"
+			[border]="'#D4D9E2'"
+			[gradient]="buttonBackColor"
+			[rightIcon]="'./assets/Undo.svg'"
+			[rightIconWidth]="'13px'"
+			(buttonClick)="toggleFlip()">
+			{{ getButtonText }}
+		</app-gradient-button>
+	</div>
 </div>

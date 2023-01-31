@@ -1,54 +1,45 @@
 <div class="wrapper">
-  <div class="header">
-    <img (click)="close()" class="back-button" [src]="'./assets/Back Button (Blue-White).svg' | resolveAsset">
-    <div class="title">Report</div>
-    <app-icon-button class="print" [onDarkShade]="true" [size]="17" [srcString]="'Print'" (clickEvent)="openPdfLink()"></app-icon-button>
-  </div>
-  <div class="content" (scroll)="scroll($event)">
-    <div class="block">
-      <div class="status">
-      <div class="title">Status</div>
-        <app-status-chip 
-          [editable]="data?.isAdmin" 
-          [status]="report.status"
-          [remoteid]="report.id"
-          [forceLookHovered]="true"
-        ></app-status-chip>
-      </div>
-      <div class="title">Student</div>
-      <div class="subtitle" notranslate>{{ report.student.display_name }}</div>
-      <div class="subtitle" notranslate>{{ report.student.primary_email }}</div>
-    </div>
+	<div class="header">
+		<img (click)="close()" class="back-button" [src]="'./assets/Back Button (Blue-White).svg' | resolveAsset" />
+		<div class="title">Report</div>
+		<app-icon-button class="print" [onDarkShade]="true" [size]="17" [srcString]="'Print'" (clickEvent)="openPdfLink()"></app-icon-button>
+	</div>
+	<div class="content" (scroll)="scroll($event)">
+		<div class="block">
+			<div class="status">
+				<div class="title">Status</div>
+				<app-status-chip [editable]="data?.isAdmin" [status]="report.status" [remoteid]="report.id" [forceLookHovered]="true"></app-status-chip>
+			</div>
+			<div class="title">Student</div>
+			<div class="subtitle" notranslate>{{ report.student.display_name }}</div>
+			<div class="subtitle" notranslate>{{ report.student.primary_email }}</div>
+		</div>
 
-    <div class="block">
-      <div class="title">Message</div>
-      <div [attr.notranslate]="report.message !== '' ? true : null" class="subtitle">{{ report.message || 'No report message' }}</div>
-    </div>
+		<div class="block">
+			<div class="title">Message</div>
+			<div [attr.notranslate]="report.message !== '' ? true : null" class="subtitle">{{ report.message || 'No report message' }}</div>
+		</div>
 
-    <div class="block"
-      *ngIf="!!report.reported_pass_id"
-         (click)="reportedPassClick()"
-    >
-      <div class="title">Pass</div>
-        <app-pass-tile
-          [forStaff]="data.forStaff"
-          [pass]="report.reported_pass"
-          [isActive]="isReportedPassActive === null ? null : isReportedPassActive"
-        ></app-pass-tile>
-    </div>
-    <mat-divider></mat-divider>
+		<div class="block" *ngIf="!!report.reported_pass_id" (click)="reportedPassClick()">
+			<div class="title">Pass</div>
+			<app-pass-tile
+				[forStaff]="data.forStaff"
+				[pass]="report.reported_pass"
+				[isActive]="isReportedPassActive === null ? null : isReportedPassActive"></app-pass-tile>
+		</div>
+		<mat-divider></mat-divider>
 
-    <div class="container">
-      <div class="block">
-        <div class="title">Submitted by</div>
-        <div class="subtitle" ignore>{{ report.issuer.display_name }}</div>
-      </div>
-      <div class="block">
-        <div class="title">Date Submitted</div>
-        <div notranslate class="subtitle">{{ dateFormat }}</div>
-      </div>
-    </div>
+		<div class="container">
+			<div class="block">
+				<div class="title">Submitted by</div>
+				<div class="subtitle" ignore>{{ report.issuer.display_name }}</div>
+			</div>
+			<div class="block">
+				<div class="title">Date Submitted</div>
+				<div notranslate class="subtitle">{{ dateFormat }}</div>
+			</div>
+		</div>
 
-    <div class="shadow" *ngIf="showBottomShadow"></div>
-  </div>
+		<div class="shadow" *ngIf="showBottomShadow"></div>
+	</div>
 </div>
