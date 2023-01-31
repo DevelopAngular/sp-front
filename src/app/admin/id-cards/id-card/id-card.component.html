@@ -47,8 +47,7 @@
         <img class="design" [src]="'./assets/DIgital ID Card Design.svg' | resolveAsset" alt="">
     </div>
     <div class="button flip-btn">
-        <app-gradient-button [style.margin-left]="'15px'" [hoverColor]="'#00B476'" [textColor]="'#7083A0'" [border]="'
-        #D4D9E2'" [gradient]="buttonBackColor" [rightIcon]="'./assets/Undo.svg'" [rightIconWidth]="'13px'" (buttonClick)="toggleFlip()">
+        <app-gradient-button [style.margin-left]="'15px'" [hoverColor]="'#00B476'" [textColor]="'#7083A0'" [border]="'#D4D9E2'" [gradient]="buttonBackColor" [rightIcon]="'./assets/Undo.svg'" [rightIconWidth]="'13px'" (buttonClick)="toggleFlip()">
             {{getButtonText}}
         </app-gradient-button>
     </div>
