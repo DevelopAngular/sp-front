@@ -79,29 +79,27 @@ export class AppComponent implements OnInit, AfterViewInit, OnDestroy {
 
 	private subscriber$ = new Subject();
 
-  trialEndDate$ = this.http.currentSchoolSubject.pipe(
-    takeUntil(this.subscriber$),
-    filter(s => !!s?.trial_end_date),
-    map(s => {
-      const endDate = new Date(s.trial_end_date);
-      // We want the trial to end at the end of the day specified by |trial_end_date|
-      const day = (60 * 60 * 24 * 1000) - 1;
-      const realEndDate = new Date(endDate.getTime() + day);
-      return realEndDate;
-    }),
-  );
+	trialEndDate$ = this.http.currentSchoolSubject.pipe(
+		takeUntil(this.subscriber$),
+		filter((s) => !!s?.trial_end_date),
+		map((s) => {
+			const endDate = new Date(s.trial_end_date);
+			// We want the trial to end at the end of the day specified by |trial_end_date|
+			const day = 60 * 60 * 24 * 1000 - 1;
+			const realEndDate = new Date(endDate.getTime() + day);
+			return realEndDate;
+		})
+	);
 
 	isAdmin$ = this.userService.userData.pipe(
 		filter((u) => !!u),
 		map((u) => u.isAdmin())
 	);
 
-  private todayDate = (() => {
-    const date = new Date();
-    return Date.UTC(date.getUTCFullYear(), date.getUTCMonth(),
-      date.getUTCDate(), date.getUTCHours(),
-      date.getUTCMinutes(), date.getUTCSeconds());
-  })();
+	private todayDate = (() => {
+		const date = new Date();
+		return Date.UTC(date.getUTCFullYear(), date.getUTCMonth(), date.getUTCDate(), date.getUTCHours(), date.getUTCMinutes(), date.getUTCSeconds());
+	})();
 
 	@HostListener('window:popstate', ['$event'])
 	back(event) {
@@ -442,16 +440,16 @@ export class AppComponent implements OnInit, AfterViewInit, OnDestroy {
 		}, 3000);
 	}
 
-  getDaysUntil(date: Date): number {
-    const oneDay = 24 * 60 * 60 * 1000; // hours*minutes*seconds*milliseconds
-    // @ts-ignore
-    const diffDays = Math.round(Math.abs((date - this.todayDate) / oneDay));
-    return diffDays;
-  }
+	getDaysUntil(date: Date): number {
+		const oneDay = 24 * 60 * 60 * 1000; // hours*minutes*seconds*milliseconds
+		// @ts-ignore
+		const diffDays = Math.round(Math.abs((date - this.todayDate) / oneDay));
+		return diffDays;
+	}
 
-  getDayText(days: number): string {
-    return days === 1 ? 'day' : 'days';
-  }
+	getDayText(days: number): string {
+		return days === 1 ? 'day' : 'days';
+	}
 
 	getUserType(user: User): string {
 		if (user.isAdmin()) {

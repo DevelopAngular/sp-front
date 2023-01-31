@@ -32,29 +32,22 @@
 		</div>
 	</div>
 
-  <div
-    class="trial-bar"
-    *ngIf="isAuthenticated && !isKioskMode && (isAdmin$ | async) && trialEndDate$ | async as trialEndDate"
-  >
-    <div
-      class="trialing"
-      *ngIf="trialEndDate >= todayDate; else ended">
-      <div class="daysLeft">
-        You have
-        <div class="daysContainer">
-          <div class="daysRect"></div>
-          <div class="days">{{getDaysUntil(trialEndDate)}}</div>
-        </div>
-        {{getDayText(getDaysUntil(trialEndDate))}} left in your SmartPass trial.
-      </div>
-      <button class="purchase">
-        Ready to purchase?
-      </button>
-      <div class="helpContainer">
-        <div class="daysRect"></div>
-        <button class="help">Need Help?</button>
-      </div>
-    </div>
+	<div class="trial-bar" *ngIf="isAuthenticated && !isKioskMode && (isAdmin$ | async) && trialEndDate$ | async as trialEndDate">
+		<div class="trialing" *ngIf="trialEndDate >= todayDate; else ended">
+			<div class="daysLeft">
+				You have
+				<div class="daysContainer">
+					<div class="daysRect"></div>
+					<div class="days">{{ getDaysUntil(trialEndDate) }}</div>
+				</div>
+				{{ getDayText(getDaysUntil(trialEndDate)) }} left in your SmartPass trial.
+			</div>
+			<button class="purchase">Ready to purchase?</button>
+			<div class="helpContainer">
+				<div class="daysRect"></div>
+				<button class="help">Need Help?</button>
+			</div>
+		</div>
 
 		<ng-template #ended>
 			<div class="trial-ended">
