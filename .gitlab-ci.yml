@@ -150,6 +150,7 @@ deploy_staging:
     - pwd
     - source scripts/auto_devops.sh
     - scripts/build.sh
+    - yarn lint:ci
     - install_dependencies
     - ensure_namespace
     - install_tiller
@@ -161,7 +162,6 @@ deploy_staging:
   environment:
       name: staging
       url: "https://notify-messenger-notify-server-staging.lavanote.com"
-  needs: [lint]
   only:
     refs:
       - master
