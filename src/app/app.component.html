@@ -28,18 +28,18 @@
 
   <div
     class="trial-bar"
-    *ngIf="isAuthenticated && (isAdmin$ | async) && trialEndDate$ | async as trialEndDate"
+    *ngIf="isAuthenticated && !isKioskMode && (isAdmin$ | async) && trialEndDate$ | async as trialEndDate"
   >
     <div
       class="trialing"
-      *ngIf="trialEndDate > todayDate; else ended">
+      *ngIf="trialEndDate >= todayDate; else ended">
       <div class="daysLeft">
         You have
         <div class="daysContainer">
           <div class="daysRect"></div>
           <div class="days">{{getDaysUntil(trialEndDate)}}</div>
         </div>
-        days left in your SmartPass trial.
+        {{getDayText(getDaysUntil(trialEndDate))}} left in your SmartPass trial.
       </div>
       <button class="purchase">
         Ready to purchase?
