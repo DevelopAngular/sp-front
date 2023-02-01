@@ -247,7 +247,7 @@
 				[currentPage]="currentView$.value"
 				(loadMoreData)="loadMorePasses()"
 				(sortClickEvent)="sortHeaders($event)"
-				[height]="(schools$ | async).length > 1 ? 'calc(100vh - 200px)' : 'calc(100vh - 150px)'"
+				[height]="(schools$ | async).length > 1 ? 'calc(100vh - 250px)' : 'calc(100vh - 200px)'"
 				[isRowClick]="true"
 				(rowClickEvent)="passClick($event.id)"
 				[sort]="passSearchState.sortPasses$ | async"
@@ -267,7 +267,7 @@
 				[showEmptyState]="reportSearchState.isEmpty && reportSearchState.loaded$ | async"
 				[emptyIcon]="'./assets/Report Search (Blue-Gray).svg' | resolveAsset"
 				[emptyText]="'No reports found with the selected filters.'"
-				[height]="(schools$ | async).length > 1 ? 'calc(100vh - 200px)' : 'calc(100vh - 150px)'"
+				[height]="(schools$ | async).length > 1 ? 'calc(100vh - 250px)' : 'calc(100vh - 200px)'"
 				[itemSize]="66"
 				[isRowClick]="true"
 				[showPrintButtons]="false"
@@ -281,7 +281,7 @@
 		<div
 			class="contact-trace"
 			*ngIf="views[currentView].id === 3"
-			[style.height]="(schools$ | async).length > 1 ? 'calc(100vh - 200px)' : 'calc(100vh - 150px)'">
+			[style.height]="(schools$ | async).length > 1 ? 'calc(100vh - 250px)' : 'calc(100vh - 200px)'">
 			<app-sp-data-table
 				*ngIf="showContactTraceTable; else empty"
 				[isCheckbox]="isCheckbox$"
@@ -291,7 +291,7 @@
 				[currentPage]="currentView$.value"
 				[emptyIcon]="'./assets/Contact Trace (Blue-Gray).svg' | resolveAsset"
 				[emptyText]="contactTraceData.selectedStudents[0].display_name + ' did not have an overlapping pass with another student'"
-				[height]="(schools$ | async).length > 1 ? 'calc(100vh - 200px)' : 'calc(100vh - 150px)'"
+				[height]="(schools$ | async).length > 1 ? 'calc(100vh - 250px)' : 'calc(100vh - 200px)'"
 				[disabledInfinityScroll]="true"
 				[showPrintButtons]="false"></app-sp-data-table>
 			<ng-template #empty>
@@ -312,7 +312,7 @@
 					[emptyIcon]="'./assets/Encounter Detection (Blue-Gray).svg' | resolveAsset"
 					[emptyText]="'You must have at-least one week of pass history before seeing results from Detected Encounters. Check back next Sunday!'"
 					[currentPage]="'encounter_detection'"
-					[height]="(schools$ | async).length > 1 ? 'calc(100vh - 200px)' : 'calc(100vh - 150px)'"
+					[height]="(schools$ | async).length > 1 ? 'calc(100vh - 250px)' : 'calc(100vh - 200px)'"
 					[disabledInfinityScroll]="true"
 					[showPrintButtons]="false"></app-sp-data-table>
 			</div>
@@ -325,7 +325,7 @@
 					[emptyIcon]="'./assets/Encounter Detection (Blue-Gray).svg' | resolveAsset"
 					[emptyText]="'No detected encounters found with the selected filters.'"
 					[currentPage]="currentView$.value"
-					[height]="(schools$ | async).length > 1 ? 'calc(100vh - 200px)' : 'calc(100vh - 150px)'"
+					[height]="(schools$ | async).length > 1 ? 'calc(100vh - 250px)' : 'calc(100vh - 200px)'"
 					[isRowClick]="true"
 					(rowClickEvent)="encounterClick($event)"
 					[disabledInfinityScroll]="true"

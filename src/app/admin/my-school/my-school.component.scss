@@ -90,7 +90,7 @@
 			align-items: center;
 			min-width: 800px;
 			padding: 25px 0;
-			height: 100vh;
+			height: calc(100vh - 130px);
 			.header-container {
 				width: 100%;
 				.header-wrapper {
