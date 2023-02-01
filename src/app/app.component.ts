@@ -58,6 +58,8 @@ export class AppComponent implements OnInit, AfterViewInit, OnDestroy {
 		this.dialogContainer = content.nativeElement;
 	}
 
+	@ViewChild('trialBar') trialBarElementView: ElementRef;
+
 	public isAuthenticated = null;
 	public hideScroll = true;
 	public hideSchoolToggleBar = false;
@@ -541,6 +543,18 @@ export class AppComponent implements OnInit, AfterViewInit, OnDestroy {
 			}
 		});
 		this.intercomObserver.observe(targetNode, listenerConfig);
+	}
+
+	get setHeight() {
+		if (this.trialBarElementView?.nativeElement?.offsetHeight && !this.hideSchoolToggleBar) {
+			// console.log("IF")
+			return `calc(100% - ${this.trialBarElementView?.nativeElement?.offsetHeight}px - 51px)`
+		} else if (this.trialBarElementView?.nativeElement?.offsetHeight) {
+			// console.log("ELSE")
+			return `calc(100% - ${this.trialBarElementView?.nativeElement?.offsetHeight}px)`
+		}else {
+			return '100%';
+		}
 	}
 
 	updateApp() {
