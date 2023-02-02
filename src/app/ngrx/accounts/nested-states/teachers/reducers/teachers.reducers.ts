@@ -18,42 +18,38 @@ export const teachersInitialState: TeachersStates = adapter.getInitialState({
 });
 
 const reducer = createReducer(
-	teachersInitialState,
-	on(
-		teachersActions.getTeachers,
-		// teachersActions.removeTeacher,
-		// teachersActions.getMoreTeachers,
-		(state) => ({ ...state, loading: true, loaded: false })
-	),
-	on(teachersActions.getTeachersSuccess, (state, { teachers, next }) => {
-		return adapter.addAll(teachers, { ...state, loading: false, loaded: true, nextRequest: next, lastAddedTeachers: [] });
-	}),
-	on(teachersActions.removeTeacherSuccess, (state, { id }) => {
-		return adapter.removeOne(+id, { ...state, loading: false, loaded: true });
-	}),
-	on(
-		teachersActions.updateTeacherActivitySuccess,
-		teachersActions.updateTeacherPermissionsSuccess,
-		teachersActions.updateTeacherAccount,
-		teachersActions.updateTeacherLocationsSuccess,
-		(state, { profile }) => {
-			return adapter.upsertOne(profile, { ...state, loading: false, loaded: true, currentUpdatedAccount: profile });
-		}
-	),
-	on(teachersActions.getMoreTeachersSuccess, (state, { moreTeachers, next }) => {
-		return adapter.addMany(moreTeachers, { ...state, loading: false, loaded: true, nextRequest: next, lastAddedTeachers: moreTeachers });
-	}),
-	on(teachersActions.postTeacherSuccess, addUserToTeacherProfileSuccess, (state, { teacher }) => {
-		return adapter.addOne(teacher, { ...state, loading: false, loaded: true, addedUser: teacher });
-	}),
-	on(teachersActions.getMoreTeachersFailure, (state, { errorMessage }) => ({ ...state, loading: false, loaded: true })),
-	on(teachersActions.bulkAddTeacherAccounts, (state, { teachers }) => {
-		return adapter.addMany(teachers, { ...state });
-	}),
-	on(teachersActions.sortTeacherAccountsSuccess, (state, { teachers, next, sortValue }) => {
-		return adapter.addAll(teachers, { ...state, loading: false, loaded: true, nextRequest: next, sortValue });
-	}),
-	on(teachersActions.clearCurrentUpdatedTeacher, (state) => ({ ...state, currentUpdatedAccount: null }))
+  teachersInitialState,
+  on(teachersActions.getTeachers,
+    // teachersActions.removeTeacher,
+    // teachersActions.getMoreTeachers,
+    (state) => ({...state, loading: true, loaded: false})),
+  on(teachersActions.getTeachersSuccess, (state, {teachers, next}) => {
+    return adapter.addAll(teachers, {...state, loading: false, loaded: true, nextRequest: next, lastAddedTeachers: []});
+  }),
+  on(teachersActions.removeTeacherSuccess, (state, {id}) => {
+    return adapter.removeOne(+id, {...state, loading: false, loaded: true});
+  }),
+  on(teachersActions.updateTeacherActivitySuccess,
+    teachersActions.updateTeacherPermissionsSuccess,
+    teachersActions.updateTeacherAccount,
+    teachersActions.updateTeacherLocationsSuccess,
+    (state, {profile}) => {
+    return adapter.upsertOne(profile, {...state, loading: false, loaded: true, currentUpdatedAccount: profile});
+  }),
+  on(teachersActions.getMoreTeachersSuccess, (state, {moreTeachers, next}) => {
+    return adapter.addMany(moreTeachers, {...state, loading: false, loaded: true, nextRequest: next, lastAddedTeachers: moreTeachers});
+  }),
+  on(teachersActions.postTeacherSuccess, addUserToTeacherProfileSuccess, (state, {teacher}) => {
+    return adapter.addOne(teacher, {...state, loading: false, loaded: true, addedUser: teacher});
+  }),
+  on(teachersActions.getMoreTeachersFailure, (state, {errorMessage}) => ({...state, loading: false, loaded: true})),
+  on(teachersActions.bulkAddTeacherAccounts, (state, {teachers}) => {
+    return adapter.addMany(teachers, {...state});
+  }),
+  on(teachersActions.sortTeacherAccountsSuccess, (state, {teachers, next, sortValue}) => {
+    return adapter.addAll(teachers, {...state, loading: false, loaded: true, nextRequest: next, sortValue});
+  }),
+  on(teachersActions.clearCurrentUpdatedTeacher, (state) => ({...state, currentUpdatedAccount: null}))
 );
 
 export function teachersReducer(state: any | undefined, action: Action) {

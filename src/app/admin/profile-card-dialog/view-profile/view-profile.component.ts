@@ -311,26 +311,10 @@ export class ViewProfileComponent implements OnInit {
 			this.userService.updateTeacherLocations(this.user, [...locsToRemove, ...locsToAdd], this.teacherRooms);
 		}
 
-		if (!isEqual(this.initialSelectedRoles, this.userRoles)) {
-			const rolesToRemove = [];
-			this.initialSelectedRoles.forEach((role) => {
-				if (!this.userRoles.find((r) => r.role === role.role)) {
-					rolesToRemove.push(role);
-				}
-			});
-			if (rolesToRemove.length) {
-				zip(
-					...rolesToRemove.map((role) => {
-						return this.userService.deleteUserRequest(this.user, `_profile_${role.role.toLowerCase()}`);
-					})
-				).subscribe();
-			}
-
-			this.userService.addUserToProfilesRequest(
-				this.user,
-				this.userRoles.map((r) => r.role.toLowerCase())
-			);
-		}
+		this.userService.addUserToProfilesRequest(
+			this.user,
+			this.userRoles.map((r) => r.role.toLowerCase())
+		);
 
 		if (this.permissionsFormEditState && this.assistantForEditState) {
 			return zip(
@@ -480,7 +464,8 @@ export class ViewProfileComponent implements OnInit {
 	save() {
 		this.updateProfile().subscribe((action) => {
 			this.toast.openToast({
-				title: 'Account updated',
+				title: 'Updating account',
+				subtitle: 'This may take a few minutes...',
 				type: 'success',
 			});
 			this.close.emit(true);
