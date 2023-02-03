@@ -12,140 +12,126 @@ import { RepresentedUser } from '../navbar/navbar.component';
 import { Store } from '@ngrx/store';
 import { AppState } from '../ngrx/app-state/app-state';
 import {
-  addUserToProfiles,
-  bulkAddAccounts,
-  clearCurrentUpdatedAccount,
-  getAccounts,
-  getMoreAccounts,
-  postAccounts,
-  removeAccount,
-  sortAccounts,
-  updateAccountActivity,
-  updateAccountPermissions,
-  updateAccountPicture,
+	addUserToProfiles,
+	bulkAddAccounts,
+	clearCurrentUpdatedAccount,
+	getAccounts,
+	getMoreAccounts,
+	postAccounts,
+	removeAccount,
+	sortAccounts,
+	updateAccountActivity,
+	updateAccountPermissions,
+	updateAccountPicture,
 } from '../ngrx/accounts/actions/accounts.actions';
 import {
-  getAllAccountsCollection,
-  getAllAccountsEntities,
-  getCountAllAccounts,
-  getLastAddedAllAccounts,
-  getLoadedAllAccounts,
-  getLoadingAllAccounts,
-  getNextRequestAllAccounts,
+	getAllAccountsCollection,
+	getAllAccountsEntities,
+	getCountAllAccounts,
+	getLastAddedAllAccounts,
+	getLoadedAllAccounts,
+	getLoadingAllAccounts,
+	getNextRequestAllAccounts,
 } from '../ngrx/accounts/nested-states/all-accounts/states/all-accounts-getters.state';
 import {
-  getAddedAdmin,
-  getAdminsAccountsEntities,
-  getAdminsCollections,
-  getAdminSort,
-  getCountAdmins,
-  getCurrentUpdatedAdmin,
-  getLastAddedAdminsAccounts,
-  getLoadedAdminsAccounts,
-  getLoadingAdminsAccounts,
-  getNextRequestAdminsAccounts,
+	getAddedAdmin,
+	getAdminsAccountsEntities,
+	getAdminsCollections,
+	getAdminSort,
+	getCountAdmins,
+	getCurrentUpdatedAdmin,
+	getLastAddedAdminsAccounts,
+	getLoadedAdminsAccounts,
+	getLoadingAdminsAccounts,
+	getNextRequestAdminsAccounts,
 } from '../ngrx/accounts/nested-states/admins/states/admins.getters.state';
 import {
-  getAddedTeacher,
-  getCountTeachers,
-  getCurrentUpdatedTeacher,
-  getLastAddedTeachers,
-  getLoadedTeachers,
-  getLoadingTeachers,
-  getNextRequestTeachers,
-  getTeacherAccountsCollection,
-  getTeachersAccountsEntities,
-  getTeacherSort,
+	getAddedTeacher,
+	getCountTeachers,
+	getCurrentUpdatedTeacher,
+	getLastAddedTeachers,
+	getLoadedTeachers,
+	getLoadingTeachers,
+	getNextRequestTeachers,
+	getTeacherAccountsCollection,
+	getTeachersAccountsEntities,
+	getTeacherSort,
 } from '../ngrx/accounts/nested-states/teachers/states/teachers-getters.state';
 import {
-  getAddedAssistant,
-  getAssistantsAccountsCollection,
-  getAssistantsAccountsEntities,
-  getAssistantSort,
-  getCountAssistants,
-  getCurrentUpdatedAssistant,
-  getLastAddedAssistants,
-  getLoadedAssistants,
-  getLoadingAssistants,
-  getNextRequestAssistants,
+	getAddedAssistant,
+	getAssistantsAccountsCollection,
+	getAssistantsAccountsEntities,
+	getAssistantSort,
+	getCountAssistants,
+	getCurrentUpdatedAssistant,
+	getLastAddedAssistants,
+	getLoadedAssistants,
+	getLoadingAssistants,
+	getNextRequestAssistants,
 } from '../ngrx/accounts/nested-states/assistants/states';
 import {
-  getAddedStudent,
-  getCountStudents,
-  getCurrentUpdatedStudent,
-  getLastAddedStudents,
-  getLoadedStudents,
-  getLoadingStudents,
-  getNextRequestStudents,
-  getStudentsAccountsCollection,
-  getStudentsAccountsEntities,
-  getStudentSort,
-  getStudentsStats,
-  getStudentsStatsLoaded,
-  getStudentsStatsLoading,
+	getAddedStudent,
+	getCountStudents,
+	getCurrentUpdatedStudent,
+	getLastAddedStudents,
+	getLoadedStudents,
+	getLoadingStudents,
+	getNextRequestStudents,
+	getStudentsAccountsCollection,
+	getStudentsAccountsEntities,
+	getStudentSort,
+	getStudentsStats,
+	getStudentsStatsLoaded,
+	getStudentsStatsLoading,
 } from '../ngrx/accounts/nested-states/students/states';
-import {
-  getStudentGroups,
-  postStudentGroup,
-  removeStudentGroup,
-  updateStudentGroup,
-} from '../ngrx/student-groups/actions';
+import { getStudentGroups, postStudentGroup, removeStudentGroup, updateStudentGroup } from '../ngrx/student-groups/actions';
 import { StudentList } from '../models/StudentList';
 import {
-  getCurrentStudentGroup,
-  getLoadedGroups,
-  getLoadingGroups,
-  getStudentGroupsCollection,
+	getCurrentStudentGroup,
+	getLoadedGroups,
+	getLoadingGroups,
+	getStudentGroupsCollection,
 } from '../ngrx/student-groups/states/groups-getters.state';
-import {
-  getCurrentUpdatedUser,
-  getLoadedUser,
-  getNuxDates,
-  getSelectUserPin,
-  getUserData,
-} from '../ngrx/user/states/user-getters.state';
+import { getCurrentUpdatedUser, getLoadedUser, getNuxDates, getSelectUserPin, getUserData } from '../ngrx/user/states/user-getters.state';
 import { clearUser, getNuxAction, getUser, getUserPinAction, updateUserAction } from '../ngrx/user/actions';
-import {
-  addRepresentedUserAction,
-  removeRepresentedUserAction,
-} from '../ngrx/accounts/nested-states/assistants/actions';
+import { addRepresentedUserAction, removeRepresentedUserAction } from '../ngrx/accounts/nested-states/assistants/actions';
 import { HttpClient, HttpHeaders, HttpParams } from '@angular/common/http';
 import {
-  getIntros,
-  updateIntros,
-  updateIntrosAdminPassLimitsMessage,
-  updateIntrosDisableRoom,
-  updateIntrosEncounter,
-  updateIntrosMain,
-  updateIntrosSearch,
-  updateIntrosStudentPassLimits,
-  updateIntrosWaitInLine,
+	getIntros,
+	updateIntros,
+	updateIntrosAdminPassLimitsMessage,
+	updateIntrosDisableRoom,
+	updateIntrosEncounter,
+	updateIntrosMain,
+	updateIntrosSearch,
+	updateIntrosStudentPassLimits,
+	updateIntrosWaitInLine,
 } from '../ngrx/intros/actions';
 import { getIntrosData, IntroData } from '../ngrx/intros/state';
 import { clearSchools, getSchoolsFailure } from '../ngrx/schools/actions';
 import { clearRUsers, getRUsers, updateEffectiveUser } from '../ngrx/represented-users/actions';
 import { getEffectiveUser, getRepresentedUsersCollections } from '../ngrx/represented-users/states';
 import {
-  clearProfilePicturesUploadErrors,
-  clearUploadedData,
-  createUploadGroup,
-  deleteProfilePicture,
-  getMissingProfilePictures,
-  getProfilePicturesUploadedGroups,
-  getUploadedErrors,
-  postProfilePictures,
-  putUploadErrors,
+	clearProfilePicturesUploadErrors,
+	clearUploadedData,
+	createUploadGroup,
+	deleteProfilePicture,
+	getMissingProfilePictures,
+	getProfilePicturesUploadedGroups,
+	getUploadedErrors,
+	postProfilePictures,
+	putUploadErrors,
 } from '../ngrx/profile-pictures/actions';
 import {
-  getCurrentUploadedGroup,
-  getLastUploadedGroup,
-  getMissingProfiles,
-  getProfilePicturesLoaded,
-  getProfilePicturesLoaderPercent,
-  getProfilePicturesLoading,
-  getProfiles,
-  getUploadedGroups,
-  getUploadErrors,
+	getCurrentUploadedGroup,
+	getLastUploadedGroup,
+	getMissingProfiles,
+	getProfilePicturesLoaded,
+	getProfilePicturesLoaderPercent,
+	getProfilePicturesLoading,
+	getProfiles,
+	getUploadedGroups,
+	getUploadErrors,
 } from '../ngrx/profile-pictures/states';
 import { updateTeacherLocations } from '../ngrx/accounts/nested-states/teachers/actions';
 import { ProfilePicturesUploadGroup } from '../models/ProfilePicturesUploadGroup';
@@ -156,16 +142,16 @@ import { School } from '../models/School';
 import { UserStats } from '../models/UserStats';
 import { getStudentStats } from '../ngrx/accounts/nested-states/students/actions';
 import {
-  getAddedParent,
-  getCountParents,
-  getCurrentUpdatedParent,
-  getLastAddedParents,
-  getLoadedParents,
-  getLoadingParents,
-  getNextRequestParents,
-  getParentsAccountsCollection,
-  getParentsAccountsEntities,
-  getParentSort,
+	getAddedParent,
+	getCountParents,
+	getCurrentUpdatedParent,
+	getLastAddedParents,
+	getLoadedParents,
+	getLoadingParents,
+	getNextRequestParents,
+	getParentsAccountsCollection,
+	getParentsAccountsEntities,
+	getParentSort,
 } from '../ngrx/accounts/nested-states/parents/states';
 
 @Injectable({
@@ -748,39 +734,39 @@ export class UserService implements OnDestroy {
 		return of(null);
 	}
 
-  addAccountToSchool(id, user, userType: string, roles: Array<string>) {
-    if (userType === 'gsuite') {
-      return this.http.post(`v1/schools/${id}/add_user`, {
-        type: 'gsuite',
-        email: user.email,
-        profiles: roles
-      });
-    } else if (userType === 'email') {
-      return this.http.post(`v1/schools/${id}/add_user`, {
-        type: 'email',
-        email: user.email,
-        password: user.password,
-        first_name: user.first_name,
-        last_name: user.last_name,
-        display_name: user.display_name,
-        profiles: roles
-      });
-    } else if (userType === 'username') {
-      return this.http.post(`v1/schools/${id}/add_user`, {
-        type: 'username',
-        username: user.email,
-        password: user.password,
-        first_name: user.first_name,
-        last_name: user.last_name,
-        display_name: user.display_name,
-        profiles: roles
-      });
-    }
-  }
+	addAccountToSchool(id, user, userType: string, roles: Array<string>) {
+		if (userType === 'gsuite') {
+			return this.http.post(`v1/schools/${id}/add_user`, {
+				type: 'gsuite',
+				email: user.email,
+				profiles: roles,
+			});
+		} else if (userType === 'email') {
+			return this.http.post(`v1/schools/${id}/add_user`, {
+				type: 'email',
+				email: user.email,
+				password: user.password,
+				first_name: user.first_name,
+				last_name: user.last_name,
+				display_name: user.display_name,
+				profiles: roles,
+			});
+		} else if (userType === 'username') {
+			return this.http.post(`v1/schools/${id}/add_user`, {
+				type: 'username',
+				username: user.email,
+				password: user.password,
+				first_name: user.first_name,
+				last_name: user.last_name,
+				display_name: user.display_name,
+				profiles: roles,
+			});
+		}
+	}
 
-  addUserToProfilesRequest(user: User, roles: string[]) {
-    this.store.dispatch(addUserToProfiles({user, roles}));
-  }
+	addUserToProfilesRequest(user: User, roles: string[]) {
+		this.store.dispatch(addUserToProfiles({ user, roles }));
+	}
 
 	addUserToProfiles(id: string | number, roles: string[]): Observable<User> {
 		return this.http.patch(`v1/users/${id}/profiles`, { profiles: roles });

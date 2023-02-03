@@ -20,11 +20,9 @@ export const addUserToProfiles = createAction(`[Accounts] Add User To Profiles`,
 export const addUserToProfilesSuccess = createAction(`[Accounts] Add User To Profiles Success`, props<{ updatedUser: User }>());
 export const addUserToProfilesError = createAction(`[Accounts] Add User To Profiles Error`, props<{ errorMessage: string }>());
 
-export const updateAccountActivity = createAction(`[Accounts] Update Account Activity`,
-  props<{profile: User, active: boolean, role: string}>());
+export const updateAccountActivity = createAction(`[Accounts] Update Account Activity`, props<{ profile: User; active: boolean; role: string }>());
 
-export const updateAccountPermissions =
-  createAction(`[Accounts] Update Permissions`, props<{profile: User, permissions: any, role: string}>());
+export const updateAccountPermissions = createAction(`[Accounts] Update Permissions`, props<{ profile: User; permissions: any; role: string }>());
 
 export const bulkAddAccounts = createAction('[Accounts] Bulk Add Accounts', props<{ accounts: any[] }>());
 export const bulkAddAccountsSuccess = createAction('[Accounts] Bulk Add Accounts Success', props<{ accounts: User[] }>());

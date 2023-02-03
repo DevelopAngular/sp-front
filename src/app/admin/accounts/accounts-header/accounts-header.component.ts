@@ -1,19 +1,19 @@
 import {
-  AfterViewInit,
-  ChangeDetectionStrategy,
-  ChangeDetectorRef,
-  Component,
-  ElementRef,
-  EventEmitter,
-  HostListener,
-  Input,
-  OnDestroy,
-  OnInit,
-  Output,
-  QueryList,
-  TemplateRef,
-  ViewChild,
-  ViewChildren,
+	AfterViewInit,
+	ChangeDetectionStrategy,
+	ChangeDetectorRef,
+	Component,
+	ElementRef,
+	EventEmitter,
+	HostListener,
+	Input,
+	OnDestroy,
+	OnInit,
+	Output,
+	QueryList,
+	TemplateRef,
+	ViewChild,
+	ViewChildren,
 } from '@angular/core';
 import { Router } from '@angular/router';
 import { combineLatest, Observable, of, Subject, zip } from 'rxjs';
@@ -35,17 +35,13 @@ import { TableFilterOption, TableService } from '../../sp-data-table/table.servi
 import { PermissionsDialogComponent } from '../../accounts-role/permissions-dialog/permissions-dialog.component';
 import { StatusPopupComponent } from '../../profile-card-dialog/status-popup/status-popup.component';
 import { ToastService } from '../../../services/toast.service';
-import {
-  EncounterPreventionDialogComponent,
-} from '../encounter-prevention-dialog/encounter-prevention-dialog.component';
+import { EncounterPreventionDialogComponent } from '../encounter-prevention-dialog/encounter-prevention-dialog.component';
 import { ProfilePictureComponent } from '../profile-picture/profile-picture.component';
 import * as moment from 'moment';
 import { AdminPassLimitDialogComponent } from '../../../admin-pass-limits-dialog/admin-pass-limits-dialog.component';
 import { ConnectedPosition } from '@angular/cdk/overlay';
 import { PassLimitBulkEditComponent } from '../../../pass-limit-bulk-edit/pass-limit-bulk-edit.component';
-import {
-  RecommendedDialogConfig,
-} from '../../../shared/shared-components/confirmation-dialog/confirmation-dialog.component';
+import { RecommendedDialogConfig } from '../../../shared/shared-components/confirmation-dialog/confirmation-dialog.component';
 import { PassLimitService } from '../../../services/pass-limit.service';
 import { InviteFamiliesDialogComponent } from '../../invite-families-dialog/invite-families-dialog.component';
 import { Actions, ofType } from '@ngrx/effects';
@@ -138,7 +134,7 @@ export class AccountsHeaderComponent implements OnInit, AfterViewInit, OnDestroy
 		private toast: ToastService,
 		private cdr: ChangeDetectorRef,
 		private passLimitsService: PassLimitService,
-    private actions$: Actions
+		private actions$: Actions
 	) {}
 
 	get showIntegrations$() {
@@ -197,9 +193,9 @@ export class AccountsHeaderComponent implements OnInit, AfterViewInit, OnDestroy
 				this.showPassLimitNux.next(!intros?.student_pass_limit?.universal?.seen_version);
 			});
 
-    this.actions$.pipe(ofType(addUserToProfilesSuccess)).subscribe({
-      next: () => this.adminService.getCountAccountsRequest()
-    })
+		this.actions$.pipe(ofType(addUserToProfilesSuccess)).subscribe({
+			next: () => this.adminService.getCountAccountsRequest(),
+		});
 	}
 
 	ngAfterViewInit(): void {
