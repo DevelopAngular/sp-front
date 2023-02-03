@@ -783,7 +783,7 @@ export class UserService implements OnDestroy {
   }
 
 	addUserToProfiles(id: string | number, roles: string[]): Observable<User> {
-		return this.http.put(`v1/users/${id}/profiles`, { profiles: roles });
+		return this.http.patch(`v1/users/${id}/profiles`, { profiles: roles });
 	}
 
 	addUserToProfile(id, role) {
