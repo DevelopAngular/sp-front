@@ -546,11 +546,9 @@ export class AppComponent implements OnInit, AfterViewInit, OnDestroy {
 	}
 
 	get setHeight() {
-		if (this.trialBarElementView?.nativeElement?.offsetHeight && !this.hideSchoolToggleBar) {
-			// console.log("IF")
+		if (this.trialBarElementView?.nativeElement?.offsetHeight && document.getElementById('school_toggle_bar')) {
 			return `calc(100% - ${this.trialBarElementView?.nativeElement?.offsetHeight}px - 51px)`;
 		} else if (this.trialBarElementView?.nativeElement?.offsetHeight) {
-			// console.log("ELSE")
 			return `calc(100% - ${this.trialBarElementView?.nativeElement?.offsetHeight}px)`;
 		} else {
 			return '100%';

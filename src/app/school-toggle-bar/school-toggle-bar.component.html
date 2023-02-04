@@ -1,4 +1,4 @@
-<div class="school-toggle-bar-wrapper" #schoolToggle>
+<div class="school-toggle-bar-wrapper" #schoolToggle id="school_toggle_bar">
 	<div class="selected-school" #targetElement (click)="showOptions(targetElement)">
 		<span class="school-name" ignore>{{ currentSchool?.name }}</span>
 		<img class="disclosure-icon" [src]="'./assets/Chevron Down (Navy).svg' | resolveAsset" />
