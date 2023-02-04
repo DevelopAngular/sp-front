@@ -1,3 +1,4 @@
+@import "../design-system.scss";
 .global-container {
 	display: flex;
 	flex-direction: column;
@@ -86,7 +87,7 @@
 			font-weight: 600;
 			color: white;
 			font-weight: 600;
-
+			font-family: $primaryFont !important;
 			padding: 0;
 		}
 
