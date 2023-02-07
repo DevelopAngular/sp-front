@@ -12,6 +12,7 @@ variables:
   HELM_VERSION: 3.6.2
   SENTRY_ORG: "smartpass"
   SENTRY_PROJECT: "hall-pass-web"
+  KUBE_NAMESPACE: "hall-pass-web-4996193"
 
 stages:
   - lint
