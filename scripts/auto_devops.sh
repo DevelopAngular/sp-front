@@ -73,6 +73,8 @@ function install_dependencies() {
     curl -L -o /usr/bin/kubectl "https://storage.googleapis.com/kubernetes-release/release/v${KUBERNETES_VERSION}/bin/linux/amd64/kubectl"
     chmod +x /usr/bin/kubectl
     kubectl version --client
+
+    kubectl config get-contexts
 }
 
 function setup_docker() {
