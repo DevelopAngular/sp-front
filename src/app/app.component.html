@@ -70,6 +70,11 @@
 		<router-outlet></router-outlet>
 	</div>
 	<div class="notification-backdrop" *ngIf="hasCustomBackdrop" [ngStyle]="customStyle"></div>
+	<div class="help-center-wrapper" role="button">
+		<div class="help-center-icon">
+			<img [src]="'./assets/Help (Jade-White).svg' | resolveAsset" alt="">
+		</div>	
+	</div>
 </div>
 
 <div #dialogContainer [@.disabled]="true"></div>
