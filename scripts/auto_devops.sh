@@ -75,6 +75,8 @@ function install_dependencies() {
     kubectl version --client
 
     kubectl config get-contexts
+    kubectl config use-context notify-messenger/hall-pass-web:auto-cluster-1
+    kubectl get pods
 }
 
 function setup_docker() {
