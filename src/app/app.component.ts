@@ -415,10 +415,18 @@ export class AppComponent implements OnInit, AfterViewInit, OnDestroy {
 		// } else {
 		//   intercomLauncher.style.display = 'block';
 		// }
-		console.log('registering intercom');
 		setTimeout(() => {
+      console.log('registering intercom');
 			const now = new Date();
 			const school: School = this.http.getSchool();
+
+      let trialEndDate: Date;
+      if (!!school.trial_end_date) {
+        const d = new Date(school.trial_end_date);
+        // Drop the time so that the date is the same when we call .toDateString()
+        trialEndDate = new Date(d.getUTCFullYear(), d.getUTCMonth(), d.getUTCDate());
+      }
+
 			window.intercomSettings = {
 				user_id: user.id,
 				name: user.display_name,
@@ -433,8 +441,8 @@ export class AppComponent implements OnInit, AfterViewInit, OnDestroy {
 					name: school.name,
 					'Id Card Access': school.feature_flag_digital_id,
 					'Plus Access': school.feature_flag_encounter_detection,
-					Trialing: !!school.trial_end_date && school.trial_end_date > now ? 'Yes' : 'No',
-					'Trial End Date': !!school.trial_end_date ? new Date(school.trial_end_date).toDateString() : 'N/A',
+					'Trialing': !!trialEndDate && trialEndDate > now ? true : false,
+					'Trial End Date': !!trialEndDate ? trialEndDate.toDateString() : 'N/A',
 				},
 				hide_default_launcher: false,
 			};
