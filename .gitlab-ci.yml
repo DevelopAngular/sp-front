@@ -171,7 +171,6 @@ deploy_staging:
 build_production:
   stage: build
   script:
-    - kubectl config get-contexts
     - 'echo "@old http://dl-3.alpinelinux.org/alpine/v3.10/main/" >> /etc/apk/repositories'
     - 'echo "@old http://dl-3.alpinelinux.org/alpine/v3.10/community/" >> /etc/apk/repositories'
     - apk add --no-cache bash tree git python make g++ libstdc++ coreutils yarn
