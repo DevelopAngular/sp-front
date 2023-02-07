@@ -1,40 +1,49 @@
 import { Component, ElementRef, EventEmitter, Input, OnDestroy, OnInit, Output, ViewChild } from '@angular/core';
 import { FormControl, FormGroup } from '@angular/forms';
 
-import { merge, Subject, timer } from 'rxjs';
+import { Subject, timer } from 'rxjs';
 import { takeUntil } from 'rxjs/operators';
 import * as moment from 'moment';
 
+/**
+ * This component was lightly refactored to cater for a simple bug fix.
+ * Ideally, we should come back to this component and do more refactoring and
+ * limit the domain. This component should also be heavily tested.
+ *
+ * This is a time-picker component, it shouldn't care about the day of the week or
+ * the month. At the very least, the component should:
+ * - accept a date
+ * - output the same date with the updated time
+ * - validate any hour and minute UI inputs
+ * We could go a stretch further and accept a minimum date but this can also be
+ * validated by the consumer of this component's output.
+ *
+ * Some UI considerations would be to set up appropriate listeners for web and
+ * PWA environments. This is already mostly done but refactored code should not
+ * affect this.
+ */
 @Component({
 	selector: 'app-time-picker',
 	templateUrl: './time-picker.component.html',
 	styleUrls: ['./time-picker.component.scss'],
 })
 export class TimePickerComponent implements OnInit, OnDestroy {
-	@Input() set currentDate(mDate) {
-		this._currentDate = moment(mDate);
-	}
-
 	@Input() min: moment.Moment;
-
 	@Input() forseDate$: Subject<moment.Moment>;
-
+  @Input() set currentDate(mDate) {
+    this._currentDate = moment(mDate);
+  }
+  @Output() timeResult: EventEmitter<moment.Moment> = new EventEmitter<moment.Moment>();
 	@ViewChild('hourInp') hourInput: ElementRef;
-
-	@Output() timeResult: EventEmitter<moment.Moment> = new EventEmitter<moment.Moment>();
 
 	public hourHovered: boolean;
 	public minHovered: boolean;
-	private isUpdateTime: boolean;
 
-	upInterval;
-	downInterval;
-
+	upInterval: number;
+	downInterval: number;
 	_currentDate: moment.Moment;
 
 	timeForm: FormGroup;
-	changeEmit$: Subject<{ hour: string; minute: string }> = new Subject<{ hour: string; minute: string }>();
-
 	destroy$ = new Subject();
 
 	constructor() {}
@@ -69,34 +78,6 @@ export class TimePickerComponent implements OnInit, OnDestroy {
 			.subscribe(() => {
 				this.timeResult.emit(this._currentDate);
 			});
-		merge(this.timeForm.valueChanges, this.changeEmit$)
-			.pipe(takeUntil(this.destroy$))
-			.subscribe((value) => {
-				if (!this.isUpdateTime) {
-					const currentDay = moment(this._currentDate);
-					if (this._currentDate.format('A') === 'PM') {
-						this._currentDate = this._currentDate.set('hour', +value.hour + 12);
-					} else {
-						this._currentDate = this._currentDate.set('hour', value.hour);
-						if (this.invalidTime) {
-							this._currentDate = this._currentDate.set('hour', +value.hour + 12);
-							console.log('Current Time ==>>', this._currentDate.format('DD hh:mm A'));
-						}
-					}
-					this._currentDate = this._currentDate.set('minute', value.minute);
-					if (this.invalidTime) {
-						console.log('Invalid Time ==>>', this._currentDate.format('DD hh:mm A'));
-						this._currentDate = moment().add(5, 'minutes');
-					}
-					this.normalizeDateDay(currentDay, this._currentDate);
-				}
-			});
-	}
-
-	normalizeDateDay(currentDate: moment.Moment, newDate: moment.Moment) {
-		if (newDate.isAfter(currentDate, 'day')) {
-			this._currentDate.set('date', currentDate.date());
-		}
 	}
 
 	buildFrom() {
@@ -106,17 +87,46 @@ export class TimePickerComponent implements OnInit, OnDestroy {
 		});
 	}
 
-	updateDate() {
-		this.isUpdateTime = true;
-		this.timeForm.get('hour').setValue(this._currentDate.format('hh'));
-		this.timeForm.get('minute').setValue(this._currentDate.format('mm'));
-		this.timeResult.emit(this._currentDate);
-		this.isUpdateTime = false;
-	}
+  private refresh() {
+    this.buildFrom();
+    this.timeResult.emit(this._currentDate);
+  }
 
-	change() {
-		this.changeEmit$.next(this.timeForm.value);
-	}
+  updateMinute() {
+    let parsedMinute = parseInt(this.timeForm?.value?.minute);
+    if (Number.isNaN(parsedMinute)) {
+      // since this is a text input, the user can enter stuff like "ff"
+      // invalid inputs should be reverted back to the current minute
+      parsedMinute = this._currentDate.minute();
+    }
+
+    // the user should not be allowed to enter a value greater than 59 or less than 0
+    this._currentDate = this._currentDate.set('minute', Math.abs(parsedMinute) % 60);
+    this.refresh();
+  }
+
+  updateHour() {
+    let parsedHour = parseInt(this.timeForm?.value?.hour);
+    if (Number.isNaN(parsedHour)) {
+      // since this is a text input, the user can enter stuff like "ff"
+      // invalid inputs should be reverted back to the current hour
+      parsedHour = this._currentDate.hour();
+      this._currentDate = this._currentDate.set('hour', parsedHour);
+      this.refresh();
+      return;
+    }
+
+    // if a person enters something stupid like 25 and the time is set to PM, modding would account for that
+    parsedHour = parsedHour % 12;
+    const AMPM: string = this._currentDate.format('A');
+    if (AMPM === 'PM') {
+      // we should add 12 to the input number, only if the hour isn't 12
+      // If adding 12 gives a number higher than 24, mod it
+      parsedHour = (parsedHour === 12 ? 12 : parsedHour + 12) % 24;
+    }
+    this._currentDate = this._currentDate.set('hour', Math.abs(parsedHour) % 24);
+    this.refresh();
+  }
 
 	ngOnDestroy() {
 		this.destroy$.next();
@@ -132,14 +142,13 @@ export class TimePickerComponent implements OnInit, OnDestroy {
 				this._currentDate = moment().add(5, 'minutes');
 			}
 		}
-		this.buildFrom();
-		this.timeResult.emit(this._currentDate);
+		this.refresh();
 	}
 
 	changeTime(action, up) {
 		if (up === 'up') {
 			this.upInterval = setInterval(() => {
-				this._currentDate.add(1, action);
+        this._currentDate = this._currentDate.add(1, action);
 				this.buildFrom();
 				this.timeResult.emit(this._currentDate);
 			}, 200);
@@ -149,17 +158,17 @@ export class TimePickerComponent implements OnInit, OnDestroy {
 					this.destroyInterval(action, up);
 					return;
 				}
-				this._currentDate.subtract(1, action);
+        this._currentDate = this._currentDate.subtract(1, action);
 				this.buildFrom();
 				this.timeResult.emit(this._currentDate);
 			}, 200);
 		}
 	}
 
-	destroyInterval(action, up) {
-		if (up === 'up') {
+	destroyInterval(action, direction: 'up' | 'down') {
+		if (direction === 'up') {
 			clearInterval(this.upInterval);
-		} else if (up === 'down') {
+		} else if (direction === 'down') {
 			clearInterval(this.downInterval);
 		}
 	}
@@ -176,7 +185,6 @@ export class TimePickerComponent implements OnInit, OnDestroy {
 		}
 
 		this._currentDate = newDate;
-		this.buildFrom();
-		this.timeResult.emit(this._currentDate);
+		this.refresh();
 	}
 }
