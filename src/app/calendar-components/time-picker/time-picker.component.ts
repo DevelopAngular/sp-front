@@ -30,10 +30,10 @@ import * as moment from 'moment';
 export class TimePickerComponent implements OnInit, OnDestroy {
 	@Input() min: moment.Moment;
 	@Input() forseDate$: Subject<moment.Moment>;
-  @Input() set currentDate(mDate) {
-    this._currentDate = moment(mDate);
-  }
-  @Output() timeResult: EventEmitter<moment.Moment> = new EventEmitter<moment.Moment>();
+	@Input() set currentDate(mDate) {
+		this._currentDate = moment(mDate);
+	}
+	@Output() timeResult: EventEmitter<moment.Moment> = new EventEmitter<moment.Moment>();
 	@ViewChild('hourInp') hourInput: ElementRef;
 
 	public hourHovered: boolean;
@@ -87,46 +87,46 @@ export class TimePickerComponent implements OnInit, OnDestroy {
 		});
 	}
 
-  private refresh() {
-    this.buildFrom();
-    this.timeResult.emit(this._currentDate);
-  }
+	private refresh() {
+		this.buildFrom();
+		this.timeResult.emit(this._currentDate);
+	}
 
-  updateMinute() {
-    let parsedMinute = parseInt(this.timeForm?.value?.minute);
-    if (Number.isNaN(parsedMinute)) {
-      // since this is a text input, the user can enter stuff like "ff"
-      // invalid inputs should be reverted back to the current minute
-      parsedMinute = this._currentDate.minute();
-    }
+	updateMinute() {
+		let parsedMinute = parseInt(this.timeForm?.value?.minute);
+		if (Number.isNaN(parsedMinute)) {
+			// since this is a text input, the user can enter stuff like "ff"
+			// invalid inputs should be reverted back to the current minute
+			parsedMinute = this._currentDate.minute();
+		}
 
-    // the user should not be allowed to enter a value greater than 59 or less than 0
-    this._currentDate = this._currentDate.set('minute', Math.abs(parsedMinute) % 60);
-    this.refresh();
-  }
+		// the user should not be allowed to enter a value greater than 59 or less than 0
+		this._currentDate = this._currentDate.set('minute', Math.abs(parsedMinute) % 60);
+		this.refresh();
+	}
 
-  updateHour() {
-    let parsedHour = parseInt(this.timeForm?.value?.hour);
-    if (Number.isNaN(parsedHour)) {
-      // since this is a text input, the user can enter stuff like "ff"
-      // invalid inputs should be reverted back to the current hour
-      parsedHour = this._currentDate.hour();
-      this._currentDate = this._currentDate.set('hour', parsedHour);
-      this.refresh();
-      return;
-    }
+	updateHour() {
+		let parsedHour = parseInt(this.timeForm?.value?.hour);
+		if (Number.isNaN(parsedHour)) {
+			// since this is a text input, the user can enter stuff like "ff"
+			// invalid inputs should be reverted back to the current hour
+			parsedHour = this._currentDate.hour();
+			this._currentDate = this._currentDate.set('hour', parsedHour);
+			this.refresh();
+			return;
+		}
 
-    // if a person enters something stupid like 25 and the time is set to PM, modding would account for that
-    parsedHour = parsedHour % 12;
-    const AMPM: string = this._currentDate.format('A');
-    if (AMPM === 'PM') {
-      // we should add 12 to the input number, only if the hour isn't 12
-      // If adding 12 gives a number higher than 24, mod it
-      parsedHour = (parsedHour === 12 ? 12 : parsedHour + 12) % 24;
-    }
-    this._currentDate = this._currentDate.set('hour', Math.abs(parsedHour) % 24);
-    this.refresh();
-  }
+		// if a person enters something stupid like 25 and the time is set to PM, modding would account for that
+		parsedHour = parsedHour % 12;
+		const AMPM: string = this._currentDate.format('A');
+		if (AMPM === 'PM') {
+			// we should add 12 to the input number, only if the hour isn't 12
+			// If adding 12 gives a number higher than 24, mod it
+			parsedHour = (parsedHour === 12 ? 12 : parsedHour + 12) % 24;
+		}
+		this._currentDate = this._currentDate.set('hour', Math.abs(parsedHour) % 24);
+		this.refresh();
+	}
 
 	ngOnDestroy() {
 		this.destroy$.next();
@@ -148,7 +148,7 @@ export class TimePickerComponent implements OnInit, OnDestroy {
 	changeTime(action, up) {
 		if (up === 'up') {
 			this.upInterval = setInterval(() => {
-        this._currentDate = this._currentDate.add(1, action);
+				this._currentDate = this._currentDate.add(1, action);
 				this.buildFrom();
 				this.timeResult.emit(this._currentDate);
 			}, 200);
@@ -158,7 +158,7 @@ export class TimePickerComponent implements OnInit, OnDestroy {
 					this.destroyInterval(action, up);
 					return;
 				}
-        this._currentDate = this._currentDate.subtract(1, action);
+				this._currentDate = this._currentDate.subtract(1, action);
 				this.buildFrom();
 				this.timeResult.emit(this._currentDate);
 			}, 200);

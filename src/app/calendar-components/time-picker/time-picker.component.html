@@ -33,13 +33,7 @@
 				(click)="clickChangeTime('minutes', 'up')"
 				[src]="'./assets/Chevron Up (Blue-Gray).svg' | resolveAsset"
 				alt="Icon" />
-			<input
-				[tabindex]="timeForm.touched ? 1 : -1"
-				class="timeInput"
-				maxlength="2"
-				type="text"
-				formControlName="minute"
-				(blur)="updateMinute()" />
+			<input [tabindex]="timeForm.touched ? 1 : -1" class="timeInput" maxlength="2" type="text" formControlName="minute" (blur)="updateMinute()" />
 			<img
 				class="arrow"
 				[style.opacity]="minHovered && !isDisabledSwitchMinButton ? 1 : 0"
