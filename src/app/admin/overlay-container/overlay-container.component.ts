@@ -1,10 +1,10 @@
 import { Component, ElementRef, Inject, OnDestroy, OnInit, ViewChild } from '@angular/core';
-import { AbstractControl, FormControl, FormGroup, Validators, ValidationErrors } from '@angular/forms';
+import { AbstractControl, FormControl, FormGroup, ValidationErrors, Validators } from '@angular/forms';
 import { MAT_DIALOG_DATA, MatDialog, MatDialogRef } from '@angular/material/dialog';
 import { DomSanitizer } from '@angular/platform-browser';
 
 import { BehaviorSubject, combineLatest, forkJoin, fromEvent, merge, Observable, of, Subject, zip } from 'rxjs';
-import { debounceTime, distinctUntilChanged, filter, map, switchMap, take, takeUntil, tap, catchError, concatMap } from 'rxjs/operators';
+import { catchError, concatMap, debounceTime, distinctUntilChanged, filter, map, switchMap, take, takeUntil, tap } from 'rxjs/operators';
 
 import { bumpIn, NextStep } from '../../animations';
 import { Pinnable } from '../../models/Pinnable';
@@ -21,7 +21,7 @@ import { ColorProfile } from '../../models/ColorProfile';
 import { User } from '../../models/User';
 import { ToastService } from '../../services/toast.service';
 import { ConsentMenuComponent } from '../../consent-menu/consent-menu.component';
-import { VisibilityOverStudents, DEFAULT_VISIBILITY_STUDENTS } from './visibility-room/visibility-room.type';
+import { DEFAULT_VISIBILITY_STUDENTS, VisibilityOverStudents } from './visibility-room/visibility-room.type';
 import { BlockScrollService } from './block-scroll.service';
 
 @Component({
@@ -845,10 +845,17 @@ export class OverlayContainerComponent implements OnInit, OnDestroy {
 					? [of([])]
 					: this.folderData.roomsInFolder.map((room) => this.createOrUpdateLocation(room, category));
 
+			// delete pinnables for locations being added into category
+
+			if (this.pinnableToDeleteIds.length === 0) {
+				return of(null);
+			}
+
+			zip(...this.pinnableToDeleteIds.map((id) => this.hallPassService.deletePinnableRequest(id, true))).subscribe();
 			zip(...roomsInFolderUpdateRequests$)
 				.pipe(
-					switchMap(() =>
-						zip(
+					switchMap(() => {
+						return zip(
 							this.hallPassService.pinnables$.pipe(take(1)),
 							this.hallPassService.postPinnableRequest(pinnableData).pipe(filter((res) => !!res))
 						).pipe(
@@ -857,8 +864,8 @@ export class OverlayContainerComponent implements OnInit, OnDestroy {
 								arrangedSequence.push(result[1].id);
 								return this.hallPassService.createArrangedPinnableRequest({ order: arrangedSequence.join(',') });
 							})
-						)
-					),
+						);
+					}),
 					takeUntil(this.destroy$),
 					this.catchError()
 				)
