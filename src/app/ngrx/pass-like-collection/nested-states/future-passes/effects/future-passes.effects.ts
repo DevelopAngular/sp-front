@@ -1,6 +1,6 @@
 import { Injectable } from '@angular/core';
 import { Actions, createEffect, ofType } from '@ngrx/effects';
-import { LiveDataService } from '../../../../../live-data/live-data.service';
+import { LiveDataService, PassFilterType } from '../../../../../live-data/live-data.service';
 import * as futurePassesActions from '../actions';
 import { catchError, map, switchMap } from 'rxjs/operators';
 import { HallPass } from '../../../../../models/HallPass';
@@ -12,16 +12,19 @@ export class FuturePassesEffects {
 		return this.actions$.pipe(
 			ofType(futurePassesActions.getFuturePasses),
 			switchMap((action: any) => {
-				return this.liveDataService
-					.watchFutureHallPasses(
-						action.user.roles.includes('hallpass_student') ? { type: 'student', value: action.user } : { type: 'issuer', value: action.user }
-					)
-					.pipe(
-						map((futurePasses: HallPass[]) => {
-							return futurePassesActions.getFuturePassesSuccess({ futurePasses });
-						}),
-						catchError((error) => of(futurePassesActions.getFuturePassesFailure({ errorMessage: error.message })))
-					);
+				const regexp = /\/main\/student\/\d+/;
+				const filter = regexp.test(window.location.href)
+					? undefined
+					: action.user.roles.includes('hallpass_student')
+					? { type: 'student', value: action.user }
+					: { type: 'issuer', value: action.user };
+
+				return this.liveDataService.watchFutureHallPasses(filter as PassFilterType).pipe(
+					map((futurePasses: HallPass[]) => {
+						return futurePassesActions.getFuturePassesSuccess({ futurePasses });
+					}),
+					catchError((error) => of(futurePassesActions.getFuturePassesFailure({ errorMessage: error.message })))
+				);
 			})
 		);
 	});
