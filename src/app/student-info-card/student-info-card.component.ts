@@ -49,11 +49,16 @@ import { ConnectedPosition } from '@angular/cdk/overlay';
 import { IntroData } from '../ngrx/intros';
 import { IdcardOverlayContainerComponent } from '../idcard-overlay-container/idcard-overlay-container.component';
 import { QRBarcodeGeneratorService } from '../services/qrbarcode-generator.service';
-import { IDCardService, IDCard } from '../services/IDCardService';
+import { IDCard, IDCardService } from '../services/IDCardService';
 import { IdCardGradeLevelsComponent } from '../admin/id-cards/id-card-grade-levels/id-card-grade-levels.component';
 import { IdCardIdNumbersComponent } from '../admin/id-cards/id-card-id-numbers/id-card-id-numbers.component';
 import { PassLimitStudentInfoComponent } from '../pass-limit-student-info/pass-limit-student-info.component';
 import { RecommendedDialogConfig } from '../shared/shared-components/confirmation-dialog/confirmation-dialog.component';
+import { LiveDataService } from '../live-data/live-data.service';
+import { getFuturePassesLoading } from '../ngrx/pass-like-collection/nested-states/future-passes/states';
+import { Store } from '@ngrx/store';
+import { AppState } from '../ngrx/app-state/app-state';
+import { getExpiredPassesLoading } from '../ngrx/pass-like-collection/nested-states/expired-passes/states';
 
 declare const window: Window;
 
@@ -79,6 +84,11 @@ export class StudentInfoCardComponent implements OnInit, AfterViewInit, OnDestro
 	studentStats$: Observable<UserStats>;
 	lastStudentPasses$: Observable<HallPass[]>;
 
+	expiredPasses$: Observable<HallPass[]>;
+	expiredPassesLoading: Observable<boolean>;
+	futurePasses$: Observable<HallPass[]>;
+	getFuturePassesLoading: Observable<boolean>;
+
 	exclusionGroups$: Observable<ExclusionGroup[]>;
 	exclusionGroupsLoading$: Observable<boolean>;
 	user: User;
@@ -95,7 +105,9 @@ export class StudentInfoCardComponent implements OnInit, AfterViewInit, OnDestro
 		start: moment('1/8/2022', 'DD/MM/YYYY'),
 		end: moment().endOf('day'),
 	};
-	isFullScreenPasses: boolean;
+
+	isFullScreenExpiredPasses: boolean;
+	isFullScreenScheduledPasses: boolean;
 	isFullScreenReports: boolean;
 
 	isScrollable: boolean;
@@ -135,7 +147,9 @@ export class StudentInfoCardComponent implements OnInit, AfterViewInit, OnDestro
 		private darkTheme: DarkThemeSwitch,
 		private passLimitsService: PassLimitService,
 		private qrBarcodeGenerator: QRBarcodeGeneratorService,
-		private idCardService: IDCardService
+		private idCardService: IDCardService,
+		private liveDataService: LiveDataService,
+		private store: Store<AppState>
 	) {}
 
 	@HostListener('document.scroll', ['$event'])
@@ -187,6 +201,7 @@ export class StudentInfoCardComponent implements OnInit, AfterViewInit, OnDestro
 			)
 			.subscribe((user) => {
 				this.user = user;
+				console.log(this.user);
 			});
 
 		this.route.params
@@ -196,8 +211,14 @@ export class StudentInfoCardComponent implements OnInit, AfterViewInit, OnDestro
 				takeUntil(this.destroy$)
 			)
 			.subscribe({
-				next: (user) => {
-					this.profile = user;
+				next: (profile) => {
+					this.profile = profile;
+
+					this.futurePasses$ = this.liveDataService.futurePasses$.pipe(map((passes) => passes.filter((p) => p.student.id == this.profile.id)));
+					this.expiredPasses$ = this.liveDataService
+						.watchPastHallPasses()
+						.pipe(map((passes) => passes.filter((p) => p.student.id == this.profile.id)));
+
 					this.school = this.userService.getUserSchool();
 					this.passesService.getQuickPreviewPassesRequest(this.profile.id, true);
 					this.getUserStats();
@@ -226,6 +247,8 @@ export class StudentInfoCardComponent implements OnInit, AfterViewInit, OnDestro
 		this.loadingPassesStats$ = this.passesService.quickPreviewPassesLoading$;
 		this.passesStats$ = this.passesService.quickPreviewPassesStats$;
 		this.studentsStatsLoading$ = this.userService.studentsStatsLoading$;
+		this.getFuturePassesLoading = this.store.select(getFuturePassesLoading);
+		this.expiredPassesLoading = this.store.select(getExpiredPassesLoading);
 
 		this.passesService.createPassEvent$.pipe(take(1)).subscribe((res) => {
 			this.router.navigate(['/main/passes']);
@@ -733,15 +756,16 @@ export class StudentInfoCardComponent implements OnInit, AfterViewInit, OnDestro
 	openPassCard({ time$, pass }) {
 		pass.start_time = new Date(pass.start_time);
 		pass.end_time = new Date(pass.end_time);
+
 		const data = {
 			pass: pass,
-			fromPast: true,
-			forFuture: false,
+			fromPast: pass.end_time.getTime() < Date.now(),
+			forFuture: pass.start_time.getTime() > Date.now(),
 			forMonitor: false,
 			isActive: false,
 			forStaff: true,
 		};
-		const dialogRef = this.dialog.open(PassCardComponent, {
+		this.dialog.open(PassCardComponent, {
 			panelClass: 'search-pass-card-dialog-container',
 			backdropClass: 'custom-bd',
 			data: data,
