@@ -332,6 +332,9 @@ export class PassCardComponent implements OnInit, OnDestroy {
 			);
 		} else if (this.forFuture && this.pass.issuer) {
 			this.buildPage('Pass Created', 'by ' + this.getUserName(this.pass.issuer), this.formatDateTime(this.pass.created), this.pagerPages + 1);
+			if (this.pass.start_time.getTime() > Date.now()) {
+				this.buildPage('Scheduled to start', '', this.formatDateTime(this.pass.start_time), this.pagerPages + 1);
+			}
 		} else if (this.pass.issuer) {
 			this.buildPage('Pass Created', 'by ' + this.getUserName(this.pass.issuer), this.formatDateTime(this.pass.created), this.pagerPages + 1);
 		}

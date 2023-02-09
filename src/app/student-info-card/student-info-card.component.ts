@@ -58,6 +58,7 @@ import { LiveDataService } from '../live-data/live-data.service';
 import { getFuturePassesLoading } from '../ngrx/pass-like-collection/nested-states/future-passes/states';
 import { Store } from '@ngrx/store';
 import { AppState } from '../ngrx/app-state/app-state';
+import { getExpiredPassesLoading } from '../ngrx/pass-like-collection/nested-states/expired-passes/states';
 
 declare const window: Window;
 
@@ -83,8 +84,10 @@ export class StudentInfoCardComponent implements OnInit, AfterViewInit, OnDestro
 	studentStats$: Observable<UserStats>;
 	lastStudentPasses$: Observable<HallPass[]>;
 
+	expiredPasses$: Observable<HallPass[]>;
+	expiredPassesLoading: Observable<boolean>;
 	futurePasses$: Observable<HallPass[]>;
-	getFuturePassesLoading;
+	getFuturePassesLoading: Observable<boolean>;
 
 	exclusionGroups$: Observable<ExclusionGroup[]>;
 	exclusionGroupsLoading$: Observable<boolean>;
@@ -103,7 +106,7 @@ export class StudentInfoCardComponent implements OnInit, AfterViewInit, OnDestro
 		end: moment().endOf('day'),
 	};
 
-	isFullScreenActivePasses: boolean;
+	isFullScreenExpiredPasses: boolean;
 	isFullScreenScheduledPasses: boolean;
 	isFullScreenReports: boolean;
 
@@ -210,9 +213,11 @@ export class StudentInfoCardComponent implements OnInit, AfterViewInit, OnDestro
 			.subscribe({
 				next: (profile) => {
 					this.profile = profile;
-					console.log(this.profile);
 
 					this.futurePasses$ = this.liveDataService.futurePasses$.pipe(map((passes) => passes.filter((p) => p.student.id == this.profile.id)));
+					this.expiredPasses$ = this.liveDataService
+						.watchPastHallPasses()
+						.pipe(map((passes) => passes.filter((p) => p.student.id == this.profile.id)));
 
 					this.school = this.userService.getUserSchool();
 					this.passesService.getQuickPreviewPassesRequest(this.profile.id, true);
@@ -243,6 +248,7 @@ export class StudentInfoCardComponent implements OnInit, AfterViewInit, OnDestro
 		this.passesStats$ = this.passesService.quickPreviewPassesStats$;
 		this.studentsStatsLoading$ = this.userService.studentsStatsLoading$;
 		this.getFuturePassesLoading = this.store.select(getFuturePassesLoading);
+		this.expiredPassesLoading = this.store.select(getExpiredPassesLoading);
 
 		this.passesService.createPassEvent$.pipe(take(1)).subscribe((res) => {
 			this.router.navigate(['/main/passes']);
@@ -750,15 +756,16 @@ export class StudentInfoCardComponent implements OnInit, AfterViewInit, OnDestro
 	openPassCard({ time$, pass }) {
 		pass.start_time = new Date(pass.start_time);
 		pass.end_time = new Date(pass.end_time);
+
 		const data = {
 			pass: pass,
-			fromPast: true,
-			forFuture: false,
+			fromPast: pass.end_time.getTime() < Date.now(),
+			forFuture: pass.start_time.getTime() > Date.now(),
 			forMonitor: false,
 			isActive: false,
 			forStaff: true,
 		};
-		const dialogRef = this.dialog.open(PassCardComponent, {
+		this.dialog.open(PassCardComponent, {
 			panelClass: 'search-pass-card-dialog-container',
 			backdropClass: 'custom-bd',
 			data: data,
