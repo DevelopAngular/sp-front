@@ -594,93 +594,89 @@ and the cycle is repeating endlessly causing an UI flickering
 						</ng-template>
 
 						<div class="block" [style.margin-top]="'40px'">
-							<ng-container *ngIf="futurePasses$ | async as futurePasses">
-								<app-overview-container [title]="'Scheduled Passes'" [icon]="'./assets/Passes (Navy).svg'" (clickFilter)="openFilter($event)">
-									<div class="block-container">
-										<ng-container *ngIf="!(getFuturePassesLoading | async); else fakePasses">
-											<div class="info-cards" *ngIf="futurePasses.length > 0; else emptyPassState">
-												<ng-container *ngFor="let pass of futurePasses; let i = index">
-													<app-pass-tile
-														*ngIf="i <= 5"
-														[forFuture]="true"
-														[fromPast]="false"
-														[forStaff]="false"
-														[pass]="pass"
-														[profileImage]="false"
-														[isMiniCard]="true"
-														(tileSelected)="openPassCard($event)"></app-pass-tile>
-													<app-pass-tile
-														*ngIf="i > 5 && isFullScreenScheduledPasses"
-														[forFuture]="true"
-														[fromPast]="false"
-														[forStaff]="false"
-														[pass]="pass"
-														[profileImage]="false"
-														[isMiniCard]="true"
-														(tileSelected)="openPassCard($event)"></app-pass-tile>
-												</ng-container>
-											</div>
-										</ng-container>
-
-										<div class="button">
-											<app-gradient-button
-												[style.margin-top]="'20px'"
-												[gradient]="'#FFFFFF, #FFFFFF'"
-												*ngIf="futurePasses.length > 6"
-												[leftIcon]="isFullScreenScheduledPasses ? './assets/Chevron Up (Blue-Gray).svg' : './assets/Chevron Down (Blue-Gray).svg'"
-												[textColor]="'#7f879d'"
-												(buttonClick)="isFullScreenScheduledPasses = !isFullScreenScheduledPasses"
-												>{{ isFullScreenScheduledPasses ? 'Collapse' : 'See all ' + futurePasses.length + ' passes' }}
-											</app-gradient-button>
+							<app-overview-container [title]="'Scheduled Passes'" [icon]="'./assets/Passes (Navy).svg'" (clickFilter)="openFilter($event)">
+								<div class="block-container">
+									<ng-container *ngIf="!(getFuturePassesLoading | async); else fakePasses">
+										<div class="info-cards" *ngIf="futurePasses.length > 0; else emptyPassState">
+											<ng-container *ngFor="let pass of futurePasses; let i = index">
+												<app-pass-tile
+													*ngIf="i <= 5"
+													[forFuture]="true"
+													[fromPast]="false"
+													[forStaff]="false"
+													[pass]="pass"
+													[profileImage]="false"
+													[isMiniCard]="true"
+													(tileSelected)="openPassCard($event)"></app-pass-tile>
+												<app-pass-tile
+													*ngIf="i > 5 && isFullScreenScheduledPasses"
+													[forFuture]="true"
+													[fromPast]="false"
+													[forStaff]="false"
+													[pass]="pass"
+													[profileImage]="false"
+													[isMiniCard]="true"
+													(tileSelected)="openPassCard($event)"></app-pass-tile>
+											</ng-container>
 										</div>
+									</ng-container>
+
+									<div class="button">
+										<app-gradient-button
+											[style.margin-top]="'20px'"
+											[gradient]="'#FFFFFF, #FFFFFF'"
+											*ngIf="futurePasses.length > 6"
+											[leftIcon]="isFullScreenScheduledPasses ? './assets/Chevron Up (Blue-Gray).svg' : './assets/Chevron Down (Blue-Gray).svg'"
+											[textColor]="'#7f879d'"
+											(buttonClick)="isFullScreenScheduledPasses = !isFullScreenScheduledPasses"
+											>{{ isFullScreenScheduledPasses ? 'Collapse' : 'See all ' + futurePasses.length + ' passes' }}
+										</app-gradient-button>
 									</div>
-								</app-overview-container>
-							</ng-container>
+								</div>
+							</app-overview-container>
 						</div>
 
 						<div class="block" [style.margin-top]="'40px'">
-							<ng-container *ngIf="expiredPasses$ | async as expiredPasses">
-								<app-overview-container [title]="'Expired Passes'" [icon]="'./assets/Passes (Navy).svg'" (clickFilter)="openFilter($event)">
-									<div class="block-container">
-										<ng-container *ngIf="!(expiredPassesLoading | async); else fakePasses">
-											<div class="info-cards" *ngIf="expiredPasses.length > 0; else emptyPassState">
-												<ng-container *ngFor="let pass of expiredPasses; let i = index">
-													<app-pass-tile
-														*ngIf="i <= 5"
-														[forFuture]="false"
-														[fromPast]="true"
-														[forStaff]="false"
-														[pass]="pass"
-														[profileImage]="false"
-														[isMiniCard]="true"
-														(tileSelected)="openPassCard($event)"></app-pass-tile>
-													<app-pass-tile
-														*ngIf="i > 5 && isFullScreenExpiredPasses"
-														[forFuture]="false"
-														[fromPast]="true"
-														[forStaff]="false"
-														[pass]="pass"
-														[profileImage]="false"
-														[isMiniCard]="true"
-														(tileSelected)="openPassCard($event)"></app-pass-tile>
-												</ng-container>
-											</div>
-										</ng-container>
-
-										<div class="button">
-											<app-gradient-button
-												[style.margin-top]="'20px'"
-												[gradient]="'#FFFFFF, #FFFFFF'"
-												*ngIf="expiredPasses.length > 6"
-												[leftIcon]="isFullScreenExpiredPasses ? './assets/Chevron Up (Blue-Gray).svg' : './assets/Chevron Down (Blue-Gray).svg'"
-												[textColor]="'#7f879d'"
-												(buttonClick)="isFullScreenExpiredPasses = !isFullScreenExpiredPasses"
-												>{{ isFullScreenScheduledPasses ? 'Collapse' : 'See all ' + expiredPasses.length + ' passes' }}
-											</app-gradient-button>
+							<app-overview-container [title]="'Expired Passes'" [icon]="'./assets/Passes (Navy).svg'" (clickFilter)="openFilter($event)">
+								<div class="block-container">
+									<ng-container *ngIf="!(expiredPassesLoading | async); else fakePasses">
+										<div class="info-cards" *ngIf="expiredPasses.length > 0; else emptyPassState">
+											<ng-container *ngFor="let pass of expiredPasses; let i = index">
+												<app-pass-tile
+													*ngIf="i <= 5"
+													[forFuture]="false"
+													[fromPast]="true"
+													[forStaff]="false"
+													[pass]="pass"
+													[profileImage]="false"
+													[isMiniCard]="true"
+													(tileSelected)="openPassCard($event)"></app-pass-tile>
+												<app-pass-tile
+													*ngIf="i > 5 && isFullScreenExpiredPasses"
+													[forFuture]="false"
+													[fromPast]="true"
+													[forStaff]="false"
+													[pass]="pass"
+													[profileImage]="false"
+													[isMiniCard]="true"
+													(tileSelected)="openPassCard($event)"></app-pass-tile>
+											</ng-container>
 										</div>
+									</ng-container>
+
+									<div class="button">
+										<app-gradient-button
+											[style.margin-top]="'20px'"
+											[gradient]="'#FFFFFF, #FFFFFF'"
+											*ngIf="expiredPasses.length > 6"
+											[leftIcon]="isFullScreenExpiredPasses ? './assets/Chevron Up (Blue-Gray).svg' : './assets/Chevron Down (Blue-Gray).svg'"
+											[textColor]="'#7f879d'"
+											(buttonClick)="isFullScreenExpiredPasses = !isFullScreenExpiredPasses"
+											>{{ isFullScreenScheduledPasses ? 'Collapse' : 'See all ' + expiredPasses.length + ' passes' }}
+										</app-gradient-button>
 									</div>
-								</app-overview-container>
-							</ng-container>
+								</div>
+							</app-overview-container>
 						</div>
 
 						<div class="block" [style.margin-top]="'40px'">

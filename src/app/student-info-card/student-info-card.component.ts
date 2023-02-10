@@ -84,9 +84,10 @@ export class StudentInfoCardComponent implements OnInit, AfterViewInit, OnDestro
 	studentStats$: Observable<UserStats>;
 	lastStudentPasses$: Observable<HallPass[]>;
 
+	expiredPasses: HallPass[];
 	expiredPasses$: Observable<HallPass[]>;
 	expiredPassesLoading: Observable<boolean>;
-	futurePasses$: Observable<HallPass[]>;
+	futurePasses: HallPass[] = [];
 	getFuturePassesLoading: Observable<boolean>;
 
 	exclusionGroups$: Observable<ExclusionGroup[]>;
@@ -214,10 +215,27 @@ export class StudentInfoCardComponent implements OnInit, AfterViewInit, OnDestro
 				next: (profile) => {
 					this.profile = profile;
 
-					this.futurePasses$ = this.liveDataService.futurePasses$.pipe(map((passes) => passes.filter((p) => p.student.id == this.profile.id)));
-					this.expiredPasses$ = this.liveDataService
-						.watchPastHallPasses()
-						.pipe(map((passes) => passes.filter((p) => p.student.id == this.profile.id)));
+					this.liveDataService.futurePasses$
+						.pipe(
+							takeUntil(this.destroy$),
+							map((passes) => passes.filter((p) => p.student.id == this.profile.id))
+						)
+						.subscribe({
+							next: (passes) => {
+								this.futurePasses = passes;
+							},
+						});
+
+					this.liveDataService.expiredPasses$
+						.pipe(
+							takeUntil(this.destroy$),
+							map((passes) => passes.filter((p) => p.student.id == this.profile.id))
+						)
+						.subscribe({
+							next: (passes) => {
+								this.expiredPasses = passes;
+							},
+						});
 
 					this.school = this.userService.getUserSchool();
 					this.passesService.getQuickPreviewPassesRequest(this.profile.id, true);
