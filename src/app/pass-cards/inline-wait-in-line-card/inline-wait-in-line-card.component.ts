@@ -214,6 +214,7 @@ export class InlineWaitInLineCardComponent implements OnInit, OnDestroy {
 	}
 
 	ngOnInit() {
+    console.log(this.wil$.value);
 		this.userService.user$
 			.pipe(
 				map((user) => User.fromJSON(user)),
@@ -223,7 +224,7 @@ export class InlineWaitInLineCardComponent implements OnInit, OnDestroy {
 				this.user = user;
 			});
 		this.frameMotion$ = this.formService.getFrameMotionDirection();
-		this.wil$ = this.wilService.fakeWil;
+		// this.wil$ = this.wilService.fakeWil;
 		this.wil$
 			.asObservable()
 			.pipe(takeUntil(this.destroy$))

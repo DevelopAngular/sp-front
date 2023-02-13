@@ -76,7 +76,6 @@
 	(scroll)="scroll($event)"
 	appSwipeEvent
 	(swipeRight)="openSettings(true)">
-  <p>{{currentWaitInLine$ | async | json}}</p>
 	<div class="main-page-left">
 		<div class="current-pass" [style.margin-bottom]="'15px'">
 			<div *ngIf="(isActivePass$ | async) || (isActiveRequest$ | async) || ((isActiveWaitInLine$ | async) && isStudent); else newPass" class="center">
@@ -196,7 +195,6 @@
 	[style.overflow]="isStaff ? 'auto' : 'visible'"
 	*ngIf="(user && !this.screenService.isDeviceSmall && !this.screenService.isDeviceMid) || (user && this.screenService.isIpadWidth)">
 	<h1 class="passes-heading">Passes</h1>
-  <p>{{currentWaitInLine$ | async | json}}</p>
 	<div class="main-page-left">
 		<div class="current-pass">
 			<div

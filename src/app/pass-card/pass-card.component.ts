@@ -164,10 +164,10 @@ export class PassCardComponent implements OnInit, OnDestroy {
 		} else {
 			const selectedStudents = this.formState.data.roomStudents ?? this.selectedStudents;
 			return selectedStudents
-				? selectedStudents.length > 2
-					? selectedStudents[0].display_name + ' and ' + (selectedStudents.length - 1) + ' more'
-					: selectedStudents[0].display_name + (selectedStudents.length > 1 ? ' and ' + selectedStudents[1].display_name : '')
-				: this.pass.student.display_name + ` (${this.studentEmail})`;
+				? selectedStudents?.length > 2
+					? selectedStudents[0]?.display_name + ' and ' + (selectedStudents?.length - 1) + ' more'
+					: selectedStudents[0]?.display_name + (selectedStudents?.length > 1 ? ' and ' + selectedStudents[1]?.display_name : '')
+				: this.pass?.student?.display_name + ` (${this.studentEmail})`;
 		}
 	}
 

@@ -130,28 +130,6 @@ const WilColorParser = (JSON: any): ColorProfile => {
   return new ColorProfile(id, title, gradient_color, solid_color, overlay_color, pressed_color, time_color);
 }
 
-// Given the position in a line, return the ordinal number
-// Position 1: 1st, Position 3: 3rd, etc.
-export const ordinance = (positionInLine: number): string => {
-	const suffixMap = {
-		1: 'st',
-		2: 'nd',
-		3: 'rd',
-	};
-	const edgeCases = [11, 12, 13];
-
-	const lastTwoDigits = positionInLine % 100;
-
-	if (edgeCases.includes(lastTwoDigits)) {
-		return `${positionInLine}th`;
-	}
-
-	const lastDigit = positionInLine % 10;
-	const suffix = suffixMap[lastDigit];
-
-	return !suffix ? `${positionInLine}th` : `${positionInLine}${suffix}`;
-};
-
 export type WaitingInLineUser = Pick<User,
   'id' | 'first_name' | 'last_name' | 'primary_email' | 'badge' | 'profile_picture' |
   'first_login' | 'last_active'> & {
