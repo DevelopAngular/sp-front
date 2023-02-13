@@ -1,15 +1,15 @@
 import {
-	ChangeDetectionStrategy,
-	ChangeDetectorRef,
-	Component,
-	ElementRef,
-	EventEmitter,
-	Input,
-	OnDestroy,
-	OnInit,
-	Output,
-	TemplateRef,
-	ViewChild,
+  ChangeDetectionStrategy,
+  ChangeDetectorRef,
+  Component,
+  ElementRef,
+  EventEmitter,
+  Input,
+  OnDestroy,
+  OnInit,
+  Output,
+  TemplateRef,
+  ViewChild,
 } from '@angular/core';
 import { fromEvent, iif, of, Subject } from 'rxjs';
 import { isNaN } from 'lodash';
@@ -20,7 +20,7 @@ import { Request } from '../models/Request';
 import { PassLimitService } from '../services/pass-limit.service';
 import { HttpErrorResponse } from '@angular/common/http';
 import { MatDialog } from '@angular/material/dialog';
-import { WaitInLine } from '../models/WaitInLine';
+import { WaitingInLinePass } from '../models/WaitInLine';
 import { FeatureFlagService, FLAGS } from '../services/feature-flag.service';
 import { WaitInLineService } from '../services/wait-in-line.service';
 import { LocationsService } from '../services/locations.service';
@@ -113,17 +113,16 @@ export class TeacherPinStudentComponent implements OnInit, OnDestroy {
 									const destFull = pass_limit?.max_passes_to_active && pass_limit.to_count >= pass_limit.max_passes_to;
 									const mockWaitInLine = this.requestService.cancelRequest(this.request.id).pipe(
 										tap(() => {
-											const wil: WaitInLine = {
+                      // @ts-ignore
+											const wil: Partial<WaitingInLinePass> = {
 												...this.request,
 												issuer: null,
-												position: '3rd',
+												line_position: 3,
 												isSameObject: this.request.isSameObject,
-												cancellable_by_student: true,
 												isAssignedToSchool: this.request?.hallpass?.isAssignedToSchool ?? (() => true),
-												cancelled: false,
 											};
 
-											this.wilService.fakeWil.next(wil);
+											this.wilService.fakeWil.next(wil as any);
 											this.wilService.fakeWilActive.next(true);
 											console.log(this.wilService.fakeWil.value);
 										})

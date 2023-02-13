@@ -1,4 +1,16 @@
-import { Component, ElementRef, EventEmitter, Input, OnChanges, OnDestroy, OnInit, Output, Renderer2, SimpleChanges, ViewChild } from '@angular/core';
+import {
+  Component,
+  ElementRef,
+  EventEmitter,
+  Input,
+  OnChanges,
+  OnDestroy,
+  OnInit,
+  Output,
+  Renderer2,
+  SimpleChanges,
+  ViewChild,
+} from '@angular/core';
 import { BehaviorSubject, fromEvent, interval, Observable, Subject } from 'rxjs';
 import { bumpIn, studentPassFadeInOut } from '../animations';
 import { PassLike } from '../models';
@@ -11,7 +23,7 @@ import { filter, take, takeUntil } from 'rxjs/operators';
 import { ConnectedPosition, Overlay } from '@angular/cdk/overlay';
 import { DomCheckerService } from '../services/dom-checker.service';
 import { KioskModeService } from '../services/kiosk-mode.service';
-import { WaitInLine } from '../models/WaitInLine';
+import { WaitingInLinePass } from '../models/WaitInLine';
 
 @Component({
 	selector: 'app-pass-tile',
@@ -71,7 +83,7 @@ export class PassTileComponent implements OnInit, OnDestroy, OnChanges {
 			return this.timeLeft + (this.valid ? ' Remaining' : ' Expiring');
 		} else if (this.waitInLine) {
 			// Here we will fetch number in line
-			return `${(this.pass as WaitInLine).position} in line`;
+			return `${(this.pass as WaitingInLinePass).line_position} in line`;
 		} else {
 			if (this.encounterPreventionCard) {
 				return 'Now';

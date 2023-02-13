@@ -1,28 +1,28 @@
 import {
-	AfterViewInit,
-	Component,
-	ElementRef,
-	EventEmitter,
-	HostListener,
-	Input,
-	OnDestroy,
-	OnInit,
-	Optional,
-	Output,
-	ViewChild,
+  AfterViewInit,
+  Component,
+  ElementRef,
+  EventEmitter,
+  HostListener,
+  Input,
+  OnDestroy,
+  OnInit,
+  Optional,
+  Output,
+  ViewChild,
 } from '@angular/core';
 import { User } from '../models/User';
 import { BehaviorSubject, Observable, Subject } from 'rxjs';
 import { HallPass } from '../models/HallPass';
 
 import {
-	bumpIn,
-	ResizeProfileImage,
-	resizeStudentPasses,
-	scaleStudentPasses,
-	showHideProfileEmail,
-	studentPassFadeInOut,
-	topBottomProfileName,
+  bumpIn,
+  ResizeProfileImage,
+  resizeStudentPasses,
+  scaleStudentPasses,
+  showHideProfileEmail,
+  studentPassFadeInOut,
+  topBottomProfileName,
 } from '../animations';
 import { MatDialog, MatDialogRef } from '@angular/material/dialog';
 import { PassCardComponent } from '../pass-card/pass-card.component';
@@ -30,7 +30,7 @@ import { DomCheckerService } from '../services/dom-checker.service';
 import { PassLike } from '../models';
 import { HallPassesService } from '../services/hall-passes.service';
 import { QuickPreviewPasses } from '../models/QuickPreviewPasses';
-import { filter, map, take, tap, delay } from 'rxjs/operators';
+import { filter, map, take, tap } from 'rxjs/operators';
 import { DeviceDetection } from '../device-detection.helper';
 import * as moment from 'moment';
 import { EncounterPreventionService } from '../services/encounter-prevention.service';
@@ -43,7 +43,7 @@ import { KioskModeService } from '../services/kiosk-mode.service';
 import { UNANIMATED_CONTAINER } from '../consent-menu-overlay';
 import { SettingsDescriptionPopupComponent } from '../settings-description-popup/settings-description-popup.component';
 import { CreateHallpassFormsComponent } from '../create-hallpass-forms/create-hallpass-forms.component';
-import { WaitInLine } from '../models/WaitInLine';
+import { WaitingInLinePass } from '../models/WaitInLine';
 
 @Component({
 	selector: 'app-student-passes',
@@ -120,7 +120,7 @@ export class StudentPassesComponent implements OnInit, OnDestroy, AfterViewInit 
 	}
 
 	ngOnInit() {
-		this.isWaitInLine = this.pass instanceof WaitInLine;
+		this.isWaitInLine = this.pass instanceof WaitingInLinePass;
 		this.user$ = this.userService.user$.pipe(map((u) => User.fromJSON(u)));
 		this.fadeInOutTrigger$ = this.domCheckerService.fadeInOutTrigger$;
 		this.passesService.getQuickPreviewPassesRequest(this.profile.id, true);

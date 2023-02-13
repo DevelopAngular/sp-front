@@ -20,7 +20,7 @@ export class FeatureFlagService {
 	private school: School;
 
 	constructor(private http: HttpService) {
-		this.http.currentUpdateSchool$.subscribe({
+		this.http.currentSchool$.subscribe({
 			next: (s) => (this.school = s),
 		});
 	}

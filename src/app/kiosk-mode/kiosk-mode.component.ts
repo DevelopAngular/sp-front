@@ -6,7 +6,7 @@ import { BehaviorSubject, combineLatest, EMPTY, Observable, of, Subject, timer }
 import { UserService } from '../services/user.service';
 import { HallPassesService } from '../services/hall-passes.service';
 import { HallPass } from '../models/HallPass';
-import { filter, startWith, switchMap, takeUntil, map, mergeMap } from 'rxjs/operators';
+import { filter, map, mergeMap, startWith, switchMap, takeUntil, tap } from 'rxjs/operators';
 import { JwtHelperService } from '@auth0/angular-jwt';
 import { StorageService } from '../services/storage.service';
 import { LocationsService } from '../services/locations.service';
@@ -18,7 +18,7 @@ import { Title } from '@angular/platform-browser';
 import { Location } from '../models/Location';
 import { FeatureFlagService, FLAGS } from '../services/feature-flag.service';
 import { WaitInLineService } from '../services/wait-in-line.service';
-import { WaitInLine } from '../models/WaitInLine';
+import { WaitingInLinePass } from '../models/WaitInLine';
 
 declare const window;
 
@@ -29,7 +29,7 @@ declare const window;
 })
 export class KioskModeComponent implements OnInit, AfterViewInit, OnDestroy {
 	activePassesKiosk: Observable<HallPass[]>;
-	waitInLinePassesKiosk: Observable<WaitInLine[]>;
+	waitInLinePassesKiosk: Observable<WaitingInLinePass[]>;
 	// isActiveWaitInLine$: Observable<boolean>;
 	// currentWaitInLine$ = new BehaviorSubject<WaitInLine>(null);
 
@@ -96,7 +96,7 @@ export class KioskModeComponent implements OnInit, AfterViewInit, OnDestroy {
 	}
 
 	get waitInLinePassesPresent() {
-		return this.isWaitInLine && this.wilService.fakeWilActive.getValue();
+		return this.isWaitInLine;
 	}
 
 	ngOnInit() {
@@ -145,8 +145,14 @@ export class KioskModeComponent implements OnInit, AfterViewInit, OnDestroy {
 				this.kioskMode.setCurrentRoom(kioskLocation);
 			});
 
+
 		this.activePassesKiosk = this.liveDataService.myRoomActivePasses$;
-		this.waitInLinePassesKiosk = this.wilService.fakeWilPasses.asObservable();
+    this.waitInLinePassesKiosk = this.liveDataService.watchActiveWaitInLinePasses().pipe(
+      tap(console.log),
+      map(passes => passes.filter(p => p.origin.id == this.kioskMode.getCurrentRoom().value.id)),
+      tap(console.log)
+    );
+		// this.waitInLinePassesKiosk = this.wilService.fakeWilPasses.asObservable();
 
 		/**
 		 * The following listener is responsible for checking if incoming hall passes are the result

@@ -27,8 +27,7 @@ export enum Role {
 export enum FormFactor {
 	HallPass = 1,
 	Request = 2,
-	Invitation = 3,
-	WaitInLine = 4,
+	Invitation = 3
 }
 
 export interface FormMode {
@@ -44,6 +43,7 @@ export interface Navigation {
 	fromState?: number;
 	formMode?: FormMode;
 	data?: {
+    destLimitReached?: boolean; // A simple way of passing along the condition of the destination room being filled
 		request?: any;
 		date?: {
 			date?: Date;

@@ -4,7 +4,7 @@ import * as moment from 'moment';
 
 // TODO: Replace deprecated empty() observable with EMPTY
 import { combineLatest, EMPTY, empty, merge, Observable, of, Subject } from 'rxjs';
-import { distinctUntilChanged, exhaustMap, map, pluck, scan, startWith, switchMap } from 'rxjs/operators';
+import { distinctUntilChanged, exhaustMap, filter, map, pluck, scan, startWith, switchMap, tap } from 'rxjs/operators';
 import { Paged, PassLike } from '../models';
 import { BaseModel } from '../models/base';
 import { HallPass } from '../models/HallPass';
@@ -16,96 +16,97 @@ import { HttpService } from '../services/http-service';
 import { PollingEvent, PollingService } from '../services/polling-service';
 import { TimeService } from '../services/time.service';
 import {
-	Action,
-	ExternalEvent,
-	isExternalEvent,
-	isPollingEvent,
-	isTransformFunc,
-	PollingEventContext,
-	PollingEventHandler,
-	TransformFunc,
+  Action,
+  ExternalEvent,
+  isExternalEvent,
+  isPollingEvent,
+  isTransformFunc,
+  PollingEventContext,
+  PollingEventHandler,
+  TransformFunc,
 } from './events';
 import { filterHallPasses, filterNewestFirst, identityFilter } from './filters';
 import { constructUrl, QueryParams } from './helpers';
 import {
-	AddItem,
-	makePollingEventHandler,
-	RemoveInvitationOnApprove,
-	RemoveItem,
-	RemoveRequestOnApprove,
-	UpdateItem,
+  AddItem,
+  makePollingEventHandler,
+  RemoveInvitationOnApprove,
+  RemoveItem,
+  RemoveRequestOnApprove,
+  UpdateItem,
 } from './polling-event-handlers';
 import { State } from './state';
 import { HallPassesService } from '../services/hall-passes.service';
 import {
-	clearExpiredPasses,
-	getActivePasses,
-	getExpiredPasses,
-	getFromLocationPasses,
-	getHallMonitorPasses,
-	getMyRoomPasses,
-	getPassLikeCollection,
-	getToLocationPasses,
-	updateActivePasses,
-	updateHallMonitorPasses,
+  clearExpiredPasses,
+  getActivePasses,
+  getExpiredPasses,
+  getFromLocationPasses,
+  getHallMonitorPasses,
+  getMyRoomPasses,
+  getPassLikeCollection,
+  getToLocationPasses,
+  updateActivePasses,
+  updateHallMonitorPasses,
 } from '../ngrx/pass-like-collection/actions';
 import { Store } from '@ngrx/store';
 import { AppState } from '../ngrx/app-state/app-state';
 import {
-	getInvitationLoadedState,
-	getInvitationLoadingState,
-	getInvitationsCollection,
-	getInvitationsTotalNumber,
+  getInvitationLoadedState,
+  getInvitationLoadingState,
+  getInvitationsCollection,
+  getInvitationsTotalNumber,
 } from '../ngrx/pass-like-collection/nested-states/invitations/states/invitations-getters.states';
 import {
-	getRequestsCollection,
-	getRequestsLoaded,
-	getRequestsLoading,
-	getRequestsTotalNumber,
+  getRequestsCollection,
+  getRequestsLoaded,
+  getRequestsLoading,
+  getRequestsTotalNumber,
 } from '../ngrx/pass-like-collection/nested-states/requests/states';
 import {
-	getExpiredPassesCollection,
-	getExpiredPassesLoaded,
-	getExpiredPassesLoading,
-	getExpiredPassesTotalNumber,
+  getExpiredPassesCollection,
+  getExpiredPassesLoaded,
+  getExpiredPassesLoading,
+  getExpiredPassesTotalNumber,
 } from '../ngrx/pass-like-collection/nested-states/expired-passes/states';
 import {
-	getFuturePassesCollection,
-	getFuturePassesLoaded,
-	getFuturePassesLoading,
-	getFuturePassesTotalNumber,
+  getFuturePassesCollection,
+  getFuturePassesLoaded,
+  getFuturePassesLoading,
+  getFuturePassesTotalNumber,
 } from '../ngrx/pass-like-collection/nested-states/future-passes/states';
 import {
-	getActivePassesCollection,
-	getActivePassesLoaded,
-	getActivePassesLoading,
-	getActivePassesTotalNumber,
+  getActivePassesCollection,
+  getActivePassesLoaded,
+  getActivePassesLoading,
+  getActivePassesTotalNumber,
 } from '../ngrx/pass-like-collection/nested-states/active-passes/states';
 import {
-	getToLocationLoaded,
-	getToLocationLoading,
-	getToLocationPassesCollection,
-	getToLocationPassesTotalNumber,
+  getToLocationLoaded,
+  getToLocationLoading,
+  getToLocationPassesCollection,
+  getToLocationPassesTotalNumber,
 } from '../ngrx/pass-like-collection/nested-states/to-location/states';
 import {
-	getFromLocationLoaded,
-	getFromLocationLoading,
-	getFromLocationPassesCollection,
-	getFromLocationPassesTotalNumber,
+  getFromLocationLoaded,
+  getFromLocationLoading,
+  getFromLocationPassesCollection,
+  getFromLocationPassesTotalNumber,
 } from '../ngrx/pass-like-collection/nested-states/from-location/states';
 import {
-	getHallMonitorPassesCollection,
-	getHallMonitorPassesLoaded,
-	getHallMonitorPassesLoading,
-	getHallMonitorPassesTotalNumber,
+  getHallMonitorPassesCollection,
+  getHallMonitorPassesLoaded,
+  getHallMonitorPassesLoading,
+  getHallMonitorPassesTotalNumber,
 } from '../ngrx/pass-like-collection/nested-states/hall-monitor-passes/states/hall-monitor-passes-getters.state';
 import {
-	getMyRoomPassesCollection,
-	getMyRoomPassesLoaded,
-	getMyRoomPassesLoading,
-	getMyRoomPassesTotalNumber,
+  getMyRoomPassesCollection,
+  getMyRoomPassesLoaded,
+  getMyRoomPassesLoading,
+  getMyRoomPassesTotalNumber,
 } from '../ngrx/pass-like-collection/nested-states/my-room-passes/states';
 import { HallPassLimit, StudentPassLimit } from '../models/HallPassLimits';
+import { WaitingInLinePass, WaitingInLinePassResponse } from '../models/WaitInLine';
 
 interface WatchData<ModelType extends BaseModel, ExternalEventType> {
 	/**
@@ -227,6 +228,8 @@ function mergeFilters<T>(filters: FilterFunc<T>[]): FilterFunc<T> {
 export type PassFilterType = { type: 'issuer'; value: User } | { type: 'student'; value: User } | { type: 'location'; value: Location | Location[] };
 
 export type RequestFilterType = { type: 'issuer'; value: User } | { type: 'student'; value: User } | { type: 'destination'; value: Location };
+
+export type WaitingInLineFilterType = { type: 'issuer', value: User } | { type: 'student', value: User } | { type: 'destination', value: Location };
 
 /**
  * An interface representing how hall passes should be filtered.
@@ -404,7 +407,11 @@ export class LiveDataService {
 		 */
 		return fullReload$.pipe(
 			exhaustMap((value) => {
-				return this.http.get<Paged<any>>(config.initialUrl);
+        // Revert to original after
+        return config.initialUrl.includes('ignore')
+          ? of({})
+          : this.http.get<Paged<any>>(config.initialUrl);
+        // return this.http.get<Paged<any>>(config.initialUrl);
 			}),
 			map(rawDecoder),
 			switchMap((items) => {
@@ -502,6 +509,22 @@ export class LiveDataService {
 			})
 		);
 	}
+
+  // move this to the bottom after
+  watchActiveWaitInLinePasses(): Observable<WaitingInLinePass[]> {
+    return this.polling.listen().pipe(
+      filter(event => event.action.includes('waiting_in_line_pass')),
+      tap(console.warn),
+      map<PollingEvent, WaitingInLinePass[]>(event => (event.data as WaitingInLinePassResponse[]).map(WaitingInLinePass.fromJSON)),
+      tap(console.error),
+      map(passes => passes.sort((p1, p2) => {
+        return p1.line_position < p2.line_position
+          ? -1
+          : p1.line_position > p2.line_position
+            ? 1 : 0;
+      }))
+    )
+  }
 
 	watchActiveHallPasses(sortingEvents: Observable<HallPassFilter>, filter?: PassFilterType, date: Date = null): Observable<HallPass[]> {
 		const queryFilter: QueryParams = {
@@ -783,36 +806,42 @@ export class LiveDataService {
 	}
 
 	watchActivePassLike(student: User): Observable<PassLike> {
-		const passes$ = this.activePasses$;
+		const passes$ = this.activePasses$.pipe(
+      tap(console.log),
+      map((passes) => (passes.length ? passes[0] : null)),
+      startWith(null)
+    );
 		const requests$ = this.watchActiveRequests(student).pipe(
 			map((requests) => {
 				return requests.filter((req) => !req.request_time);
-			})
+			}),
+      map((requests) => (requests.length ? requests[0] : null)),
+      startWith(null)
 		);
+    const waitingInLinePasses$ = this.watchActiveWaitInLinePasses().pipe(
+      map(wilPasses => wilPasses.filter(p => p.student.id.toString() === student.id)),
+      map(wilPasses => wilPasses.length ? wilPasses[0] : null),
+      startWith(null)
+    );
 
-		const merged$ = combineLatest(
-			passes$.pipe(
-				map((passes) => (passes.length ? passes[0] : null)),
-				startWith(null)
-			),
-			requests$.pipe(
-				map((requests) => (requests.length ? requests[0] : null)),
-				startWith(null)
-			),
-			(pass, request) => ({ pass: pass, request: request })
-		);
+    return combineLatest(
+			passes$,
+			requests$,
+      waitingInLinePasses$,
+			(pass, request, waitingInLine) => {
+        console.log({
+          pass, request, waitingInLine
+        });
+        if (pass) {
+          return pass;
+        }
 
-		return merged$.pipe(
-			map((m) => {
-				if (m.pass) {
-					return m.pass;
-				}
-				if (m.request) {
-					return m.request;
-				}
-				return null;
-			})
-		);
+        if (request) {
+          return request;
+        }
+
+        return waitingInLine;
+      });
 	}
 
 	getPassLikeCollectionRequest(user) {

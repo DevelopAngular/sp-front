@@ -1,19 +1,19 @@
 import {
-	AfterViewInit,
-	ChangeDetectorRef,
-	Component,
-	ElementRef,
-	EventEmitter,
-	HostListener,
-	Input,
-	NgZone,
-	OnDestroy,
-	OnInit,
-	Output,
-	QueryList,
-	Renderer2,
-	ViewChild,
-	ViewChildren,
+  AfterViewInit,
+  ChangeDetectorRef,
+  Component,
+  ElementRef,
+  EventEmitter,
+  HostListener,
+  Input,
+  NgZone,
+  OnDestroy,
+  OnInit,
+  Output,
+  QueryList,
+  Renderer2,
+  ViewChild,
+  ViewChildren,
 } from '@angular/core';
 import { Location } from '@angular/common';
 import { MatDialog } from '@angular/material/dialog';
@@ -397,6 +397,7 @@ export class NavbarComponent implements AfterViewInit, OnInit, OnDestroy {
 				takeUntil(this.destroyer$)
 			)
 			.subscribe((data) => {
+        console.log(data);
 				this.introsData = data;
 			});
 	}

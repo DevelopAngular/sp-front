@@ -5,32 +5,44 @@ import { HttpService } from './http-service';
 import { Store } from '@ngrx/store';
 import { AppState } from '../ngrx/app-state/app-state';
 import {
-	getArrangedLoading,
-	getCurrentPinnable,
-	getIsLoadedPinnables,
-	getIsLoadingPinnables,
-	getPinnableCollection,
-	getPinnableEntities,
-	getPinnablesIds,
+  getArrangedLoading,
+  getCurrentPinnable,
+  getIsLoadedPinnables,
+  getIsLoadingPinnables,
+  getPinnableCollection,
+  getPinnableEntities,
+  getPinnablesIds,
 } from '../ngrx/pinnables/states';
-import { arrangedPinnable, getPinnables, postPinnables, removePinnable, updatePinnable } from '../ngrx/pinnables/actions';
+import {
+  arrangedPinnable,
+  getPinnables,
+  postPinnables,
+  removePinnable,
+  updatePinnable,
+} from '../ngrx/pinnables/actions';
 import { getPassStats } from '../ngrx/pass-stats/actions';
 import { getPassStatsResult } from '../ngrx/pass-stats/state/pass-stats-getters.state';
 import { bufferCount, filter, mergeMap, reduce } from 'rxjs/operators';
 import { constructUrl } from '../live-data/helpers';
-import { endPassAction, getMorePasses, searchPasses, sortPasses, changePassesCollectionAction } from '../ngrx/passes/actions';
 import {
-	getMorePassesLoading,
-	getPassesCollection,
-	getPassesEntities,
-	getPassesLoaded,
-	getPassesLoading,
-	getPassesNextUrl,
-	getPassesTotalCount,
-	getSortPassesLoading,
-	getSortPassesValue,
-	getStartPassLoading,
-	getTotalPasses,
+  changePassesCollectionAction,
+  endPassAction,
+  getMorePasses,
+  searchPasses,
+  sortPasses,
+} from '../ngrx/passes/actions';
+import {
+  getMorePassesLoading,
+  getPassesCollection,
+  getPassesEntities,
+  getPassesLoaded,
+  getPassesLoading,
+  getPassesNextUrl,
+  getPassesTotalCount,
+  getSortPassesLoading,
+  getSortPassesValue,
+  getStartPassLoading,
+  getTotalPasses,
 } from '../ngrx/passes/states';
 import { HallPass } from '../models/HallPass';
 import { PollingService } from './polling-service';
@@ -38,17 +50,26 @@ import { getPassFilter, updatePassFilter } from '../ngrx/pass-filters/actions';
 import { getFiltersData, getFiltersDataLoading } from '../ngrx/pass-filters/states';
 import { PassFilters } from '../models/PassFilters';
 import { Invitation } from '../models/Invitation';
-import { getInvitationsCollection } from '../ngrx/pass-like-collection/nested-states/invitations/states/invitations-getters.states';
+import {
+  getInvitationsCollection,
+} from '../ngrx/pass-like-collection/nested-states/invitations/states/invitations-getters.states';
 import { filterExpiredPasses } from '../ngrx/pass-like-collection/nested-states/expired-passes/actions';
 import { getLastAddedExpiredPasses } from '../ngrx/pass-like-collection/nested-states/expired-passes/states';
 import { getPreviewPasses } from '../ngrx/quick-preview-passes/actions';
 import {
-	getQuickPreviewPassesCollection,
-	getQuickPreviewPassesLoaded,
-	getQuickPreviewPassesLoading,
-	getQuickPreviewPassesStats,
+  getQuickPreviewPassesCollection,
+  getQuickPreviewPassesLoaded,
+  getQuickPreviewPassesLoading,
+  getQuickPreviewPassesStats,
 } from '../ngrx/quick-preview-passes/states';
 import { Dictionary } from '@ngrx/entity';
+import { WaitingInLinePassResponse } from '../models/WaitInLine';
+
+export interface BulkHallPassPostResponse {
+  passes: HallPass[];
+  conflict_student_ids: string[];
+  waiting_in_line_passes: WaitingInLinePassResponse[];
+}
 
 @Injectable({
 	providedIn: 'root',
@@ -121,7 +142,9 @@ export class HallPassesService {
 		return this.http.post(`v1/hall_passes`, data);
 	}
 
-	bulkCreatePass(data, future: boolean = false) {
+  // response is a Partial since depending on when the route is called, the backend can
+  // return at least one of the possible keys
+	bulkCreatePass(data, future: boolean = false): Observable<Partial<BulkHallPassPostResponse>> {
 		return this.http.post(`v1/hall_passes`, data);
 	}
 

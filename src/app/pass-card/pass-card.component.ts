@@ -1,4 +1,15 @@
-import { Component, ElementRef, EventEmitter, Inject, Input, OnDestroy, OnInit, Output, TemplateRef, ViewChild } from '@angular/core';
+import {
+  Component,
+  ElementRef,
+  EventEmitter,
+  Inject,
+  Input,
+  OnDestroy,
+  OnInit,
+  Output,
+  TemplateRef,
+  ViewChild,
+} from '@angular/core';
 import { User } from '../models/User';
 import { HallPass } from '../models/HallPass';
 import { Util } from '../../Util';
@@ -23,14 +34,15 @@ import { EncounterPreventionService } from '../services/encounter-prevention.ser
 import { isEmpty, remove } from 'lodash';
 import { HttpErrorResponse } from '@angular/common/http';
 import {
-	ConfirmationDialogComponent,
-	ConfirmationTemplates,
-	RecommendedDialogConfig,
+  ConfirmationDialogComponent,
+  ConfirmationTemplates,
+  RecommendedDialogConfig,
 } from '../shared/shared-components/confirmation-dialog/confirmation-dialog.component';
 import { LocationsService } from '../services/locations.service';
 import { Location } from '../models/Location';
 import { RecurringSchedulePassService } from '../services/recurring-schedule-pass.service';
 import { RecurringConfig } from '../models/RecurringFutureConfig';
+import { PassLimit } from '../models/PassLimit';
 
 @Component({
 	selector: 'app-pass-card',
@@ -109,6 +121,7 @@ export class PassCardComponent implements OnInit, OnDestroy {
 	frameMotion$: BehaviorSubject<any>;
 	currentSchool: School;
 	recurringConfig: RecurringConfig;
+  passLimit: PassLimit;
 
 	isEnableProfilePictures$: Observable<boolean>;
 
@@ -131,9 +144,7 @@ export class PassCardComponent implements OnInit, OnDestroy {
 		private encounterService: EncounterPreventionService,
 		private locationsService: LocationsService,
 		private recurringConfigService: RecurringSchedulePassService
-	) {
-		console.log(this.data);
-	}
+	) {}
 
 	getUserName(user: any) {
 		if (user instanceof User) {
@@ -186,6 +197,21 @@ export class PassCardComponent implements OnInit, OnDestroy {
 			? true
 			: (this.forInput || this.forStaff || (this.pass.cancellable_by_student && this.user.isStudent())) && !this.fromPast && !this.hideButton;
 	}
+
+  get buttonText(): string {
+    const numStudents = this.selectedStudents.length;
+    if (this.forFuture && this.forInput) {
+      return 'Schedule Pass' + (numStudents > 1? 'es' : '')
+    }
+
+    if (this.forStaff) {
+      return this.formState?.data?.destLimitReached
+        ? 'Send to Line' : 'Send Pass' + (numStudents > 1 ? 'es' : '')
+    }
+
+    return this.formState?.data?.destLimitReached
+      ? 'Wait in Line' : 'Start Pass' + (numStudents > 1 ? 'es' : '')
+  }
 
 	ngOnInit() {
 		this.frameMotion$ = this.formService.getFrameMotionDirection();

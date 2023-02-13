@@ -1,32 +1,32 @@
 import {
-	AfterViewInit,
-	ChangeDetectionStrategy,
-	ChangeDetectorRef,
-	Component,
-	ElementRef,
-	HostListener,
-	NgZone,
-	OnDestroy,
-	OnInit,
-	ViewChild,
+  AfterViewInit,
+  ChangeDetectionStrategy,
+  ChangeDetectorRef,
+  Component,
+  ElementRef,
+  HostListener,
+  NgZone,
+  OnDestroy,
+  OnInit,
+  ViewChild,
 } from '@angular/core';
 import { MatDialog, MatDialogRef, MatDialogState } from '@angular/material/dialog';
 // TODO: Replace combineLatest with non-deprecated implementation
 import { BehaviorSubject, combineLatest, forkJoin, interval, merge, Observable, of, Subject, timer } from 'rxjs';
 import {
-	concatMap,
-	distinctUntilChanged,
-	filter,
-	map,
-	pluck,
-	publishReplay,
-	refCount,
-	startWith,
-	switchMap,
-	take,
-	takeUntil,
-	tap,
-	withLatestFrom,
+  concatMap,
+  distinctUntilChanged,
+  filter,
+  map,
+  pluck,
+  publishReplay,
+  refCount,
+  startWith,
+  switchMap,
+  take,
+  takeUntil,
+  tap,
+  withLatestFrom,
 } from 'rxjs/operators';
 import { CreateFormService } from '../create-hallpass-forms/create-form.service';
 import { CreatePassDialogData } from '../create-hallpass-forms/create-hallpass-forms.component';
@@ -61,7 +61,7 @@ import { MainHallPassFormComponent } from '../create-hallpass-forms/main-hallpas
 import { CheckForUpdateService } from '../services/check-for-update.service';
 import { Title } from '@angular/platform-browser';
 import { FeatureFlagService, FLAGS } from '../services/feature-flag.service';
-import { WaitInLine } from '../models/WaitInLine';
+import { WaitingInLinePass } from '../models/WaitInLine';
 import { WaitInLineService } from '../services/wait-in-line.service';
 
 @Component({
@@ -134,7 +134,7 @@ export class PassesComponent implements OnInit, AfterViewInit, OnDestroy {
 
 	currentPass$ = new BehaviorSubject<HallPass>(null);
 	currentRequest$ = new BehaviorSubject<Request>(null);
-	currentWaitInLine$ = new BehaviorSubject<WaitInLine>(null);
+	currentWaitInLine$ = new BehaviorSubject<WaitingInLinePass>(null);
 
 	isActivePass$: Observable<boolean>;
 	isActiveRequest$: Observable<boolean>;
@@ -343,8 +343,7 @@ export class PassesComponent implements OnInit, AfterViewInit, OnDestroy {
 			})
 		);
 
-		this.isActiveWaitInLine$ = this.wilService.fakeWilActive.asObservable();
-		this.currentWaitInLine$ = this.wilService.fakeWil;
+    this.isActiveWaitInLine$ = this.currentWaitInLine$.pipe(map(Boolean));
 
 		this.dataService.currentUser
 			.pipe(
@@ -356,11 +355,12 @@ export class PassesComponent implements OnInit, AfterViewInit, OnDestroy {
 			)
 			.subscribe((passLike) => {
 				this._zone.run(() => {
-					if ((passLike instanceof HallPass || passLike instanceof Request) && this.currentScrollPosition) {
+					if ((passLike instanceof HallPass || passLike instanceof Request || passLike instanceof WaitingInLinePass) && this.currentScrollPosition) {
 						this.scrollableArea.scrollTo({ top: 0 });
 					}
 					this.currentPass$.next(passLike instanceof HallPass ? passLike : null);
 					this.currentRequest$.next(passLike instanceof Request ? passLike : null);
+          this.currentWaitInLine$.next(passLike instanceof WaitingInLinePass ? passLike : null);
 				});
 			});
 

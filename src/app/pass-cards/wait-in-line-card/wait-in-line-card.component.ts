@@ -1,25 +1,30 @@
-import { Component, ElementRef, EventEmitter, Inject, Input, OnInit, Optional, Output, TemplateRef, ViewChild } from '@angular/core';
+import {
+  Component,
+  ElementRef,
+  EventEmitter,
+  Inject,
+  Input,
+  OnInit,
+  Optional,
+  Output,
+  TemplateRef,
+  ViewChild,
+} from '@angular/core';
 import { Navigation } from '../../create-hallpass-forms/main-hallpass--form/main-hall-pass-form.component';
 import { User } from '../../models/User';
 import { BehaviorSubject, Observable, Subject } from 'rxjs';
 import { School } from '../../models/School';
 import { MAT_DIALOG_DATA, MatDialog, MatDialogRef } from '@angular/material/dialog';
 import { HallPassesService } from '../../services/hall-passes.service';
-import { LoadingService } from '../../services/loading.service';
 import { CreateFormService } from '../../create-hallpass-forms/create-form.service';
-import { TimeService } from '../../services/time.service';
-import { ScreenService } from '../../services/screen.service';
-import { KeyboardShortcutsService } from '../../services/keyboard-shortcuts.service';
-import { DomCheckerService } from '../../services/dom-checker.service';
-import { UserService } from '../../services/user.service';
-import { ToastService } from '../../services/toast.service';
 import { EncounterPreventionService } from '../../services/encounter-prevention.service';
 import { PassLimitService } from '../../services/pass-limit.service';
 import { LocationsService } from '../../services/locations.service';
 import { DeviceDetection } from '../../device-detection.helper';
 import { scalePassCards } from '../../animations';
-import { WaitInLine } from '../../models/WaitInLine';
+import { WaitingInLinePass } from '../../models/WaitInLine';
 import { WaitInLineService } from '../../services/wait-in-line.service';
+import { finalize } from 'rxjs/operators';
 
 /**
  * Wait in Line has 2 parts, similar to the pass request flow:
@@ -42,7 +47,7 @@ import { WaitInLineService } from '../../services/wait-in-line.service';
 	animations: [scalePassCards],
 })
 export class WaitInLineCardComponent implements OnInit {
-	@Input() wil: WaitInLine;
+	@Input() wil: WaitingInLinePass;
 	@Input() forStaff = false;
 	@Input() forKioskMode = false;
 	@Input() formState: Navigation;
@@ -77,18 +82,11 @@ export class WaitInLineCardComponent implements OnInit {
 		@Optional() @Inject(MAT_DIALOG_DATA) public data: any,
 		private hallPassService: HallPassesService,
 		public dialog: MatDialog,
-		private loadingService: LoadingService,
 		private formService: CreateFormService,
-		private timeService: TimeService,
-		public screenService: ScreenService,
-		private shortcutsService: KeyboardShortcutsService,
-		private domCheckerService: DomCheckerService,
-		private userService: UserService,
-		private toastService: ToastService,
 		private encounterService: EncounterPreventionService,
 		private passLimitService: PassLimitService,
 		private locationsService: LocationsService,
-		private wilService: WaitInLineService
+		private wilService: WaitInLineService,
 	) {}
 
 	get gradient() {
@@ -101,7 +99,7 @@ export class WaitInLineCardComponent implements OnInit {
 		const studentGroup = this.formState.data.roomStudents ?? this.formState.data.selectedStudents;
 		const student = studentGroup[0];
 
-		return student ? student.display_name : this.wil.student.display_name + ` (${this.studentEmail})`;
+		return student ? student.display_name : this.wil.student.username + ` (${this.studentEmail})`;
 	}
 
 	get studentEmail() {
@@ -117,7 +115,7 @@ export class WaitInLineCardComponent implements OnInit {
 			this.wil.student = this.wil.issuer;
 		} else {
 			const studentGroup = this.formState.data.roomStudents ?? this.formState.data.selectedStudents;
-			this.wil.student = studentGroup[0];
+			this.wil.student = studentGroup[0] as any;
 		}
 	}
 
@@ -155,7 +153,7 @@ export class WaitInLineCardComponent implements OnInit {
 		};
 
 		this.wil.duration = this.selectedDuration * 60;
-		this.wil.travel_type = this.selectedTravelType;
+		this.wil.travel_type = this.selectedTravelType as 'round_trip' | 'one_way';
 
 		// body['override_visibility'] = this.formState.data.roomOverride;
 
@@ -165,7 +163,6 @@ export class WaitInLineCardComponent implements OnInit {
 		// }
 		if (this.forKioskMode) {
 			body['self_issued'] = true;
-			this.wil.self_issued = true;
 		}
 		if (!this.forStaff) {
 			delete body['override_visibility'];
@@ -186,11 +183,20 @@ export class WaitInLineCardComponent implements OnInit {
 		//   this.wilService.fakeWilPasses.next([...this.wilService.fakeWilPasses.getValue(), this.wil]);
 		// }
 
-		this.wilService.fakeWil.next(this.wil);
-		this.wilService.fakeWilPasses.next([...this.wilService.fakeWilPasses.getValue(), this.wil]);
-		this.wilService.fakeWilActive.next(true);
-		this.performingAction = false;
-		this.dialogRef.close();
+    this.hallPassService.createPass(body)
+      .pipe(finalize(() => this.performingAction = false))
+      .subscribe({
+      next: hpResponse => {
+        console.log(hpResponse);
+        this.dialogRef.close();
+      }
+    });
+
+		// this.wilService.fakeWil.next(this.wil);
+		// this.wilService.fakeWilPasses.next([...this.wilService.fakeWilPasses.getValue(), this.wil]);
+		// this.wilService.fakeWilActive.next(true);
+		// this.performingAction = false;
+		// this.dialogRef.close();
 	}
 
 	genOption(display, color, action, icon?) {
