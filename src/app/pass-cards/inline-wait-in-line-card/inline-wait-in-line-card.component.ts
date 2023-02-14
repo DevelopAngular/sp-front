@@ -165,7 +165,12 @@ export class InlineWaitInLineCardComponent implements OnInit, OnDestroy {
 		private dialog: MatDialog,
 		private screen: ScreenService,
 		public kioskService: KioskModeService
-	) {}
+	) {
+		if (this.dialogData?.pass instanceof WaitingInLinePass) {
+			// it's not enough for the JSON to have the data, it must be an instance of the class
+			this.wil$ = new BehaviorSubject(this.dialogData.pass);
+		}
+	}
 
 	private get scalingFactor() {
 		if (this.isMobile) {

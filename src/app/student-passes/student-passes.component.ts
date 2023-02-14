@@ -155,14 +155,10 @@ export class StudentPassesComponent implements OnInit, OnDestroy, AfterViewInit 
 		this.user$
 			.pipe(
 				take(1),
-				map((user) => {
-					const isStaff =
-						user.roles.includes('_profile_teacher') || user.roles.includes('_profile_admin') || user.roles.includes('_profile_assistant');
-					return isStaff;
-				}),
+				map((user) => user.isStaff()),
 				tap((isStaff) => {
 					this.isStaff = isStaff;
-					if (!this.kioskModeRoom$.value && !this.isWaitInLine) {
+					if (!(this.kioskModeRoom$.value && this.isWaitInLine)) {
 						this.height += this.extraSpace;
 					}
 				})

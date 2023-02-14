@@ -298,7 +298,7 @@ export class PassCollectionComponent implements OnInit, AfterViewInit, OnDestroy
 	showPass({ time$, pass }) {
 		this.activePassTime$ = time$;
 		this.passClick.emit(true);
-		if (pass.id !== 'template') {
+		if (!this.waitInLine) {
 			this.dataService.markRead(pass).subscribe();
 		}
 		this.initializeDialog(pass);
@@ -336,7 +336,6 @@ export class PassCollectionComponent implements OnInit, AfterViewInit, OnDestroy
 			.afterClosed()
 			.pipe(filter((res) => !!res))
 			.subscribe((action) => {
-				console.log(action);
 				if (action !== 'hide_expired_pass') {
 					if (this.selectedSort === action) {
 						this.selectedSort = 'all_time';

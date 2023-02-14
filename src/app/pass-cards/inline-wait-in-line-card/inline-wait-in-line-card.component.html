@@ -98,7 +98,7 @@
 			</div>
 		</div>
 
-		<div class="student-footer-info" *ngIf="openedFromPassTile">
+		<div class="student-footer-info" *ngIf="openedFromPassTile" [style.margin-top]="isKiosk ? '110px' : '160px'">
 			<app-student-passes [pass]="wil$.value" [profile]="wil$.value.student"></app-student-passes>
 		</div>
 	</ng-template>

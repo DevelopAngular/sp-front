@@ -12,6 +12,9 @@ import { ConnectedPosition, Overlay } from '@angular/cdk/overlay';
 import { DomCheckerService } from '../services/dom-checker.service';
 import { KioskModeService } from '../services/kiosk-mode.service';
 import { WaitingInLinePass } from '../models/WaitInLine';
+import { OrdinancePipe } from '../core/ordinance.pipe';
+
+const ordinance = new OrdinancePipe().transform;
 
 @Component({
 	selector: 'app-pass-tile',
@@ -71,7 +74,7 @@ export class PassTileComponent implements OnInit, OnDestroy, OnChanges {
 			return this.timeLeft + (this.valid ? ' Remaining' : ' Expiring');
 		} else if (this.waitInLine) {
 			// Here we will fetch number in line
-			return `${(this.pass as WaitingInLinePass).line_position} in line`;
+			return `${ordinance((this.pass as WaitingInLinePass).line_position)} in line`;
 		} else {
 			if (this.encounterPreventionCard) {
 				return 'Now';

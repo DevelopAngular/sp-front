@@ -187,6 +187,10 @@ export class User extends BaseModel {
 		return this.roles.includes('_profile_assistant') && this.roles.includes('represent_users');
 	}
 
+	isStaff() {
+		return this.isTeacher() || this.isAdmin() || this.isAssistant();
+	}
+
 	userRoles() {
 		return this.roles.filter(
 			(role) =>
