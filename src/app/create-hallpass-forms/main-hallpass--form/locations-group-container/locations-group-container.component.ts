@@ -1,17 +1,17 @@
 import {
-  ChangeDetectorRef,
-  Component,
-  ElementRef,
-  EventEmitter,
-  forwardRef,
-  HostListener,
-  Inject,
-  Injector,
-  Input,
-  OnDestroy,
-  OnInit,
-  Output,
-  ViewChild,
+	ChangeDetectorRef,
+	Component,
+	ElementRef,
+	EventEmitter,
+	forwardRef,
+	HostListener,
+	Inject,
+	Injector,
+	Input,
+	OnDestroy,
+	OnInit,
+	Output,
+	ViewChild,
 } from '@angular/core';
 import { BehaviorSubject, Observable, Subject } from 'rxjs';
 import { User } from '../../../models/User';
@@ -510,7 +510,7 @@ export class LocationsGroupContainerComponent implements OnInit, OnDestroy {
 		const dest = this.FORM_STATE.data.direction.to;
 		const { pass_limits } = await this.locationsService.getPassLimit().toPromise();
 		const destPassLimit = pass_limits.find((p) => p.id == dest.id);
-    this.FORM_STATE.data.destLimitReached = this.locationsService.reachedRoomPassLimit('to', destPassLimit, false);
+		this.FORM_STATE.data.destLimitReached = this.locationsService.reachedRoomPassLimit('to', destPassLimit, false);
 
 		if (!this.isStaff && !restricted) {
 			this.FORM_STATE.formMode.formFactor = FormFactor.HallPass;
@@ -522,7 +522,7 @@ export class LocationsGroupContainerComponent implements OnInit, OnDestroy {
 			if (this.FORM_STATE.data.date && this.FORM_STATE.data.date.declinable) {
 				this.FORM_STATE.formMode.formFactor = FormFactor.Invitation;
 			} else {
-        this.FORM_STATE.formMode.formFactor = FormFactor.HallPass;
+				this.FORM_STATE.formMode.formFactor = FormFactor.HallPass;
 			}
 		}
 

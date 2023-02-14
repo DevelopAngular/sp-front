@@ -1,32 +1,32 @@
 import {
-  AfterViewInit,
-  ChangeDetectionStrategy,
-  ChangeDetectorRef,
-  Component,
-  ElementRef,
-  HostListener,
-  NgZone,
-  OnDestroy,
-  OnInit,
-  ViewChild,
+	AfterViewInit,
+	ChangeDetectionStrategy,
+	ChangeDetectorRef,
+	Component,
+	ElementRef,
+	HostListener,
+	NgZone,
+	OnDestroy,
+	OnInit,
+	ViewChild,
 } from '@angular/core';
 import { MatDialog, MatDialogRef, MatDialogState } from '@angular/material/dialog';
 // TODO: Replace combineLatest with non-deprecated implementation
 import { BehaviorSubject, combineLatest, forkJoin, interval, merge, Observable, of, Subject, timer } from 'rxjs';
 import {
-  concatMap,
-  distinctUntilChanged,
-  filter,
-  map,
-  pluck,
-  publishReplay,
-  refCount,
-  startWith,
-  switchMap,
-  take,
-  takeUntil,
-  tap,
-  withLatestFrom,
+	concatMap,
+	distinctUntilChanged,
+	filter,
+	map,
+	pluck,
+	publishReplay,
+	refCount,
+	startWith,
+	switchMap,
+	take,
+	takeUntil,
+	tap,
+	withLatestFrom,
 } from 'rxjs/operators';
 import { CreateFormService } from '../create-hallpass-forms/create-form.service';
 import { CreatePassDialogData } from '../create-hallpass-forms/create-hallpass-forms.component';
@@ -343,13 +343,12 @@ export class PassesComponent implements OnInit, AfterViewInit, OnDestroy {
 			})
 		);
 
-    this.isActiveWaitInLine$ = this.currentWaitInLine$.pipe(map(Boolean));
+		this.isActiveWaitInLine$ = this.currentWaitInLine$.pipe(map(Boolean));
 
 		this.dataService.currentUser
 			.pipe(
 				takeUntil(this.destroy$),
 				switchMap((user: User) => {
-					console.log(user);
 					return user.roles.includes('hallpass_student') ? this.liveDataService.watchActivePassLike(user) : of(null);
 				})
 			)
@@ -360,7 +359,14 @@ export class PassesComponent implements OnInit, AfterViewInit, OnDestroy {
 					}
 					this.currentPass$.next(passLike instanceof HallPass ? passLike : null);
 					this.currentRequest$.next(passLike instanceof Request ? passLike : null);
-          this.currentWaitInLine$.next(passLike instanceof WaitingInLinePass ? passLike : null);
+
+					if (passLike instanceof WaitingInLinePass) {
+						if (this.currentWaitInLine$.value?.line_position != passLike.line_position) {
+							this.currentWaitInLine$.next(passLike);
+						}
+					} else {
+						this.currentWaitInLine$.next(null);
+					}
 				});
 			});
 

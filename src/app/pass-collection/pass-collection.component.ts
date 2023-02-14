@@ -1,16 +1,16 @@
 import {
-  AfterViewInit,
-  ChangeDetectionStrategy,
-  ChangeDetectorRef,
-  Component,
-  EventEmitter,
-  HostListener,
-  Input,
-  OnDestroy,
-  OnInit,
-  Output,
-  QueryList,
-  ViewChildren,
+	AfterViewInit,
+	ChangeDetectionStrategy,
+	ChangeDetectorRef,
+	Component,
+	EventEmitter,
+	HostListener,
+	Input,
+	OnDestroy,
+	OnInit,
+	Output,
+	QueryList,
+	ViewChildren,
 } from '@angular/core';
 import { MatDialog } from '@angular/material/dialog';
 import { BehaviorSubject, Observable, Subject } from 'rxjs';
@@ -37,9 +37,7 @@ import { User } from '../models/User';
 import { UserService } from '../services/user.service';
 import * as moment from 'moment';
 import { PassTileComponent } from '../pass-tile/pass-tile.component';
-import {
-  InlineWaitInLineCardComponent,
-} from '../pass-cards/inline-wait-in-line-card/inline-wait-in-line-card.component';
+import { InlineWaitInLineCardComponent } from '../pass-cards/inline-wait-in-line-card/inline-wait-in-line-card.component';
 import { WaitingInLinePass } from '../models/WaitInLine';
 
 export class SortOption {

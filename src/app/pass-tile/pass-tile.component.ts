@@ -1,16 +1,4 @@
-import {
-  Component,
-  ElementRef,
-  EventEmitter,
-  Input,
-  OnChanges,
-  OnDestroy,
-  OnInit,
-  Output,
-  Renderer2,
-  SimpleChanges,
-  ViewChild,
-} from '@angular/core';
+import { Component, ElementRef, EventEmitter, Input, OnChanges, OnDestroy, OnInit, Output, Renderer2, SimpleChanges, ViewChild } from '@angular/core';
 import { BehaviorSubject, fromEvent, interval, Observable, Subject } from 'rxjs';
 import { bumpIn, studentPassFadeInOut } from '../animations';
 import { PassLike } from '../models';

@@ -51,11 +51,7 @@
 
 		<div
 			class="metrics"
-			*ngIf="
-				(fullScreenPass$ | async) &&
-				(FORM_STATE.formMode.formFactor === states.HallPass ||
-					FORM_STATE.formMode.formFactor === states.Request)
-			">
+			*ngIf="(fullScreenPass$ | async) && (FORM_STATE.formMode.formFactor === states.HallPass || FORM_STATE.formMode.formFactor === states.Request)">
 			<app-student-metrics></app-student-metrics>
 		</div>
 	</div>

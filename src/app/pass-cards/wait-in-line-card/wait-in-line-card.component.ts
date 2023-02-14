@@ -1,15 +1,4 @@
-import {
-  Component,
-  ElementRef,
-  EventEmitter,
-  Inject,
-  Input,
-  OnInit,
-  Optional,
-  Output,
-  TemplateRef,
-  ViewChild,
-} from '@angular/core';
+import { Component, ElementRef, EventEmitter, Inject, Input, OnInit, Optional, Output, TemplateRef, ViewChild } from '@angular/core';
 import { Navigation } from '../../create-hallpass-forms/main-hallpass--form/main-hall-pass-form.component';
 import { User } from '../../models/User';
 import { BehaviorSubject, Observable, Subject } from 'rxjs';
@@ -86,7 +75,7 @@ export class WaitInLineCardComponent implements OnInit {
 		private encounterService: EncounterPreventionService,
 		private passLimitService: PassLimitService,
 		private locationsService: LocationsService,
-		private wilService: WaitInLineService,
+		private wilService: WaitInLineService
 	) {}
 
 	get gradient() {
@@ -183,14 +172,15 @@ export class WaitInLineCardComponent implements OnInit {
 		//   this.wilService.fakeWilPasses.next([...this.wilService.fakeWilPasses.getValue(), this.wil]);
 		// }
 
-    this.hallPassService.createPass(body)
-      .pipe(finalize(() => this.performingAction = false))
-      .subscribe({
-      next: hpResponse => {
-        console.log(hpResponse);
-        this.dialogRef.close();
-      }
-    });
+		this.hallPassService
+			.createPass(body)
+			.pipe(finalize(() => (this.performingAction = false)))
+			.subscribe({
+				next: (hpResponse) => {
+					console.log(hpResponse);
+					this.dialogRef.close();
+				},
+			});
 
 		// this.wilService.fakeWil.next(this.wil);
 		// this.wilService.fakeWilPasses.next([...this.wilService.fakeWilPasses.getValue(), this.wil]);

@@ -26,5 +26,8 @@ export function exceptPasses<T extends PassLike>(array: T[], excluded: T[]) {
 }
 
 export const snakeToTitleCase = (key: string): string => {
-  return key.split('_').map(str => `${str[0].toUpperCase()}${str.slice(1)}`).join('')
-}
+	return key
+		.split('_')
+		.map((str) => `${str[0].toUpperCase()}${str.slice(1)}`)
+		.join('');
+};

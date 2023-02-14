@@ -145,13 +145,12 @@ export class KioskModeComponent implements OnInit, AfterViewInit, OnDestroy {
 				this.kioskMode.setCurrentRoom(kioskLocation);
 			});
 
-
 		this.activePassesKiosk = this.liveDataService.myRoomActivePasses$;
-    this.waitInLinePassesKiosk = this.liveDataService.watchActiveWaitInLinePasses().pipe(
-      tap(console.log),
-      map(passes => passes.filter(p => p.origin.id == this.kioskMode.getCurrentRoom().value.id)),
-      tap(console.log)
-    );
+		this.waitInLinePassesKiosk = this.liveDataService.watchActiveWaitInLinePasses().pipe(
+			tap(console.log),
+			map((passes) => passes.filter((p) => p.origin.id == this.kioskMode.getCurrentRoom().value.id)),
+			tap(console.log)
+		);
 		// this.waitInLinePassesKiosk = this.wilService.fakeWilPasses.asObservable();
 
 		/**

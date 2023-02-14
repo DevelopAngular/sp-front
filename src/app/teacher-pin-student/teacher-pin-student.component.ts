@@ -1,15 +1,15 @@
 import {
-  ChangeDetectionStrategy,
-  ChangeDetectorRef,
-  Component,
-  ElementRef,
-  EventEmitter,
-  Input,
-  OnDestroy,
-  OnInit,
-  Output,
-  TemplateRef,
-  ViewChild,
+	ChangeDetectionStrategy,
+	ChangeDetectorRef,
+	Component,
+	ElementRef,
+	EventEmitter,
+	Input,
+	OnDestroy,
+	OnInit,
+	Output,
+	TemplateRef,
+	ViewChild,
 } from '@angular/core';
 import { fromEvent, iif, of, Subject } from 'rxjs';
 import { isNaN } from 'lodash';
@@ -113,7 +113,7 @@ export class TeacherPinStudentComponent implements OnInit, OnDestroy {
 									const destFull = pass_limit?.max_passes_to_active && pass_limit.to_count >= pass_limit.max_passes_to;
 									const mockWaitInLine = this.requestService.cancelRequest(this.request.id).pipe(
 										tap(() => {
-                      // @ts-ignore
+											// @ts-ignore
 											const wil: Partial<WaitingInLinePass> = {
 												...this.request,
 												issuer: null,

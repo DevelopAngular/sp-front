@@ -15,12 +15,8 @@ import { ToolTipRendererDirective } from './directives/tool-tip-renderer.directi
 import { SwipeEventDirective } from './directives/swipe-event.directive';
 import { PassTileComponent } from '../pass-tile/pass-tile.component';
 import { StudentPassesComponent } from '../student-passes/student-passes.component';
-import {
-  StudentPassesInfoCardComponent,
-} from '../student-passes/student-passes-info-card/student-passes-info-card.component';
-import {
-  EncounterPreventionTooltipComponent,
-} from '../student-passes/encounter-prevention-tooltip/encounter-prevention-tooltip.component';
+import { StudentPassesInfoCardComponent } from '../student-passes/student-passes-info-card/student-passes-info-card.component';
+import { EncounterPreventionTooltipComponent } from '../student-passes/encounter-prevention-tooltip/encounter-prevention-tooltip.component';
 import { OctagonComponent } from '../admin/accounts/encounter-prevention-dialog/octagon/octagon.component';
 import { NuxTooltipRendererDirective } from './directives/nux-tooltip-renderer.directive';
 import { SpEmailPipe } from './pipes/sp-email.pipe';

@@ -1,28 +1,28 @@
 import {
-  AfterViewInit,
-  Component,
-  ElementRef,
-  EventEmitter,
-  HostListener,
-  Input,
-  OnDestroy,
-  OnInit,
-  Optional,
-  Output,
-  ViewChild,
+	AfterViewInit,
+	Component,
+	ElementRef,
+	EventEmitter,
+	HostListener,
+	Input,
+	OnDestroy,
+	OnInit,
+	Optional,
+	Output,
+	ViewChild,
 } from '@angular/core';
 import { User } from '../models/User';
 import { BehaviorSubject, Observable, Subject } from 'rxjs';
 import { HallPass } from '../models/HallPass';
 
 import {
-  bumpIn,
-  ResizeProfileImage,
-  resizeStudentPasses,
-  scaleStudentPasses,
-  showHideProfileEmail,
-  studentPassFadeInOut,
-  topBottomProfileName,
+	bumpIn,
+	ResizeProfileImage,
+	resizeStudentPasses,
+	scaleStudentPasses,
+	showHideProfileEmail,
+	studentPassFadeInOut,
+	topBottomProfileName,
 } from '../animations';
 import { MatDialog, MatDialogRef } from '@angular/material/dialog';
 import { PassCardComponent } from '../pass-card/pass-card.component';

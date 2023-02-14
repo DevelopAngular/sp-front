@@ -1,15 +1,4 @@
-import {
-  Component,
-  ElementRef,
-  EventEmitter,
-  Inject,
-  Input,
-  OnDestroy,
-  OnInit,
-  Output,
-  TemplateRef,
-  ViewChild,
-} from '@angular/core';
+import { Component, ElementRef, EventEmitter, Inject, Input, OnDestroy, OnInit, Output, TemplateRef, ViewChild } from '@angular/core';
 import { User } from '../models/User';
 import { HallPass } from '../models/HallPass';
 import { Util } from '../../Util';
@@ -34,9 +23,9 @@ import { EncounterPreventionService } from '../services/encounter-prevention.ser
 import { isEmpty, remove } from 'lodash';
 import { HttpErrorResponse } from '@angular/common/http';
 import {
-  ConfirmationDialogComponent,
-  ConfirmationTemplates,
-  RecommendedDialogConfig,
+	ConfirmationDialogComponent,
+	ConfirmationTemplates,
+	RecommendedDialogConfig,
 } from '../shared/shared-components/confirmation-dialog/confirmation-dialog.component';
 import { LocationsService } from '../services/locations.service';
 import { Location } from '../models/Location';
@@ -121,7 +110,7 @@ export class PassCardComponent implements OnInit, OnDestroy {
 	frameMotion$: BehaviorSubject<any>;
 	currentSchool: School;
 	recurringConfig: RecurringConfig;
-  passLimit: PassLimit;
+	passLimit: PassLimit;
 
 	isEnableProfilePictures$: Observable<boolean>;
 
@@ -198,20 +187,18 @@ export class PassCardComponent implements OnInit, OnDestroy {
 			: (this.forInput || this.forStaff || (this.pass.cancellable_by_student && this.user.isStudent())) && !this.fromPast && !this.hideButton;
 	}
 
-  get buttonText(): string {
-    const numStudents = this.selectedStudents.length;
-    if (this.forFuture && this.forInput) {
-      return 'Schedule Pass' + (numStudents > 1? 'es' : '')
-    }
+	get buttonText(): string {
+		const numStudents = this.selectedStudents.length;
+		if (this.forFuture && this.forInput) {
+			return 'Schedule Pass' + (numStudents > 1 ? 'es' : '');
+		}
 
-    if (this.forStaff) {
-      return this.formState?.data?.destLimitReached
-        ? 'Send to Line' : 'Send Pass' + (numStudents > 1 ? 'es' : '')
-    }
+		if (this.forStaff) {
+			return this.formState?.data?.destLimitReached ? 'Send to Line' : 'Send Pass' + (numStudents > 1 ? 'es' : '');
+		}
 
-    return this.formState?.data?.destLimitReached
-      ? 'Wait in Line' : 'Start Pass' + (numStudents > 1 ? 'es' : '')
-  }
+		return this.formState?.data?.destLimitReached ? 'Wait in Line' : 'Start Pass' + (numStudents > 1 ? 'es' : '');
+	}
 
 	ngOnInit() {
 		this.frameMotion$ = this.formService.getFrameMotionDirection();

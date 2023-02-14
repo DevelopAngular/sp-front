@@ -23,12 +23,12 @@
 				</div>
 
 				<div class="button" style="height: 110px">
-					<ng-container *ngIf="waitInLineState === 1; else wilCardButton">
+					<ng-container *ngIf="position > 0; else wilCardButton">
 						<mat-divider></mat-divider>
 						<ng-template #positionInLine>
 							<div class="end-pass-content" style="margin-top: 10px !important; margin-left: 10px !important">
 								<img class="ds-mr-20" [src]="'./assets/Clock (White).svg' | resolveAsset" alt="Clock face" />
-								<span style="width: 120px">{{ wil$.value.line_position | ordinance }} in line<span style="width: 20px" #waitingDots></span></span>
+								<span style="width: 120px">{{ position | ordinance }} in line<span style="width: 20px" #waitingDots></span></span>
 							</div>
 						</ng-template>
 
@@ -42,7 +42,7 @@
 								<div class="page-2 teacher-details" [attr.data-motion-translate]="(frameMotion$ | async).direction">
 									<div style="position: relative; margin-top: 20px !important; display: flex; justify-content: center">
 										<img class="ds-mr-10" [src]="'./assets/Clock (White).svg' | resolveAsset" alt="Clock face" />
-										<span style="width: 108px">{{ wil$.value.line_position | ordinance }} in line</span
+										<span style="width: 108px">{{ position | ordinance }} in line</span
 										><span style="width: 20px; text-align: left" #waitingDots></span>
 									</div>
 								</div>
@@ -59,17 +59,16 @@
 							[gradientColor]="wil$.value?.color_profile.gradient_color"
 							[overlayWidth]="overlayWidth"
 							[valid]="valid">
-							<ng-container [ngSwitch]="waitInLineState">
-								<div class="end-pass-content" *ngSwitchCase="1">
-									<img class="ds-mr-20" [src]="'./assets/Clock (White).svg' | resolveAsset" alt="Clock face" />
-									<span style="width: 120px">{{ wil$.value.line_position | ordinance }} in line<span style="width: 20px" #waitingDots></span></span>
+							<ng-container *ngIf="requestLoading; else frontOfLine">
+								<div class="end-pass-content" style="width: auto !important">
+									<mat-spinner [color]="'accent'" [diameter]="35"></mat-spinner>
 								</div>
+							</ng-container>
 
-								<!-- TODO: Kick student to the back of line if attempts expire -->
+							<ng-template #frontOfLine>
 								<div
 									class="end-pass-content ds-flex-center-between"
 									style="justify-content: space-around; width: 100%; border-radius: 8px"
-									*ngSwitchCase="2"
 									matRipple
 									[matRippleDisabled]="true"
 									[matRippleCentered]="true"
@@ -92,11 +91,7 @@
 										</div>
 									</ng-template>
 								</div>
-
-								<div class="end-pass-content" *ngSwitchDefault>
-									<mat-spinner [color]="'accent'" [diameter]="35"></mat-spinner>
-								</div>
-							</ng-container>
+							</ng-template>
 						</app-card-button>
 					</ng-template>
 				</div>
