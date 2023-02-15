@@ -17,7 +17,7 @@ import { QuickPreviewPasses } from '../models/QuickPreviewPasses';
 import { UserService } from '../services/user.service';
 import { School } from '../models/School';
 import { HallPass } from '../models/HallPass';
-import { concatMap, filter, map, switchMap, take, takeUntil, tap } from 'rxjs/operators';
+import { concatMap, distinctUntilChanged, filter, map, switchMap, take, takeUntil, tap } from 'rxjs/operators';
 import { UNANIMATED_CONTAINER } from '../consent-menu-overlay';
 import { SettingsDescriptionPopupComponent } from '../settings-description-popup/settings-description-popup.component';
 import { UserStats } from '../models/UserStats';
@@ -49,11 +49,12 @@ import { ConnectedPosition } from '@angular/cdk/overlay';
 import { IntroData } from '../ngrx/intros';
 import { IdcardOverlayContainerComponent } from '../idcard-overlay-container/idcard-overlay-container.component';
 import { QRBarcodeGeneratorService } from '../services/qrbarcode-generator.service';
-import { IDCardService, IDCard } from '../services/IDCardService';
+import { IDCard, IDCardService } from '../services/IDCardService';
 import { IdCardGradeLevelsComponent } from '../admin/id-cards/id-card-grade-levels/id-card-grade-levels.component';
 import { IdCardIdNumbersComponent } from '../admin/id-cards/id-card-id-numbers/id-card-id-numbers.component';
 import { PassLimitStudentInfoComponent } from '../pass-limit-student-info/pass-limit-student-info.component';
 import { RecommendedDialogConfig } from '../shared/shared-components/confirmation-dialog/confirmation-dialog.component';
+import { LiveDataService } from '../live-data/live-data.service';
 
 declare const window: Window;
 
@@ -75,6 +76,9 @@ export class StudentInfoCardComponent implements OnInit, AfterViewInit, OnDestro
 
 	loadingPassesStats$: Observable<boolean>;
 	studentsStatsLoading$: Observable<boolean>;
+
+	futurePasses: HallPass[] = [];
+	futurePassesLoading = this.liveDataService.futurePassesLoading$;
 	passesStats$: Observable<QuickPreviewPasses>;
 	studentStats$: Observable<UserStats>;
 	lastStudentPasses$: Observable<HallPass[]>;
@@ -95,7 +99,9 @@ export class StudentInfoCardComponent implements OnInit, AfterViewInit, OnDestro
 		start: moment('1/8/2022', 'DD/MM/YYYY'),
 		end: moment().endOf('day'),
 	};
-	isFullScreenPasses: boolean;
+
+	isFullScreenFuturePasses = false;
+	isFullScreenExpiredPasses = false;
 	isFullScreenReports: boolean;
 
 	isScrollable: boolean;
@@ -135,7 +141,8 @@ export class StudentInfoCardComponent implements OnInit, AfterViewInit, OnDestro
 		private darkTheme: DarkThemeSwitch,
 		private passLimitsService: PassLimitService,
 		private qrBarcodeGenerator: QRBarcodeGeneratorService,
-		private idCardService: IDCardService
+		private idCardService: IDCardService,
+		private liveDataService: LiveDataService
 	) {}
 
 	@HostListener('document.scroll', ['$event'])
@@ -186,6 +193,7 @@ export class StudentInfoCardComponent implements OnInit, AfterViewInit, OnDestro
 				map((u) => User.fromJSON(u))
 			)
 			.subscribe((user) => {
+				// THIS IS THE LOGGED-IN TEACHER
 				this.user = user;
 			});
 
@@ -197,11 +205,31 @@ export class StudentInfoCardComponent implements OnInit, AfterViewInit, OnDestro
 			)
 			.subscribe({
 				next: (user) => {
+					// THIS IS THE PROFILE OF THE STUDENT WHOSE PAGE WE'RE CURRENTLY ON
 					this.profile = user;
 					this.school = this.userService.getUserSchool();
 					this.passesService.getQuickPreviewPassesRequest(this.profile.id, true);
 					this.getUserStats();
-					this.studentStats$ = this.userService.studentsStats$.pipe(map((stats) => stats[this.profile.id]));
+
+					this.liveDataService
+						.watchFutureHallPasses()
+						.pipe(
+							map((passes) => passes.filter((p) => p.student.id == this.profile.id)),
+							takeUntil(this.destroy$),
+							distinctUntilChanged((passes1, passes2) => JSON.stringify(passes1) === JSON.stringify(passes2))
+						)
+						.subscribe({
+							next: (futurePasses) => (this.futurePasses = futurePasses),
+						});
+
+					this.studentStats$ = this.userService.studentsStats$.pipe(
+						map<Record<string, UserStats>, UserStats>((allStats) => allStats[this.profile.id]),
+						filter(Boolean),
+						map<UserStats, UserStats>((profileStats) => ({
+							...profileStats,
+							expired_passes: profileStats?.expired_passes.filter((p) => p.end_time.getTime() < Date.now()),
+						}))
+					);
 					this.encounterPreventionService.getExclusionGroupsRequest({ student: this.profile.id });
 
 					if (this.studentPassLimitSubs) {
@@ -733,10 +761,12 @@ export class StudentInfoCardComponent implements OnInit, AfterViewInit, OnDestro
 	openPassCard({ time$, pass }) {
 		pass.start_time = new Date(pass.start_time);
 		pass.end_time = new Date(pass.end_time);
+		const now = Date.now();
+
 		const data = {
 			pass: pass,
-			fromPast: true,
-			forFuture: false,
+			fromPast: pass.end_time.getTime() < now,
+			forFuture: now < pass.start_time.getTime(),
 			forMonitor: false,
 			isActive: false,
 			forStaff: true,

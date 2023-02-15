@@ -32,7 +32,7 @@
 		</div>
 	</div>
 
-	<div class="trial-bar" *ngIf="isAuthenticated && !isKioskMode && (isAdmin$ | async) && trialEndDate$ | async as trialEndDate">
+	<div #trialBar class="trial-bar" *ngIf="isAuthenticated && !isKioskMode && (isAdmin$ | async) && trialEndDate$ | async as trialEndDate">
 		<div class="trialing" *ngIf="trialEndDate >= todayDate; else ended">
 			<div class="daysLeft">
 				You have
@@ -66,7 +66,7 @@
 	</app-school-toggle-bar>
 	<!--  <app-support-button *ngIf="showSupportButton"></app-support-button>-->
 	<!--  style="height: 100%; overflow: hidden !important;"-->
-	<div class="router-outlet" [style.width]="mainContentWidth">
+	<div class="router-outlet" [style.width]="mainContentWidth" [style.height]="setHeight">
 		<router-outlet></router-outlet>
 	</div>
 	<div class="notification-backdrop" *ngIf="hasCustomBackdrop" [ngStyle]="customStyle"></div>

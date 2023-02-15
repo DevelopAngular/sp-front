@@ -59,11 +59,11 @@
 		isStaff
 			? (schoolsLength$ | async) > 1
 				? (isUpdateBar$ | async)
-					? 'calc(100vh - 193px)'
-					: 'calc(100vh - 154px)'
+					? 'calc(100% - 193px)'
+					: 'calc(100% - 154px)'
 				: (isUpdateBar$ | async)
-				? 'calc(100vh - 144px)'
-				: 'calc(100vh - 105px)'
+				? 'calc(100% - 144px)'
+				: 'calc(100% - 105px)'
 			: ''
 	"
 	[style.touch-action]="'auto'"
@@ -191,7 +191,7 @@
 <div
 	class="passes-wrapper"
 	(scroll)="scroll($event)"
-	[style.height]="isStaff ? ((schoolsLength$ | async) > 1 ? 'calc(100vh - 154px)' : 'calc(100vh - 105px)') : ''"
+	[style.height]="isStaff ? ((schoolsLength$ | async) > 1 ? 'calc(100% - 154px)' : 'calc(100% - 105px)') : ''"
 	[style.overflow]="isStaff ? 'auto' : 'visible'"
 	*ngIf="(user && !this.screenService.isDeviceSmall && !this.screenService.isDeviceMid) || (user && this.screenService.isIpadWidth)">
 	<h1 class="passes-heading">Passes</h1>

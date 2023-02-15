@@ -1,10 +1,10 @@
 import { Component, ElementRef, Inject, OnDestroy, OnInit, ViewChild } from '@angular/core';
-import { AbstractControl, FormControl, FormGroup, Validators, ValidationErrors } from '@angular/forms';
+import { AbstractControl, FormControl, FormGroup, ValidationErrors, Validators } from '@angular/forms';
 import { MAT_DIALOG_DATA, MatDialog, MatDialogRef } from '@angular/material/dialog';
 import { DomSanitizer } from '@angular/platform-browser';
 
 import { BehaviorSubject, combineLatest, forkJoin, fromEvent, merge, Observable, of, Subject, zip } from 'rxjs';
-import { debounceTime, distinctUntilChanged, filter, map, switchMap, take, takeUntil, tap, catchError, concatMap } from 'rxjs/operators';
+import { catchError, concatMap, debounceTime, distinctUntilChanged, filter, map, switchMap, take, takeUntil, tap } from 'rxjs/operators';
 
 import { bumpIn, NextStep } from '../../animations';
 import { Pinnable } from '../../models/Pinnable';
@@ -21,7 +21,7 @@ import { ColorProfile } from '../../models/ColorProfile';
 import { User } from '../../models/User';
 import { ToastService } from '../../services/toast.service';
 import { ConsentMenuComponent } from '../../consent-menu/consent-menu.component';
-import { VisibilityOverStudents, DEFAULT_VISIBILITY_STUDENTS } from './visibility-room/visibility-room.type';
+import { DEFAULT_VISIBILITY_STUDENTS, VisibilityOverStudents } from './visibility-room/visibility-room.type';
 import { BlockScrollService } from './block-scroll.service';
 
 @Component({
@@ -249,9 +249,16 @@ export class OverlayContainerComponent implements OnInit, OnDestroy {
 		if (this.isFormIncomplete) {
 			let missing = [];
 
-			if (this.currentPage === Pages.EditRoom || this.currentPage === Pages.NewRoom) if (this.form.get('roomName').invalid) missing.push('room name');
-			if (this.currentPage === Pages.NewFolder || this.currentPage === Pages.EditFolder || this.currentPage === Pages.BulkEditRoomsInFolder)
-				if (this.form.get('folderName').invalid) missing.push('folder name');
+			if (this.currentPage === Pages.EditRoom || this.currentPage === Pages.NewRoom) {
+				if (this.form.get('roomName').invalid) {
+					missing.push('room name');
+				}
+			}
+			if (this.currentPage === Pages.NewFolder || this.currentPage === Pages.EditFolder || this.currentPage === Pages.BulkEditRoomsInFolder) {
+				if (this.form.get('folderName').invalid) {
+					missing.push('folder name');
+				}
+			}
 
 			if (
 				this.currentPage === Pages.EditRoom ||
@@ -260,23 +267,42 @@ export class OverlayContainerComponent implements OnInit, OnDestroy {
 				this.currentPage === Pages.EditFolder ||
 				this.currentPage === Pages.BulkEditRoomsInFolder
 			) {
-				if (!this.selectedIcon) missing.push('icon');
-				if (!this.color_profile) missing.push('color');
+				if (!this.selectedIcon) {
+					missing.push('icon');
+				}
+				if (!this.color_profile) {
+					missing.push('color');
+				}
 			}
 
 			if (this.currentPage === Pages.EditRoom || this.currentPage === Pages.NewRoom) {
-				if (this.form.get('roomNumber').invalid) missing.push('room number');
-				if (this.form.get('timeLimit').invalid) missing.push('time limit');
+				if (this.form.get('roomNumber').invalid) {
+					missing.push('room number');
+				}
+				if (this.form.get('timeLimit').invalid) {
+					missing.push('time limit');
+				}
 
 				if (this.roomData !== undefined) {
-					if (this.roomData.travelType.length === 0) missing.push('travel type');
-					if (this.roomData.advOptState.now.state === 'Certain \n teachers' && this.roomData.advOptState.now.data.selectedTeachers.length === 0)
+					if (this.roomData.travelType.length === 0) {
+						missing.push('travel type');
+					}
+					if (this.roomData.advOptState.now.state === 'Certain \n teachers' && this.roomData.advOptState.now.data.selectedTeachers.length === 0) {
 						missing.push('restriction for now teachers');
-					if (this.roomData.advOptState.future.state === 'Certain \n teachers' && this.roomData.advOptState.future.data.selectedTeachers.length === 0)
+					}
+					if (
+						this.roomData.advOptState.future.state === 'Certain \n teachers' &&
+						this.roomData.advOptState.future.data.selectedTeachers.length === 0
+					) {
 						missing.push('restriction for future teachers');
+					}
 				}
-				if (this.passLimitForm.get('to').invalid && this.passLimitForm.get('toEnabled').value) missing.push('active pass limit');
-				if (this.visibilityForm.invalid) missing.push('room visibility');
+				if (this.passLimitForm.get('to').invalid && this.passLimitForm.get('toEnabled').value) {
+					missing.push('active pass limit');
+				}
+				if (this.visibilityForm.invalid) {
+					missing.push('room visibility');
+				}
 			}
 
 			if (this.currentPage === Pages.BulkEditRooms) {
@@ -284,23 +310,35 @@ export class OverlayContainerComponent implements OnInit, OnDestroy {
 					if (
 						this.bulkEditData.roomData.advOptState.now.state === 'Certain \n teachers' &&
 						this.bulkEditData.roomData.advOptState.now.data.selectedTeachers.length === 0
-					)
+					) {
 						missing.push('restriction for now teachers');
+					}
 					if (
 						this.bulkEditData.roomData.advOptState.future.state === 'Certain \n teachers' &&
 						this.bulkEditData.roomData.advOptState.future.data.selectedTeachers.length === 0
-					)
+					) {
 						missing.push('restriction for future teachers');
+					}
 				}
-				if (this.passLimitForm.get('to').invalid && this.passLimitForm.get('toEnabled').value) missing.push('pass limit');
+				if (this.passLimitForm.get('to').invalid && this.passLimitForm.get('toEnabled').value) {
+					missing.push('pass limit');
+				}
 			}
 
-			if (missing.length === 1) return 'Missing ' + missing[0];
-			if (missing.length === 2) return `Missing ${missing[0]} and ${missing[1]}`;
-			if (missing.length !== 0) return `Missing ${missing.slice(0, missing.length - 1).join(', ')}, and ${missing[missing.length - 1]}`;
+			if (missing.length === 1) {
+				return 'Missing ' + missing[0];
+			}
+			if (missing.length === 2) {
+				return `Missing ${missing[0]} and ${missing[1]}`;
+			}
+			if (missing.length !== 0) {
+				return `Missing ${missing.slice(0, missing.length - 1).join(', ')}, and ${missing[missing.length - 1]}`;
+			}
 		}
 
-		if (this.showPublishSpinner) return 'Please wait, rooms are still being uploaded.';
+		if (this.showPublishSpinner) {
+			return 'Please wait, rooms are still being uploaded.';
+		}
 
 		return null;
 	}
@@ -496,7 +534,9 @@ export class OverlayContainerComponent implements OnInit, OnDestroy {
 				[
 					(c: AbstractControl): ValidationErrors | null => {
 						// abort, skip, abanton do not engage validation
-						if (c.value === null) return null;
+						if (c.value === null) {
+							return null;
+						}
 						// only visible_all_students do not need a group of students
 						// ensures non-all modes have a non-empty over array (students)
 						if (c.value.mode !== 'visible_all_students' && c.value.over.length === 0 && c.value.grade.length === 0) {
@@ -510,8 +550,15 @@ export class OverlayContainerComponent implements OnInit, OnDestroy {
 	}
 
 	getVisibilityStudents(loc: Location): VisibilityOverStudents {
-		if (!loc) return cloneDeep(DEFAULT_VISIBILITY_STUDENTS);
-		return { ...cloneDeep(DEFAULT_VISIBILITY_STUDENTS), mode: loc.visibility_type, over: loc.visibility_students, grade: loc.visibility_grade };
+		if (!loc) {
+			return cloneDeep(DEFAULT_VISIBILITY_STUDENTS);
+		}
+		return {
+			...cloneDeep(DEFAULT_VISIBILITY_STUDENTS),
+			mode: loc.visibility_type,
+			over: loc.visibility_students,
+			grade: loc.visibility_grade,
+		};
 	}
 
 	generateAdvOptionsModel(loc: Location) {
@@ -845,10 +892,16 @@ export class OverlayContainerComponent implements OnInit, OnDestroy {
 					? [of([])]
 					: this.folderData.roomsInFolder.map((room) => this.createOrUpdateLocation(room, category));
 
-			zip(...roomsInFolderUpdateRequests$)
+			// delete pinnables for locations being added into category
+			const pinnablesToDeleteRequest$ =
+				this.pinnableToDeleteIds.length === 0
+					? of([])
+					: zip(...this.pinnableToDeleteIds.map((id) => this.hallPassService.deletePinnableRequest(id, true)));
+
+			zip(...roomsInFolderUpdateRequests$, pinnablesToDeleteRequest$)
 				.pipe(
-					switchMap(() =>
-						zip(
+					switchMap(() => {
+						return zip(
 							this.hallPassService.pinnables$.pipe(take(1)),
 							this.hallPassService.postPinnableRequest(pinnableData).pipe(filter((res) => !!res))
 						).pipe(
@@ -857,8 +910,8 @@ export class OverlayContainerComponent implements OnInit, OnDestroy {
 								arrangedSequence.push(result[1].id);
 								return this.hallPassService.createArrangedPinnableRequest({ order: arrangedSequence.join(',') });
 							})
-						)
-					),
+						);
+					}),
 					takeUntil(this.destroy$),
 					this.catchError()
 				)
