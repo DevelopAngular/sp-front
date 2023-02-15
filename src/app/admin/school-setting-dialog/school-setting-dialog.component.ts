@@ -1,4 +1,4 @@
-import { Component, OnDestroy, OnInit } from '@angular/core';
+import { Component, Inject, OnDestroy, OnInit } from '@angular/core';
 import { FormControl, FormGroup, Validators } from '@angular/forms';
 import { MatDialogRef } from '@angular/material/dialog';
 import { AdminService } from '../../services/admin.service';
@@ -7,6 +7,8 @@ import { School } from '../../models/School';
 import { filter, switchMap, takeUntil } from 'rxjs/operators';
 import { HttpService } from '../../services/http-service';
 import { FeatureFlagService, FLAGS } from '../../services/feature-flag.service';
+import * as moment from 'moment';
+import { TimeZoneService } from '../../services/time-zone.service';
 
 @Component({
 	selector: 'app-school-setting-dialog',
@@ -22,6 +24,7 @@ export class SchoolSettingDialogComponent implements OnInit, OnDestroy {
 		show_active_passes_number: boolean;
 		student_can_use_mobile: boolean;
 		wait_in_line: boolean;
+		timezone: string;
 	};
 
 	changeForm: boolean;
@@ -31,7 +34,19 @@ export class SchoolSettingDialogComponent implements OnInit, OnDestroy {
 	changeSettings$ = new Subject();
 	destroy$ = new Subject();
 
-	constructor(private dialogRef: MatDialogRef<SchoolSettingDialogComponent>, private adminService: AdminService, private http: HttpService) {}
+	public tzNames: string[];
+
+	public userTz: string;
+	public selectedTz: string;
+
+	constructor(
+		private dialogRef: MatDialogRef<SchoolSettingDialogComponent>,
+		private adminService: AdminService,
+		private http: HttpService,
+		@Inject('TimeZoneService') private timeZoneService: TimeZoneService
+	) {
+		this.tzNames = moment.tz.names();
+	}
 
 	ngOnInit() {
 		this.http.currentSchool$
@@ -43,6 +58,7 @@ export class SchoolSettingDialogComponent implements OnInit, OnDestroy {
 				this.currentSchool = school;
 				this.buildForm(this.currentSchool);
 			});
+		this.selectedTz = this.currentSchool.timezone;
 		this.initialState = this.schoolForm.value;
 		this.schoolForm.valueChanges.pipe(takeUntil(this.destroy$)).subscribe((res) => {
 			this.changeForm =
@@ -51,6 +67,7 @@ export class SchoolSettingDialogComponent implements OnInit, OnDestroy {
 				res.show_active_passes_number !== this.initialState.show_active_passes_number ||
 				res.student_can_use_mobile !== this.initialState.student_can_use_mobile ||
 				res.wait_in_line !== this.initialState.wait_in_line;
+			res.timezone !== this.initialState.timezone;
 		});
 		this.changeSettings$
 			.pipe(
@@ -92,6 +109,7 @@ export class SchoolSettingDialogComponent implements OnInit, OnDestroy {
 			show_active_passes_number: new FormControl(school.show_active_passes_number),
 			student_can_use_mobile: new FormControl(school.student_can_use_mobile),
 			wait_in_line: new FormControl(school.feature_flag_wait_in_line),
+			timezone: new FormControl(school.timezone),
 		});
 	}
 
@@ -102,5 +120,11 @@ export class SchoolSettingDialogComponent implements OnInit, OnDestroy {
 
 	close() {
 		this.dialogRef.close();
+	}
+
+	timeZoneChanged(timeZone: string): void {
+		this.selectedTz = timeZone;
+		this.schoolForm.controls['timezone'].setValue(timeZone);
+		this.changeForm = true;
 	}
 }

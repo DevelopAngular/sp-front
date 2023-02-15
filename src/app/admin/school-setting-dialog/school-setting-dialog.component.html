@@ -94,6 +94,27 @@
 				</div>
 			</div>
 
+			<div class="block">
+				<div class="label timezone">
+					<div>Time zone</div>
+					<div class="tooltip-container">
+						<img
+							customToolTip="The school's timezone controls how times are displayed in exported hall passes, email notifications, and affects scheduled passes as well."
+							class="support-icon"
+							[src]="'./assets/Info (Blue-Gray).svg' | resolveAsset" />
+						<div class="arrow-down-container">
+							<div class="arrow-down"></div>
+						</div>
+					</div>
+				</div>
+				<!-- <label>Select tenant/device time zone: </label> -->
+				<select name="'timeZone'" [ngModel]="selectedTz" (ngModelChange)="timeZoneChanged($event)">
+					<option *ngFor="let tz of tzNames" [value]="tz">
+						{{ tz }}
+					</option>
+				</select>
+			</div>
+
 			<!--    <div class="bottom-block">-->
 			<!--      <div class="ds-dialog-bold-text">Have a feature suggestion?</div>-->
 			<!--      <div class="ds-small-link-text">Email us at support@smartpass.app</div>-->

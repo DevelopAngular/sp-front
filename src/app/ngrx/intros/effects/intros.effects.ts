@@ -105,6 +105,26 @@ export class IntrosEffects {
 		);
 	});
 
+	updateIntrosHelpCenter$ = createEffect(() => {
+		return this.action$.pipe(
+			ofType(introsActions.updateIntrosHelpCenter),
+			switchMap((action) => {
+				return this.userService.updateIntrosHelpCenter(action.device, action.version).pipe(
+					map((data) => {
+						const updatedData = {
+							...action.intros,
+							frontend_help_center: {
+								[action.device]: { seen_version: action.version },
+							},
+						};
+						return introsActions.updateIntrosHelpCenterSuccess({ data: updatedData });
+					}),
+					catchError((error) => of(introsActions.updateIntrosHelpCenterFailure({ errorMessage: error.message })))
+				);
+			})
+		);
+	});
+
 	updateIntrosDisableRoom$ = createEffect(() => {
 		return this.action$.pipe(
 			ofType(introsActions.updateIntrosDisableRoom),

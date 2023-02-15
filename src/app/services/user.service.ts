@@ -104,6 +104,7 @@ import {
 	updateIntrosEncounter,
 	updateIntrosMain,
 	updateIntrosSearch,
+	updateIntrosHelpCenter,
 	updateIntrosStudentPassLimits,
 	updateIntrosWaitInLine,
 } from '../ngrx/intros/actions';
@@ -603,6 +604,10 @@ export class UserService implements OnDestroy {
 		this.store.dispatch(updateIntrosSearch({ intros, device, version }));
 	}
 
+	updateIntrosHelpCenterRequest(intros, device, version) {
+		this.store.dispatch(updateIntrosHelpCenter({ intros, device, version }));
+	}
+
 	updateIntrosDisableRequest(intros, device, version) {
 		this.store.dispatch(updateIntrosDisableRoom({ intros, device, version }));
 	}
@@ -637,6 +642,10 @@ export class UserService implements OnDestroy {
 
 	updateIntrosSearch(device, version) {
 		return this.http.patch('v1/intros/search_reminder', { device, version });
+	}
+
+	updateIntrosHelpCenter(device, version) {
+		return this.http.patch('v1/intros/frontend_help_center', { device, version });
 	}
 
 	updateIntrosDisableRoom(device, version) {

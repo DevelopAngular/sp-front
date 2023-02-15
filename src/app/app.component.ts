@@ -3,7 +3,7 @@ import { AfterViewInit, Component, ElementRef, HostListener, NgZone, OnDestroy, 
 import { MatDialog } from '@angular/material/dialog';
 import { ActivatedRoute, NavigationEnd, Router } from '@angular/router';
 import { filter as _filter } from 'lodash';
-import { BehaviorSubject, interval, Observable, ReplaySubject, Subject, zip } from 'rxjs';
+import { BehaviorSubject, interval, Observable, ReplaySubject, Subject, Subscription, zip } from 'rxjs';
 
 import { concatMap, filter, map, mergeMap, switchMap, take, takeUntil, withLatestFrom } from 'rxjs/operators';
 import { BUILD_INFO_REAL } from '../build-info';
@@ -34,6 +34,8 @@ import { CheckForUpdateService } from './services/check-for-update.service';
 import { LocalizejsService } from './services/localizejs.service';
 import { ColorProfile } from './models/ColorProfile';
 import { Util } from '../Util';
+import { HelpCenterService } from './services/help-center.service';
+import { CallDialogComponent } from './shared/shared-components/call-dialog/call-dialog.component';
 
 declare const window;
 
@@ -78,6 +80,9 @@ export class AppComponent implements OnInit, AfterViewInit, OnDestroy {
 	intercomObserver: MutationObserver;
 
 	private subscriber$ = new Subject();
+
+	public mainContentWidth: string = '100%';
+	public rightPosition;
 
 	trialEndDate$ = this.http.currentSchoolSubject.pipe(
 		takeUntil(this.subscriber$),
@@ -130,7 +135,8 @@ export class AppComponent implements OnInit, AfterViewInit, OnDestroy {
 		private screen: ScreenService,
 		private toastService: ToastService,
 		private localize: LocalizejsService,
-		private updateService: CheckForUpdateService
+		private updateService: CheckForUpdateService,
+		public helpCenter: HelpCenterService
 	) {}
 
 	get isMobile() {
@@ -204,7 +210,8 @@ export class AppComponent implements OnInit, AfterViewInit, OnDestroy {
 					}
 
 					if (intercomWrapper) {
-						intercomWrapper.style.display = user.isStudent() ? 'none' : 'block';
+						// intercomWrapper.style.display = user.isStudent() ? 'none' : 'block';
+						intercomWrapper.style.display = 'none';
 					}
 
 					if (isAllowed && !this.isMobile) {
@@ -545,5 +552,84 @@ export class AppComponent implements OnInit, AfterViewInit, OnDestroy {
 
 	updateApp() {
 		this.updateService.update();
+	}
+
+	openHelpCenter(event) {
+		this.helpCenter.isHelpCenterOpen.next(event);
+		setTimeout(() => {
+			const BORDER_SIZE = 4;
+			const panel = document.getElementById('help-center-content');
+			const dragDivider = document.getElementById('drag-divider');
+			setTimeout(() => {
+				const mainRouter = document.querySelector<HTMLElement>('.router-outlet');
+				mainRouter.style.transition = 'none';
+			}, 1000);
+			panel.style.transition = 'none';
+			let m_pos;
+			function resize(e) {
+				const dx = m_pos - e.x;
+				m_pos = e.x;
+				panel.style.width = parseInt(getComputedStyle(panel, '').width) + dx + 'px';
+			}
+
+			panel.addEventListener(
+				'mousedown',
+				function (e) {
+					if (e.offsetX < BORDER_SIZE) {
+						m_pos = e.x;
+						document.addEventListener('mousemove', resize, false);
+						document.body.style.cursor = 'col-resize';
+						dragDivider.style.backgroundColor = '#00B476';
+					}
+				},
+				false
+			);
+
+			document.addEventListener(
+				'mouseup',
+				function () {
+					document.removeEventListener('mousemove', resize, false);
+					document.body.style.cursor = 'default';
+					dragDivider.style.backgroundColor = '#B7C1CF';
+				},
+				false
+			);
+
+			const myEl = document.querySelector('#help-center-content');
+
+			// Create observer
+			const observer = new ResizeObserver((element) => {
+				if (!this.helpCenter.isHelpCenterOpen.getValue()) {
+					this.mainContentWidth = '100%';
+				} else if (document.getElementById('help-center-content')) {
+					this.mainContentWidth = `calc(100% - ${document.getElementById('help-center-content').offsetWidth}px)`;
+				}
+				// console.log("mainContentWidth : ", this.mainContentWidth)
+				// this.rightPosition = panel.offsetWidth;
+			});
+
+			// Add element (observe)
+			observer.observe(myEl);
+		}, 100);
+	}
+
+	closeHelpCenter() {
+		this.helpCenter.isHelpCenterOpen.next(false);
+	}
+
+	openCallDialog(elem) {
+		const CDC = this.dialog.open(CallDialogComponent, {
+			panelClass: 'consent-dialog-container',
+			backdropClass: 'invis-backdrop',
+			data: {
+				trigger: elem.currentTarget,
+			},
+		});
+
+		CDC.afterClosed()
+			.pipe(filter((res) => !!res))
+			.subscribe((status) => {
+				console.log('status : ', status);
+			});
 	}
 }
