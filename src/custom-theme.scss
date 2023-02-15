@@ -22,13 +22,11 @@ $mat-white: (
 $inter-font: mat-typography-config(
   $font-family: $primaryFont
 );
-$slider-theme-primary: mat-palette($mat-white);
-$slider-theme-accent: mat-palette($mat-white);
-$slider-theme: mat-light-theme($slider-theme-primary, $slider-theme-accent);
 
-@include angular-material-theme($slider-theme);
+$white-palette: mat-palette($mat-white);
+$white-theme: mat-light-theme($white-palette, $white-palette);
+@include angular-material-theme($white-theme);
 @include mat-core($inter-font);
-
 
 $mat-dark-green: (
   100: #06FF7A,
@@ -65,7 +63,6 @@ $loading-theme-primary: mat-palette($mat-dark-green);
 $loading-theme-accent: mat-palette($mat-light-green);
 $loading-theme: mat-light-theme($loading-theme-accent, $loading-theme-primary);
 
-
 $sp-blue-grey: (
   50: #7F879D,
   100: #7F879D,
@@ -101,23 +98,12 @@ $sp-blue-grey: (
 
 
 
-$loading-theme-white-primary: mat-palette($mat-white);
-$loading-theme-white-accent: mat-palette($mat-white);
-$loading-theme-white: mat-light-theme($loading-theme-white-accent, $loading-theme-white-primary);
-
 $loading-theme-blue-gray-primary: mat-palette($mat-blue-grey);
 $loading-theme-blue-gray-accent: mat-palette($sp-blue-grey);
 $loading-theme-blue-gray: mat-dark-theme($loading-theme-blue-gray-accent, $loading-theme-blue-gray-primary);
 
 .loading-theme {
-    @include angular-material-theme($loading-theme);
-  &_white {
-    @include angular-material-theme($loading-theme-white);
-  }
-  &_light-gray {
-    @include angular-material-theme($loading-theme-blue-gray);
-  }
-  &_blue-gray {
+  &_light-gray, &_blue-gray {
     @include angular-material-theme($loading-theme-blue-gray);
   }
 }
