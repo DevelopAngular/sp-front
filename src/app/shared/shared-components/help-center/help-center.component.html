@@ -9,10 +9,6 @@
 	<P>?</P>
 </div>
 <ng-template #helpcentertooltip>
-	<app-nux-help-center
-	[showBadge]="showBadge"
-		[title]="title"
-		[description]="description"
-		(gotItEvent)="closeNuxToolTip($event)">
+	<app-nux-help-center [showBadge]="showBadge" [title]="title" [description]="description" (gotItEvent)="closeNuxToolTip($event)">
 	</app-nux-help-center>
 </ng-template>

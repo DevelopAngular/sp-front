@@ -11,7 +11,7 @@ import { UserService } from '../../../services/user.service';
 	templateUrl: './help-center.component.html',
 	styleUrls: ['./help-center.component.scss'],
 })
-export class HelpCenterComponent implements OnInit , OnDestroy {
+export class HelpCenterComponent implements OnInit, OnDestroy {
 	showNuxTooltip: Subject<boolean> = new Subject();
 	nuxWrapperPosition: ConnectedPosition = {
 		originX: 'center',
