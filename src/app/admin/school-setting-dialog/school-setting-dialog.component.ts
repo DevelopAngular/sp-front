@@ -6,9 +6,7 @@ import { Subject } from 'rxjs';
 import { School } from '../../models/School';
 import { filter, switchMap, takeUntil } from 'rxjs/operators';
 import { HttpService } from '../../services/http-service';
-import { FeatureFlagService, FLAGS } from '../../services/feature-flag.service';
 import * as moment from 'moment';
-import { TimeZoneService } from '../../services/time-zone.service';
 
 @Component({
 	selector: 'app-school-setting-dialog',
@@ -39,12 +37,7 @@ export class SchoolSettingDialogComponent implements OnInit, OnDestroy {
 	public userTz: string;
 	public selectedTz: string;
 
-	constructor(
-		private dialogRef: MatDialogRef<SchoolSettingDialogComponent>,
-		private adminService: AdminService,
-		private http: HttpService,
-		@Inject('TimeZoneService') private timeZoneService: TimeZoneService
-	) {
+	constructor(private dialogRef: MatDialogRef<SchoolSettingDialogComponent>, private adminService: AdminService, private http: HttpService) {
 		this.tzNames = moment.tz.names();
 	}
 
@@ -67,7 +60,6 @@ export class SchoolSettingDialogComponent implements OnInit, OnDestroy {
 				res.show_active_passes_number !== this.initialState.show_active_passes_number ||
 				res.student_can_use_mobile !== this.initialState.student_can_use_mobile ||
 				res.wait_in_line !== this.initialState.wait_in_line;
-			res.timezone !== this.initialState.timezone;
 		});
 		this.changeSettings$
 			.pipe(

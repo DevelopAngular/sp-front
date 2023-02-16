@@ -64,13 +64,13 @@
 
 	<app-school-toggle-bar *ngIf="isAuthenticated && schools && schools.length > 1 && !hideSchoolToggleBar && !isKioskMode" [schools]="schools">
 	</app-school-toggle-bar>
-	<!--  <app-support-button *ngIf="showSupportButton"></app-support-button>-->
-	<!--  style="height: 100%; overflow: hidden !important;"-->
 	<div class="router-outlet" [style.width]="mainContentWidth" [style.height]="setHeight">
 		<router-outlet></router-outlet>
 	</div>
 	<div class="notification-backdrop" *ngIf="hasCustomBackdrop" [ngStyle]="customStyle"></div>
-	<app-help-center *ngIf="!(helpCenter.isHelpCenterOpen | async)" (onClick)="openHelpCenter($event)"></app-help-center>
+	<app-help-center
+		*ngIf="isAuthenticated && !(user$ | async)?.isStudent() && !(helpCenter.isHelpCenterOpen | async) && !isKioskMode"
+		(onClick)="openHelpCenter($event)"></app-help-center>
 	<ng-container *ngIf="helpCenter.isHelpCenterOpen | async">
 		<div class="help-center-content-wrapper" id="help-center-content">
 			<div class="drag-divider" id="drag-divider"></div>

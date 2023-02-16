@@ -625,8 +625,6 @@ export class AppComponent implements OnInit, AfterViewInit, OnDestroy {
 				} else if (document.getElementById('help-center-content')) {
 					this.mainContentWidth = `calc(100% - ${document.getElementById('help-center-content').offsetWidth}px)`;
 				}
-				// console.log("mainContentWidth : ", this.mainContentWidth)
-				// this.rightPosition = panel.offsetWidth;
 			});
 
 			// Add element (observe)
