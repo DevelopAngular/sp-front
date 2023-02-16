@@ -38,6 +38,7 @@ import { HelpCenterService } from './services/help-center.service';
 import { CallDialogComponent } from './shared/shared-components/call-dialog/call-dialog.component';
 
 declare const window;
+declare var ResizeObserver;
 
 export const INITIAL_LOCATION_PATHNAME = new ReplaySubject<string>(1);
 
