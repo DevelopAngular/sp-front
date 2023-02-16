@@ -191,6 +191,7 @@
 	position: absolute;
 	right: 0;
 	transition: all 0.3s;
+	overflow-y: hidden;
 	.drag-divider {
 		// bottom: 0;
 		// cursor: col-resize;
