@@ -3,7 +3,7 @@ import { MatDialog } from '@angular/material/dialog';
 import { BehaviorSubject, combineLatest, forkJoin, Observable, of, Subject } from 'rxjs';
 import { UserService } from '../../services/user.service';
 import { ActivatedRoute, Router } from '@angular/router';
-import { debounceTime, filter, map, skipUntil, switchMap, take, takeUntil, tap } from 'rxjs/operators';
+import { debounceTime, filter, map, skipUntil, startWith, switchMap, take, takeUntil, tap } from 'rxjs/operators';
 import { Util } from '../../../Util';
 import { HttpService } from '../../services/http-service';
 import { AdminService } from '../../services/admin.service';
@@ -22,6 +22,8 @@ import { ToastService } from '../../services/toast.service';
 import { PassLimitService } from '../../services/pass-limit.service';
 import { StudentPassLimit } from '../../models/HallPassLimits';
 import { ParentAccountService, ParentResponse, StudentResponse } from '../../services/parent-account.service';
+import { Actions, ofType } from '@ngrx/effects';
+import { addUserToProfilesSuccess } from '../../ngrx/accounts/actions/accounts.actions';
 
 export const TABLE_RELOADING_TRIGGER = new Subject<any>();
 
@@ -73,7 +75,8 @@ export class AccountsRoleComponent implements OnInit, OnDestroy {
 		private storage: StorageService,
 		private toast: ToastService,
 		private passLimitsService: PassLimitService,
-		private parentService: ParentAccountService
+		private parentService: ParentAccountService,
+		private actions$: Actions
 	) {}
 
 	ngOnInit() {
@@ -82,6 +85,15 @@ export class AccountsRoleComponent implements OnInit, OnDestroy {
 		this.isLoading$.next(true);
 
 		this.accountRoleData$ = combineLatest(
+			this.actions$.pipe(
+				ofType(addUserToProfilesSuccess),
+				startWith({ updatedUser: null }),
+				tap(({ updatedUser }) => {
+					if (updatedUser?.id == this.user.id) {
+						this.userService.getUserRequest();
+					}
+				})
+			),
 			this.tableService.activeFilters$.asObservable().pipe(
 				tap(() => {
 					this.isLoaded$.next(false);
