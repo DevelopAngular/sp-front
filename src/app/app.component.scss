@@ -2,7 +2,7 @@
 @import '../design-system.scss';
 .global-container {
 	display: flex;
-	// flex-direction: column;
+	flex-direction: column;
 	background-color: #fbfeff;
 	.router-outlet {
 		height: 100%;
