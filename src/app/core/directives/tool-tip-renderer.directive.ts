@@ -181,6 +181,9 @@ export class ToolTipRendererDirective implements OnInit, OnDestroy, OnChanges {
 	}
 	show() {
 		// attach the component if it has not already attached to the overlay
+		if (!(this.text || this.contentTemplate)) {
+			return;
+		}
 		timer(300)
 			.pipe(
 				takeUntil(this.destroyOpen$),
