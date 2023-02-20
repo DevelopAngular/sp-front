@@ -1,5 +1,20 @@
-import { Component, ElementRef, Inject, Input, OnDestroy, OnInit, Optional, QueryList, TemplateRef, ViewChild, ViewChildren } from '@angular/core';
-import { BehaviorSubject, from, interval, Observable, of, Subject, timer } from 'rxjs';
+import {
+  Component,
+  ElementRef,
+  Inject,
+  Input,
+  OnChanges,
+  OnDestroy,
+  OnInit,
+  Optional,
+  QueryList,
+  SimpleChange,
+  SimpleChanges,
+  TemplateRef,
+  ViewChild,
+  ViewChildren,
+} from '@angular/core';
+import { BehaviorSubject, from, interval, Observable, of, Subject, throwError, timer } from 'rxjs';
 import { Navigation } from '../../create-hallpass-forms/main-hallpass--form/main-hall-pass-form.component';
 import { Pinnable } from '../../models/Pinnable';
 import { HttpService } from '../../services/http-service';
@@ -9,7 +24,7 @@ import { MAT_DIALOG_DATA, MatDialog, MatDialogRef } from '@angular/material/dial
 import { ScreenService } from '../../services/screen.service';
 import { DeviceDetection } from '../../device-detection.helper';
 import { WaitingInLinePass } from '../../models/WaitInLine';
-import { concatMap, filter, finalize, map, takeUntil, takeWhile } from 'rxjs/operators';
+import { concatMap, filter, finalize, map, takeUntil, takeWhile, tap } from 'rxjs/operators';
 import { MatRipple } from '@angular/material/core';
 import { ConsentMenuComponent } from '../../consent-menu/consent-menu.component';
 import { Util } from '../../../Util';
@@ -19,6 +34,8 @@ import { Title } from '@angular/platform-browser';
 import { CreateFormService } from '../../create-hallpass-forms/create-form.service';
 import { User } from '../../models/User';
 import { UserService } from '../../services/user.service';
+import { WaitInLineService } from '../../services/wait-in-line.service';
+import { TimerSpinnerComponent } from '../../core/components/timer-spinner/timer-spinner.component';
 
 export enum WILHeaderOptions {
 	Delete = 'delete',
@@ -50,10 +67,26 @@ export enum WILHeaderOptions {
 	templateUrl: './inline-wait-in-line-card.component.html',
 	styleUrls: ['./inline-wait-in-line-card.component.scss'],
 })
-export class InlineWaitInLineCardComponent implements OnInit, OnDestroy {
-	@Input() wil$: BehaviorSubject<WaitingInLinePass>;
+export class InlineWaitInLineCardComponent implements OnInit, OnChanges, OnDestroy {
+	@Input() wil: WaitingInLinePass;
 	@Input() forStaff: boolean;
 
+  @ViewChildren(TimerSpinnerComponent) timeSpinner: QueryList<TimerSpinnerComponent>;
+  @ViewChild('waitingDots') set dotsSpan(span: ElementRef<HTMLSpanElement>) {
+    if (!span) {
+      return;
+    }
+
+    timer(0, 750)
+      .pipe(
+        takeUntil(this.destroy$),
+        tap((count) => {
+          span.nativeElement.innerText = '.'.repeat(count % 4);
+          count++;
+        })
+      )
+      .subscribe();
+  }
 	@ViewChild('root') set root(root: TemplateRef<any>) {
 		if (!root) {
 			return;
@@ -82,7 +115,7 @@ export class InlineWaitInLineCardComponent implements OnInit, OnDestroy {
 			return;
 		}
 
-		if (this.isKiosk && this.wil$.value.isFrontOfLine()) {
+		if (this.isKiosk && this.wil.isFrontOfLine()) {
 			return;
 		}
 
@@ -127,12 +160,6 @@ export class InlineWaitInLineCardComponent implements OnInit, OnDestroy {
 			});
 	}
 
-	@ViewChild('waitingDots') set dotsSpan(span: ElementRef<HTMLSpanElement>) {
-		if (!span) {
-			return;
-		}
-	}
-
 	gradient: string;
 	valid: boolean = true;
 	overlayWidth: string = '0px';
@@ -164,11 +191,12 @@ export class InlineWaitInLineCardComponent implements OnInit, OnDestroy {
 		private hallPassService: HallPassesService,
 		private dialog: MatDialog,
 		private screen: ScreenService,
-		public kioskService: KioskModeService
+		public kioskService: KioskModeService,
+    private wilService: WaitInLineService
 	) {
 		if (this.dialogData?.pass instanceof WaitingInLinePass) {
 			// it's not enough for the JSON to have the data, it must be an instance of the class
-			this.wil$ = new BehaviorSubject(this.dialogData.pass);
+			this.wil = this.dialogData.pass;
 		}
 	}
 
@@ -192,22 +220,32 @@ export class InlineWaitInLineCardComponent implements OnInit, OnDestroy {
 	}
 
 	get position(): number {
-		return this.wil$.value.line_position;
+		return this.wil.line_position;
 	}
 
 	get showBigCard() {
-		return this.wil$.value.isReadyToStart() || this.openedFromPassTile;
+		return this.wil.isReadyToStart() || this.openedFromPassTile;
 	}
 
 	get getUserName() {
-		return this.wil$.value.issuer.id == this.user.id ? 'Me' : this.wil$.value.issuer.username;
+		return this.wil.issuer.id == this.user.id ? 'Me' : this.wil.issuer.username;
 	}
 
 	get isKiosk() {
 		return this.kioskService.isKisokMode();
 	}
 
-	ngOnInit() {
+  ngOnChanges (changes: SimpleChanges) {
+    console.log(changes);
+    if (this.timeSpinner?.length > 0) {
+      const { previousValue, currentValue }: SimpleChange = changes['wil'];
+      if (currentValue.missed_start_attempts > previousValue.missed_start_attempts) {
+        this.timeSpinner.forEach(t => t.reset());
+      }
+    }
+  }
+
+  ngOnInit() {
 		this.userService.user$
 			.pipe(
 				map((user) => User.fromJSON(user)),
@@ -224,7 +262,7 @@ export class InlineWaitInLineCardComponent implements OnInit, OnDestroy {
 			this.forStaff = this.dialogData.forStaff;
 		}
 
-		this.gradient = `radial-gradient(circle at 73% 71%, ${this.wil$.value.color_profile.gradient_color})`;
+		this.gradient = `radial-gradient(circle at 73% 71%, ${this.wil?.color_profile.gradient_color})`;
 	}
 
 	readyToStartTick(remainingTime: number) {
@@ -271,24 +309,26 @@ export class InlineWaitInLineCardComponent implements OnInit, OnDestroy {
 			},
 		});
 
-		cancelDialog.afterClosed().subscribe({
-			next: (action) => {
-				if (action === WILHeaderOptions.Delete) {
-					this.closeDialog();
-					return;
-				}
+    cancelDialog.afterClosed().pipe(
+      filter(Boolean),
+      concatMap((action: WILHeaderOptions) => {
+        if (action === WILHeaderOptions.Delete) {
+          return this.wilService.deleteWilPass(this.wil.id)
+        }
 
-				if (action === WILHeaderOptions.Start) {
-					this.startPass();
-					return;
-				}
-			},
-		});
+        if (action === WILHeaderOptions.Start) {
+          return of(true).pipe(tap(() => this.startPass()))
+        }
+
+        return throwError(new Error('Invalid option chosen!'))
+      }),
+      finalize(() => this.closeDialog())
+    ).subscribe();
 	}
 
 	startPass() {
 		this.requestLoading = true;
-		const wil = this.wil$.value;
+		const wil = this.wil;
 		const newPassRequestBody = {
 			duration: wil.duration,
 			origin: wil.origin.id,
@@ -307,7 +347,7 @@ export class InlineWaitInLineCardComponent implements OnInit, OnDestroy {
 		if (!this.forStaff && !this.isKiosk) {
 			overallPassRequest$ = passRequest$;
 		} else {
-			overallPassRequest$ = from(this.locationsService.staffRoomLimitOverride(this.wil$.value.destination, this.isKiosk, 1, true)).pipe(
+			overallPassRequest$ = from(this.locationsService.staffRoomLimitOverride(this.wil.destination, this.isKiosk, 1, true)).pipe(
 				concatMap((overrideRoomLimit) => {
 					if (!overrideRoomLimit) {
 						return of(null);
@@ -347,7 +387,7 @@ export class InlineWaitInLineCardComponent implements OnInit, OnDestroy {
 
 	private toggleBigBackground(applyBackground = true) {
 		if (applyBackground) {
-			const solidColor = Util.convertHex(this.wil$.value.color_profile.solid_color, 70);
+			const solidColor = Util.convertHex(this.wil.color_profile.solid_color, 70);
 			this.screen.customBackdropStyle$.next({
 				background: `linear-gradient(0deg, ${solidColor} 100%, rgba(0, 0, 0, 0.3) 100%)`,
 			});
@@ -386,9 +426,8 @@ export class InlineWaitInLineCardComponent implements OnInit, OnDestroy {
 		});
 	}
 
-	resetAttempt() {}
-
 	ngOnDestroy() {
+    this.closeDialog();
 		this.destroy$.next();
 		this.destroy$.complete();
 	}

@@ -1,14 +1,7 @@
 import { Injectable } from '@angular/core';
-import { BehaviorSubject } from 'rxjs';
+import { BehaviorSubject, Observable } from 'rxjs';
 import { WaitingInLinePass } from '../models/WaitInLine';
-
-export enum WaitInLineState {
-	CreatingPass,
-	WaitingInLine,
-	FrontOfLine,
-	PassStarted,
-	RequestWaiting,
-}
+import { HttpService } from './http-service';
 
 /**
  * This service contains any non-UI logic regarding Wait In Line.
@@ -21,7 +14,11 @@ export enum WaitInLineState {
 export class WaitInLineService {
 	fakeWil = new BehaviorSubject<WaitingInLinePass>(null);
 	fakeWilActive = new BehaviorSubject<boolean>(false);
-	fakeWilPasses = new BehaviorSubject<WaitingInLinePass[]>([]);
 
-	constructor() {}
+	constructor(private http: HttpService) {}
+
+  deleteWilPass(id: string | number): Observable<never> {
+    id = parseInt(id.toString(), 10); // force convert to number
+    return this.http.post('v2/waiting_in_line_pass/delete', { waiting_in_line_pass_id: id }, undefined, false);
+  }
 }

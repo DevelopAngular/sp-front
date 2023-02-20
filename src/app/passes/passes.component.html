@@ -83,7 +83,7 @@
 					*ngIf="(isActiveRequest$ | async) && !(isActivePass$ | async)"
 					[request]="currentRequest$ | async"></app-inline-request-card>
 				<app-inline-pass-card *ngIf="isActivePass$ | async" [pass]="currentPass$ | async" [isActive]="true"></app-inline-pass-card>
-				<app-wait-in-line-card *ngIf="isActiveWaitInLine$ | async" [wil]="currentWaitInLine$ | async"></app-wait-in-line-card>
+				<app-inline-wait-in-line-card *ngIf="isActiveWaitInLine$ | async" [wil]="currentWaitInLine$ | async"></app-inline-wait-in-line-card>
 			</div>
 			<ng-template #newPass>
 				<app-display-card [title]="'Create Pass'" [hasDivider]="true" [fontSize]="'22px'">
@@ -209,7 +209,7 @@
 				<app-inline-pass-card *ngIf="isActivePass$ | async" [pass]="currentPass$ | async" [isActive]="true"></app-inline-pass-card>
 				<app-inline-wait-in-line-card
 					*ngIf="(isActiveWaitInLine$ | async) && !!(currentWaitInLine$ | async)"
-					[wil$]="currentWaitInLine$"
+					[wil]="currentWaitInLine$ | async"
 					[forStaff]="isStaff"></app-inline-wait-in-line-card>
 			</div>
 			<ng-template #newPass>

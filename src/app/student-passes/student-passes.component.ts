@@ -1,28 +1,28 @@
 import {
-	AfterViewInit,
-	Component,
-	ElementRef,
-	EventEmitter,
-	HostListener,
-	Input,
-	OnDestroy,
-	OnInit,
-	Optional,
-	Output,
-	ViewChild,
+  AfterViewInit,
+  Component,
+  ElementRef,
+  EventEmitter,
+  HostListener,
+  Input,
+  OnDestroy,
+  OnInit,
+  Optional,
+  Output,
+  ViewChild,
 } from '@angular/core';
 import { User } from '../models/User';
 import { BehaviorSubject, Observable, Subject } from 'rxjs';
 import { HallPass } from '../models/HallPass';
 
 import {
-	bumpIn,
-	ResizeProfileImage,
-	resizeStudentPasses,
-	scaleStudentPasses,
-	showHideProfileEmail,
-	studentPassFadeInOut,
-	topBottomProfileName,
+  bumpIn,
+  ResizeProfileImage,
+  resizeStudentPasses,
+  scaleStudentPasses,
+  showHideProfileEmail,
+  studentPassFadeInOut,
+  topBottomProfileName,
 } from '../animations';
 import { MatDialog, MatDialogRef } from '@angular/material/dialog';
 import { PassCardComponent } from '../pass-card/pass-card.component';
@@ -52,7 +52,7 @@ import { WaitingInLinePass } from '../models/WaitInLine';
 	animations: [ResizeProfileImage, showHideProfileEmail, topBottomProfileName, scaleStudentPasses, resizeStudentPasses, studentPassFadeInOut, bumpIn],
 })
 export class StudentPassesComponent implements OnInit, OnDestroy, AfterViewInit {
-	@Input() profile: User;
+	@Input() profile: Pick<User, 'id' | 'profile_picture' | 'first_name' | 'last_name' | 'display_name' | 'primary_email'>;
 	@Input() height: number = 75;
 	@Input() isResize: boolean = true;
 	@Input() pass: PassLike;

@@ -1,4 +1,4 @@
-<ng-container *ngIf="wil$ | async">
+<ng-container *ngIf="wil">
 	<ng-template #root>
 		<div
 			#rootWrapper
@@ -9,8 +9,8 @@
 			<div class="pass-card-header">
 				<div class="header-content">
 					<div class="header-info">
-						<img class="pass-card-header-icon" [src]="wil$.value.icon | resolveAsset" />
-						<div class="pass-card-header-text">{{ wil$.value.destination.title }}</div>
+						<img class="pass-card-header-icon" [src]="wil.icon | resolveAsset" />
+						<div class="pass-card-header-text">{{ wil.destination.title }}</div>
 					</div>
 					<app-icon-button [srcString]="optionsIcon" [onDarkShade]="true" [size]="20" (clickEvent)="showOptions($event)"></app-icon-button>
 				</div>
@@ -19,7 +19,7 @@
 
 			<div class="inline-pass-card-content">
 				<div class="travel">
-					<app-travel-view [pass]="wil$.value"></app-travel-view>
+					<app-travel-view [pass]="wil"></app-travel-view>
 				</div>
 
 				<div class="button" style="height: 110px">
@@ -56,7 +56,7 @@
 						<app-card-button
 							[width]="buttonWidth + 'px'"
 							[height]="'81px'"
-							[gradientColor]="wil$.value?.color_profile.gradient_color"
+							[gradientColor]="wil?.color_profile.gradient_color"
 							[overlayWidth]="overlayWidth"
 							[valid]="valid">
 							<ng-container *ngIf="requestLoading; else frontOfLine">
@@ -79,15 +79,14 @@
 										[contentTemplate]="passAttemptTooltip"
 										[seconds]="30"
 										[showNumber]="true"
-										(pulse)="readyToStartTick($event)"
-										(completed)="resetAttempt()">
+										(pulse)="readyToStartTick($event)">
 									</sp-timer-spinner>
 									<span>Start Pass</span>
 									<img style="width: 25px" [src]="'./assets/Chevron Right (White).svg' | resolveAsset" alt="Right Arrow" />
 
 									<ng-template #passAttemptTooltip>
 										<div class="ds-tooltip" style="width: 200px">
-											<span> You have {{ acceptingPassTimeRemaining }} sec left to start your pass or you will be sent back in line. </span>
+											<span> You have {{ acceptingPassTimeRemaining }} sec left to start your pass or {{wil.missed_start_attempts === 1 ? "your pass will be deleted" : "you will be sent back in line"}}.</span>
 										</div>
 									</ng-template>
 								</div>
@@ -99,7 +98,7 @@
 		</div>
 
 		<div class="student-footer-info" *ngIf="openedFromPassTile" [style.margin-top]="isKiosk ? '110px' : '160px'">
-			<app-student-passes [pass]="wil$.value" [profile]="wil$.value.student"></app-student-passes>
+			<app-student-passes [pass]="wil" [profile]="wil.student"></app-student-passes>
 		</div>
 	</ng-template>
 
