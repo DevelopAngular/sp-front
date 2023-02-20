@@ -578,9 +578,10 @@ export class AppComponent implements OnInit, AfterViewInit, OnDestroy {
 	openHelpCenter(event) {
 		this.helpCenter.isHelpCenterOpen.next(event);
 		setTimeout(() => {
-			const BORDER_SIZE = 4;
+			const BORDER_SIZE = 8;
 			const panel = document.getElementById('help-center-content');
 			const dragDivider = document.getElementById('drag-divider');
+			const teacherView = document.getElementById('teacher-view');
 			setTimeout(() => {
 				const mainRouter = document.querySelector<HTMLElement>('.router-outlet');
 				mainRouter.style.transition = 'none';
@@ -596,22 +597,36 @@ export class AppComponent implements OnInit, AfterViewInit, OnDestroy {
 			panel.addEventListener(
 				'mousedown',
 				function (e) {
+					console.log("mousedown")
 					if (e.offsetX < BORDER_SIZE) {
 						m_pos = e.x;
 						document.addEventListener('mousemove', resize, false);
+						// panel.addEventListener('mousemove', resize, false);
 						document.body.style.cursor = 'col-resize';
-						dragDivider.style.backgroundColor = '#00B476';
+						// dragDivider.style.backgroundColor = '#00B476';
 					}
 				},
 				false
 			);
+			// setTimeout(() => {
+			// 	const iframe = document.querySelector('.div-block-262');
+			// 	console.log("iframe : ", iframe);
+			// 	iframe.addEventListener(
+			// 		'mouseup',
+			// 		function () {
+			// 			console.log("mouseup in panel")
+			// 		},
+			// 		false
+			// 	);
+			// }, 5000);
 
 			document.addEventListener(
 				'mouseup',
 				function () {
+					console.log("mouseup")
 					document.removeEventListener('mousemove', resize, false);
 					document.body.style.cursor = 'default';
-					dragDivider.style.backgroundColor = '#B7C1CF';
+					// dragDivider.style.backgroundColor = '#B7C1CF';
 				},
 				false
 			);
@@ -624,6 +639,11 @@ export class AppComponent implements OnInit, AfterViewInit, OnDestroy {
 					this.mainContentWidth = '100%';
 				} else if (document.getElementById('help-center-content')) {
 					this.mainContentWidth = `calc(100% - ${document.getElementById('help-center-content').offsetWidth}px)`;
+					// teacherView.style.width = this.mainContentWidth;
+					// const mainRouter = document.querySelector<HTMLElement>('.router-outlet');
+					// const SCALE = (screen.width - document.getElementById('help-center-content').offsetWidth) / screen.width;
+					// mainRouter.style.transform = `scaleX(${SCALE})`;
+					// console.log("Scale : ", SCALE);
 				}
 			});
 

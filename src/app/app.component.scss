@@ -194,14 +194,38 @@
 		position: absolute;
 		left: 0;
 		height: inherit;
-		width: 2px;
+		width: 8px;
 		z-index: 1000;
-		background-color: $gray400;
-		&:hover {
-			width: 2px;
-			background-color: $green500;
-			cursor: col-resize;
+		// background-color: $gray400;
+		// border-left: 1px solid $gray400;
+		// transition: width 0.2s linear;
+		transition: box-shadow 0.3s ease-in-out;
+		&::after {
+			background-color: $gray400;
+    bottom: 0;
+    content: "";
+    left: 4px;
+    position: absolute;
+    top: 0;
+    transition: $gray400 .15s .15s,box-shadow .15s .15s;
+    width: 1px;
 		}
+
+		&:hover
+		{
+
+			cursor: col-resize;
+			&:after {
+				background-color: $green500;
+				box-shadow: 0 0 0 1px $green500;
+			}
+		}
+		// &:hover {
+		// 	// width: 2px;
+		// 	border-left: 2px solid $green500;
+		// 	// background-color: $green500;
+		// 	cursor: col-resize;
+		// }
 	}
 	.close-icon {
 		position: absolute;
@@ -266,6 +290,6 @@
 	content: '';
 	position: absolute;
 	left: 0;
-	width: 4px;
+	width: 8px;
 	height: 100%;
 }

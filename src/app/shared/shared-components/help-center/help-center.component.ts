@@ -64,16 +64,16 @@ export class HelpCenterComponent implements OnInit, OnDestroy {
 		});
 	}
 
-	openHelpNux() {
-		this.showNuxTooltip.next(true);
-	}
-
 	closeNuxToolTip(event) {
 		this.showNuxTooltip.next(false);
 		this.userService.updateIntrosHelpCenterRequest(this.introsData, 'universal', '1');
 		if (event == true) {
-			this.onClick.emit(true);
+			this.openHelpCenter();
 		}
+	}
+
+	openHelpCenter() {
+		this.onClick.emit(true);
 	}
 
 	ngOnDestroy() {
