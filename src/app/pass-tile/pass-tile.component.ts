@@ -73,8 +73,8 @@ export class PassTileComponent implements OnInit, OnDestroy, OnChanges {
 		if (this.isActive) {
 			return this.timeLeft + (this.valid ? ' Remaining' : ' Expiring');
 		} else if (this.waitInLine) {
-			// Here we will fetch number in line
-			return `${ordinance((this.pass as WaitingInLinePass).line_position)} in line`;
+			const { line_position } = this.pass as WaitingInLinePass;
+			return line_position === 0 ? 'Next in Line!' : `${ordinance((this.pass as WaitingInLinePass).line_position)} in line`;
 		} else {
 			if (this.encounterPreventionCard) {
 				return 'Now';

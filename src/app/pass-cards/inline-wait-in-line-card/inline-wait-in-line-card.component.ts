@@ -1,30 +1,30 @@
 import {
-  Component,
-  ElementRef,
-  Inject,
-  Input,
-  OnChanges,
-  OnDestroy,
-  OnInit,
-  Optional,
-  QueryList,
-  SimpleChange,
-  SimpleChanges,
-  TemplateRef,
-  ViewChild,
-  ViewChildren,
+	Component,
+	ElementRef,
+	Inject,
+	Input,
+	OnChanges,
+	OnDestroy,
+	OnInit,
+	Optional,
+	QueryList,
+	SimpleChange,
+	SimpleChanges,
+	TemplateRef,
+	ViewChild,
+	ViewChildren,
 } from '@angular/core';
 import { BehaviorSubject, from, interval, Observable, of, Subject, throwError, timer } from 'rxjs';
 import { Navigation } from '../../create-hallpass-forms/main-hallpass--form/main-hall-pass-form.component';
 import { Pinnable } from '../../models/Pinnable';
 import { HttpService } from '../../services/http-service';
 import { DataService } from '../../services/data-service';
-import { HallPassesService } from '../../services/hall-passes.service';
+import { HallPassErrors, HallPassesService } from '../../services/hall-passes.service';
 import { MAT_DIALOG_DATA, MatDialog, MatDialogRef } from '@angular/material/dialog';
 import { ScreenService } from '../../services/screen.service';
 import { DeviceDetection } from '../../device-detection.helper';
 import { WaitingInLinePass } from '../../models/WaitInLine';
-import { concatMap, filter, finalize, map, takeUntil, takeWhile, tap } from 'rxjs/operators';
+import { catchError, concatMap, filter, finalize, map, takeUntil, takeWhile, tap } from 'rxjs/operators';
 import { MatRipple } from '@angular/material/core';
 import { ConsentMenuComponent } from '../../consent-menu/consent-menu.component';
 import { Util } from '../../../Util';
@@ -36,6 +36,7 @@ import { User } from '../../models/User';
 import { UserService } from '../../services/user.service';
 import { WaitInLineService } from '../../services/wait-in-line.service';
 import { TimerSpinnerComponent } from '../../core/components/timer-spinner/timer-spinner.component';
+import { EncounterPreventionService } from '../../services/encounter-prevention.service';
 
 export enum WILHeaderOptions {
 	Delete = 'delete',
@@ -71,22 +72,22 @@ export class InlineWaitInLineCardComponent implements OnInit, OnChanges, OnDestr
 	@Input() wil: WaitingInLinePass;
 	@Input() forStaff: boolean;
 
-  @ViewChildren(TimerSpinnerComponent) timeSpinner: QueryList<TimerSpinnerComponent>;
-  @ViewChild('waitingDots') set dotsSpan(span: ElementRef<HTMLSpanElement>) {
-    if (!span) {
-      return;
-    }
+	@ViewChildren(TimerSpinnerComponent) timeSpinner: QueryList<TimerSpinnerComponent>;
+	@ViewChild('waitingDots') set dotsSpan(span: ElementRef<HTMLSpanElement>) {
+		if (!span) {
+			return;
+		}
 
-    timer(0, 750)
-      .pipe(
-        takeUntil(this.destroy$),
-        tap((count) => {
-          span.nativeElement.innerText = '.'.repeat(count % 4);
-          count++;
-        })
-      )
-      .subscribe();
-  }
+		timer(0, 750)
+			.pipe(
+				takeUntil(this.destroy$),
+				tap((count) => {
+					span.nativeElement.innerText = '.'.repeat(count % 4);
+					count++;
+				})
+			)
+			.subscribe();
+	}
 	@ViewChild('root') set root(root: TemplateRef<any>) {
 		if (!root) {
 			return;
@@ -192,7 +193,8 @@ export class InlineWaitInLineCardComponent implements OnInit, OnChanges, OnDestr
 		private dialog: MatDialog,
 		private screen: ScreenService,
 		public kioskService: KioskModeService,
-    private wilService: WaitInLineService
+		private wilService: WaitInLineService,
+		private encounterService: EncounterPreventionService
 	) {
 		if (this.dialogData?.pass instanceof WaitingInLinePass) {
 			// it's not enough for the JSON to have the data, it must be an instance of the class
@@ -235,17 +237,17 @@ export class InlineWaitInLineCardComponent implements OnInit, OnChanges, OnDestr
 		return this.kioskService.isKisokMode();
 	}
 
-  ngOnChanges (changes: SimpleChanges) {
-    console.log(changes);
-    if (this.timeSpinner?.length > 0) {
-      const { previousValue, currentValue }: SimpleChange = changes['wil'];
-      if (currentValue.missed_start_attempts > previousValue.missed_start_attempts) {
-        this.timeSpinner.forEach(t => t.reset());
-      }
-    }
-  }
+	ngOnChanges(changes: SimpleChanges) {
+		console.log(changes);
+		if (this.timeSpinner?.length > 0) {
+			const { previousValue, currentValue }: SimpleChange = changes['wil'];
+			if (currentValue.missed_start_attempts > previousValue.missed_start_attempts) {
+				this.timeSpinner.forEach((t) => t.reset());
+			}
+		}
+	}
 
-  ngOnInit() {
+	ngOnInit() {
 		this.userService.user$
 			.pipe(
 				map((user) => User.fromJSON(user)),
@@ -309,39 +311,42 @@ export class InlineWaitInLineCardComponent implements OnInit, OnChanges, OnDestr
 			},
 		});
 
-    cancelDialog.afterClosed().pipe(
-      filter(Boolean),
-      concatMap((action: WILHeaderOptions) => {
-        if (action === WILHeaderOptions.Delete) {
-          return this.wilService.deleteWilPass(this.wil.id)
-        }
+		cancelDialog
+			.afterClosed()
+			.pipe(
+				filter(Boolean),
+				concatMap((action: WILHeaderOptions) => {
+					if (action === WILHeaderOptions.Delete) {
+						return this.wilService.deleteWilPass(this.wil.id);
+					}
 
-        if (action === WILHeaderOptions.Start) {
-          return of(true).pipe(tap(() => this.startPass()))
-        }
+					if (action === WILHeaderOptions.Start) {
+						return from(this.startPass());
+					}
 
-        return throwError(new Error('Invalid option chosen!'))
-      }),
-      finalize(() => this.closeDialog())
-    ).subscribe();
+					return throwError(new Error('Invalid option chosen!'));
+				}),
+				finalize(() => this.closeDialog())
+			)
+			.subscribe();
 	}
 
-	startPass() {
+	async startPass() {
 		this.requestLoading = true;
-		const wil = this.wil;
-		const newPassRequestBody = {
-			duration: wil.duration,
-			origin: wil.origin.id,
-			destination: wil.destination.id,
-			travel_type: wil.travel_type,
-			student: wil.student.id,
-		};
+		const passRequest$ = this.hallPassService.startWilPassNow(this.wil.id).pipe(
+			takeUntil(this.destroy$),
+			catchError((error) => {
+				if (error === HallPassErrors.Encounter) {
+					this.encounterService.showEncounterPreventionToast({
+						isStaff: this.forStaff,
+						// @ts-ignore
+						exclusionPass: this.wil,
+					});
+				}
 
-		if (this.isKiosk) {
-			newPassRequestBody['self_issued'] = true;
-		}
-
-		const passRequest$ = this.hallPassService.createPass(newPassRequestBody).pipe(takeUntil(this.destroy$));
+				return throwError(error);
+			})
+		);
 		let overallPassRequest$: Observable<any>;
 
 		if (!this.forStaff && !this.isKiosk) {
@@ -349,11 +354,11 @@ export class InlineWaitInLineCardComponent implements OnInit, OnChanges, OnDestr
 		} else {
 			overallPassRequest$ = from(this.locationsService.staffRoomLimitOverride(this.wil.destination, this.isKiosk, 1, true)).pipe(
 				concatMap((overrideRoomLimit) => {
+					console.log(overrideRoomLimit);
 					if (!overrideRoomLimit) {
 						return of(null);
 					}
-
-					return of(newPassRequestBody);
+					return of(true);
 				}),
 				filter(Boolean),
 				concatMap(() => passRequest$),
@@ -361,15 +366,16 @@ export class InlineWaitInLineCardComponent implements OnInit, OnChanges, OnDestr
 			);
 		}
 
-		overallPassRequest$.pipe(finalize(() => this.closeDialog())).subscribe({
-			next: () => {
-				// pass response
-				this.titleService.setTitle('SmartPass');
-			},
-			error: (err) => {
-				console.error(err);
-			},
-		});
+		return overallPassRequest$.toPromise();
+		// overallPassRequest$.pipe(finalize(() => this.closeDialog())).subscribe({
+		// 	next: () => {
+		// 		// pass response
+		// 		this.titleService.setTitle('SmartPass');
+		// 	},
+		// 	error: (err) => {
+		// 		console.error(err);
+		// 	},
+		// });
 	}
 
 	private closeDialog() {
@@ -427,7 +433,8 @@ export class InlineWaitInLineCardComponent implements OnInit, OnChanges, OnDestr
 	}
 
 	ngOnDestroy() {
-    this.closeDialog();
+		this.titleService.setTitle('SmartPass');
+		this.closeDialog();
 		this.destroy$.next();
 		this.destroy$.complete();
 	}

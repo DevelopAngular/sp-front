@@ -1,5 +1,5 @@
 import { Injectable } from '@angular/core';
-import { BehaviorSubject, from, Observable, of, Subject } from 'rxjs';
+import { BehaviorSubject, from, Observable, of, Subject, throwError } from 'rxjs';
 import { Pinnable } from '../models/Pinnable';
 import { HttpService } from './http-service';
 import { Store } from '@ngrx/store';
@@ -16,10 +16,12 @@ import {
 import { arrangedPinnable, getPinnables, postPinnables, removePinnable, updatePinnable } from '../ngrx/pinnables/actions';
 import { getPassStats } from '../ngrx/pass-stats/actions';
 import { getPassStatsResult } from '../ngrx/pass-stats/state/pass-stats-getters.state';
-import { bufferCount, filter, mergeMap, reduce } from 'rxjs/operators';
+import { bufferCount, concatMap, filter, mergeMap, reduce } from 'rxjs/operators';
 import { constructUrl } from '../live-data/helpers';
-import { changePassesCollectionAction, endPassAction, getMorePasses, searchPasses, sortPasses } from '../ngrx/passes/actions';
 import {
+	changePassesCollectionAction,
+	endPassAction,
+	getMorePasses,
 	getMorePassesLoading,
 	getPassesCollection,
 	getPassesEntities,
@@ -31,7 +33,9 @@ import {
 	getSortPassesValue,
 	getStartPassLoading,
 	getTotalPasses,
-} from '../ngrx/passes/states';
+	searchPasses,
+	sortPasses,
+} from '../ngrx/passes';
 import { HallPass } from '../models/HallPass';
 import { PollingService } from './polling-service';
 import { getPassFilter, updatePassFilter } from '../ngrx/pass-filters/actions';
@@ -51,10 +55,20 @@ import {
 import { Dictionary } from '@ngrx/entity';
 import { WaitingInLinePassResponse } from '../models/WaitInLine';
 
+// error codes that are used locally on the UI
+export enum HallPassErrors {
+	Encounter = 'ENCOUNTER PREVENTION',
+}
+
 export interface BulkHallPassPostResponse {
 	passes: HallPass[];
 	conflict_student_ids: string[];
 	waiting_in_line_passes: WaitingInLinePassResponse[];
+}
+
+export interface StartWaitingInLinePassResponse {
+	pass: HallPass;
+	conflict_student_ids: string[];
 }
 
 @Injectable({
@@ -285,5 +299,20 @@ export class HallPassesService {
 
 	changePassesCollection(passIds: number[]) {
 		this.store.dispatch(changePassesCollectionAction({ passIds }));
+	}
+
+	startWilPassNow(id: string | number): Observable<StartWaitingInLinePassResponse> {
+		const waiting_in_line_pass_id = parseInt(id.toString(), 10);
+		return this.http
+			.post<StartWaitingInLinePassResponse>('v2/hall_passes/start_waiting_in_line_pass', { waiting_in_line_pass_id }, undefined, false)
+			.pipe(
+				concatMap((response) => {
+					if (response?.conflict_student_ids?.length > 0) {
+						return throwError(HallPassErrors.Encounter);
+					}
+
+					return of(response);
+				})
+			);
 	}
 }

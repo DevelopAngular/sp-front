@@ -86,7 +86,14 @@
 					[gradientColor]="pass.color_profile.gradient_color">
 					<div class="start-pass-content">
 						<mat-spinner *ngIf="performingAction" [color]="'accent'" [diameter]="35"></mat-spinner>
-						<div *ngIf="!performingAction" class="start-pass-content-text">{{ buttonText }}</div>
+						<img
+							*ngIf="!performingAction && formState?.data?.destLimitReached"
+							class="ds-mx-10"
+							[src]="'./assets/Clock (White).svg' | resolveAsset"
+							alt="Clock face" />
+						<div *ngIf="!performingAction" class="start-pass-content-text" [style.margin-right]="formState?.data?.destLimitReached ? '20px' : '0px'">
+							{{ buttonText }}
+						</div>
 						<img *ngIf="!performingAction" class="button-icon-right" [src]="'./assets/SP Arrow (White).svg' | resolveAsset" />
 					</div>
 				</app-card-button>

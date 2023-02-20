@@ -17,8 +17,8 @@ export class WaitInLineService {
 
 	constructor(private http: HttpService) {}
 
-  deleteWilPass(id: string | number): Observable<never> {
-    id = parseInt(id.toString(), 10); // force convert to number
-    return this.http.post('v2/waiting_in_line_pass/delete', { waiting_in_line_pass_id: id }, undefined, false);
-  }
+	deleteWilPass(id: string | number): Observable<never> {
+		id = parseInt(id.toString(), 10); // force convert to number
+		return this.http.post('v2/waiting_in_line_pass/delete', { waiting_in_line_pass_id: id }, undefined, false);
+	}
 }

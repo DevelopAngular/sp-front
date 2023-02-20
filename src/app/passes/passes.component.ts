@@ -1,31 +1,21 @@
-import {
-  ChangeDetectionStrategy,
-  ChangeDetectorRef,
-  Component,
-  ElementRef,
-  HostListener,
-  NgZone,
-  OnDestroy,
-  OnInit,
-  ViewChild,
-} from '@angular/core';
+import { ChangeDetectionStrategy, ChangeDetectorRef, Component, ElementRef, HostListener, NgZone, OnDestroy, OnInit, ViewChild } from '@angular/core';
 import { MatDialog, MatDialogRef, MatDialogState } from '@angular/material/dialog';
 // TODO: Replace combineLatest with non-deprecated implementation
 import { BehaviorSubject, combineLatest, forkJoin, interval, merge, Observable, of, Subject, timer } from 'rxjs';
 import {
-  concatMap,
-  distinctUntilChanged,
-  filter,
-  map,
-  pluck,
-  publishReplay,
-  refCount,
-  startWith,
-  switchMap,
-  take,
-  takeUntil,
-  tap,
-  withLatestFrom,
+	concatMap,
+	distinctUntilChanged,
+	filter,
+	map,
+	pluck,
+	publishReplay,
+	refCount,
+	startWith,
+	switchMap,
+	take,
+	takeUntil,
+	tap,
+	withLatestFrom,
 } from 'rxjs/operators';
 import { CreateFormService } from '../create-hallpass-forms/create-form.service';
 import { CreatePassDialogData } from '../create-hallpass-forms/create-hallpass-forms.component';
@@ -267,7 +257,23 @@ export class PassesComponent implements OnInit, OnDestroy {
 					if (this.isStaff) {
 						this.titleService.setTitle('SmartPass');
 						this.dataService.updateInbox(true);
-						this.waitInLinePasses = this.liveDataService.watchWaitingInLinePasses({ type: 'issuer', value: user }).pipe(tap(console.warn));
+						this.waitInLinePasses = this.liveDataService.watchWaitingInLinePasses({ type: 'issuer', value: user }).pipe(
+							tap<WaitingInLinePass[]>(console.log),
+							map((passes) => {
+								return passes.sort((p1, p2) => {
+									if (p1.line_position < p2.line_position) {
+										return -1;
+									}
+
+									if (p1.line_position > p2.line_position) {
+										return 1;
+									}
+
+									// add more levels of sorting here
+									return 0;
+								});
+							})
+						);
 					} else {
 						this.titleService.setTitle(`${user.display_name} | SmartPass`);
 					}
@@ -342,7 +348,7 @@ export class PassesComponent implements OnInit, OnDestroy {
 					this.currentRequest$.next(passLike instanceof Request ? passLike : null);
 
 					if (passLike instanceof WaitingInLinePass) {
-            const currentWil = this.currentWaitInLine$.value;
+						const currentWil = this.currentWaitInLine$.value;
 						if (currentWil?.line_position != passLike.line_position || currentWil?.missed_start_attempts != passLike.missed_start_attempts) {
 							this.currentWaitInLine$.next(passLike);
 						}

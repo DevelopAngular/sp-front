@@ -86,7 +86,10 @@
 
 									<ng-template #passAttemptTooltip>
 										<div class="ds-tooltip" style="width: 200px">
-											<span> You have {{ acceptingPassTimeRemaining }} sec left to start your pass or {{wil.missed_start_attempts === 1 ? "your pass will be deleted" : "you will be sent back in line"}}.</span>
+											<span>
+												You have {{ acceptingPassTimeRemaining }} sec left to start your pass or
+												{{ wil.missed_start_attempts === 1 ? 'your pass will be deleted' : 'you will be sent back in line' }}.</span
+											>
 										</div>
 									</ng-template>
 								</div>

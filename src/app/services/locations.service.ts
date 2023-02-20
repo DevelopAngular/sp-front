@@ -232,7 +232,10 @@ export class LocationsService {
 			return true;
 		}
 
-		const passLimit = (await this.pass_limits$.pipe(take(1)).toPromise()).find((pl) => pl.id == location.id);
+		const allPassLimits = (await this.getPassLimit().pipe(take(1)).toPromise()).pass_limits;
+		const passLimit = allPassLimits.find((pl) => pl.id == location.id);
+		console.log(passLimit);
+
 		if (!passLimit) {
 			// passLimits has no location.id
 			return true;
@@ -242,7 +245,7 @@ export class LocationsService {
 			return true;
 		}
 
-		const passLimitReached = passLimit.max_passes_to_active && passLimit.to_count + studentCount > passLimit.max_passes_to;
+		const passLimitReached = passLimit.to_count + studentCount > passLimit.max_passes_to;
 		if (!passLimitReached) {
 			return true;
 		}
