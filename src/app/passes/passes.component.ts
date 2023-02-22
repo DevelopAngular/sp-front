@@ -17,7 +17,6 @@ import {
 	tap,
 	withLatestFrom,
 } from 'rxjs/operators';
-import { CreateFormService } from '../create-hallpass-forms/create-form.service';
 import { CreatePassDialogData } from '../create-hallpass-forms/create-hallpass-forms.component';
 import { HallPassFilter, LiveDataService } from '../live-data/live-data.service';
 import { exceptPasses } from '../models';
@@ -25,8 +24,6 @@ import { HallPass } from '../models/HallPass';
 import { Request } from '../models/Request';
 import { User } from '../models/User';
 import { DataService } from '../services/data-service';
-import { LoadingService } from '../services/loading.service';
-import { NotificationService } from '../services/notification-service';
 import { TimeService } from '../services/time.service';
 import { DarkThemeSwitch } from '../dark-theme-switch';
 import { NavbarDataService } from '../main/navbar-data.service';
@@ -52,6 +49,9 @@ import { Title } from '@angular/platform-browser';
 import { FeatureFlagService, FLAGS } from '../services/feature-flag.service';
 import { WaitingInLinePass } from '../models/WaitInLine';
 import { Invitation } from '../models/Invitation';
+import { sortWilByPosition } from '../services/wait-in-line.service';
+import { InlineWaitInLineCardComponent } from '../pass-cards/inline-wait-in-line-card/inline-wait-in-line-card.component';
+import { Util } from '../../Util';
 
 @Component({
 	selector: 'app-passes',
@@ -130,6 +130,7 @@ export class PassesComponent implements OnInit, OnDestroy {
 	currentPass$ = new BehaviorSubject<HallPass>(null);
 	currentRequest$ = new BehaviorSubject<Request>(null);
 	currentWaitInLine$ = new BehaviorSubject<WaitingInLinePass>(null);
+	fullScreenWaitInLineRef: MatDialogRef<InlineWaitInLineCardComponent>;
 
 	inboxHasItems: Observable<boolean> = of(null);
 	passesHaveItems: Observable<boolean> = of(false);
@@ -225,10 +226,7 @@ export class PassesComponent implements OnInit, OnDestroy {
 		public dataService: DataService,
 		public dialog: MatDialog,
 		private _zone: NgZone,
-		private loadingService: LoadingService,
 		private liveDataService: LiveDataService,
-		private createFormService: CreateFormService,
-		private notifService: NotificationService,
 		private timeService: TimeService,
 		private navbarService: NavbarDataService,
 		public screenService: ScreenService,
@@ -258,20 +256,8 @@ export class PassesComponent implements OnInit, OnDestroy {
 						this.titleService.setTitle('SmartPass');
 						this.dataService.updateInbox(true);
 						this.waitInLinePasses = this.liveDataService.watchWaitingInLinePasses({ type: 'issuer', value: user }).pipe(
-							tap<WaitingInLinePass[]>(console.log),
 							map((passes) => {
-								return passes.sort((p1, p2) => {
-									if (p1.line_position < p2.line_position) {
-										return -1;
-									}
-
-									if (p1.line_position > p2.line_position) {
-										return 1;
-									}
-
-									// add more levels of sorting here
-									return 0;
-								});
+								return passes.sort(sortWilByPosition);
 							})
 						);
 					} else {
@@ -331,6 +317,43 @@ export class PassesComponent implements OnInit, OnDestroy {
 		);
 
 		this.isActiveWaitInLine$ = this.currentWaitInLine$.pipe(map(Boolean));
+		this.currentWaitInLine$
+			.pipe(
+				takeUntil(this.destroy$),
+				filter((wilPass) => wilPass?.line_position === 0 && this.fullScreenWaitInLineRef?.getState() !== MatDialogState.OPEN)
+			)
+			.subscribe({
+				next: (wilPass: WaitingInLinePass) => {
+					this.fullScreenWaitInLineRef = this.dialog.open(InlineWaitInLineCardComponent, {
+						panelClass: ['overlay-dialog', 'teacher-pass-card-dialog-container'],
+						backdropClass: 'custom-backdrop',
+						disableClose: true,
+						closeOnNavigation: true,
+						data: {
+							pass: wilPass,
+							nextInLine: true,
+							forStaff: this.isStaff,
+						},
+					});
+
+					this.fullScreenWaitInLineRef.afterOpened().subscribe({
+						next: () => {
+							const solidColor = Util.convertHex(wilPass.color_profile.solid_color, 70);
+							this.screenService.customBackdropStyle$.next({
+								background: `linear-gradient(0deg, ${solidColor} 100%, rgba(0, 0, 0, 0.3) 100%)`,
+							});
+							this.screenService.customBackdropEvent$.next(true);
+						},
+					});
+
+					this.fullScreenWaitInLineRef.afterClosed().subscribe({
+						next: () => {
+							this.screenService.customBackdropEvent$.next(false);
+							this.screenService.customBackdropStyle$.next(null);
+						},
+					});
+				},
+			});
 
 		this.dataService.currentUser
 			.pipe(

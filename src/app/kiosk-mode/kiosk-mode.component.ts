@@ -17,8 +17,9 @@ import { MainHallPassFormComponent } from '../create-hallpass-forms/main-hallpas
 import { Title } from '@angular/platform-browser';
 import { Location } from '../models/Location';
 import { FeatureFlagService, FLAGS } from '../services/feature-flag.service';
-import { WaitInLineService } from '../services/wait-in-line.service';
+import { sortWilByPosition } from '../services/wait-in-line.service';
 import { WaitingInLinePass } from '../models/WaitInLine';
+import { InlineWaitInLineCardComponent } from '../pass-cards/inline-wait-in-line-card/inline-wait-in-line-card.component';
 
 declare const window;
 
@@ -29,9 +30,7 @@ declare const window;
 })
 export class KioskModeComponent implements OnInit, AfterViewInit, OnDestroy {
 	activePassesKiosk: Observable<HallPass[]>;
-	waitInLinePassesKiosk: Observable<WaitingInLinePass[]>;
-	// isActiveWaitInLine$: Observable<boolean>;
-	// currentWaitInLine$ = new BehaviorSubject<WaitInLine>(null);
+	waitInLinePasses: Observable<WaitingInLinePass[]>;
 
 	cardReaderValue: string;
 
@@ -56,6 +55,7 @@ export class KioskModeComponent implements OnInit, AfterViewInit, OnDestroy {
 	});
 
 	mainFormRef: MatDialogRef<MainHallPassFormComponent>;
+	frontOfWaitInLineDialogRef: MatDialogRef<InlineWaitInLineCardComponent>;
 
 	@ViewChild('input', { read: ElementRef, static: true }) input: ElementRef;
 
@@ -80,12 +80,8 @@ export class KioskModeComponent implements OnInit, AfterViewInit, OnDestroy {
 		private timeService: TimeService,
 		private activatedRoute: ActivatedRoute,
 		private titleService: Title,
-		private featureService: FeatureFlagService,
-		private wilService: WaitInLineService
-	) {
-		// this.isActiveWaitInLine$ = this.wilService.fakeWilActive.asObservable();
-		// this.currentWaitInLine$ = this.wilService.fakeWil;
-	}
+		private featureService: FeatureFlagService
+	) {}
 
 	get showProfilePicture() {
 		return this.userService.getUserSchool()?.profile_pictures_enabled;
@@ -101,7 +97,6 @@ export class KioskModeComponent implements OnInit, AfterViewInit, OnDestroy {
 
 	ngOnInit() {
 		this.activatedRoute.data.subscribe((state) => {
-			console.log(state);
 			if ('openDialog' in state && state.openDialog) {
 				this.dialog.open(KioskSettingsDialogComponent, {
 					panelClass: 'sp-form-dialog',
@@ -146,12 +141,28 @@ export class KioskModeComponent implements OnInit, AfterViewInit, OnDestroy {
 			});
 
 		this.activePassesKiosk = this.liveDataService.myRoomActivePasses$;
-		this.waitInLinePassesKiosk = this.liveDataService.watchActiveWaitInLinePasses().pipe(
-			tap(console.log),
-			map((passes) => passes.filter((p) => p.origin.id == this.kioskMode.getCurrentRoom().value.id)),
-			tap(console.log)
+		this.waitInLinePasses = this.kioskMode.getCurrentRoom().pipe(
+			filter(Boolean),
+			switchMap((location: Location) => this.liveDataService.watchWaitingInLinePasses({ type: 'origin', value: location })),
+			map((passes) => passes.sort(sortWilByPosition)),
+			tap((passes) => {
+				console.log(passes);
+				if (passes[0].line_position === 0 && this.frontOfWaitInLineDialogRef?.getState() !== MatDialogState.OPEN) {
+					this.frontOfWaitInLineDialogRef = this.dialog.open(InlineWaitInLineCardComponent, {
+						panelClass: ['overlay-dialog', 'teacher-pass-card-dialog-container'],
+						backdropClass: 'custom-backdrop',
+						disableClose: true,
+						closeOnNavigation: true,
+						data: {
+							nextInLine: true,
+							pass: passes[0],
+							forStaff: false,
+							forKiosk: true,
+						},
+					});
+				}
+			})
 		);
-		// this.waitInLinePassesKiosk = this.wilService.fakeWilPasses.asObservable();
 
 		/**
 		 * The following listener is responsible for checking if incoming hall passes are the result

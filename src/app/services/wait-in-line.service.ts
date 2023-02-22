@@ -3,6 +3,8 @@ import { BehaviorSubject, Observable } from 'rxjs';
 import { WaitingInLinePass } from '../models/WaitInLine';
 import { HttpService } from './http-service';
 
+export const sortWilByPosition = (pass1: WaitingInLinePass, pass2: WaitingInLinePass): number => pass1.line_position - pass2.line_position;
+
 /**
  * This service contains any non-UI logic regarding Wait In Line.
  * This includes data parsing as well as http requests

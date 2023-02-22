@@ -4,7 +4,7 @@ import * as moment from 'moment';
 
 // TODO: Replace deprecated empty() observable with EMPTY
 import { combineLatest, EMPTY, empty, merge, Observable, of, Subject } from 'rxjs';
-import { distinctUntilChanged, exhaustMap, filter, map, pluck, scan, startWith, switchMap, tap } from 'rxjs/operators';
+import { distinctUntilChanged, exhaustMap, map, pluck, scan, startWith, switchMap } from 'rxjs/operators';
 import { Paged, PassLike } from '../models';
 import { BaseModel } from '../models/base';
 import { HallPass } from '../models/HallPass';
@@ -248,7 +248,7 @@ export type PassFilterType = { type: 'issuer'; value: User } | { type: 'student'
 
 export type RequestFilterType = { type: 'issuer'; value: User } | { type: 'student'; value: User } | { type: 'destination'; value: Location };
 
-export type WaitingInLineFilter = { type: 'issuer'; value: User } | { type: 'student'; value: User } | { type: 'destination'; value: Location };
+export type WaitingInLineFilter = { type: 'issuer'; value: User } | { type: 'student'; value: User } | { type: 'origin'; value: Location };
 
 /**
  * An interface representing how hall passes should be filtered.
@@ -697,8 +697,8 @@ export class LiveDataService {
 		});
 	}
 
-	watchWaitingInLinePasses(filter?: WaitingInLineFilter): Observable<WaitingInLinePass[]> {
-		let requestFilter: Partial<{ student_id: number; issuer_id: number; destination_id: number }> = {};
+	watchWaitingInLinePasses(filter: WaitingInLineFilter): Observable<WaitingInLinePass[]> {
+		let requestFilter: Partial<{ student_id: number; issuer_id: number; origin_id: number }> = {};
 		if (filter) {
 			const { type, value } = filter;
 			const id = parseInt(value.id, 10);
@@ -709,8 +709,8 @@ export class LiveDataService {
 				case 'issuer':
 					requestFilter.issuer_id = id;
 					break;
-				case 'destination':
-					requestFilter.destination_id = id;
+				case 'origin':
+					requestFilter.origin_id = id;
 					break;
 				default:
 					console.error('NO FILTER APPLIED');
@@ -733,20 +733,6 @@ export class LiveDataService {
 			]),
 			handlePost: filterNewestFirst,
 		});
-	}
-
-	watchActiveWaitInLinePasses(): Observable<WaitingInLinePass[]> {
-		return this.polling.listen().pipe(
-			filter((event) => event.action.includes('waiting_in_line_pass')),
-			tap(console.warn),
-			map<PollingEvent, WaitingInLinePass[]>((event) => (event.data as WaitingInLinePassResponse[]).map(WaitingInLinePass.fromJSON)),
-			tap(console.error),
-			map((passes) =>
-				passes.sort((p1, p2) => {
-					return p1.line_position < p2.line_position ? -1 : p1.line_position > p2.line_position ? 1 : 0;
-				})
-			)
-		);
 	}
 
 	watchInboxRequests(filter: User): Observable<Request[]> {
