@@ -1,5 +1,5 @@
 import { Injectable } from '@angular/core';
-import { BehaviorSubject, Observable } from 'rxjs';
+import { Observable } from 'rxjs';
 import { WaitingInLinePass } from '../models/WaitInLine';
 import { HttpService } from './http-service';
 
@@ -14,9 +14,6 @@ export const sortWilByPosition = (pass1: WaitingInLinePass, pass2: WaitingInLine
 	providedIn: 'root',
 })
 export class WaitInLineService {
-	fakeWil = new BehaviorSubject<WaitingInLinePass>(null);
-	fakeWilActive = new BehaviorSubject<boolean>(false);
-
 	constructor(private http: HttpService) {}
 
 	deleteWilPass(id: string | number): Observable<never> {

@@ -1,6 +1,6 @@
 import { Injectable, TemplateRef } from '@angular/core';
 import { HttpService } from './http-service';
-import { concatMap, filter, map, take } from 'rxjs/operators';
+import { catchError, concatMap, filter, map, take } from 'rxjs/operators';
 import { Observable, of, throwError } from 'rxjs';
 import { PassLimitDialogComponent } from '../create-hallpass-forms/main-hallpass--form/locations-group-container/pass-limit-dialog/pass-limit-dialog.component';
 import {
@@ -14,12 +14,43 @@ import { MatDialog } from '@angular/material/dialog';
 import { Request } from '../models/Request';
 import { PassLimit } from '../models/PassLimit';
 import { StudentPassLimit } from '../models/HallPassLimits';
+import { ColorProfile } from '../models/ColorProfile';
+import { Location } from '../models/Location';
+import { User } from '../models/User';
+import { HttpErrorResponse } from '@angular/common/http';
+import { HallPassErrors } from './hall-passes.service';
 
 export interface AcceptRequestBody {
 	duration?: string;
 	teacher_pin?: string;
 	overrode_student_pass_limit?: boolean;
 	overrode_room_active_limit?: boolean;
+}
+
+export interface AcceptResponseBody {
+	cancellable_by_student: boolean;
+	cancelled: null;
+	color_profile: ColorProfile;
+	created: string; // date string
+	destination: Location;
+	end_time: string; // date
+	expiration_time: string; // date
+	flow_start: string; // date
+	gradient_color: string; // "HEX:HEX"
+	icon: string; // icon url string
+	id: number;
+	issuer: User;
+	issuer_message: string;
+	last_read: string; // date
+	last_updated: string; // date
+	needs_check_in: boolean;
+	origin: Location;
+	parent_invitation: number;
+	parent_request: number;
+	school_id: number;
+	start_time: string; // date
+	student: User;
+	travel_type: 'round_trip' | 'one_way';
 }
 
 const OverrideMessage = 'override cancelled';
@@ -58,8 +89,16 @@ export class RequestsService {
 		return this.http.post('v1/pass_requests', data);
 	}
 
-	acceptRequest(id, data: AcceptRequestBody) {
-		return this.http.post(`v1/pass_requests/${id}/accept`, data);
+	acceptRequest(request: Request, data: AcceptRequestBody): Observable<AcceptResponseBody> {
+		return this.http.post<AcceptResponseBody>(`v1/pass_requests/${request.id}/accept`, data).pipe(
+			catchError((errorResponse: HttpErrorResponse) => {
+				if (errorResponse?.error?.conflict_student_ids?.length > 0) {
+					return throwError(HallPassErrors.Encounter);
+				}
+
+				return throwError(errorResponse);
+			})
+		);
 	}
 
 	private openOverrideRoomLimitDialog(passLimit: PassLimit): Observable<boolean> {

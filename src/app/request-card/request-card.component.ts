@@ -8,7 +8,7 @@ import { Navigation } from '../create-hallpass-forms/main-hallpass--form/main-ha
 import { getInnerPassName } from '../pass-tile/pass-display-util';
 import { DataService } from '../services/data-service';
 import { LoadingService } from '../services/loading.service';
-import { catchError, concatMap, filter, finalize, map, pluck, switchMap, take, takeUntil, tap } from 'rxjs/operators';
+import { catchError, concatMap, filter, finalize, map, pluck, switchMap, takeUntil, tap } from 'rxjs/operators';
 import { CreateHallpassFormsComponent } from '../create-hallpass-forms/create-hallpass-forms.component';
 import { CreateFormService } from '../create-hallpass-forms/create-form.service';
 import { RequestsService } from '../services/requests.service';
@@ -32,7 +32,7 @@ import { PassLimitService } from '../services/pass-limit.service';
 import { ConfirmDeleteKioskModeComponent } from './confirm-delete-kiosk-mode/confirm-delete-kiosk-mode.component';
 import { ToastService } from '../services/toast.service';
 import { HttpErrorResponse } from '@angular/common/http';
-import { EncounterPreventionService } from '../services/encounter-prevention.service';
+import { HallPassesService } from '../services/hall-passes.service';
 
 @Component({
 	selector: 'app-request-card',
@@ -110,7 +110,7 @@ export class RequestCardComponent implements OnInit, OnDestroy {
 		private passLimitsService: PassLimitService,
 		private createPassFormRef: MatDialogRef<CreateHallpassFormsComponent>,
 		private toast: ToastService,
-		private encounterService: EncounterPreventionService
+		private hallpassService: HallPassesService
 	) {}
 
 	get invalidDate() {
@@ -664,7 +664,7 @@ export class RequestCardComponent implements OnInit, OnDestroy {
 			.checkLimits({}, this.request, this.overriderBody)
 			.pipe(
 				concatMap((httpBody) => {
-					return this.requestService.acceptRequest(this.request.id, httpBody);
+					return this.requestService.acceptRequest(this.request, httpBody);
 				}),
 				finalize(() => (this.performingAction = false))
 			)
@@ -672,7 +672,7 @@ export class RequestCardComponent implements OnInit, OnDestroy {
 				next: () => this.dialogRef.close(),
 				error: (err: Error) => {
 					if ((err as HttpErrorResponse).error.conflict_student_ids) {
-						this.encounterService.showEncounterPreventionToast({
+						this.hallpassService.showEncounterPreventionToast({
 							exclusionPass: this.request,
 							isStaff: this.forStaff,
 						});

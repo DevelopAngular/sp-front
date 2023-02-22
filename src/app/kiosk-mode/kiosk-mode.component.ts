@@ -2,11 +2,11 @@ import { AfterViewInit, Component, ElementRef, HostListener, OnDestroy, OnInit, 
 import { MatDialog, MatDialogRef, MatDialogState } from '@angular/material/dialog';
 import { KioskModeService, KioskSettings } from '../services/kiosk-mode.service';
 import { LiveDataService } from '../live-data/live-data.service';
-import { BehaviorSubject, combineLatest, EMPTY, Observable, of, Subject, timer } from 'rxjs';
+import { BehaviorSubject, combineLatest, EMPTY, Observable, of, Subject, throwError, timer } from 'rxjs';
 import { UserService } from '../services/user.service';
 import { HallPassesService } from '../services/hall-passes.service';
 import { HallPass } from '../models/HallPass';
-import { filter, map, mergeMap, startWith, switchMap, takeUntil, tap } from 'rxjs/operators';
+import { catchError, filter, map, mergeMap, startWith, switchMap, takeUntil, tap } from 'rxjs/operators';
 import { JwtHelperService } from '@auth0/angular-jwt';
 import { StorageService } from '../services/storage.service';
 import { LocationsService } from '../services/locations.service';
@@ -146,7 +146,9 @@ export class KioskModeComponent implements OnInit, AfterViewInit, OnDestroy {
 			switchMap((location: Location) => this.liveDataService.watchWaitingInLinePasses({ type: 'origin', value: location })),
 			map((passes) => passes.sort(sortWilByPosition)),
 			tap((passes) => {
-				console.log(passes);
+				if (passes.length === 0) {
+					return;
+				}
 				if (passes[0].line_position === 0 && this.frontOfWaitInLineDialogRef?.getState() !== MatDialogState.OPEN) {
 					this.frontOfWaitInLineDialogRef = this.dialog.open(InlineWaitInLineCardComponent, {
 						panelClass: ['overlay-dialog', 'teacher-pass-card-dialog-container'],
@@ -161,6 +163,11 @@ export class KioskModeComponent implements OnInit, AfterViewInit, OnDestroy {
 						},
 					});
 				}
+			}),
+			catchError((error) => {
+				console.warn('No more updates to WIL passes because of the following:');
+				console.error(error);
+				return throwError(error);
 			})
 		);
 

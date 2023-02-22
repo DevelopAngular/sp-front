@@ -10,7 +10,6 @@ import {
 	getIsLoadedPinnables,
 	getIsLoadingPinnables,
 	getPinnableCollection,
-	getPinnableEntities,
 	getPinnablesIds,
 } from '../ngrx/pinnables/states';
 import { arrangedPinnable, getPinnables, postPinnables, removePinnable, updatePinnable } from '../ngrx/pinnables/actions';
@@ -52,8 +51,16 @@ import {
 	getQuickPreviewPassesLoading,
 	getQuickPreviewPassesStats,
 } from '../ngrx/quick-preview-passes/states';
-import { Dictionary } from '@ngrx/entity';
 import { WaitingInLinePassResponse } from '../models/WaitInLine';
+import { openToastAction } from '../ngrx/toast/actions';
+import { Request } from '../models/Request';
+import { ExclusionGroup } from '../models/ExclusionGroup';
+
+interface EncounterPreventionToast {
+	exclusionPass: HallPass | Request;
+	isStaff?: boolean;
+	exclusionGroups?: ExclusionGroup[];
+}
 
 // error codes that are used locally on the UI
 export enum HallPassErrors {
@@ -79,7 +86,6 @@ export class HallPassesService {
 	loadedPinnables$: Observable<boolean> = this.store.select(getIsLoadedPinnables);
 	isLoadingPinnables$: Observable<boolean> = this.store.select(getIsLoadingPinnables);
 	pinnablesCollectionIds$: Observable<number[] | string[]> = this.store.select(getPinnablesIds);
-	pinnablesEntities$: Observable<Dictionary<Pinnable>> = this.store.select(getPinnableEntities);
 	isLoadingArranged$: Observable<boolean> = this.store.select(getArrangedLoading);
 
 	passesEntities$: Observable<{ [id: number]: HallPass }> = this.store.select(getPassesEntities);
@@ -314,5 +320,23 @@ export class HallPassesService {
 					return of(response);
 				})
 			);
+	}
+
+	showEncounterPreventionToast({ exclusionPass, isStaff, exclusionGroups }: EncounterPreventionToast) {
+		const title = isStaff ? "This pass can't start now to prevent encounter." : "Sorry, you can't start your pass right now.";
+		const subtitle = isStaff ? "These students can't have a pass at the same time." : 'Please try again later.';
+
+		this.store.dispatch(
+			openToastAction({
+				data: {
+					title,
+					subtitle,
+					type: 'error',
+					encounterPrevention: true,
+					exclusionPass,
+					exclusionGroups,
+				},
+			})
+		);
 	}
 }

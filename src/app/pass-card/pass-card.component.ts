@@ -472,7 +472,7 @@ export class PassCardComponent implements OnInit, OnDestroy {
 				switchMap(({ conflict_student_ids, passes }) => {
 					if (conflict_student_ids) {
 						if (!this.forStaff) {
-							this.encounterService.showEncounterPreventionToast({
+							this.hallPassService.showEncounterPreventionToast({
 								exclusionPass: {
 									...this.pass,
 									travel_type: this.selectedTravelType,
@@ -490,7 +490,7 @@ export class PassCardComponent implements OnInit, OnDestroy {
 										tap((groups) => {
 											const exclusionGroups = groups[+id];
 											if (exclusionGroups[0].enabled) {
-												this.encounterService.showEncounterPreventionToast({
+												this.hallPassService.showEncounterPreventionToast({
 													exclusionPass: {
 														...this.pass,
 														travel_type: this.selectedTravelType,

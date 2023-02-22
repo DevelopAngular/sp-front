@@ -290,7 +290,7 @@ export class InlineWaitInLineCardComponent implements OnInit, OnChanges, OnDestr
 			takeUntil(this.destroy$),
 			catchError((error) => {
 				if (error === HallPassErrors.Encounter) {
-					this.encounterService.showEncounterPreventionToast({
+					this.hallPassService.showEncounterPreventionToast({
 						isStaff: this.forStaff,
 						// @ts-ignore
 						exclusionPass: this.wil,
