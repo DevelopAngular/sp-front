@@ -1,50 +1,11 @@
 import { BaseModel } from './base';
 
-const expandedStudentRoles = ['_profile_student', 'hallpass_student', 'create_own_hallpass', 'access_passes'];
-const expandedTeacherRoles = [
-	'_profile_teacher',
-	'create_hallpass',
-	'flag_hallpass',
-	'edit_all_hallpass',
-	'create_report',
-	'view_traveling_users',
-	'access_passes',
-	'access_hall_monitor',
-	'access_teacher_room',
-];
-const expandedAdminRoles = [
-	'_profile_admin',
-	'create_hallpass',
-	'edit_all_hallpass',
-	'manage_school',
-	'manage_pinnables',
-	'manage_locations',
-	'manage_alerts',
-	'view_reports',
-	'create_report',
-	'view_traveling_users',
-	'admin_dashboard',
-	'admin_hall_monitor',
-	'admin_search',
-	'admin_accounts',
-	'admin_pass_config',
-	'admin_school_settings',
-	'access_admin_dashboard',
-	'access_hall_monitor',
-	'access_admin_search',
-	'access_pass_config',
-	'access_user_config',
-	'admin_manage_integration',
-];
-const expandedAssistantRoles = ['_profile_assistant', 'represent_users', 'access_passes', 'access_hall_monitor', 'access_teacher_room'];
-const expandedParentRoles = ['_profile_parent', 'access_passes'];
-
 export enum ROLES {
-	Student = 'student',
-	Teacher = 'teacher',
-	Admin = 'admin',
-	Assistant = 'assistant',
-	Parent = 'parent',
+	Student = '_profile_student',
+	Teacher = '_profile_teacher',
+	Admin = '_profile_admin',
+	Assistant = '_profile_assistant',
+	Parent = '_profile_parent',
 }
 
 export class User extends BaseModel {
@@ -111,27 +72,6 @@ export class User extends BaseModel {
 		for (let i = 0; i < rolesJSON.length; i++) {
 			roles.push(rolesJSON[i]);
 		}
-
-		if (rolesJSON.includes(ROLES.Student)) {
-			roles.push(...expandedStudentRoles);
-		}
-
-		if (rolesJSON.includes(ROLES.Teacher)) {
-			roles.push(...expandedTeacherRoles);
-		}
-
-		if (rolesJSON.includes(ROLES.Admin)) {
-			roles.push(...expandedAdminRoles);
-		}
-
-		if (rolesJSON.includes(ROLES.Assistant)) {
-			roles.push(...expandedAssistantRoles);
-		}
-
-		if (rolesJSON.includes(ROLES.Parent)) {
-			roles.push(...expandedParentRoles);
-		}
-
 		for (let i = 0; i < sync_types_json.length; i++) {
 			sync_types.push(sync_types_json[i]);
 		}
