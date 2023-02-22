@@ -580,8 +580,7 @@ export class AppComponent implements OnInit, AfterViewInit, OnDestroy {
 		setTimeout(() => {
 			const BORDER_SIZE = 8;
 			const panel = document.getElementById('help-center-content');
-			const dragDivider = document.getElementById('drag-divider');
-			const teacherView = document.getElementById('teacher-view');
+			const dragDivider = document.querySelector<HTMLElement>('.drag-divider');
 			setTimeout(() => {
 				const mainRouter = document.querySelector<HTMLElement>('.router-outlet');
 				mainRouter.style.transition = 'none';
@@ -597,36 +596,24 @@ export class AppComponent implements OnInit, AfterViewInit, OnDestroy {
 			panel.addEventListener(
 				'mousedown',
 				function (e) {
-					console.log("mousedown")
 					if (e.offsetX < BORDER_SIZE) {
 						m_pos = e.x;
 						document.addEventListener('mousemove', resize, false);
-						// panel.addEventListener('mousemove', resize, false);
 						document.body.style.cursor = 'col-resize';
-						// dragDivider.style.backgroundColor = '#00B476';
+						dragDivider.style.setProperty('--drag-after-color', '#00B476');
+						dragDivider.style.setProperty('--drag-after-shadow', '1px');
 					}
 				},
 				false
 			);
-			// setTimeout(() => {
-			// 	const iframe = document.querySelector('.div-block-262');
-			// 	console.log("iframe : ", iframe);
-			// 	iframe.addEventListener(
-			// 		'mouseup',
-			// 		function () {
-			// 			console.log("mouseup in panel")
-			// 		},
-			// 		false
-			// 	);
-			// }, 5000);
 
 			document.addEventListener(
 				'mouseup',
 				function () {
-					console.log("mouseup")
 					document.removeEventListener('mousemove', resize, false);
 					document.body.style.cursor = 'default';
-					// dragDivider.style.backgroundColor = '#B7C1CF';
+					dragDivider.style.setProperty('--drag-after-color', '#B7C1CF');
+					dragDivider.style.setProperty('--drag-after-shadow', '0px');
 				},
 				false
 			);

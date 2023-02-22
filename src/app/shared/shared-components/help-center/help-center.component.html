@@ -1,11 +1,11 @@
 <div
-	[ngClass]="{ clicked: showNuxTooltip | async }"
+	[ngClass]="{ clicked: showHelpNuxTooltip | async }"
 	class="help-center-wrapper"
 	(click)="openHelpCenter()"
 	nuxTooltip
 	[contentTemplate]="helpcentertooltip"
 	[position]="nuxWrapperPosition"
-	[showToolTip$]="showNuxTooltip">
+	[showToolTip$]="showHelpNuxTooltip">
 	<P>?</P>
 </div>
 <ng-template #helpcentertooltip>

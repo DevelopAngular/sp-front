@@ -71,10 +71,13 @@ export class ScreenService {
 		return this.extraLargeDeviceBreakPoint < this.windowWidth;
 	}
 
-	private get windowWidth() {
+	public get windowWidth() {
 		if (this.helpCenter.isHelpCenterOpen.getValue()) {
-			console.log("windowWidth : ", (window.innerWidth - document.getElementById('help-center-content').offsetWidth), (document.documentElement.clientWidth - document.getElementById('help-center-content').offsetWidth), (document.body.clientWidth - document.getElementById('help-center-content').offsetWidth));
-			return (window.innerWidth - document.getElementById('help-center-content').offsetWidth) || (document.documentElement.clientWidth - document.getElementById('help-center-content').offsetWidth) || (document.body.clientWidth - document.getElementById('help-center-content').offsetWidth);
+			return (
+				window.innerWidth - document.getElementById('help-center-content').offsetWidth ||
+				document.documentElement.clientWidth - document.getElementById('help-center-content').offsetWidth ||
+				document.body.clientWidth - document.getElementById('help-center-content').offsetWidth
+			);
 		} else {
 			return window.innerWidth || document.documentElement.clientWidth || document.body.clientWidth;
 		}

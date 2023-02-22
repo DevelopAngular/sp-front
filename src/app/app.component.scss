@@ -200,32 +200,25 @@
 		// border-left: 1px solid $gray400;
 		// transition: width 0.2s linear;
 		transition: box-shadow 0.3s ease-in-out;
-		&::after {
-			background-color: $gray400;
-    bottom: 0;
-    content: "";
-    left: 4px;
-    position: absolute;
-    top: 0;
-    transition: $gray400 .15s .15s,box-shadow .15s .15s;
-    width: 1px;
+		&:after {
+			background-color: var(--drag-after-color, $gray400);
+			bottom: 0;
+			content: '';
+			left: 4px;
+			position: absolute;
+			top: 0;
+			transition: $gray400 0.15s 0.15s, box-shadow 0.15s 0.15s;
+			width: 1px;
+			box-shadow: 0 0 0 var(--drag-after-shadow, 0px) $green500;
 		}
 
-		&:hover
-		{
-
+		&:hover {
 			cursor: col-resize;
 			&:after {
 				background-color: $green500;
 				box-shadow: 0 0 0 1px $green500;
 			}
 		}
-		// &:hover {
-		// 	// width: 2px;
-		// 	border-left: 2px solid $green500;
-		// 	// background-color: $green500;
-		// 	cursor: col-resize;
-		// }
 	}
 	.close-icon {
 		position: absolute;

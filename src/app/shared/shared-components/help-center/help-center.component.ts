@@ -1,5 +1,5 @@
 import { ConnectedPosition } from '@angular/cdk/overlay';
-import { Component, EventEmitter, OnDestroy, OnInit, Output } from '@angular/core';
+import { AfterViewInit, Component, EventEmitter, OnDestroy, OnInit, Output } from '@angular/core';
 import * as moment from 'moment';
 import { Subject, Subscription } from 'rxjs';
 import { takeUntil } from 'rxjs/operators';
@@ -11,8 +11,8 @@ import { UserService } from '../../../services/user.service';
 	templateUrl: './help-center.component.html',
 	styleUrls: ['./help-center.component.scss'],
 })
-export class HelpCenterComponent implements OnInit, OnDestroy {
-	showNuxTooltip: Subject<boolean> = new Subject();
+export class HelpCenterComponent implements OnInit, OnDestroy, AfterViewInit {
+	showHelpNuxTooltip: Subject<boolean> = new Subject();
 	nuxWrapperPosition: ConnectedPosition = {
 		originX: 'center',
 		originY: 'bottom',
@@ -47,11 +47,6 @@ export class HelpCenterComponent implements OnInit, OnDestroy {
 			offsetX: -30,
 		};
 
-		this.introSubs = this.userService.introsData$.subscribe((intros) => {
-			this.introsData = intros;
-			this.showNuxTooltip.next(!intros?.frontend_help_center?.universal?.seen_version);
-		});
-
 		this.userService.user$.pipe(takeUntil(this.destroy$)).subscribe((user) => {
 			this.isOldUser = moment(user?.first_login).isBefore(moment('2023-02-14T01:14:00.000Z'));
 			if (this.isOldUser) {
@@ -64,8 +59,15 @@ export class HelpCenterComponent implements OnInit, OnDestroy {
 		});
 	}
 
+	ngAfterViewInit(): void {
+		this.introSubs = this.userService.introsData$.subscribe((intros) => {
+			this.introsData = intros;
+			if (intros) this.showHelpNuxTooltip.next(!intros?.frontend_help_center?.universal?.seen_version);
+		});
+	}
+
 	closeNuxToolTip(event) {
-		this.showNuxTooltip.next(false);
+		this.showHelpNuxTooltip.next(false);
 		this.userService.updateIntrosHelpCenterRequest(this.introsData, 'universal', '1');
 		if (event == true) {
 			this.openHelpCenter();
