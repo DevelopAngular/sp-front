@@ -397,7 +397,6 @@ export class NavbarComponent implements AfterViewInit, OnInit, OnDestroy {
 				takeUntil(this.destroyer$)
 			)
 			.subscribe((data) => {
-				console.log(data);
 				this.introsData = data;
 			});
 	}

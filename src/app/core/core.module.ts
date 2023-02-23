@@ -23,7 +23,7 @@ import { SpEmailPipe } from './pipes/sp-email.pipe';
 import { IdCardComponent } from '../admin/id-cards/id-card/id-card.component';
 import { DropdownSelectionComponent } from './components/dropdown-selection/dropdown-selection.component';
 import { TimerSpinnerComponent } from './components/timer-spinner/timer-spinner.component';
-import { OrdinancePipe } from './ordinance.pipe';
+import { PositionPipe } from './position.pipe';
 
 @NgModule({
 	declarations: [
@@ -49,7 +49,7 @@ import { OrdinancePipe } from './ordinance.pipe';
 		IdCardComponent,
 		DropdownSelectionComponent,
 		TimerSpinnerComponent,
-		OrdinancePipe,
+		PositionPipe,
 	],
 	imports: [CommonModule, MaterialModule],
 	exports: [
@@ -74,7 +74,7 @@ import { OrdinancePipe } from './ordinance.pipe';
 		IdCardComponent,
 		DropdownSelectionComponent,
 		TimerSpinnerComponent,
-		OrdinancePipe,
+		PositionPipe,
 	],
 })
 export class CoreModule {}

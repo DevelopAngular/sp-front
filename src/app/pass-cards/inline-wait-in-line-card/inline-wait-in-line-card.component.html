@@ -22,12 +22,12 @@
 			</div>
 
 			<div class="button" style="height: 110px">
-				<ng-container *ngIf="position > 0; else wilCardButton">
+				<ng-container *ngIf="!wil.isReadyToStart(); else wilCardButton">
 					<mat-divider></mat-divider>
 					<ng-template #positionInLine>
 						<div class="end-pass-content" style="margin-top: 10px !important; margin-left: 10px !important">
 							<img class="ds-mr-20" [src]="'./assets/Clock (White).svg' | resolveAsset" alt="Clock face" />
-							<span style="width: 120px">{{ position | ordinance }} in line<span style="width: 20px" #waitingDots></span></span>
+							<span style="width: 120px">{{ line_position | position }} in line<span style="width: 20px" #waitingDots></span></span>
 						</div>
 					</ng-template>
 
@@ -35,13 +35,14 @@
 						<app-pager [pages]="2" [page]="2">
 							<div class="page-1 teacher-details" [attr.data-motion-translate]="(frameMotion$ | async).direction">
 								<span class="bold">Pass Created</span> <br />
-								<span class="smaller">by {{ getUserName }} - {{ wil.start_attempt_end_time | date : 'EEEE, h:mm a' }}</span>
+								<span class="smaller">by {{ getUserName }} - {{ wil.created | date : 'EEEE, h:mm a' }}</span>
 							</div>
 
 							<div class="page-2 teacher-details" [attr.data-motion-translate]="(frameMotion$ | async).direction">
 								<div style="position: relative; margin-top: 20px !important; display: flex; justify-content: center">
 									<img class="ds-mr-10" [src]="'./assets/Clock (White).svg' | resolveAsset" alt="Clock face" />
-									<span style="width: 108px">{{ position | ordinance }} in line</span><span style="width: 20px; text-align: left" #waitingDots></span>
+									<span style="width: 108px">{{ line_position | position }} in line</span
+									><span style="width: 20px; text-align: left" #waitingDots></span>
 								</div>
 							</div>
 						</app-pager>

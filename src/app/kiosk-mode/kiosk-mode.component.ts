@@ -149,7 +149,7 @@ export class KioskModeComponent implements OnInit, AfterViewInit, OnDestroy {
 				if (passes.length === 0) {
 					return;
 				}
-				if (passes[0].line_position === 0 && this.frontOfWaitInLineDialogRef?.getState() !== MatDialogState.OPEN) {
+				if (passes[0].isReadyToStart() && this.frontOfWaitInLineDialogRef?.getState() !== MatDialogState.OPEN) {
 					this.frontOfWaitInLineDialogRef = this.dialog.open(InlineWaitInLineCardComponent, {
 						panelClass: ['overlay-dialog', 'teacher-pass-card-dialog-container'],
 						backdropClass: 'custom-backdrop',

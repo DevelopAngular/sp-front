@@ -320,7 +320,7 @@ export class PassesComponent implements OnInit, OnDestroy {
 		this.currentWaitInLine$
 			.pipe(
 				takeUntil(this.destroy$),
-				filter((wilPass) => wilPass?.line_position === 0 && this.fullScreenWaitInLineRef?.getState() !== MatDialogState.OPEN)
+				filter((wilPass) => wilPass?.isReadyToStart() && this.fullScreenWaitInLineRef?.getState() !== MatDialogState.OPEN)
 			)
 			.subscribe({
 				next: (wilPass: WaitingInLinePass) => {

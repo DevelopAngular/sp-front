@@ -3,8 +3,6 @@ import { PassLike } from '../models';
 import { HallPass } from '../models/HallPass';
 import { Invitation } from '../models/Invitation';
 import { Request } from '../models/Request';
-import { User } from '../models/User';
-import { WaitingInLineUser } from '../models/WaitInLine';
 
 export function getFormattedPassDate(pass: PassLike) {
 	let date: Date;
@@ -47,7 +45,7 @@ export function getInnerPassName(pass: PassLike) {
 		return '';
 	}
 	if (pass.student.first_name === '') {
-		return (pass.student as User).display_name || (pass.student as WaitingInLineUser).username;
+		return pass.student.display_name;
 	}
 	return pass.student.first_name.substr(0, 1) + '. ' + pass.student.last_name;
 }

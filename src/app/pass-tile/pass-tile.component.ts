@@ -12,9 +12,9 @@ import { ConnectedPosition, Overlay } from '@angular/cdk/overlay';
 import { DomCheckerService } from '../services/dom-checker.service';
 import { KioskModeService } from '../services/kiosk-mode.service';
 import { WaitingInLinePass } from '../models/WaitInLine';
-import { OrdinancePipe } from '../core/ordinance.pipe';
+import { PositionPipe } from '../core/position.pipe';
 
-const ordinance = new OrdinancePipe().transform;
+const calculatePositionString = new PositionPipe().transform;
 
 @Component({
 	selector: 'app-pass-tile',
@@ -73,23 +73,22 @@ export class PassTileComponent implements OnInit, OnDestroy, OnChanges {
 		if (this.isActive) {
 			return this.timeLeft + (this.valid ? ' Remaining' : ' Expiring');
 		} else if (this.waitInLine) {
-			const { line_position } = this.pass as WaitingInLinePass;
-			return line_position === 0 ? 'Next in Line!' : `${ordinance((this.pass as WaitingInLinePass).line_position)} in line`;
+			return (this.pass as WaitingInLinePass).isReadyToStart()
+				? 'Ready to Start!'
+				: `${calculatePositionString((this.pass as WaitingInLinePass).line_position)} in line`;
 		} else {
 			if (this.encounterPreventionCard) {
 				return 'Now';
 			}
-			const content =
-				this.pass instanceof Request
-					? this.pass.request_time && this.forFuture
-						? !this.forStaff
-							? getInnerPassContent(this.pass)
-							: getFormattedPassDate(this.pass)
-						: this.forStaff
-						? 'Pass for Now'
-						: ''
-					: getInnerPassContent(this.pass, (!this.pass['request_time'] && this.pass instanceof Request) || !(this.pass instanceof Invitation));
-			return content;
+			return this.pass instanceof Request
+				? this.pass.request_time && this.forFuture
+					? !this.forStaff
+						? getInnerPassContent(this.pass)
+						: getFormattedPassDate(this.pass)
+					: this.forStaff
+					? 'Pass for Now'
+					: ''
+				: getInnerPassContent(this.pass, (!this.pass['request_time'] && this.pass instanceof Request) || !(this.pass instanceof Invitation));
 		}
 	}
 

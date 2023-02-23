@@ -3,20 +3,6 @@ import { Location } from './Location';
 import { ColorProfile } from './ColorProfile';
 import { User } from './User';
 
-export type WaitingInLineUser = Pick<
-	User,
-	'id' | 'first_name' | 'last_name' | 'primary_email' | 'badge' | 'profile_picture' | 'first_login' | 'last_active'
-> & {
-	PrimaryLoginProvider: string;
-	Extras?: Record<string, any>;
-	username: string;
-	is_active: boolean;
-	is_deleted: boolean;
-	is_staff: boolean;
-	is_superuser: boolean;
-	student_invite_code: string;
-};
-
 export interface WaitingInLinePassResponse {
 	id: string;
 	created: Date;
@@ -27,10 +13,10 @@ export interface WaitingInLinePassResponse {
 	duration: number;
 	issuer_message: string;
 	icon: string; // asset URL
-	issuer: WaitingInLineUser;
+	issuer: User;
 	origin: Record<string, any>;
 	destination: Record<string, any>;
-	student: WaitingInLineUser;
+	student: User;
 	color_profile: Record<string, any>;
 	school_id_fk: number;
 	line_position: number;
@@ -47,10 +33,10 @@ export class WaitingInLinePass extends BaseModel {
 		public duration: number,
 		public issuer_message: string,
 		public icon: string, // asset URL
-		public issuer: WaitingInLineUser,
+		public issuer: User,
 		public origin: Location,
 		public destination: Location,
-		public student: WaitingInLineUser,
+		public student: User,
 		public color_profile: ColorProfile,
 		public school_id_fk: number,
 		public line_position: number
@@ -67,18 +53,19 @@ export class WaitingInLinePass extends BaseModel {
 			created: Date = new Date(JSON['created']),
 			entry_time: Date = new Date(JSON['entry_time']),
 			missed_start_attempts: number = JSON['missed_start_attempts'],
-			start_attempt_end_time: Date = new Date(JSON['start_attempt_end_time']),
 			travel_type: string = JSON['travel_type'],
 			duration: number = JSON['duration'],
 			issuer_message: string = JSON['issuer_message'],
 			icon: string = JSON['icon'],
-			issuer: WaitingInLineUser = JSON['issuer'],
+			issuer: User = User.fromJSON(JSON['issuer']),
 			origin: Location = Location.fromJSON(JSON['origin']),
 			destination: Location = Location.fromJSON(JSON['destination']),
-			student: WaitingInLineUser = JSON['student'],
+			student: User = User.fromJSON(JSON['student']),
 			color_profile: ColorProfile = ColorProfile.fromJSON(JSON['color_profile']),
 			school_id_fk: number = JSON['school_id_fk'],
 			line_position: number = JSON['line_position'];
+
+		const start_attempt_end_time: Date = !!JSON['start_attempt_end_time'] ? new Date(JSON['start_attempt_end_time']) : null;
 
 		return new WaitingInLinePass(
 			id,
@@ -101,10 +88,6 @@ export class WaitingInLinePass extends BaseModel {
 	}
 
 	isReadyToStart(): boolean {
-		return this.line_position === 0;
-	}
-
-	isFrontOfLine(): boolean {
-		return this.line_position === 1;
+		return !!this.start_attempt_end_time;
 	}
 }

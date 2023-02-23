@@ -164,12 +164,12 @@ export class InlineWaitInLineCardComponent implements OnInit, OnChanges, OnDestr
 		return this.forStaff && !this.isKiosk ? './assets/Dots (Transparent).svg' : './assets/Delete (White).svg';
 	}
 
-	get position(): number {
+	get line_position(): number {
 		return this.wil.line_position;
 	}
 
 	get getUserName() {
-		return this.wil.issuer.id == this.user.id ? 'Me' : this.wil.issuer.username;
+		return this.wil.issuer.id == this.user.id ? 'Me' : this.wil.issuer.display_name;
 	}
 
 	get isKiosk() {

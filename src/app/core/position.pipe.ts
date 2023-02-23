@@ -1,9 +1,9 @@
 import { Pipe, PipeTransform } from '@angular/core';
 
 @Pipe({
-	name: 'ordinance',
+	name: 'position',
 })
-export class OrdinancePipe implements PipeTransform {
+export class PositionPipe implements PipeTransform {
 	// Given the position in a line, return the ordinal number
 	// Position 1: 1st, Position 3: 3rd, etc.
 	transform(value: number): string {
