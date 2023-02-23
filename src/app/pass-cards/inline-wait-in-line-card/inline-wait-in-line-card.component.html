@@ -35,7 +35,9 @@
 						<app-pager [pages]="2" [page]="2">
 							<div class="page-1 teacher-details" [attr.data-motion-translate]="(frameMotion$ | async).direction">
 								<span class="bold">Pass Created</span> <br />
-								<span class="smaller">by {{ getUserName }} - {{ wil.created | date : 'EEEE, h:mm a' }}</span>
+								<span class="smaller" style="width: 200px; display: block; margin: 0 auto"
+									>by {{ getUserName }} - {{ wil.created | date : 'EE, h:mm a' }}</span
+								>
 							</div>
 
 							<div class="page-2 teacher-details" [attr.data-motion-translate]="(frameMotion$ | async).direction">

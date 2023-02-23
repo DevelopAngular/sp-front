@@ -52,6 +52,7 @@ import { Invitation } from '../models/Invitation';
 import { sortWilByPosition } from '../services/wait-in-line.service';
 import { InlineWaitInLineCardComponent } from '../pass-cards/inline-wait-in-line-card/inline-wait-in-line-card.component';
 import { Util } from '../../Util';
+import { RepresentedUser } from '../navbar/navbar.component';
 
 @Component({
 	selector: 'app-passes',
@@ -255,7 +256,14 @@ export class PassesComponent implements OnInit, OnDestroy {
 					if (this.isStaff) {
 						this.titleService.setTitle('SmartPass');
 						this.dataService.updateInbox(true);
-						this.waitInLinePasses = this.liveDataService.watchWaitingInLinePasses({ type: 'issuer', value: user }).pipe(
+						const waitInLineWatcher = this.user.isAssistant()
+							? this.userService.effectiveUser.pipe(
+									filter<RepresentedUser>(Boolean),
+									concatMap((effectiveResponse) => this.liveDataService.watchWaitingInLinePasses({ type: 'issuer', value: effectiveResponse.user }))
+							  )
+							: this.liveDataService.watchWaitingInLinePasses({ type: 'issuer', value: this.user });
+
+						this.waitInLinePasses = waitInLineWatcher.pipe(
 							map((passes) => {
 								return passes.sort(sortWilByPosition);
 							})
