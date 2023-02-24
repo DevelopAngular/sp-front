@@ -29,7 +29,6 @@ import { User } from '../../models/User';
 import { UserService } from '../../services/user.service';
 import { WaitInLineService } from '../../services/wait-in-line.service';
 import { TimerSpinnerComponent } from '../../core/components/timer-spinner/timer-spinner.component';
-import { EncounterPreventionService } from '../../services/encounter-prevention.service';
 
 export enum WILHeaderOptions {
 	Delete = 'delete',
@@ -37,21 +36,14 @@ export enum WILHeaderOptions {
 }
 
 /**
- * Wait in Line has 2 parts, similar to the pass request flow:
- * 1. Wait in Line Creation (queuing a student in line)
- * 2. Wait in Line Acceptance (starting the pass for a student at the front of the line)
+ * This component is the main piece of UI for interacting with Waiting In Line and is
+ * responsible for the following:
  *
- * This component deals with the different stages waiting in line until the pass is created.
- * This component is a result of the WaitInLineCardComponent creating a Wait In Line object
- * on the server side.
- *
- * 1. Get the current position in the line and display this position
- * 2. When at the front of the line, fullscreen this component and pulse the "Start Pass" button.
- *    The student has 30 seconds to create the pass.
- * 3. Failing to create a pass before the timer expires kicks the student to the back of the line.
- *    Failing to create a pass the second time deletes the Wait In Line Card and kicks the student out of the line.
- * 4. If the student creates the pass, regular checks are done (student pass limits mainly) and the pass is created.
- * 5. This component is destroyed.
+ * - Starting a WaitingInLinePass
+ * - Deleting a WaitingInLinePass
+ * - Showing component inline for a student when pass is in line
+ * - Showing component as a fullscreen focused dialog when a pass is ready to start (student and kiosk)
+ * - Showing component as a dialog for passes currently waiting in line
  */
 @Component({
 	selector: 'app-inline-wait-in-line-card',
@@ -78,7 +70,19 @@ export class InlineWaitInLineCardComponent implements OnInit, OnChanges, OnDestr
 			)
 			.subscribe();
 	}
-	@ViewChild('rootWrapper') set wrapperElem(wrapper: ElementRef<HTMLElement>) {
+
+	/**
+	 * This DOM setter is responsible for making the dialog fullscreen when it needs to be.
+	 * When the #rootWrapper element enters the DOM, we need to check if the component needs scaling up.
+	 * The only time the component needs scaling up is if the pass is opened as a dialog and the pass is
+	 * Ready to Start. If this is the case, then the dialog data would have already been loaded in the
+	 * constructor.
+	 *
+	 * We continue working up the DOM until we find the wrapper element responsible for holding the
+	 * mat-dialog-container. We calculate how much scaling is necessary and apply a transform to the
+	 * wrapper element.
+	 */
+	@ViewChild('rootWrapper') set scaleWrapper(wrapper: ElementRef<HTMLElement>) {
 		if (!this.dialogData?.nextInLine) {
 			return;
 		}
@@ -134,8 +138,7 @@ export class InlineWaitInLineCardComponent implements OnInit, OnChanges, OnDestr
 		private hallPassService: HallPassesService,
 		private dialog: MatDialog,
 		public kioskService: KioskModeService,
-		private wilService: WaitInLineService,
-		private encounterService: EncounterPreventionService
+		private wilService: WaitInLineService
 	) {}
 
 	private get scalingFactor() {
@@ -223,6 +226,7 @@ export class InlineWaitInLineCardComponent implements OnInit, OnChanges, OnDestr
 	readyToStartTick(remainingTime: number) {
 		this.acceptingPassTimeRemaining = remainingTime;
 		if (remainingTime === 30 || remainingTime === 29) {
+			// The unicode for ⚠️ won't show the same in all browsers and may not even be the desired yellow color
 			this.titleService.setTitle("⚠️ It's Time to Start your Pass");
 			return;
 		}
@@ -232,6 +236,7 @@ export class InlineWaitInLineCardComponent implements OnInit, OnChanges, OnDestr
 		}
 
 		if (remainingTime % 2 === 0) {
+			// The ⏳ icon shows fine in text with color even when the ⚠️ does not
 			this.titleService.setTitle(`⏳ ${remainingTime} sec left...`);
 		} else {
 			this.titleService.setTitle((document.title = `Pass Ready to Start`));
@@ -286,13 +291,12 @@ export class InlineWaitInLineCardComponent implements OnInit, OnChanges, OnDestr
 
 	async startPass() {
 		this.requestLoading = true;
-		const passRequest$ = this.hallPassService.startWilPassNow(this.wil.id).pipe(
+		const passRequest$ = this.wilService.startWilPassNow(this.wil.id).pipe(
 			takeUntil(this.destroy$),
 			catchError((error) => {
 				if (error === HallPassErrors.Encounter) {
 					this.hallPassService.showEncounterPreventionToast({
 						isStaff: this.forStaff,
-						// @ts-ignore
 						exclusionPass: this.wil,
 					});
 				}
@@ -307,7 +311,6 @@ export class InlineWaitInLineCardComponent implements OnInit, OnChanges, OnDestr
 		} else {
 			overallPassRequest$ = from(this.locationsService.staffRoomLimitOverride(this.wil.destination, this.isKiosk, 1, true)).pipe(
 				concatMap((overrideRoomLimit) => {
-					console.log(overrideRoomLimit);
 					if (!overrideRoomLimit) {
 						return of(null);
 					}
@@ -331,7 +334,6 @@ export class InlineWaitInLineCardComponent implements OnInit, OnChanges, OnDestr
 	}
 
 	ngOnDestroy() {
-		this.titleService.setTitle('SmartPass');
 		this.closeDialog();
 		this.destroy$.next();
 		this.destroy$.complete();
