@@ -9,23 +9,27 @@ import { finalize, take, tap } from 'rxjs/operators';
 })
 export class TimerSpinnerComponent implements OnInit {
 	@Input() showNumber = true;
-	@Input() private maxSeconds = 30;
-	@Input() private startAt: number = 0;
+	@Input() private maxSeconds;
+	@Input() private startAt: number;
 	@Output() private pulse = new EventEmitter<number>();
 	@Output() private completed = new EventEmitter<void>();
 
-	countdown: number = this.startAt > 0 ? this.startAt : this.maxSeconds;
+	countdown: number;
 	timerSubscription: Subscription;
 
 	ngOnInit(): void {
-		this.timerSubscription = this.createTimer(this.maxSeconds).subscribe();
+		if (!this.startAt) {
+			this.startAt = this.maxSeconds;
+		}
+		this.countdown = this.startAt > 0 ? this.startAt : this.maxSeconds;
+		this.timerSubscription = this.createTimer(this.startAt).subscribe();
 	}
 
 	private createTimer(seconds: number) {
 		return timer(0, 1000).pipe(
-			take(this.maxSeconds + 1),
+			take(seconds + 1),
 			tap((counter) => {
-				const remaining = this.startAt > 0 ? this.startAt : this.maxSeconds - counter;
+				const remaining = seconds - counter;
 				this.countdown = remaining;
 				this.pulse.emit(remaining);
 			}),
