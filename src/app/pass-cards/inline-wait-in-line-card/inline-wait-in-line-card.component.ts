@@ -1,16 +1,4 @@
-import {
-  Component,
-  ElementRef,
-  Inject,
-  Input,
-  OnChanges,
-  OnDestroy,
-  OnInit,
-  Optional,
-  SimpleChange,
-  SimpleChanges,
-  ViewChild,
-} from '@angular/core';
+import { Component, ElementRef, Inject, Input, OnChanges, OnDestroy, OnInit, Optional, SimpleChange, SimpleChanges, ViewChild } from '@angular/core';
 import { BehaviorSubject, from, Observable, of, Subject, throwError, timer } from 'rxjs';
 import { HallPassErrors, HallPassesService } from '../../services/hall-passes.service';
 import { MAT_DIALOG_DATA, MatDialog, MatDialogRef } from '@angular/material/dialog';
@@ -251,12 +239,12 @@ export class InlineWaitInLineCardComponent implements OnInit, OnChanges, OnDestr
 		this.acceptingPassTimeRemaining = remainingTime;
 		if (remainingTime === 30 || remainingTime === 29) {
 			// The unicode for ⚠️ won't show the same in all browsers and may not even be the desired yellow color
-      this.changeTitle("⚠️ It's Time to Start your Pass");
+			this.changeTitle("⚠️ It's Time to Start your Pass");
 			return;
 		}
 
 		if (remainingTime === 0) {
-      this.changeTitle('Smartpass');
+			this.changeTitle('Smartpass');
 		}
 
 		if (remainingTime % 2 === 0) {
@@ -359,16 +347,16 @@ export class InlineWaitInLineCardComponent implements OnInit, OnChanges, OnDestr
 			this.dialogRef.close();
 		}
 
-    this.changeTitle('SmartPass');
+		this.changeTitle('SmartPass');
 	}
 
-  changeTitle(tabTitle: string) {
-    if (!this.user?.isStudent()) {
-      return
-    }
+	changeTitle(tabTitle: string) {
+		if (!this.user?.isStudent()) {
+			return;
+		}
 
-    this.titleService.setTitle(tabTitle);
-  }
+		this.titleService.setTitle(tabTitle);
+	}
 
 	ngOnDestroy() {
 		this.closeDialog();
