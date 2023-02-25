@@ -1,17 +1,15 @@
 import {
-	Component,
-	ElementRef,
-	Inject,
-	Input,
-	OnChanges,
-	OnDestroy,
-	OnInit,
-	Optional,
-	QueryList,
-	SimpleChange,
-	SimpleChanges,
-	ViewChild,
-	ViewChildren,
+  Component,
+  ElementRef,
+  Inject,
+  Input,
+  OnChanges,
+  OnDestroy,
+  OnInit,
+  Optional,
+  SimpleChange,
+  SimpleChanges,
+  ViewChild,
 } from '@angular/core';
 import { BehaviorSubject, from, Observable, of, Subject, throwError, timer } from 'rxjs';
 import { HallPassErrors, HallPassesService } from '../../services/hall-passes.service';
@@ -29,6 +27,7 @@ import { User } from '../../models/User';
 import { UserService } from '../../services/user.service';
 import { WaitInLineService } from '../../services/wait-in-line.service';
 import { TimerSpinnerComponent } from '../../core/components/timer-spinner/timer-spinner.component';
+import { PollingEvent } from '../../services/polling-service';
 
 export enum WILHeaderOptions {
 	Delete = 'delete',
@@ -51,10 +50,11 @@ export enum WILHeaderOptions {
 	styleUrls: ['./inline-wait-in-line-card.component.scss'],
 })
 export class InlineWaitInLineCardComponent implements OnInit, OnChanges, OnDestroy {
+	// TODO: make @Input wil into a setter
 	@Input() wil: WaitingInLinePass;
 	@Input() forStaff: boolean;
 
-	@ViewChildren(TimerSpinnerComponent) timeSpinner: QueryList<TimerSpinnerComponent>;
+	@ViewChild(TimerSpinnerComponent) timeSpinner: TimerSpinnerComponent;
 	@ViewChild('waitingDots') set dotsSpan(span: ElementRef<HTMLSpanElement>) {
 		if (!span) {
 			return;
@@ -184,10 +184,11 @@ export class InlineWaitInLineCardComponent implements OnInit, OnChanges, OnDestr
 	}
 
 	ngOnChanges(changes: SimpleChanges) {
-		if (this.timeSpinner?.length > 0) {
+		// This would only happen when the pass is inline and not in a dialog
+		if (this.timeSpinner) {
 			const { previousValue, currentValue }: SimpleChange = changes['wil'];
 			if (currentValue.missed_start_attempts > previousValue.missed_start_attempts) {
-				this.timeSpinner.forEach((t) => t.reset());
+				this.timeSpinner.reset();
 			}
 		}
 	}
@@ -199,7 +200,30 @@ export class InlineWaitInLineCardComponent implements OnInit, OnChanges, OnDestr
 				this.wil = this.dialogData.pass;
 			}
 			this.forStaff = this.dialogData.forStaff;
+
+			if (this.wil.isReadyToStart()) {
+				this.wilService
+					.listenForWilUpdate(this.wil.id)
+					.pipe(
+						takeUntil(this.destroy$),
+						map<PollingEvent, WaitingInLinePass>((event) => event.data),
+						filter((wil) => wil.missed_start_attempts > this.wil.missed_start_attempts),
+						tap(() => {
+							this.timeSpinner.reset();
+						})
+					)
+					.subscribe();
+			}
 		}
+
+		this.wilService
+			.listenForWilDeletion(this.wil.id)
+			.pipe(takeUntil(this.destroy$))
+			.subscribe({
+				next: () => {
+					this.closeDialog();
+				},
+			});
 
 		this.userService.user$
 			.pipe(
@@ -227,19 +251,19 @@ export class InlineWaitInLineCardComponent implements OnInit, OnChanges, OnDestr
 		this.acceptingPassTimeRemaining = remainingTime;
 		if (remainingTime === 30 || remainingTime === 29) {
 			// The unicode for ⚠️ won't show the same in all browsers and may not even be the desired yellow color
-			this.titleService.setTitle("⚠️ It's Time to Start your Pass");
+      this.changeTitle("⚠️ It's Time to Start your Pass");
 			return;
 		}
 
 		if (remainingTime === 0) {
-			this.titleService.setTitle('SmartPass');
+      this.changeTitle('Smartpass');
 		}
 
 		if (remainingTime % 2 === 0) {
 			// The ⏳ icon shows fine in text with color even when the ⚠️ does not
-			this.titleService.setTitle(`⏳ ${remainingTime} sec left...`);
+			this.changeTitle(`⏳ ${remainingTime} sec left...`);
 		} else {
-			this.titleService.setTitle((document.title = `Pass Ready to Start`));
+			this.changeTitle((document.title = `Pass Ready to Start`));
 		}
 	}
 
@@ -309,7 +333,12 @@ export class InlineWaitInLineCardComponent implements OnInit, OnChanges, OnDestr
 		if (!this.forStaff && !this.isKiosk) {
 			overallPassRequest$ = passRequest$;
 		} else {
-			overallPassRequest$ = from(this.locationsService.staffRoomLimitOverride(this.wil.destination, this.isKiosk, 1, true)).pipe(
+			// We do not count the WaitingInLinePass if the pass is ready to start. This is because the backend already
+			// considers a ready to start pass as part of the number of passes in the room.
+			// If the WaitingInLinePass isn't ready to start, then this would be considered an override. It's set to 1
+			// since we're only overriding a single WaitingInLine pass into the room.
+			const studentCount = this.wil.isReadyToStart() ? 0 : 1;
+			overallPassRequest$ = from(this.locationsService.checkIfFullRoom(this.wil.destination, this.isKiosk, studentCount, true)).pipe(
 				concatMap((overrideRoomLimit) => {
 					if (!overrideRoomLimit) {
 						return of(null);
@@ -330,8 +359,16 @@ export class InlineWaitInLineCardComponent implements OnInit, OnChanges, OnDestr
 			this.dialogRef.close();
 		}
 
-		this.titleService.setTitle('SmartPass');
+    this.changeTitle('SmartPass');
 	}
+
+  changeTitle(tabTitle: string) {
+    if (!this.user?.isStudent()) {
+      return
+    }
+
+    this.titleService.setTitle(tabTitle);
+  }
 
 	ngOnDestroy() {
 		this.closeDialog();

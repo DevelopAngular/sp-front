@@ -4,7 +4,7 @@ import * as moment from 'moment';
 
 // TODO: Replace deprecated empty() observable with EMPTY
 import { combineLatest, EMPTY, empty, merge, Observable, of, Subject } from 'rxjs';
-import { distinctUntilChanged, exhaustMap, map, pluck, scan, startWith, switchMap } from 'rxjs/operators';
+import { distinctUntilChanged, exhaustMap, filter, map, pluck, scan, startWith, switchMap } from 'rxjs/operators';
 import { Paged, PassLike } from '../models';
 import { BaseModel } from '../models/base';
 import { HallPass } from '../models/HallPass';
@@ -733,6 +733,14 @@ export class LiveDataService {
 			]),
 			handlePost: filterNewestFirst,
 		});
+	}
+
+	watchDeletedWaitingInLine() {
+		return this.polling.listen().pipe(filter((event) => event.action === WaitingInLineEvents.Delete));
+	}
+
+	watchUpdatedWaitingInLine() {
+		return this.polling.listen().pipe(filter((event) => event.action === WaitingInLineEvents.Update));
 	}
 
 	watchInboxRequests(filter: User): Observable<Request[]> {

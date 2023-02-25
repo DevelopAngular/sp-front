@@ -39,7 +39,7 @@ Similar to regular Hall Passes, a teacher can also delete Waiting In Line Passes
 
 ### Kiosk Mode
 
-Kiosk Mode is similar to the student's flow with the only difference being the Waiting In Line Passes shown are only for the origin room.
+Kiosk Mode is similar to the student's flow with the only difference being the Waiting In Line Passes shown are only fo the origin room.
 
 ## UI Considerations
 

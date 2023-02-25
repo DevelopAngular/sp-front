@@ -227,7 +227,22 @@ export class LocationsService {
 		return this.http.put('v1/users/@me/starred', body);
 	}
 
-	async staffRoomLimitOverride(location: Location, isKioskMode: boolean, studentCount: number, skipLine?: boolean): Promise<boolean> {
+	/**
+	 * This function checks if a user is allowed to create passes into a destination.
+	 * @param location The pass destination that is being checked for overrides
+	 * @param isKioskMode true if kiosk mode, false otherwise
+	 * @param studentCount The number of passes being made into location
+	 * @param skipLine true if we're overriding a Wait in Line queue. False/undefined otherwise
+	 * @return {Promise<boolean>} A promise containing whether the user can create passes into the destination.
+	 * Returns Promise<false> if the location limit isn't being overridden.
+	 * A return value of Promise<true> means that we are allowed to create passes into the destination. This happens
+	 * under the following circumstances:
+	 * - The destination doesn't have a pass limit
+	 * - The destination's pass limit isn't reached
+	 * - Wait in Line is enabled, one student is selected and a teacher is not skipping the line
+	 * - The room limit is reached and the user confirms that they wish to override the room limit
+	 */
+	async checkIfFullRoom(location: Location, isKioskMode: boolean, studentCount: number, skipLine?: boolean): Promise<boolean> {
 		if (isKioskMode) {
 			return true;
 		}

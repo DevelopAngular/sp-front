@@ -1,5 +1,5 @@
 import { Component, EventEmitter, Input, OnInit, Output } from '@angular/core';
-import { timer } from 'rxjs';
+import { Subscription, timer } from 'rxjs';
 import { finalize, take, tap } from 'rxjs/operators';
 
 @Component({
@@ -15,9 +15,10 @@ export class TimerSpinnerComponent implements OnInit {
 	@Output() private completed = new EventEmitter<void>();
 
 	countdown: number = this.startAt > 0 ? this.startAt : this.maxSeconds;
+	timerSubscription: Subscription;
 
 	ngOnInit(): void {
-		this.createTimer(this.maxSeconds).subscribe();
+		this.timerSubscription = this.createTimer(this.maxSeconds).subscribe();
 	}
 
 	private createTimer(seconds: number) {
@@ -37,10 +38,13 @@ export class TimerSpinnerComponent implements OnInit {
 	}
 
 	public reset(overrideSeconds?: number) {
+		if (this.timerSubscription) {
+			this.timerSubscription.unsubscribe();
+		}
 		if (overrideSeconds) {
 			this.maxSeconds = overrideSeconds;
 		}
 		this.countdown = this.maxSeconds;
-		this.createTimer(this.maxSeconds).subscribe();
+		this.timerSubscription = this.createTimer(this.maxSeconds).subscribe();
 	}
 }
