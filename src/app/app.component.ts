@@ -18,7 +18,7 @@ import { KioskModeService } from './services/kiosk-mode.service';
 import { StorageService } from './services/storage.service';
 import { OverlayContainer } from '@angular/cdk/overlay';
 import { APPLY_ANIMATED_CONTAINER, ConsentMenuOverlay } from './consent-menu-overlay';
-import { Meta } from '@angular/platform-browser';
+import { DomSanitizer, Meta, SafeResourceUrl } from '@angular/platform-browser';
 import { NotificationService } from './services/notification-service';
 import { GoogleAnalyticsService } from './services/google-analytics.service';
 import { ShortcutInput } from 'ng-keyboard-shortcuts';
@@ -55,6 +55,7 @@ export class AppComponent implements OnInit, AfterViewInit, OnDestroy {
 	currentRoute: string;
 
 	needToUpdateApp$: Subject<{ active: boolean; color: ColorProfile }>;
+	helpCentreURL: SafeResourceUrl;
 
 	private dialogContainer: HTMLElement;
 	@ViewChild('dialogContainer', { static: true }) set content(content: ElementRef) {
@@ -87,6 +88,8 @@ export class AppComponent implements OnInit, AfterViewInit, OnDestroy {
 	public mainContentWidth: string = '100%';
 	public rightPosition;
 
+	// @ViewChild('help-centre-iframe') iframe: ElementRef;
+
 	trialEndDate$ = this.http.currentSchoolSubject.pipe(
 		takeUntil(this.subscriber$),
 		filter((s) => !!s?.trial_end_date),
@@ -116,6 +119,13 @@ export class AppComponent implements OnInit, AfterViewInit, OnDestroy {
 		}
 	}
 
+	// @HostListener('window:mousemove', ['$event'])
+	// onWindowBlur(event: any): void {
+	// 	addEventListener('mousemove', function (e) {
+	// 		console.log('On iframe');
+	// 	});
+	// }
+
 	constructor(
 		public darkTheme: DarkThemeSwitch,
 		public loginService: GoogleLoginService,
@@ -139,7 +149,8 @@ export class AppComponent implements OnInit, AfterViewInit, OnDestroy {
 		private toastService: ToastService,
 		private localize: LocalizejsService,
 		private updateService: CheckForUpdateService,
-		public helpCenter: HelpCenterService
+		public helpCenter: HelpCenterService,
+		private sanitizer: DomSanitizer
 	) {}
 
 	get isMobile() {
@@ -576,6 +587,7 @@ export class AppComponent implements OnInit, AfterViewInit, OnDestroy {
 	}
 
 	openHelpCenter(event) {
+		this.helpCentreURL = this.sanitizer.bypassSecurityTrustResourceUrl('https://www.smartpass.app/help-center');
 		this.helpCenter.isHelpCenterOpen.next(event);
 		setTimeout(() => {
 			const BORDER_SIZE = 8;
@@ -593,6 +605,36 @@ export class AppComponent implements OnInit, AfterViewInit, OnDestroy {
 				panel.style.width = parseInt(getComputedStyle(panel, '').width) + dx + 'px';
 			}
 
+			setTimeout(() => {
+				// var iframe = document.querySelector<HTMLIFrameElement>('#help-centre-iframe');
+				// 			var iframe = new ElementRef(document.querySelector<HTMLIFrameElement>('#help-centre-iframe'));
+				// 			let doc = iframe.nativeElement.contentDocument ||iframe.nativeElement.contentWindow.document;
+				// 			console.log("doc : ", doc);
+				//   if (typeof doc.addEventListener !== undefined) {
+				//     console.log("inside if - addEventListener") // Is shown
+				//     doc.addEventListener("mousedown", function (e) {
+				// 		console.log("Inside iframe")
+				// 	}, false)
+				// }
+				//   } else if (typeof doc.attachEvent !== undefined) {
+				//     console.log("inside if - attachEvent ") // Does not show
+				//     doc.attachEvent("mousedown", function (e) {
+				// 		console.log("Inside iframe")
+				// 	})
+				//   }
+				var iframe = document.querySelector<HTMLIFrameElement>('#help-centre-iframe');
+				// console.log('iframe : ', iframe);
+				// // iframe.addEventListener('mouseup', Handler);
+
+				iframe.contentDocument.body.addEventListener(
+					'mousedown',
+					function (e) {
+						console.log('Iframe mouse down');
+					},
+					false
+				);
+			}, 2000);
+
 			panel.addEventListener(
 				'mousedown',
 				function (e) {
@@ -602,6 +644,7 @@ export class AppComponent implements OnInit, AfterViewInit, OnDestroy {
 						document.body.style.cursor = 'col-resize';
 						dragDivider.style.setProperty('--drag-after-color', '#00B476');
 						dragDivider.style.setProperty('--drag-after-shadow', '1px');
+						dragDivider.style.setProperty('--drag-after-left', '2px');
 					}
 				},
 				false
@@ -614,6 +657,7 @@ export class AppComponent implements OnInit, AfterViewInit, OnDestroy {
 					document.body.style.cursor = 'default';
 					dragDivider.style.setProperty('--drag-after-color', '#B7C1CF');
 					dragDivider.style.setProperty('--drag-after-shadow', '0px');
+					dragDivider.style.setProperty('--drag-after-left', '0px');
 				},
 				false
 			);

@@ -204,7 +204,7 @@
 			background-color: var(--drag-after-color, $gray400);
 			bottom: 0;
 			content: '';
-			left: 4px;
+			left: (--drag-after-left, 0px);
 			position: absolute;
 			top: 0;
 			transition: $gray400 0.15s 0.15s, box-shadow 0.15s 0.15s;
@@ -217,6 +217,7 @@
 			&:after {
 				background-color: $green500;
 				box-shadow: 0 0 0 1px $green500;
+				left: 1px;
 			}
 		}
 	}
@@ -225,6 +226,8 @@
 		right: 0;
 		cursor: pointer;
 	}
+	object,
+	embed,
 	iframe {
 		width: 100%;
 		height: calc(100vh - 70px);
