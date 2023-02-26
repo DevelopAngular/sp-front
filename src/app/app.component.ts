@@ -3,7 +3,7 @@ import { AfterViewInit, Component, ElementRef, HostListener, NgZone, OnDestroy, 
 import { MatDialog } from '@angular/material/dialog';
 import { ActivatedRoute, NavigationEnd, Router } from '@angular/router';
 import { filter as _filter } from 'lodash';
-import { BehaviorSubject, interval, Observable, ReplaySubject, Subject, Subscription, zip } from 'rxjs';
+import { BehaviorSubject, fromEvent, interval, Observable, ReplaySubject, Subject, Subscription, zip } from 'rxjs';
 
 import { concatMap, filter, map, mergeMap, switchMap, take, takeUntil, withLatestFrom } from 'rxjs/operators';
 import { BUILD_INFO_REAL } from '../build-info';
@@ -605,62 +605,87 @@ export class AppComponent implements OnInit, AfterViewInit, OnDestroy {
 				panel.style.width = parseInt(getComputedStyle(panel, '').width) + dx + 'px';
 			}
 
-			setTimeout(() => {
-				// var iframe = document.querySelector<HTMLIFrameElement>('#help-centre-iframe');
-				// 			var iframe = new ElementRef(document.querySelector<HTMLIFrameElement>('#help-centre-iframe'));
-				// 			let doc = iframe.nativeElement.contentDocument ||iframe.nativeElement.contentWindow.document;
-				// 			console.log("doc : ", doc);
-				//   if (typeof doc.addEventListener !== undefined) {
-				//     console.log("inside if - addEventListener") // Is shown
-				//     doc.addEventListener("mousedown", function (e) {
-				// 		console.log("Inside iframe")
-				// 	}, false)
-				// }
-				//   } else if (typeof doc.attachEvent !== undefined) {
-				//     console.log("inside if - attachEvent ") // Does not show
-				//     doc.attachEvent("mousedown", function (e) {
-				// 		console.log("Inside iframe")
-				// 	})
-				//   }
-				var iframe = document.querySelector<HTMLIFrameElement>('#help-centre-iframe');
-				// console.log('iframe : ', iframe);
-				// // iframe.addEventListener('mouseup', Handler);
+			// setTimeout(() => {
+			// 	// var iframe = document.querySelector<HTMLIFrameElement>('#help-centre-iframe');
+			// 	// 			var iframe = new ElementRef(document.querySelector<HTMLIFrameElement>('#help-centre-iframe'));
+			// 	// 			let doc = iframe.nativeElement.contentDocument ||iframe.nativeElement.contentWindow.document;
+			// 	// 			console.log("doc : ", doc);
+			// 	//   if (typeof doc.addEventListener !== undefined) {
+			// 	//     console.log("inside if - addEventListener") // Is shown
+			// 	//     doc.addEventListener("mousedown", function (e) {
+			// 	// 		console.log("Inside iframe")
+			// 	// 	}, false)
+			// 	// }
+			// 	//   } else if (typeof doc.attachEvent !== undefined) {
+			// 	//     console.log("inside if - attachEvent ") // Does not show
+			// 	//     doc.attachEvent("mousedown", function (e) {
+			// 	// 		console.log("Inside iframe")
+			// 	// 	})
+			// 	//   }
+			// 	var iframe = document.querySelector<HTMLIFrameElement>('#help-centre-iframe');
+			// 	// console.log('iframe : ', iframe);
+			// 	// // iframe.addEventListener('mouseup', Handler);
 
-				iframe.contentDocument.body.addEventListener(
-					'mousedown',
-					function (e) {
-						console.log('Iframe mouse down');
-					},
-					false
-				);
-			}, 2000);
+			// 	iframe.contentDocument.body.addEventListener(
+			// 		'mousedown',
+			// 		function (e) {
+			// 			console.log('Iframe mouse down');
+			// 		},
+			// 		false
+			// 	);
+			// }, 2000);
 
-			panel.addEventListener(
-				'mousedown',
-				function (e) {
-					if (e.offsetX < BORDER_SIZE) {
-						m_pos = e.x;
-						document.addEventListener('mousemove', resize, false);
-						document.body.style.cursor = 'col-resize';
-						dragDivider.style.setProperty('--drag-after-color', '#00B476');
-						dragDivider.style.setProperty('--drag-after-shadow', '1px');
-						dragDivider.style.setProperty('--drag-after-left', '2px');
-					}
-				},
-				false
-			);
-
-			document.addEventListener(
-				'mouseup',
-				function () {
+			const mouseDown = fromEvent<MouseEvent>(panel, 'mousedown');
+			const mousemove = fromEvent<MouseEvent>(document, 'mousemove');
+			const subscription = mouseDown.subscribe(evt => {
+				mousemove.subscribe(event => {
+					console.log("Calling resize")
+					resize
+				})
+				// document.addEventListener('mousemove', resize, false);
+				// Log coords of mouse movements
+				// console.log(`Coords: ${evt.clientX} X ${evt.clientY}`);
+				
+				// When the mouse is over the upper-left of the screen,
+				// unsubscribe to stop listening for mouse movements
+				// if (evt.clientX < 40 && evt.clientY < 40) {
+					//   subscription.unsubscribe();
+					// }
+				});
+				
+				const mouseUp = fromEvent<MouseEvent>(document, 'mouseup');
+				const mouseUpSub = mouseUp.subscribe(e => {
 					document.removeEventListener('mousemove', resize, false);
-					document.body.style.cursor = 'default';
-					dragDivider.style.setProperty('--drag-after-color', '#B7C1CF');
-					dragDivider.style.setProperty('--drag-after-shadow', '0px');
-					dragDivider.style.setProperty('--drag-after-left', '0px');
-				},
-				false
-			);
+					subscription.unsubscribe();
+					console.log("Unsubscribe")
+					mouseUpSub.unsubscribe();
+				})
+			// panel.addEventListener(
+			// 	'mousedown',
+			// 	function (e) {
+			// 		if (e.offsetX < BORDER_SIZE) {
+			// 			m_pos = e.x;
+			// 			document.addEventListener('mousemove', resize, false);
+			// 			document.body.style.cursor = 'col-resize';
+			// 			dragDivider.style.setProperty('--drag-after-color', '#00B476');
+			// 			dragDivider.style.setProperty('--drag-after-shadow', '1px');
+			// 			dragDivider.style.setProperty('--drag-after-left', '2px');
+			// 		}
+			// 	},
+			// 	false
+			// );
+
+			// document.addEventListener(
+			// 	'mouseup',
+			// 	function () {
+			// 		document.removeEventListener('mousemove', resize, false);
+			// 		document.body.style.cursor = 'default';
+			// 		dragDivider.style.setProperty('--drag-after-color', '#B7C1CF');
+			// 		dragDivider.style.setProperty('--drag-after-shadow', '0px');
+			// 		dragDivider.style.setProperty('--drag-after-left', '0px');
+			// 	},
+			// 	false
+			// );
 
 			const myEl = document.querySelector('#help-center-content');
 
