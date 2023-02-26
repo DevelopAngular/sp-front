@@ -73,7 +73,7 @@
 		(onClick)="openHelpCenter($event)"></app-help-center>
 	<ng-container *ngIf="helpCenter.isHelpCenterOpen | async">
 		<div class="help-center-content-wrapper" id="help-center-content">
-      <div class="help-center-unsubscribe"></div>
+			<div class="help-center-unsubscribe"></div>
 			<div class="drag-divider" id="drag-divider"></div>
 			<img class="close-icon" (click)="closeHelpCenter()" [src]="'./assets/Cancel (White-Gray).svg' | resolveAsset" alt="" />
 			<!-- <embed src="https://www.smartpass.app/help-center" /> -->
