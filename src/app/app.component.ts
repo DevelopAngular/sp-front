@@ -3,9 +3,20 @@ import { AfterViewInit, Component, ElementRef, HostListener, NgZone, OnDestroy, 
 import { MatDialog } from '@angular/material/dialog';
 import { ActivatedRoute, NavigationEnd, Router } from '@angular/router';
 import { filter as _filter } from 'lodash';
-import { BehaviorSubject, interval, Observable, ReplaySubject, Subject, Subscription, zip } from 'rxjs';
+import {BehaviorSubject, fromEvent, interval, merge, Observable, ReplaySubject, Subject, Subscription, zip} from 'rxjs';
 
-import { concatMap, filter, map, mergeMap, switchMap, take, takeUntil, withLatestFrom } from 'rxjs/operators';
+import {
+  concatMap,
+  filter,
+  finalize,
+  map,
+  mergeMap,
+  switchMap,
+  take,
+  takeUntil,
+  tap,
+  withLatestFrom
+} from 'rxjs/operators';
 import { BUILD_INFO_REAL } from '../build-info';
 import { DarkThemeSwitch } from './dark-theme-switch';
 
@@ -63,6 +74,7 @@ export class AppComponent implements OnInit, AfterViewInit, OnDestroy {
 	}
 
 	@ViewChild('trialBar') trialBarElementView: ElementRef;
+  @ViewChild('helpIframe') helpCenterIframe: ElementRef;
 
 	public isAuthenticated = null;
 	public hideScroll = true;
@@ -591,7 +603,8 @@ export class AppComponent implements OnInit, AfterViewInit, OnDestroy {
 		this.helpCenter.isHelpCenterOpen.next(event);
 		setTimeout(() => {
 			const BORDER_SIZE = 8;
-			const panel = document.getElementById('help-center-content');
+			const panel = document.querySelector<HTMLElement>('#help-center-content');
+
 			const dragDivider = document.querySelector<HTMLElement>('.drag-divider');
 			setTimeout(() => {
 				const mainRouter = document.querySelector<HTMLElement>('.router-outlet');
@@ -605,7 +618,7 @@ export class AppComponent implements OnInit, AfterViewInit, OnDestroy {
 				panel.style.width = parseInt(getComputedStyle(panel, '').width) + dx + 'px';
 			}
 
-			setTimeout(() => {
+			// setTimeout(() => {
 				// var iframe = document.querySelector<HTMLIFrameElement>('#help-centre-iframe');
 				// 			var iframe = new ElementRef(document.querySelector<HTMLIFrameElement>('#help-centre-iframe'));
 				// 			let doc = iframe.nativeElement.contentDocument ||iframe.nativeElement.contentWindow.document;
@@ -622,64 +635,94 @@ export class AppComponent implements OnInit, AfterViewInit, OnDestroy {
 				// 		console.log("Inside iframe")
 				// 	})
 				//   }
-				var iframe = document.querySelector<HTMLIFrameElement>('#help-centre-iframe');
 				// console.log('iframe : ', iframe);
 				// // iframe.addEventListener('mouseup', Handler);
 
-				iframe.contentDocument.body.addEventListener(
-					'mousedown',
-					function (e) {
-						console.log('Iframe mouse down');
-					},
-					false
-				);
-			}, 2000);
+				// iframe.contentDocument.body.addEventListener(
+				// 	'mousedown',
+				// 	function (e) {
+				// 		console.log('Iframe mouse down');
+				// 	},
+				// 	false
+				// );
+			// }, 2000);
 
-			panel.addEventListener(
-				'mousedown',
-				function (e) {
-					if (e.offsetX < BORDER_SIZE) {
-						m_pos = e.x;
-						document.addEventListener('mousemove', resize, false);
-						document.body.style.cursor = 'col-resize';
-						dragDivider.style.setProperty('--drag-after-color', '#00B476');
-						dragDivider.style.setProperty('--drag-after-shadow', '1px');
-						dragDivider.style.setProperty('--drag-after-left', '2px');
-					}
-				},
-				false
-			);
+      let iframe = document.querySelector<HTMLIFrameElement>('.help-center-unsubscribe');
 
-			document.addEventListener(
-				'mouseup',
-				function () {
-					document.removeEventListener('mousemove', resize, false);
-					document.body.style.cursor = 'default';
-					dragDivider.style.setProperty('--drag-after-color', '#B7C1CF');
-					dragDivider.style.setProperty('--drag-after-shadow', '0px');
-					dragDivider.style.setProperty('--drag-after-left', '0px');
-				},
-				false
-			);
+      const mouseDown$ = fromEvent<MouseEvent>(panel, 'mousedown');
+      const mouseMove$ = fromEvent<MouseEvent>(document, 'mousemove');
+      const mouseUp$ = merge(
+        fromEvent<MouseEvent>(dragDivider, 'mouseup'),
+        fromEvent<MouseEvent>(iframe, 'mouseup'),
+        fromEvent<MouseEvent>(panel, 'mouseup'),
+      );
+
+      mouseDown$
+        .pipe(
+          switchMap(event => mouseMove$
+            .pipe(
+              tap(ev => {
+                if (event.offsetX < BORDER_SIZE) {
+                  resize(ev)
+                  document.body.style.cursor = 'col-resize';
+                  dragDivider.style.setProperty('--drag-after-color', '#00B476');
+                  dragDivider.style.setProperty('--drag-after-shadow', '1px');
+                  dragDivider.style.setProperty('--drag-after-left', '2px');
+                }
+              }),
+              takeUntil(mouseUp$),
+              finalize(() => {
+                document.body.style.cursor = 'default';
+              })
+            )
+          ),
+        ).subscribe()
+      //
+			// panel.addEventListener(
+			// 	'mousedown',
+			// 	function (e) {
+			// 		if (e.offsetX < BORDER_SIZE) {
+			// 			m_pos = e.x;
+			// 			document.addEventListener('mousemove', resize, false);
+			// 			document.body.style.cursor = 'col-resize';
+			// 			dragDivider.style.setProperty('--drag-after-color', '#00B476');
+			// 			dragDivider.style.setProperty('--drag-after-shadow', '1px');
+			// 			dragDivider.style.setProperty('--drag-after-left', '2px');
+			// 		}
+			// 	},
+			// 	false
+			// );
+
+			// document.addEventListener(
+			// 	'mouseup',
+			// 	function () {
+			// 		document.removeEventListener('mousemove', resize, false);
+			// 		document.body.style.cursor = 'default';
+			// 		dragDivider.style.setProperty('--drag-after-color', '#B7C1CF');
+			// 		dragDivider.style.setProperty('--drag-after-shadow', '0px');
+			// 		dragDivider.style.setProperty('--drag-after-left', '0px');
+			// 	},
+			// 	false
+			// );
 
 			const myEl = document.querySelector('#help-center-content');
 
 			// Create observer
-			const observer = new ResizeObserver((element) => {
-				if (!this.helpCenter.isHelpCenterOpen.getValue()) {
-					this.mainContentWidth = '100%';
-				} else if (document.getElementById('help-center-content')) {
-					this.mainContentWidth = `calc(100% - ${document.getElementById('help-center-content').offsetWidth}px)`;
-					// teacherView.style.width = this.mainContentWidth;
-					// const mainRouter = document.querySelector<HTMLElement>('.router-outlet');
-					// const SCALE = (screen.width - document.getElementById('help-center-content').offsetWidth) / screen.width;
-					// mainRouter.style.transform = `scaleX(${SCALE})`;
-					// console.log("Scale : ", SCALE);
-				}
-			});
+			// const observer = new ResizeObserver((element) => {
+			// 	if (!this.helpCenter.isHelpCenterOpen.getValue()) {
+			// 		this.mainContentWidth = '100%';
+			// 	} else if (document.getElementById('help-center-content')) {
+			// 		this.mainContentWidth = `calc(100% - ${document.getElementById('help-center-content').offsetWidth}px)`;
+			// 		// teacherView.style.width = this.mainContentWidth;
+			// 		// const mainRouter = document.querySelector<HTMLElement>('.router-outlet');
+			// 		// const SCALE = (screen.width - document.getElementById('help-center-content').offsetWidth) / screen.width;
+			// 		// mainRouter.style.transform = `scaleX(${SCALE})`;
+			// 		// console.log("Scale : ", SCALE);
+			// 	}
+			// });
 
 			// Add element (observe)
-			observer.observe(myEl);
+			// observer.observe(myEl);
 		}, 100);
 	}
 

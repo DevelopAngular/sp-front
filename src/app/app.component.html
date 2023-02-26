@@ -73,13 +73,14 @@
 		(onClick)="openHelpCenter($event)"></app-help-center>
 	<ng-container *ngIf="helpCenter.isHelpCenterOpen | async">
 		<div class="help-center-content-wrapper" id="help-center-content">
+      <div class="help-center-unsubscribe"></div>
 			<div class="drag-divider" id="drag-divider"></div>
 			<img class="close-icon" (click)="closeHelpCenter()" [src]="'./assets/Cancel (White-Gray).svg' | resolveAsset" alt="" />
 			<!-- <embed src="https://www.smartpass.app/help-center" /> -->
 			<!-- <object data="https://www.smartpass.app/help-center">
     Alternative Content
 </object> -->
-			<iframe class="help-centre-iframe" id="help-centre-iframe" src="https://www.smartpass.app/help-center" frameborder="0"></iframe>
+			<iframe #helpIframe class="help-centre-iframe" id="help-centre-iframe" src="https://www.smartpass.app/help-center" frameborder="0"></iframe>
 			<div class="contact-wrapper">
 				<div class="live-chat" id="live-chat">
 					<img class="chat-icon" [src]="'./assets/Chat (Blue-Gray).svg' | resolveAsset" alt="" />
