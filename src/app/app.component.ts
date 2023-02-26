@@ -3,9 +3,20 @@ import { AfterViewInit, Component, ElementRef, HostListener, NgZone, OnDestroy, 
 import { MatDialog } from '@angular/material/dialog';
 import { ActivatedRoute, NavigationEnd, Router } from '@angular/router';
 import { filter as _filter } from 'lodash';
-import { BehaviorSubject, fromEvent, interval, Observable, ReplaySubject, Subject, Subscription, zip } from 'rxjs';
+import {BehaviorSubject, fromEvent, interval, merge, Observable, ReplaySubject, Subject, Subscription, zip} from 'rxjs';
 
-import { concatMap, filter, map, mergeMap, switchMap, take, takeUntil, withLatestFrom } from 'rxjs/operators';
+import {
+  concatMap,
+  filter,
+  finalize,
+  map,
+  mergeMap,
+  switchMap,
+  take,
+  takeUntil,
+  tap,
+  withLatestFrom
+} from 'rxjs/operators';
 import { BUILD_INFO_REAL } from '../build-info';
 import { DarkThemeSwitch } from './dark-theme-switch';
 
@@ -63,6 +74,7 @@ export class AppComponent implements OnInit, AfterViewInit, OnDestroy {
 	}
 
 	@ViewChild('trialBar') trialBarElementView: ElementRef;
+  @ViewChild('helpIframe') helpCenterIframe: ElementRef;
 
 	public isAuthenticated = null;
 	public hideScroll = true;
@@ -591,7 +603,8 @@ export class AppComponent implements OnInit, AfterViewInit, OnDestroy {
 		this.helpCenter.isHelpCenterOpen.next(event);
 		setTimeout(() => {
 			const BORDER_SIZE = 8;
-			const panel = document.getElementById('help-center-content');
+			const panel = document.querySelector<HTMLElement>('#help-center-content');
+
 			const dragDivider = document.querySelector<HTMLElement>('.drag-divider');
 			setTimeout(() => {
 				const mainRouter = document.querySelector<HTMLElement>('.router-outlet');
@@ -606,60 +619,65 @@ export class AppComponent implements OnInit, AfterViewInit, OnDestroy {
 			}
 
 			// setTimeout(() => {
-			// 	// var iframe = document.querySelector<HTMLIFrameElement>('#help-centre-iframe');
-			// 	// 			var iframe = new ElementRef(document.querySelector<HTMLIFrameElement>('#help-centre-iframe'));
-			// 	// 			let doc = iframe.nativeElement.contentDocument ||iframe.nativeElement.contentWindow.document;
-			// 	// 			console.log("doc : ", doc);
-			// 	//   if (typeof doc.addEventListener !== undefined) {
-			// 	//     console.log("inside if - addEventListener") // Is shown
-			// 	//     doc.addEventListener("mousedown", function (e) {
-			// 	// 		console.log("Inside iframe")
-			// 	// 	}, false)
-			// 	// }
-			// 	//   } else if (typeof doc.attachEvent !== undefined) {
-			// 	//     console.log("inside if - attachEvent ") // Does not show
-			// 	//     doc.attachEvent("mousedown", function (e) {
-			// 	// 		console.log("Inside iframe")
-			// 	// 	})
-			// 	//   }
-			// 	var iframe = document.querySelector<HTMLIFrameElement>('#help-centre-iframe');
-			// 	// console.log('iframe : ', iframe);
-			// 	// // iframe.addEventListener('mouseup', Handler);
+				// var iframe = document.querySelector<HTMLIFrameElement>('#help-centre-iframe');
+				// 			var iframe = new ElementRef(document.querySelector<HTMLIFrameElement>('#help-centre-iframe'));
+				// 			let doc = iframe.nativeElement.contentDocument ||iframe.nativeElement.contentWindow.document;
+				// 			console.log("doc : ", doc);
+				//   if (typeof doc.addEventListener !== undefined) {
+				//     console.log("inside if - addEventListener") // Is shown
+				//     doc.addEventListener("mousedown", function (e) {
+				// 		console.log("Inside iframe")
+				// 	}, false)
+				// }
+				//   } else if (typeof doc.attachEvent !== undefined) {
+				//     console.log("inside if - attachEvent ") // Does not show
+				//     doc.attachEvent("mousedown", function (e) {
+				// 		console.log("Inside iframe")
+				// 	})
+				//   }
+				// console.log('iframe : ', iframe);
+				// // iframe.addEventListener('mouseup', Handler);
 
-			// 	iframe.contentDocument.body.addEventListener(
-			// 		'mousedown',
-			// 		function (e) {
-			// 			console.log('Iframe mouse down');
-			// 		},
-			// 		false
-			// 	);
+				// iframe.contentDocument.body.addEventListener(
+				// 	'mousedown',
+				// 	function (e) {
+				// 		console.log('Iframe mouse down');
+				// 	},
+				// 	false
+				// );
 			// }, 2000);
 
-			const mouseDown = fromEvent<MouseEvent>(panel, 'mousedown');
-			const mousemove = fromEvent<MouseEvent>(document, 'mousemove');
-			const subscription = mouseDown.subscribe(evt => {
-				mousemove.subscribe(event => {
-					console.log("Calling resize")
-					resize
-				})
-				// document.addEventListener('mousemove', resize, false);
-				// Log coords of mouse movements
-				// console.log(`Coords: ${evt.clientX} X ${evt.clientY}`);
-				
-				// When the mouse is over the upper-left of the screen,
-				// unsubscribe to stop listening for mouse movements
-				// if (evt.clientX < 40 && evt.clientY < 40) {
-					//   subscription.unsubscribe();
-					// }
-				});
-				
-				const mouseUp = fromEvent<MouseEvent>(document, 'mouseup');
-				const mouseUpSub = mouseUp.subscribe(e => {
-					document.removeEventListener('mousemove', resize, false);
-					subscription.unsubscribe();
-					console.log("Unsubscribe")
-					mouseUpSub.unsubscribe();
-				})
+      let iframe = document.querySelector<HTMLIFrameElement>('.help-center-unsubscribe');
+
+      const mouseDown$ = fromEvent<MouseEvent>(panel, 'mousedown');
+      const mouseMove$ = fromEvent<MouseEvent>(document, 'mousemove');
+      const mouseUp$ = merge(
+        fromEvent<MouseEvent>(dragDivider, 'mouseup'),
+        fromEvent<MouseEvent>(iframe, 'mouseup'),
+        fromEvent<MouseEvent>(panel, 'mouseup'),
+      );
+
+      mouseDown$
+        .pipe(
+          switchMap(event => mouseMove$
+            .pipe(
+              tap(ev => {
+                if (event.offsetX < BORDER_SIZE) {
+                  resize(ev)
+                  document.body.style.cursor = 'col-resize';
+                  dragDivider.style.setProperty('--drag-after-color', '#00B476');
+                  dragDivider.style.setProperty('--drag-after-shadow', '1px');
+                  dragDivider.style.setProperty('--drag-after-left', '2px');
+                }
+              }),
+              takeUntil(mouseUp$),
+              finalize(() => {
+                document.body.style.cursor = 'default';
+              })
+            )
+          ),
+        ).subscribe()
+      //
 			// panel.addEventListener(
 			// 	'mousedown',
 			// 	function (e) {
@@ -690,21 +708,21 @@ export class AppComponent implements OnInit, AfterViewInit, OnDestroy {
 			const myEl = document.querySelector('#help-center-content');
 
 			// Create observer
-			const observer = new ResizeObserver((element) => {
-				if (!this.helpCenter.isHelpCenterOpen.getValue()) {
-					this.mainContentWidth = '100%';
-				} else if (document.getElementById('help-center-content')) {
-					this.mainContentWidth = `calc(100% - ${document.getElementById('help-center-content').offsetWidth}px)`;
-					// teacherView.style.width = this.mainContentWidth;
-					// const mainRouter = document.querySelector<HTMLElement>('.router-outlet');
-					// const SCALE = (screen.width - document.getElementById('help-center-content').offsetWidth) / screen.width;
-					// mainRouter.style.transform = `scaleX(${SCALE})`;
-					// console.log("Scale : ", SCALE);
-				}
-			});
+			// const observer = new ResizeObserver((element) => {
+			// 	if (!this.helpCenter.isHelpCenterOpen.getValue()) {
+			// 		this.mainContentWidth = '100%';
+			// 	} else if (document.getElementById('help-center-content')) {
+			// 		this.mainContentWidth = `calc(100% - ${document.getElementById('help-center-content').offsetWidth}px)`;
+			// 		// teacherView.style.width = this.mainContentWidth;
+			// 		// const mainRouter = document.querySelector<HTMLElement>('.router-outlet');
+			// 		// const SCALE = (screen.width - document.getElementById('help-center-content').offsetWidth) / screen.width;
+			// 		// mainRouter.style.transform = `scaleX(${SCALE})`;
+			// 		// console.log("Scale : ", SCALE);
+			// 	}
+			// });
 
 			// Add element (observe)
-			observer.observe(myEl);
+			// observer.observe(myEl);
 		}, 100);
 	}
 
