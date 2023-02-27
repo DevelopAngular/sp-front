@@ -625,6 +625,7 @@ export class AppComponent implements OnInit, AfterViewInit, OnDestroy {
 							tap((ev) => {
 								if (event.offsetX < BORDER_SIZE) {
 									resize(ev);
+									iframe.style.display = 'block';
 									document.body.style.cursor = 'col-resize';
 									dragDivider.style.setProperty('--drag-after-color', '#00B476');
 									dragDivider.style.setProperty('--drag-after-shadow', '1px');
@@ -637,6 +638,7 @@ export class AppComponent implements OnInit, AfterViewInit, OnDestroy {
 								dragDivider.style.setProperty('--drag-after-color', '#B7C1CF');
 								dragDivider.style.setProperty('--drag-after-shadow', '0px');
 								dragDivider.style.setProperty('--drag-after-left', '0px');
+								iframe.style.display = 'none';
 							})
 						)
 					)
@@ -665,7 +667,7 @@ export class AppComponent implements OnInit, AfterViewInit, OnDestroy {
 
 	openCallDialog(elem) {
 		const CDC = this.dialog.open(CallDialogComponent, {
-			panelClass: 'consent-dialog-container',
+			panelClass: 'consent-dialog-container-helpcenter',
 			backdropClass: 'invis-backdrop',
 			data: {
 				trigger: elem.currentTarget,
