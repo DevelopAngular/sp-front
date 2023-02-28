@@ -1,15 +1,4 @@
-import {
-  Component,
-  ElementRef,
-  EventEmitter,
-  Inject,
-  Input,
-  OnDestroy,
-  OnInit,
-  Output,
-  TemplateRef,
-  ViewChild,
-} from '@angular/core';
+import { Component, ElementRef, EventEmitter, Inject, Input, OnDestroy, OnInit, Output, TemplateRef, ViewChild } from '@angular/core';
 import { Request } from '../models/Request';
 import { User } from '../models/User';
 import { Util } from '../../Util';
@@ -123,7 +112,7 @@ export class RequestCardComponent implements OnInit, OnDestroy {
 		private createPassFormRef: MatDialogRef<CreateHallpassFormsComponent>,
 		private toast: ToastService,
 		private hallpassService: HallPassesService,
-    private features: FeatureFlagService
+		private features: FeatureFlagService
 	) {}
 
 	get invalidDate() {
@@ -674,32 +663,28 @@ export class RequestCardComponent implements OnInit, OnDestroy {
 	approveRequest() {
 		this.performingAction = true;
 
-    const httpRequest$ = this.features.isFeatureEnabled(FLAGS.WaitInLine)
-      ? this.requestService.acceptRequest(this.request, {})
-      : this.requestService
-        .checkLimits({}, this.request, this.overriderBody)
-        .pipe(
-          concatMap((httpBody) => {
-            return this.requestService.acceptRequest(this.request, httpBody);
-          })
-        );
-    
-    httpRequest$
-      .pipe(finalize(() => (this.performingAction = false)))
-      .subscribe({
-        next: () => this.dialogRef.close(),
-        error: (err: Error) => {
-          if ((err as HttpErrorResponse).error.conflict_student_ids) {
-            this.hallpassService.showEncounterPreventionToast({
-              exclusionPass: this.request,
-              isStaff: this.forStaff,
-            });
-            return;
-          }
-          this.openErrorToast(err);
-          console.error(err);
-        },
-      });
+		const httpRequest$ = this.features.isFeatureEnabled(FLAGS.WaitInLine)
+			? this.requestService.acceptRequest(this.request, {})
+			: this.requestService.checkLimits({}, this.request, this.overriderBody).pipe(
+					concatMap((httpBody) => {
+						return this.requestService.acceptRequest(this.request, httpBody);
+					})
+			  );
+
+		httpRequest$.pipe(finalize(() => (this.performingAction = false))).subscribe({
+			next: () => this.dialogRef.close(),
+			error: (err: Error) => {
+				if ((err as HttpErrorResponse).error.conflict_student_ids) {
+					this.hallpassService.showEncounterPreventionToast({
+						exclusionPass: this.request,
+						isStaff: this.forStaff,
+					});
+					return;
+				}
+				this.openErrorToast(err);
+				console.error(err);
+			},
+		});
 
 		// this.requestService
 		// 	.checkLimits({}, this.request, this.overriderBody)

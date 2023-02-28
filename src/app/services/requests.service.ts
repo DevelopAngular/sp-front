@@ -2,13 +2,11 @@ import { Injectable, TemplateRef } from '@angular/core';
 import { HttpService } from './http-service';
 import { catchError, concatMap, filter, map, take } from 'rxjs/operators';
 import { Observable, of, throwError } from 'rxjs';
+import { PassLimitDialogComponent } from '../create-hallpass-forms/main-hallpass--form/locations-group-container/pass-limit-dialog/pass-limit-dialog.component';
 import {
-  PassLimitDialogComponent,
-} from '../create-hallpass-forms/main-hallpass--form/locations-group-container/pass-limit-dialog/pass-limit-dialog.component';
-import {
-  ConfirmationDialogComponent,
-  ConfirmationTemplates,
-  RecommendedDialogConfig,
+	ConfirmationDialogComponent,
+	ConfirmationTemplates,
+	RecommendedDialogConfig,
 } from '../shared/shared-components/confirmation-dialog/confirmation-dialog.component';
 import { LocationsService } from './locations.service';
 import { PassLimitService } from './pass-limit.service';
