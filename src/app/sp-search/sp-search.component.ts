@@ -692,8 +692,7 @@ export class SPSearchComponent implements OnInit, OnDestroy {
 		}
 
 		if (students[0] instanceof User || this.searchTarget === 'users') {
-			return (students as User[]).filter((obj, index, self) =>
-    			index === self.findIndex((o) => o.id === obj.id));
+			return (students as User[]).filter((obj, index, self) => index === self.findIndex((o) => o.id === obj.id));
 		}
 
 		if (students[0] instanceof GSuiteSelector || this.searchTarget === 'orgunits') {
