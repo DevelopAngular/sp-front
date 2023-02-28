@@ -13,7 +13,8 @@
 	max-height: 60px;
 	height: 60px;
 	border-radius: 50%;
-	background: $jade;
+	background: radial-gradient(98.09% 98.09% at 10.99% 0%, #15d593 0%, #00b467 100%);
+	box-shadow: 0px 5px 22px 5px rgba(0, 0, 0, 0.12);
 	cursor: pointer;
 	transition: transform 167ms cubic-bezier(0.33, 0, 0, 1);
 	box-sizing: content-box;
