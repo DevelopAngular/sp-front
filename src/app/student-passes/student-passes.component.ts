@@ -158,7 +158,7 @@ export class StudentPassesComponent implements OnInit, OnDestroy, AfterViewInit 
 				map((user) => user.isStaff()),
 				tap((isStaff) => {
 					this.isStaff = isStaff;
-					if (!(this.kioskModeRoom$.value && this.isWaitInLine)) {
+					if (!this.kioskModeRoom$.value) {
 						this.height += this.extraSpace;
 					}
 				})

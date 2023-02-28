@@ -385,7 +385,7 @@ export class PassCollectionComponent implements OnInit, AfterViewInit, OnDestroy
 				kioskMode: !!this.kioskMode.getCurrentRoom().value,
 				hideReport: this.isAdminPage,
 				activePassTime$: this.activePassTime$,
-				showStudentInfoBlock: !this.kioskMode.getCurrentRoom().value,
+				showStudentInfoBlock: this.forStaff || this.kioskMode.getCurrentRoom().value,
 			};
 			data.isActive = !data.fromPast && !data.forFuture;
 		} else {

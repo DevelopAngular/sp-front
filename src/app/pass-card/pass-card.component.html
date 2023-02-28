@@ -230,7 +230,10 @@
 		</div>
 	</div>
 
-	<div class="student-footer-info" *ngIf="forStaff && isModal && showStudentInfoBlock" [style.marginTop]="!data.kioskMod ? '58px' : ''">
+	<div
+		class="student-footer-info"
+		*ngIf="(forStaff || forKioskMode) && isModal && showStudentInfoBlock"
+		[style.margin-top]="forStaff ? '64px' : '20px'">
 		<app-student-passes [pass]="pass" [profile]="pass.student"></app-student-passes>
 	</div>
 </div>

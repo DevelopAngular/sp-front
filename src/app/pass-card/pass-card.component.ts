@@ -194,7 +194,7 @@ export class PassCardComponent implements OnInit, OnDestroy {
 		}
 
 		if (this.forStaff) {
-			return this.formState?.data?.destLimitReached ? 'Send to Line' : 'Send Pass' + (numStudents > 1 ? 'es' : '');
+			return this.formState?.data?.destLimitReached && numStudents === 1 ? 'Send to Line' : 'Send Pass' + (numStudents > 1 ? 'es' : '');
 		}
 
 		return this.formState?.data?.destLimitReached ? 'Wait in Line' : 'Start Pass' + (numStudents > 1 ? 'es' : '');
@@ -215,6 +215,7 @@ export class PassCardComponent implements OnInit, OnDestroy {
 			this.forFuture = this.data['forFuture'];
 			this.fromPast = this.data['fromPast'];
 			this.forStaff = this.data['forStaff'];
+			this.forKioskMode = this.data['kioskMode'];
 			this.selectedStudents = this.data['selectedStudents'];
 			this.forMonitor = this.data['forMonitor'];
 			this.fromHistory = this.data['fromHistory'];

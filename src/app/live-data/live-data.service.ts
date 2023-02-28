@@ -107,6 +107,7 @@ import {
 } from '../ngrx/pass-like-collection/nested-states/my-room-passes/states';
 import { HallPassLimit, StudentPassLimit } from '../models/HallPassLimits';
 import { WaitingInLinePass, WaitingInLinePassResponse } from '../models/WaitInLine';
+import { FeatureFlagService, FLAGS } from '../services/feature-flag.service';
 
 interface WatchData<ModelType extends BaseModel, ExternalEventType> {
 	/**
@@ -323,7 +324,8 @@ export class LiveDataService {
 		private polling: PollingService,
 		private timeService: TimeService,
 		private hallPassesService: HallPassesService,
-		private store: Store<AppState>
+		private store: Store<AppState>,
+		private features: FeatureFlagService
 	) {
 		this.http.schoolToggle$.pipe(pluck('id'), distinctUntilChanged()).subscribe(() => {
 			setTimeout(() => {
@@ -698,6 +700,9 @@ export class LiveDataService {
 	}
 
 	watchWaitingInLinePasses(filter: WaitingInLineFilter): Observable<WaitingInLinePass[]> {
+		if (!this.features.isFeatureEnabled(FLAGS.WaitInLine)) {
+			return of([]);
+		}
 		let requestFilter: Partial<{ student_id: number; issuer_id: number; origin_id: number }> = {};
 		if (filter) {
 			const { type, value } = filter;
@@ -873,11 +878,11 @@ export class LiveDataService {
 		);
 
 		return combineLatest(passes$, requests$, waitingInLinePasses$, (pass, request, waitingInLine) => {
-			console.log({
-				pass,
-				request,
-				waitingInLine,
-			});
+			// console.log({
+			// 	pass,
+			// 	request,
+			// 	waitingInLine,
+			// });
 			if (pass) {
 				return pass;
 			}

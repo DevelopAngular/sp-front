@@ -22,6 +22,7 @@ export class School extends BaseModel {
 		public feature_flag_encounter_detection: boolean,
 		public feature_flag_parent_accounts: boolean,
 		public feature_flag_wait_in_line: boolean,
+		public feature_flag_show_wait_in_line: boolean,
 		public trial_end_date: Date,
 		public timezone: string
 	) {
@@ -54,6 +55,7 @@ export class School extends BaseModel {
 			feature_flag_encounter_detection: boolean = !!JSON['feature_flag_encounter_detection'],
 			feature_flag_parent_accounts: boolean = !!JSON['feature_flag_parent_accounts'],
 			feature_flag_wait_in_line: boolean = !!JSON['feature_flag_wait_in_line'],
+			feature_flag_show_wait_in_line: boolean = !!JSON['feature_flag_show_wait_in_line'],
 			timezone: string = JSON['timezone'];
 
 		let trial_end_date: Date;
@@ -82,6 +84,7 @@ export class School extends BaseModel {
 			feature_flag_encounter_detection,
 			feature_flag_parent_accounts,
 			feature_flag_wait_in_line,
+			feature_flag_show_wait_in_line,
 			trial_end_date,
 			timezone
 		);

@@ -10,6 +10,7 @@ export enum FLAGS {
 	DigitalId = 'feature_flag_digital_id',
 	ParentAccounts = 'feature_flag_parent_accounts',
 	WaitInLine = 'feature_flag_wait_in_line',
+	ShowWaitInLine = 'feature_flag_show_wait_in_line',
 }
 
 // TODO: Replace individual feature flag functions with this service

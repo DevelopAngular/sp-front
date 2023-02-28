@@ -244,14 +244,15 @@ export class InlineWaitInLineCardComponent implements OnInit, OnChanges, OnDestr
 		}
 
 		if (remainingTime === 0) {
-			this.changeTitle('Smartpass');
+			this.changeTitle('SmartPass');
+			return;
 		}
 
 		if (remainingTime % 2 === 0) {
 			// The ⏳ icon shows fine in text with color even when the ⚠️ does not
 			this.changeTitle(`⏳ ${remainingTime} sec left...`);
 		} else {
-			this.changeTitle((document.title = `Pass Ready to Start`));
+			this.changeTitle('Pass Ready to Start');
 		}
 	}
 
@@ -351,7 +352,7 @@ export class InlineWaitInLineCardComponent implements OnInit, OnChanges, OnDestr
 	}
 
 	changeTitle(tabTitle: string) {
-		if (!this.user?.isStudent()) {
+		if (!(this.user.isStudent() || this.isKiosk)) {
 			return;
 		}
 
