@@ -692,12 +692,8 @@ export class SPSearchComponent implements OnInit, OnDestroy {
 		}
 
 		if (students[0] instanceof User || this.searchTarget === 'users') {
-			const idsToRemove = (this.selectedOptions as User[]).map((u) => u.id);
-			if (idsToRemove.length === 0) {
-				return students;
-			}
-			remove(students as User[], (s) => idsToRemove.includes(s.id)); // remove mutates the array
-			return students;
+			return (students as User[]).filter((obj, index, self) =>
+    			index === self.findIndex((o) => o.id === obj.id));
 		}
 
 		if (students[0] instanceof GSuiteSelector || this.searchTarget === 'orgunits') {
