@@ -1,100 +1,93 @@
 import { BaseModel } from './base';
-import { User } from './User';
 import { Location } from './Location';
 import { ColorProfile } from './ColorProfile';
+import { User } from './User';
 
-// Given the position in a line, return the ordinal number
-// Position 1: "1st", Position 3: "3rd", etc.
-export const ordinance = (positionInLine: number): string => {
-	const suffixMap = {
-		1: 'st',
-		2: 'nd',
-		3: 'rd',
-	};
-	const edgeCases = [11, 12, 13];
+export interface WaitingInLinePassResponse {
+	id: string;
+	created: Date;
+	entry_time: Date;
+	missed_start_attempts: number;
+	start_attempt_end_time: Date | null;
+	travel_type: 'round_trip' | 'one_way';
+	duration: number;
+	issuer_message: string;
+	icon: string; // asset URL
+	issuer: User;
+	origin: Record<string, any>;
+	destination: Record<string, any>;
+	student: User;
+	color_profile: Record<string, any>;
+	school_id_fk: number;
+	line_position: number;
+}
 
-	const lastTwoDigits = positionInLine % 100;
-
-	if (edgeCases.includes(lastTwoDigits)) {
-		return `${positionInLine}th`;
-	}
-
-	const lastDigit = positionInLine % 10;
-	const suffix = suffixMap[lastDigit];
-
-	return !suffix ? `${positionInLine}th` : `${positionInLine}${suffix}`;
-};
-
-export class WaitInLine extends BaseModel {
+export class WaitingInLinePass extends BaseModel {
 	constructor(
 		public id: string,
-		public student: User,
-		public issuer: User,
 		public created: Date,
-		public last_updated: Date,
+		public entry_time: Date,
+		public missed_start_attempts: number,
+		public start_attempt_end_time: Date | null,
+		public travel_type: string,
 		public duration: number,
+		public issuer_message: string,
+		public icon: string, // asset URL
+		public issuer: User,
 		public origin: Location,
 		public destination: Location,
-		public travel_type: string,
-		public gradient_color: string,
-		public icon: string,
+		public student: User,
 		public color_profile: ColorProfile,
-		public cancellable_by_student: boolean = true,
-		public position: string,
-		public cancelled?: boolean,
-		public issuer_message?: string,
-		public self_issued?: boolean
+		public school_id_fk: number,
+		public line_position: number
 	) {
 		super();
 	}
 
-	static fromJSON(JSON: Record<string, any>): WaitInLine {
+	static fromJSON(JSON: Record<string, any>): WaitingInLinePass {
 		if (!JSON) {
 			return null;
 		}
 
 		const id: string = '' + JSON['id'],
-			student: User = User.fromJSON(JSON['student']),
-			issuer: User = User.fromJSON(JSON['issuer']),
 			created: Date = new Date(JSON['created']),
-			last_updated: Date = new Date(JSON['last_updated']),
+			entry_time: Date = new Date(JSON['entry_time']),
+			missed_start_attempts: number = JSON['missed_start_attempts'],
+			travel_type: string = JSON['travel_type'],
 			duration: number = JSON['duration'],
+			issuer_message: string = JSON['issuer_message'],
+			icon: string = JSON['icon'],
+			issuer: User = User.fromJSON(JSON['issuer']),
 			origin: Location = Location.fromJSON(JSON['origin']),
 			destination: Location = Location.fromJSON(JSON['destination']),
-			travel_type: string = JSON['travel_type'],
-			gradient_color: string = JSON['gradient_color'],
-			icon: string = JSON['icon'],
+			student: User = User.fromJSON(JSON['student']),
 			color_profile: ColorProfile = ColorProfile.fromJSON(JSON['color_profile']),
-			cancelled: boolean = JSON['cancelled'],
-			cancellable_by_student: boolean = !!JSON['cancellable_by_student'],
-			issuer_message: string = JSON['issuer_message'],
-			position: string = ordinance(JSON['position'] as number),
-			self_issued: boolean = !!JSON['self_issued'];
+			school_id_fk: number = JSON['school_id_fk'],
+			line_position: number = JSON['line_position'];
 
-		const wil = new WaitInLine(
+		const start_attempt_end_time: Date = !!JSON['start_attempt_end_time'] ? new Date(JSON['start_attempt_end_time']) : null;
+
+		return new WaitingInLinePass(
 			id,
-			student,
-			issuer,
 			created,
-			last_updated,
+			entry_time,
+			missed_start_attempts,
+			start_attempt_end_time,
+			travel_type,
 			duration,
+			issuer_message,
+			icon,
+			issuer,
 			origin,
 			destination,
-			travel_type,
-			gradient_color,
-			icon,
+			student,
 			color_profile,
-			cancellable_by_student,
-			position,
-			cancelled,
-			issuer_message,
-			self_issued
+			school_id_fk,
+			line_position
 		);
+	}
 
-		if (JSON['school_id']) {
-			(wil as any).school_id = JSON['school_id'];
-		}
-
-		return wil;
+	isReadyToStart(): boolean {
+		return !!this.start_attempt_end_time;
 	}
 }

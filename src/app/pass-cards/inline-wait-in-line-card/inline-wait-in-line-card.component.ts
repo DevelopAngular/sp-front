@@ -1,25 +1,20 @@
-import { Component, ElementRef, Inject, Input, OnDestroy, OnInit, Optional, QueryList, TemplateRef, ViewChild, ViewChildren } from '@angular/core';
-import { BehaviorSubject, from, interval, Observable, of, Subject, timer } from 'rxjs';
-import { Navigation } from '../../create-hallpass-forms/main-hallpass--form/main-hall-pass-form.component';
-import { Pinnable } from '../../models/Pinnable';
-import { HttpService } from '../../services/http-service';
-import { DataService } from '../../services/data-service';
-import { HallPassesService } from '../../services/hall-passes.service';
+import { Component, ElementRef, Inject, Input, OnChanges, OnDestroy, OnInit, Optional, SimpleChange, SimpleChanges, ViewChild } from '@angular/core';
+import { BehaviorSubject, from, Observable, of, Subject, throwError, timer } from 'rxjs';
+import { HallPassErrors, HallPassesService } from '../../services/hall-passes.service';
 import { MAT_DIALOG_DATA, MatDialog, MatDialogRef } from '@angular/material/dialog';
-import { ScreenService } from '../../services/screen.service';
 import { DeviceDetection } from '../../device-detection.helper';
-import { WaitInLine } from '../../models/WaitInLine';
-import { WaitInLineService, WaitInLineState } from '../../services/wait-in-line.service';
-import { concatMap, filter, map, take, takeUntil, takeWhile, tap } from 'rxjs/operators';
-import { MatRipple } from '@angular/material/core';
+import { WaitingInLinePass } from '../../models/WaitInLine';
+import { catchError, concatMap, filter, finalize, map, takeUntil, tap } from 'rxjs/operators';
 import { ConsentMenuComponent } from '../../consent-menu/consent-menu.component';
-import { Util } from '../../../Util';
 import { KioskModeService } from '../../services/kiosk-mode.service';
 import { LocationsService } from '../../services/locations.service';
 import { Title } from '@angular/platform-browser';
 import { CreateFormService } from '../../create-hallpass-forms/create-form.service';
 import { User } from '../../models/User';
 import { UserService } from '../../services/user.service';
+import { WaitInLineService } from '../../services/wait-in-line.service';
+import { TimerSpinnerComponent } from '../../core/components/timer-spinner/timer-spinner.component';
+import { PollingEvent } from '../../services/polling-service';
 
 export enum WILHeaderOptions {
 	Delete = 'delete',
@@ -27,98 +22,26 @@ export enum WILHeaderOptions {
 }
 
 /**
- * Wait in Line has 2 parts, similar to the pass request flow:
- * 1. Wait in Line Creation (queuing a student in line)
- * 2. Wait in Line Acceptance (starting the pass for a student at the front of the line)
+ * This component is the main piece of UI for interacting with Waiting In Line and is
+ * responsible for the following:
  *
- * This component deals with the different stages waiting in line until the pass is created.
- * This component is a result of the WaitInLineCardComponent creating a Wait In Line object
- * on the server side.
- *
- * 1. Get the current position in the line and display this position
- * 2. When at the front of the line, fullscreen this component and pulse the "Start Pass" button.
- *    The student has 30 seconds to create the pass.
- * 3. Failing to create a pass before the timer expires kicks the student to the back of the line.
- *    Failing to create a pass the second time deletes the Wait In Line Card and kicks the student out of the line.
- * 4. If the student creates the pass, regular checks are done (student pass limits mainly) and the pass is created.
- * 5. This component is destroyed.
- *
- * // TODO: API Call and Listeners for Line Position
- * // TODO: Pass checks before creating pass
+ * - Starting a WaitingInLinePass
+ * - Deleting a WaitingInLinePass
+ * - Showing component inline for a student when pass is in line
+ * - Showing component as a fullscreen focused dialog when a pass is ready to start (student and kiosk)
+ * - Showing component as a dialog for passes currently waiting in line
  */
 @Component({
 	selector: 'app-inline-wait-in-line-card',
 	templateUrl: './inline-wait-in-line-card.component.html',
 	styleUrls: ['./inline-wait-in-line-card.component.scss'],
 })
-export class InlineWaitInLineCardComponent implements OnInit, OnDestroy {
-	@Input() wil$: BehaviorSubject<WaitInLine>;
+export class InlineWaitInLineCardComponent implements OnInit, OnChanges, OnDestroy {
+	// TODO: make @Input wil into a setter
+	@Input() wil: WaitingInLinePass;
 	@Input() forStaff: boolean;
 
-	@ViewChild('root') root: TemplateRef<any>;
-	@ViewChildren('rootWrapper') set wrapperElem(wrappers: QueryList<ElementRef<HTMLElement>>) {
-		if (!wrappers) {
-			return;
-		}
-
-		let elem = wrappers.last.nativeElement;
-		if (!elem) {
-			return;
-		}
-
-		while (!elem.classList.contains('cdk-overlay-pane')) {
-			elem = elem.parentElement;
-		}
-
-		if (this.user.isTeacher() && !this.isKiosk) {
-			return;
-		}
-
-		if (this.isKiosk && this.wil$.value.position !== '1st') {
-			return;
-		}
-
-		if (this.showBigCard) {
-			// document.querySelector<HTMLDivElement>('.cdk-overlay-pane').style.transform = `scale(${this.scalingFactor})`;
-			elem.style.transform = `scale(${this.scalingFactor})`;
-			return;
-		}
-
-		if (!this.firstInLinePopup) {
-			return;
-		}
-
-		// document.querySelector<HTMLDivElement>('.cdk-overlay-pane').style.transform = `scale(${this.scalingFactor})`;
-		elem.style.transform = `scale(${this.scalingFactor})`;
-	}
-	@ViewChildren(MatRipple) set constantRipple(ripples: QueryList<MatRipple>) {
-		if (!ripples?.length) {
-			return;
-		}
-
-		timer(1000, 2500)
-			.pipe(
-				takeWhile(() => ripples?.length > 0),
-				takeUntil(this.destroy$)
-			)
-			.subscribe(() => {
-				// second ripple on popup doesn't seem to work well due to transform scaling issue
-				// ripples.forEach(ripple => {
-				//   const rippleRef = ripple.launch({
-				//     persistent: true,
-				//     centered: true
-				//   });
-				//   rippleRef.fadeOut();
-				// })
-
-				const rippleRef = ripples.first.launch({
-					persistent: true,
-					centered: true,
-				});
-				rippleRef.fadeOut();
-			});
-	}
-
+	@ViewChild(TimerSpinnerComponent) timeSpinner: TimerSpinnerComponent;
 	@ViewChild('waitingDots') set dotsSpan(span: ElementRef<HTMLSpanElement>) {
 		if (!span) {
 			return;
@@ -135,43 +58,68 @@ export class InlineWaitInLineCardComponent implements OnInit, OnDestroy {
 			.subscribe();
 	}
 
-	gradient: string;
-	valid: boolean = true;
-	overlayWidth: string = '0px';
-	buttonWidth: number = 288;
-	isMobile = DeviceDetection.isMobile();
+	/**
+	 * This DOM setter is responsible for making the dialog fullscreen when it needs to be.
+	 * When the #rootWrapper element enters the DOM, we need to check if the component needs scaling up.
+	 * The only time the component needs scaling up is if the pass is opened as a dialog and the pass is
+	 * Ready to Start. If this is the case, then the dialog data would have already been loaded in the
+	 * constructor.
+	 *
+	 * We continue working up the DOM until we find the wrapper element responsible for holding the
+	 * mat-dialog-container. We calculate how much scaling is necessary and apply a transform to the
+	 * wrapper element.
+	 */
+	@ViewChild('rootWrapper') set scaleWrapper(wrapper: ElementRef<HTMLElement>) {
+		if (!this.dialogData?.nextInLine) {
+			return;
+		}
 
+		if (!wrapper) {
+			return;
+		}
+
+		let elem = wrapper.nativeElement;
+		if (!elem) {
+			return;
+		}
+
+		while (!elem.classList.contains('cdk-overlay-pane')) {
+			// BE CAREFUL HERE!
+			elem = elem.parentElement;
+		}
+
+		elem.style.transform = `scale(${this.scalingFactor})`;
+	}
+
+	gradient: string;
+	requestLoading = false;
 	frameMotion$: BehaviorSubject<any>;
 	destroy$: Subject<any> = new Subject<any>();
-	waitInLineState: WaitInLineState = WaitInLineState.WaitingInLine;
 	acceptingPassTimeRemaining: number;
-	passAttempts = 2;
-	firstInLinePopup = false;
-	firstInLinePopupRef: MatDialogRef<TemplateRef<any>>;
 	user: User;
-	currentDate = interval(1000).pipe(map(() => new Date())); // less CD cycles and better pipe caching
-
-	public FORM_STATE: Navigation;
-	pinnable: Pinnable;
 
 	constructor(
 		@Optional() private dialogRef: MatDialogRef<InlineWaitInLineCardComponent>,
-		@Optional() @Inject(MAT_DIALOG_DATA) public dialogData: { pass: WaitInLine; forStaff: boolean },
+		@Optional() @Inject(MAT_DIALOG_DATA) public dialogData: { nextInLine: boolean; pass: WaitingInLinePass; forStaff: boolean },
 		private titleService: Title,
-		private http: HttpService,
-		private dataService: DataService,
 		private userService: UserService,
 		private formService: CreateFormService,
 		private locationsService: LocationsService,
 		private hallPassService: HallPassesService,
 		private dialog: MatDialog,
-		private screen: ScreenService,
-		private wilService: WaitInLineService,
-		public kioskService: KioskModeService
+		public kioskService: KioskModeService,
+		private wilService: WaitInLineService
 	) {}
 
 	private get scalingFactor() {
-		if (this.isMobile) {
+		if (!this.dialogData?.nextInLine) {
+			// Ideally, this function is only ever called when a next in line dialog is triggered,
+			// but the check is still placed here just in case the function is used elsewhere in
+			// the component
+			return 1;
+		}
+
+		if (DeviceDetection.isMobile()) {
 			return 1.15;
 		}
 		let targetHeight = document.documentElement.clientHeight * 0.85;
@@ -182,26 +130,71 @@ export class InlineWaitInLineCardComponent implements OnInit, OnDestroy {
 	}
 
 	get openedFromPassTile(): boolean {
-		return !!this.dialogRef && !!this.dialogData.pass;
+		return this.forStaff || (this.isKiosk && !this.wil.isReadyToStart());
 	}
 
 	get optionsIcon() {
 		return this.forStaff && !this.isKiosk ? './assets/Dots (Transparent).svg' : './assets/Delete (White).svg';
 	}
 
-	get showBigCard() {
-		return this.waitInLineState === WaitInLineState.FrontOfLine || this.openedFromPassTile;
+	get line_position(): number {
+		return this.wil.line_position;
 	}
 
 	get getUserName() {
-		return this.wil$.value.issuer.id === this.user.id ? 'Me' : this.wil$.value.issuer.display_name;
+		return this.wil.issuer.id == this.user.id ? 'Me' : this.wil.issuer.display_name;
 	}
 
 	get isKiosk() {
 		return this.kioskService.isKisokMode();
 	}
 
+	get remainingAttemptSeconds(): number {
+		return Math.floor((this.wil.start_attempt_end_time.getTime() - Date.now()) / 1000);
+	}
+
+	ngOnChanges(changes: SimpleChanges) {
+		// This would only happen when the pass is inline and not in a dialog
+		if (this.timeSpinner) {
+			const { previousValue, currentValue }: SimpleChange = changes['wil'];
+			if (currentValue.missed_start_attempts > previousValue.missed_start_attempts) {
+				this.timeSpinner.reset();
+			}
+		}
+	}
+
 	ngOnInit() {
+		if (this.dialogData) {
+			if (this.dialogData.pass instanceof WaitingInLinePass) {
+				// it's not enough for the JSON to have the data, it must be an instance of the class
+				this.wil = this.dialogData.pass;
+			}
+			this.forStaff = this.dialogData.forStaff;
+
+			if (this.wil.isReadyToStart()) {
+				this.wilService
+					.listenForWilUpdate(this.wil.id)
+					.pipe(
+						takeUntil(this.destroy$),
+						map<PollingEvent, WaitingInLinePass>((event) => event.data),
+						filter((wil) => wil.missed_start_attempts > this.wil.missed_start_attempts),
+						tap(() => {
+							this.timeSpinner.reset();
+						})
+					)
+					.subscribe();
+			}
+		}
+
+		this.wilService
+			.listenForWilDeletion(this.wil.id)
+			.pipe(takeUntil(this.destroy$))
+			.subscribe({
+				next: () => {
+					this.closeDialog();
+				},
+			});
+
 		this.userService.user$
 			.pipe(
 				map((user) => User.fromJSON(user)),
@@ -210,61 +203,38 @@ export class InlineWaitInLineCardComponent implements OnInit, OnDestroy {
 			.subscribe((user) => {
 				this.user = user;
 			});
+		// Instead of having this.formService.getFrameMotionDirection() in multiple places all across the code,
+		// this should be included inside the app-pager component and target the relevant ng-content
+		// children using @ContentChildren directive: https://angular.io/api/core/ContentChildren
 		this.frameMotion$ = this.formService.getFrameMotionDirection();
-		this.wil$ = this.wilService.fakeWil;
-		this.wil$
-			.asObservable()
-			.pipe(takeUntil(this.destroy$))
-			.subscribe({
-				next: (wil) => {
-					if (wil.position === '1st') {
-						this.waitInLineState = WaitInLineState.FrontOfLine;
-						this.openBigPassCard();
-					}
-				},
-			});
-
 		if (this.openedFromPassTile) {
 			// pass has already been created, this dialog has been opened by clicking on its pass-tile from inside a
 			// pass-collection
-			this.waitInLineState = WaitInLineState.WaitingInLine;
 			// this.wil = this.dialogData.pass;
 			this.forStaff = this.dialogData.forStaff;
 		}
 
-		this.gradient = `radial-gradient(circle at 73% 71%, ${this.wil$.value.color_profile.gradient_color})`;
-
-		if (!this.openedFromPassTile || this.isKiosk) {
-			// TODO: Remove mock code when APIs are available
-			timer(0, 2000)
-				.pipe(takeUntil(this.destroy$), take(3))
-				.subscribe({
-					next: (counter) => {
-						const newWil = WaitInLine.fromJSON({ ...this.wil$.value, position: 3 - counter });
-						// this.ngOnChanges({ 'wil': { currentValue: newWil, previousValue: undefined, firstChange: false, isFirstChange: () => false } })
-						this.wilService.fakeWil.next(newWil);
-						// @ts-ignore
-						this.wilService.fakeWilPasses.next([newWil]);
-					},
-				});
-		}
+		this.gradient = `radial-gradient(circle at 73% 71%, ${this.wil?.color_profile.gradient_color})`;
 	}
 
 	readyToStartTick(remainingTime: number) {
 		this.acceptingPassTimeRemaining = remainingTime;
 		if (remainingTime === 30 || remainingTime === 29) {
-			this.titleService.setTitle("⚠️ It's Time to Start your Pass");
+			// The unicode for ⚠️ won't show the same in all browsers and may not even be the desired yellow color
+			this.changeTitle("⚠️ It's Time to Start your Pass");
 			return;
 		}
 
 		if (remainingTime === 0) {
-			this.titleService.setTitle('SmartPass');
+			this.changeTitle('SmartPass');
+			return;
 		}
 
 		if (remainingTime % 2 === 0) {
-			this.titleService.setTitle(`⏳ ${remainingTime} sec left...`);
+			// The ⏳ icon shows fine in text with color even when the ⚠️ does not
+			this.changeTitle(`⏳ ${remainingTime} sec left...`);
 		} else {
-			this.titleService.setTitle((document.title = `Pass Ready to Start`));
+			this.changeTitle('Pass Ready to Start');
 		}
 	}
 
@@ -294,53 +264,57 @@ export class InlineWaitInLineCardComponent implements OnInit, OnDestroy {
 			},
 		});
 
-		cancelDialog.afterClosed().subscribe({
-			next: (action) => {
-				if (action === WILHeaderOptions.Delete) {
-					this.closeDialog(true);
-					return;
-				}
+		cancelDialog
+			.afterClosed()
+			.pipe(
+				filter(Boolean),
+				concatMap((action: WILHeaderOptions) => {
+					if (action === WILHeaderOptions.Delete) {
+						return this.wilService.deleteWilPass(this.wil.id);
+					}
 
-				if (action === WILHeaderOptions.Start) {
-					this.startPass();
-					return;
-				}
-			},
-		});
+					if (action === WILHeaderOptions.Start) {
+						return from(this.startPass());
+					}
+
+					return throwError(new Error('Invalid option chosen!'));
+				}),
+				finalize(() => this.closeDialog())
+			)
+			.subscribe();
 	}
 
-	startPass() {
-		this.waitInLineState = WaitInLineState.CreatingPass;
-		const wil = this.wil$.value;
-		const newPassRequestBody = {
-			duration: wil.duration,
-			origin: wil.origin.id,
-			destination: wil.destination.id,
-			travel_type: wil.travel_type,
-			student: wil.student.id,
-		};
+	async startPass() {
+		this.requestLoading = true;
+		const passRequest$ = this.wilService.startWilPassNow(this.wil.id).pipe(
+			takeUntil(this.destroy$),
+			catchError((error) => {
+				if (error === HallPassErrors.Encounter) {
+					this.hallPassService.showEncounterPreventionToast({
+						isStaff: this.forStaff,
+						exclusionPass: this.wil,
+					});
+				}
 
-		if (this.isKiosk) {
-			newPassRequestBody['self_issued'] = true;
-		}
-
-		// console.log(this.forStaff, this.isKiosk);
-		// return;
-
-		const passRequest$ = this.hallPassService.createPass(newPassRequestBody).pipe(takeUntil(this.destroy$));
+				return throwError(error);
+			})
+		);
 		let overallPassRequest$: Observable<any>;
 
 		if (!this.forStaff && !this.isKiosk) {
 			overallPassRequest$ = passRequest$;
 		} else {
-			overallPassRequest$ = from(this.locationsService.staffRoomLimitOverride(this.wil$.value.destination, this.isKiosk, 1, true)).pipe(
+			// We do not count the WaitingInLinePass if the pass is ready to start. This is because the backend already
+			// considers a ready to start pass as part of the number of passes in the room.
+			// If the WaitingInLinePass isn't ready to start, then this would be considered an override. It's set to 1
+			// since we're only overriding a single WaitingInLine pass into the room.
+			const studentCount = this.wil.isReadyToStart() ? 0 : 1;
+			overallPassRequest$ = from(this.locationsService.checkIfFullRoom(this.wil.destination, this.isKiosk, studentCount, true)).pipe(
 				concatMap((overrideRoomLimit) => {
 					if (!overrideRoomLimit) {
-						this.waitInLineState = this.wil$.value.position === '1st' ? WaitInLineState.FrontOfLine : WaitInLineState.WaitingInLine;
 						return of(null);
 					}
-
-					return of(newPassRequestBody);
+					return of(true);
 				}),
 				filter(Boolean),
 				concatMap(() => passRequest$),
@@ -348,97 +322,27 @@ export class InlineWaitInLineCardComponent implements OnInit, OnDestroy {
 			);
 		}
 
-		overallPassRequest$.subscribe({
-			next: () => {
-				// pass response
-				this.waitInLineState = WaitInLineState.PassStarted;
-				this.titleService.setTitle('SmartPass');
-				this.closeDialog(true);
-			},
-			error: (err) => {
-				console.error(err);
-				this.waitInLineState = WaitInLineState.FrontOfLine;
-			},
-		});
+		return overallPassRequest$.pipe(finalize(() => this.closeDialog())).toPromise();
 	}
 
-	private closeDialog(deleteWil: boolean = true) {
+	private closeDialog() {
 		if (this.dialogRef) {
 			this.dialogRef.close();
 		}
 
-		if (this.firstInLinePopupRef) {
-			this.firstInLinePopupRef.close();
-		}
-
-		this.titleService.setTitle('SmartPass');
-		this.toggleBigBackground(false);
-
-		if (deleteWil) {
-			this.deleteWil();
-		}
+		this.changeTitle('SmartPass');
 	}
 
-	private toggleBigBackground(applyBackground = true) {
-		if (applyBackground) {
-			const solidColor = Util.convertHex(this.wil$.value.color_profile.solid_color, 70);
-			this.screen.customBackdropStyle$.next({
-				background: `linear-gradient(0deg, ${solidColor} 100%, rgba(0, 0, 0, 0.3) 100%)`,
-			});
-			this.screen.customBackdropEvent$.next(true);
+	changeTitle(tabTitle: string) {
+		if (!(this.user.isStudent() || this.isKiosk)) {
 			return;
 		}
 
-		this.screen.customBackdropEvent$.next(false);
-		this.screen.customBackdropStyle$.next(null);
-	}
-
-	private deleteWil() {
-		this.wilService.fakeWilActive.next(false);
-		this.forStaff || this.isKiosk ? this.wilService.fakeWilPasses.next([]) : this.wilService.fakeWil.next(null);
-	}
-
-	private openBigPassCard() {
-		this.toggleBigBackground();
-		this.firstInLinePopup = true;
-		// open this same template scaled up
-		this.firstInLinePopupRef = this.dialog.open(this.root, {
-			panelClass: ['overlay-dialog', 'teacher-pass-card-dialog-container'],
-			backdropClass: 'custom-backdrop',
-			disableClose: true,
-			closeOnNavigation: true,
-			data: {
-				firstInLinePopup: true,
-			},
-		});
-
-		if (this.dialogRef) {
-			this.dialogRef.close();
-		}
-
-		this.firstInLinePopupRef.afterClosed().subscribe({
-			next: () => {
-				this.toggleBigBackground(false);
-				this.firstInLinePopup = false;
-				this.firstInLinePopupRef = null;
-			},
-		});
-	}
-
-	resetAttempt() {
-		if (this.passAttempts === 1) {
-			this.waitInLineState = WaitInLineState.WaitingInLine;
-			this.closeDialog(false);
-			return;
-		}
-
-		if (this.passAttempts === 2) {
-			this.closeDialog(true);
-		}
-		this.titleService.setTitle('SmartPass');
+		this.titleService.setTitle(tabTitle);
 	}
 
 	ngOnDestroy() {
+		this.closeDialog();
 		this.destroy$.next();
 		this.destroy$.complete();
 	}

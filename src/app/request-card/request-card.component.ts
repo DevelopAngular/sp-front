@@ -8,7 +8,7 @@ import { Navigation } from '../create-hallpass-forms/main-hallpass--form/main-ha
 import { getInnerPassName } from '../pass-tile/pass-display-util';
 import { DataService } from '../services/data-service';
 import { LoadingService } from '../services/loading.service';
-import { catchError, concatMap, filter, finalize, map, pluck, switchMap, take, takeUntil, tap } from 'rxjs/operators';
+import { catchError, concatMap, filter, finalize, map, pluck, switchMap, takeUntil, tap } from 'rxjs/operators';
 import { CreateHallpassFormsComponent } from '../create-hallpass-forms/create-hallpass-forms.component';
 import { CreateFormService } from '../create-hallpass-forms/create-form.service';
 import { RequestsService } from '../services/requests.service';
@@ -32,7 +32,8 @@ import { PassLimitService } from '../services/pass-limit.service';
 import { ConfirmDeleteKioskModeComponent } from './confirm-delete-kiosk-mode/confirm-delete-kiosk-mode.component';
 import { ToastService } from '../services/toast.service';
 import { HttpErrorResponse } from '@angular/common/http';
-import { EncounterPreventionService } from '../services/encounter-prevention.service';
+import { HallPassesService } from '../services/hall-passes.service';
+import { FeatureFlagService, FLAGS } from '../services/feature-flag.service';
 
 @Component({
 	selector: 'app-request-card',
@@ -110,7 +111,8 @@ export class RequestCardComponent implements OnInit, OnDestroy {
 		private passLimitsService: PassLimitService,
 		private createPassFormRef: MatDialogRef<CreateHallpassFormsComponent>,
 		private toast: ToastService,
-		private encounterService: EncounterPreventionService
+		private hallpassService: HallPassesService,
+		private features: FeatureFlagService
 	) {}
 
 	get invalidDate() {
@@ -660,28 +662,52 @@ export class RequestCardComponent implements OnInit, OnDestroy {
 
 	approveRequest() {
 		this.performingAction = true;
-		this.requestService
-			.checkLimits({}, this.request, this.overriderBody)
-			.pipe(
-				concatMap((httpBody) => {
-					return this.requestService.acceptRequest(this.request.id, httpBody);
-				}),
-				finalize(() => (this.performingAction = false))
-			)
-			.subscribe({
-				next: () => this.dialogRef.close(),
-				error: (err: Error) => {
-					if ((err as HttpErrorResponse).error.conflict_student_ids) {
-						this.encounterService.showEncounterPreventionToast({
-							exclusionPass: this.request,
-							isStaff: this.forStaff,
-						});
-						return;
-					}
-					this.openErrorToast(err);
-					console.error(err);
-				},
-			});
+
+		const httpRequest$ = this.features.isFeatureEnabled(FLAGS.WaitInLine)
+			? this.requestService.acceptRequest(this.request, {})
+			: this.requestService.checkLimits({}, this.request, this.overriderBody).pipe(
+					concatMap((httpBody) => {
+						return this.requestService.acceptRequest(this.request, httpBody);
+					})
+			  );
+
+		httpRequest$.pipe(finalize(() => (this.performingAction = false))).subscribe({
+			next: () => this.dialogRef.close(),
+			error: (err: Error) => {
+				if ((err as HttpErrorResponse).error.conflict_student_ids) {
+					this.hallpassService.showEncounterPreventionToast({
+						exclusionPass: this.request,
+						isStaff: this.forStaff,
+					});
+					return;
+				}
+				this.openErrorToast(err);
+				console.error(err);
+			},
+		});
+
+		// this.requestService
+		// 	.checkLimits({}, this.request, this.overriderBody)
+		// 	.pipe(
+		// 		concatMap((httpBody) => {
+		// 			return this.requestService.acceptRequest(this.request, httpBody);
+		// 		}),
+		//
+		// 	)
+		// 	.subscribe({
+		// 		next: () => this.dialogRef.close(),
+		// 		error: (err: Error) => {
+		// 			if ((err as HttpErrorResponse).error.conflict_student_ids) {
+		// 				this.hallpassService.showEncounterPreventionToast({
+		// 					exclusionPass: this.request,
+		// 					isStaff: this.forStaff,
+		// 				});
+		// 				return;
+		// 			}
+		// 			this.openErrorToast(err);
+		// 			console.error(err);
+		// 		},
+		// 	});
 	}
 
 	cancelClick() {

@@ -1,15 +1,4 @@
-import {
-	AfterViewInit,
-	ChangeDetectionStrategy,
-	ChangeDetectorRef,
-	Component,
-	ElementRef,
-	HostListener,
-	NgZone,
-	OnDestroy,
-	OnInit,
-	ViewChild,
-} from '@angular/core';
+import { ChangeDetectionStrategy, ChangeDetectorRef, Component, ElementRef, HostListener, NgZone, OnDestroy, OnInit, ViewChild } from '@angular/core';
 import { MatDialog, MatDialogRef, MatDialogState } from '@angular/material/dialog';
 // TODO: Replace combineLatest with non-deprecated implementation
 import { BehaviorSubject, combineLatest, forkJoin, interval, merge, Observable, of, Subject, timer } from 'rxjs';
@@ -28,7 +17,6 @@ import {
 	tap,
 	withLatestFrom,
 } from 'rxjs/operators';
-import { CreateFormService } from '../create-hallpass-forms/create-form.service';
 import { CreatePassDialogData } from '../create-hallpass-forms/create-hallpass-forms.component';
 import { HallPassFilter, LiveDataService } from '../live-data/live-data.service';
 import { exceptPasses } from '../models';
@@ -36,8 +24,6 @@ import { HallPass } from '../models/HallPass';
 import { Request } from '../models/Request';
 import { User } from '../models/User';
 import { DataService } from '../services/data-service';
-import { LoadingService } from '../services/loading.service';
-import { NotificationService } from '../services/notification-service';
 import { TimeService } from '../services/time.service';
 import { DarkThemeSwitch } from '../dark-theme-switch';
 import { NavbarDataService } from '../main/navbar-data.service';
@@ -61,8 +47,12 @@ import { MainHallPassFormComponent } from '../create-hallpass-forms/main-hallpas
 import { CheckForUpdateService } from '../services/check-for-update.service';
 import { Title } from '@angular/platform-browser';
 import { FeatureFlagService, FLAGS } from '../services/feature-flag.service';
-import { WaitInLine } from '../models/WaitInLine';
-import { WaitInLineService } from '../services/wait-in-line.service';
+import { WaitingInLinePass } from '../models/WaitInLine';
+import { Invitation } from '../models/Invitation';
+import { sortWilByPosition } from '../services/wait-in-line.service';
+import { InlineWaitInLineCardComponent } from '../pass-cards/inline-wait-in-line-card/inline-wait-in-line-card.component';
+import { Util } from '../../Util';
+import { RepresentedUser } from '../navbar/navbar.component';
 
 @Component({
 	selector: 'app-passes',
@@ -78,7 +68,7 @@ import { WaitInLineService } from '../services/wait-in-line.service';
 	],
 	changeDetection: ChangeDetectionStrategy.OnPush,
 })
-export class PassesComponent implements OnInit, AfterViewInit, OnDestroy {
+export class PassesComponent implements OnInit, OnDestroy {
 	private scrollableAreaName = 'Passes';
 	private scrollableArea: HTMLElement;
 
@@ -124,21 +114,24 @@ export class PassesComponent implements OnInit, AfterViewInit, OnDestroy {
 		}
 	}
 
-	futurePasses: any;
-	activePasses: any;
-	pastPasses: any;
-	waitInLinePasses: any;
+	// pass observables
+	futurePasses: Observable<HallPass[]>;
+	activePasses: Observable<HallPass[]>;
+	pastPasses: Observable<HallPass[]>;
+	waitInLinePasses: Observable<WaitingInLinePass[]>;
 
-	sentRequests: any;
-	receivedRequests: any;
+	// request observables
+	sentRequests: Observable<Request[]> | Observable<Invitation[]>;
+	receivedRequests: Observable<Request[]> | Observable<Invitation[]>;
 
-	currentPass$ = new BehaviorSubject<HallPass>(null);
-	currentRequest$ = new BehaviorSubject<Request>(null);
-	currentWaitInLine$ = new BehaviorSubject<WaitInLine>(null);
-
+	// currently active pass, request or wait-in-line, for student side, and their active states
 	isActivePass$: Observable<boolean>;
 	isActiveRequest$: Observable<boolean>;
 	isActiveWaitInLine$: Observable<boolean>;
+	currentPass$ = new BehaviorSubject<HallPass>(null);
+	currentRequest$ = new BehaviorSubject<Request>(null);
+	currentWaitInLine$ = new BehaviorSubject<WaitingInLinePass>(null);
+	fullScreenWaitInLineRef: MatDialogRef<InlineWaitInLineCardComponent>;
 
 	inboxHasItems: Observable<boolean> = of(null);
 	passesHaveItems: Observable<boolean> = of(false);
@@ -150,7 +143,6 @@ export class PassesComponent implements OnInit, AfterViewInit, OnDestroy {
 	filterFuturePass$: BehaviorSubject<moment.Moment> = new BehaviorSubject<moment.Moment>(null);
 	filterReceivedPass$: BehaviorSubject<moment.Moment> = new BehaviorSubject<moment.Moment>(null);
 	filterSendPass$: BehaviorSubject<moment.Moment> = new BehaviorSubject<moment.Moment>(null);
-
 	filterExpiredPass$: BehaviorSubject<string> = new BehaviorSubject<string>(null);
 	expiredPassesSelectedSort$: Observable<string>;
 	isEmptyPassFilter: boolean;
@@ -165,9 +157,10 @@ export class PassesComponent implements OnInit, AfterViewInit, OnDestroy {
 	isStaff = false;
 	isStudent = false;
 	currentScrollPosition: number;
+	isSmartphone = DeviceDetection.isAndroid() || DeviceDetection.isIOSMobile();
+	isMobile = DeviceDetection.isMobile();
 
 	isUpdateBar$: Subject<any>;
-
 	isInboxClicked$: Observable<boolean>;
 
 	cursor = 'pointer';
@@ -227,36 +220,14 @@ export class PassesComponent implements OnInit, AfterViewInit, OnDestroy {
 	}
 
 	get isWaitInLine(): boolean {
-		return this.featureService.isFeatureEnabled(FLAGS.WaitInLine) && this.wilService.fakeWilActive.getValue();
-	}
-
-	get showInbox() {
-		if (!this.isStaff) {
-			return this.dataService.inboxState;
-		} else if (!this.inboxHasItems && !this.passesHaveItems) {
-			return of(false);
-		} else {
-			return of(true);
-		}
-	}
-
-	// TODO: Move to constructor to calculate once
-	get isSmartphone() {
-		return DeviceDetection.isAndroid() || DeviceDetection.isIOSMobile();
-	}
-
-	get isMobile() {
-		return DeviceDetection.isMobile();
+		return this.featureService.isFeatureEnabled(FLAGS.WaitInLine);
 	}
 
 	constructor(
 		public dataService: DataService,
 		public dialog: MatDialog,
 		private _zone: NgZone,
-		private loadingService: LoadingService,
 		private liveDataService: LiveDataService,
-		private createFormService: CreateFormService,
-		private notifService: NotificationService,
 		private timeService: TimeService,
 		private navbarService: NavbarDataService,
 		public screenService: ScreenService,
@@ -273,26 +244,36 @@ export class PassesComponent implements OnInit, AfterViewInit, OnDestroy {
 		private updateService: CheckForUpdateService,
 		private cdr: ChangeDetectorRef,
 		private titleService: Title,
-		private featureService: FeatureFlagService,
-		private wilService: WaitInLineService
+		private featureService: FeatureFlagService
 	) {
 		this.userService.user$
 			.pipe(
 				take(1),
 				map((user) => {
-					this.user = user;
-					this.isStaff =
-						user.roles.includes('_profile_teacher') || user.roles.includes('_profile_admin') || user.roles.includes('_profile_assistant');
+					this.user = User.fromJSON(user);
+					this.isStaff = this.user.isStaff();
+					this.isStudent = this.user.isStudent();
 					if (this.isStaff) {
 						this.titleService.setTitle('SmartPass');
 						this.dataService.updateInbox(true);
+						const waitInLineWatcher = this.user.isAssistant()
+							? this.userService.effectiveUser.pipe(
+									filter<RepresentedUser>(Boolean),
+									concatMap((effectiveResponse) => this.liveDataService.watchWaitingInLinePasses({ type: 'issuer', value: effectiveResponse.user }))
+							  )
+							: this.liveDataService.watchWaitingInLinePasses({ type: 'issuer', value: this.user });
+
+						this.waitInLinePasses = waitInLineWatcher.pipe(
+							map((passes) => {
+								return passes.sort(sortWilByPosition);
+							})
+						);
 					} else {
 						this.titleService.setTitle(`${user.display_name} | SmartPass`);
 					}
-					return user.roles.includes('hallpass_student');
-				}), // TODO filter events to only changes.
+					return this.isStudent;
+				}),
 				concatMap((isStudent) => {
-					this.isStudent = isStudent;
 					if (!isStudent) {
 						this.receivedRequests = this.liveDataService.requests$;
 						this.sentRequests = this.liveDataService.invitations$;
@@ -343,24 +324,68 @@ export class PassesComponent implements OnInit, AfterViewInit, OnDestroy {
 			})
 		);
 
-		this.isActiveWaitInLine$ = this.wilService.fakeWilActive.asObservable();
-		this.currentWaitInLine$ = this.wilService.fakeWil;
+		this.isActiveWaitInLine$ = this.currentWaitInLine$.pipe(map(Boolean));
+		this.currentWaitInLine$
+			.pipe(
+				takeUntil(this.destroy$),
+				filter((wilPass) => wilPass?.isReadyToStart() && this.fullScreenWaitInLineRef?.getState() !== MatDialogState.OPEN)
+			)
+			.subscribe({
+				next: (wilPass: WaitingInLinePass) => {
+					this.fullScreenWaitInLineRef = this.dialog.open(InlineWaitInLineCardComponent, {
+						panelClass: ['overlay-dialog', 'teacher-pass-card-dialog-container'],
+						backdropClass: 'custom-backdrop',
+						disableClose: true,
+						closeOnNavigation: true,
+						data: {
+							pass: wilPass,
+							nextInLine: true,
+							forStaff: this.isStaff,
+						},
+					});
+
+					this.fullScreenWaitInLineRef.afterOpened().subscribe({
+						next: () => {
+							const solidColor = Util.convertHex(wilPass.color_profile.solid_color, 70);
+							this.screenService.customBackdropStyle$.next({
+								background: `linear-gradient(0deg, ${solidColor} 100%, rgba(0, 0, 0, 0.3) 100%)`,
+							});
+							this.screenService.customBackdropEvent$.next(true);
+						},
+					});
+
+					this.fullScreenWaitInLineRef.afterClosed().subscribe({
+						next: () => {
+							this.screenService.customBackdropEvent$.next(false);
+							this.screenService.customBackdropStyle$.next(null);
+						},
+					});
+				},
+			});
 
 		this.dataService.currentUser
 			.pipe(
 				takeUntil(this.destroy$),
 				switchMap((user: User) => {
-					console.log(user);
-					return user.roles.includes('hallpass_student') ? this.liveDataService.watchActivePassLike(user) : of(null);
+					return user.isStudent() ? this.liveDataService.watchActivePassLike(user) : of(null);
 				})
 			)
 			.subscribe((passLike) => {
 				this._zone.run(() => {
-					if ((passLike instanceof HallPass || passLike instanceof Request) && this.currentScrollPosition) {
+					if ((passLike instanceof HallPass || passLike instanceof Request || passLike instanceof WaitingInLinePass) && this.currentScrollPosition) {
 						this.scrollableArea.scrollTo({ top: 0 });
 					}
 					this.currentPass$.next(passLike instanceof HallPass ? passLike : null);
 					this.currentRequest$.next(passLike instanceof Request ? passLike : null);
+
+					if (passLike instanceof WaitingInLinePass) {
+						const currentWil = this.currentWaitInLine$.value;
+						if (currentWil?.line_position != passLike.line_position || currentWil?.missed_start_attempts != passLike.missed_start_attempts) {
+							this.currentWaitInLine$.next(passLike);
+						}
+					} else {
+						this.currentWaitInLine$.next(null);
+					}
 				});
 			});
 
@@ -403,7 +428,6 @@ export class PassesComponent implements OnInit, AfterViewInit, OnDestroy {
 		this.isUpdateBar$ = this.updateService.needToUpdate$;
 		this.futurePasses = this.liveDataService.futurePasses$;
 		this.activePasses = this.getActivePasses();
-		this.waitInLinePasses = this.wilService.fakeWilPasses.asObservable();
 		this.pastPasses = this.liveDataService.expiredPasses$;
 		this.expiredPassesSelectedSort$ = this.passesService.passFilters$.pipe(
 			filter((res) => !!res),
@@ -474,8 +498,6 @@ export class PassesComponent implements OnInit, AfterViewInit, OnDestroy {
 		});
 	}
 
-	ngAfterViewInit(): void {}
-
 	ngOnDestroy(): void {
 		if (this.scrollableArea && this.scrollableAreaName) {
 			this.scrollPosition.saveComponentScroll(this.scrollableAreaName, this.scrollableArea.scrollTop);
@@ -513,30 +535,28 @@ export class PassesComponent implements OnInit, AfterViewInit, OnDestroy {
 		});
 	}
 
-	passClick(event) {
-		this.passesService.isOpenPassModal$.next(true);
-	}
-
 	openSettings(value) {
 		if (value && !this.dialog.openDialogs.length) {
 			this.sideNavService.openSettingsEvent$.next(true);
 		}
 	}
 
+	// TODO: Type All Filters properly
 	filterPasses(collection, action) {
-		if (collection === 'active') {
-			this.filterActivePass$.next(action);
-		} else if (collection === 'future') {
-			this.filterFuturePass$.next(action);
-		} else if (collection === 'expired-passes') {
-			this.filterExpiredPass$.next(action);
-		} else if (collection === 'received-pass-requests') {
-			this.filterReceivedPass$.next(action);
-		} else if (collection === 'sent-pass-requests') {
-			this.filterSendPass$.next(action);
+		const filterMap: Record<string, BehaviorSubject<string | moment.Moment>> = {
+			active: this.filterActivePass$,
+			future: this.filterFuturePass$,
+			'expired-passes': this.filterExpiredPass$,
+			'received-pass-requests': this.filterReceivedPass$,
+			'sent-pass-requests': this.filterSendPass$,
+		};
+
+		if (collection in filterMap) {
+			filterMap[collection].next(action);
 		}
 	}
 
+	// TODO: Type All Filters properly
 	prepareFilter(action, collection) {
 		if (action === 'past-hour') {
 			this.filterPasses(collection, action);

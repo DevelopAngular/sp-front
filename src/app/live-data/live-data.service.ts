@@ -4,7 +4,7 @@ import * as moment from 'moment';
 
 // TODO: Replace deprecated empty() observable with EMPTY
 import { combineLatest, EMPTY, empty, merge, Observable, of, Subject } from 'rxjs';
-import { distinctUntilChanged, exhaustMap, map, pluck, scan, startWith, switchMap } from 'rxjs/operators';
+import { distinctUntilChanged, exhaustMap, filter, map, pluck, scan, startWith, switchMap } from 'rxjs/operators';
 import { Paged, PassLike } from '../models';
 import { BaseModel } from '../models/base';
 import { HallPass } from '../models/HallPass';
@@ -106,6 +106,8 @@ import {
 	getMyRoomPassesTotalNumber,
 } from '../ngrx/pass-like-collection/nested-states/my-room-passes/states';
 import { HallPassLimit, StudentPassLimit } from '../models/HallPassLimits';
+import { WaitingInLinePass, WaitingInLinePassResponse } from '../models/WaitInLine';
+import { FeatureFlagService, FLAGS } from '../services/feature-flag.service';
 
 interface WatchData<ModelType extends BaseModel, ExternalEventType> {
 	/**
@@ -127,6 +129,18 @@ interface WatchData<ModelType extends BaseModel, ExternalEventType> {
 	 * a GET request with the filters encoded as query parameters.
 	 */
 	initialUrl: string;
+
+	/**
+	 * The body passed into the GET request. Some GET requests use a JSON body
+	 * instead of query parameters. Omit this if the GET request does not use
+	 * a JSON body.
+	 */
+	bodyParams?: Record<string, any>;
+
+	/**
+	 * Request type, typically a GET request.
+	 */
+	postType?: 'GET' | 'POST';
 
 	/**
 	 * Decode the raw JSON response into an array of initial items of ModelType.
@@ -186,6 +200,13 @@ export enum PassLimitEvent {
 	Update = 'pass_limit.update',
 }
 
+export enum WaitingInLineEvents {
+	Root = 'waiting_in_line_pass',
+	Create = 'waiting_in_line_pass.create',
+	Update = 'waiting_in_line_pass.update',
+	Delete = 'waiting_in_line_pass.delete',
+}
+
 /**
  * For a given date, return the Date objects corresponding to the
  * previous midnight and the next midnight.
@@ -227,6 +248,8 @@ function mergeFilters<T>(filters: FilterFunc<T>[]): FilterFunc<T> {
 export type PassFilterType = { type: 'issuer'; value: User } | { type: 'student'; value: User } | { type: 'location'; value: Location | Location[] };
 
 export type RequestFilterType = { type: 'issuer'; value: User } | { type: 'student'; value: User } | { type: 'destination'; value: Location };
+
+export type WaitingInLineFilter = { type: 'issuer'; value: User } | { type: 'student'; value: User } | { type: 'origin'; value: Location };
 
 /**
  * An interface representing how hall passes should be filtered.
@@ -301,7 +324,8 @@ export class LiveDataService {
 		private polling: PollingService,
 		private timeService: TimeService,
 		private hallPassesService: HallPassesService,
-		private store: Store<AppState>
+		private store: Store<AppState>,
+		private features: FeatureFlagService
 	) {
 		this.http.schoolToggle$.pipe(pluck('id'), distinctUntilChanged()).subscribe(() => {
 			setTimeout(() => {
@@ -316,6 +340,9 @@ export class LiveDataService {
 	}
 
 	private watch<ModelType extends BaseModel, ExternalEventType>(config: WatchData<ModelType, ExternalEventType>): Observable<ModelType[]> {
+		if (!config.postType) {
+			config.postType = 'GET';
+		}
 		// Wrap external events in an object so that we can distinguish event types after they are merged.
 		const wrappedExternalEvents: Observable<ExternalEvent<ExternalEventType>> = config.externalEvents.pipe(
 			map((event) => <ExternalEvent<ExternalEventType>>{ type: 'external-event', event: event })
@@ -404,7 +431,9 @@ export class LiveDataService {
 		 */
 		return fullReload$.pipe(
 			exhaustMap((value) => {
-				return this.http.get<Paged<any>>(config.initialUrl);
+				return config.postType === 'POST'
+					? this.http.post<Paged<any>>(config.initialUrl, config.bodyParams, undefined, false)
+					: this.http.get<Paged<any>>(config.initialUrl);
 			}),
 			map(rawDecoder),
 			switchMap((items) => {
@@ -418,7 +447,7 @@ export class LiveDataService {
 		return getDateLimits(date);
 	}
 
-	// TODO: Make web socker event strings into enums
+	// TODO: Make web socket event strings into enums
 	watchHallPassesFromLocation(sortingEvents: Observable<HallPassFilter>, filter: Location[], date: Date = null): Observable<HallPass[]> {
 		const filterIds = filter.map((l) => l.id);
 
@@ -670,6 +699,55 @@ export class LiveDataService {
 		});
 	}
 
+	watchWaitingInLinePasses(filter: WaitingInLineFilter): Observable<WaitingInLinePass[]> {
+		if (!this.features.isFeatureEnabled(FLAGS.WaitInLine)) {
+			return of([]);
+		}
+		let requestFilter: Partial<{ student_id: number; issuer_id: number; origin_id: number }> = {};
+		if (filter) {
+			const { type, value } = filter;
+			const id = parseInt(value.id, 10);
+			switch (type) {
+				case 'student':
+					requestFilter.student_id = id;
+					break;
+				case 'issuer':
+					requestFilter.issuer_id = id;
+					break;
+				case 'origin':
+					requestFilter.origin_id = id;
+					break;
+				default:
+					console.error('NO FILTER APPLIED');
+			}
+		}
+
+		return this.watch<WaitingInLinePass, string>({
+			externalEvents: empty(),
+			eventNamespace: WaitingInLineEvents.Root,
+			initialUrl: 'v2/waiting_in_line_pass/list_all',
+			postType: 'POST',
+			bodyParams: requestFilter,
+			rawDecoder: (json: { passes: WaitingInLinePassResponse[] }) => json.passes.map((p) => WaitingInLinePass.fromJSON(p)),
+			decoder: (data) => WaitingInLinePass.fromJSON(data),
+			handleExternalEvent: (s: State<WaitingInLinePass>, e: string) => s,
+			handlePollingEvent: makePollingEventHandler([
+				new AddItem([WaitingInLineEvents.Create], WaitingInLinePass.fromJSON),
+				new UpdateItem([WaitingInLineEvents.Update], WaitingInLinePass.fromJSON),
+				new RemoveItem([WaitingInLineEvents.Delete], WaitingInLinePass.fromJSON),
+			]),
+			handlePost: filterNewestFirst,
+		});
+	}
+
+	watchDeletedWaitingInLine() {
+		return this.polling.listen().pipe(filter((event) => event.action === WaitingInLineEvents.Delete));
+	}
+
+	watchUpdatedWaitingInLine() {
+		return this.polling.listen().pipe(filter((event) => event.action === WaitingInLineEvents.Update));
+	}
+
 	watchInboxRequests(filter: User): Observable<Request[]> {
 		const isStudent = filter.roles.includes('hallpass_student');
 
@@ -689,7 +767,7 @@ export class LiveDataService {
 			handlePollingEvent: makePollingEventHandler([
 				new AddItem(['pass_request.create'], Request.fromJSON, mergeFilters(filters)),
 				new UpdateItem(['pass_request.update'], Request.fromJSON),
-				new RemoveItem(['pass_request.cancel'], Request.fromJSON),
+				new RemoveItem(['pass_request.cancel', 'pass_request.delete'], Request.fromJSON),
 				new RemoveRequestOnApprove(['pass_request.accept']),
 				denyHandler,
 			]),
@@ -747,7 +825,7 @@ export class LiveDataService {
 			handleExternalEvent: (s: State<Request>, e: string) => s,
 			handlePollingEvent: makePollingEventHandler([
 				new AddItem(['pass_request.create'], Request.fromJSON, mergeFilters(filters)),
-				new RemoveItem(['pass_request.cancel'], Request.fromJSON),
+				new RemoveItem(['pass_request.cancel', 'pass_request.delete'], Request.fromJSON),
 				new RemoveRequestOnApprove(['pass_request.accept']),
 				new UpdateItem(['pass_request.deny'], Request.fromJSON),
 			]),
@@ -783,36 +861,38 @@ export class LiveDataService {
 	}
 
 	watchActivePassLike(student: User): Observable<PassLike> {
-		const passes$ = this.activePasses$;
+		const passes$ = this.activePasses$.pipe(
+			map((passes) => (passes.length ? passes[0] : null)),
+			startWith(null)
+		);
 		const requests$ = this.watchActiveRequests(student).pipe(
 			map((requests) => {
 				return requests.filter((req) => !req.request_time);
-			})
+			}),
+			map((requests) => (requests.length ? requests[0] : null)),
+			startWith(null)
+		);
+		const waitingInLinePasses$ = this.watchWaitingInLinePasses({ type: 'student', value: student }).pipe(
+			map((wilPasses) => (wilPasses.length ? wilPasses[0] : null)),
+			startWith(null)
 		);
 
-		const merged$ = combineLatest(
-			passes$.pipe(
-				map((passes) => (passes.length ? passes[0] : null)),
-				startWith(null)
-			),
-			requests$.pipe(
-				map((requests) => (requests.length ? requests[0] : null)),
-				startWith(null)
-			),
-			(pass, request) => ({ pass: pass, request: request })
-		);
+		return combineLatest(passes$, requests$, waitingInLinePasses$, (pass, request, waitingInLine) => {
+			// console.log({
+			// 	pass,
+			// 	request,
+			// 	waitingInLine,
+			// });
+			if (pass) {
+				return pass;
+			}
 
-		return merged$.pipe(
-			map((m) => {
-				if (m.pass) {
-					return m.pass;
-				}
-				if (m.request) {
-					return m.request;
-				}
-				return null;
-			})
-		);
+			if (request) {
+				return request;
+			}
+
+			return waitingInLine;
+		});
 	}
 
 	getPassLikeCollectionRequest(user) {

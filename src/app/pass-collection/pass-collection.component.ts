@@ -38,7 +38,7 @@ import { UserService } from '../services/user.service';
 import * as moment from 'moment';
 import { PassTileComponent } from '../pass-tile/pass-tile.component';
 import { InlineWaitInLineCardComponent } from '../pass-cards/inline-wait-in-line-card/inline-wait-in-line-card.component';
-import { WaitInLine } from '../models/WaitInLine';
+import { WaitingInLinePass } from '../models/WaitInLine';
 
 export class SortOption {
 	constructor(private name: string, public value: string) {}
@@ -135,7 +135,7 @@ export class PassCollectionComponent implements OnInit, AfterViewInit, OnDestroy
 			return RequestCardComponent;
 		}
 
-		if (pass instanceof WaitInLine) {
+		if (pass instanceof WaitingInLinePass) {
 			return InlineWaitInLineCardComponent;
 		}
 
@@ -298,7 +298,7 @@ export class PassCollectionComponent implements OnInit, AfterViewInit, OnDestroy
 	showPass({ time$, pass }) {
 		this.activePassTime$ = time$;
 		this.passClick.emit(true);
-		if (pass.id !== 'template') {
+		if (!this.waitInLine) {
 			this.dataService.markRead(pass).subscribe();
 		}
 		this.initializeDialog(pass);
@@ -336,7 +336,6 @@ export class PassCollectionComponent implements OnInit, AfterViewInit, OnDestroy
 			.afterClosed()
 			.pipe(filter((res) => !!res))
 			.subscribe((action) => {
-				console.log(action);
 				if (action !== 'hide_expired_pass') {
 					if (this.selectedSort === action) {
 						this.selectedSort = 'all_time';
@@ -386,7 +385,7 @@ export class PassCollectionComponent implements OnInit, AfterViewInit, OnDestroy
 				kioskMode: !!this.kioskMode.getCurrentRoom().value,
 				hideReport: this.isAdminPage,
 				activePassTime$: this.activePassTime$,
-				showStudentInfoBlock: !this.kioskMode.getCurrentRoom().value,
+				showStudentInfoBlock: this.forStaff || this.kioskMode.getCurrentRoom().value,
 			};
 			data.isActive = !data.fromPast && !data.forFuture;
 		} else {

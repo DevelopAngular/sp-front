@@ -30,7 +30,7 @@ import { DomCheckerService } from '../services/dom-checker.service';
 import { PassLike } from '../models';
 import { HallPassesService } from '../services/hall-passes.service';
 import { QuickPreviewPasses } from '../models/QuickPreviewPasses';
-import { filter, map, take, tap, delay } from 'rxjs/operators';
+import { filter, map, take, tap } from 'rxjs/operators';
 import { DeviceDetection } from '../device-detection.helper';
 import * as moment from 'moment';
 import { EncounterPreventionService } from '../services/encounter-prevention.service';
@@ -43,7 +43,7 @@ import { KioskModeService } from '../services/kiosk-mode.service';
 import { UNANIMATED_CONTAINER } from '../consent-menu-overlay';
 import { SettingsDescriptionPopupComponent } from '../settings-description-popup/settings-description-popup.component';
 import { CreateHallpassFormsComponent } from '../create-hallpass-forms/create-hallpass-forms.component';
-import { WaitInLine } from '../models/WaitInLine';
+import { WaitingInLinePass } from '../models/WaitInLine';
 
 @Component({
 	selector: 'app-student-passes',
@@ -52,7 +52,7 @@ import { WaitInLine } from '../models/WaitInLine';
 	animations: [ResizeProfileImage, showHideProfileEmail, topBottomProfileName, scaleStudentPasses, resizeStudentPasses, studentPassFadeInOut, bumpIn],
 })
 export class StudentPassesComponent implements OnInit, OnDestroy, AfterViewInit {
-	@Input() profile: User;
+	@Input() profile: Pick<User, 'id' | 'profile_picture' | 'first_name' | 'last_name' | 'display_name' | 'primary_email'>;
 	@Input() height: number = 75;
 	@Input() isResize: boolean = true;
 	@Input() pass: PassLike;
@@ -120,7 +120,7 @@ export class StudentPassesComponent implements OnInit, OnDestroy, AfterViewInit 
 	}
 
 	ngOnInit() {
-		this.isWaitInLine = this.pass instanceof WaitInLine;
+		this.isWaitInLine = this.pass instanceof WaitingInLinePass;
 		this.user$ = this.userService.user$.pipe(map((u) => User.fromJSON(u)));
 		this.fadeInOutTrigger$ = this.domCheckerService.fadeInOutTrigger$;
 		this.passesService.getQuickPreviewPassesRequest(this.profile.id, true);
@@ -155,14 +155,10 @@ export class StudentPassesComponent implements OnInit, OnDestroy, AfterViewInit 
 		this.user$
 			.pipe(
 				take(1),
-				map((user) => {
-					const isStaff =
-						user.roles.includes('_profile_teacher') || user.roles.includes('_profile_admin') || user.roles.includes('_profile_assistant');
-					return isStaff;
-				}),
+				map((user) => user.isStaff()),
 				tap((isStaff) => {
 					this.isStaff = isStaff;
-					if (!this.kioskModeRoom$.value && !this.isWaitInLine) {
+					if (!this.kioskModeRoom$.value) {
 						this.height += this.extraSpace;
 					}
 				})

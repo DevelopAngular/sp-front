@@ -14,8 +14,8 @@ import { PassLike } from '../../../models';
 import { DeviceDetection } from '../../../device-detection.helper';
 import { BehaviorSubject } from 'rxjs';
 import { takeUntil } from 'rxjs/operators';
-import { WaitInLine } from '../../../models/WaitInLine';
 import { StorageService } from '../../../services/storage.service';
+import { WaitingInLinePass } from '../../../models/WaitInLine';
 
 export type PassLayout = 'pass' | 'request' | 'inlinePass' | 'inlineRequest';
 
@@ -54,7 +54,7 @@ export class FormFactorContainerComponent implements OnInit {
 
 	isMobile = DeviceDetection.isMobile();
 	public states = FormFactor;
-	public template: Request | HallPass | Invitation | Pinnable | WaitInLine;
+	public template: Request | HallPass | Invitation | Pinnable | WaitingInLinePass;
 	isOpenBigCard: boolean;
 	fullScreenPass$: BehaviorSubject<boolean> = new BehaviorSubject(true);
 
@@ -164,29 +164,6 @@ export class FormFactorContainerComponent implements OnInit {
 						null,
 						null,
 						this.FORM_STATE.data.message
-					);
-					break;
-
-				case this.states.WaitInLine:
-					const student = user ?? this.FORM_STATE.data.selectedStudents[0];
-					this.template = new WaitInLine(
-						'template',
-						student,
-						_user,
-						null,
-						null,
-						5, // placeholder duration
-						this.FORM_STATE.data.direction.from,
-						this.FORM_STATE.data.direction.to,
-						'',
-						'',
-						this.FORM_STATE.data.direction.pinnable.icon,
-						this.FORM_STATE.data.direction.pinnable.color_profile,
-						true,
-						'3rd',
-						this.FORM_STATE.data.date ? this.FORM_STATE.data.date.declinable : false,
-						this.forStaff ? this.FORM_STATE.data.message : null,
-						!this.forStaff
 					);
 					break;
 			}

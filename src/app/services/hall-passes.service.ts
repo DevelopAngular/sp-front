@@ -10,7 +10,6 @@ import {
 	getIsLoadedPinnables,
 	getIsLoadingPinnables,
 	getPinnableCollection,
-	getPinnableEntities,
 	getPinnablesIds,
 } from '../ngrx/pinnables/states';
 import { arrangedPinnable, getPinnables, postPinnables, removePinnable, updatePinnable } from '../ngrx/pinnables/actions';
@@ -18,8 +17,10 @@ import { getPassStats } from '../ngrx/pass-stats/actions';
 import { getPassStatsResult } from '../ngrx/pass-stats/state/pass-stats-getters.state';
 import { bufferCount, filter, mergeMap, reduce } from 'rxjs/operators';
 import { constructUrl } from '../live-data/helpers';
-import { endPassAction, getMorePasses, searchPasses, sortPasses, changePassesCollectionAction } from '../ngrx/passes/actions';
 import {
+	changePassesCollectionAction,
+	endPassAction,
+	getMorePasses,
 	getMorePassesLoading,
 	getPassesCollection,
 	getPassesEntities,
@@ -31,7 +32,9 @@ import {
 	getSortPassesValue,
 	getStartPassLoading,
 	getTotalPasses,
-} from '../ngrx/passes/states';
+	searchPasses,
+	sortPasses,
+} from '../ngrx/passes';
 import { HallPass } from '../models/HallPass';
 import { PollingService } from './polling-service';
 import { getPassFilter, updatePassFilter } from '../ngrx/pass-filters/actions';
@@ -48,7 +51,32 @@ import {
 	getQuickPreviewPassesLoading,
 	getQuickPreviewPassesStats,
 } from '../ngrx/quick-preview-passes/states';
-import { Dictionary } from '@ngrx/entity';
+import { WaitingInLinePassResponse } from '../models/WaitInLine';
+import { openToastAction } from '../ngrx/toast/actions';
+import { ExclusionGroup } from '../models/ExclusionGroup';
+import { PassLike } from '../models';
+
+interface EncounterPreventionToast {
+	exclusionPass: PassLike;
+	isStaff?: boolean;
+	exclusionGroups?: ExclusionGroup[];
+}
+
+// error codes that are used locally on the UI
+export enum HallPassErrors {
+	Encounter = 'ENCOUNTER PREVENTION',
+}
+
+export interface BulkHallPassPostResponse {
+	passes: HallPass[];
+	conflict_student_ids: string[];
+	waiting_in_line_passes: WaitingInLinePassResponse[];
+}
+
+export interface StartWaitingInLinePassResponse {
+	pass: HallPass;
+	conflict_student_ids: string[];
+}
 
 @Injectable({
 	providedIn: 'root',
@@ -58,7 +86,6 @@ export class HallPassesService {
 	loadedPinnables$: Observable<boolean> = this.store.select(getIsLoadedPinnables);
 	isLoadingPinnables$: Observable<boolean> = this.store.select(getIsLoadingPinnables);
 	pinnablesCollectionIds$: Observable<number[] | string[]> = this.store.select(getPinnablesIds);
-	pinnablesEntities$: Observable<Dictionary<Pinnable>> = this.store.select(getPinnableEntities);
 	isLoadingArranged$: Observable<boolean> = this.store.select(getArrangedLoading);
 
 	passesEntities$: Observable<{ [id: number]: HallPass }> = this.store.select(getPassesEntities);
@@ -121,7 +148,9 @@ export class HallPassesService {
 		return this.http.post(`v1/hall_passes`, data);
 	}
 
-	bulkCreatePass(data, future: boolean = false) {
+	// response is a Partial since depending on when the route is called, the backend can
+	// return at least one of the possible keys
+	bulkCreatePass(data, future: boolean = false): Observable<Partial<BulkHallPassPostResponse>> {
 		return this.http.post(`v1/hall_passes`, data);
 	}
 
@@ -276,5 +305,23 @@ export class HallPassesService {
 
 	changePassesCollection(passIds: number[]) {
 		this.store.dispatch(changePassesCollectionAction({ passIds }));
+	}
+
+	showEncounterPreventionToast({ exclusionPass, isStaff, exclusionGroups }: EncounterPreventionToast) {
+		const title = isStaff ? "This pass can't start now to prevent encounter." : "Sorry, you can't start your pass right now.";
+		const subtitle = isStaff ? "These students can't have a pass at the same time." : 'Please try again later.';
+
+		this.store.dispatch(
+			openToastAction({
+				data: {
+					title,
+					subtitle,
+					type: 'error',
+					encounterPrevention: true,
+					exclusionPass,
+					exclusionGroups,
+				},
+			})
+		);
 	}
 }

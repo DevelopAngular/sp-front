@@ -2,11 +2,11 @@ import { AfterViewInit, Component, ElementRef, HostListener, OnDestroy, OnInit, 
 import { MatDialog, MatDialogRef, MatDialogState } from '@angular/material/dialog';
 import { KioskModeService, KioskSettings } from '../services/kiosk-mode.service';
 import { LiveDataService } from '../live-data/live-data.service';
-import { BehaviorSubject, combineLatest, EMPTY, Observable, of, Subject, timer } from 'rxjs';
+import { BehaviorSubject, combineLatest, EMPTY, Observable, of, Subject, throwError, timer } from 'rxjs';
 import { UserService } from '../services/user.service';
 import { HallPassesService } from '../services/hall-passes.service';
 import { HallPass } from '../models/HallPass';
-import { filter, startWith, switchMap, takeUntil, map, mergeMap } from 'rxjs/operators';
+import { catchError, filter, map, mergeMap, startWith, switchMap, takeUntil, tap } from 'rxjs/operators';
 import { JwtHelperService } from '@auth0/angular-jwt';
 import { StorageService } from '../services/storage.service';
 import { LocationsService } from '../services/locations.service';
@@ -17,8 +17,9 @@ import { MainHallPassFormComponent } from '../create-hallpass-forms/main-hallpas
 import { Title } from '@angular/platform-browser';
 import { Location } from '../models/Location';
 import { FeatureFlagService, FLAGS } from '../services/feature-flag.service';
-import { WaitInLineService } from '../services/wait-in-line.service';
-import { WaitInLine } from '../models/WaitInLine';
+import { sortWilByPosition } from '../services/wait-in-line.service';
+import { WaitingInLinePass } from '../models/WaitInLine';
+import { InlineWaitInLineCardComponent } from '../pass-cards/inline-wait-in-line-card/inline-wait-in-line-card.component';
 
 declare const window;
 
@@ -29,9 +30,7 @@ declare const window;
 })
 export class KioskModeComponent implements OnInit, AfterViewInit, OnDestroy {
 	activePassesKiosk: Observable<HallPass[]>;
-	waitInLinePassesKiosk: Observable<WaitInLine[]>;
-	// isActiveWaitInLine$: Observable<boolean>;
-	// currentWaitInLine$ = new BehaviorSubject<WaitInLine>(null);
+	waitInLinePasses: Observable<WaitingInLinePass[]>;
 
 	cardReaderValue: string;
 
@@ -56,6 +55,7 @@ export class KioskModeComponent implements OnInit, AfterViewInit, OnDestroy {
 	});
 
 	mainFormRef: MatDialogRef<MainHallPassFormComponent>;
+	frontOfWaitInLineDialogRef: MatDialogRef<InlineWaitInLineCardComponent>;
 
 	@ViewChild('input', { read: ElementRef, static: true }) input: ElementRef;
 
@@ -80,12 +80,8 @@ export class KioskModeComponent implements OnInit, AfterViewInit, OnDestroy {
 		private timeService: TimeService,
 		private activatedRoute: ActivatedRoute,
 		private titleService: Title,
-		private featureService: FeatureFlagService,
-		private wilService: WaitInLineService
-	) {
-		// this.isActiveWaitInLine$ = this.wilService.fakeWilActive.asObservable();
-		// this.currentWaitInLine$ = this.wilService.fakeWil;
-	}
+		private featureService: FeatureFlagService
+	) {}
 
 	get showProfilePicture() {
 		return this.userService.getUserSchool()?.profile_pictures_enabled;
@@ -96,12 +92,11 @@ export class KioskModeComponent implements OnInit, AfterViewInit, OnDestroy {
 	}
 
 	get waitInLinePassesPresent() {
-		return this.isWaitInLine && this.wilService.fakeWilActive.getValue();
+		return this.isWaitInLine;
 	}
 
 	ngOnInit() {
 		this.activatedRoute.data.subscribe((state) => {
-			console.log(state);
 			if ('openDialog' in state && state.openDialog) {
 				this.dialog.open(KioskSettingsDialogComponent, {
 					panelClass: 'sp-form-dialog',
@@ -146,7 +141,35 @@ export class KioskModeComponent implements OnInit, AfterViewInit, OnDestroy {
 			});
 
 		this.activePassesKiosk = this.liveDataService.myRoomActivePasses$;
-		this.waitInLinePassesKiosk = this.wilService.fakeWilPasses.asObservable();
+		this.waitInLinePasses = this.kioskMode.getCurrentRoom().pipe(
+			filter(Boolean),
+			switchMap((location: Location) => this.liveDataService.watchWaitingInLinePasses({ type: 'origin', value: location })),
+			map((passes) => passes.sort(sortWilByPosition)),
+			tap((passes) => {
+				if (passes.length === 0) {
+					return;
+				}
+				if (passes[0].isReadyToStart() && this.frontOfWaitInLineDialogRef?.getState() !== MatDialogState.OPEN) {
+					this.frontOfWaitInLineDialogRef = this.dialog.open(InlineWaitInLineCardComponent, {
+						panelClass: ['overlay-dialog', 'teacher-pass-card-dialog-container'],
+						backdropClass: 'custom-backdrop',
+						disableClose: true,
+						closeOnNavigation: true,
+						data: {
+							nextInLine: true,
+							pass: passes[0],
+							forStaff: false,
+							forKiosk: true,
+						},
+					});
+				}
+			}),
+			catchError((error) => {
+				console.warn('No more updates to WIL passes because of the following:');
+				console.error(error);
+				return throwError(error);
+			})
+		);
 
 		/**
 		 * The following listener is responsible for checking if incoming hall passes are the result

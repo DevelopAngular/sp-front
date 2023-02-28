@@ -108,7 +108,6 @@ import { DateButtonComponent } from '../student-info-card/date-button/date-butto
 import { OverviewContainerComponent } from '../student-info-card/student-passes-overwiew/overview-container.component';
 import { SettingsComponent } from '../settings/settings.component';
 import { InviteFamiliesDialogComponent } from '../admin/invite-families-dialog/invite-families-dialog.component';
-import { WaitInLineCardComponent } from '../pass-cards/wait-in-line-card/wait-in-line-card.component';
 import { InlineWaitInLineCardComponent } from '../pass-cards/inline-wait-in-line-card/inline-wait-in-line-card.component';
 import { HelpCenterComponent } from './shared-components/help-center/help-center.component';
 import { NuxHelpCenterComponent } from '../nux-components/nux-help-center/nux-help-center.component';
@@ -223,7 +222,6 @@ const DEFAULT_SWIPER_CONFIG: SwiperConfigInterface = {
 		OverviewContainerComponent,
 		SettingsComponent,
 		InviteFamiliesDialogComponent,
-		WaitInLineCardComponent,
 		HelpCenterComponent,
 		NuxHelpCenterComponent,
 		CallDialogComponent,
@@ -326,7 +324,6 @@ const DEFAULT_SWIPER_CONFIG: SwiperConfigInterface = {
 		OverviewContainerComponent,
 		SettingsComponent,
 		InviteFamiliesDialogComponent,
-		WaitInLineCardComponent,
 		HelpCenterComponent,
 		NuxHelpCenterComponent,
 		CallDialogComponent,
