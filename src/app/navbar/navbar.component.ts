@@ -214,7 +214,7 @@ export class NavbarComponent implements AfterViewInit, OnInit, OnDestroy {
 	}
 
 	get isMobile() {
-		return DeviceDetection.isMobile() || this.helpCenter.isHelpCenterOpen.getValue();
+		return DeviceDetection.isMobile() || (this.screenService.windowWidth < 1170 && this.helpCenter.isHelpCenterOpen.getValue());
 	}
 
 	get showNav() {
