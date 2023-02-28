@@ -2,11 +2,13 @@ import { Injectable, TemplateRef } from '@angular/core';
 import { HttpService } from './http-service';
 import { catchError, concatMap, filter, map, take } from 'rxjs/operators';
 import { Observable, of, throwError } from 'rxjs';
-import { PassLimitDialogComponent } from '../create-hallpass-forms/main-hallpass--form/locations-group-container/pass-limit-dialog/pass-limit-dialog.component';
 import {
-	ConfirmationDialogComponent,
-	ConfirmationTemplates,
-	RecommendedDialogConfig,
+  PassLimitDialogComponent,
+} from '../create-hallpass-forms/main-hallpass--form/locations-group-container/pass-limit-dialog/pass-limit-dialog.component';
+import {
+  ConfirmationDialogComponent,
+  ConfirmationTemplates,
+  RecommendedDialogConfig,
 } from '../shared/shared-components/confirmation-dialog/confirmation-dialog.component';
 import { LocationsService } from './locations.service';
 import { PassLimitService } from './pass-limit.service';
@@ -126,7 +128,6 @@ export class RequestsService {
 			map((pl) => pl.find((p) => p.id.toString() === request.destination.id.toString())),
 			take(1),
 			concatMap((pl) => {
-				console.log(pl);
 				const roomLimitReached = !!pl ? pl?.max_passes_to_active && pl?.max_passes_to <= pl?.to_count : false;
 
 				if (!roomLimitReached) {

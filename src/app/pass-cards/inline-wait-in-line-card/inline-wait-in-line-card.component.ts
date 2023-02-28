@@ -1,11 +1,22 @@
-import { Component, ElementRef, Inject, Input, OnChanges, OnDestroy, OnInit, Optional, SimpleChange, SimpleChanges, ViewChild } from '@angular/core';
+import {
+  Component,
+  ElementRef,
+  Inject,
+  Input,
+  OnChanges,
+  OnDestroy,
+  OnInit,
+  Optional,
+  SimpleChange,
+  SimpleChanges,
+  ViewChild,
+} from '@angular/core';
 import { BehaviorSubject, from, Observable, of, Subject, throwError, timer } from 'rxjs';
 import { HallPassErrors, HallPassesService } from '../../services/hall-passes.service';
 import { MAT_DIALOG_DATA, MatDialog, MatDialogRef } from '@angular/material/dialog';
 import { DeviceDetection } from '../../device-detection.helper';
 import { WaitingInLinePass } from '../../models/WaitInLine';
 import { catchError, concatMap, filter, finalize, map, takeUntil, tap } from 'rxjs/operators';
-import { MatRipple } from '@angular/material/core';
 import { ConsentMenuComponent } from '../../consent-menu/consent-menu.component';
 import { KioskModeService } from '../../services/kiosk-mode.service';
 import { LocationsService } from '../../services/locations.service';
@@ -90,23 +101,6 @@ export class InlineWaitInLineCardComponent implements OnInit, OnChanges, OnDestr
 		}
 
 		elem.style.transform = `scale(${this.scalingFactor})`;
-	}
-	@ViewChild(MatRipple) set constantRipple(ripple: MatRipple) {
-		if (!ripple) {
-			return;
-		}
-
-		timer(1000, 2500)
-			.pipe(takeUntil(this.destroy$))
-			.subscribe({
-				next: () => {
-					const rippleRef = ripple.launch({
-						persistent: true,
-						centered: true,
-					});
-					rippleRef.fadeOut();
-				},
-			});
 	}
 
 	gradient: string;
