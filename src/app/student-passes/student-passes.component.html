@@ -84,10 +84,7 @@
 				</div>
 			</div>
 		</div>
-		<div
-			*ngIf="isStaff && !isOpen && !kioskModeRoom$.value && !isWaitInLine"
-			class="action-buttons-wrapper"
-			[style.marginTop]="height - extraSpace + 10 + 'px'">
+		<div *ngIf="isStaff && !isOpen && !kioskModeRoom$.value" class="action-buttons-wrapper" [style.marginTop]="height - extraSpace + 10 + 'px'">
 			<app-gradient-button
 				[cursor]="'pointer'"
 				[leftIcon]="'./assets/Report (Gray-500).svg' | resolveAsset"

@@ -118,6 +118,7 @@ export class MainPageComponent implements OnInit, AfterViewInit, OnDestroy {
 			this.passesService.getFiltersRequest('past-passes');
 		});
 
+		// TODO: WHY DO WE NEED THIS?
 		combineLatest(
 			dbUser$,
 			this.passesService.passFilters$.pipe(

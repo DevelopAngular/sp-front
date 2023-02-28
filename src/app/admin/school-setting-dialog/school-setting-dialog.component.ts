@@ -6,7 +6,6 @@ import { Subject } from 'rxjs';
 import { School } from '../../models/School';
 import { filter, switchMap, takeUntil } from 'rxjs/operators';
 import { HttpService } from '../../services/http-service';
-import { FeatureFlagService, FLAGS } from '../../services/feature-flag.service';
 
 @Component({
 	selector: 'app-school-setting-dialog',

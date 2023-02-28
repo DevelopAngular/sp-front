@@ -11,6 +11,11 @@ export enum KEY_CODE {
 	LEFT_ARROW = 37,
 }
 
+// Instead of having this.formService.getFrameMotionDirection() in multiple places all across the code,
+// [attr.data-motion-translate]="(frameMotion$ | async).direction" should be included inside the app-pager
+// component and target the relevant ng-content children using @ContentChildren directive
+// https://angular.io/api/core/ContentChildren
+
 @Component({
 	selector: 'app-pager',
 	templateUrl: './pager.component.html',

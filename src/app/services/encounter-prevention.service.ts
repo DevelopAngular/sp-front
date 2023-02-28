@@ -22,14 +22,6 @@ import {
 } from '../ngrx/encounters-prevention/excusion-groups/states/exclusion-groups-getters.state';
 import { constructUrl } from '../live-data/helpers';
 import { ToastService } from './toast.service';
-import { HallPass } from '../models/HallPass';
-import { Request } from '../models/Request';
-
-interface EncounterPreventionToast {
-	exclusionPass: HallPass | Request;
-	isStaff?: boolean;
-	exclusionGroups?: ExclusionGroup[];
-}
 
 @Injectable({
 	providedIn: 'root',
@@ -82,20 +74,5 @@ export class EncounterPreventionService {
 
 	deleteExclusionGroup(groupId) {
 		return this.http.delete(`v1/exclusion_groups/${groupId}`);
-	}
-
-	showEncounterPreventionToast({ exclusionPass, isStaff, exclusionGroups }: EncounterPreventionToast) {
-		const title = isStaff ? "This pass can't start now to prevent encounter." : "Sorry, you can't start your pass right now.";
-
-		const subtitle = isStaff ? "These students can't have a pass at the same time." : 'Please try again later.';
-
-		this.toastService.openToast({
-			title,
-			subtitle,
-			type: 'error',
-			encounterPrevention: true,
-			exclusionPass,
-			exclusionGroups,
-		});
 	}
 }

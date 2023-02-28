@@ -86,14 +86,13 @@
 					[gradientColor]="pass.color_profile.gradient_color">
 					<div class="start-pass-content">
 						<mat-spinner *ngIf="performingAction" [color]="'accent'" [diameter]="35"></mat-spinner>
-						<div *ngIf="!performingAction" class="start-pass-content-text">
-							{{
-								forFuture && forInput
-									? 'Schedule Pass' + (selectedStudents.length > 1 ? 'es' : '')
-									: forStaff
-									? 'Send Pass' + (selectedStudents.length > 1 ? 'es' : '')
-									: 'Start Pass' + (selectedStudents.length > 1 ? 'es' : '')
-							}}
+						<img
+							*ngIf="!performingAction && formState?.data?.destLimitReached"
+							class="ds-mx-10"
+							[src]="'./assets/Clock (White).svg' | resolveAsset"
+							alt="Clock face" />
+						<div *ngIf="!performingAction" class="start-pass-content-text" [style.margin-right]="formState?.data?.destLimitReached ? '20px' : '0px'">
+							{{ buttonText }}
 						</div>
 						<img *ngIf="!performingAction" class="button-icon-right" [src]="'./assets/SP Arrow (White).svg' | resolveAsset" />
 					</div>
@@ -231,7 +230,10 @@
 		</div>
 	</div>
 
-	<div class="student-footer-info" *ngIf="forStaff && isModal && showStudentInfoBlock" [style.marginTop]="!data.kioskMod ? '58px' : ''">
+	<div
+		class="student-footer-info"
+		*ngIf="(forStaff || forKioskMode) && isModal && showStudentInfoBlock"
+		[style.margin-top]="forStaff ? '64px' : '20px'">
 		<app-student-passes [pass]="pass" [profile]="pass.student"></app-student-passes>
 	</div>
 </div>

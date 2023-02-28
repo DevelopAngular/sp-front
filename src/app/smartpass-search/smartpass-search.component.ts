@@ -91,7 +91,7 @@ export class SmartpassSearchComponent implements OnInit, OnDestroy {
 			.subscribe(([intros, nuxDates, user]) => {
 				this.introsData = intros;
 				const showNux = moment(user.first_login).isBefore(moment(nuxDates[1].created), 'day');
-				this.showTooltip$.next(!intros.search_reminder.universal.seen_version && showNux);
+				this.showTooltip$.next(!intros.search_reminder.universal.seen_version && showNux && User.fromJSON(user).isTeacher());
 				this.cdr.detectChanges();
 			});
 	}

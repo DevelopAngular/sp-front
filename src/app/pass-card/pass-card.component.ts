@@ -31,6 +31,7 @@ import { LocationsService } from '../services/locations.service';
 import { Location } from '../models/Location';
 import { RecurringSchedulePassService } from '../services/recurring-schedule-pass.service';
 import { RecurringConfig } from '../models/RecurringFutureConfig';
+import { PassLimit } from '../models/PassLimit';
 
 @Component({
 	selector: 'app-pass-card',
@@ -109,6 +110,7 @@ export class PassCardComponent implements OnInit, OnDestroy {
 	frameMotion$: BehaviorSubject<any>;
 	currentSchool: School;
 	recurringConfig: RecurringConfig;
+	passLimit: PassLimit;
 
 	isEnableProfilePictures$: Observable<boolean>;
 
@@ -131,9 +133,7 @@ export class PassCardComponent implements OnInit, OnDestroy {
 		private encounterService: EncounterPreventionService,
 		private locationsService: LocationsService,
 		private recurringConfigService: RecurringSchedulePassService
-	) {
-		console.log(this.data);
-	}
+	) {}
 
 	getUserName(user: any) {
 		if (user instanceof User) {
@@ -153,10 +153,10 @@ export class PassCardComponent implements OnInit, OnDestroy {
 		} else {
 			const selectedStudents = this.formState.data.roomStudents ?? this.selectedStudents;
 			return selectedStudents
-				? selectedStudents.length > 2
-					? selectedStudents[0].display_name + ' and ' + (selectedStudents.length - 1) + ' more'
-					: selectedStudents[0].display_name + (selectedStudents.length > 1 ? ' and ' + selectedStudents[1].display_name : '')
-				: this.pass.student.display_name + ` (${this.studentEmail})`;
+				? selectedStudents?.length > 2
+					? selectedStudents[0]?.display_name + ' and ' + (selectedStudents?.length - 1) + ' more'
+					: selectedStudents[0]?.display_name + (selectedStudents?.length > 1 ? ' and ' + selectedStudents[1]?.display_name : '')
+				: this.pass?.student?.display_name + ` (${this.studentEmail})`;
 		}
 	}
 
@@ -187,6 +187,19 @@ export class PassCardComponent implements OnInit, OnDestroy {
 			: (this.forInput || this.forStaff || (this.pass.cancellable_by_student && this.user.isStudent())) && !this.fromPast && !this.hideButton;
 	}
 
+	get buttonText(): string {
+		const numStudents = this.selectedStudents.length;
+		if (this.forFuture && this.forInput) {
+			return 'Schedule Pass' + (numStudents > 1 ? 'es' : '');
+		}
+
+		if (this.forStaff) {
+			return this.formState?.data?.destLimitReached && numStudents === 1 ? 'Send to Line' : 'Send Pass' + (numStudents > 1 ? 'es' : '');
+		}
+
+		return this.formState?.data?.destLimitReached ? 'Wait in Line' : 'Start Pass' + (numStudents > 1 ? 'es' : '');
+	}
+
 	ngOnInit() {
 		this.frameMotion$ = this.formService.getFrameMotionDirection();
 		this.scaleCardTrigger$ = this.domCheckerService.scalePassCard;
@@ -202,6 +215,7 @@ export class PassCardComponent implements OnInit, OnDestroy {
 			this.forFuture = this.data['forFuture'];
 			this.fromPast = this.data['fromPast'];
 			this.forStaff = this.data['forStaff'];
+			this.forKioskMode = this.data['kioskMode'];
 			this.selectedStudents = this.data['selectedStudents'];
 			this.forMonitor = this.data['forMonitor'];
 			this.fromHistory = this.data['fromHistory'];
@@ -459,7 +473,7 @@ export class PassCardComponent implements OnInit, OnDestroy {
 				switchMap(({ conflict_student_ids, passes }) => {
 					if (conflict_student_ids) {
 						if (!this.forStaff) {
-							this.encounterService.showEncounterPreventionToast({
+							this.hallPassService.showEncounterPreventionToast({
 								exclusionPass: {
 									...this.pass,
 									travel_type: this.selectedTravelType,
@@ -477,7 +491,7 @@ export class PassCardComponent implements OnInit, OnDestroy {
 										tap((groups) => {
 											const exclusionGroups = groups[+id];
 											if (exclusionGroups[0].enabled) {
-												this.encounterService.showEncounterPreventionToast({
+												this.hallPassService.showEncounterPreventionToast({
 													exclusionPass: {
 														...this.pass,
 														travel_type: this.selectedTravelType,

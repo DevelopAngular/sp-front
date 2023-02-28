@@ -1,5 +1,5 @@
 import { Component, EventEmitter, Input, OnInit, Output } from '@angular/core';
-import { timer } from 'rxjs';
+import { Subscription, timer } from 'rxjs';
 import { finalize, take, tap } from 'rxjs/operators';
 
 @Component({
@@ -9,21 +9,27 @@ import { finalize, take, tap } from 'rxjs/operators';
 })
 export class TimerSpinnerComponent implements OnInit {
 	@Input() showNumber = true;
-	@Input() private seconds = 30;
+	@Input() private maxSeconds;
+	@Input() private startAt: number;
 	@Output() private pulse = new EventEmitter<number>();
 	@Output() private completed = new EventEmitter<void>();
 
-	countdown: number = this.seconds;
+	countdown: number;
+	timerSubscription: Subscription;
 
 	ngOnInit(): void {
-		this.createTimer(this.seconds).subscribe();
+		if (!this.startAt) {
+			this.startAt = this.maxSeconds;
+		}
+		this.countdown = this.startAt > 0 ? this.startAt : this.maxSeconds;
+		this.timerSubscription = this.createTimer(this.startAt).subscribe();
 	}
 
 	private createTimer(seconds: number) {
 		return timer(0, 1000).pipe(
-			take(this.seconds + 1),
+			take(seconds + 1),
 			tap((counter) => {
-				const remaining = this.seconds - counter;
+				const remaining = seconds - counter;
 				this.countdown = remaining;
 				this.pulse.emit(remaining);
 			}),
@@ -32,14 +38,17 @@ export class TimerSpinnerComponent implements OnInit {
 	}
 
 	get remainingPercentage(): number {
-		return (this.countdown / this.seconds) * 100;
+		return (this.countdown / this.maxSeconds) * 100;
 	}
 
 	public reset(overrideSeconds?: number) {
-		if (overrideSeconds) {
-			this.seconds = overrideSeconds;
+		if (this.timerSubscription) {
+			this.timerSubscription.unsubscribe();
 		}
-		this.countdown = this.seconds;
-		this.createTimer(this.seconds).subscribe();
+		if (overrideSeconds) {
+			this.maxSeconds = overrideSeconds;
+		}
+		this.countdown = this.maxSeconds;
+		this.timerSubscription = this.createTimer(this.maxSeconds).subscribe();
 	}
 }

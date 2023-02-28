@@ -21,7 +21,7 @@ export class ExclusionGroupsEffects {
 						toast.openToastAction({
 							data: {
 								title: 'Oh no! Something went wrong',
-								subtitle: `Please try refreshing the page. If the issue keeps occuring, contact us at support@smartpass.app. (${error.status})`,
+								subtitle: `Please try refreshing the page. If the issue keeps occurring, contact us at support@smartpass.app. (${error.status})`,
 								type: 'error',
 							},
 						});

@@ -1,11 +1,9 @@
 import { Component, EventEmitter, Input, OnInit, Output } from '@angular/core';
 import { HallPass } from '../models/HallPass';
 import { Invitation } from '../models/Invitation';
-import { Request } from '../models/Request';
-import { MatDialog } from '@angular/material/dialog';
 import { filter } from 'rxjs/operators';
 import { HttpService } from '../services/http-service';
-import { ScreenService } from '../services/screen.service';
+import { PassLike } from '../models';
 
 @Component({
 	selector: 'app-travel-view',
@@ -13,7 +11,7 @@ import { ScreenService } from '../services/screen.service';
 	styleUrls: ['./travel-view.component.scss'],
 })
 export class TravelViewComponent implements OnInit {
-	@Input() pass: HallPass | Invitation | Request;
+	@Input() pass: PassLike;
 	@Input() shrink: boolean = false;
 	@Input() forStaff: boolean = false;
 	@Input() height: string = '217px';
@@ -23,7 +21,7 @@ export class TravelViewComponent implements OnInit {
 	type: string;
 	showRoomNumber: boolean;
 
-	constructor(public dialog: MatDialog, private http: HttpService, public screenService: ScreenService) {}
+	constructor(private http: HttpService) {}
 
 	get originRoomName() {
 		if (this.showRoomNumber) {

@@ -10,6 +10,7 @@ export enum FLAGS {
 	DigitalId = 'feature_flag_digital_id',
 	ParentAccounts = 'feature_flag_parent_accounts',
 	WaitInLine = 'feature_flag_wait_in_line',
+	ShowWaitInLine = 'feature_flag_show_wait_in_line',
 }
 
 // TODO: Replace individual feature flag functions with this service
@@ -20,7 +21,7 @@ export class FeatureFlagService {
 	private school: School;
 
 	constructor(private http: HttpService) {
-		this.http.currentUpdateSchool$.subscribe({
+		this.http.currentSchool$.subscribe({
 			next: (s) => (this.school = s),
 		});
 	}

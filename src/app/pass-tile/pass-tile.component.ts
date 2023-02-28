@@ -11,7 +11,10 @@ import { filter, take, takeUntil } from 'rxjs/operators';
 import { ConnectedPosition, Overlay } from '@angular/cdk/overlay';
 import { DomCheckerService } from '../services/dom-checker.service';
 import { KioskModeService } from '../services/kiosk-mode.service';
-import { WaitInLine } from '../models/WaitInLine';
+import { WaitingInLinePass } from '../models/WaitInLine';
+import { PositionPipe } from '../core/position.pipe';
+
+const calculatePositionString = new PositionPipe().transform;
 
 @Component({
 	selector: 'app-pass-tile',
@@ -70,23 +73,22 @@ export class PassTileComponent implements OnInit, OnDestroy, OnChanges {
 		if (this.isActive) {
 			return this.timeLeft + (this.valid ? ' Remaining' : ' Expiring');
 		} else if (this.waitInLine) {
-			// Here we will fetch number in line
-			return `${(this.pass as WaitInLine).position} in line`;
+			return (this.pass as WaitingInLinePass).isReadyToStart()
+				? 'Ready to Start!'
+				: `${calculatePositionString((this.pass as WaitingInLinePass).line_position)} in line`;
 		} else {
 			if (this.encounterPreventionCard) {
 				return 'Now';
 			}
-			const content =
-				this.pass instanceof Request
-					? this.pass.request_time && this.forFuture
-						? !this.forStaff
-							? getInnerPassContent(this.pass)
-							: getFormattedPassDate(this.pass)
-						: this.forStaff
-						? 'Pass for Now'
-						: ''
-					: getInnerPassContent(this.pass, (!this.pass['request_time'] && this.pass instanceof Request) || !(this.pass instanceof Invitation));
-			return content;
+			return this.pass instanceof Request
+				? this.pass.request_time && this.forFuture
+					? !this.forStaff
+						? getInnerPassContent(this.pass)
+						: getFormattedPassDate(this.pass)
+					: this.forStaff
+					? 'Pass for Now'
+					: ''
+				: getInnerPassContent(this.pass, (!this.pass['request_time'] && this.pass instanceof Request) || !(this.pass instanceof Invitation));
 		}
 	}
 

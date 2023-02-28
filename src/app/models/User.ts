@@ -1,5 +1,13 @@
 import { BaseModel } from './base';
 
+export enum ROLES {
+	Student = '_profile_student',
+	Teacher = '_profile_teacher',
+	Admin = '_profile_admin',
+	Assistant = '_profile_assistant',
+	Parent = '_profile_parent',
+}
+
 export class User extends BaseModel {
 	constructor(
 		public id: string,
@@ -58,7 +66,8 @@ export class User extends BaseModel {
 			custom_id: string = JSON['custom_id'],
 			last_active: Date = new Date(JSON['last_active']);
 
-		const rolesJSON = JSON['roles'];
+		const rolesJSON: string[] = JSON['roles'];
+
 		const sync_types_json = JSON['sync_types'];
 		for (let i = 0; i < rolesJSON.length; i++) {
 			roles.push(rolesJSON[i]);
@@ -116,6 +125,10 @@ export class User extends BaseModel {
 
 	isAssistant() {
 		return this.roles.includes('_profile_assistant') && this.roles.includes('represent_users');
+	}
+
+	isStaff() {
+		return this.isTeacher() || this.isAdmin() || this.isAssistant();
 	}
 
 	userRoles() {

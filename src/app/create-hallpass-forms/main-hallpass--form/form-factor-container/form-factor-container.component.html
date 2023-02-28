@@ -47,25 +47,11 @@
 					(cardEvent)="onNextStep($event)">
 				</app-invitation-card>
 			</ng-container>
-
-			<ng-container *ngSwitchCase="states.WaitInLine">
-				<app-wait-in-line-card
-					[wil]="template"
-					[forStaff]="forStaff && !dialogData.kioskModeRoom"
-					[forKioskMode]="!!dialogData.kioskModeRoom"
-					[formState]="FORM_STATE"
-					(cardEvent)="onNextStep($event)"></app-wait-in-line-card>
-			</ng-container>
 		</ng-container>
 
 		<div
 			class="metrics"
-			*ngIf="
-				(fullScreenPass$ | async) &&
-				(FORM_STATE.formMode.formFactor === states.HallPass ||
-					FORM_STATE.formMode.formFactor === states.Request ||
-					(states.WaitInLine && !forStaff && !dialogData.kioskModeRoom))
-			">
+			*ngIf="(fullScreenPass$ | async) && (FORM_STATE.formMode.formFactor === states.HallPass || FORM_STATE.formMode.formFactor === states.Request)">
 			<app-student-metrics></app-student-metrics>
 		</div>
 	</div>
