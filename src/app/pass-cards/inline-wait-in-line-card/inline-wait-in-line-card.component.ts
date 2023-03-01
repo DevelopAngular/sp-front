@@ -176,10 +176,20 @@ export class InlineWaitInLineCardComponent implements OnInit, OnChanges, OnDestr
 					.listenForWilUpdate(this.wil.id)
 					.pipe(
 						takeUntil(this.destroy$),
-						map<PollingEvent, WaitingInLinePass>((event) => event.data),
-						filter((wil) => wil.missed_start_attempts > this.wil.missed_start_attempts),
-						tap(() => {
-							this.timeSpinner.reset();
+						map<PollingEvent, WaitingInLinePass>((event) => WaitingInLinePass.fromJSON(event.data)),
+						tap((wil) => {
+							if (!wil.isReadyToStart() && wil.missed_start_attempts > 0) {
+								// not ready to start and having missed attempts means the student did not start their pass in time
+								// and this pass is moved to the back of the line
+								this.closeDialog();
+								return;
+							}
+
+							if (wil.isReadyToStart() && wil.missed_start_attempts > this.wil.missed_start_attempts) {
+								// ready to start and more than one missed attempts mean that this is the only student waiting in line
+								// and the student did not start their pass in time
+								this.timeSpinner.reset();
+							}
 						})
 					)
 					.subscribe();

@@ -17,9 +17,10 @@ import { MainHallPassFormComponent } from '../create-hallpass-forms/main-hallpas
 import { Title } from '@angular/platform-browser';
 import { Location } from '../models/Location';
 import { FeatureFlagService, FLAGS } from '../services/feature-flag.service';
-import { sortWilByPosition } from '../services/wait-in-line.service';
+import { sortWil } from '../services/wait-in-line.service';
 import { WaitingInLinePass } from '../models/WaitInLine';
 import { InlineWaitInLineCardComponent } from '../pass-cards/inline-wait-in-line-card/inline-wait-in-line-card.component';
+import { PassLike } from '../models';
 
 declare const window;
 
@@ -56,6 +57,7 @@ export class KioskModeComponent implements OnInit, AfterViewInit, OnDestroy {
 
 	mainFormRef: MatDialogRef<MainHallPassFormComponent>;
 	frontOfWaitInLineDialogRef: MatDialogRef<InlineWaitInLineCardComponent>;
+	alreadyOpenedWil: Record<string, boolean> = {};
 
 	@ViewChild('input', { read: ElementRef, static: true }) input: ElementRef;
 
@@ -68,6 +70,14 @@ export class KioskModeComponent implements OnInit, AfterViewInit, OnDestroy {
 		takeUntil(this.destroy$),
 		map((count) => `Waiting in Line${'.'.repeat(count % 4)}`)
 	);
+
+	applyShakeToReadyWil = (pass: PassLike): string => {
+		if (!(pass instanceof WaitingInLinePass)) {
+			return '';
+		}
+
+		return pass.isReadyToStart() ? 'shake-ready-wil' : '';
+	};
 
 	constructor(
 		private dialog: MatDialog,
@@ -144,16 +154,21 @@ export class KioskModeComponent implements OnInit, AfterViewInit, OnDestroy {
 		this.waitInLinePasses = this.kioskMode.getCurrentRoom().pipe(
 			filter(Boolean),
 			switchMap((location: Location) => this.liveDataService.watchWaitingInLinePasses({ type: 'origin', value: location })),
-			map((passes) => passes.sort(sortWilByPosition)),
+			map((passes) => passes.sort(sortWil)),
 			tap((passes) => {
 				if (passes.length === 0) {
 					return;
 				}
-				if (passes[0].isReadyToStart() && this.frontOfWaitInLineDialogRef?.getState() !== MatDialogState.OPEN) {
+				if (
+					!(passes[0].id in this.alreadyOpenedWil) &&
+					passes[0].isReadyToStart() &&
+					this.frontOfWaitInLineDialogRef?.getState() !== MatDialogState.OPEN
+				) {
+					this.alreadyOpenedWil[passes[0].id] = true;
 					this.frontOfWaitInLineDialogRef = this.dialog.open(InlineWaitInLineCardComponent, {
 						panelClass: ['overlay-dialog', 'teacher-pass-card-dialog-container'],
 						backdropClass: 'custom-backdrop',
-						disableClose: true,
+						disableClose: false,
 						closeOnNavigation: true,
 						data: {
 							nextInLine: true,

@@ -53,7 +53,8 @@
 				[passProvider]="waitInLinePasses"
 				[title]="waitInLineTitle | async"
 				[columns]="2"
-				[showProfilePictures]="showProfilePicture"></app-pass-collection>
+				[showProfilePictures]="showProfilePicture"
+				[applyClassToTiles]="applyShakeToReadyWil"></app-pass-collection>
 		</div>
 	</div>
 	<div class="main-page-right" *ngIf="(activePassesKiosk | async)?.length > 0">

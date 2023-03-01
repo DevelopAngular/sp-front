@@ -49,7 +49,7 @@ import { Title } from '@angular/platform-browser';
 import { FeatureFlagService, FLAGS } from '../services/feature-flag.service';
 import { WaitingInLinePass } from '../models/WaitInLine';
 import { Invitation } from '../models/Invitation';
-import { sortWilByPosition } from '../services/wait-in-line.service';
+import { sortWil } from '../services/wait-in-line.service';
 import { InlineWaitInLineCardComponent } from '../pass-cards/inline-wait-in-line-card/inline-wait-in-line-card.component';
 import { Util } from '../../Util';
 import { RepresentedUser } from '../navbar/navbar.component';
@@ -265,7 +265,7 @@ export class PassesComponent implements OnInit, OnDestroy {
 
 						this.waitInLinePasses = waitInLineWatcher.pipe(
 							map((passes) => {
-								return passes.sort(sortWilByPosition);
+								return passes.sort(sortWil);
 							})
 						);
 					} else {
