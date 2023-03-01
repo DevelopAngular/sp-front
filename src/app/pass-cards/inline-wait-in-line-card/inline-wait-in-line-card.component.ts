@@ -130,7 +130,7 @@ export class InlineWaitInLineCardComponent implements OnInit, OnChanges, OnDestr
 	}
 
 	get openedFromPassTile(): boolean {
-		return this.forStaff || (this.isKiosk && !this.wil.isReadyToStart());
+		return this.forStaff || this.isKiosk;
 	}
 
 	get optionsIcon() {
