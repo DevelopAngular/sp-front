@@ -33,6 +33,12 @@
 	}
 }
 
+@media all and (max-width: 1024px) {
+  .collection-wrapper.wait-in-line-wrapper {
+    background: transparent !important;
+  }
+}
+
 :host {
 }
 
