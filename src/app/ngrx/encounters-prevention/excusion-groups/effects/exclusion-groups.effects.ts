@@ -15,7 +15,8 @@ export class ExclusionGroupsEffects {
 			mergeMap((action) => {
 				return this.encounterPreventionService.getExclusionGroups(action.queryParams).pipe(
 					map((groups: ExclusionGroup[]) => {
-						return exclusionGroupsActions.getExclusionGroupsSuccess({ groups });
+						const filtered = groups.filter((g) => g.prevented_encounters.length > 0);
+						return exclusionGroupsActions.getExclusionGroupsSuccess({ groups: filtered });
 					}),
 					catchError((error) => {
 						toast.openToastAction({
@@ -27,20 +28,6 @@ export class ExclusionGroupsEffects {
 						});
 						return of(exclusionGroupsActions.getExclusionGroupsFailure({ errorMessage: error.message }));
 					})
-				);
-			})
-		);
-	});
-
-	getExclusionGroupsRorStudent$ = createEffect(() => {
-		return this.actions$.pipe(
-			ofType(exclusionGroupsActions.getExclusionGroupsForStudent),
-			mergeMap((action: any) => {
-				return this.encounterPreventionService.getExclusionGroups({ student: action.id }).pipe(
-					map((groups: ExclusionGroup[]) => {
-						return exclusionGroupsActions.getExclusionGroupsForStudentSuccess({ groups, studentId: action.id });
-					}),
-					catchError((error) => of(exclusionGroupsActions.getExclusionGroupsFailure({ errorMessage: error.message })))
 				);
 			})
 		);

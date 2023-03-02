@@ -7,12 +7,10 @@ import { AppState } from '../ngrx/app-state/app-state';
 import {
 	createExclusionGroup,
 	getExclusionGroups,
-	getExclusionGroupsForStudent,
 	removeExclusionGroup,
 	updateExclusionGroup,
 } from '../ngrx/encounters-prevention/excusion-groups/actions';
 import {
-	exclusionGroupsForStudent,
 	getCurrentExclusionGroup,
 	getEncounterPreventionLength,
 	getExclusionGroupsCollection,
@@ -22,6 +20,10 @@ import {
 } from '../ngrx/encounters-prevention/excusion-groups/states/exclusion-groups-getters.state';
 import { constructUrl } from '../live-data/helpers';
 import { ToastService } from './toast.service';
+
+export type ExclusionGroupQueryParams = Partial<{
+	student: string | string[];
+}>;
 
 @Injectable({
 	providedIn: 'root',
@@ -34,20 +36,13 @@ export class EncounterPreventionService {
 	exclusionGroupsLength$: Observable<number> = this.store.select(getExclusionGroupsLength);
 	encounterPreventionLength$: Observable<number> = this.store.select(getEncounterPreventionLength);
 
-	exclusionGroupsForStudents$: Observable<{ [studentId: string]: ExclusionGroup[] }> = this.store.select(exclusionGroupsForStudent);
-
 	constructor(private http: HttpService, private store: Store<AppState>, private toastService: ToastService) {}
 
-	getExclusionGroupsRequest(queryParams?) {
+	getExclusionGroupsRequest(queryParams?: ExclusionGroupQueryParams) {
 		this.store.dispatch(getExclusionGroups({ queryParams }));
 	}
 
-	getExclusionGroupsForStudentRequest(id) {
-		this.store.dispatch(getExclusionGroupsForStudent({ id }));
-		return this.exclusionGroupsForStudents$;
-	}
-
-	getExclusionGroups(queryParams): Observable<ExclusionGroup[]> {
+	getExclusionGroups(queryParams: ExclusionGroupQueryParams): Observable<ExclusionGroup[]> {
 		return this.http.get(constructUrl('v1/exclusion_groups', queryParams));
 	}
 
