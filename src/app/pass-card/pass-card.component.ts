@@ -20,7 +20,7 @@ import { DomCheckerService } from '../services/dom-checker.service';
 import { UserService } from '../services/user.service';
 import { ToastService } from '../services/toast.service';
 import { EncounterPreventionService } from '../services/encounter-prevention.service';
-import { isEmpty, remove } from 'lodash';
+import { remove } from 'lodash';
 import { HttpErrorResponse } from '@angular/common/http';
 import {
 	ConfirmationDialogComponent,
@@ -485,12 +485,12 @@ export class PassCardComponent implements OnInit, OnDestroy {
 						} else {
 							return zip(
 								...conflict_student_ids.map((id) => {
-									return this.encounterService.getExclusionGroupsForStudentRequest(id).pipe(
-										filter((r) => !isEmpty(r) && !!r[+id]),
+									return this.encounterService.getExclusionGroups({ student: id }).pipe(
+										filter((groups) => groups.length > 0),
 										take(1),
 										tap((groups) => {
-											const exclusionGroups = groups[+id];
-											if (exclusionGroups[0].enabled) {
+											const enabledGroups = groups.filter((g) => g.enabled);
+											if (enabledGroups.length > 0) {
 												this.hallPassService.showEncounterPreventionToast({
 													exclusionPass: {
 														...this.pass,
@@ -498,7 +498,7 @@ export class PassCardComponent implements OnInit, OnDestroy {
 														student: this.selectedStudents.find((user) => +user.id === +id),
 													} as HallPass,
 													isStaff: this.forStaff,
-													exclusionGroups,
+													exclusionGroups: enabledGroups,
 												});
 											}
 										})
