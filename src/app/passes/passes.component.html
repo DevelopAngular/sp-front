@@ -106,17 +106,17 @@
 		<!--          <div class="big-text ds-empty-text-title" [style.margin]="'10px 0'">Jump Right In</div>-->
 		<!--          <div class="text ds-empty-text-info">The hallway will never be the same</div>-->
 		<!--        </div>-->
-    <div class="waitinline-passes pass-collection">
-      <app-pass-collection
-        *ngIf="isWaitInLine && isStaff"
-        [waitInLine]="true"
-        [forStaff]="isStaff"
-        [style.width]="'460px'"
-        [passProvider]="waitInLinePasses"
-        [title]="waitInLineTitle | async"
-        [columns]="3"
-        [showProfilePictures]="showProfilePictures$ | async"></app-pass-collection>
-    </div>
+		<div class="waitinline-passes pass-collection">
+			<app-pass-collection
+				*ngIf="isWaitInLine && isStaff"
+				[waitInLine]="true"
+				[forStaff]="isStaff"
+				[style.width]="'460px'"
+				[passProvider]="waitInLinePasses"
+				[title]="waitInLineTitle | async"
+				[columns]="3"
+				[showProfilePictures]="showProfilePictures$ | async"></app-pass-collection>
+		</div>
 		<div class="active-passes pass-collection">
 			<app-pass-collection
 				*ngIf="isStaff"
