@@ -20,9 +20,7 @@
 		<app-pass-limit-tooltip
 			[isHand]="pinnable.location && pinnable.location.enable"
 			*ngIf="showTooltipWithDelay"
-			[description]="
-				!isSameRoom || passLimit?.max_passes_to_active ? tooltipDescription : 'You selected ' + pinnable.title + ' as the origin (where you are now)!'
-			"></app-pass-limit-tooltip>
+			[description]="tooltipDescription"></app-pass-limit-tooltip>
 	</ng-template>
 
 	<div *ngIf="selected" class="selected-overlay"></div>

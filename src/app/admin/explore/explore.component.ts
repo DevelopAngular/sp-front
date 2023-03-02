@@ -2,7 +2,7 @@ import { ChangeDetectionStrategy, ChangeDetectorRef, Component, ElementRef, OnDe
 import { HttpErrorResponse } from '@angular/common/http';
 import { BehaviorSubject, combineLatest, iif, Observable, of, Subject, Subscription } from 'rxjs';
 import { MatDialog } from '@angular/material/dialog';
-import { filter, map, switchMap, take, takeUntil, tap, withLatestFrom, retryWhen, delay, concatMap, catchError } from 'rxjs/operators';
+import { catchError, concatMap, delay, filter, map, retryWhen, switchMap, take, takeUntil, tap, withLatestFrom } from 'rxjs/operators';
 import { StudentFilterComponent } from './student-filter/student-filter.component';
 import { StatusFilterComponent } from './status-filter/status-filter.component';
 import { User } from '../../models/User';

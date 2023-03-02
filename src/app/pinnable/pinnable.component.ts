@@ -132,6 +132,11 @@ export class PinnableComponent implements OnInit, OnChanges {
 		if (this.pinnable.location && !this.pinnable.location.enable && this.currentPage === 'to') {
 			return 'This room has been closed by an admin.';
 		}
+
+		if (this.isSameRoom) {
+			return `You selected ${this.pinnable.title} as the origin (where you are now)!`;
+		}
+
 		if (this.passLimit?.max_passes_to_active) {
 			return this.passLimit && this.locationsService.tooltipDescription('to', this.passLimit);
 		}
