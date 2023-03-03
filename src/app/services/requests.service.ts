@@ -19,6 +19,7 @@ import { Location } from '../models/Location';
 import { User } from '../models/User';
 import { HttpErrorResponse } from '@angular/common/http';
 import { HallPassErrors } from './hall-passes.service';
+import { FeatureFlagService, FLAGS } from './feature-flag.service';
 
 export interface AcceptRequestBody {
 	duration?: string;
@@ -64,6 +65,7 @@ export class RequestsService {
 		private http: HttpService,
 		private locationsService: LocationsService,
 		private passLimitService: PassLimitService,
+		private features: FeatureFlagService,
 		private dialog: MatDialog
 	) {}
 
@@ -120,6 +122,9 @@ export class RequestsService {
 	}
 
 	private overrideRoomLimit(body: AcceptRequestBody, request: Request): Observable<AcceptRequestBody> {
+		if (this.features.isFeatureEnabled(FLAGS.WaitInLine)) {
+			return of(body);
+		}
 		return this.locationsService.getPassLimit().pipe(
 			map((pl) => pl.pass_limits),
 			filter((pl) => pl.length > 0),

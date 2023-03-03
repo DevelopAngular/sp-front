@@ -17,8 +17,6 @@ import { RequestsService } from '../services/requests.service';
 import { catchError, concatMap, mapTo, switchMap, takeUntil } from 'rxjs/operators';
 import { StorageService } from '../services/storage.service';
 import { Request } from '../models/Request';
-import { PassLimitService } from '../services/pass-limit.service';
-import { FeatureFlagService, FLAGS } from '../services/feature-flag.service';
 import { HallPassErrors, HallPassesService } from '../services/hall-passes.service';
 
 /*
@@ -54,8 +52,6 @@ export class TeacherPinStudentComponent implements OnInit, OnDestroy {
 		private requestService: RequestsService,
 		private cdr: ChangeDetectorRef,
 		private storage: StorageService,
-		private passLimitsService: PassLimitService,
-		private featureService: FeatureFlagService,
 		private hallpassService: HallPassesService
 	) {}
 
@@ -92,13 +88,8 @@ export class TeacherPinStudentComponent implements OnInit, OnDestroy {
 							// if WIL isn't enabled, then we should show the override dialog asking the user to confirm overriding the room limit
 							// if WIL is enabled, then we should accept the request and let the backend handle the rest
 
-							const acceptRequest$ = this.featureService.isFeatureEnabled(FLAGS.WaitInLine)
-								? this.requestService.acceptRequest(this.request, { teacher_pin: this.pin })
-								: this.requestService
-										.checkLimits({ teacher_pin: this.pin }, this.request, this.confirmDialogBody)
-										.pipe(concatMap((httpBody) => this.requestService.acceptRequest(this.request, httpBody)));
-
-							return acceptRequest$.pipe(
+							return this.requestService.checkLimits({ teacher_pin: this.pin }, this.request, this.confirmDialogBody).pipe(
+								concatMap((httpBody) => this.requestService.acceptRequest(this.request, httpBody)),
 								catchError((err) => {
 									if (err === HallPassErrors.Encounter) {
 										this.hallpassService.showEncounterPreventionToast({
