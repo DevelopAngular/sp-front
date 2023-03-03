@@ -44,6 +44,8 @@ import { PassLimitBulkEditComponent } from '../../../pass-limit-bulk-edit/pass-l
 import { RecommendedDialogConfig } from '../../../shared/shared-components/confirmation-dialog/confirmation-dialog.component';
 import { PassLimitService } from '../../../services/pass-limit.service';
 import { InviteFamiliesDialogComponent } from '../../invite-families-dialog/invite-families-dialog.component';
+import { Actions, ofType } from '@ngrx/effects';
+import { addUserToProfilesSuccess } from '../../../ngrx/accounts/actions/accounts.actions';
 
 @Component({
 	selector: 'app-accounts-header',
@@ -131,7 +133,8 @@ export class AccountsHeaderComponent implements OnInit, AfterViewInit, OnDestroy
 		private tableService: TableService,
 		private toast: ToastService,
 		private cdr: ChangeDetectorRef,
-		private passLimitsService: PassLimitService
+		private passLimitsService: PassLimitService,
+		private actions$: Actions
 	) {}
 
 	get showIntegrations$() {
@@ -189,6 +192,10 @@ export class AccountsHeaderComponent implements OnInit, AfterViewInit, OnDestroy
 				this.showNuxTooltip.next(!this.introsData.encounter_reminder.universal.seen_version && showNux);
 				this.showPassLimitNux.next(!intros?.student_pass_limit?.universal?.seen_version);
 			});
+
+		this.actions$.pipe(ofType(addUserToProfilesSuccess)).subscribe({
+			next: () => this.adminService.getCountAccountsRequest(),
+		});
 	}
 
 	ngAfterViewInit(): void {

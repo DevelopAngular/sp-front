@@ -685,42 +685,6 @@ export class RequestCardComponent implements OnInit, OnDestroy {
 				console.error(err);
 			},
 		});
-
-		// this.requestService
-		// 	.checkLimits({}, this.request, this.overriderBody)
-		// 	.pipe(
-		// 		concatMap((httpBody) => {
-		// 			return this.requestService.acceptRequest(this.request, httpBody);
-		// 		}),
-		//
-		// 	)
-		// 	.subscribe({
-		// 		next: () => this.dialogRef.close(),
-		// 		error: (err: Error) => {
-		// 			if ((err as HttpErrorResponse).error.conflict_student_ids) {
-		// 				this.hallpassService.showEncounterPreventionToast({
-		// 					exclusionPass: this.request,
-		// 					isStaff: this.forStaff,
-		// 				});
-		// 				return;
-		// 			}
-		// 			this.openErrorToast(err);
-		// 			console.error(err);
-		// 		},
-		// 	});
-	}
-
-	cancelClick() {
-		this.cancelEditClick = false;
-	}
-
-	backdropClick() {
-		this.cancelEditClick = false;
-	}
-
-	receiveOption(action) {
-		this.chooseAction(action);
-		this.dialogRef.close();
 	}
 
 	onHover(evt: HTMLElement, container: HTMLElement) {

@@ -83,6 +83,7 @@ export class PassCollectionComponent implements OnInit, AfterViewInit, OnDestroy
 	@Input() selectedSort = null;
 	@Input() searchPanel: boolean;
 	@Input() showProfilePictures = true;
+	@Input() applyClassToTiles: (pass: PassLike) => string = () => '';
 
 	@Output() sortMode = new EventEmitter<string>();
 	@Output() reportFromPassCard = new EventEmitter();

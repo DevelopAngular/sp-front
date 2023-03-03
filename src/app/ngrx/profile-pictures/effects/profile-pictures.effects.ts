@@ -138,14 +138,19 @@ export class ProfilePicturesEffects {
 							if (user.primary_email.includes('@spnx.local')) {
 								user.primary_email = primary_email.replace('@spnx.local', '');
 							}
+
+							let result = { ...acc, [primary_email]: user };
+
+							// This is the clever user identifier
 							if (user.extras.clever) {
-								return { ...acc, [user.extras.clever]: user, [primary_email]: user };
+								result[user.extras.clever] = user;
 							}
-							// TODO: is clever_student_number used anymore?
-							if (user.extras.clever_student_number) {
-								return { ...acc, [user.extras.clever_student_number]: user, [primary_email]: user };
+
+							if (user.custom_id) {
+								result[user.custom_id] = user;
 							}
-							return { ...acc, [primary_email]: user };
+
+							return result;
 						}, {});
 					}),
 					map((students) => {
@@ -167,20 +172,21 @@ export class ProfilePicturesEffects {
 						if (found.length) {
 							return found;
 						}
-						throw new Error('Found no any acceptable record');
+						throw new Error('No users matched the provided emails, clever user identifiers, or custom ids');
 					}),
 					switchMap((students) => {
 						const picturesData: { userId: string | number; pictureId: number | string }[] = students
 							.filter((s) => !!s)
 							.map((s: User) => {
 								const email = s.primary_email.toLowerCase();
-								let clever: string, clever_student_number: string;
+								const custom_id = s.custom_id;
 
+								let clever: string;
 								if (!!s.extras) {
-									[clever, clever_student_number] = [s.extras.clever, s.extras.clever_student_number];
+									clever = s.extras.clever;
 								}
 
-								const pictureId = images_data_lowercased[email] ?? images_data_lowercased[clever] ?? images_data_lowercased[clever_student_number];
+								const pictureId = images_data_lowercased[email] ?? images_data_lowercased[clever] ?? images_data_lowercased[custom_id];
 								return { userId: s.id, pictureId };
 							});
 						return [

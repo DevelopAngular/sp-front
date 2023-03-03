@@ -59,8 +59,10 @@
 				<div class="step-container">
 					<div class="step-number" [ngClass]="{ selected: uploadingProgress.csv.complete }">1</div>
 					<div class="step">
-						<div class="ds-dialog-heading">Add map file</div>
-						<div class="description">Upload an Excel file (.xlsx) containing the email or Clever ID, and the corresponding image filename.</div>
+						<div class="ds-dialog-heading">Upload mapping file</div>
+						<div class="description">
+							Specify which image file should be used for each user. Please download the mapping template, fill it in, and upload it here.
+						</div>
 					</div>
 				</div>
 				<div class="buttons">
@@ -99,9 +101,9 @@
 				<div class="step-container">
 					<div class="step-number" [ngClass]="{ selected: uploadingProgress.images.complete }">2</div>
 					<div class="step">
-						<div class="ds-dialog-heading">Add profile picture files</div>
+						<div class="ds-dialog-heading">Select profile picture images</div>
 						<div class="description">
-							Supported image types: JPEG, PNG <br />
+							Supported image types: JPEG, JPG, PNG <br />
 							You can also upload a zip file that contains the images.
 						</div>
 					</div>

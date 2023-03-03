@@ -65,7 +65,7 @@
 				[ngClass]="{ 'wait-in-line-grid': waitInLine && isKioskMode }"
 				[style.gridTemplateColumns]="gridTemplate"
 				[style.gridGap]="gridGap">
-				<div class="tile" *ngFor="let pass of currentPasses">
+				<div class="tile" *ngFor="let pass of currentPasses" [ngClass]="applyClassToTiles(pass)">
 					<app-pass-tile
 						(tileSelected)="showPass($event)"
 						[timerEvent]="timerEvent"

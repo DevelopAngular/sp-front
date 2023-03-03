@@ -6,7 +6,17 @@ import { concatMap, filter } from 'rxjs/operators';
 import { HallPassErrors, StartWaitingInLinePassResponse } from './hall-passes.service';
 import { LiveDataService } from '../live-data/live-data.service';
 
-export const sortWilByPosition = (pass1: WaitingInLinePass, pass2: WaitingInLinePass): number => pass1.line_position - pass2.line_position;
+export const sortWil = (pass1: WaitingInLinePass, pass2: WaitingInLinePass): number => {
+	const date = new Date();
+	const timeDifference = (pass1?.start_attempt_end_time || date).getTime() - (pass2?.start_attempt_end_time || date).getTime();
+	if (timeDifference !== 0) {
+		// first sorts by start_attempt_end_time
+		return timeDifference;
+	}
+
+	// if the times are equal or both times are null, sort by line position
+	return pass1.line_position - pass2.line_position;
+};
 
 /**
  * This service contains all business logic responsible for interacting with the WaitingInLine API and
