@@ -680,4 +680,11 @@ export class AppComponent implements OnInit, AfterViewInit, OnDestroy {
 				console.log('status : ', status);
 			});
 	}
+
+	openLiveChat(event) {
+		window.Intercom('show');
+		// window.Intercom('onShow', function() { 
+			
+		// });
+	}
 }
