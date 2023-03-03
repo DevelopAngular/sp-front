@@ -36,7 +36,6 @@ import { LocationVisibilityService } from '../location-visibility.service';
 import { PassLimitDialogComponent } from './pass-limit-dialog/pass-limit-dialog.component';
 import { KioskModeService } from '../../../services/kiosk-mode.service';
 import { HttpService } from '../../../services/http-service';
-import { FeatureFlagService, FLAGS } from '../../../services/feature-flag.service';
 
 // when WS notify a change we have to skip functions that change
 // FORM_STATE state and step
@@ -117,8 +116,7 @@ export class LocationsGroupContainerComponent implements OnInit, OnDestroy {
 		private cdr: ChangeDetectorRef,
 		private dialog: MatDialog,
 		private kioskService: KioskModeService,
-		private httpService: HttpService,
-		private featureService: FeatureFlagService
+		private httpService: HttpService
 	) {}
 
 	private destroy$ = new Subject();
@@ -158,10 +156,10 @@ export class LocationsGroupContainerComponent implements OnInit, OnDestroy {
 	shouldSkipTeacherSelect() {
 		const to = this.FORM_STATE.data.direction.to;
 		return (
-			(!this.FORM_STATE.forLater && to.request_mode === 'specific_teachers' && to.request_teachers.length === 1) ||
+			(!this.FORM_STATE.forLater && to.request_mode === 'specific_teachers') ||
 			(!this.FORM_STATE.forLater && to.request_mode === 'all_teachers_in_room') ||
 			(!this.FORM_STATE.forLater && this.teachersLength === 1) ||
-			(this.FORM_STATE.forLater && to.scheduling_request_mode === 'specific_teachers' && to.scheduling_request_teachers.length === 1) ||
+			(this.FORM_STATE.forLater && to.scheduling_request_mode === 'specific_teachers') ||
 			(this.FORM_STATE.forLater && to.scheduling_request_mode === 'all_teachers_in_room') ||
 			(this.FORM_STATE.forLater && this.teachersLength === 1)
 		);
@@ -508,7 +506,6 @@ export class LocationsGroupContainerComponent implements OnInit, OnDestroy {
 			this.isStaff = false;
 		}
 
-		const wilEnabled = this.featureService.isFeatureEnabled(FLAGS.WaitInLine);
 		const dest = this.FORM_STATE.data.direction.to;
 		const { pass_limits } = await this.locationsService.getPassLimit().toPromise();
 		const destPassLimit = pass_limits.find((p) => p.id == dest.id);
