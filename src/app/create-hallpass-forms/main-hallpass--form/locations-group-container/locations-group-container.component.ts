@@ -360,7 +360,7 @@ export class LocationsGroupContainerComponent implements OnInit, OnDestroy {
 			this.FORM_STATE.data.direction.to = pinnable.location;
 
 			const restricted = (this.pinnable.location.restricted && !this.showDate) || (this.pinnable.location.scheduling_restricted && !!this.showDate);
-			if (!this.isStaff && restricted && pinnable.location) {
+			if ((this.user.isStudent() || this.isKioskMode) && restricted && pinnable.location) {
 				this.FORM_STATE.previousState = this.FORM_STATE.state;
 				this.FORM_STATE.state = this.maybeSkipTeacherSelect();
 				return;
