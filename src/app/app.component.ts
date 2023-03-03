@@ -3,7 +3,7 @@ import { AfterViewInit, Component, ElementRef, HostListener, NgZone, OnDestroy, 
 import { MatDialog } from '@angular/material/dialog';
 import { ActivatedRoute, NavigationEnd, Router } from '@angular/router';
 import { filter as _filter } from 'lodash';
-import { BehaviorSubject, fromEvent, interval, merge, Observable, ReplaySubject, Subject, Subscription, zip } from 'rxjs';
+import { BehaviorSubject, fromEvent, interval, merge, Observable, ReplaySubject, Subject, zip } from 'rxjs';
 
 import { concatMap, filter, finalize, map, mergeMap, switchMap, take, takeUntil, tap, withLatestFrom } from 'rxjs/operators';
 import { BUILD_INFO_REAL } from '../build-info';
@@ -465,6 +465,7 @@ export class AppComponent implements OnInit, AfterViewInit, OnDestroy {
 					'Trial End Date': !!trialEndDate ? trialEndDate.toDateString() : 'N/A',
 				},
 				hide_default_launcher: false,
+				custom_launcher_selector: '.live-chat',
 			};
 			window.Intercom('update');
 		}, 3000);
@@ -663,6 +664,7 @@ export class AppComponent implements OnInit, AfterViewInit, OnDestroy {
 
 	closeHelpCenter() {
 		this.helpCenter.isHelpCenterOpen.next(false);
+		window.Intercom('update', { hide_default_launcher: true });
 	}
 
 	openCallDialog(elem) {
@@ -681,10 +683,7 @@ export class AppComponent implements OnInit, AfterViewInit, OnDestroy {
 			});
 	}
 
-	openLiveChat(event) {
-		window.Intercom('show');
-		// window.Intercom('onShow', function() { 
-			
-		// });
+	openLiveChat() {
+		window.Intercom('update', { hide_default_launcher: false });
 	}
 }
