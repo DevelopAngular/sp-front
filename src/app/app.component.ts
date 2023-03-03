@@ -684,6 +684,6 @@ export class AppComponent implements OnInit, AfterViewInit, OnDestroy {
 	}
 
 	openLiveChat() {
-		window.Intercom('update', { hide_default_launcher: false });
+		window.Intercom('update', { hide_default_launcher: true });
 	}
 }
