@@ -26,6 +26,7 @@ export class SignOutComponent implements AfterContentInit {
 		this.http.setSchool(null);
 		this.userService.clearUser();
 		_refiner('resetUser');
+		window.posthog.reset();
 	}
 
 	ngAfterContentInit() {
