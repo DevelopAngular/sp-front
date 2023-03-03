@@ -670,17 +670,17 @@ export class AppComponent implements OnInit, AfterViewInit, OnDestroy {
 	openCallDialog(elem) {
 		const CDC = this.dialog.open(CallDialogComponent, {
 			panelClass: 'consent-dialog-container-helpcenter',
-			backdropClass: 'invis-backdrop',
+			backdropClass: 'invis-backdrop-helpcenter',
 			data: {
 				trigger: elem.currentTarget,
 			},
 		});
+		window.document.querySelector('.invis-backdrop-helpcenter').parentNode.style.zIndex = '1009';
 
-		CDC.afterClosed()
-			.pipe(filter((res) => !!res))
-			.subscribe((status) => {
-				console.log('status : ', status);
-			});
+		CDC.afterClosed().subscribe((status) => {
+			console.log('status : ', status);
+			window.document.querySelector('.cdk-overlay-container').style.zIndex = '1005';
+		});
 	}
 
 	openLiveChat() {
