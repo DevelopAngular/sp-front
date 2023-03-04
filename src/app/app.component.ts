@@ -1,6 +1,6 @@
 import { HttpClient } from '@angular/common/http';
 import { AfterViewInit, Component, ElementRef, HostListener, NgZone, OnDestroy, OnInit, ViewChild } from '@angular/core';
-import { MatDialog } from '@angular/material/dialog';
+import { MatDialog, MatDialogRef } from '@angular/material/dialog';
 import { ActivatedRoute, NavigationEnd, Router } from '@angular/router';
 import { filter as _filter } from 'lodash';
 import { BehaviorSubject, fromEvent, interval, merge, Observable, ReplaySubject, Subject, zip } from 'rxjs';
@@ -667,12 +667,13 @@ export class AppComponent implements OnInit, AfterViewInit, OnDestroy {
 		window.Intercom('update', { hide_default_launcher: true });
 	}
 
-	openCallDialog(elem) {
-		const CDC = this.dialog.open(CallDialogComponent, {
+	openCallDialog(event) {
+		const target = new ElementRef(event.currentTarget);
+		const CDC: MatDialogRef<CallDialogComponent> = this.dialog.open(CallDialogComponent, {
 			panelClass: 'consent-dialog-container-helpcenter',
 			backdropClass: 'invis-backdrop-helpcenter',
 			data: {
-				trigger: elem.currentTarget,
+				trigger: target,
 			},
 		});
 		window.document.querySelector('.invis-backdrop-helpcenter').parentNode.style.zIndex = '1009';

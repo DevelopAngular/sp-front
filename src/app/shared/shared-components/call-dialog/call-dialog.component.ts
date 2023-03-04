@@ -1,4 +1,4 @@
-import { Component, Inject, OnInit } from '@angular/core';
+import { Component, ElementRef, Inject, OnInit } from '@angular/core';
 import { MatDialogConfig, MatDialogRef, MAT_DIALOG_DATA } from '@angular/material/dialog';
 import { FeatureFlagService, FLAGS } from '../../../services/feature-flag.service';
 
@@ -8,7 +8,7 @@ import { FeatureFlagService, FLAGS } from '../../../services/feature-flag.servic
 	styleUrls: ['./call-dialog.component.scss'],
 })
 export class CallDialogComponent implements OnInit {
-	triggerElementRef: HTMLElement;
+	triggerElementRef: ElementRef;
 	public isProUser: boolean;
 
 	constructor(
@@ -25,9 +25,9 @@ export class CallDialogComponent implements OnInit {
 
 	updatePosition() {
 		const matDialogConfig: MatDialogConfig = new MatDialogConfig();
-		const rect = this.triggerElementRef.getBoundingClientRect();
+		const rect = this.triggerElementRef.nativeElement.getBoundingClientRect();
 
-		matDialogConfig.position = { right: `${rect.width - 14}px`, bottom: `${rect.height + 30}px` };
+		matDialogConfig.position = { left: `${rect.left - 20}px`, bottom: `${rect.height + 30}px` };
 
 		this.dialogRef.updatePosition(matDialogConfig.position);
 	}
