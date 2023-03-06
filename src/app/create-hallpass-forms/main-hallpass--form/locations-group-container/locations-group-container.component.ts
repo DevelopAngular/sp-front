@@ -446,6 +446,7 @@ export class LocationsGroupContainerComponent implements OnInit, OnDestroy {
 		if (numberOfStudentsInRoom !== undefined) {
 			const totalStudents =
 				this.user.isStudent() || this.isKioskMode ? numberOfStudentsInRoom : numberOfStudentsInRoom + this.FORM_STATE.data.selectedStudents.length;
+
 			let reached = location?.max_passes_to_active;
 			if (this.user.isStudent() || this.kioskService.isKisokMode()) {
 				reached = reached && totalStudents >= location.max_passes_to;
@@ -453,7 +454,7 @@ export class LocationsGroupContainerComponent implements OnInit, OnDestroy {
 				reached = reached && totalStudents > location.max_passes_to;
 			}
 
-			if (reached) {
+			if (reached && !this.waitInLineEnabled) {
 				const overrideRoomLimit = await this.showDestinationLimitReachedFromCategory(
 					location.max_passes_to,
 					this.FORM_STATE.data.selectedStudents.length,
