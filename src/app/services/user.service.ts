@@ -1,7 +1,7 @@
 import { ErrorHandler, Injectable, OnDestroy } from '@angular/core';
 import { BehaviorSubject, combineLatest, interval, merge, Observable, of, race, ReplaySubject, Subject } from 'rxjs';
 import { SentryErrorHandler } from '../error-handler';
-import { HttpService } from './http-service';
+import { HttpService, ServerAuth } from './http-service';
 import { constructUrl } from '../live-data/helpers';
 import { Logger } from './logger.service';
 import { User } from '../models/User';
@@ -153,6 +153,7 @@ import {
 	getParentsAccountsEntities,
 	getParentSort,
 } from '../ngrx/accounts/nested-states/parents/states';
+import { LoginDataQueryParams } from '../models/LoginDataQueryParams';
 
 @Injectable({
 	providedIn: 'root',
@@ -400,14 +401,11 @@ export class UserService implements OnDestroy {
 				exhaustMap(() => {
 					return combineLatest(
 						this.user$.pipe(
-							filter((res) => !!res),
+							filter(Boolean),
 							take(1),
 							map((raw) => User.fromJSON(raw))
 						),
-						this.loginDataService.loginDataQueryParams.pipe(
-							filter((r) => !!r),
-							take(1)
-						)
+						this.loginDataService.loginDataQueryParams.pipe(filter<LoginDataQueryParams>(Boolean), take(1))
 					);
 				}),
 				map(([user, queryParams]) => {
@@ -434,7 +432,7 @@ export class UserService implements OnDestroy {
 				}),
 				switchMap((user: User) => {
 					this.blockUserPage$.next(false);
-					if (user.isAssistant()) {
+					if (user.isAssistant() && !window.location.href.includes('/kioskMode')) {
 						return combineLatest(this.representedUsers.pipe(filter((res) => !!res)), this.http.schoolsCollection$).pipe(
 							tap(([users, schools]) => {
 								if (!users.length && schools.length === 1) {
@@ -654,7 +652,7 @@ export class UserService implements OnDestroy {
 		return this.http.patch(`v1/intros/wait_in_line`, { device, version });
 	}
 
-	saveKioskModeLocation(locId) {
+	saveKioskModeLocation(locId): Observable<ServerAuth> {
 		return this.http.post('auth/kiosk', { location: locId });
 	}
 
