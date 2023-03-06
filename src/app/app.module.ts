@@ -98,17 +98,17 @@ const appRoutes: Routes = [
 	},
 	{
 		path: '',
-		loadChildren: () => import('app/login/login.module').then((m) => m.LoginModule),
+		loadChildren: () => import('app/auth/login.module').then((m) => m.LoginModule),
 		data: { hideSchoolToggleBar: true },
 	},
 	{
 		path: 'google_oauth',
-		loadChildren: () => import('app/login/login.module').then((m) => m.LoginModule),
+		loadChildren: () => import('app/auth/login.module').then((m) => m.LoginModule),
 		data: { hideSchoolToggleBar: true },
 	},
 	{
 		path: 'classlink_oauth',
-		loadChildren: () => import('app/login/login.module').then((m) => m.LoginModule),
+		loadChildren: () => import('app/auth/login.module').then((m) => m.LoginModule),
 		data: { hideSchoolToggleBar: true },
 	},
 	{

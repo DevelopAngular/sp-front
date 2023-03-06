@@ -1,4 +1,4 @@
-import { Component, ElementRef, EventEmitter, OnDestroy, AfterViewInit, OnInit, Output, ViewChild } from '@angular/core';
+import { Component, ElementRef, EventEmitter, OnDestroy, OnInit, Output, ViewChild } from '@angular/core';
 import { ActivatedRoute, Router } from '@angular/router';
 import { DeviceDetection } from '../device-detection.helper';
 import { GoogleLoginService } from '../services/google-login.service';
@@ -19,11 +19,11 @@ import { LoginDataService } from '../services/login-data.service';
 declare const window;
 
 @Component({
-	selector: 'app-login',
-	templateUrl: './login.component.html',
-	styleUrls: ['./login.component.scss'],
+	selector: 'app-login-page',
+	templateUrl: './login-page.component.html',
+	styleUrls: ['./login-page.component.scss'],
 })
-export class LoginComponent implements OnInit, OnDestroy {
+export class LoginPageComponent implements OnInit, OnDestroy {
 	@ViewChild('place') place: ElementRef;
 
 	@Output() errorEvent: EventEmitter<any> = new EventEmitter();

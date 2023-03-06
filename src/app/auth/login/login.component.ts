@@ -1,20 +1,20 @@
 import { ChangeDetectionStrategy, ChangeDetectorRef, Component, EventEmitter, NgZone, OnDestroy, OnInit, Output } from '@angular/core';
-import { GoogleLoginService } from '../services/google-login.service';
+import { GoogleLoginService } from '../../services/google-login.service';
 import { BehaviorSubject, Observable, of, Subject } from 'rxjs';
 import { filter, finalize, pluck, takeUntil, tap } from 'rxjs/operators';
-import { HttpService } from '../services/http-service';
+import { HttpService } from '../../services/http-service';
 import { DomSanitizer, Meta, Title } from '@angular/platform-browser';
-import { environment } from '../../environments/environment';
+import { environment } from '../../../environments/environment';
 import { ActivatedRoute, Router } from '@angular/router';
 import { MatDialog } from '@angular/material/dialog';
 import { HttpClient } from '@angular/common/http';
 import { FormControl, FormGroup } from '@angular/forms';
-import { KeyboardShortcutsService } from '../services/keyboard-shortcuts.service';
-import { StorageService } from '../services/storage.service';
-import { DeviceDetection } from '../device-detection.helper';
-import { ToastService } from '../services/toast.service';
-import { LoginDataService } from '../services/login-data.service';
-import { QueryParams } from '../live-data/helpers';
+import { KeyboardShortcutsService } from '../../services/keyboard-shortcuts.service';
+import { StorageService } from '../../services/storage.service';
+import { DeviceDetection } from '../../device-detection.helper';
+import { ToastService } from '../../services/toast.service';
+import { LoginDataService } from '../../services/login-data.service';
+import { QueryParams } from '../../live-data/helpers';
 
 declare const window;
 
@@ -25,11 +25,11 @@ export enum LoginMethod {
 
 @Component({
 	selector: 'google-signin',
-	templateUrl: './google-signin.component.html',
-	styleUrls: ['./google-signin.component.scss'],
+	templateUrl: './login.component.html',
+	styleUrls: ['./login.component.scss'],
 	changeDetection: ChangeDetectionStrategy.OnPush,
 })
-export class GoogleSigninComponent implements OnInit, OnDestroy {
+export class LoginComponent implements OnInit, OnDestroy {
 	@Output() focusEvent: EventEmitter<any> = new EventEmitter<any>();
 	@Output() blurEvent: EventEmitter<any> = new EventEmitter<any>();
 

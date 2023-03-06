@@ -37,7 +37,7 @@ import { IosCalendarComponent } from '../ios-calendar/ios-calendar.component';
 import { NavbarElementSenderDirective } from '../core/directives/navbar-element-sender.directive';
 import { ChartsModule } from 'ng2-charts';
 import { ConsentMenuComponent } from '../consent-menu/consent-menu.component';
-import { GoogleSigninComponent } from '../google-signin/google-signin.component';
+import { LoginComponent } from '../auth/login/login.component';
 import { IntroDialogComponent } from '../intro-dialog/intro-dialog.component';
 import { IntroComponent } from '../intro/intro.component';
 import { SortMenuComponent } from '../sort-menu/sort-menu.component';
@@ -121,7 +121,7 @@ const DEFAULT_SWIPER_CONFIG: SwiperConfigInterface = {
 @NgModule({
 	imports: [CommonModule, ScrollingModule, FormsModule, ReactiveFormsModule, DragulaModule.forRoot(), SwiperModule, ChartsModule, CoreModule],
 	declarations: [
-		GoogleSigninComponent,
+		LoginComponent,
 		SmartpassLogoComponent,
 		DisplayCardComponent,
 		PinnableComponent,
@@ -261,7 +261,7 @@ const DEFAULT_SWIPER_CONFIG: SwiperConfigInterface = {
 		ChartsModule,
 		SmartpassLogoComponent,
 		IntroComponent,
-		GoogleSigninComponent,
+		LoginComponent,
 		CoreModule,
 		PrivacyCardComponent,
 		ProfileComponent,
