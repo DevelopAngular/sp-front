@@ -6,13 +6,11 @@ import { mergeObject } from '../live-data/helpers';
 import { LiveDataService } from '../live-data/live-data.service';
 import { LoadingService } from '../services/loading.service';
 import { Location } from '../models/Location';
-import { testPasses } from '../models/mock_data';
-import { BasicPassLikeProvider, PassLikeProvider } from '../models/providers';
 import { User } from '../models/User';
 import { DropdownComponent } from '../dropdown/dropdown.component';
 import { TimeService } from '../services/time.service';
 import { CalendarComponent } from '../admin/calendar/calendar.component';
-import { filter, finalize, map, switchMap, takeUntil, tap } from 'rxjs/operators';
+import { concatMap, filter, finalize, map, switchMap, takeUntil, tap } from 'rxjs/operators';
 import { DarkThemeSwitch } from '../dark-theme-switch';
 import { LocationsService } from '../services/locations.service';
 import { RepresentedUser } from '../navbar/navbar.component';
@@ -20,7 +18,7 @@ import { UserService } from '../services/user.service';
 import { ScreenService } from '../services/screen.service';
 import { SortMenuComponent } from '../sort-menu/sort-menu.component';
 import { MyRoomAnimations } from './my-room.animations';
-import { KioskModeService } from '../services/kiosk-mode.service';
+import { KioskLogin, KioskLoginResponse, KioskModeService } from '../services/kiosk-mode.service';
 import { bumpIn } from '../animations';
 import { DomSanitizer, Title } from '@angular/platform-browser';
 import { Router } from '@angular/router';
@@ -35,7 +33,6 @@ import * as moment from 'moment';
 import { CheckForUpdateService } from '../services/check-for-update.service';
 import { RoomCheckinCodeDialogComponent } from './room-checkin-code-dialog/room-checkin-code-dialog.component';
 import { KioskModeDialogComponent } from '../kiosk-mode/kiosk-mode-dialog/kiosk-mode-dialog.component';
-import { KioskSettingsDialogComponent } from '../kiosk-settings-dialog/kiosk-settings-dialog.component';
 
 @Component({
 	selector: 'app-my-room',
@@ -385,54 +382,58 @@ export class MyRoomComponent implements OnInit, OnDestroy, AfterViewInit {
 		}
 		this.setRoomToKioskModeProcesing = true;
 
-		this.http
-			.get(`v1//kiosk/${this.selectedLocation.id}/login`)
+		let kioskLogin: KioskLogin;
+
+		this.kioskMode
+			.getKioskModeLogin(this.selectedLocation.id)
 			.pipe(
-				takeUntil(this.destroy$),
-				finalize(() => (this.setRoomToKioskModeProcesing = false))
-			)
-			.subscribe({
-				next: (kioskLoginInfo: any) => {
+				// Get Dedicated Login details
+				takeUntil<KioskLoginResponse>(this.destroy$),
+				map(({ results }) => results), // de-nest server response
+				finalize(() => (this.setRoomToKioskModeProcesing = false)),
+				concatMap((kioskLoginInfo) => {
+					kioskLogin = kioskLoginInfo;
 					const dialogRef = this.dialog.open(KioskModeDialogComponent, {
 						panelClass: 'accounts-profiles-dialog',
 						backdropClass: 'custom-bd',
 						width: '425px',
 						height: '480px',
-						data: { selectedRoom: this.selectedLocation, loginData: kioskLoginInfo.results },
+						data: { selectedRoom: this.selectedLocation, loginData: kioskLoginInfo },
 					});
 
-					dialogRef.afterClosed().subscribe((result) => {
-						if (result) {
+					return dialogRef.afterClosed().pipe(
+						filter(Boolean),
+						concatMap(() => {
 							this.router.navigate(['main/kioskMode/settings']);
-							this.kioskMode.enterKioskMode$.subscribe((res) => {
-								if (res) {
-									let kioskRoom;
-									if (this.roomOptions.length === 1) {
-										kioskRoom = this.roomOptions[0];
-									} else {
-										kioskRoom = Object.assign({}, this.selectedLocation);
-									}
-									this.kioskMode.setCurrentRoom(kioskRoom);
-									this.userService.saveKioskModeLocation(kioskRoom.id).subscribe((res: any) => {
-										// Switch into kiosk mode
+							return this.kioskMode.enterKioskMode$.pipe(filter(Boolean));
+						}),
+						concatMap(() => {
+							let kioskRoom;
+							if (this.roomOptions.length === 1) {
+								kioskRoom = this.roomOptions[0];
+							} else {
+								kioskRoom = Object.assign({}, this.selectedLocation);
+							}
+							this.kioskMode.setCurrentRoom(kioskRoom);
 
-										this.storage.setItem('kioskToken', res.access_token);
-										// this.storage.setItem('refresh_token', res.refresh_token);
-										this.loginService.updateAuth({
-											username: kioskLoginInfo.results.username,
-											password: kioskLoginInfo.results.password,
-											type: 'demo-login',
-											kioskMode: true,
-										});
-										this.http.kioskTokenSubject$.next(res);
-										this.router.navigate(['main/kioskMode']);
-									});
-								}
+							return this.userService.saveKioskModeLocation(kioskRoom.id);
+						}),
+						tap((res) => {
+							this.storage.setItem('kioskToken', res.access_token);
+							// this.storage.setItem('refresh_token', res.refresh_token);
+							this.loginService.updateAuth({
+								username: kioskLogin.username,
+								password: kioskLogin.password,
+								type: 'demo-login',
+								kioskMode: true,
 							});
-						}
-					});
-				},
-			});
+							this.http.kioskTokenSubject$.next(res);
+							this.router.navigate(['main/kioskMode']);
+						})
+					);
+				})
+			)
+			.subscribe();
 	}
 
 	openRoomCodeDialog() {
