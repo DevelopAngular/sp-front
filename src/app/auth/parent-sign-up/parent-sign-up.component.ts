@@ -6,7 +6,7 @@ import { Router } from '@angular/router';
 import { BehaviorSubject, Subject } from 'rxjs';
 import { debounceTime, distinctUntilChanged, filter, map, switchMap, take, takeUntil } from 'rxjs/operators';
 import { DeviceDetection } from '../../device-detection.helper';
-import { GoogleLoginService } from '../../services/google-login.service';
+import { LoginService } from '../../services/login.service';
 import { environment } from '../../../environments/environment';
 
 declare const window;
@@ -38,7 +38,7 @@ export class ParentSignUpComponent implements OnInit, OnDestroy {
 		private sanitizer: DomSanitizer,
 		private router: Router,
 		private http: HttpClient,
-		private loginService: GoogleLoginService,
+		private loginService: LoginService,
 		private _zone: NgZone
 	) {
 		this.trustedBackgroundUrl = this.sanitizer.bypassSecurityTrustStyle("url('./assets/Signup Background.svg')");

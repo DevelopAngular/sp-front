@@ -23,7 +23,7 @@ import { combineLatest, Observable, ReplaySubject, Subject } from 'rxjs';
 import { filter, map, pluck, switchMap, takeUntil } from 'rxjs/operators';
 
 import { DataService } from '../services/data-service';
-import { GoogleLoginService } from '../services/google-login.service';
+import { LoginService } from '../services/login.service';
 import { NavbarDataService } from '../main/navbar-data.service';
 import { User } from '../models/User';
 import { UserService } from '../services/user.service';
@@ -187,7 +187,7 @@ export class NavbarComponent implements AfterViewInit, OnInit, OnDestroy {
 		public dialog: MatDialog,
 		public router: Router,
 		private location: Location,
-		public loginService: GoogleLoginService,
+		public loginService: LoginService,
 		private locationService: LocationsService,
 		private _zone: NgZone,
 		private navbarData: NavbarDataService,

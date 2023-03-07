@@ -139,7 +139,7 @@ import { updateTeacherLocations } from '../ngrx/accounts/nested-states/teachers/
 import { ProfilePicturesUploadGroup } from '../models/ProfilePicturesUploadGroup';
 import { ProfilePicturesError } from '../models/ProfilePicturesError';
 import { LoginDataService } from './login-data.service';
-import { GoogleLoginService } from './google-login.service';
+import { LoginService } from './login.service';
 import { School } from '../models/School';
 import { UserStats } from '../models/UserStats';
 import { getStudentStats } from '../ngrx/accounts/nested-states/students/actions';
@@ -335,7 +335,7 @@ export class UserService implements OnDestroy {
 		private _logging: Logger,
 		private errorHandler: ErrorHandler,
 		private store: Store<AppState>,
-		private loginService: GoogleLoginService,
+		private loginService: LoginService,
 		private loginDataService: LoginDataService
 	) {
 		/**

@@ -1,25 +1,22 @@
 import { Component, ElementRef, EventEmitter, OnDestroy, OnInit, Output, ViewChild } from '@angular/core';
 import { ActivatedRoute, Router } from '@angular/router';
 import { DeviceDetection } from '../device-detection.helper';
-import { GoogleLoginService } from '../services/google-login.service';
+import { LoginService } from '../services/login.service';
 import { UserService } from '../services/user.service';
 import { DomSanitizer, Meta, SafeUrl, Title } from '@angular/platform-browser';
 import { filter, map, switchMap, takeUntil } from 'rxjs/operators';
-import { HttpService } from '../services/http-service';
 import { JwtHelperService } from '@auth0/angular-jwt';
-import { StorageService } from '../services/storage.service';
 import { User } from '../models/User';
 import { Observable, ReplaySubject, Subject, zip } from 'rxjs';
 import { INITIAL_LOCATION_PATHNAME } from '../app.component';
 import { NotificationService } from '../services/notification-service';
 import { environment } from '../../environments/environment.prod';
-import { ScreenService } from '../services/screen.service';
 import { LoginDataService } from '../services/login-data.service';
 
 declare const window;
 
 @Component({
-	selector: 'app-login-page',
+	selector: 'sp-login-page',
 	templateUrl: './login-page.component.html',
 	styleUrls: ['./login-page.component.scss'],
 })
@@ -41,17 +38,14 @@ export class LoginPageComponent implements OnInit, OnDestroy {
 	private destroyer$ = new Subject<any>();
 
 	constructor(
-		private httpService: HttpService,
 		private userService: UserService,
-		private loginService: GoogleLoginService,
-		private storage: StorageService,
+		private loginService: LoginService,
 		private router: Router,
 		private route: ActivatedRoute,
 		private sanitizer: DomSanitizer,
 		private titleService: Title,
 		private metaService: Meta,
 		private notifService: NotificationService,
-		public screen: ScreenService,
 		private loginDataService: LoginDataService
 	) {
 		this.jwt = new JwtHelperService();

@@ -1,9 +1,9 @@
 import { Injectable, OnDestroy } from '@angular/core';
-import { BehaviorSubject, Subject, Observable, combineLatest } from 'rxjs';
+import { BehaviorSubject, combineLatest, Subject } from 'rxjs';
 import { Router } from '@angular/router';
-import { tap, map, takeUntil } from 'rxjs/operators';
+import { map, takeUntil } from 'rxjs/operators';
 
-import { GoogleLoginService } from '../services/google-login.service';
+import { LoginService } from './login.service';
 import { UserService } from './user.service';
 import { HttpService } from './http-service';
 import { DeviceDetection } from '../device-detection.helper';
@@ -17,7 +17,7 @@ export class AllowMobileService implements OnDestroy {
 	currentUser$ = this.userService.userData.asObservable();
 	destroy$: Subject<any> = new Subject<any>();
 
-	constructor(private loginService: GoogleLoginService, private userService: UserService, private httpService: HttpService, private router: Router) {
+	constructor(private loginService: LoginService, private userService: UserService, private httpService: HttpService, private router: Router) {
 		combineLatest(this.loginService.isAuthenticated$, this.userService.userData.asObservable(), this.httpService.currentSchool$)
 			.pipe(
 				map(([isAuthenticated, user, school]) => {

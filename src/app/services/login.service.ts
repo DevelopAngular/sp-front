@@ -1,4 +1,4 @@
-import { Inject, Injectable, NgZone, OnDestroy } from '@angular/core';
+import { Inject, Injectable, OnDestroy } from '@angular/core';
 import { BehaviorSubject, Observable, ReplaySubject, Subject } from 'rxjs';
 import { filter, takeUntil } from 'rxjs/operators';
 import { StorageService } from './storage.service';
@@ -31,6 +31,11 @@ export interface GoogleLogin {
 	type: 'google-login';
 }
 
+export interface SessionLogin {
+	provider: string;
+	token: string;
+}
+
 export function isDemoLogin(d: any): d is DemoLogin {
 	return (<DemoLogin>d).type === 'demo-login';
 }
@@ -47,7 +52,7 @@ export function isGoogleLogin(d: any): d is GoogleLogin {
 	return (<GoogleLogin>d).type === 'google-login';
 }
 
-type AuthObject = GoogleLogin | DemoLogin | ClassLinkLogin | CleverLogin;
+export type AuthObject = GoogleLogin | DemoLogin | ClassLinkLogin | CleverLogin;
 
 enum OAuthType {
 	google = 'google',
@@ -56,7 +61,7 @@ enum OAuthType {
 @Injectable({
 	providedIn: 'root',
 })
-export class GoogleLoginService implements OnDestroy {
+export class LoginService implements OnDestroy {
 	static googleOAuthUrl = `https://accounts.google.com/o/oauth2/v2/auth?client_id=560691963710-220tggv4d3jo9rpc3l70opj1510keb59.apps.googleusercontent.com&response_type=code&access_type=offline&scope=profile%20email%20openid`;
 
 	private authObject$ = new BehaviorSubject<AuthObject>(null);
@@ -71,7 +76,6 @@ export class GoogleLoginService implements OnDestroy {
 	constructor(
 		@Inject(APP_BASE_HREF)
 		private baseHref: string,
-		private _zone: NgZone,
 		private storage: StorageService
 	) {
 		if (baseHref === '/app') {
@@ -110,6 +114,7 @@ export class GoogleLoginService implements OnDestroy {
 		return this.authObject$.pipe(filter((t) => !!t));
 	}
 
+	// updating this triggers a login flow, clearing this logs the user out
 	public updateAuth(auth: AuthObject) {
 		this.authObject$.next(auth);
 	}
@@ -141,7 +146,7 @@ export class GoogleLoginService implements OnDestroy {
 
 	public signIn(userEmail?: string) {
 		// TODO IMPLEMENT THIS
-		let url = GoogleLoginService.googleOAuthUrl + `&redirect_uri=${this.getRedirectUrl()}google_oauth`;
+		let url = LoginService.googleOAuthUrl + `&redirect_uri=${this.getRedirectUrl()}google_oauth`;
 		if (userEmail) {
 			url = url + `&login_hint=${userEmail}`;
 		}

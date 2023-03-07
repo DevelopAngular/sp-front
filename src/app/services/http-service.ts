@@ -10,7 +10,7 @@ import { School } from '../models/School';
 import { AppState } from '../ngrx/app-state/app-state';
 import { clearSchools, getSchools } from '../ngrx/schools/actions';
 import { getCurrentSchool, getLoadedSchools, getSchoolsCollection, getSchoolsLength } from '../ngrx/schools/states';
-import { GoogleLoginService, isClassLinkLogin, isCleverLogin, isDemoLogin } from './google-login.service';
+import { AuthObject, isClassLinkLogin, isCleverLogin, isDemoLogin, LoginService, SessionLogin } from './login.service';
 import { StorageService } from './storage.service';
 import { SafeHtml } from '@angular/platform-browser';
 import { MatDialog } from '@angular/material/dialog';
@@ -28,6 +28,26 @@ declare const window: Window;
 
 export interface Config {
 	[key: string]: any;
+}
+
+export interface AuthProviderResponse {
+	provider: string;
+	sourceId: string;
+	name: string;
+}
+
+export enum AuthType {
+	Password = 'password',
+	Google = 'google',
+	Classlink = 'classlink',
+	Clever = 'clever',
+	GG4L = 'gg4l',
+	Empty = '',
+}
+
+export interface DiscoverServerResponse {
+	auth_types: AuthType[];
+	auth_providers: AuthProviderResponse[];
 }
 
 export interface ServerAuth {
@@ -177,9 +197,10 @@ class SilentError extends Error {
 	}
 }
 
-const AuthTypeGoogle = 'google';
-const AuthTypeClever = 'clever';
-const AuthTypeClassLink = 'classlink';
+const discoveryEndpoint = (userName: string) =>
+	/proxy/.test(environment.buildType)
+		? `/api/discovery/email_info?email=${encodeURIComponent(userName)}`
+		: `https://smartpass.app/api/discovery/email_info?email=${encodeURIComponent(userName)}`;
 
 @Injectable({
 	providedIn: 'root',
@@ -237,7 +258,7 @@ export class HttpService implements OnDestroy {
 		@Inject(APP_BASE_HREF)
 		private baseHref: string,
 		private http: HttpClient,
-		private loginService: GoogleLoginService,
+		private loginService: LoginService,
 		private storage: StorageService,
 		private pwaStorage: LocalStorage,
 		private store: Store<AppState>,
@@ -400,12 +421,27 @@ export class HttpService implements OnDestroy {
 		this.destroyed$.complete();
 	}
 
+	/**
+	 * Discover which server the user is on
+	 * @param userName the username or email of the account
+	 */
+	discoverServer(userName: string) {
+		return this.http.get<DiscoverServerResponse>(discoveryEndpoint(userName)).pipe(
+			tap((response) => {
+				if (response?.auth_types?.length === 0) {
+					throw new Error("Couldn't find that username or email");
+				}
+			})
+		);
+	}
+
 	// Used in AccessTokenInterceptor for token refresh and adding access token
 	getAuthContext(): AuthContext {
 		return this._authContext;
 	}
 
-	getUserAuth(authObj) {
+	getUserAuth(authObj: AuthObject) {
+		console.log(authObj);
 		const auth: AuthContext = JSON.parse(this.storage.getItem('auth'));
 		if (auth) {
 			console.log('Token will expire ==>>', moment(auth.auth.expires).format('DD HH:mm'));
@@ -694,7 +730,11 @@ export class HttpService implements OnDestroy {
 		);
 	}
 
-	private fetchServerAuth(authObject: any): Observable<AuthContext | any> {
+	loginSession(sessionLogin: SessionLogin) {
+		return this.post('sessions', sessionLogin, undefined, false);
+	}
+
+	private fetchServerAuth(authObject: any): Observable<AuthContext> {
 		let authContext$: Observable<AuthContext>;
 		if (isDemoLogin(authObject)) {
 			authContext$ = this.loginManual(authObject.username, authObject.password);
@@ -731,7 +771,7 @@ export class HttpService implements OnDestroy {
 		const signOutCatch = catchError((err) => {
 			this.showSignBackIn().subscribe((_) => {
 				if (err === this.cannotRefreshGoogle) {
-					const url = GoogleLoginService.googleOAuthUrl + `&redirect_uri=${this.getRedirectUrl()}google_oauth`;
+					const url = LoginService.googleOAuthUrl + `&redirect_uri=${this.getRedirectUrl()}google_oauth`;
 					this.loginService.clearInternal(true);
 					window.location.href = url;
 				} else if (err === this.cannotRefreshClever) {
@@ -810,7 +850,7 @@ export class HttpService implements OnDestroy {
 			case 'password':
 				return this.doSPTokenRefresh(false);
 			case 'google':
-				const url = GoogleLoginService.googleOAuthUrl + `&redirect_uri=${this.getRedirectUrl()}google_oauth`;
+				const url = LoginService.googleOAuthUrl + `&redirect_uri=${this.getRedirectUrl()}google_oauth`;
 				this.showSignBackIn()
 					.pipe(takeUntil(this.destroyed$))
 					.subscribe((_) => {

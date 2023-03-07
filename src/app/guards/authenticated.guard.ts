@@ -1,7 +1,7 @@
 import { Injectable } from '@angular/core';
 import { ActivatedRouteSnapshot, CanActivate, Router, RouterStateSnapshot } from '@angular/router';
 import { Observable } from 'rxjs';
-import { GoogleLoginService } from '../services/google-login.service';
+import { LoginService } from '../services/login.service';
 import { map, tap, withLatestFrom } from 'rxjs/operators';
 import { StorageService } from '../services/storage.service';
 import { AllowMobileService } from '../services/allow-mobile.service';
@@ -10,12 +10,7 @@ import { AllowMobileService } from '../services/allow-mobile.service';
 	providedIn: 'root',
 })
 export class AuthenticatedGuard implements CanActivate {
-	constructor(
-		private loginService: GoogleLoginService,
-		private router: Router,
-		private storage: StorageService,
-		private allowMobile: AllowMobileService
-	) {}
+	constructor(private loginService: LoginService, private router: Router, private storage: StorageService, private allowMobile: AllowMobileService) {}
 
 	canActivate(next: ActivatedRouteSnapshot, state: RouterStateSnapshot): Observable<boolean> | Promise<boolean> | boolean {
 		// we don't actually want to cancel routing this path, we want to wait until isAuthenticated$ becomes true.

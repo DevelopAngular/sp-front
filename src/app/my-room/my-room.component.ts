@@ -28,7 +28,7 @@ import { ScrollPositionService } from '../scroll-position.service';
 import { DeviceDetection } from '../device-detection.helper';
 import { HallPassesService } from '../services/hall-passes.service';
 import { UNANIMATED_CONTAINER } from '../consent-menu-overlay';
-import { GoogleLoginService } from '../services/google-login.service';
+import { LoginService } from '../services/login.service';
 import * as moment from 'moment';
 import { CheckForUpdateService } from '../services/check-for-update.service';
 import { RoomCheckinCodeDialogComponent } from './room-checkin-code-dialog/room-checkin-code-dialog.component';
@@ -150,7 +150,7 @@ export class MyRoomComponent implements OnInit, OnDestroy, AfterViewInit {
 		public darkTheme: DarkThemeSwitch,
 		public dialog: MatDialog,
 		public userService: UserService,
-		public loginService: GoogleLoginService,
+		public loginService: LoginService,
 		public kioskMode: KioskModeService,
 		private sanitizer: DomSanitizer,
 		private storage: StorageService,

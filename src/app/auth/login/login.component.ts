@@ -1,13 +1,10 @@
-import { ChangeDetectionStrategy, ChangeDetectorRef, Component, EventEmitter, NgZone, OnDestroy, OnInit, Output } from '@angular/core';
-import { GoogleLoginService } from '../../services/google-login.service';
+import { ChangeDetectionStrategy, ChangeDetectorRef, Component, EventEmitter, OnDestroy, OnInit, Output } from '@angular/core';
+import { AuthObject, DemoLogin, LoginService } from '../../services/login.service';
 import { BehaviorSubject, Observable, of, Subject } from 'rxjs';
 import { filter, finalize, pluck, takeUntil, tap } from 'rxjs/operators';
-import { HttpService } from '../../services/http-service';
-import { DomSanitizer, Meta, Title } from '@angular/platform-browser';
-import { environment } from '../../../environments/environment';
+import { AuthType, HttpService } from '../../services/http-service';
+import { Meta, Title } from '@angular/platform-browser';
 import { ActivatedRoute, Router } from '@angular/router';
-import { MatDialog } from '@angular/material/dialog';
-import { HttpClient } from '@angular/common/http';
 import { FormControl, FormGroup } from '@angular/forms';
 import { KeyboardShortcutsService } from '../../services/keyboard-shortcuts.service';
 import { StorageService } from '../../services/storage.service';
@@ -23,8 +20,30 @@ export enum LoginMethod {
 	LocalStrategy = 2,
 }
 
+interface LoginFormValue {
+	username: string;
+	password: string;
+}
+
+/**
+ * This component is responsible for logging a user into smartpass
+ * There are currently 4 methods of authentication:
+ * - Email/Password
+ * - Google
+ * - Clever
+ * - Classlink
+ *
+ * Component Logic:
+ * 1. When this component loads, the query params are checked for a redirect. All platforms
+ *    except for email/password redirect back to this page with query params. The code from
+ *    the redirect means that the login on the external platforms were successful. This code
+ *    is similar to the login token returned by the server after a successful email/password login
+ * 2. After the login token from step 1 is retrieved, the component sends another request containing
+ *    the token to authenticate the user. This returns an access_token which the UI attaches to all
+ *    requests to access SmartPass.
+ */
 @Component({
-	selector: 'google-signin',
+	selector: 'sp-login',
 	templateUrl: './login.component.html',
 	styleUrls: ['./login.component.scss'],
 	changeDetection: ChangeDetectionStrategy.OnPush,
@@ -35,11 +54,16 @@ export class LoginComponent implements OnInit, OnDestroy {
 
 	public showSpinner = false;
 	public loggedWith: number;
-	public loginData = {
+	public loginData: {
+		demoLoginEnabled: boolean;
+		demoUsername: string;
+		demoPassword: string;
+		authType: AuthType;
+	} = {
 		demoLoginEnabled: false,
 		demoUsername: '',
 		demoPassword: '',
-		authType: '',
+		authType: AuthType.Empty,
 	};
 	public isGoogleLogin: boolean;
 	public isStandardLogin: boolean;
@@ -61,17 +85,13 @@ export class LoginComponent implements OnInit, OnDestroy {
 
 	constructor(
 		private httpService: HttpService,
-		private _ngZone: NgZone,
-		private loginService: GoogleLoginService,
+		private loginService: LoginService,
 		private titleService: Title,
 		private metaService: Meta,
 		private router: Router,
 		private route: ActivatedRoute,
-		private http: HttpClient,
-		private dialog: MatDialog,
 		private shortcuts: KeyboardShortcutsService,
 		private storage: StorageService,
-		private domSanitizer: DomSanitizer,
 		private cdr: ChangeDetectorRef,
 		private toast: ToastService,
 		private loginDataService: LoginDataService
@@ -108,6 +128,38 @@ export class LoginComponent implements OnInit, OnDestroy {
 		return DeviceDetection.isMobile();
 	}
 
+	private resetAuthType() {
+		this.loginData.demoLoginEnabled = false;
+		this.isClever = false;
+		this.isClasslink = false;
+		this.isStandardLogin = false;
+		this.isGoogleLogin = false;
+	}
+
+	private setAuthType(auth_types: AuthType[]) {
+		if (auth_types.includes(AuthType.Google)) {
+			this.isGoogleLogin = true;
+			return;
+		}
+
+		if (auth_types.includes(AuthType.Clever)) {
+			this.isClever = true;
+			return;
+		}
+
+		if (auth_types.includes(AuthType.Classlink)) {
+			this.isClasslink = true;
+			return;
+		}
+
+		if (auth_types.includes(AuthType.Password)) {
+			this.isStandardLogin = true;
+			return;
+		}
+
+		this.loginData.demoLoginEnabled = false;
+	}
+
 	ngOnInit(): void {
 		this.route.queryParams
 			.pipe(
@@ -119,6 +171,8 @@ export class LoginComponent implements OnInit, OnDestroy {
 				})
 			)
 			.subscribe((qp) => {
+				// These query parameters are present after logging into the respective platforms
+				// and being redirected here with the params in the URL
 				this.storage.removeItem('context');
 				if (this.router.url.includes('google_oauth')) {
 					return this.loginGoogle(qp.code as string);
@@ -150,7 +204,7 @@ export class LoginComponent implements OnInit, OnDestroy {
 					this.forceFocus$.next();
 				} else if (key[0] === 'enter') {
 					if (!this.disabledButton && !this.loginData.demoLoginEnabled) {
-						this.nextButtonTapped();
+						this.checkEmail();
 					} else if (this.loginData.demoLoginEnabled) {
 						this.demoLogin();
 					}
@@ -238,63 +292,31 @@ export class LoginComponent implements OnInit, OnDestroy {
 		// this.loginData.demoPassword = event;
 	}
 
-	nextButtonTapped() {
+	// After verification, checks whether the email belongs to an external
+	// platform authenticator or whether the account's email uses a password
+	// to log in
+	checkEmail() {
 		this.showSpinner = true;
 		const userName = this.loginData.demoUsername;
-		const discovery = /proxy/.test(environment.buildType)
-			? `/api/discovery/email_info?email=${encodeURIComponent(userName)}`
-			: `https://smartpass.app/api/discovery/email_info?email=${encodeURIComponent(userName)}`;
-		this.http.get<any>(discovery).subscribe(
-			({ auth_types, auth_providers }) => {
-				this.showSpinner = false;
-				if (!auth_types.length) {
-					this.error$.next(`Couldn't find that username or email`);
-					this.showSpinner = false;
-					this.isGoogleLogin = false;
-					this.isStandardLogin = false;
-					this.loginData.demoLoginEnabled = false;
-					return;
-				} else {
-					this.error$.next(null);
-				}
-				this.loginData.authType = auth_types[auth_types.length - 1];
-				this.auth_providers = auth_providers[0];
-				const auth = auth_types[auth_types.length - 1];
-				if (auth.indexOf('google') !== -1) {
-					this.loginData.demoLoginEnabled = false;
-					this.isStandardLogin = false;
-					this.isClasslink = false;
-					this.isGoogleLogin = true;
-					this.isClever = false;
-				} else if (auth.indexOf('clever') !== -1) {
-					this.loginData.demoLoginEnabled = false;
-					this.isStandardLogin = false;
-					this.isClasslink = false;
-					this.isGoogleLogin = false;
-					this.isClever = true;
-				} else if (auth.indexOf('classlink') !== -1) {
-					this.loginData.demoLoginEnabled = false;
-					this.isStandardLogin = false;
-					this.isGoogleLogin = false;
-					this.isClever = false;
-					this.isClasslink = true;
-				} else if (auth.indexOf('password') !== -1) {
-					this.isGoogleLogin = false;
-					this.isStandardLogin = true;
-					this.isClever = false;
-					this.isClasslink = false;
-				} else {
-					this.loginData.demoLoginEnabled = false;
-				}
-				this.disabledButton = false;
-				this.signIn();
-				this.cdr.detectChanges();
-			},
-			(_) => {
-				this.error$.next(`Couldn't find that username or email`);
-				this.showSpinner = false;
-			}
-		);
+
+		this.httpService
+			.discoverServer(userName)
+			.pipe(finalize(() => (this.showSpinner = false)))
+			.subscribe({
+				next: ({ auth_types, auth_providers }) => {
+					this.loginData.authType = auth_types[auth_types.length - 1];
+					this.auth_providers = auth_providers[0];
+					this.resetAuthType();
+					this.setAuthType(auth_types);
+					this.disabledButton = false;
+					this.signIn();
+					this.cdr.detectChanges();
+				},
+				error: (err: Error) => {
+					this.resetAuthType();
+					this.error$.next(err.message);
+				},
+			});
 	}
 
 	signIn() {
@@ -338,12 +360,30 @@ export class LoginComponent implements OnInit, OnDestroy {
 		this.loginService.showLoginError$.next(false);
 		// this.loginService.loginErrorMessage$.next(null);
 
-		of(this.loginService.signInDemoMode(this.loginForm.get('username').value, this.loginForm.get('password').value)).pipe(
-			finalize(() => {
-				this.showSpinner = false;
-				this.cdr.detectChanges();
-			})
-		);
+		const { username, password } = this.loginForm.value;
+		const loginDetails: AuthObject = {
+			username,
+			password,
+			kioskMode: false,
+			type: 'demo-login',
+		} as DemoLogin;
+
+		this.httpService.getUserAuth(loginDetails).subscribe(console.log);
+		// this.httpService.getUserAuth(loginDetails).pipe(
+		//   concatMap(authObject => {
+		//     return this.httpService.loginSession({
+		//       provider: ,
+		//       token: authObject.auth.access_token
+		//     })
+		//   })
+		// )
+
+		// of(this.loginService.signInDemoMode(this.loginForm.get('username').value, this.loginForm.get('password').value)).pipe(
+		// 	finalize(() => {
+		// 		this.showSpinner = false;
+		// 		this.cdr.detectChanges();
+		// 	})
+		// );
 	}
 
 	initLogin() {

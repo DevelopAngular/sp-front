@@ -7,7 +7,7 @@ import { School } from '../../../models/School';
 import { of } from 'rxjs';
 import { AdminService } from '../../../services/admin.service';
 import { SchoolSyncInfo } from '../../../models/SchoolSyncInfo';
-import { GoogleLoginService } from '../../../services/google-login.service';
+import { LoginService } from '../../../services/login.service';
 import { Router } from '@angular/router';
 import { UserService } from '../../../services/user.service';
 import { GSuiteOrgs } from '../../../models/GSuiteOrgs';
@@ -189,6 +189,6 @@ export class SchoolsEffects {
 		private adminService: AdminService,
 		private router: Router,
 		private userService: UserService,
-		private loginService: GoogleLoginService
+		private loginService: LoginService
 	) {}
 }
