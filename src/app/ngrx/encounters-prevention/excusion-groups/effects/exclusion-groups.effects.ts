@@ -15,8 +15,7 @@ export class ExclusionGroupsEffects {
 			mergeMap((action) => {
 				return this.encounterPreventionService.getExclusionGroups(action.queryParams).pipe(
 					map((groups: ExclusionGroup[]) => {
-						const filtered = groups.filter((g) => g.prevented_encounters.length > 0);
-						return exclusionGroupsActions.getExclusionGroupsSuccess({ groups: filtered });
+						return exclusionGroupsActions.getExclusionGroupsSuccess({ groups });
 					}),
 					catchError((error) => {
 						toast.openToastAction({
