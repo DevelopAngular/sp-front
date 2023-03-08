@@ -28,12 +28,10 @@ import { UserService } from '../services/user.service';
 import { School } from '../models/School';
 import { LocationsService } from '../services/locations.service';
 import { Location } from '../models/Location';
-import { PassLimitService } from '../services/pass-limit.service';
 import { ConfirmDeleteKioskModeComponent } from './confirm-delete-kiosk-mode/confirm-delete-kiosk-mode.component';
 import { ToastService } from '../services/toast.service';
 import { HttpErrorResponse } from '@angular/common/http';
 import { HallPassesService } from '../services/hall-passes.service';
-import { FeatureFlagService, FLAGS } from '../services/feature-flag.service';
 
 @Component({
 	selector: 'app-request-card',
@@ -75,7 +73,6 @@ export class RequestCardComponent implements OnInit, OnDestroy {
 	frameMotion$: BehaviorSubject<any>;
 	options: any[];
 	header: string;
-	cancelEditClick: boolean;
 
 	hoverDestroyer$: Subject<any>;
 
@@ -108,11 +105,9 @@ export class RequestCardComponent implements OnInit, OnDestroy {
 		private domCheckerService: DomCheckerService,
 		private userService: UserService,
 		private locationsService: LocationsService,
-		private passLimitsService: PassLimitService,
 		private createPassFormRef: MatDialogRef<CreateHallpassFormsComponent>,
 		private toast: ToastService,
-		private hallpassService: HallPassesService,
-		private features: FeatureFlagService
+		private hallpassService: HallPassesService
 	) {}
 
 	get invalidDate() {
@@ -663,28 +658,28 @@ export class RequestCardComponent implements OnInit, OnDestroy {
 	approveRequest() {
 		this.performingAction = true;
 
-		const httpRequest$ = this.features.isFeatureEnabled(FLAGS.WaitInLine)
-			? this.requestService.acceptRequest(this.request, {})
-			: this.requestService.checkLimits({}, this.request, this.overriderBody).pipe(
-					concatMap((httpBody) => {
-						return this.requestService.acceptRequest(this.request, httpBody);
-					})
-			  );
-
-		httpRequest$.pipe(finalize(() => (this.performingAction = false))).subscribe({
-			next: () => this.dialogRef.close(),
-			error: (err: Error) => {
-				if ((err as HttpErrorResponse).error.conflict_student_ids) {
-					this.hallpassService.showEncounterPreventionToast({
-						exclusionPass: this.request,
-						isStaff: this.forStaff,
-					});
-					return;
-				}
-				this.openErrorToast(err);
-				console.error(err);
-			},
-		});
+		this.requestService
+			.checkLimits({}, this.request, this.overriderBody)
+			.pipe(
+				concatMap((httpBody) => {
+					return this.requestService.acceptRequest(this.request, httpBody);
+				}),
+				finalize(() => (this.performingAction = false))
+			)
+			.subscribe({
+				next: () => this.dialogRef.close(),
+				error: (err: Error) => {
+					if ((err as HttpErrorResponse).error.conflict_student_ids) {
+						this.hallpassService.showEncounterPreventionToast({
+							exclusionPass: this.request,
+							isStaff: this.forStaff,
+						});
+						return;
+					}
+					this.openErrorToast(err);
+					console.error(err);
+				},
+			});
 	}
 
 	onHover(evt: HTMLElement, container: HTMLElement) {

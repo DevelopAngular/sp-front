@@ -210,7 +210,7 @@ export class AppComponent implements OnInit, AfterViewInit, OnDestroy {
 					}
 
 					if (isAllowed && !this.isMobile) {
-						this.registerIntercom(user);
+						this.registerThirdPartyPlugins(user);
 					}
 					return this.nextReleaseService.getLastReleasedUpdates(DeviceDetection.platform()).pipe(
 						map((release: Array<Update>): Array<Update> => {
@@ -408,7 +408,7 @@ export class AppComponent implements OnInit, AfterViewInit, OnDestroy {
 		// _refiner('showForm', '31b6c030-820a-11ec-9c99-8b41a98d875d');
 	}
 
-	registerIntercom(user: User) {
+	registerThirdPartyPlugins(user: User) {
 		// const intercomLauncher = document.querySelector<HTMLDivElement>('div.intercom-lightweight-app');
 		// if (user.isStudent() && intercomLauncher) {
 		//   intercomLauncher.style.display = 'none';
@@ -416,7 +416,7 @@ export class AppComponent implements OnInit, AfterViewInit, OnDestroy {
 		//   intercomLauncher.style.display = 'block';
 		// }
 		setTimeout(() => {
-			console.log('registering intercom');
+			console.log('registering third party plugins');
 			const now = new Date();
 			const school: School = this.http.getSchool();
 
@@ -427,6 +427,10 @@ export class AppComponent implements OnInit, AfterViewInit, OnDestroy {
 				trialEndDate = new Date(d.getUTCFullYear(), d.getUTCMonth(), d.getUTCDate());
 			}
 
+			let accountType = user.sync_types[0] === 'google' ? 'Google' : user.sync_types[0] === 'clever' ? 'Clever' : 'Standard';
+			let trialing = !!trialEndDate && trialEndDate > now ? true : false;
+			let trialEndDateStr = !!trialEndDate ? trialEndDate.toDateString() : 'N/A';
+
 			window.intercomSettings = {
 				user_id: user.id,
 				name: user.display_name,
@@ -434,19 +438,35 @@ export class AppComponent implements OnInit, AfterViewInit, OnDestroy {
 				created: new Date(user.created),
 				type: this.getUserType(user),
 				status: user.status,
-				account_type: user.sync_types[0] === 'google' ? 'Google' : user.sync_types[0] === 'clever' ? 'Clever' : 'Standard',
+				account_type: accountType,
 				first_login_at: user.first_login,
 				company: {
 					id: school.id,
 					name: school.name,
 					'Id Card Access': school.feature_flag_digital_id,
 					'Plus Access': school.feature_flag_encounter_detection,
-					Trialing: !!trialEndDate && trialEndDate > now ? true : false,
-					'Trial End Date': !!trialEndDate ? trialEndDate.toDateString() : 'N/A',
+					Trialing: trialing,
+					'Trial End Date': trialEndDateStr,
 				},
 				hide_default_launcher: false,
 			};
 			window.Intercom('update');
+
+			window.posthog.identify(user.id, {
+				name: user.display_name,
+				email: user.primary_email,
+				created: new Date(user.created),
+				type: this.getUserType(user),
+				status: user.status,
+				account_type: accountType,
+				first_login_at: user.first_login,
+				school_id: school.id,
+				school_name: school.name,
+				id_card_access: school.feature_flag_digital_id,
+				encounter_detection_access: school.feature_flag_encounter_detection,
+				trialing: trialing,
+				trial_end_date: trialEndDateStr,
+			});
 		}, 3000);
 	}
 
