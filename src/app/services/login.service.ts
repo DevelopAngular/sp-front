@@ -33,7 +33,8 @@ export interface GoogleLogin {
 
 export interface SessionLogin {
 	provider: string;
-	token: string;
+	token?: string;
+  username?: string;
 }
 
 export function isDemoLogin(d: any): d is DemoLogin {
@@ -144,7 +145,7 @@ export class LoginService implements OnDestroy {
 	 * method.
 	 */
 
-	public signIn(userEmail?: string) {
+	public triggerGoogleAuthFlow(userEmail?: string) {
 		// TODO IMPLEMENT THIS
 		let url = LoginService.googleOAuthUrl + `&redirect_uri=${this.getRedirectUrl()}google_oauth`;
 		if (userEmail) {

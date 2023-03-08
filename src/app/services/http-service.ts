@@ -1,16 +1,37 @@
 import { HttpClient } from '@angular/common/http';
-import { Inject, Injectable, NgZone, OnDestroy } from '@angular/core';
+import { Inject, Injectable, OnDestroy } from '@angular/core';
 import { Store } from '@ngrx/store';
 import { LocalStorage } from '@ngx-pwa/local-storage';
 import { BehaviorSubject, combineLatest, iif, Observable, of, ReplaySubject, Subject, throwError } from 'rxjs';
-import { catchError, delay, exhaustMap, filter, map, mapTo, mergeMap, switchMap, take, takeUntil, tap } from 'rxjs/operators';
+import {
+  catchError,
+  concatMap,
+  delay,
+  exhaustMap,
+  filter,
+  map,
+  mapTo,
+  mergeMap,
+  switchMap,
+  take,
+  takeUntil,
+  tap,
+} from 'rxjs/operators';
 import { BUILD_DATE, RELEASE_NAME } from '../../build-info';
 import { environment } from '../../environments/environment';
 import { School } from '../models/School';
 import { AppState } from '../ngrx/app-state/app-state';
 import { clearSchools, getSchools } from '../ngrx/schools/actions';
 import { getCurrentSchool, getLoadedSchools, getSchoolsCollection, getSchoolsLength } from '../ngrx/schools/states';
-import { AuthObject, isClassLinkLogin, isCleverLogin, isDemoLogin, LoginService, SessionLogin } from './login.service';
+import {
+  AuthObject,
+  isClassLinkLogin,
+  isCleverLogin,
+  isDemoLogin,
+  isGoogleLogin,
+  LoginService,
+  SessionLogin,
+} from './login.service';
 import { StorageService } from './storage.service';
 import { SafeHtml } from '@angular/platform-browser';
 import { MatDialog } from '@angular/material/dialog';
@@ -23,6 +44,7 @@ import { JwtHelperService } from '@auth0/angular-jwt';
 import * as moment from 'moment';
 import { LoginDataService } from './login-data.service';
 import { clearUser } from '../ngrx/user/actions';
+import { auth } from 'firebase';
 
 declare const window: Window;
 
@@ -43,6 +65,13 @@ export enum AuthType {
 	Clever = 'clever',
 	GG4L = 'gg4l',
 	Empty = '',
+}
+
+export enum LoginProvider {
+  Password = 'password',
+  Classlink = 'classlink',
+  Clever = 'clever',
+  Google = 'google-access-token'
 }
 
 export interface DiscoverServerResponse {
@@ -202,6 +231,18 @@ const discoveryEndpoint = (userName: string) =>
 		? `/api/discovery/email_info?email=${encodeURIComponent(userName)}`
 		: `https://smartpass.app/api/discovery/email_info?email=${encodeURIComponent(userName)}`;
 
+const discoveryV2Endpoint = /(proxy)/.test(environment.buildType)
+  ? '/api/discovery/v2/find'
+  : 'https://smartpass.app/api/discovery/v2/find';
+
+/**
+ * This service is supposed to build off Angular's HttpClient but it ends up
+ * also tracking the authentication state, authcontext and dealing with a bunch
+ * of other login behaviour
+ *
+ * This has to be refactored very heavily to remove the login behavior and to track
+ * the auth state elsewhere
+ */
 @Injectable({
 	providedIn: 'root',
 })
@@ -262,7 +303,6 @@ export class HttpService implements OnDestroy {
 		private storage: StorageService,
 		private pwaStorage: LocalStorage,
 		private store: Store<AppState>,
-		private _zone: NgZone,
 		private matDialog: MatDialog,
 		private router: Router,
 		private loginDataService: LoginDataService
@@ -377,7 +417,8 @@ export class HttpService implements OnDestroy {
 					}),
 					tap({
 						next: (errOrAuth) => {
-							if (!errOrAuth.auth) {
+              console.log(errOrAuth);
+							if (!errOrAuth?.auth) {
 								// Next object is error
 								if (errOrAuth instanceof SilentError) {
 									// Do nothing
@@ -441,7 +482,6 @@ export class HttpService implements OnDestroy {
 	}
 
 	getUserAuth(authObj: AuthObject) {
-		console.log(authObj);
 		const auth: AuthContext = JSON.parse(this.storage.getItem('auth'));
 		if (auth) {
 			console.log('Token will expire ==>>', moment(auth.auth.expires).format('DD HH:mm'));
@@ -456,6 +496,24 @@ export class HttpService implements OnDestroy {
 		this._authContext = ctx;
 		this.authContext$.next(ctx);
 	}
+
+  // THIS SHOULD BE IN THE LOGIN SERVICE
+  // The code is so tangled right now that doing a major refactor may be too time-consuming
+  updateAuthFromExternalLogin(url: string, loginCode: string, scope: string) {
+    if (url.includes('google_oauth')) {
+      this.storage.setItem('authType', AuthType.Google);
+      this.loginService.updateAuth({ google_code: loginCode, type: 'google-login' });
+    }
+
+    if (url.includes('classlink_oauth')) {
+      this.storage.setItem('authType', AuthType.Classlink);
+      this.loginService.updateAuth({ classlink_code: loginCode, type: 'classlink-login' });
+    } else if (!!scope) {
+      this.clearInternal();
+      this.storage.setItem('authType', AuthType.Clever);
+      this.loginService.updateAuth({ clever_code: loginCode, type: 'clever-login' });
+    }
+  }
 
 	dirtyAccessToken(): void {
 		const ctx = this.getAuthContext();
@@ -484,8 +542,7 @@ export class HttpService implements OnDestroy {
 		if (preferredEnvironment && typeof preferredEnvironment === 'object') {
 			return of({ server: preferredEnvironment as LoginServer });
 		}
-		const discovery = /(proxy)/.test(environment.buildType) ? '/api/discovery/v2/find' : 'https://smartpass.app/api/discovery/v2/find';
-		return this.http.post(discovery, data).pipe(
+		return this.http.post(discoveryV2Endpoint, data).pipe(
 			switchMap((servers: LoginResponse) => {
 				return this.pwaStorage.setItem('servers', servers).pipe(mapTo(servers));
 			}),
@@ -730,22 +787,54 @@ export class HttpService implements OnDestroy {
 		);
 	}
 
-	loginSession(sessionLogin: SessionLogin) {
-		return this.post('sessions', sessionLogin, undefined, false);
+	loginSession(authObject: AuthObject) {
+    const formData = new FormData();
+    let sessionLogin: Partial<SessionLogin> = {};
+    const authContext: AuthContext = JSON.parse(this.storage.getItem('auth'));
+    const context = authContext ? authContext : null;
+    const google_token = context?.google_token;
+
+    formData.append('platform_type', 'web');
+    if (isDemoLogin(authObject)) {
+      sessionLogin.provider = LoginProvider.Password;
+      sessionLogin.token = authObject.password;
+      sessionLogin.username = authObject.username;
+      formData.append('email', authObject.username);
+    } else if (isClassLinkLogin(authObject)) {
+      sessionLogin.provider = LoginProvider.Classlink;
+      formData.append('code', authObject.classlink_code);
+      formData.append('provider', 'classlink');
+    } else if (isCleverLogin(authObject)) {
+      sessionLogin.provider = LoginProvider.Clever
+      formData.append('code', authObject.clever_code);
+      formData.append('provider', 'clever');
+      formData.append('redirect_uri', this.getRedirectUrl());
+    } else if (isGoogleLogin(authObject)) {
+      if (!google_token) {
+        return throwError(new LoginServerError('Please sign in again'));
+      }
+      sessionLogin.provider = LoginProvider.Google;
+      formData.append('code', authObject.google_code);
+      formData.append('provider', 'google-oauth-code');
+      formData.append('redirect_uri', this.getRedirectUrl() + 'google_oauth');
+    }
+
+    return this.http.post(discoveryV2Endpoint, formData).pipe(
+      switchMap((servers: LoginResponse) => {
+        return this.pwaStorage.setItem('servers', servers).pipe(mapTo(servers));
+      }),
+      concatMap((servers: LoginResponse) => {
+        if (!isDemoLogin(authObject)) {
+          sessionLogin.token = servers.token.access_token;
+        }
+        console.log(servers);
+        return this.http.post(makeUrl(servers.servers[0], 'sessions'), sessionLogin);
+      })
+    )
 	}
 
 	private fetchServerAuth(authObject: any): Observable<AuthContext> {
-		let authContext$: Observable<AuthContext>;
-		if (isDemoLogin(authObject)) {
-			authContext$ = this.loginManual(authObject.username, authObject.password);
-		} else if (isClassLinkLogin(authObject)) {
-			authContext$ = this.loginClassLink(authObject.classlink_code);
-		} else if (isCleverLogin(authObject)) {
-			authContext$ = this.loginClever(authObject.clever_code);
-		} else {
-			authContext$ = this.loginGoogle(authObject.google_code);
-		}
-		return authContext$.pipe(
+		return this.loginSession(authObject).pipe(
 			catchError((err) => {
 				console.log('Failed to fetch serverAuth, err: ', err);
 				// Attempt to refresh once...

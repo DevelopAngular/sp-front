@@ -1,4 +1,12 @@
-import { ChangeDetectionStrategy, ChangeDetectorRef, Component, EventEmitter, OnDestroy, OnInit, Output } from '@angular/core';
+import {
+  ChangeDetectionStrategy,
+  ChangeDetectorRef,
+  Component,
+  EventEmitter,
+  OnDestroy,
+  OnInit,
+  Output,
+} from '@angular/core';
 import { AuthObject, DemoLogin, LoginService } from '../../services/login.service';
 import { BehaviorSubject, Observable, of, Subject } from 'rxjs';
 import { filter, finalize, pluck, takeUntil, tap } from 'rxjs/operators';
@@ -77,7 +85,6 @@ export class LoginComponent implements OnInit, OnDestroy {
 	public loginForm: FormGroup;
 	public error$: BehaviorSubject<string> = new BehaviorSubject<string>(null);
 	public disabledButton = true;
-	public showError: boolean;
 	public schoolAlreadyText$: Observable<string>;
 	public passwordError: boolean;
 
@@ -129,7 +136,6 @@ export class LoginComponent implements OnInit, OnDestroy {
 	}
 
 	private resetAuthType() {
-		this.loginData.demoLoginEnabled = false;
 		this.isClever = false;
 		this.isClasslink = false;
 		this.isStandardLogin = false;
@@ -172,15 +178,15 @@ export class LoginComponent implements OnInit, OnDestroy {
 			)
 			.subscribe((qp) => {
 				// These query parameters are present after logging into the respective platforms
-				// and being redirected here with the params in the URL
+				// and then being redirected here with new params in the URL
+        // The redirect back into this component will be a result of the triggerAuthFromEmail function
+        const { code, scope } = qp; // scope is only available for clever login
+        const { url } = this.router;
 				this.storage.removeItem('context');
-				if (this.router.url.includes('google_oauth')) {
-					return this.loginGoogle(qp.code as string);
-				} else if (this.router.url.includes('classlink_oauth')) {
-					return this.loginSSO(qp.code as string);
-				} else if (!!qp.scope) {
-					return this.loginClever(qp.code as string);
-				}
+        console.log({
+          code, scope, url
+        });
+        // this.httpService.updateAuthFromExternalLogin(url, code as string, scope as string);
 			});
 
 		this.loginForm = new FormGroup({
@@ -240,7 +246,7 @@ export class LoginComponent implements OnInit, OnDestroy {
 						//   this.isGG4L = true;
 						//   break;
 					}
-					this.signIn();
+					this.triggerAuthFromEmail();
 				}
 			});
 	}
@@ -248,25 +254,6 @@ export class LoginComponent implements OnInit, OnDestroy {
 	ngOnDestroy(): void {
 		this.destroy$.next();
 		this.destroy$.complete();
-	}
-
-	loginSSO(code: string) {
-		this.storage.setItem('authType', 'classlink');
-		this.loginService.updateAuth({ classlink_code: code, type: 'classlink-login' });
-		return of(null);
-	}
-
-	loginClever(code: string) {
-		this.httpService.clearInternal();
-		this.storage.setItem('authType', 'clever');
-		this.loginService.updateAuth({ clever_code: code, type: 'clever-login' });
-		return of(null);
-	}
-
-	loginGoogle(code: string) {
-		this.storage.setItem('authType', 'google');
-		this.loginService.updateAuth({ google_code: code, type: 'google-login' });
-		return of(null);
 	}
 
 	updateDemoUsername(event) {
@@ -304,12 +291,14 @@ export class LoginComponent implements OnInit, OnDestroy {
 			.pipe(finalize(() => (this.showSpinner = false)))
 			.subscribe({
 				next: ({ auth_types, auth_providers }) => {
+          console.log(auth_types);
+          console.log(auth_providers);
 					this.loginData.authType = auth_types[auth_types.length - 1];
 					this.auth_providers = auth_providers[0];
 					this.resetAuthType();
 					this.setAuthType(auth_types);
 					this.disabledButton = false;
-					this.signIn();
+					this.triggerAuthFromEmail();
 					this.cdr.detectChanges();
 				},
 				error: (err: Error) => {
@@ -319,37 +308,58 @@ export class LoginComponent implements OnInit, OnDestroy {
 			});
 	}
 
-	signIn() {
+  /**
+   * This function is called after the user's email has been verified and its auth type
+   * has been returned. It is also called when the user redirects back to this component from a successful
+   * Google authentication.
+   *
+   * For a user whose account is accessed by a password, this function simply shows the password field.
+   * For all other external platform auth, this function redirects to those platforms.
+   */
+	triggerAuthFromEmail() {
 		this.storage.removeItem('authType');
 		this.httpService.schoolSignInRegisterText$.next(null);
 		if (this.isGoogleLogin) {
 			this.storage.setItem('authType', this.loginData.authType);
-			this.initLogin();
-		} else if (this.isClever) {
+			this.initGoogleLogin();
+      return
+		}
+
+    if (this.isClever) {
 			this.showSpinner = true;
 			this.storage.setItem('authType', this.loginData.authType);
-			const district = this.auth_providers && this.auth_providers.provider === 'clever' ? this.auth_providers.sourceId : null;
+			const district = this.auth_providers && this.auth_providers.provider === AuthType.Clever ? this.auth_providers.sourceId : null;
 			const redirect = this.httpService.getEncodedRedirectUrl();
 			if (district) {
 				window.location.href = `https://clever.com/oauth/authorize?response_type=code&redirect_uri=${redirect}&client_id=f4260ade643c042482a3&district_id=${district}`;
 			} else {
 				window.location.href = `https://clever.com/oauth/authorize?response_type=code&redirect_uri=${redirect}&client_id=f4260ade643c042482a3`;
 			}
-		} else if (this.isClasslink) {
+      return
+		}
+
+    if (this.isClasslink) {
 			this.showSpinner = true;
 			this.storage.setItem('authType', this.loginData.authType);
 			const redirect = this.httpService.getEncodedRedirectUrl() + 'classlink_oauth';
 			window.location.href = `https://launchpad.classlink.com/oauth2/v2/auth?scope=oneroster,profile,full&client_id=c1655133410502391e3e32b3fb24cefb8535bd9994d4&response_type=code&redirect_uri=${redirect}`;
-		} else if (this.isStandardLogin) {
+      return
+		}
+
+    if (this.isStandardLogin) {
 			this.storage.setItem('authType', this.loginData.authType);
 			this.inputFocusNumber = 2;
 			this.forceFocus$.next();
 			this.loginData.demoLoginEnabled = true;
+      this.isGoogleLogin = false;
+      this.isClasslink = false;
+      this.isStandardLogin = false;
+      this.isClever = false;
+      return;
 		}
-		this.isGoogleLogin = false;
-		this.isClasslink = false;
-		this.isStandardLogin = false;
-		this.isClever = false;
+
+    // no auth type is set
+    this.error$.next('Something went horribly wrong');
 	}
 
 	demoLogin() {
@@ -368,29 +378,19 @@ export class LoginComponent implements OnInit, OnDestroy {
 			type: 'demo-login',
 		} as DemoLogin;
 
-		this.httpService.getUserAuth(loginDetails).subscribe(console.log);
-		// this.httpService.getUserAuth(loginDetails).pipe(
-		//   concatMap(authObject => {
-		//     return this.httpService.loginSession({
-		//       provider: ,
-		//       token: authObject.auth.access_token
-		//     })
-		//   })
-		// )
-
-		// of(this.loginService.signInDemoMode(this.loginForm.get('username').value, this.loginForm.get('password').value)).pipe(
-		// 	finalize(() => {
-		// 		this.showSpinner = false;
-		// 		this.cdr.detectChanges();
-		// 	})
-		// );
+		of(this.loginService.signInDemoMode(loginDetails.username, loginDetails.password)).pipe(
+			finalize(() => {
+				this.showSpinner = false;
+				this.cdr.detectChanges();
+			})
+		);
 	}
 
-	initLogin() {
+  initGoogleLogin() {
 		this.loggedWith = LoginMethod.OAuth;
 		this.loginService.showLoginError$.next(false);
 		this.loginService.loginErrorMessage$.next(null);
-		this.loginService.signIn(this.loginData.demoUsername);
+		this.loginService.triggerGoogleAuthFlow(this.loginData.demoUsername);
 		this.cdr.detectChanges();
 	}
 }
