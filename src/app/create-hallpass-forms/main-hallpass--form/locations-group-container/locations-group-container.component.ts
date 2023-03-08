@@ -36,7 +36,6 @@ import { LocationVisibilityService } from '../location-visibility.service';
 import { PassLimitDialogComponent } from './pass-limit-dialog/pass-limit-dialog.component';
 import { KioskModeService } from '../../../services/kiosk-mode.service';
 import { HttpService } from '../../../services/http-service';
-import { FeatureFlagService, FLAGS } from '../../../services/feature-flag.service';
 
 // when WS notify a change we have to skip functions that change
 // FORM_STATE state and step
@@ -117,8 +116,7 @@ export class LocationsGroupContainerComponent implements OnInit, OnDestroy {
 		private cdr: ChangeDetectorRef,
 		private dialog: MatDialog,
 		private kioskService: KioskModeService,
-		private httpService: HttpService,
-		private featureService: FeatureFlagService
+		private httpService: HttpService
 	) {}
 
 	private destroy$ = new Subject();
@@ -158,10 +156,10 @@ export class LocationsGroupContainerComponent implements OnInit, OnDestroy {
 	shouldSkipTeacherSelect() {
 		const to = this.FORM_STATE.data.direction.to;
 		return (
-			(!this.FORM_STATE.forLater && to.request_mode === 'specific_teachers' && to.request_teachers.length === 1) ||
+			(!this.FORM_STATE.forLater && to.request_mode === 'specific_teachers') ||
 			(!this.FORM_STATE.forLater && to.request_mode === 'all_teachers_in_room') ||
 			(!this.FORM_STATE.forLater && this.teachersLength === 1) ||
-			(this.FORM_STATE.forLater && to.scheduling_request_mode === 'specific_teachers' && to.scheduling_request_teachers.length === 1) ||
+			(this.FORM_STATE.forLater && to.scheduling_request_mode === 'specific_teachers') ||
 			(this.FORM_STATE.forLater && to.scheduling_request_mode === 'all_teachers_in_room') ||
 			(this.FORM_STATE.forLater && this.teachersLength === 1)
 		);
@@ -328,6 +326,8 @@ export class LocationsGroupContainerComponent implements OnInit, OnDestroy {
 
 		if (requestMode === 'teacher_in_room') {
 			teacher = this.getTeacherChoicesForTeacherInRoom()[0];
+		} else if (requestMode === 'specific_teachers') {
+			teacher = this.FORM_STATE.data.direction.to.request_teachers[0];
 		} else {
 			teacher = this.user;
 		}
@@ -360,7 +360,7 @@ export class LocationsGroupContainerComponent implements OnInit, OnDestroy {
 			this.FORM_STATE.data.direction.to = pinnable.location;
 
 			const restricted = (this.pinnable.location.restricted && !this.showDate) || (this.pinnable.location.scheduling_restricted && !!this.showDate);
-			if (!this.isStaff && restricted && pinnable.location) {
+			if ((this.user.isStudent() || this.isKioskMode) && restricted && pinnable.location) {
 				this.FORM_STATE.previousState = this.FORM_STATE.state;
 				this.FORM_STATE.state = this.maybeSkipTeacherSelect();
 				return;
@@ -446,6 +446,7 @@ export class LocationsGroupContainerComponent implements OnInit, OnDestroy {
 		if (numberOfStudentsInRoom !== undefined) {
 			const totalStudents =
 				this.user.isStudent() || this.isKioskMode ? numberOfStudentsInRoom : numberOfStudentsInRoom + this.FORM_STATE.data.selectedStudents.length;
+
 			let reached = location?.max_passes_to_active;
 			if (this.user.isStudent() || this.kioskService.isKisokMode()) {
 				reached = reached && totalStudents >= location.max_passes_to;
@@ -453,7 +454,7 @@ export class LocationsGroupContainerComponent implements OnInit, OnDestroy {
 				reached = reached && totalStudents > location.max_passes_to;
 			}
 
-			if (reached) {
+			if (reached && !this.waitInLineEnabled) {
 				const overrideRoomLimit = await this.showDestinationLimitReachedFromCategory(
 					location.max_passes_to,
 					this.FORM_STATE.data.selectedStudents.length,
@@ -506,7 +507,6 @@ export class LocationsGroupContainerComponent implements OnInit, OnDestroy {
 			this.isStaff = false;
 		}
 
-		const wilEnabled = this.featureService.isFeatureEnabled(FLAGS.WaitInLine);
 		const dest = this.FORM_STATE.data.direction.to;
 		const { pass_limits } = await this.locationsService.getPassLimit().toPromise();
 		const destPassLimit = pass_limits.find((p) => p.id == dest.id);

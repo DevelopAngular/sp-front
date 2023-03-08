@@ -17,6 +17,15 @@ export interface KioskSettings {
 	findByScan: boolean;
 }
 
+export interface KioskLogin {
+	username: string;
+	password: string;
+}
+
+export interface KioskLoginResponse {
+	results: KioskLogin;
+}
+
 @Injectable({
 	providedIn: 'root',
 })
@@ -71,6 +80,10 @@ export class KioskModeService {
 	}
 	resetPassword(location: Location) {
 		return this.http.patch(`v1//kiosk/${location.id}/password`);
+	}
+
+	getKioskModeLogin(locationId: string): Observable<KioskLoginResponse> {
+		return this.http.get(`v1/kiosk/${locationId}/login`);
 	}
 
 	getAllKioskLogin() {

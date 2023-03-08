@@ -219,7 +219,7 @@ export class HttpService implements OnDestroy {
 	// should come from server
 	public langs$: Observable<string[]> = of(['en', 'es']);
 
-	public kioskTokenSubject$ = new BehaviorSubject<any>(null);
+	public kioskTokenSubject$ = new BehaviorSubject<ServerAuth>(null);
 
 	public globalReload$ = this.currentSchool$.pipe(
 		filter((school) => !!school),
@@ -367,12 +367,13 @@ export class HttpService implements OnDestroy {
 									// Direct HTTP Errors
 									this.loginService.showLoginError$.next(true);
 								}
+
 								this.loginService.isAuthenticated$.next(false);
 								this.loginService.clearInternal(true);
 							}
 						},
 					}),
-					filter((authObj) => !!authObj && !!authObj.auth)
+					filter((authObj) => !!authObj?.auth)
 				)
 				.subscribe({
 					next: (authCtx) => {
@@ -906,27 +907,10 @@ export class HttpService implements OnDestroy {
 	}
 
 	get<T>(url, config?: Config, schoolOverride?: School): Observable<T> {
-		// console.log('Making request: ' + url);
 		return this.performRequest((ctx) => {
 			// Explicitly check for undefined because the caller may want to override with null.
 			const school = schoolOverride !== undefined ? schoolOverride : this.getSchool();
-
-			// WARNING
-			//
-			// This following code is a bit of a hack. hall-pass-web expects /@me and /@me/representedUsers to return consistent results
-			// even the user is an assistant. In reality, the moment they assume the assistant role, /@me and especially /@me/representedUsers
-			// returns a different value...
-			//
-			// At one point in time, we had a bug in kiosk mode for assistants. Basically an assistant would not be able to use kiosk mode
-			// and make passes. The symptoms were that the user would appear to be signed into kiosk mode, but none of the actual auth
-			// information was loaded. The problem was the the auth was being immediately unloaded upon switching to kiosk mode,
-			// because the previously cached user was an assistant and /@me/representedUsers returned no results. (AKA an assistant with no
-			// assigned users!) This is because we had "switched" our auth to the effective user.
-			//
-			// The below prevents passing the effective user id for any of the /users/@me calls.
-			// const effectiveUserId = url.includes('/users/@me') ? undefined : this.getEffectiveUserId();
 			const effectiveUserId = this.getEffectiveUserId();
-
 			return this.http.get<T>(makeUrl(ctx.server, url), makeConfig(config, school, effectiveUserId));
 		});
 	}
