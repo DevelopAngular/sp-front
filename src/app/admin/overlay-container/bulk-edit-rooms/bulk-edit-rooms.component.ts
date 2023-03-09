@@ -70,6 +70,7 @@ export class BulkEditRoomsComponent implements OnInit {
 			(this.roomData.travelType.length ||
 				!isNull(this.roomData.restricted) ||
 				!isNull(this.roomData.scheduling_restricted) ||
+				!isNull(this.roomData.ignore_students_pass_limit) ||
 				this.roomData.timeLimit ||
 				this.roomData.selectedTeachers.length) &&
 			!this.advOptionsButtons
@@ -79,6 +80,7 @@ export class BulkEditRoomsComponent implements OnInit {
 			this.roomData.travelType.length ||
 			!isNull(this.roomData.restricted) ||
 			!isNull(this.roomData.scheduling_restricted) ||
+			!isNull(this.roomData.ignore_students_pass_limit) ||
 			this.roomData.timeLimit ||
 			this.roomData.selectedTeachers.length ||
 			this.advOptionsButtons

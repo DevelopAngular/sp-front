@@ -49,6 +49,7 @@ export interface ValidButtons {
 export class AdvancedOptionsComponent implements OnInit, OnDestroy {
 	@Input() roomName: string;
 	@Input() nowRestricted: boolean;
+	@Input() ignoreStudentsPassLimit: boolean;
 	@Input() futureRestricted: boolean;
 	@Input() disabledOptions: string[];
 	@Input() data: OptionState;
@@ -65,6 +66,7 @@ export class AdvancedOptionsComponent implements OnInit, OnDestroy {
 	@Output() nowRestrEmit: EventEmitter<boolean> = new EventEmitter<boolean>();
 	@Output() futureRestEmit: EventEmitter<boolean> = new EventEmitter<boolean>();
 	@Output() checkInEmit: EventEmitter<boolean> = new EventEmitter<boolean>();
+	@Output() ignoreStudentsPassLimitEmit: EventEmitter<boolean> = new EventEmitter<boolean>();
 
 	hideFutureBlock: boolean;
 	tooltipText;
@@ -137,7 +139,9 @@ export class AdvancedOptionsComponent implements OnInit, OnDestroy {
 			forNow: new FormControl(this.roomData.restricted),
 			forFuture: new FormControl(this.roomData.scheduling_restricted),
 			checkIn: new FormControl(this.roomData.needs_check_in),
+			ignorePass: new FormControl(!this.roomData.ignore_students_pass_limit),
 		});
+
 		this.futureRestEmit.emit(this.roomData.scheduling_restricted);
 		this.nowRestrEmit.emit(this.roomData.restricted);
 		this.checkInEmit.emit(this.roomData.needs_check_in);
@@ -277,6 +281,10 @@ export class AdvancedOptionsComponent implements OnInit, OnDestroy {
 
 	checkInEvent(value) {
 		this.checkInEmit.emit(value);
+	}
+
+	ignoreStudentsPassLimitEvent(value) {
+		this.ignoreStudentsPassLimitEmit.emit(!value);
 	}
 
 	isRestrictionEmpty(restriction) {

@@ -6,6 +6,31 @@
 					<div class="toggle">
 						<app-toggle-input
 							[form]="restrictionForm"
+							[controlName]="'ignorePass'"
+							[delimiter]="false"
+							[controlSize]="'small'"
+							[hasIcon]="true"
+							[icon]="'./assets/Locked (Navy).svg'"
+							[color]="'#1F195E'"
+							(pushOutValue)="ignoreStudentsPassLimitEvent($event)"></app-toggle-input>
+					</div>
+					<div class="toggle-content">
+						<div class="title-line">
+							<div class="label" [style.color]="restrictionForm.get('ignorePass').value ? '#1F194E' : '#7F879D'">Count towards Pass Limits</div>
+							<img
+								[customToolTip]="tooltipText.ignore_students_pass_limit"
+								class="support-icon"
+								[src]="'./assets/Support (Gray).svg' | resolveAsset" />
+						</div>
+					</div>
+				</div>
+			</div>
+
+			<div class="block">
+				<div class="line">
+					<div class="toggle">
+						<app-toggle-input
+							[form]="restrictionForm"
 							[controlName]="'forNow'"
 							[delimiter]="false"
 							[controlSize]="'small'"

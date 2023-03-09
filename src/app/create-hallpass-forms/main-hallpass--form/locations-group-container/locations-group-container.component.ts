@@ -269,7 +269,7 @@ export class LocationsGroupContainerComponent implements OnInit, OnDestroy {
 							// ignore folders
 							return p;
 						}
-						if (!p?.location?.restricted) {
+						if (!p?.location?.restricted && !p?.location?.ignore_students_pass_limit) {
 							p.location.restricted = true;
 						}
 					});

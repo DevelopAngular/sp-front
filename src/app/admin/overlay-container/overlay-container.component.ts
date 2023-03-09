@@ -832,6 +832,7 @@ export class OverlayContainerComponent implements OnInit, OnDestroy {
 				room: this.roomData.roomNumber,
 				restricted: !!this.roomData.restricted,
 				scheduling_restricted: !!this.roomData.scheduling_restricted,
+				ignore_students_pass_limit: !!this.roomData.ignore_students_pass_limit,
 				needs_check_in: !!this.roomData.needs_check_in,
 				teachers: this.roomData.selectedTeachers.map((teacher) => teacher.id),
 				travel_types: this.roomData.travelType,
@@ -992,6 +993,7 @@ export class OverlayContainerComponent implements OnInit, OnDestroy {
 				room: this.roomData.roomNumber,
 				restricted: !!this.roomData.restricted,
 				scheduling_restricted: !!this.roomData.scheduling_restricted,
+				ignore_students_pass_limit: !!this.roomData.ignore_students_pass_limit,
 				needs_check_in: !!this.roomData.needs_check_in,
 				teachers: this.roomData.selectedTeachers.map((teacher) => teacher.id),
 				travel_types: this.roomData.travelType,
@@ -1214,6 +1216,7 @@ export class OverlayContainerComponent implements OnInit, OnDestroy {
 			room: room.roomNumber,
 			restricted: !!room.restricted,
 			scheduling_restricted: !!room.scheduling_restricted,
+			ignore_students_pass_limit: !!room.ignore_students_pass_limit,
 			needs_check_in: !!room.needs_check_in,
 			teachers: room.selectedTeachers,
 			// TODO: Make every single travelType prop into travel_types to avoid this kind of error in the future

@@ -400,6 +400,7 @@ export class PassConfigComponent implements OnInit, OnDestroy {
 					room: pin.room,
 					restricted: pin.restricted,
 					scheduling_restricted: pin.scheduling_restricted,
+					ignore_students_pass_limit: pin.ignore_students_pass_limit,
 					travel_types: pin.travel_types,
 					max_allowed_time: pin.max_allowed_time,
 				};
