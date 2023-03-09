@@ -1,0 +1,36 @@
+<div class="wrapper streak" *ngIf="!isLost; else lostContainer">
+	<div class="top">
+		<div class="streaks-wrapper">
+			<img class="streaks-icon" [src]="'./assets/Streaks.svg'" alt="" />
+			<div class="days">{{ streaksCount }} days</div>
+		</div>
+	</div>
+	<div class="bottom">
+		<div class="title">
+			<p>Smart<span>Streak!</span></p>
+		</div>
+		<div class="discription">
+			<p>
+				The last <span>{{ streaksCount }} days</span> that you had passes, you ended all of them!
+			</p>
+		</div>
+	</div>
+</div>
+
+<ng-template #lostContainer>
+	<div class="wrapper lost">
+		<div class="top">
+			<div class="streaks-wrapper">
+				<img class="streaks-icon" [src]="'./assets/Grimacing.svg'" alt="" />
+			</div>
+		</div>
+		<div class="bottom">
+			<div class="title">
+				<p>End Your Pass Next Time!</p>
+			</div>
+			<div class="discription">
+				<p>You lost your 🔥 streak because you didn’t end your pass</p>
+			</div>
+		</div>
+	</div>
+</ng-template>

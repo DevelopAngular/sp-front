@@ -56,6 +56,7 @@ import { IdcardOverlayContainerComponent } from '../idcard-overlay-container/idc
 import { IDCard, IDCardService } from '../services/IDCardService';
 import { CheckForUpdateService } from '../services/check-for-update.service';
 import { SmartpassSearchComponent } from '../smartpass-search/smartpass-search.component';
+import { StreaksDialogComponent } from '../streaks-dialog/streaks-dialog.component';
 
 declare const window;
 
@@ -108,6 +109,9 @@ export class NavbarComponent implements AfterViewInit, OnInit, OnDestroy {
 	kioskModeLocation: any;
 
 	isOpenSettings: boolean;
+
+	isStreaksOpen: boolean = false;
+	@ViewChild('streaksButton') streaksButton: ElementRef;
 
 	hideButtons: boolean;
 
@@ -246,6 +250,10 @@ export class NavbarComponent implements AfterViewInit, OnInit, OnDestroy {
 		return this.user && moment(this.user.created).add(7, 'days').isSameOrBefore(moment());
 	}
 
+	get streaksCount(): number {
+		return this.user?.streak_count;
+	}
+
 	ngOnInit() {
 		this.isUpdateBar$ = this.updateService.needToUpdate$;
 		this.isEnabledProfilePictures$ = this.userService.isEnableProfilePictures$;
@@ -313,6 +321,11 @@ export class NavbarComponent implements AfterViewInit, OnInit, OnDestroy {
 				takeUntil(this.destroyer$),
 				switchMap(([eu, user]: [RepresentedUser, User]) => {
 					this.user = User.fromJSON(user);
+					if (this.user?.lost_streak_count != null) {
+						setTimeout(() => {
+							this.openStreaks(this.streaksButton, true);
+						}, 2000);
+					}
 					this.isStaff = this.user.isTeacher();
 					this.isAssistant = this.user.isAssistant();
 					if (this.userService.getFeatureFlagDigitalID()) {
@@ -403,6 +416,33 @@ export class NavbarComponent implements AfterViewInit, OnInit, OnDestroy {
 
 	ngAfterViewInit(): void {
 		this.navbarElementsService.navbarRef$.next(this.navbar);
+	}
+
+	poofAnimation() {
+		const poof_target = document.querySelector<HTMLElement>('#puff');
+		function animatePoof() {
+			var bgTop = 0,
+				frame = 0,
+				frames = 6,
+				frameSize = 32,
+				frameRate = 200,
+				puff = poof_target;
+			var animate = function () {
+				if (frame < frames) {
+					puff.style.backgroundPosition = '0 ' + bgTop + 'px';
+					bgTop = bgTop - frameSize;
+					frame++;
+					setTimeout(animate, frameRate);
+				} else {
+					poof_target.style.display = 'none';
+				}
+			};
+			animate();
+		}
+		poof_target.style.left = this.streaksButton.nativeElement.getBoundingClientRect().left + 20 + 'px';
+		poof_target.style.top = this.streaksButton.nativeElement.getBoundingClientRect().top + 'px';
+		poof_target.style.display = 'block';
+		animatePoof();
 	}
 
 	getIcon(iconName: string, darkFill?: string, lightFill?: string) {
@@ -657,5 +697,34 @@ export class NavbarComponent implements AfterViewInit, OnInit, OnDestroy {
 	isKioskModeSettingsPage() {
 		if ((this.activeRoute.snapshot as any)._routerState.url === `/main/kioskMode/settings`) return true;
 		return false;
+	}
+
+	openStreaks(event, isLost: boolean = false) {
+		this.isStreaksOpen = true;
+		let target;
+		if (isLost) {
+			target = event;
+			setTimeout(() => {
+				this.poofAnimation();
+			}, 500);
+		} else {
+			target = new ElementRef(event.currentTarget);
+		}
+		const SDC = this.dialog.open(StreaksDialogComponent, {
+			panelClass: 'consent-dialog-container',
+			backdropClass: 'invis-backdrop',
+			data: {
+				trigger: target,
+				streaks_count: this.streaksCount,
+				is_lost: !isLost,
+			},
+		});
+
+		SDC.afterClosed().subscribe((status) => {
+			this.isStreaksOpen = false;
+			if (isLost) {
+				this.userService.updateUserRequest(this.user, { lost_streak_count: null });
+			}
+		});
 	}
 }
