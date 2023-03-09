@@ -184,7 +184,7 @@
 .help-center-content-wrapper {
 	height: 100vh;
 	max-width: 449px;
-	min-width: 300px;
+	min-width: 320px;
 	width: 0px;
 	position: absolute;
 	right: 0;
@@ -232,11 +232,25 @@
 			}
 		}
 	}
-	.close-icon {
+	.close-icon-wrapper {
 		position: absolute;
-		right: 0;
+		right: 8px;
+		top: 8px;
 		cursor: pointer;
 		z-index: 999;
+		.circle {
+			background: #ffffff;
+			transition: all 0.2s;
+			border-radius: 10px;
+			width: 40px;
+			height: 40px;
+			.close-icon {
+				padding: 13px;
+			}
+			&:hover {
+				background: #f0f2f5;
+			}
+		}
 	}
 	iframe {
 		width: 100%;

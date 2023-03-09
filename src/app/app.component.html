@@ -75,7 +75,11 @@
 		<div class="help-center-content-wrapper" id="help-center-content">
 			<div class="help-center-unsubscribe"></div>
 			<div class="drag-divider" id="drag-divider"></div>
-			<img class="close-icon" (click)="closeHelpCenter()" [src]="'./assets/Cancel (White-Gray).svg' | resolveAsset" alt="" />
+			<div class="close-icon-wrapper" (click)="closeHelpCenter()">
+				<div class="circle">
+					<img class="close-icon" [src]="'./assets/Close (Grey).svg' | resolveAsset" alt="" />
+				</div>
+			</div>
 			<iframe #helpIframe class="help-centre-iframe" id="help-centre-iframe" src="https://www.smartpass.app/help-center" frameborder="0"></iframe>
 			<div class="contact-wrapper">
 				<div class="call-main">
