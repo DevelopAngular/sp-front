@@ -454,6 +454,16 @@ export class HttpService implements OnDestroy {
 		);
 	}
 
+  getServerFromStorage(): { server: LoginServer } {
+    let server = this.storage.getItem('server');
+    if (!server) {
+      this.loginService.isAuthenticated$.next(false);
+      return null;
+    }
+
+    return JSON.parse(server);
+  }
+
 	// Used in AccessTokenInterceptor for token refresh and adding access token
 	getAuthContext(): AuthContext {
 		return this._authContext;
@@ -828,12 +838,16 @@ export class HttpService implements OnDestroy {
 		);
 	}
 
-	private performRequest<T>(predicate: (ctx: AuthContext) => Observable<T>): Observable<T> {
-		if (!this.getAuthContext()) {
-			return throwError(new LoginServerError('No authContext'));
-		}
+	private performRequest<T>(predicate: (ctx: LoginServer) => Observable<T>): Observable<T> {
+    let server = this.storage.getItem('server');
+    if (!server) {
+      this.loginService.isAuthenticated$.next(false);
+      return throwError(new LoginServerError('No login server!'));
+    }
 
-		return predicate(this.getAuthContext());
+    const parsedServer: { server: LoginServer } = JSON.parse(server);
+
+		return predicate(parsedServer.server);
 	}
 
 	// Used in AccessTokenInterceptor to trigger refresh
@@ -1013,28 +1027,16 @@ export class HttpService implements OnDestroy {
 
 	searchIcons(search: string, config?: Config) {
 		return this.performRequest((ctx) => {
-			return this.http.get(`${ctx.server.icon_search_url}?query=${search}`);
+			return this.http.get(`${ctx.icon_search_url}?query=${search}`);
 		});
 	}
 
-  private getServerFromStorage(): { server: LoginServer } {
-    let server = this.storage.getItem('server');
-    if (!server) {
-      this.loginService.isAuthenticated$.next(false);
-      return null;
-    }
-
-    return JSON.parse(server);
-  }
-
 	get<T>(url, config?: Config, schoolOverride?: School): Observable<T> {
-    const server = this.getServerFromStorage();
-    if (!server) {
-      return throwError(new LoginServerError('No Login Server!'));
-    }
     const school = schoolOverride !== undefined ? schoolOverride : this.getSchool();
     const effectiveUserId = this.getEffectiveUserId();
-    return this.http.get<T>(makeUrl(server.server, url), makeConfig(config, school, effectiveUserId));
+    return this.performRequest<T>((server) =>
+      this.http.get<T>(makeUrl(server, url), makeConfig(config, school, effectiveUserId))
+    )
 	}
 
 	post<T>(url: string, body?: any, config?: Config, isFormData = true): Observable<T> {
@@ -1053,14 +1055,15 @@ export class HttpService implements OnDestroy {
 			}
 			body = formData;
 		}
-		return this.performRequest((ctx) =>
-			this.http.post<T>(makeUrl(ctx.server, url), body, makeConfig(config, this.getSchool(), this.getEffectiveUserId()))
+
+		return this.performRequest((server) =>
+			this.http.post<T>(makeUrl(server, url), body, makeConfig(config, this.getSchool(), this.getEffectiveUserId()))
 		);
 	}
 
 	delete<T>(url, config?: Config): Observable<T> {
-		return this.performRequest((ctx) =>
-			this.http.delete<T>(makeUrl(ctx.server, url), makeConfig(config, this.getSchool(), this.getEffectiveUserId()))
+		return this.performRequest((server) =>
+			this.http.delete<T>(makeUrl(server, url), makeConfig(config, this.getSchool(), this.getEffectiveUserId()))
 		);
 	}
 
@@ -1077,8 +1080,8 @@ export class HttpService implements OnDestroy {
 				}
 			}
 		}
-		return this.performRequest((ctx) =>
-			this.http.put<T>(makeUrl(ctx.server, url), body, makeConfig(config, this.getSchool(), this.getEffectiveUserId()))
+		return this.performRequest((server) =>
+			this.http.put<T>(makeUrl(server, url), body, makeConfig(config, this.getSchool(), this.getEffectiveUserId()))
 		);
 	}
 
@@ -1095,8 +1098,8 @@ export class HttpService implements OnDestroy {
 				}
 			}
 		}
-		return this.performRequest((ctx) =>
-			this.http.patch<T>(makeUrl(ctx.server, url), body, makeConfig(config, this.getSchool(), this.getEffectiveUserId()))
+		return this.performRequest((server) =>
+			this.http.patch<T>(makeUrl(server, url), body, makeConfig(config, this.getSchool(), this.getEffectiveUserId()))
 		);
 	}
 }
