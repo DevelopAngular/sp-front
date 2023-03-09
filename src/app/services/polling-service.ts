@@ -1,7 +1,7 @@
 import { Injectable } from '@angular/core';
 import { $WebSocket } from 'angular2-websocket/angular2-websocket';
-import { BehaviorSubject, NEVER, Observable, Subject, Subscription, fromEvent, merge } from 'rxjs';
-import { filter, map, publish, refCount, switchMap, tap } from 'rxjs/operators';
+import { BehaviorSubject, fromEvent, NEVER, Observable, Subject, Subscription } from 'rxjs';
+import { filter, map, publish, refCount, tap } from 'rxjs/operators';
 import { HttpService } from './http-service';
 import { Logger } from './logger.service';
 
@@ -84,7 +84,7 @@ export class PollingService {
 				opened = true;
 
 				console.log('Websocket opened');
-				ws.send4Direct(JSON.stringify({ action: 'authenticate', token: ctx.auth.access_token }));
+				ws.send4Direct(JSON.stringify({ action: 'authenticate', token: ctx.auth.access_token, token_type: "cookie_value" }));
 
 				// any time the websocket opens, trigger an invalidation event because listeners can't trust their
 				// current state but by refreshing and listening from here, they will get all updates. (technically

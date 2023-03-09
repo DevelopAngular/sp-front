@@ -91,18 +91,8 @@ export class LoginService implements OnDestroy {
 			}
 		});
 
-		const savedAuth = this.storage.getItem(STORAGE_KEY);
-		if (savedAuth) {
-			// console.log('Loading saved auth:', savedAuth);
-			const auth = JSON.parse(savedAuth);
-			if (isGoogleLogin(auth) || isDemoLogin(auth) || isClassLinkLogin(auth) || isCleverLogin(auth)) {
-				this.updateAuth(auth);
-			} else {
-				this.isAuthenticated$.next(false);
-			}
-		} else {
-			this.isAuthenticated$.next(false);
-		}
+    const savedServerConfig = this.storage.getItem('server');
+    this.isAuthenticated$.next(!!savedServerConfig);
 	}
 
 	ngOnDestroy(): void {

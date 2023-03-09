@@ -56,7 +56,6 @@ import { ContactTraceEffects } from './ngrx/contact-trace/effects';
 import { IntrosEffects } from './ngrx/intros/effects/intros.effects';
 import { ServiceWorkerModule } from '@angular/service-worker';
 import { FiltersEffects } from './ngrx/pass-filters/effects';
-import { AccessTokenInterceptor } from './services/AccessTokenInterceptor';
 import { InvitationsEffects } from './ngrx/pass-like-collection/nested-states/invitations/effects';
 import { PassLikeCollectionEffects } from './ngrx/pass-like-collection/effects/pass-like-collection.effects';
 import { RequestsEffects } from './ngrx/pass-like-collection/nested-states/requests/effects';
@@ -79,6 +78,8 @@ import { EncounterDetectionEffects } from './ngrx/encounter-detection/effects';
 import { SharedModule } from './shared/shared.module';
 import { ParentsEffects } from './ngrx/accounts/nested-states/parents/effects';
 import { IsParentGuard } from './guards/is-parent.guard';
+import { AuthInterceptor } from './auth.interceptor';
+import { LoginService } from './services/login.service';
 // uncomment when app uses formatDate and so on
 //import {LOCALE_ID} from '@angular/core';
 //import {HttpService} from './services/http-service';
@@ -232,12 +233,13 @@ const appRoutes: Routes = [
 		StoreDevtoolsModule.instrument({}),
 		HammerModule,
 		ServiceWorkerModule.register('ngsw-worker.js', { enabled: environment.production }),
-		SharedModule,
+		SharedModule
 	],
 	providers: [
 		{ provide: OverlayContainer, useFactory: InitOverlay },
 		{ provide: HTTP_INTERCEPTORS, useClass: ProgressInterceptor, multi: true },
-		{ provide: HTTP_INTERCEPTORS, useClass: AccessTokenInterceptor, multi: true },
+    { provide: HTTP_INTERCEPTORS, useClass: AuthInterceptor, multi: true, deps: [LoginService] },
+		// { provide: HTTP_INTERCEPTORS, useClass: AccessTokenInterceptor, multi: true },
 		{ provide: APP_BASE_HREF, useValue: environment.production ? '/app' : '/' },
 		{ provide: SWIPER_CONFIG, useValue: DEFAULT_SWIPER_CONFIG },
 		,
