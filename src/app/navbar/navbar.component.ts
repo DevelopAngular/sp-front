@@ -716,7 +716,7 @@ export class NavbarComponent implements AfterViewInit, OnInit, OnDestroy {
 			data: {
 				trigger: target,
 				streaks_count: this.streaksCount,
-				is_lost: !isLost,
+				is_lost: isLost,
 			},
 		});
 
