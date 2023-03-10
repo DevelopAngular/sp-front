@@ -68,11 +68,11 @@
 		<router-outlet></router-outlet>
 	</div>
 	<div class="notification-backdrop" *ngIf="hasCustomBackdrop" [ngStyle]="customStyle"></div>
-  <ng-container *ngIf="(user$ | async) as user">
-    <app-help-center
-      *ngIf="isAuthenticated && !!user && !user.isStudent() && !(helpCenter.isHelpCenterOpen | async) && !isKioskMode"
-      (onClick)="openHelpCenter($event)"></app-help-center>
-  </ng-container>
+	<ng-container *ngIf="user$ | async as user">
+		<app-help-center
+			*ngIf="isAuthenticated && !!user && !user.isStudent() && !(helpCenter.isHelpCenterOpen | async) && !isKioskMode"
+			(onClick)="openHelpCenter($event)"></app-help-center>
+	</ng-container>
 	<ng-container *ngIf="helpCenter.isHelpCenterOpen | async">
 		<div class="help-center-content-wrapper" id="help-center-content">
 			<div class="help-center-unsubscribe"></div>
