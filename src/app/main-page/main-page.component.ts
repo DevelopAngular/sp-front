@@ -193,6 +193,8 @@ export class MainPageComponent implements OnInit, AfterViewInit, OnDestroy {
 
 		this.userService.userData
 			.pipe(
+				filter(Boolean),
+				map((user) => User.fromJSON(user)),
 				filter((user) => !user.isTeacher() && user.isAdmin()),
 				takeUntil(this.destroy$)
 			)

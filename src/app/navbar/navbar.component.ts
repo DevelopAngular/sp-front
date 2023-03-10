@@ -493,6 +493,7 @@ export class NavbarComponent implements AfterViewInit, OnInit, OnDestroy {
 					const efUser = this.representedUsers.find((u) => +u.user.id === +id);
 					this.userService.updateEffectiveUser(efUser);
 					this.http.effectiveUserId.next(+efUser.user.id);
+					this.userService.getUserPinRequest();
 				}
 			});
 	}
