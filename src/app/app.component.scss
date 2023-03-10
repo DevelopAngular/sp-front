@@ -235,17 +235,20 @@
 	.close-icon-wrapper {
 		position: absolute;
 		right: 12px;
-		top: 12px;
+		top: 10px;
 		cursor: pointer;
 		z-index: 999;
+		width: 50px;
+		height: 50px;
+		background: #ffffff;
 		.circle {
-			background: #ffffff;
 			transition: all 0.2s;
 			border-radius: 10px;
-			width: 50px;
-			height: 50px;
+			width: 40px;
+			height: 40px;
+			margin: 5px auto;
 			.close-icon {
-				padding: 18px;
+				padding: 13px;
 			}
 			&:hover {
 				background: #f0f2f5;
