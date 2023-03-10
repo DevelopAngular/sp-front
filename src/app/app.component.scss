@@ -234,18 +234,18 @@
 	}
 	.close-icon-wrapper {
 		position: absolute;
-		right: 8px;
-		top: 8px;
+		right: 12px;
+		top: 12px;
 		cursor: pointer;
 		z-index: 999;
 		.circle {
 			background: #ffffff;
 			transition: all 0.2s;
 			border-radius: 10px;
-			width: 40px;
-			height: 40px;
+			width: 50px;
+			height: 50px;
 			.close-icon {
-				padding: 13px;
+				padding: 18px;
 			}
 			&:hover {
 				background: #f0f2f5;
