@@ -3,6 +3,7 @@ import { BehaviorSubject, Observable, ReplaySubject, Subject } from 'rxjs';
 import { filter, takeUntil } from 'rxjs/operators';
 import { StorageService } from './storage.service';
 import { APP_BASE_HREF } from '@angular/common';
+import { CookieService } from 'ngx-cookie-service';
 
 declare const window;
 
@@ -77,11 +78,13 @@ export class LoginService implements OnDestroy {
 	constructor(
 		@Inject(APP_BASE_HREF)
 		private baseHref: string,
-		private storage: StorageService
+		private storage: StorageService,
+    private cookie: CookieService
 	) {
 		if (baseHref === '/app') {
 			this.baseHref = '/app/';
 		}
+
 		this.authObject$.pipe(takeUntil(this.destroy$)).subscribe((auth) => {
 			if (auth) {
 				const storageKey = isDemoLogin(auth)
@@ -112,6 +115,8 @@ export class LoginService implements OnDestroy {
 
 	clearInternal(permanent: boolean = false) {
 		this.authObject$.next(null);
+    this.cookie.delete('smartpassToken');
+    this.storage.removeItem('server');
 
 		if (!permanent) {
 			this.isAuthenticated$.next(false);

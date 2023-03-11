@@ -72,11 +72,11 @@ export class PollingService {
       return;
     }
 
-    const { server } = this.http.getServerFromStorage();
-    if (!server) {
+    const serverFromStorage = this.http.getServerFromStorage();
+    if (!serverFromStorage) {
       return;
     }
-
+    const { server } = serverFromStorage
     let sendMessageSubscription: Subscription = null;
 
     const url = server.ws_url;

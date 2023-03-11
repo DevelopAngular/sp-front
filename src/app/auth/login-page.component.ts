@@ -4,14 +4,15 @@ import { DeviceDetection } from '../device-detection.helper';
 import { LoginService } from '../services/login.service';
 import { UserService } from '../services/user.service';
 import { DomSanitizer, Meta, SafeUrl, Title } from '@angular/platform-browser';
-import { filter, map, switchMap, takeUntil } from 'rxjs/operators';
+import { filter, mergeMap, takeUntil, tap } from 'rxjs/operators';
 import { JwtHelperService } from '@auth0/angular-jwt';
-import { User } from '../models/User';
-import { Observable, ReplaySubject, Subject, zip } from 'rxjs';
-import { INITIAL_LOCATION_PATHNAME } from '../app.component';
+import { combineLatest, Observable, of, ReplaySubject, Subject } from 'rxjs';
 import { NotificationService } from '../services/notification-service';
-import { environment } from '../../environments/environment.prod';
 import { LoginDataService } from '../services/login-data.service';
+import { StorageService } from '../services/storage.service';
+import { CookieService } from 'ngx-cookie-service';
+import { User } from '../models/User';
+import { environment } from '../../environments/environment';
 
 declare const window;
 
@@ -46,7 +47,9 @@ export class LoginPageComponent implements OnInit, OnDestroy {
 		private titleService: Title,
 		private metaService: Meta,
 		private notifService: NotificationService,
-		private loginDataService: LoginDataService
+		private loginDataService: LoginDataService,
+    private storage: StorageService,
+    private cookie: CookieService
 	) {
 		this.jwt = new JwtHelperService();
 		this.pending$ = this.pendingSubject.asObservable();
@@ -69,35 +72,39 @@ export class LoginPageComponent implements OnInit, OnDestroy {
 			window.appLoaded();
 		}, 700);
 
-		this.loginService.isAuthenticated$
-			.pipe(
-				filter((v) => v),
-				switchMap((v): Observable<[User, Array<string>]> => {
-					return zip(
-						this.userService.userData.asObservable().pipe(filter((user) => !!user)),
-						INITIAL_LOCATION_PATHNAME.asObservable().pipe(map((p) => p.split('/').filter((v) => v && v !== 'app')))
-					);
-				}),
-				takeUntil(this.destroyer$)
-			)
-			.subscribe(([currentUser, path]) => {
-				if (NotificationService.hasPermission && environment.production) {
-					this.notifService.initNotifications(true);
-				}
+    combineLatest([
+      this.checkIfAuthOnLoad(),
+      this.loginService.isAuthenticated$.asObservable()
+    ]).pipe(
+      filter((([authOnLoad, authStateChanged]) => authOnLoad || authStateChanged)),
+      tap(() => {
+        this.userService.getUserRequest();
+      }),
+      mergeMap(() => this.userService.user$.pipe(filter(Boolean))),
+      tap(console.log),
+      // mergeMap(() => this.userService.userData.asObservable()
+      //   .pipe(catchError(error => { console.warn(error); return throwError(error); }),takeUntil(this.destroyer$), filter<User>(Boolean))),
+      tap((user) => {
+        user = User.fromJSON(user);
+        console.log(user);
+        if (NotificationService.hasPermission && environment.production) {
+          this.notifService.initNotifications(true);
+        }
 
-				const callbackUrl: string = window.history.state.callbackUrl;
-				if (callbackUrl != null || callbackUrl !== undefined) {
-					this.router.navigate([callbackUrl]);
-				} else if (this.isMobileDevice && currentUser.isAdmin() && currentUser.isTeacher()) {
-					this.router.navigate(['main']);
-				} else if (currentUser.isParent()) {
-					this.router.navigate(['parent']);
-				} else {
-					const loadView = currentUser.isAdmin() ? 'admin' : 'main';
-					this.router.navigate([loadView]);
-				}
-				this.titleService.setTitle('SmartPass');
-			});
+        const callbackUrl: string = window.history.state.callbackUrl;
+        if (callbackUrl != null || callbackUrl !== undefined) {
+          this.router.navigate([callbackUrl]);
+        } else if (this.isMobileDevice && user.isAdmin() && user.isTeacher()) {
+          this.router.navigate(['main']);
+        } else if (user.isParent()) {
+          this.router.navigate(['parent']);
+        } else {
+          const loadView = user.isAdmin() ? 'admin' : 'main';
+          this.router.navigate([loadView]);
+        }
+        this.titleService.setTitle('SmartPass');
+      })
+    ).subscribe();
 
 		this.trustedBackgroundUrl = this.sanitizer.bypassSecurityTrustStyle("url('./assets/Login Background.svg')");
 
@@ -120,6 +127,83 @@ export class LoginPageComponent implements OnInit, OnDestroy {
 				this.loginDataService.setLoginDataQueryParams({ email: qp.email, school_id: qp.school_id, instant_login: qp.instant_login });
 			});
 	}
+
+  private checkIfAuthOnLoad(): Observable<boolean> {
+  //   // Ideally, I don't really want this logic here.
+  //   // Application-wide routing due to auth state is better placed in services, guards
+  //   // and (to a lesser extent) interceptors.
+  //   // However, the services are pretty tangled now, so this will have to do
+  //   // TODO: Move this logic into login service after http service and login service are
+  //   //  properly split
+  //   this.loginService.isAuthenticated$
+  //     .pipe(
+  //       filter((v) => v),
+  //       switchMap((v): Observable<[User, Array<string>]> => {
+  //         return zip(
+  //           this.userService.userData.asObservable().pipe(filter((user) => !!user)),
+  //           INITIAL_LOCATION_PATHNAME.asObservable().pipe(map((p) => p.split('/').filter((v) => v && v !== 'app')))
+  //         );
+  //       }),
+  //       takeUntil(this.destroyer$)
+  //     )
+  //     .subscribe(([currentUser, path]) => {
+  //       if (NotificationService.hasPermission && environment.production) {
+  //         this.notifService.initNotifications(true);
+  //       }
+  //
+  //       debugger;
+  //
+  //       const callbackUrl: string = window.history.state.callbackUrl;
+  //       if (callbackUrl != null || callbackUrl !== undefined) {
+  //         this.router.navigate([callbackUrl]);
+  //       } else if (this.isMobileDevice && currentUser.isAdmin() && currentUser.isTeacher()) {
+  //         this.router.navigate(['main']);
+  //       } else if (currentUser.isParent()) {
+  //         this.router.navigate(['parent']);
+  //       } else {
+  //         const loadView = currentUser.isAdmin() ? 'admin' : 'main';
+  //         this.router.navigate([loadView]);
+  //       }
+  //       this.titleService.setTitle('SmartPass');
+  //     });
+
+  const isCookiePresent = !!this.cookie.get('smartpassToken');
+
+  if (!isCookiePresent) {
+    return of(false);
+  }
+
+  const svrString = this.storage.getItem('server');
+  if (!svrString) {
+    return of(false);
+  }
+
+  return of(true);
+
+  // return this.userService.userData.asObservable().pipe(
+  //   takeUntil(this.destroyer$),
+  //   filter<User>(Boolean),
+  //   map((user) => {
+  //     if (NotificationService.hasPermission && environment.production) {
+  //       this.notifService.initNotifications(true);
+  //     }
+  //
+  //     debugger;
+  //
+  //     const callbackUrl: string = window.history.state.callbackUrl;
+  //     if (callbackUrl != null || callbackUrl !== undefined) {
+  //       this.router.navigate([callbackUrl]);
+  //     } else if (this.isMobileDevice && user.isAdmin() && user.isTeacher()) {
+  //       this.router.navigate(['main']);
+  //     } else if (user.isParent()) {
+  //       this.router.navigate(['parent']);
+  //     } else {
+  //       const loadView = user.isAdmin() ? 'admin' : 'main';
+  //       this.router.navigate([loadView]);
+  //     }
+  //     this.titleService.setTitle('SmartPass');
+  //   }))
+  }
 
 	ngOnDestroy() {
 		window.Intercom('update', { hide_default_launcher: false });
