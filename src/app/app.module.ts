@@ -81,7 +81,6 @@ import { IsParentGuard } from './guards/is-parent.guard';
 import { AuthInterceptor } from './auth.interceptor';
 import { LoginService } from './services/login.service';
 import { CookieService } from 'ngx-cookie-service';
-import { CheckIfLoggedInGuard } from './guards/check-if-logged-in.guard';
 // uncomment when app uses formatDate and so on
 //import {LOCALE_ID} from '@angular/core';
 //import {HttpService} from './services/http-service';
@@ -101,7 +100,6 @@ const appRoutes: Routes = [
 	},
 	{
 		path: '',
-    canActivate: [CheckIfLoggedInGuard],
 		loadChildren: () => import('app/auth/login.module').then((m) => m.LoginModule),
 		data: { hideSchoolToggleBar: true },
 	},
@@ -178,7 +176,7 @@ const appRoutes: Routes = [
 		KeyboardShortcutsModule.forRoot(),
 
 		RouterModule.forRoot(appRoutes, {
-			enableTracing: false,
+			enableTracing: false
 		}),
 		OAuthModule.forRoot(),
 		AngularFireModule.initializeApp(environment.firebase, 'notifyhallpass'),

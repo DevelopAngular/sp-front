@@ -1,7 +1,6 @@
 import { Injectable } from '@angular/core';
 import { ActivatedRouteSnapshot, CanActivate, Router, RouterStateSnapshot } from '@angular/router';
 import { Observable, of } from 'rxjs';
-import { LoginService } from '../services/login.service';
 import { map, tap, withLatestFrom } from 'rxjs/operators';
 import { StorageService } from '../services/storage.service';
 import { AllowMobileService } from '../services/allow-mobile.service';
@@ -12,7 +11,6 @@ import { CookieService } from 'ngx-cookie-service';
 })
 export class AuthenticatedGuard implements CanActivate {
 	constructor(
-    private loginService: LoginService,
     private router: Router,
     private storage: StorageService,
     private allowMobile: AllowMobileService,
@@ -45,7 +43,6 @@ export class AuthenticatedGuard implements CanActivate {
 						this.router.navigate(['/mobile-restriction']);
 					}
 				}
-        this.loginService.isAuthenticated$.next(isAuthenticated);
         return isAuthenticated;
 			})
 		);

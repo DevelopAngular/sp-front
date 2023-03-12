@@ -16,7 +16,6 @@ export class CheckIfLoggedInGuard implements CanActivate {
 
     if (!!this.cookie.get('smartpassToken')) {
       this.router.navigate(['main'])
-      return false;
     }
 
     return true;
