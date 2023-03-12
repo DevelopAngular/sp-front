@@ -57,6 +57,7 @@ import { IDCard, IDCardService } from '../services/IDCardService';
 import { CheckForUpdateService } from '../services/check-for-update.service';
 import { SmartpassSearchComponent } from '../smartpass-search/smartpass-search.component';
 import { StreaksDialogComponent } from '../streaks-dialog/streaks-dialog.component';
+import { FeatureFlagService, FLAGS } from '../services/feature-flag.service';
 
 declare const window;
 
@@ -208,7 +209,8 @@ export class NavbarComponent implements AfterViewInit, OnInit, OnDestroy {
 		private shortcutsService: KeyboardShortcutsService,
 		private qrBarcodeGenerator: QRBarcodeGeneratorService,
 		private idCardService: IDCardService,
-		private updateService: CheckForUpdateService
+		private updateService: CheckForUpdateService,
+		private featureService: FeatureFlagService
 	) {}
 
 	get optionsOpen() {
@@ -252,6 +254,10 @@ export class NavbarComponent implements AfterViewInit, OnInit, OnDestroy {
 
 	get streaksCount(): number {
 		return this.user?.streak_count;
+	}
+
+	get isStreaks(): boolean {
+		return this.featureService.isFeatureEnabled(FLAGS.ShowStreaks);
 	}
 
 	ngOnInit() {
@@ -321,7 +327,7 @@ export class NavbarComponent implements AfterViewInit, OnInit, OnDestroy {
 				takeUntil(this.destroyer$),
 				switchMap(([eu, user]: [RepresentedUser, User]) => {
 					this.user = User.fromJSON(user);
-					if (this.user?.lost_streak_count != null) {
+					if (this.isStreaks && this.user?.lost_streak_count != null) {
 						setTimeout(() => {
 							this.openStreaks(this.streaksButton, true);
 						}, 2000);

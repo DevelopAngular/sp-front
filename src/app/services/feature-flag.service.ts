@@ -11,6 +11,7 @@ export enum FLAGS {
 	ParentAccounts = 'feature_flag_parent_accounts',
 	WaitInLine = 'feature_flag_wait_in_line',
 	ShowWaitInLine = 'feature_flag_show_wait_in_line',
+	ShowStreaks = 'feature_flag_streaks',
 }
 
 // TODO: Replace individual feature flag functions with this service
