@@ -228,6 +228,17 @@ export class PassCardComponent implements OnInit, OnDestroy {
 			this.selectedStudents = this.students;
 		}
 
+		merge(this.hallPassService.watchEndPass(), this.hallPassService.watchCancelPass())
+			.pipe(
+				takeUntil(this.destroy$),
+				map(({ action, data }) => HallPass.fromJSON(data))
+			)
+			.subscribe((hallPass) => {
+				if (hallPass.id == this.pass.id) {
+					this.dialogRef.close();
+				}
+			});
+
 		if (this.pass?.schedule_config_id) {
 			this.recurringConfigService.getRecurringScheduledConfig(this.pass.schedule_config_id).subscribe({
 				next: (c) => (this.recurringConfig = c),

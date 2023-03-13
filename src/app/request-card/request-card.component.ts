@@ -13,7 +13,7 @@ import { CreateHallpassFormsComponent } from '../create-hallpass-forms/create-ha
 import { CreateFormService } from '../create-hallpass-forms/create-form.service';
 import { RequestsService } from '../services/requests.service';
 import { NextStep, scalePassCards } from '../animations';
-import { BehaviorSubject, interval, Observable, of, Subject } from 'rxjs';
+import { BehaviorSubject, interval, merge, Observable, of, Subject } from 'rxjs';
 
 import * as moment from 'moment';
 import { isNull, uniq, uniqBy } from 'lodash';
@@ -160,6 +160,27 @@ export class RequestCardComponent implements OnInit, OnDestroy {
 			this.fromHistoryIndex = this.data['fromHistoryIndex'];
 		}
 
+		this.requestService
+			.watchDenyRequest()
+			.pipe(
+				takeUntil(this.destroy$),
+				map(({ action, data }) => Request.fromJSON(data))
+			)
+			.subscribe((request) => {
+				this.request = request;
+			});
+
+		merge(this.requestService.watchRequestCancel(), this.requestService.watchRequestAccept())
+			.pipe(
+				takeUntil(this.destroy$),
+				map(({ action, data }) => Request.fromJSON(data))
+			)
+			.subscribe((request) => {
+				if (request.id == this.request.id) {
+					this.dialogRef.close();
+				}
+			});
+
 		this.shortcutsService.onPressKeyEvent$.pipe(pluck('key'), takeUntil(this.destroy$)).subscribe((key) => {
 			if (key[0] === 'a') {
 				this.approveRequest();
@@ -298,7 +319,10 @@ export class RequestCardComponent implements OnInit, OnDestroy {
 	}
 
 	formatDateTime(date: Date, timeOnly?: boolean) {
-		return Util.formatDateTime(date, timeOnly);
+		if (date instanceof Date) {
+			return Util.formatDateTime(date, timeOnly);
+		}
+		return '';
 	}
 
 	newRequest() {

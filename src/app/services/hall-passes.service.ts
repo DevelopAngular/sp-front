@@ -275,6 +275,10 @@ export class HallPassesService {
 		return this.pollingService.listen('hall_pass.end');
 	}
 
+	watchCancelPass() {
+		return this.pollingService.listen('hall_pass.cancel');
+	}
+
 	getFiltersRequest(model: string) {
 		this.store.dispatch(getPassFilter({ model }));
 	}
