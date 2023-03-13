@@ -235,4 +235,8 @@ export class RequestsService {
 	watchInvitationAccept() {
 		return this.pollingService.listen('pass_invitation.accept');
 	}
+
+  watchUpdateRequest() {
+    return this.pollingService.listen('pass_request.update');
+  }
 }
