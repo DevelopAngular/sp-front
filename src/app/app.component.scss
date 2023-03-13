@@ -1,3 +1,4 @@
+@import '../sp-colors.scss';
 @import '../design-system.scss';
 .global-container {
 	display: flex;
@@ -5,6 +6,7 @@
 	background-color: #fbfeff;
 	.router-outlet {
 		height: 100%;
+		transition: all 0.3s;
 	}
 }
 
@@ -178,3 +180,140 @@
 //::ng-deep .Application__WidgetAppContainer-sc-1i6h88-0 {
 //  opacity: 0 !important;
 //}
+
+.help-center-content-wrapper {
+	height: 100vh;
+	max-width: 449px;
+	min-width: 320px;
+	width: 0px;
+	position: absolute;
+	right: 0;
+	transition: all 0.3s;
+	overflow-y: hidden;
+	background: rgb(251, 254, 255);
+	z-index: 1006;
+
+	.help-center-unsubscribe {
+		position: absolute;
+		top: 0;
+		bottom: 0;
+		right: 0;
+		left: 0;
+		display: none;
+	}
+	.drag-divider {
+		position: absolute;
+		left: 0;
+		height: inherit;
+		width: 8px;
+		z-index: 1000;
+		// background-color: $gray400;
+		// border-left: 1px solid $gray400;
+		// transition: width 0.2s linear;
+		transition: box-shadow 0.3s ease-in-out;
+		&:after {
+			background-color: var(--drag-after-color, $gray400);
+			bottom: 0;
+			content: '';
+			left: (--drag-after-left, 0px);
+			position: absolute;
+			top: 0;
+			transition: $gray400 0.15s 0.15s, box-shadow 0.15s 0.15s;
+			width: 1px;
+			box-shadow: 0 0 0 var(--drag-after-shadow, 0px) $green500;
+		}
+
+		&:hover {
+			cursor: col-resize;
+			&:after {
+				background-color: $green500;
+				box-shadow: 0 0 0 1px $green500;
+				left: 1px;
+			}
+		}
+	}
+	.close-icon-wrapper {
+		position: absolute;
+		right: 12px;
+		top: 10px;
+		cursor: pointer;
+		z-index: 999;
+		width: 50px;
+		height: 50px;
+		background: #ffffff;
+		.circle {
+			transition: all 0.2s;
+			border-radius: 10px;
+			width: 40px;
+			height: 40px;
+			margin: 5px auto;
+			.close-icon {
+				padding: 13px;
+			}
+			&:hover {
+				background: #f0f2f5;
+			}
+		}
+	}
+	iframe {
+		width: 100%;
+		height: 100vh;
+		overflow-y: auto;
+		// padding: 12px 12px 0;
+	}
+
+	.contact-wrapper {
+		display: flex;
+		align-items: center;
+		justify-content: space-between;
+		padding: 10px;
+		border-top: 1px solid $gray400;
+		position: absolute;
+		width: -webkit-fill-available;
+		bottom: 0px;
+		height: 59px;
+		background: #ffffff;
+		.live-chat {
+			padding: 0 12px;
+			display: flex;
+			transition: all 0.2s;
+			cursor: pointer;
+			position: relative;
+			&:hover {
+				background: #f0f2f5;
+				border-radius: 10px;
+			}
+			.live-chat-text {
+				padding-left: 8px;
+				color: $gray500;
+				font-family: 'Inter';
+				font-style: normal;
+				font-weight: 500;
+				font-size: 14px;
+			}
+		}
+		.call-main {
+			padding-right: 10px;
+			cursor: pointer;
+			.call-contant {
+				position: relative;
+				transition: all 0.2s;
+				padding: 12px;
+				height: 22px;
+				&:hover {
+					background: #f0f2f5;
+					border-radius: 10px;
+				}
+				.pro-icon {
+					position: absolute;
+					width: 14px;
+					right: 8px;
+					top: 8px;
+				}
+				.call-icon {
+					width: 22px;
+				}
+			}
+		}
+	}
+}

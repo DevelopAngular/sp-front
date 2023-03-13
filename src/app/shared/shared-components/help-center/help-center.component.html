@@ -1,0 +1,14 @@
+<div
+	[ngClass]="{ clicked: showHelpNuxTooltip | async }"
+	class="help-center-wrapper"
+	(click)="openHelpCenter()"
+	nuxTooltip
+	[contentTemplate]="helpcentertooltip"
+	[position]="nuxWrapperPosition"
+	[showToolTip$]="showHelpNuxTooltip">
+	<P>?</P>
+</div>
+<ng-template #helpcentertooltip>
+	<app-nux-help-center [showBadge]="showBadge" [title]="title" [description]="description" (gotItEvent)="closeNuxToolTip($event)">
+	</app-nux-help-center>
+</ng-template>

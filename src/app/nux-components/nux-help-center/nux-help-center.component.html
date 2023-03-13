@@ -1,0 +1,9 @@
+<div class="wrapper">
+	<img class="close" (click)="gotItEvent.emit(false)" [src]="'./assets/Close (Grey).svg' | resolveAsset" />
+	<div *ngIf="showBadge" class="new ds-flex-center-center ds-py-5 ds-px-0">NEW</div>
+	<div class="title" [ngClass]="{ 'ds-mt-10': !showBadge }">{{ title }}</div>
+	<div class="info ds-mb-20">{{ description }}</div>
+	<div class="buttons ds-flex-end-end">
+		<app-gradient-button style="margin-left: 10px" (buttonClick)="gotItEvent.emit(true)">Check it out</app-gradient-button>
+	</div>
+</div>
