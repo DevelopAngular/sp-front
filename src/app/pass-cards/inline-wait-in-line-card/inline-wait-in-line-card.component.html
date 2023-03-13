@@ -92,7 +92,7 @@
 		</div>
 	</div>
 
-	<div class="leave-browser-hint" *ngIf="user?.isStudent()">
+	<div class="leave-browser-hint" *ngIf="user?.isStudent() && !dialogData?.nextInLine">
 		<div class="wrapper">
 			<img class="report-icon" [src]="'./assets/Report (Yellow-Black).svg' | resolveAsset" />
 			<p>Your browser tab will flash when it’s your turn to go — feel free to leave the page.</p>
