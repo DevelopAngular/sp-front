@@ -49,7 +49,6 @@ import { Title } from '@angular/platform-browser';
 import { FeatureFlagService, FLAGS } from '../services/feature-flag.service';
 import { WaitingInLinePass } from '../models/WaitInLine';
 import { Invitation } from '../models/Invitation';
-import { sortWil } from '../services/wait-in-line.service';
 import { InlineWaitInLineCardComponent } from '../pass-cards/inline-wait-in-line-card/inline-wait-in-line-card.component';
 import { Util } from '../../Util';
 import { RepresentedUser } from '../navbar/navbar.component';
@@ -256,16 +255,21 @@ export class PassesComponent implements OnInit, OnDestroy {
 					if (this.isStaff) {
 						this.titleService.setTitle('SmartPass');
 						this.dataService.updateInbox(true);
-						const waitInLineWatcher = this.user.isAssistant()
+
+						const user$ = this.user.isAssistant()
 							? this.userService.effectiveUser.pipe(
 									filter<RepresentedUser>(Boolean),
-									concatMap((effectiveResponse) => this.liveDataService.watchWaitingInLinePasses({ type: 'issuer', value: effectiveResponse.user }))
+									map((response) => response.user)
 							  )
-							: this.liveDataService.watchWaitingInLinePasses({ type: 'issuer', value: this.user });
+							: of(this.user);
 
-						this.waitInLinePasses = waitInLineWatcher.pipe(
-							map((passes) => {
-								return passes.sort(sortWil);
+						this.waitInLinePasses = user$.pipe(
+							concatMap((user) => {
+								return this.liveDataService.watchWaitingInLinePasses({ type: 'issuer', value: user }).pipe(
+									map((passes) => {
+										return passes.filter((p) => p.issuer.id == user.id);
+									})
+								);
 							})
 						);
 					} else {
