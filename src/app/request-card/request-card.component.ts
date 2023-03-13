@@ -160,10 +160,7 @@ export class RequestCardComponent implements OnInit, OnDestroy {
 			this.fromHistoryIndex = this.data['fromHistoryIndex'];
 		}
 
-    merge(
-      this.requestService.watchDenyRequest(),
-      this.requestService.watchUpdateRequest()
-    )
+		merge(this.requestService.watchDenyRequest(), this.requestService.watchUpdateRequest())
 			.pipe(
 				takeUntil(this.destroy$),
 				map(({ action, data }) => Request.fromJSON(data))
