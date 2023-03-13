@@ -378,9 +378,12 @@ export class AppComponent implements OnInit, AfterViewInit, OnDestroy {
           this.router.navigate(['parent']);
         } else {
           const loadView = user.isAdmin() ? 'admin' : 'main';
-          this.router.navigate([loadView]).then(() => {
-            console.log('navigation finished');
-          });
+          const href: string = window.location.href;
+          if (!(href.includes('admin') || href.includes('main'))) {
+            this.router.navigate([loadView]).then(() => {
+              console.log('navigation finished');
+            });
+          }
         }
         this.titleService.setTitle('SmartPass');
       })

@@ -1,10 +1,9 @@
-import { AfterViewInit, Component, ElementRef, NgZone, OnDestroy, OnInit, ViewChild } from '@angular/core';
+import { AfterViewInit, Component, ElementRef, OnDestroy, OnInit, ViewChild } from '@angular/core';
 import { MatDialog } from '@angular/material/dialog';
 import { BehaviorSubject, combineLatest, interval, Observable, of, ReplaySubject, Subject } from 'rxjs';
 import { Util } from '../../Util';
 import { mergeObject } from '../live-data/helpers';
 import { LiveDataService } from '../live-data/live-data.service';
-import { LoadingService } from '../services/loading.service';
 import { Location } from '../models/Location';
 import { User } from '../models/User';
 import { DropdownComponent } from '../dropdown/dropdown.component';
@@ -141,8 +140,6 @@ export class MyRoomComponent implements OnInit, OnDestroy, AfterViewInit {
 	holdScrollPosition: number = 0;
 
 	constructor(
-		private _zone: NgZone,
-		private loadingService: LoadingService,
 		private liveDataService: LiveDataService,
 		private timeService: TimeService,
 		private locationService: LocationsService,
@@ -380,6 +377,12 @@ export class MyRoomComponent implements OnInit, OnDestroy, AfterViewInit {
 		if (this.setRoomToKioskModeProcesing) {
 			return;
 		}
+
+    const loginServer = this.http.getServerFromStorage();
+    if (!loginServer) {
+      throw new Error('No login server!');
+    }
+
 		this.setRoomToKioskModeProcesing = true;
 
 		let kioskLogin: KioskLogin;
@@ -419,11 +422,15 @@ export class MyRoomComponent implements OnInit, OnDestroy, AfterViewInit {
 							return this.userService.saveKioskModeLocation(kioskRoom.id);
 						}),
 						tap((res) => {
+              let { username, password } = kioskLogin;
+              // if (loginServer.server.api_root.includes('staging')) {
+              //   username += '@smartpass.app';
+              // }
 							this.storage.setItem('kioskToken', res.access_token);
-							// this.storage.setItem('refresh_token', res.refresh_token);
+							this.storage.setItem('refresh_token', res.refresh_token);
 							this.loginService.updateAuth({
-								username: kioskLogin.username,
-								password: kioskLogin.password,
+								username,
+								password,
 								type: 'demo-login',
 								kioskMode: true,
 							});

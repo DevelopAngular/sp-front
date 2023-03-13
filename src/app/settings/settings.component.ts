@@ -1,6 +1,5 @@
 import { Component, ElementRef, Inject, Input, OnDestroy, OnInit, Optional } from '@angular/core';
 import { MAT_DIALOG_DATA, MatDialog, MatDialogConfig, MatDialogRef } from '@angular/material/dialog';
-import { LoadingService } from '../services/loading.service';
 import { User } from '../models/User';
 import { DarkThemeSwitch } from '../dark-theme-switch';
 import { BUILD_DATE, RELEASE_NAME } from '../../build-info';
@@ -77,7 +76,6 @@ export class SettingsComponent implements OnInit, OnDestroy {
 		@Optional() @Inject(MAT_DIALOG_DATA) public data: DialogData,
 		@Optional() public dialogRef: MatDialogRef<SettingsComponent>,
 		private sideNavService: SideNavService,
-		public loadingService: LoadingService,
 		public darkTheme: DarkThemeSwitch,
 		public kioskMode: KioskModeService,
 		private router: Router,

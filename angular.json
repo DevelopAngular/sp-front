@@ -54,6 +54,7 @@
           },
           "configurations": {
             "local": {
+              "sourceMap": true,
               "fileReplacements": [
                 {
                   "replace": "src/environments/environment.ts",
@@ -62,6 +63,7 @@
               ]
             },
             "local-prod": {
+              "sourceMap": true,
               "fileReplacements": [
                 {
                   "replace": "src/environments/environment.ts",
@@ -208,11 +210,11 @@
   "defaultProject": "hallpass",
   "schematics": {
     "@schematics/angular:component": {
-      "prefix": "app",
+      "prefix": "sp",
       "style": "scss"
     },
     "@schematics/angular:directive": {
-      "prefix": "app"
+      "prefix": "sp"
     }
   },
   "cli": {
