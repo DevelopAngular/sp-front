@@ -56,6 +56,7 @@ import { IdcardOverlayContainerComponent } from '../idcard-overlay-container/idc
 import { IDCard, IDCardService } from '../services/IDCardService';
 import { CheckForUpdateService } from '../services/check-for-update.service';
 import { SmartpassSearchComponent } from '../smartpass-search/smartpass-search.component';
+import { HelpCenterService } from '../services/help-center.service';
 
 declare const window;
 
@@ -204,7 +205,8 @@ export class NavbarComponent implements AfterViewInit, OnInit, OnDestroy {
 		private shortcutsService: KeyboardShortcutsService,
 		private qrBarcodeGenerator: QRBarcodeGeneratorService,
 		private idCardService: IDCardService,
-		private updateService: CheckForUpdateService
+		private updateService: CheckForUpdateService,
+		private helpCenter: HelpCenterService
 	) {}
 
 	get optionsOpen() {
@@ -212,7 +214,7 @@ export class NavbarComponent implements AfterViewInit, OnInit, OnDestroy {
 	}
 
 	get isMobile() {
-		return DeviceDetection.isMobile();
+		return DeviceDetection.isMobile() || (this.screenService.windowWidth < 1170 && this.helpCenter.isHelpCenterOpen.getValue());
 	}
 
 	get showNav() {
@@ -244,6 +246,22 @@ export class NavbarComponent implements AfterViewInit, OnInit, OnDestroy {
 
 	get showNotificationBadge() {
 		return this.user && moment(this.user.created).add(7, 'days').isSameOrBefore(moment());
+	}
+
+	get mediaClass(): string {
+		let rightClass = '';
+		if (this.helpCenter.isHelpCenterOpen.getValue()) {
+			if (this.screenService.windowWidth < 320) {
+				rightClass = 'mediaWidth320';
+			} else if (this.screenService.windowWidth < 475) {
+				rightClass = 'mediaWidth475';
+			} else if (this.screenService.windowWidth < 700) {
+				rightClass = 'mediaWidth700';
+			} else if (this.screenService.windowWidth < 940) {
+				rightClass = 'mediaWidth940';
+			}
+		}
+		return rightClass;
 	}
 
 	ngOnInit() {

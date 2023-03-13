@@ -22,6 +22,13 @@ export const updateIntrosSearch = createAction(`[${INTROS}] Update intros Search
 export const updateIntrosSearchSuccess = createAction(`[${INTROS}] Update intros Search Success`, props<{ data: any }>());
 export const updateIntrosSearchFailure = createAction(`[${INTROS}] Update intros Search Failure`, props<{ errorMessage: string }>());
 
+export const updateIntrosHelpCenter = createAction(
+	`[${INTROS}] Update intros Help Center`,
+	props<{ intros: any; device: string; version: string }>()
+);
+export const updateIntrosHelpCenterSuccess = createAction(`[${INTROS}] Update intros Help Center Success`, props<{ data: any }>());
+export const updateIntrosHelpCenterFailure = createAction(`[${INTROS}] Update intros Help Center Failure`, props<{ errorMessage: string }>());
+
 export const updateIntrosDisableRoom = createAction(
 	`[${INTROS}] Update intros Disable Room`,
 	props<{ intros: any; device: string; version: string }>()

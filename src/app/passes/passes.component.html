@@ -162,7 +162,10 @@
 				[showProfilePictures]="showProfilePictures$ | async"></app-pass-collection>
 		</div>
 	</div>
-	<div class="main-page-right" [@OpenOrCloseRequests]="(showInboxAnimated() | async) ? 'Opened' : 'Closed'">
+	<div
+		class="main-page-right"
+		[ngStyle]="{ display: screenService.windowWidth < 940 ? 'none' : 'block' }"
+		[@OpenOrCloseRequests]="(showInboxAnimated() | async) ? 'Opened' : 'Closed'">
 		<app-display-card
 			[title]="'Requests'"
 			[hasDivider]="false"
@@ -293,7 +296,10 @@
 				[showProfilePictures]="showProfilePictures$ | async"></app-pass-collection>
 		</div>
 	</div>
-	<div class="main-page-right" [@OpenOrCloseRequests]="(showInboxAnimated() | async) ? 'Opened' : 'Closed'">
+	<div
+		class="main-page-right"
+		[ngStyle]="{ display: screenService.windowWidth < 940 ? 'none' : 'block' }"
+		[@OpenOrCloseRequests]="(showInboxAnimated() | async) ? 'Opened' : 'Closed'">
 		<app-display-card
 			[title]="'Requests'"
 			[hasDivider]="false"

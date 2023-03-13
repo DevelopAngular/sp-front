@@ -1,6 +1,7 @@
 <ng-container *ngIf="user">
 	<div
 		class="host"
+		[ngClass]="(helpCenter.isHelpCenterOpen | async) == true ? mediaClass : ''"
 		[style.background]="darkTheme.getColor({ dark: '#0F171E', white: (isStaff || isAssistant) && !isKioskMode ? '#FFFFFF' : 'transparent' })"
 		*ngIf="(showNav && !isHallMonitorRoute && showNav && !isMyRoomRoute) || (showNav && !islargeDeviceWidth)"
 		[style.border-bottom]="(darkTheme.isEnabled$ | async) && !user.isStudent() ? '1px solid #7083A0' : 'none'">
@@ -215,14 +216,14 @@
 			</div>
 		</div>
 	</div>
-
 	<div
 		class="host"
 		*ngIf="
 			(isStaff && !isAdminRoute && !hideButtons && this.screenService.isDeviceLargeExtra) ||
 			(isAssistant && !isAdminRoute && !hideButtons && this.screenService.isDeviceLargeExtra)
 		"
-		[ngClass]="isIOSTablet ? 'ios-teacherNav-mobile' : 'teacherNav-mobile'"
+		[style.width]="screenService.windowWidth + 'px'"
+		[ngClass]="[isIOSTablet ? 'ios-teacherNav-mobile' : 'teacherNav-mobile', (helpCenter.isHelpCenterOpen | async) == true ? mediaClass : '']"
 		[style.background-color]="darkTheme.getBackground('low', false)">
 		<div [ngClass]="isIOSTablet ? 'ios-teacherNav-mobile-wrapper' : 'teacherNav-mobile-wrapper'" #navButtonsContainerMobile>
 			<div
