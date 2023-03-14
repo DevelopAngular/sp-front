@@ -262,7 +262,7 @@ export class KioskModeComponent implements OnInit, AfterViewInit, OnDestroy {
 					return combineLatest(of(user), this.passesService.getActivePassesKioskMode(this.kioskMode.getCurrentRoom().value.id));
 				}),
 				map(([user, passes]) => {
-					const myPass = (passes as HallPass[]).find((pass) => pass.issuer.id === user.id);
+					const myPass = (passes as HallPass[]).find((pass) => pass.student.id === user.id);
 					if (myPass) {
 						this.passesService
 							.endPass(myPass.id)
