@@ -1,16 +1,4 @@
-import {
-  Component,
-  ElementRef,
-  Inject,
-  Input,
-  OnChanges,
-  OnDestroy,
-  OnInit,
-  Optional,
-  SimpleChange,
-  SimpleChanges,
-  ViewChild,
-} from '@angular/core';
+import { Component, ElementRef, Inject, Input, OnChanges, OnDestroy, OnInit, Optional, SimpleChange, SimpleChanges, ViewChild } from '@angular/core';
 import { BehaviorSubject, from, Observable, of, Subject, Subscription, throwError, timer } from 'rxjs';
 import { HallPassErrors, HallPassesService } from '../../services/hall-passes.service';
 import { MAT_DIALOG_DATA, MatDialog, MatDialogRef } from '@angular/material/dialog';
@@ -26,18 +14,18 @@ import { User } from '../../models/User';
 import { UserService } from '../../services/user.service';
 import { WaitInLineService } from '../../services/wait-in-line.service';
 import { TimerSpinnerComponent } from '../../core/components/timer-spinner/timer-spinner.component';
-import { ResolveAssetPipe } from '../../resolve-asset.pipe';
 import { PositionPipe } from '../../core/position.pipe';
 import { PollingEvent } from '../../services/polling-service';
 
 const positionTransformer = new PositionPipe().transform;
 
 export enum WaitInLineFavicon {
-  StartPass = 'assets/icons/Clock (Blue-Gray).png',
-  UpdatePosition = 'assets/icons/Clock (Light-Gray).png',
-  FrontOfLine = 'assets/icons/Caution.png',
-  HourglassToggle1 = 'assets/icons/Hourglass filed.png',
-  HourglassToggle2 = 'assets/icons/Hourglass Empty.png'
+	InLine = 'assets/icons/Clock (Blue-Gray).png',
+	UpdatePosition = 'assets/icons/Clock (Light-Gray).png',
+	FrontOfLine = 'assets/icons/Caution.png',
+	HourglassToggle1 = 'assets/icons/Hourglass filled.png',
+	HourglassToggle2 = 'assets/icons/Hourglass Empty.png',
+	Transparent = 'assets/icons/transparent.png',
 }
 
 export enum WILHeaderOptions {
@@ -119,7 +107,7 @@ export class InlineWaitInLineCardComponent implements OnInit, OnChanges, OnDestr
 	requestLoading = false;
 	frameMotion$: BehaviorSubject<any>;
 	destroy$: Subject<any> = new Subject<any>();
-  titleChangeSubscription: Subscription;
+	titleChangeSubscription: Subscription;
 	acceptingPassTimeRemaining: number;
 	user: User;
 
@@ -186,10 +174,22 @@ export class InlineWaitInLineCardComponent implements OnInit, OnChanges, OnDestr
 				this.timeSpinner.reset();
 			}
 		}
+
+		if (this.wil.line_position !== 0) {
+			timer(0, 750)
+				.pipe(
+					filter(() => this.wil.line_position !== 0),
+					takeUntil(this.destroy$),
+					tap((tick: number) => {
+						this.changeTitle(`${positionTransformer(this.wil.line_position)} in line` + `${'.'.repeat(tick % 4)}`);
+						this.changeFavicon(WaitInLineFavicon.InLine);
+					})
+				)
+				.subscribe();
+		}
 	}
 
 	ngOnInit() {
-
 		if (this.dialogData) {
 			if (this.dialogData.pass instanceof WaitingInLinePass) {
 				// it's not enough for the JSON to have the data, it must be an instance of the class
@@ -204,8 +204,7 @@ export class InlineWaitInLineCardComponent implements OnInit, OnChanges, OnDestr
 						takeUntil(this.destroy$),
 						map<PollingEvent, WaitingInLinePass>((event) => WaitingInLinePass.fromJSON(event.data)),
 						tap((wil) => {
-
-              this.changeFavicon(WaitInLineFavicon.FrontOfLine);
+							this.changeFavicon(WaitInLineFavicon.FrontOfLine);
 							if (!wil.isReadyToStart() && wil.missed_start_attempts > 0) {
 								// not ready to start and having missed attempts means the student did not start their pass in time
 								// and this pass is moved to the back of the line
@@ -223,11 +222,6 @@ export class InlineWaitInLineCardComponent implements OnInit, OnChanges, OnDestr
 					.subscribe();
 			}
 		}
-
-    // if (!this.wil.isReadyToStart()) {
-    //   this.titleService.setTitle(` ${positionTransformer(this.wil.line_position)} in line...`);
-    //   this.changeFavicon(WaitInLineFavicon.StartPass);
-    // }
 
 		this.wilService
 			.listenForWilDeletion(this.wil.id)
@@ -262,22 +256,27 @@ export class InlineWaitInLineCardComponent implements OnInit, OnChanges, OnDestr
 
 	readyToStartTick(remainingTime: number) {
 		this.acceptingPassTimeRemaining = remainingTime;
-		if (remainingTime === 30 || remainingTime === 29) {
-			// The unicode for ⚠️ won't show the same in all browsers and may not even be the desired yellow color
-			this.changeTitle("⚠️ It's Time to Start your Pass");
+		if (remainingTime > 27) {
+			this.changeTitle('Time to Start Your Pass');
+			this.changeFavicon(WaitInLineFavicon.FrontOfLine);
+			setTimeout(() => {
+				this.changeFavicon(WaitInLineFavicon.Transparent);
+			}, 400);
 			return;
 		}
 
-		if (remainingTime === 0) {
-			this.changeTitle('SmartPass');
+		if (remainingTime === 0 && this.wil.missed_start_attempts > 0) {
+			this.changeTitle(`${this.user.display_name} | SmartPass`);
+			this.changeFavicon('./assets/icons/favicon.ico');
 			return;
 		}
 
 		if (remainingTime % 2 === 0) {
-			// The ⏳ icon shows fine in text with color even when the ⚠️ does not
-			this.changeTitle(`⏳ ${remainingTime} sec left...`);
+			this.changeTitle(`${remainingTime} sec left...`);
+			this.changeFavicon(WaitInLineFavicon.HourglassToggle1);
 		} else {
-			this.changeTitle('Pass Ready to Start');
+			this.changeTitle(`${remainingTime} sec left...`);
+			this.changeFavicon(WaitInLineFavicon.HourglassToggle2);
 		}
 	}
 
@@ -373,7 +372,8 @@ export class InlineWaitInLineCardComponent implements OnInit, OnChanges, OnDestr
 			this.dialogRef.close();
 		}
 
-		this.changeTitle('SmartPass');
+		this.changeTitle(`${this.user.display_name} | SmartPass`);
+		this.changeFavicon('./assets/icons/favicon.ico');
 	}
 
 	changeTitle(tabTitle: string) {
@@ -390,42 +390,14 @@ export class InlineWaitInLineCardComponent implements OnInit, OnChanges, OnDestr
 		this.destroy$.complete();
 	}
 
-  /**
-   * This function is responsible for updating the tab title and favicon based on the
-   * state of the waiting in line pass
-   *
-   * When a student is in line (for example, 3rd in line):
-   *  - Change the favicon to use the Clock (Blue-Gray).png
-   *  - Text should be "3rd in line..."
-   *  - Ellipses should be animated similar to the ellipses in the pass card
-   *
-   *  Updating a student's position (not when the student updates to Ready to Start):
-   *  - Show favicon Clock (Light-Gray).png for 0.5s
-   *  - Switch back to Clock (Blue-Gray).png
-   *
-   *  Ready to start pass:
-   *  - Switch favicon to Caution.png for 3 seconds (For each second, show for 0.9s, hide for 0.1s)
-   *  - For each second after, alternative between the two hourglass favicons
-   */
-  updateTab() {
+	changeFavicon(assetLink: string) {
+		const selectors = ['link[rel="shortcut icon"]', 'link[rel="icon"]'];
 
-  }
-
-  changeFavicon(assetLink: string) {
-    const selectors = [
-      'link[rel="shortcut icon"]',
-      'link[rel="icon"]'
-    ];
-
-    console.log(assetLink);
-    console.log(encodeURIComponent(assetLink));
-    console.log(new ResolveAssetPipe().transform(assetLink));
-
-    for (const selector of selectors) {
-      document.querySelectorAll<HTMLElement>(selector).forEach((e: HTMLLinkElement) => {
-        e.type = 'image/png';
-        e.href = assetLink;
-      });
-    }
-  }
+		for (const selector of selectors) {
+			document.querySelectorAll<HTMLElement>(selector).forEach((e: HTMLLinkElement) => {
+				e.type = 'image/png';
+				e.href = assetLink;
+			});
+		}
+	}
 }
