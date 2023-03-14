@@ -410,7 +410,7 @@ export class MyRoomComponent implements OnInit, OnDestroy, AfterViewInit {
 							this.router.navigate(['main/kioskMode/settings']);
 							return this.kioskMode.enterKioskMode$.pipe(filter(Boolean));
 						}),
-						concatMap(() => {
+						tap(() => {
 							let kioskRoom;
 							if (this.roomOptions.length === 1) {
 								kioskRoom = this.roomOptions[0];
@@ -418,25 +418,20 @@ export class MyRoomComponent implements OnInit, OnDestroy, AfterViewInit {
 								kioskRoom = Object.assign({}, this.selectedLocation);
 							}
 							this.kioskMode.setCurrentRoom(kioskRoom);
-
-							return this.userService.saveKioskModeLocation(kioskRoom.id);
-						}),
-						tap((res) => {
               let { username, password } = kioskLogin;
-              // if (loginServer.server.api_root.includes('staging')) {
-              //   username += '@smartpass.app';
-              // }
-							this.storage.setItem('kioskToken', res.access_token);
-							this.storage.setItem('refresh_token', res.refresh_token);
-							this.loginService.updateAuth({
-								username,
-								password,
-								type: 'demo-login',
-								kioskMode: true,
-							});
-							this.http.kioskTokenSubject$.next(res);
-							this.router.navigate(['main/kioskMode']);
-						})
+              if (loginServer.server.api_root.includes('staging')) {
+                username += '@smartpass.app';
+              }
+
+              this.loginService.updateAuth({
+                username,
+                password,
+                type: 'demo-login',
+                kioskMode: true,
+              });
+
+              this.router.navigate(['main/kioskMode']);
+						}),
 					);
 				})
 			)

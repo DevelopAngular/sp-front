@@ -69,7 +69,7 @@
 				(pointerClickEvent)="hoveredSignout = false; signOutAction()"
 				(pointerDownEvent)="signOut.pressed = true; hoveredSignout = true"
 				(pointerCancelEvent)="signOut.pressed = false; hoveredSignout = false">
-				{{ (kioskMode.currentRoom$ | async) ? 'Exit Kiosk Mode & Sign out' : 'Sign out' }}
+				{{ (kioskMode.getCurrentRoom() | async) ? 'Exit Kiosk Mode & Sign out' : 'Sign out' }}
 			</div>
 		</div>
 

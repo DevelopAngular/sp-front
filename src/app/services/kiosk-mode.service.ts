@@ -26,6 +26,8 @@ export interface KioskLoginResponse {
 	results: KioskLogin;
 }
 
+const KioskCurrentRoom = 'current-kiosk-room';
+
 @Injectable({
 	providedIn: 'root',
 })
@@ -37,12 +39,19 @@ export class KioskModeService {
 
 	constructor(private storageService: StorageService, private locationsService: LocationsService, private http: HttpService) {}
 
-	getCurrentRoom() {
-		return this.currentRoom$;
+	getCurrentRoom(): BehaviorSubject<Location> {
+    const roomFromStorage = this.storageService.getItem(KioskCurrentRoom);
+    if (!roomFromStorage) {
+      return new BehaviorSubject(null);
+    }
+
+    return new BehaviorSubject(JSON.parse(roomFromStorage));
 	}
 
 	setCurrentRoom(location: Location) {
-		this.currentRoom$.next(location);
+    this.storageService.setItem(KioskCurrentRoom, JSON.stringify(location));
+
+		// this.currentRoom$.next(location);
 	}
 
 	areValidSettings(obj: any): obj is KioskSettings {
@@ -91,7 +100,7 @@ export class KioskModeService {
 	}
 
 	isKisokMode(): boolean {
-		return !!this.storageService.getItem('kioskToken');
+		return !!this.storageService.getItem(KioskCurrentRoom);
 	}
 
 	kioskSettingsValidCheck(obj: KioskSettings) {

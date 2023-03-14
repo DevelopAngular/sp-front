@@ -2,7 +2,7 @@ import { HttpClient } from '@angular/common/http';
 import { Inject, Injectable, OnDestroy } from '@angular/core';
 import { Store } from '@ngrx/store';
 import { LocalStorage } from '@ngx-pwa/local-storage';
-import { BehaviorSubject, combineLatest, iif, Observable, of, ReplaySubject, Subject, throwError } from 'rxjs';
+import { BehaviorSubject, combineLatest, Observable, of, ReplaySubject, Subject, throwError } from 'rxjs';
 import {
   catchError,
   concatMap,
@@ -11,7 +11,6 @@ import {
   filter,
   map,
   mapTo,
-  mergeMap,
   switchMap,
   take,
   takeUntil,
@@ -40,8 +39,6 @@ import { Router } from '@angular/router';
 import { APP_BASE_HREF } from '@angular/common';
 // uncomment when app uses formatDate and so on
 //import {APP_BASE_HREF, registerLocaleData} from '@angular/common';
-import { JwtHelperService } from '@auth0/angular-jwt';
-import * as moment from 'moment';
 import { LoginDataService } from './login-data.service';
 import { clearUser } from '../ngrx/user/actions';
 
@@ -280,8 +277,6 @@ export class HttpService implements OnDestroy {
 	// should come from server
 	public langs$: Observable<string[]> = of(['en', 'es']);
 
-	public kioskTokenSubject$ = new BehaviorSubject<ServerAuth>(null);
-
 	public globalReload$ = this.currentSchool$.pipe(
 		filter((school) => !!school),
 		map((school) => (school ? school.id : null)),
@@ -389,19 +384,6 @@ export class HttpService implements OnDestroy {
 		this.setLang('en');
 		// HACK!
 		this.storage.setItem('ljs-lang', 'en');
-
-		this.kioskTokenSubject$
-			.pipe(
-				takeUntil(this.destroyed$),
-				filter((v) => !!v && !!this.getAuthContext()),
-				take(1), // TODO this take vs above takeUntil
-				map((newToken) => {
-					return { auth: newToken, server: this.getAuthContext().server };
-				})
-			)
-			.subscribe((res) => {
-				this.setAuthContext(res, true);
-			});
 
 		// When HTTPService is being constructed, if the user is already signed in, then authObject will resolve immediately.
 		// This creates a circular dependency for HTTPService in AccessTokenInterceptor.
@@ -517,209 +499,6 @@ export class HttpService implements OnDestroy {
 		// return !!decoded.kiosk_location_id;
 	}
 
-	private getLoginServers(data: FormData): Observable<LoginChoice> {
-		const preferredEnvironment = environment.preferEnvironment;
-
-		if (preferredEnvironment && typeof preferredEnvironment === 'object') {
-			return of({ server: preferredEnvironment as LoginServer });
-		}
-		return this.http.post(discoveryV2Endpoint, data).pipe(
-			switchMap((servers: LoginResponse) => {
-				return this.pwaStorage.setItem('servers', servers).pipe(mapTo(servers));
-			}),
-			map((servers: LoginResponse) => {
-				if (servers.servers.length > 0) {
-					const server: LoginServer = servers.servers.find((s) => s.name === (preferredEnvironment as any)) || servers.servers[0];
-
-					let clever_token: string;
-					let google_token: string;
-					let classlink_token: string;
-
-					const authType = this.storage.getItem('authType');
-
-					if (servers.token) {
-						if (authType === 'clever') {
-							clever_token = servers.token.access_token;
-						} else if (authType === 'google') {
-							google_token = servers.token.access_token;
-						} else if (authType === 'classlink') {
-							classlink_token = servers.token.access_token;
-						}
-					}
-
-					return { server, classlink_token, clever_token, google_token };
-				} else {
-					return null;
-				}
-			})
-		);
-	}
-
-	private loginManual(username: string, password?: string): Observable<AuthContext> {
-		const c = new FormData();
-		c.append('email', username);
-		c.append('platform_type', 'web');
-
-		const authContext: AuthContext = JSON.parse(this.storage.getItem('auth'));
-
-		const context = authContext ? authContext : null;
-
-		return iif(() => !!context, of(context), this.getLoginServers(c)).pipe(
-			mergeMap((response: LoginChoice) => {
-				const server = response.server;
-				if (server === null) {
-					return throwError(new LoginServerError('No login server!'));
-				}
-
-				// console.log(`Chosen server: ${server.name}`, server);
-
-				const config = new FormData();
-				config.append('client_id', server.client_id);
-
-				const isKioskMode = this.storage.getItem('kioskToken') != null;
-				if (password) {
-					config.append('grant_type', 'password');
-					config.append('username', username);
-					config.append('password', password);
-				} else {
-					config.append('grant_type', 'refresh_token');
-					const refreshToken = authContext.auth.refresh_token;
-					config.append('token', refreshToken);
-
-					if (isKioskMode) {
-						const token = this.storage.getItem('kioskToken');
-						const jwt = new JwtHelperService();
-						const locId = jwt.decodeToken(token).kiosk_location_id;
-						config.append('kiosk_mode_location_id', locId);
-					}
-				}
-
-				if (!navigator.onLine) {
-					console.log('AUTHDATA OFFLINE');
-					return this.pwaStorage.getItem('authData').pipe(
-						map((data: any) => {
-							if (data) {
-								data['expires'] = moment().add(data['expires_in'], 'seconds').toDate();
-
-								ensureFields(data, ['access_token', 'token_type', 'expires', 'scope']);
-
-								const auth = data as ServerAuth;
-
-								return { auth: auth, server: server } as AuthContext;
-							}
-						})
-					);
-				}
-
-				return this.http.post(makeUrl(server, 'o/token/'), config).pipe(
-					switchMap((data) => {
-						return this.pwaStorage.setItem('authData', data).pipe(mapTo(data));
-					}),
-					map((data: any) => {
-						// this.storage.setItem('refresh_token', data.refresh_token);
-						// don't use TimeService for auth because auth is required for time service
-						// to be useful
-						data['expires'] = moment().add(data['expires_in'], 'seconds').toDate();
-
-						ensureFields(data, ['access_token', 'token_type', 'expires', 'scope']);
-
-						const auth = data as ServerAuth;
-						if (isKioskMode) {
-							this.storage.setItem('kioskToken', auth.access_token);
-							this.kioskTokenSubject$.next(auth);
-						}
-						if (!password) {
-							this.storage.setItem('auth', JSON.stringify({ auth: auth, server: server }));
-						}
-						return { auth: auth, server: server } as AuthContext;
-					})
-				);
-			})
-		);
-	}
-
-	loginGoogle(code: string): Observable<AuthContext> {
-		const c = new FormData();
-		c.append('code', code);
-		c.append('provider', 'google-oauth-code');
-		c.append('platform_type', 'web');
-		c.append('redirect_uri', this.getRedirectUrl() + 'google_oauth');
-
-		const authContext: AuthContext = JSON.parse(this.storage.getItem('auth'));
-		const context = authContext ? authContext : null;
-
-		if ((!context || !context.google_token) && !code) {
-			return throwError(new LoginServerError('Please sign in again.'));
-		}
-
-		return iif(() => !!context && !!context.google_token, of(context), this.getLoginServers(c)).pipe(
-			mergeMap((response: LoginChoice) => {
-				const server = response.server;
-				if (server === null) {
-					return throwError(new LoginServerError('No login server!'));
-				}
-
-				const config = new FormData();
-
-				config.append('client_id', server.client_id);
-				config.append('provider', 'google-access-token');
-				config.append('token', response.google_token);
-
-				return this.http.post(makeUrl(server, 'auth/by-token'), config).pipe(
-					map((data: any) => {
-						// don't use TimeService for auth because auth is required for time service
-						// to be useful
-						data['expires'] = moment().add(data['expires_in'], 'seconds').toDate();
-
-						ensureFields(data, ['access_token', 'token_type', 'expires', 'scope']);
-
-						const auth = data as ServerAuth;
-
-						return { auth: auth, server: server, google_token: response.google_token } as AuthContext;
-					})
-				);
-			})
-		);
-	}
-
-	loginClassLink(code: string): Observable<AuthContext> {
-		const c = new FormData();
-		c.append('code', code);
-		c.append('provider', 'classlink');
-		c.append('platform_type', 'web');
-
-		const context = this.storage.getItem('auth');
-
-		return iif(() => !!context, of(context), this.getLoginServers(c)).pipe(
-			mergeMap((response: LoginChoice) => {
-				const server = response.server;
-				if (server === null) {
-					return throwError(new LoginServerError('No login server!'));
-				}
-
-				const config = new FormData();
-
-				config.append('client_id', server.client_id);
-				config.append('provider', 'classlink');
-				config.append('token', response.classlink_token || '');
-
-				return this.http.post(makeUrl(server, 'auth/by-token'), config).pipe(
-					map((data: any) => {
-						// don't use TimeService for auth because auth is required for time service
-						// to be useful
-						data['expires'] = moment().add(data['expires_in'], 'seconds').toDate();
-
-						ensureFields(data, ['access_token', 'token_type', 'expires', 'scope']);
-
-						const auth = data as ServerAuth;
-
-						return { auth: auth, server: server, classlink_token: response.classlink_token } as AuthContext;
-					})
-				);
-			})
-		);
-	}
-
 	getRedirectUrl(): string {
 		const url = [window.location.protocol, '//', window.location.host, this.baseHref].join('');
 		return url;
@@ -728,44 +507,6 @@ export class HttpService implements OnDestroy {
 	getEncodedRedirectUrl(): string {
 		const redirect = encodeURIComponent(this.getRedirectUrl());
 		return redirect;
-	}
-
-	loginClever(code: string): Observable<AuthContext> {
-		const c = new FormData();
-		c.append('code', code);
-		c.append('provider', 'clever');
-		c.append('platform_type', 'web');
-		c.append('redirect_uri', this.getRedirectUrl());
-
-		const context = this.storage.getItem('auth');
-
-		return iif(() => !!context, of(JSON.parse(context)), this.getLoginServers(c)).pipe(
-			mergeMap((response: LoginChoice) => {
-				const server = response.server;
-				if (server === null) {
-					return throwError(new LoginServerError('No login server!'));
-				}
-
-				const config = new FormData();
-
-				config.append('client_id', server.client_id);
-				config.append('provider', 'clever');
-				config.append('token', response.clever_token);
-				return this.http.post(makeUrl(server, 'auth/by-token'), config).pipe(
-					map((data: any) => {
-						// don't use TimeService for auth because auth is required for time service
-						// to be useful
-						data['expires'] = moment().add(data['expires_in'], 'seconds').toDate();
-
-						ensureFields(data, ['access_token', 'token_type', 'expires', 'scope']);
-
-						const auth = data as ServerAuth;
-
-						return { auth: auth, server: server, clever_token: response.clever_token } as AuthContext;
-					})
-				);
-			})
-		);
 	}
 
 	loginSession(authObject: AuthObject) {
@@ -872,7 +613,6 @@ export class HttpService implements OnDestroy {
 		});
 
     return of(1);
-		// return this.doRefresh().pipe(tap({ next: (ctx: AuthContext) => this.setAuthContext(ctx) }), signOutCatch);
 	}
 
 	// private doSPTokenRefresh(kioskMode: boolean): Observable<AuthContext> {

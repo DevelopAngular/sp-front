@@ -1,13 +1,8 @@
-import { Component, OnInit, OnDestroy } from '@angular/core';
-import { MatDialogRef } from '@angular/material/dialog';
-import { DarkThemeSwitch } from '../../dark-theme-switch';
+import { Component, OnInit } from '@angular/core';
 import { FormBuilder, FormGroup } from '@angular/forms';
 import { KioskModeService } from '../../services/kiosk-mode.service';
 import { UserService } from '../../services/user.service';
 import { Router } from '@angular/router';
-import { HttpService } from '../../services/http-service';
-import { map } from 'rxjs/operators';
-import { StorageService } from '../../services/storage.service';
 
 @Component({
 	selector: 'app-kiosk-settings',
@@ -23,9 +18,7 @@ export class KioskSettingsComponent implements OnInit {
 		private kioskModeService: KioskModeService,
 		private fb: FormBuilder,
 		private userService: UserService,
-		private router: Router,
-		private http: HttpService,
-		private storage: StorageService
+		private router: Router
 	) {}
 
 	ngOnInit(): void {
@@ -48,19 +41,9 @@ export class KioskSettingsComponent implements OnInit {
 
 	enterKioskMode() {
 		if (this.kioskModeService.kioskSettingsValidCheck(this.kioskModeService.getKioskModeSettings())) {
-			let kioskRoom = this.kioskModeService.getCurrentRoom().value;
+			const kioskRoom = this.kioskModeService.getCurrentRoom().value;
 			if (kioskRoom?.id) {
-				this.userService
-					.saveKioskModeLocation(kioskRoom.id)
-					.pipe(
-						map((res: any) => {
-							this.storage.setItem('kioskToken', res.access_token);
-							//this.loginService.updateAuth({username: user.user.primary_email, type: 'demo-login', kioskMode: true});
-							this.http.kioskTokenSubject$.next(res);
-							this.router.navigate(['main/kioskMode']);
-						})
-					)
-					.subscribe();
+        this.router.navigate(['main/kioskMode']);
 			} else {
 				this.kioskModeService.enterKioskMode$.next(true);
 			}
