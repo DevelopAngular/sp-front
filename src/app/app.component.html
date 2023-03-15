@@ -85,7 +85,7 @@
 			<iframe #helpIframe class="help-centre-iframe" id="help-centre-iframe" src="https://www.smartpass.app/help-center" frameborder="0"></iframe>
 			<div class="contact-wrapper">
 				<div class="call-main">
-					<div class="call-contant" (click)="openCallDialog($event)" *ngIf="(isAdmin$ | async)">
+					<div class="call-contant" (click)="openCallDialog($event)" *ngIf="isAdmin$ | async">
 						<img class="pro-icon" *ngIf="!isUserHasPhoneAccess" [src]="'./assets/Plus Plan (Yellow).svg' | resolveAsset" alt="" />
 						<img class="call-icon" [src]="'./assets/Call (Gray).svg' | resolveAsset" alt="" />
 					</div>

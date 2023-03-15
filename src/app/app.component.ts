@@ -408,7 +408,7 @@ export class AppComponent implements OnInit, AfterViewInit, OnDestroy {
 				this.hideScroll = data.hideScroll;
 			});
 
-			this.isUserHasPhoneAccess = this.featureFlags.isFeatureEnabled(FLAGS.PhoneAccess);
+		this.isUserHasPhoneAccess = this.featureFlags.isFeatureEnabled(FLAGS.PhoneAccess);
 	}
 
 	registerRefiner(user: User) {
