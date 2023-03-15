@@ -36,6 +36,8 @@ export class RoomComponent implements OnInit, OnDestroy {
 
 	@Input() isEnableRoomTrigger$: Subject<boolean>;
 
+  @Input() allowChangingIgnoreStudentsPassLimit: boolean;
+
 	@Output() back = new EventEmitter();
 
 	@Output()
@@ -54,7 +56,7 @@ export class RoomComponent implements OnInit, OnDestroy {
 		travelType: [],
 		restricted: null,
 		scheduling_restricted: null,
-		ignore_students_pass_limit: null,
+		ignore_students_pass_limit: false,
 		needs_check_in: null,
 		advOptState: {
 			now: { state: '', data: { all_teach_assign: null, any_teach_assign: null, selectedTeachers: [] } },
@@ -174,7 +176,7 @@ export class RoomComponent implements OnInit, OnDestroy {
 					selectedTeachers: pinnable.location.teachers,
 					restricted: !!pinnable.location.restricted,
 					scheduling_restricted: !!pinnable.location.scheduling_restricted,
-					ignore_students_pass_limit: !!pinnable.location.ignore_students_pass_limit,
+					ignore_students_pass_limit: !!pinnable.ignore_students_pass_limit,
 					needs_check_in: !!pinnable.location.needs_check_in,
 					timeLimit: pinnable.location.max_allowed_time,
 					advOptState: this.overlayService.pageState.getValue().data.advancedOptions,
@@ -201,7 +203,8 @@ export class RoomComponent implements OnInit, OnDestroy {
 					travelType: data.travel_types,
 					restricted: !!data.restricted,
 					scheduling_restricted: !!data.scheduling_restricted,
-					ignore_students_pass_limit: !!data.ignore_students_pass_limit,
+          // This technically should use the value of the pinnable, but since we don't show it, it doesn't matter.
+					ignore_students_pass_limit: false,
 					needs_check_in: !!data.needs_check_in,
 					advOptState: this.overlayService.pageState.getValue().data.advancedOptions,
 					visibility: this.overlayService.pageState.getValue().data?.visibility,

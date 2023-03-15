@@ -57,6 +57,7 @@ export class AdvancedOptionsComponent implements OnInit, OnDestroy {
 	@Input() roomData: RoomData;
 	@Input() passLimitForm: FormGroup;
 	@Input() showErrors: boolean;
+	@Input() allowChangingIgnoreStudentsPassLimit: Boolean;
 
 	@Output() openedOptions: EventEmitter<boolean> = new EventEmitter<boolean>();
 	@Output() resultOptions: EventEmitter<{ options: OptionState; validButtons: ValidButtons }> = new EventEmitter<{
@@ -139,12 +140,13 @@ export class AdvancedOptionsComponent implements OnInit, OnDestroy {
 			forNow: new FormControl(this.roomData.restricted),
 			forFuture: new FormControl(this.roomData.scheduling_restricted),
 			checkIn: new FormControl(this.roomData.needs_check_in),
-			ignorePass: new FormControl(!this.roomData.ignore_students_pass_limit),
+			countsTowardsPassLimits: new FormControl(!this.roomData.ignore_students_pass_limit),
 		});
 
 		this.futureRestEmit.emit(this.roomData.scheduling_restricted);
 		this.nowRestrEmit.emit(this.roomData.restricted);
 		this.checkInEmit.emit(this.roomData.needs_check_in);
+		this.ignoreStudentsPassLimitEmit.emit(this.roomData.ignore_students_pass_limit);
 
 		this.change$.pipe(takeUntil(this.destroy$)).subscribe(({ value, action }) => {
 			this.limitInputsFocus[action] = value;

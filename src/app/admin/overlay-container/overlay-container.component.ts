@@ -43,11 +43,13 @@ export class OverlayContainerComponent implements OnInit, OnDestroy {
 	bulkEditData: {
 		roomData: RoomData;
 		rooms: Location[] | any[];
+    pinnables: Pinnable[];
 	};
 
 	initialSettings = {
 		icon: null,
 		color: null,
+    ignoreStudentsPassLimit: null
 	};
 
 	roomValidButtons = new BehaviorSubject<ValidButtons>({
@@ -72,6 +74,7 @@ export class OverlayContainerComponent implements OnInit, OnDestroy {
 	titleIcon: string;
 	isDirtyColor: boolean;
 	isDirtyIcon: boolean;
+  isDirtyIgnoreStudentsPassLimit: boolean;
 
 	folderRoomsLoaded: boolean;
 
@@ -139,6 +142,7 @@ export class OverlayContainerComponent implements OnInit, OnDestroy {
 					this.initialSettings = {
 						icon: cloneDeep(this.selectedIcon),
 						color: cloneDeep(this.color_profile),
+            ignoreStudentsPassLimit: this.pinnable.ignore_students_pass_limit
 					};
 					break;
 				}
@@ -159,6 +163,7 @@ export class OverlayContainerComponent implements OnInit, OnDestroy {
 				this.initialSettings = {
 					icon: cloneDeep(this.selectedIcon),
 					color: cloneDeep(this.color_profile),
+          ignoreStudentsPassLimit: this.pinnable.ignore_students_pass_limit
 				};
 				break;
 			case 'edit':
@@ -202,7 +207,7 @@ export class OverlayContainerComponent implements OnInit, OnDestroy {
 			this.currentPage === Pages.NewFolder ||
 			this.currentPage === Pages.EditFolder
 		) {
-			if (this.isDirtyColor || this.isDirtyIcon) {
+			if (this.isDirtyColor || this.isDirtyIcon || this.isDirtyIgnoreStudentsPassLimit) {
 				if (this.currentPage === Pages.NewRoom || this.currentPage === Pages.EditRoom) {
 					return !this.isValidRoomForm;
 				}
@@ -358,7 +363,7 @@ export class OverlayContainerComponent implements OnInit, OnDestroy {
 	}
 
 	get showCancelButton() {
-		return (this.roomValidButtons.getValue().cancel || this.isDirtyIcon || this.isDirtyColor) && !this.disabledRightBlock;
+		return (this.roomValidButtons.getValue().cancel || this.isDirtyIcon || this.isDirtyColor || this.isDirtyIgnoreStudentsPassLimit) && !this.disabledRightBlock;
 	}
 
 	ngOnInit() {
@@ -506,12 +511,19 @@ export class OverlayContainerComponent implements OnInit, OnDestroy {
 	}
 
 	buildForm() {
+
+    let countsTowardsPassLimits = false;
+    if (!!this.pinnable) {
+      countsTowardsPassLimits = !this.pinnable.ignore_students_pass_limit
+    }
+
 		this.form = new FormGroup({
 			file: new FormControl(),
 			roomName: new FormControl('', [Validators.maxLength(15)], this.uniqueRoomNameValidator.bind(this)),
 			folderName: new FormControl('', [Validators.maxLength(17)], this.uniqueFolderNameValidator.bind(this)),
 			roomNumber: new FormControl('', [Validators.required, Validators.maxLength(7)]),
 			timeLimit: new FormControl('', [Validators.required, Validators.pattern('^[0-9]*?[0-9]+$'), Validators.min(1), Validators.max(999)]),
+      countsTowardsPassLimits: new FormControl(countsTowardsPassLimits),
 		});
 
 		this.passLimitForm = new FormGroup({
@@ -666,6 +678,13 @@ export class OverlayContainerComponent implements OnInit, OnDestroy {
 		this.titleIcon = icon.inactive_icon;
 	}
 
+  changeIgnoreStudentsPassLimit(value) {
+    if (this.currentPage === Pages.EditFolder) {
+      this.isDirtyIgnoreStudentsPassLimit = this.initialSettings.ignoreStudentsPassLimit !== value
+      console.log(this.isDirtyIgnoreStudentsPassLimit);
+    }
+  }
+
 	normalizeAdvOptData(roomData = this.roomData) {
 		const data: any = {};
 		if (roomData.advOptState.now.state === 'Any teacher') {
@@ -818,7 +837,8 @@ export class OverlayContainerComponent implements OnInit, OnDestroy {
 		return (
 			this.folderData.folderName !== this.pinnable.title ||
 			this.color_profile.id !== this.pinnable.color_profile.id ||
-			this.getIconString() !== this.pinnable.icon
+			this.getIconString() !== this.pinnable.icon ||
+      this.folderData.ignore_students_pass_limit !== this.pinnable.ignore_students_pass_limit
 		);
 	}
 
@@ -832,7 +852,6 @@ export class OverlayContainerComponent implements OnInit, OnDestroy {
 				room: this.roomData.roomNumber,
 				restricted: !!this.roomData.restricted,
 				scheduling_restricted: !!this.roomData.scheduling_restricted,
-				ignore_students_pass_limit: !!this.roomData.ignore_students_pass_limit,
 				needs_check_in: !!this.roomData.needs_check_in,
 				teachers: this.roomData.selectedTeachers.map((teacher) => teacher.id),
 				travel_types: this.roomData.travelType,
@@ -858,6 +877,7 @@ export class OverlayContainerComponent implements OnInit, OnDestroy {
 							color_profile: this.color_profile.id,
 							icon: this.selectedIcon?.inactive_icon,
 							location: loc.id,
+              ignore_students_pass_limit: this.roomData.ignore_students_pass_limit
 						};
 						return this.hallPassService.postPinnableRequest(pinnable);
 					}),
@@ -885,6 +905,7 @@ export class OverlayContainerComponent implements OnInit, OnDestroy {
 				title: this.folderData.folderName,
 				color_profile: this.color_profile.id,
 				icon: this.getIconString(),
+        ignore_students_pass_limit: this.folderData.ignore_students_pass_limit,
 				category,
 			};
 
@@ -941,6 +962,7 @@ export class OverlayContainerComponent implements OnInit, OnDestroy {
 			const pinnableData = {
 				// data to create the pinnable
 				title: this.folderData.folderName,
+        ignore_students_pass_limit:  this.folderData.ignore_students_pass_limit,
 				color_profile: this.color_profile.id,
 				icon: this.getIconString(),
 			};
@@ -951,7 +973,7 @@ export class OverlayContainerComponent implements OnInit, OnDestroy {
 
 			console.log(`Pinnable changed: ${this.isPinnableChanged()}`);
 			const pinnableUpdateRequest$ = this.isPinnableChanged()
-				? this.hallPassService.updatePinnable(this.pinnable.id, pinnableData).pipe(takeUntil(this.destroy$), this.catchError())
+				? this.hallPassService.updatePinnableRequest(this.pinnable.id, pinnableData).pipe(take(1), takeUntil(this.destroy$), this.catchError())
 				: of(null);
 
 			const roomDeletionRequest$ = forkJoin(
@@ -993,7 +1015,6 @@ export class OverlayContainerComponent implements OnInit, OnDestroy {
 				room: this.roomData.roomNumber,
 				restricted: !!this.roomData.restricted,
 				scheduling_restricted: !!this.roomData.scheduling_restricted,
-				ignore_students_pass_limit: !!this.roomData.ignore_students_pass_limit,
 				needs_check_in: !!this.roomData.needs_check_in,
 				teachers: this.roomData.selectedTeachers.map((teacher) => teacher.id),
 				travel_types: this.roomData.travelType,
@@ -1022,6 +1043,7 @@ export class OverlayContainerComponent implements OnInit, OnDestroy {
 							color_profile: this.color_profile.id,
 							icon: this.selectedIcon?.inactive_icon,
 							location: loc.id,
+              ignore_students_pass_limit: this.roomData.ignore_students_pass_limit,
 						};
 						return this.hallPassService.updatePinnableRequest(this.pinnable.id, pinnable);
 					})
@@ -1059,7 +1081,16 @@ export class OverlayContainerComponent implements OnInit, OnDestroy {
 				return this.locationService.updateLocationRequest(room.id, data).pipe(filter((res) => !!res));
 			});
 
-			zip(...patchRequests$)
+      const patchPinnables$ = this.bulkEditData.pinnables.map(pinnable => {
+        const pinnableData = {
+          ignore_students_pass_limit: pinnable.ignore_students_pass_limit
+        }
+        return this.hallPassService.updatePinnable(pinnable.id, pinnableData).pipe(filter((res) => !!res));
+      })
+
+      const fresh = this.hallPassService.getPinnablesRequest()
+
+			zip(...patchRequests$, ...patchPinnables$)
 				.pipe(takeUntil(this.destroy$))
 				.subscribe((res) => {
 					this.toast.openToast({ title: 'Rooms updated', type: 'success' });
@@ -1160,9 +1191,10 @@ export class OverlayContainerComponent implements OnInit, OnDestroy {
 		}
 	}
 
-	bulkEditResult({ roomData, rooms, buttonState }) {
+	bulkEditResult({ roomData, rooms, buttonState, pinnables }) {
+    const editingPinnables = this.editPinnables(roomData, pinnables)
 		const editingRooms = this.editRooms(roomData, rooms);
-		this.bulkEditData = { roomData, rooms: editingRooms };
+		this.bulkEditData = { roomData, rooms: editingRooms, pinnables: editingPinnables };
 		this.roomValidButtons.next(buttonState);
 	}
 
@@ -1174,6 +1206,13 @@ export class OverlayContainerComponent implements OnInit, OnDestroy {
 		this.folderData.roomsInFolder = this.folderData.roomsInFolder.filter((r) => r.id !== room.id);
 		this.overlayService.back({ ...this.folderData, oldFolderData: this.oldFolderData });
 	}
+
+  editPinnables(roomData, pinnables) {
+    return pinnables.map(pin => {
+      pin.ignore_students_pass_limit = roomData.ignore_students_pass_limit
+      return pin;
+    })
+  }
 
 	editRooms(roomData, rooms) {
 		return rooms.map((room) => {
@@ -1216,7 +1255,6 @@ export class OverlayContainerComponent implements OnInit, OnDestroy {
 			room: room.roomNumber,
 			restricted: !!room.restricted,
 			scheduling_restricted: !!room.scheduling_restricted,
-			ignore_students_pass_limit: !!room.ignore_students_pass_limit,
 			needs_check_in: !!room.needs_check_in,
 			teachers: room.selectedTeachers,
 			// TODO: Make every single travelType prop into travel_types to avoid this kind of error in the future
