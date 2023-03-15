@@ -32,26 +32,22 @@ const KioskCurrentRoom = 'current-kiosk-room';
 	providedIn: 'root',
 })
 export class KioskModeService {
-	private currentRoom$: BehaviorSubject<Location> = new BehaviorSubject(null);
-	private loadingStoredKioskRoom = false;
 	private currentKioskSettings$: BehaviorSubject<KioskSettings> = new BehaviorSubject<KioskSettings>(this.getKioskModeSettings());
 	public enterKioskMode$: BehaviorSubject<Boolean> = new BehaviorSubject(false);
 
 	constructor(private storageService: StorageService, private locationsService: LocationsService, private http: HttpService) {}
 
 	getCurrentRoom(): BehaviorSubject<Location> {
-    const roomFromStorage = this.storageService.getItem(KioskCurrentRoom);
-    if (!roomFromStorage) {
-      return new BehaviorSubject(null);
-    }
+		const roomFromStorage = this.storageService.getItem(KioskCurrentRoom);
+		if (!roomFromStorage) {
+			return new BehaviorSubject(null);
+		}
 
-    return new BehaviorSubject(JSON.parse(roomFromStorage));
+		return new BehaviorSubject(JSON.parse(roomFromStorage));
 	}
 
 	setCurrentRoom(location: Location) {
-    this.storageService.setItem(KioskCurrentRoom, JSON.stringify(location));
-
-		// this.currentRoom$.next(location);
+		this.storageService.setItem(KioskCurrentRoom, JSON.stringify(location));
 	}
 
 	areValidSettings(obj: any): obj is KioskSettings {
@@ -60,10 +56,6 @@ export class KioskModeService {
 
 	getKioskModeSettingsSubject(): Observable<KioskSettings> {
 		return this.currentKioskSettings$.asObservable();
-	}
-
-	GetKioskModeEnterSubject(): Observable<Boolean> {
-		return this.enterKioskMode$.asObservable();
 	}
 
 	getKioskModeSettings(): KioskSettings {
@@ -103,7 +95,8 @@ export class KioskModeService {
 		return !!this.storageService.getItem(KioskCurrentRoom);
 	}
 
-	kioskSettingsValidCheck(obj: KioskSettings) {
+	kioskSettingsValidCheck() {
+		const obj = this.getKioskModeSettings();
 		let check = false;
 		for (const key in obj) {
 			if (obj[key] == true) check = true;

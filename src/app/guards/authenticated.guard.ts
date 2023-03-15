@@ -10,16 +10,11 @@ import { CookieService } from 'ngx-cookie-service';
 	providedIn: 'root',
 })
 export class AuthenticatedGuard implements CanActivate {
-	constructor(
-    private router: Router,
-    private storage: StorageService,
-    private allowMobile: AllowMobileService,
-    private cookie: CookieService
-  ) {}
+	constructor(private router: Router, private storage: StorageService, private allowMobile: AllowMobileService, private cookie: CookieService) {}
 
 	canActivate(next: ActivatedRouteSnapshot, state: RouterStateSnapshot): Observable<boolean> {
 		// we don't actually want to cancel routing this path, we want to wait until isAuthenticated$ becomes true.
-    const isAuth = !!this.cookie.get('smartpassToken')
+		const isAuth = !!this.cookie.get('smartpassToken');
 
 		return of(isAuth).pipe(
 			tap((v) => console.log('is authenticated (guard):', v)),
@@ -43,7 +38,7 @@ export class AuthenticatedGuard implements CanActivate {
 						this.router.navigate(['/mobile-restriction']);
 					}
 				}
-        return isAuthenticated;
+				return isAuthenticated;
 			})
 		);
 	}

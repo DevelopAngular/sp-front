@@ -17,9 +17,7 @@ import { Location } from '../models/Location';
 import { FeatureFlagService, FLAGS } from '../services/feature-flag.service';
 import { sortWil } from '../services/wait-in-line.service';
 import { WaitingInLinePass } from '../models/WaitInLine';
-import {
-  InlineWaitInLineCardComponent,
-} from '../pass-cards/inline-wait-in-line-card/inline-wait-in-line-card.component';
+import { InlineWaitInLineCardComponent } from '../pass-cards/inline-wait-in-line-card/inline-wait-in-line-card.component';
 import { PassLike } from '../models';
 
 declare const window;
@@ -92,7 +90,7 @@ export class KioskModeComponent implements OnInit, AfterViewInit, OnDestroy {
 	}
 
 	ngOnInit() {
-    this.userService.userData.subscribe(console.log);
+		this.userService.userData.subscribe(console.log);
 		this.activatedRoute.data.subscribe((state) => {
 			if ('openDialog' in state && state.openDialog) {
 				this.dialog.open(KioskSettingsDialogComponent, {
@@ -124,7 +122,7 @@ export class KioskModeComponent implements OnInit, AfterViewInit, OnDestroy {
 				takeUntil(this.destroy$)
 			)
 			.subscribe((locations) => {
-        const locationFromStorage = this.kioskMode.getCurrentRoom().value;
+				const locationFromStorage = this.kioskMode.getCurrentRoom().value;
 				const kioskLocation = locations.find((loc) => parseInt(loc.id, 10) === parseInt(locationFromStorage.id, 10));
 				this.titleService.setTitle(`${kioskLocation.title} | SmartPass`);
 				this.liveDataService.getMyRoomActivePassesRequest(

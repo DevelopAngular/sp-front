@@ -176,7 +176,7 @@ const appRoutes: Routes = [
 		KeyboardShortcutsModule.forRoot(),
 
 		RouterModule.forRoot(appRoutes, {
-			enableTracing: false
+			enableTracing: false,
 		}),
 		OAuthModule.forRoot(),
 		AngularFireModule.initializeApp(environment.firebase, 'notifyhallpass'),
@@ -234,12 +234,12 @@ const appRoutes: Routes = [
 		StoreDevtoolsModule.instrument({}),
 		HammerModule,
 		ServiceWorkerModule.register('ngsw-worker.js', { enabled: environment.production }),
-		SharedModule
+		SharedModule,
 	],
 	providers: [
-    CookieService,
+		CookieService,
 		{ provide: OverlayContainer, useFactory: InitOverlay },
-    { provide: HTTP_INTERCEPTORS, useClass: AuthInterceptor, multi: true, deps: [LoginService] },
+		{ provide: HTTP_INTERCEPTORS, useClass: AuthInterceptor, multi: true, deps: [LoginService] },
 		{ provide: HTTP_INTERCEPTORS, useClass: ProgressInterceptor, multi: true },
 		// { provide: HTTP_INTERCEPTORS, useClass: AccessTokenInterceptor, multi: true },
 		{ provide: APP_BASE_HREF, useValue: environment.production ? '/app' : '/' },

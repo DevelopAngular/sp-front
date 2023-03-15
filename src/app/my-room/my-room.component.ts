@@ -21,13 +21,11 @@ import { KioskLogin, KioskLoginResponse, KioskModeService } from '../services/ki
 import { bumpIn } from '../animations';
 import { DomSanitizer, Title } from '@angular/platform-browser';
 import { Router } from '@angular/router';
-import { StorageService } from '../services/storage.service';
 import { HttpService } from '../services/http-service';
 import { ScrollPositionService } from '../scroll-position.service';
 import { DeviceDetection } from '../device-detection.helper';
 import { HallPassesService } from '../services/hall-passes.service';
 import { UNANIMATED_CONTAINER } from '../consent-menu-overlay';
-import { LoginService } from '../services/login.service';
 import * as moment from 'moment';
 import { CheckForUpdateService } from '../services/check-for-update.service';
 import { RoomCheckinCodeDialogComponent } from './room-checkin-code-dialog/room-checkin-code-dialog.component';
@@ -147,10 +145,8 @@ export class MyRoomComponent implements OnInit, OnDestroy, AfterViewInit {
 		public darkTheme: DarkThemeSwitch,
 		public dialog: MatDialog,
 		public userService: UserService,
-		public loginService: LoginService,
 		public kioskMode: KioskModeService,
 		private sanitizer: DomSanitizer,
-		private storage: StorageService,
 		private http: HttpService,
 		public screenService: ScreenService,
 		public router: Router,
@@ -378,10 +374,10 @@ export class MyRoomComponent implements OnInit, OnDestroy, AfterViewInit {
 			return;
 		}
 
-    const loginServer = this.http.getServerFromStorage();
-    if (!loginServer) {
-      throw new Error('No login server!');
-    }
+		const loginServer = this.http.getServerFromStorage();
+		if (!loginServer) {
+			throw new Error('No login server!');
+		}
 
 		this.setRoomToKioskModeProcesing = true;
 
@@ -418,20 +414,8 @@ export class MyRoomComponent implements OnInit, OnDestroy, AfterViewInit {
 								kioskRoom = Object.assign({}, this.selectedLocation);
 							}
 							this.kioskMode.setCurrentRoom(kioskRoom);
-              let { username, password } = kioskLogin;
-              if (loginServer.server.api_root.includes('staging')) {
-                username += '@smartpass.app';
-              }
-
-              this.loginService.updateAuth({
-                username,
-                password,
-                type: 'demo-login',
-                kioskMode: true,
-              });
-
-              this.router.navigate(['main/kioskMode']);
-						}),
+							this.router.navigate(['main/kioskMode']);
+						})
 					);
 				})
 			)

@@ -3,34 +3,14 @@ import { Inject, Injectable, OnDestroy } from '@angular/core';
 import { Store } from '@ngrx/store';
 import { LocalStorage } from '@ngx-pwa/local-storage';
 import { BehaviorSubject, combineLatest, Observable, of, ReplaySubject, Subject, throwError } from 'rxjs';
-import {
-  catchError,
-  concatMap,
-  delay,
-  exhaustMap,
-  filter,
-  map,
-  mapTo,
-  switchMap,
-  take,
-  takeUntil,
-  tap,
-} from 'rxjs/operators';
+import { catchError, concatMap, delay, exhaustMap, filter, map, mapTo, switchMap, take, takeUntil, tap } from 'rxjs/operators';
 import { BUILD_DATE, RELEASE_NAME } from '../../build-info';
 import { environment } from '../../environments/environment';
 import { School } from '../models/School';
 import { AppState } from '../ngrx/app-state/app-state';
 import { clearSchools, getSchools } from '../ngrx/schools/actions';
 import { getCurrentSchool, getLoadedSchools, getSchoolsCollection, getSchoolsLength } from '../ngrx/schools/states';
-import {
-  AuthObject,
-  isClassLinkLogin,
-  isCleverLogin,
-  isDemoLogin,
-  isGoogleLogin,
-  LoginService,
-  SessionLogin,
-} from './login.service';
+import { AuthObject, isClassLinkLogin, isCleverLogin, isDemoLogin, isGoogleLogin, LoginService, SessionLogin } from './login.service';
 import { StorageService } from './storage.service';
 import { SafeHtml } from '@angular/platform-browser';
 import { MatDialog } from '@angular/material/dialog';
@@ -64,10 +44,10 @@ export enum AuthType {
 }
 
 export enum LoginProvider {
-  Password = 'password',
-  Classlink = 'classlink',
-  Clever = 'clever',
-  Google = 'google-access-token'
+	Password = 'password',
+	Classlink = 'classlink',
+	Clever = 'clever',
+	Google = 'google-access-token',
 }
 
 export interface DiscoverServerResponse {
@@ -227,9 +207,7 @@ const discoveryEndpoint = (userName: string) =>
 		? `/api/discovery/email_info?email=${encodeURIComponent(userName)}`
 		: `https://smartpass.app/api/discovery/email_info?email=${encodeURIComponent(userName)}`;
 
-const discoveryV2Endpoint = /(proxy)/.test(environment.buildType)
-  ? '/api/discovery/v2/find'
-  : 'https://smartpass.app/api/discovery/v2/find';
+const discoveryV2Endpoint = /(proxy)/.test(environment.buildType) ? '/api/discovery/v2/find' : 'https://smartpass.app/api/discovery/v2/find';
 
 /**
  * This service is supposed to build off Angular's HttpClient but it ends up
@@ -395,7 +373,7 @@ export class HttpService implements OnDestroy {
 					takeUntil(this.destroyed$),
 					switchMap((authObj) => {
 						return this.fetchServerAuth(authObj);
-					}),
+					})
 				)
 				.subscribe({
 					next: (authCtx) => {
@@ -436,15 +414,15 @@ export class HttpService implements OnDestroy {
 		);
 	}
 
-  getServerFromStorage(): { server: LoginServer } {
-    let server = this.storage.getItem('server');
-    if (!server) {
-      this.loginService.isAuthenticated$.next(false);
-      return null;
-    }
+	getServerFromStorage(): { server: LoginServer } {
+		let server = this.storage.getItem('server');
+		if (!server) {
+			this.loginService.isAuthenticated$.next(false);
+			return null;
+		}
 
-    return JSON.parse(server);
-  }
+		return JSON.parse(server);
+	}
 
 	// Used in AccessTokenInterceptor for token refresh and adding access token
 	getAuthContext(): AuthContext {
@@ -459,44 +437,22 @@ export class HttpService implements OnDestroy {
 		this.authContext$.next(ctx);
 	}
 
-  // THIS SHOULD BE IN THE LOGIN SERVICE
-  // The code is so tangled right now that doing a major refactor may be too time-consuming
-  updateAuthFromExternalLogin(url: string, loginCode: string, scope: string) {
-    if (url.includes('google_oauth')) {
-      this.storage.setItem('authType', AuthType.Google);
-      this.loginService.updateAuth({ google_code: loginCode, type: 'google-login' });
-    }
+	// THIS SHOULD BE IN THE LOGIN SERVICE
+	// The code is so tangled right now that doing a major refactor may be too time-consuming
+	updateAuthFromExternalLogin(url: string, loginCode: string, scope: string) {
+		if (url.includes('google_oauth')) {
+			this.storage.setItem('authType', AuthType.Google);
+			this.loginService.updateAuth({ google_code: loginCode, type: 'google-login' });
+		}
 
-    if (url.includes('classlink_oauth')) {
-      this.storage.setItem('authType', AuthType.Classlink);
-      this.loginService.updateAuth({ classlink_code: loginCode, type: 'classlink-login' });
-    } else if (!!scope) {
-      this.clearInternal();
-      this.storage.setItem('authType', AuthType.Clever);
-      this.loginService.updateAuth({ clever_code: loginCode, type: 'clever-login' });
-    }
-  }
-
-	dirtyAccessToken(): void {
-		const ctx = this.getAuthContext();
-		ctx.auth.access_token = ctx.auth.access_token + 'garbled';
-		this._authContext = ctx; // Will not update websocket, but it's ok for testing.
-	}
-
-	checkIfTokenIsKiosk(): boolean {
-    return false;
-		// const ctx = this.getAuthContext();
-		// if (!ctx) {
-		// 	return false;
-		// }
-		// const token = ctx.auth.access_token;
-		// if (!token) {
-		// 	return false;
-		// }
-		// const jwt = new JwtHelperService();
-		// const decoded = jwt.decodeToken(token);
-    //
-		// return !!decoded.kiosk_location_id;
+		if (url.includes('classlink_oauth')) {
+			this.storage.setItem('authType', AuthType.Classlink);
+			this.loginService.updateAuth({ classlink_code: loginCode, type: 'classlink-login' });
+		} else if (!!scope) {
+			this.clearInternal();
+			this.storage.setItem('authType', AuthType.Clever);
+			this.loginService.updateAuth({ clever_code: loginCode, type: 'clever-login' });
+		}
 	}
 
 	getRedirectUrl(): string {
@@ -510,59 +466,58 @@ export class HttpService implements OnDestroy {
 	}
 
 	loginSession(authObject: AuthObject) {
-    const formData = new FormData();
-    let sessionLogin: Partial<SessionLogin> = {};
-    const authContext: AuthContext = JSON.parse(this.storage.getItem('auth'));
-    const context = authContext ? authContext : null;
-    const google_token = context?.google_token;
+		const formData = new FormData();
+		let sessionLogin: Partial<SessionLogin> = {};
+		const authContext: AuthContext = JSON.parse(this.storage.getItem('auth'));
+		const context = authContext ? authContext : null;
+		const google_token = context?.google_token;
 
-    formData.append('platform_type', 'web');
-    if (isDemoLogin(authObject)) {
-      sessionLogin.provider = LoginProvider.Password;
-      sessionLogin.token = authObject.password;
-      sessionLogin.username = authObject.username;
-      formData.append('email', authObject.username);
-    } else if (isClassLinkLogin(authObject)) {
-      sessionLogin.provider = LoginProvider.Classlink;
-      formData.append('code', authObject.classlink_code);
-      formData.append('provider', 'classlink');
-    } else if (isCleverLogin(authObject)) {
-      sessionLogin.provider = LoginProvider.Clever
-      formData.append('code', authObject.clever_code);
-      formData.append('provider', 'clever');
-      formData.append('redirect_uri', this.getRedirectUrl());
-    } else if (isGoogleLogin(authObject)) {
-      if (!google_token) {
-        return throwError(new LoginServerError('Please sign in again'));
-      }
-      sessionLogin.provider = LoginProvider.Google;
-      formData.append('code', authObject.google_code);
-      formData.append('provider', 'google-oauth-code');
-      formData.append('redirect_uri', this.getRedirectUrl() + 'google_oauth');
-    }
+		formData.append('platform_type', 'web');
+		if (isDemoLogin(authObject)) {
+			sessionLogin.provider = LoginProvider.Password;
+			sessionLogin.token = authObject.password;
+			sessionLogin.username = authObject.username;
+			formData.append('email', authObject.username);
+		} else if (isClassLinkLogin(authObject)) {
+			sessionLogin.provider = LoginProvider.Classlink;
+			formData.append('code', authObject.classlink_code);
+			formData.append('provider', 'classlink');
+		} else if (isCleverLogin(authObject)) {
+			sessionLogin.provider = LoginProvider.Clever;
+			formData.append('code', authObject.clever_code);
+			formData.append('provider', 'clever');
+			formData.append('redirect_uri', this.getRedirectUrl());
+		} else if (isGoogleLogin(authObject)) {
+			if (!google_token) {
+				return throwError(new LoginServerError('Please sign in again'));
+			}
+			sessionLogin.provider = LoginProvider.Google;
+			formData.append('code', authObject.google_code);
+			formData.append('provider', 'google-oauth-code');
+			formData.append('redirect_uri', this.getRedirectUrl() + 'google_oauth');
+		}
 
-    return this.http.post(discoveryV2Endpoint, formData).pipe(
-      switchMap((servers: LoginResponse) => {
-        return this.pwaStorage.setItem('servers', servers).pipe(mapTo(servers));
-      }),
-      concatMap((servers: LoginResponse) => {
-        if (!isDemoLogin(authObject)) {
-          sessionLogin.token = servers.token.access_token;
-        }
-        return this.http.post<never>(
-          makeUrl(servers.servers[0], 'sessions'),
-          sessionLogin,
-          {
-            withCredentials: true,
-            observe: 'response'
-          }
-        )
-          .pipe(map((response) => {
-            console.log(response.headers);
-            return { server: servers.servers[0] };
-          }));
-      })
-    )
+		return this.http.post(discoveryV2Endpoint, formData).pipe(
+			switchMap((servers: LoginResponse) => {
+				return this.pwaStorage.setItem('servers', servers).pipe(mapTo(servers));
+			}),
+			concatMap((servers: LoginResponse) => {
+				if (!isDemoLogin(authObject)) {
+					sessionLogin.token = servers.token.access_token;
+				}
+				return this.http
+					.post<never>(makeUrl(servers.servers[0], 'sessions'), sessionLogin, {
+						withCredentials: true,
+						observe: 'response',
+					})
+					.pipe(
+						map((response) => {
+							console.log(response.headers);
+							return { server: servers.servers[0] };
+						})
+					);
+			})
+		);
 	}
 
 	private fetchServerAuth(authObject: any): Observable<{ server: LoginServer }> {
@@ -575,19 +530,19 @@ export class HttpService implements OnDestroy {
 				// 		return of(err2);
 				// 	})
 				// );
-        return throwError(err);
+				return throwError(err);
 			})
 		);
 	}
 
 	private performRequest<T>(predicate: (ctx: LoginServer) => Observable<T>): Observable<T> {
-    let server = this.storage.getItem('server');
-    if (!server) {
-      this.loginService.isAuthenticated$.next(false);
-      return throwError(new LoginServerError('No login server!'));
-    }
+		let server = this.storage.getItem('server');
+		if (!server) {
+			this.loginService.isAuthenticated$.next(false);
+			return throwError(new LoginServerError('No login server!'));
+		}
 
-    const parsedServer: { server: LoginServer } = JSON.parse(server);
+		const parsedServer: { server: LoginServer } = JSON.parse(server);
 
 		return predicate(parsedServer.server);
 	}
@@ -612,7 +567,7 @@ export class HttpService implements OnDestroy {
 			throw err;
 		});
 
-    return of(1);
+		return of(1);
 	}
 
 	// private doSPTokenRefresh(kioskMode: boolean): Observable<AuthContext> {
@@ -620,25 +575,25 @@ export class HttpService implements OnDestroy {
 	// 	const auth: AuthContext = JSON.parse(this.storage.getItem('auth'));
 	// 	const s = auth ? auth : null;
 	// 	const refresh_token = auth ? auth.auth.refresh_token : null;
-  //
+	//
 	// 	if (!s || !refresh_token) {
 	// 		return throwError(new LoginServerError('Please sign in again.'));
 	// 	}
-  //
+	//
 	// 	const c: AuthContext = s;
 	// 	const server = c.server;
 	// 	const config = new FormData();
 	// 	config.append('client_id', server.client_id);
 	// 	config.append('grant_type', 'refresh_token');
 	// 	config.append('token', refresh_token);
-  //
+	//
 	// 	if (kioskMode) {
 	// 		const token = this.storage.getItem('kioskToken');
 	// 		const jwt = new JwtHelperService();
 	// 		const locId = jwt.decodeToken(token).kiosk_location_id;
 	// 		config.append('kiosk_mode_location_id', locId);
 	// 	}
-  //
+	//
 	// 	return this.http.post(makeUrl(server, 'o/token/'), config).pipe(
 	// 		tap({ next: (o) => console.log('Received refresh object: ', o) }),
 	// 		map((data: Object) => {
@@ -665,13 +620,13 @@ export class HttpService implements OnDestroy {
 	// 	if (isKiosk) {
 	// 		return this.doSPTokenRefresh(true);
 	// 	}
-  //
+	//
 	// 	const authType = this.storage.getItem('authType');
-  //
+	//
 	// 	if (!authType) {
 	// 		return throwError(new LoginServerError('Please sign in again.'));
 	// 	}
-  //
+	//
 	// 	switch (authType) {
 	// 		case 'password':
 	// 			return this.doSPTokenRefresh(false);
@@ -773,11 +728,9 @@ export class HttpService implements OnDestroy {
 	}
 
 	get<T>(url, config?: Config, schoolOverride?: School): Observable<T> {
-    const school = schoolOverride !== undefined ? schoolOverride : this.getSchool();
-    const effectiveUserId = this.getEffectiveUserId();
-    return this.performRequest<T>((server) =>
-      this.http.get<T>(makeUrl(server, url), makeConfig(config, school, effectiveUserId))
-    )
+		const school = schoolOverride !== undefined ? schoolOverride : this.getSchool();
+		const effectiveUserId = this.getEffectiveUserId();
+		return this.performRequest<T>((server) => this.http.get<T>(makeUrl(server, url), makeConfig(config, school, effectiveUserId)));
 	}
 
 	post<T>(url: string, body?: any, config?: Config, isFormData = true): Observable<T> {

@@ -333,7 +333,7 @@ export class NavbarComponent implements AfterViewInit, OnInit, OnDestroy {
 					this.user = User.fromJSON(user);
 					this.isStaff = this.user.isTeacher();
 					this.isAssistant = this.user.isAssistant();
-					if (this.userService.getFeatureFlagDigitalID()) {
+					if (this.userService.getFeatureFlagDigitalID() && !this.kioskMode.isKisokMode()) {
 						this.idCardService.getIDCardDetails().subscribe({
 							next: (result: any) => {
 								if (result?.results?.digital_id_card) {

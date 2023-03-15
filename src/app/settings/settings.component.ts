@@ -141,7 +141,6 @@ export class SettingsComponent implements OnInit, OnDestroy {
 		this.sideNavService.sideNavData.pipe(takeUntil(this.destroy$)).subscribe((sideNavData) => {
 			if (sideNavData) {
 				this.targetElementRef = sideNavData['trigger'];
-				// this.isSwitch = sideNavData['isSwitch'] && !this.kioskMode.currentRoom$.value;
 				this.isSwitch = false;
 			}
 		});
@@ -206,7 +205,6 @@ export class SettingsComponent implements OnInit, OnDestroy {
 			this.sideNavService.sideNavAction$.next('signout');
 		}
 		this.removeOfflineAuthData();
-		localStorage.removeItem('kioskSettingsData');
 		localStorage.removeItem('fcm_sw_registered');
 		this.localize.setLanguageUntranslated();
 	}
@@ -227,7 +225,9 @@ export class SettingsComponent implements OnInit, OnDestroy {
 			this.dialogRef.close('signout');
 		}
 
-		combineLatest(this.pwaStorage.removeItem('servers'), this.pwaStorage.removeItem('authData')).pipe(takeUntil(this.destroy$)).subscribe();
+		combineLatest(this.pwaStorage.removeItem('server'), this.pwaStorage.removeItem('authData'), this.pwaStorage.removeItem('current-kiosk-room'))
+			.pipe(takeUntil(this.destroy$))
+			.subscribe();
 	}
 
 	openLink(action) {

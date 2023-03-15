@@ -28,13 +28,6 @@ export class SignOutComponent implements AfterContentInit {
 		setTimeout(() => {
 			this.http.clearInternal();
 			this.loginService.clearInternal(true);
-			// this.userService.userData.next(null);
-			// this.userService.userData.complete();
-
-			// debugger
-			// this.router.navigate(['']);
-
-			// window.location.href = '/';
 			const path = window.location.pathname;
 			if (path.includes('parent')) {
 				window.location.href = environment.production ? '/app/auth' : '/auth';

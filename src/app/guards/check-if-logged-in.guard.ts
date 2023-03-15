@@ -3,22 +3,16 @@ import { ActivatedRouteSnapshot, CanActivate, Router, RouterStateSnapshot } from
 import { CookieService } from 'ngx-cookie-service';
 
 @Injectable({
-  providedIn: 'root'
+	providedIn: 'root',
 })
 export class CheckIfLoggedInGuard implements CanActivate {
-  constructor (
-    private cookie: CookieService,
-    private router: Router) {}
+	constructor(private cookie: CookieService, private router: Router) {}
 
-  canActivate(
-    route: ActivatedRouteSnapshot,
-    state: RouterStateSnapshot): boolean {
+	canActivate(route: ActivatedRouteSnapshot, state: RouterStateSnapshot): boolean {
+		if (!!this.cookie.get('smartpassToken')) {
+			this.router.navigate(['main']);
+		}
 
-    if (!!this.cookie.get('smartpassToken')) {
-      this.router.navigate(['main'])
-    }
-
-    return true;
-  }
-
+		return true;
+	}
 }

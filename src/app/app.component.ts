@@ -1,42 +1,10 @@
-import {
-  AfterViewInit,
-  Component,
-  ElementRef,
-  HostListener,
-  NgZone,
-  OnDestroy,
-  OnInit,
-  ViewChild,
-} from '@angular/core';
+import { AfterViewInit, Component, ElementRef, HostListener, NgZone, OnDestroy, OnInit, ViewChild } from '@angular/core';
 import { MatDialog, MatDialogRef } from '@angular/material/dialog';
 import { ActivatedRoute, NavigationEnd, Router } from '@angular/router';
 import { filter as _filter } from 'lodash';
-import {
-  BehaviorSubject,
-  combineLatest,
-  fromEvent,
-  interval,
-  merge,
-  Observable,
-  of,
-  ReplaySubject,
-  Subject,
-  zip,
-} from 'rxjs';
+import { BehaviorSubject, combineLatest, fromEvent, interval, merge, Observable, of, ReplaySubject, Subject, zip } from 'rxjs';
 
-import {
-  concatMap,
-  distinctUntilChanged,
-  filter,
-  finalize,
-  map,
-  mergeMap,
-  switchMap,
-  take,
-  takeUntil,
-  tap,
-  withLatestFrom,
-} from 'rxjs/operators';
+import { concatMap, distinctUntilChanged, filter, finalize, map, mergeMap, switchMap, take, takeUntil, tap, withLatestFrom } from 'rxjs/operators';
 import { BUILD_INFO_REAL } from '../build-info';
 import { DarkThemeSwitch } from './dark-theme-switch';
 
@@ -337,74 +305,55 @@ export class AppComponent implements OnInit, AfterViewInit, OnDestroy {
 			document.head.appendChild(link);
 		}
 
-    combineLatest([
-      this.checkIfAuthOnLoad(),
-      this.loginService.isAuthenticated$.asObservable()
-    ]).pipe(
-      map(([authOnLoad, authStateChanged]) => authOnLoad || authStateChanged),
-      distinctUntilChanged(),
-      tap((isAuth) => {
-        if (!isAuth) {
-          const path = window.location.pathname;
-          if (path.includes('main/student')) {
-            this.storageService.setItem('initialUrl', path);
-          }
-          this.router.navigate(['/']).then(() => {
-            this.showUISubject.next(true);
-          });
-        }
-      }),
-      filter(Boolean),
-      tap(() => {
-        this.showUISubject.next(true);
-        this.userService.getUserRequest();
-        this.http.getSchoolsRequest();
-        this.userService.getIntrosRequest();
-      }),
-      mergeMap(() => this.userService.userData
-        .pipe(takeUntil(this.subscriber$),filter<User>(Boolean))),
-      tap((user) => {
-        user = User.fromJSON(user);
-        if (NotificationService.hasPermission && environment.production) {
-          this.notifService.initNotifications(true);
-        }
+		combineLatest([this.checkIfAuthOnLoad(), this.loginService.isAuthenticated$.asObservable()])
+			.pipe(
+				map(([authOnLoad, authStateChanged]) => authOnLoad || authStateChanged),
+				distinctUntilChanged(),
+				tap((isAuth) => {
+					if (!isAuth) {
+						const path = window.location.pathname;
+						if (path.includes('main/student')) {
+							this.storageService.setItem('initialUrl', path);
+						}
+						this.router.navigate(['/']).then(() => {
+							this.showUISubject.next(true);
+						});
+					}
+				}),
+				filter(Boolean),
+				tap(() => {
+					this.showUISubject.next(true);
+					this.userService.getUserRequest();
+					this.http.getSchoolsRequest();
+					this.userService.getIntrosRequest();
+				}),
+				mergeMap(() => this.userService.userData.pipe(takeUntil(this.subscriber$), filter<User>(Boolean))),
+				tap((user) => {
+					user = User.fromJSON(user);
+					if (NotificationService.hasPermission && environment.production) {
+						this.notifService.initNotifications(true);
+					}
 
-        const callbackUrl: string = window.history.state.callbackUrl;
-        if (callbackUrl != null || callbackUrl !== undefined) {
-          this.router.navigate([callbackUrl]);
-        } else if (this.isMobile && user.isAdmin() && user.isTeacher()) {
-          this.router.navigate(['main']);
-        } else if (user.isParent()) {
-          this.router.navigate(['parent']);
-        } else {
-          const loadView = user.isAdmin() ? 'admin' : 'main';
-          const href: string = window.location.href;
-          if (!(href.includes('admin') || href.includes('main'))) {
-            this.router.navigate([loadView]).then(() => {
-              console.log('navigation finished');
-            });
-          }
-        }
-        this.titleService.setTitle('SmartPass');
-      })
-    ).subscribe();
-
-
-		// this.loginService.isAuthenticated$.pipe(takeUntil(this.subscriber$)).subscribe((isAuth) => {
-		// 	this._zone.run(() => {
-		// 		this.isAuthenticated = isAuth;
-		// 		const path = window.location.pathname;
-    //
-		// 		if (isAuth && path.includes('parent-sign-up')) {
-		// 			this.router.navigate(['parent']);
-		// 		} else if (!isAuth && (path.includes('admin') || path.includes('main'))) {
-		// 			if (path.includes('main/student')) {
-		// 				this.storageService.setItem('initialUrl', path);
-		// 			}
-		// 			this.router.navigate(['/']);
-		// 		}
-		// 	});
-		// });
+					const callbackUrl: string = window.history.state.callbackUrl;
+					if (callbackUrl != null || callbackUrl !== undefined) {
+						this.router.navigate([callbackUrl]);
+					} else if (this.isMobile && user.isAdmin() && user.isTeacher()) {
+						this.router.navigate(['main']);
+					} else if (user.isParent()) {
+						this.router.navigate(['parent']);
+					} else {
+						const loadView = user.isAdmin() ? 'admin' : 'main';
+						const href: string = window.location.href;
+						if (!(href.includes('admin') || href.includes('main'))) {
+							this.router.navigate([loadView]).then(() => {
+								console.log('navigation finished');
+							});
+						}
+					}
+					this.titleService.setTitle('SmartPass');
+				})
+			)
+			.subscribe();
 
 		this.http.schoolsCollection$
 			.pipe(
@@ -460,8 +409,7 @@ export class AppComponent implements OnInit, AfterViewInit, OnDestroy {
 
 				if (
 					data.hubspot &&
-					((data.currentUser && !data.currentUser.isStudent() && data.authFree) ||
-						(!this.kms.getCurrentRoom().value)) &&
+					((data.currentUser && !data.currentUser.isStudent() && data.authFree) || !this.kms.getCurrentRoom().value) &&
 					!this.screen.isDeviceLargeExtra
 				) {
 					if (!existingHub) {
@@ -793,18 +741,18 @@ export class AppComponent implements OnInit, AfterViewInit, OnDestroy {
 		window.Intercom('update', { hide_default_launcher: true });
 	}
 
-  private checkIfAuthOnLoad(): Observable<boolean> {
-    const isCookiePresent = !!this.cookie.get('smartpassToken');
+	private checkIfAuthOnLoad(): Observable<boolean> {
+		const isCookiePresent = !!this.cookie.get('smartpassToken');
 
-    if (!isCookiePresent) {
-      return of(false);
-    }
+		if (!isCookiePresent) {
+			return of(false);
+		}
 
-    const svrString = this.storageService.getItem('server');
-    if (!svrString) {
-      return of(false);
-    }
+		const svrString = this.storageService.getItem('server');
+		if (!svrString) {
+			return of(false);
+		}
 
-    return of(true);
-  }
+		return of(true);
+	}
 }

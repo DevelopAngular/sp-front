@@ -14,12 +14,7 @@ export class KioskSettingsComponent implements OnInit {
 	idSetup: Boolean = false;
 	validCheck: Boolean = true;
 
-	constructor(
-		private kioskModeService: KioskModeService,
-		private fb: FormBuilder,
-		private userService: UserService,
-		private router: Router
-	) {}
+	constructor(private kioskModeService: KioskModeService, private fb: FormBuilder, private userService: UserService, private router: Router) {}
 
 	ngOnInit(): void {
 		this.userService.getStatusOfIDNumber().subscribe({
@@ -28,11 +23,11 @@ export class KioskSettingsComponent implements OnInit {
 			},
 		});
 		this.form = this.fb.group(this.kioskModeService.getKioskModeSettings());
-		this.validCheck = this.kioskModeService.kioskSettingsValidCheck(this.kioskModeService.getKioskModeSettings());
+		this.validCheck = this.kioskModeService.kioskSettingsValidCheck();
 		this.form.valueChanges.subscribe((value) => {
 			if (this.idSetup) {
 				this.kioskModeService.setKioskModeSettings(this.form.value);
-				this.validCheck = this.kioskModeService.kioskSettingsValidCheck(this.kioskModeService.getKioskModeSettings());
+				this.validCheck = this.kioskModeService.kioskSettingsValidCheck();
 			}
 		});
 	}
@@ -40,10 +35,10 @@ export class KioskSettingsComponent implements OnInit {
 	close() {}
 
 	enterKioskMode() {
-		if (this.kioskModeService.kioskSettingsValidCheck(this.kioskModeService.getKioskModeSettings())) {
+		if (this.kioskModeService.kioskSettingsValidCheck()) {
 			const kioskRoom = this.kioskModeService.getCurrentRoom().value;
 			if (kioskRoom?.id) {
-        this.router.navigate(['main/kioskMode']);
+				this.router.navigate(['main/kioskMode']);
 			} else {
 				this.kioskModeService.enterKioskMode$.next(true);
 			}

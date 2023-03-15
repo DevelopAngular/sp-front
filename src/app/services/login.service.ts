@@ -35,7 +35,7 @@ export interface GoogleLogin {
 export interface SessionLogin {
 	provider: string;
 	token?: string;
-  username?: string;
+	username?: string;
 }
 
 export function isDemoLogin(d: any): d is DemoLogin {
@@ -79,7 +79,7 @@ export class LoginService implements OnDestroy {
 		@Inject(APP_BASE_HREF)
 		private baseHref: string,
 		private storage: StorageService,
-    private cookie: CookieService
+		private cookie: CookieService
 	) {
 		if (baseHref === '/app') {
 			this.baseHref = '/app/';
@@ -94,8 +94,8 @@ export class LoginService implements OnDestroy {
 			}
 		});
 
-    const savedServerConfig = this.storage.getItem('server');
-    this.isAuthenticated$.next(!!savedServerConfig);
+		const savedServerConfig = this.storage.getItem('server');
+		this.isAuthenticated$.next(!!savedServerConfig);
 	}
 
 	ngOnDestroy(): void {
@@ -115,8 +115,9 @@ export class LoginService implements OnDestroy {
 
 	clearInternal(permanent: boolean = false) {
 		this.authObject$.next(null);
-    this.cookie.delete('smartpassToken');
-    this.storage.removeItem('server');
+		this.cookie.delete('smartpassToken', '/');
+		this.storage.removeItem('server');
+		this.storage.removeItem('current-kiosk-room');
 
 		if (!permanent) {
 			this.isAuthenticated$.next(false);
@@ -126,8 +127,6 @@ export class LoginService implements OnDestroy {
 		this.storage.removeItem('refresh_token');
 		this.storage.removeItem('google_id_token');
 		this.storage.removeItem('context');
-		this.storage.removeItem('kioskToken');
-		this.storage.removeItem('auth');
 		this.logout();
 	}
 
