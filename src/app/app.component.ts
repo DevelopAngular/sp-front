@@ -407,8 +407,6 @@ export class AppComponent implements OnInit, AfterViewInit, OnDestroy {
 				this.hideSchoolToggleBar = data.hideSchoolToggleBar;
 				this.hideScroll = data.hideScroll;
 			});
-
-		this.isUserHasPhoneAccess = this.featureFlags.isFeatureEnabled(FLAGS.PhoneAccess);
 	}
 
 	registerRefiner(user: User) {
@@ -615,6 +613,7 @@ export class AppComponent implements OnInit, AfterViewInit, OnDestroy {
 	}
 
 	openHelpCenter(event) {
+		this.isUserHasPhoneAccess = this.featureFlags.isFeatureEnabled(FLAGS.PhoneAccess);
 		this.helpCentreURL = this.sanitizer.bypassSecurityTrustResourceUrl('https://www.smartpass.app/help-center');
 		this.helpCenter.isHelpCenterOpen.next(event);
 		setTimeout(() => {
