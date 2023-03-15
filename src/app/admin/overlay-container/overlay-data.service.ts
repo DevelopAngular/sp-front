@@ -46,6 +46,7 @@ export interface RoomData {
 	travelType: string[];
 	restricted: boolean;
 	scheduling_restricted: boolean;
+	ignore_students_pass_limit: boolean;
 	needs_check_in: boolean;
 	advOptState: OptionState;
 	visibility?: VisibilityOverStudents;
@@ -59,6 +60,8 @@ export interface RoomData {
 export interface FolderData {
 	// folderName: Name of the Room Folder as it appears on the UI (without category name)
 	folderName: string;
+
+	ignore_students_pass_limit: boolean;
 
 	// roomsInFolder: List of rooms associated with the folder. Associated by category
 	// TODO: Properly type this. Remove `any` type
@@ -97,6 +100,7 @@ export class OverlayDataService {
 		timeLimit: 'What is the maximum time limit that a student can make the pass for themselves?',
 		restriction: 'Does the pass need digital approval from a teacher to become an active pass?',
 		scheduling_restricted: 'Does the pass need digital approval from a teacher to become a scheduled pass?',
+		ignore_students_pass_limit: `Should this room count toward student pass limits, if enabled?`,
 		needs_check_in: 'Passes must be ended using the Room Code, Teacher’s Pin, or from a Teacher’s device.',
 	};
 

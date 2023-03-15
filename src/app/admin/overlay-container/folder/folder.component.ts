@@ -85,7 +85,8 @@ export class FolderComponent implements OnInit, OnDestroy {
 	initialFolderData: {
 		folderName: string;
 		roomsInFolder: any[];
-	} = { folderName: null, roomsInFolder: [] };
+		ignore_students_pass_limit: boolean;
+	} = { folderName: null, roomsInFolder: [], ignore_students_pass_limit: false };
 
 	folderValidButtons: ValidButtons;
 
@@ -144,7 +145,11 @@ export class FolderComponent implements OnInit, OnDestroy {
 		return sortBy(this.roomsImFolder, (res) => res.title.toLowerCase());
 	}
 
+	tooltipText;
+
 	ngOnInit() {
+		this.tooltipText = this.overlayService.tooltipText;
+
 		this.form.get('folderName').setValidators([Validators.required, Validators.maxLength(17)]);
 		this.scrollableAreaName = `Folder ${this.folderNameTitle}`;
 		this.frameMotion$ = this.formService.getFrameMotionDirection();
@@ -166,6 +171,7 @@ export class FolderComponent implements OnInit, OnDestroy {
 					this.initialFolderData = {
 						folderName: this.folderName,
 						roomsInFolder: cloneDeep(this.roomsImFolder),
+						ignore_students_pass_limit: this.pinnable.ignore_students_pass_limit,
 					};
 					this.folderRoomsLoaded = true;
 				});
@@ -186,15 +192,20 @@ export class FolderComponent implements OnInit, OnDestroy {
 			this.initialFolderData = {
 				folderName: 'New Folder',
 				roomsInFolder: cloneDeep(this.roomsImFolder),
+				ignore_students_pass_limit: false,
 			};
 			this.folderRoomsLoaded = true;
 		}
 
-		merge(combineLatest(this.form.get('folderName').valueChanges, this.form.statusChanges), this.change$).subscribe(() => {
+		merge(
+			combineLatest(this.form.get('folderName').valueChanges, this.form.get('countsTowardsPassLimits').valueChanges, this.form.statusChanges),
+			this.change$
+		).subscribe(() => {
 			this.changeFolderData();
 			this.folderDataResult.emit({
 				data: {
 					folderName: this.form.get('folderName').value === '' ? 'New Folder' : this.form.get('folderName').value,
+					ignore_students_pass_limit: !this.form.get('countsTowardsPassLimits').value,
 					roomsInFolder: this.roomsImFolder,
 					selectedRoomsInFolder: this.selectedRooms,
 					roomsInFolderLoaded: true,
@@ -214,7 +225,8 @@ export class FolderComponent implements OnInit, OnDestroy {
 	changeFolderData() {
 		if (
 			!isEqual(this.initialFolderData.roomsInFolder, this.roomsImFolder) ||
-			(this.initialFolderData.folderName && this.initialFolderData.folderName !== this.form.get('folderName').value)
+			(this.initialFolderData.folderName && this.initialFolderData.folderName !== this.form.get('folderName').value) ||
+			this.initialFolderData.ignore_students_pass_limit === this.form.get('countsTowardsPassLimits').value
 		) {
 			if (this.form.get('folderName').invalid) {
 				if (this.form.get('folderName').touched) {

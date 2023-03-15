@@ -13,6 +13,27 @@
 				(blurEvent)="overlayService.folderNameBlur$.next($event)">
 			</app-input>
 		</div>
+		<div class="block">
+			<div class="line">
+				<div class="toggle">
+					<app-toggle-input
+						[form]="form"
+						[controlName]="'countsTowardsPassLimits'"
+						[delimiter]="false"
+						[controlSize]="'small'"
+						[hasIcon]="true"
+						[icon]="'./assets/Locked (Navy).svg'"
+						[color]="'#1F195E'"
+						(pushOutValue)="form.get('countsTowardsPassLimits').setValue($event)"></app-toggle-input>
+				</div>
+				<div class="toggle-content">
+					<div class="title-line">
+						<div class="label" [style.color]="form.get('countsTowardsPassLimits').value ? '#1F194E' : '#7F879D'">Counts towards Pass Limits</div>
+						<img [customToolTip]="tooltipText.ignore_students_pass_limit" class="support-icon" [src]="'./assets/Support (Gray).svg' | resolveAsset" />
+					</div>
+				</div>
+			</div>
+		</div>
 		<div *ngIf="folderRoomsLoaded; else folderRoomsLoading">
 			<div class="rooms-wrapper rooms-in-folder">
 				<div class="sticky" *ngIf="roomsImFolder.length">
