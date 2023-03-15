@@ -43,13 +43,13 @@ export class OverlayContainerComponent implements OnInit, OnDestroy {
 	bulkEditData: {
 		roomData: RoomData;
 		rooms: Location[] | any[];
-    pinnables: Pinnable[];
+		pinnables: Pinnable[];
 	};
 
 	initialSettings = {
 		icon: null,
 		color: null,
-    ignoreStudentsPassLimit: null
+		ignoreStudentsPassLimit: null,
 	};
 
 	roomValidButtons = new BehaviorSubject<ValidButtons>({
@@ -74,7 +74,7 @@ export class OverlayContainerComponent implements OnInit, OnDestroy {
 	titleIcon: string;
 	isDirtyColor: boolean;
 	isDirtyIcon: boolean;
-  isDirtyIgnoreStudentsPassLimit: boolean;
+	isDirtyIgnoreStudentsPassLimit: boolean;
 
 	folderRoomsLoaded: boolean;
 
@@ -142,7 +142,7 @@ export class OverlayContainerComponent implements OnInit, OnDestroy {
 					this.initialSettings = {
 						icon: cloneDeep(this.selectedIcon),
 						color: cloneDeep(this.color_profile),
-            ignoreStudentsPassLimit: this.pinnable.ignore_students_pass_limit
+						ignoreStudentsPassLimit: this.pinnable.ignore_students_pass_limit,
 					};
 					break;
 				}
@@ -163,7 +163,7 @@ export class OverlayContainerComponent implements OnInit, OnDestroy {
 				this.initialSettings = {
 					icon: cloneDeep(this.selectedIcon),
 					color: cloneDeep(this.color_profile),
-          ignoreStudentsPassLimit: this.pinnable.ignore_students_pass_limit
+					ignoreStudentsPassLimit: this.pinnable.ignore_students_pass_limit,
 				};
 				break;
 			case 'edit':
@@ -363,7 +363,10 @@ export class OverlayContainerComponent implements OnInit, OnDestroy {
 	}
 
 	get showCancelButton() {
-		return (this.roomValidButtons.getValue().cancel || this.isDirtyIcon || this.isDirtyColor || this.isDirtyIgnoreStudentsPassLimit) && !this.disabledRightBlock;
+		return (
+			(this.roomValidButtons.getValue().cancel || this.isDirtyIcon || this.isDirtyColor || this.isDirtyIgnoreStudentsPassLimit) &&
+			!this.disabledRightBlock
+		);
 	}
 
 	ngOnInit() {
@@ -511,11 +514,10 @@ export class OverlayContainerComponent implements OnInit, OnDestroy {
 	}
 
 	buildForm() {
-
-    let countsTowardsPassLimits = false;
-    if (!!this.pinnable) {
-      countsTowardsPassLimits = !this.pinnable.ignore_students_pass_limit
-    }
+		let countsTowardsPassLimits = false;
+		if (!!this.pinnable) {
+			countsTowardsPassLimits = !this.pinnable.ignore_students_pass_limit;
+		}
 
 		this.form = new FormGroup({
 			file: new FormControl(),
@@ -523,7 +525,7 @@ export class OverlayContainerComponent implements OnInit, OnDestroy {
 			folderName: new FormControl('', [Validators.maxLength(17)], this.uniqueFolderNameValidator.bind(this)),
 			roomNumber: new FormControl('', [Validators.required, Validators.maxLength(7)]),
 			timeLimit: new FormControl('', [Validators.required, Validators.pattern('^[0-9]*?[0-9]+$'), Validators.min(1), Validators.max(999)]),
-      countsTowardsPassLimits: new FormControl(countsTowardsPassLimits),
+			countsTowardsPassLimits: new FormControl(countsTowardsPassLimits),
 		});
 
 		this.passLimitForm = new FormGroup({
@@ -678,12 +680,12 @@ export class OverlayContainerComponent implements OnInit, OnDestroy {
 		this.titleIcon = icon.inactive_icon;
 	}
 
-  changeIgnoreStudentsPassLimit(value) {
-    if (this.currentPage === Pages.EditFolder) {
-      this.isDirtyIgnoreStudentsPassLimit = this.initialSettings.ignoreStudentsPassLimit !== value
-      console.log(this.isDirtyIgnoreStudentsPassLimit);
-    }
-  }
+	changeIgnoreStudentsPassLimit(value) {
+		if (this.currentPage === Pages.EditFolder) {
+			this.isDirtyIgnoreStudentsPassLimit = this.initialSettings.ignoreStudentsPassLimit !== value;
+			console.log(this.isDirtyIgnoreStudentsPassLimit);
+		}
+	}
 
 	normalizeAdvOptData(roomData = this.roomData) {
 		const data: any = {};
@@ -838,7 +840,7 @@ export class OverlayContainerComponent implements OnInit, OnDestroy {
 			this.folderData.folderName !== this.pinnable.title ||
 			this.color_profile.id !== this.pinnable.color_profile.id ||
 			this.getIconString() !== this.pinnable.icon ||
-      this.folderData.ignore_students_pass_limit !== this.pinnable.ignore_students_pass_limit
+			this.folderData.ignore_students_pass_limit !== this.pinnable.ignore_students_pass_limit
 		);
 	}
 
@@ -877,7 +879,7 @@ export class OverlayContainerComponent implements OnInit, OnDestroy {
 							color_profile: this.color_profile.id,
 							icon: this.selectedIcon?.inactive_icon,
 							location: loc.id,
-              ignore_students_pass_limit: this.roomData.ignore_students_pass_limit
+							ignore_students_pass_limit: this.roomData.ignore_students_pass_limit,
 						};
 						return this.hallPassService.postPinnableRequest(pinnable);
 					}),
@@ -905,7 +907,7 @@ export class OverlayContainerComponent implements OnInit, OnDestroy {
 				title: this.folderData.folderName,
 				color_profile: this.color_profile.id,
 				icon: this.getIconString(),
-        ignore_students_pass_limit: this.folderData.ignore_students_pass_limit,
+				ignore_students_pass_limit: this.folderData.ignore_students_pass_limit,
 				category,
 			};
 
@@ -962,7 +964,7 @@ export class OverlayContainerComponent implements OnInit, OnDestroy {
 			const pinnableData = {
 				// data to create the pinnable
 				title: this.folderData.folderName,
-        ignore_students_pass_limit:  this.folderData.ignore_students_pass_limit,
+				ignore_students_pass_limit: this.folderData.ignore_students_pass_limit,
 				color_profile: this.color_profile.id,
 				icon: this.getIconString(),
 			};
@@ -1043,7 +1045,7 @@ export class OverlayContainerComponent implements OnInit, OnDestroy {
 							color_profile: this.color_profile.id,
 							icon: this.selectedIcon?.inactive_icon,
 							location: loc.id,
-              ignore_students_pass_limit: this.roomData.ignore_students_pass_limit,
+							ignore_students_pass_limit: this.roomData.ignore_students_pass_limit,
 						};
 						return this.hallPassService.updatePinnableRequest(this.pinnable.id, pinnable);
 					})
@@ -1081,14 +1083,14 @@ export class OverlayContainerComponent implements OnInit, OnDestroy {
 				return this.locationService.updateLocationRequest(room.id, data).pipe(filter((res) => !!res));
 			});
 
-      const patchPinnables$ = this.bulkEditData.pinnables.map(pinnable => {
-        const pinnableData = {
-          ignore_students_pass_limit: pinnable.ignore_students_pass_limit
-        }
-        return this.hallPassService.updatePinnable(pinnable.id, pinnableData).pipe(filter((res) => !!res));
-      })
+			const patchPinnables$ = this.bulkEditData.pinnables.map((pinnable) => {
+				const pinnableData = {
+					ignore_students_pass_limit: pinnable.ignore_students_pass_limit,
+				};
+				return this.hallPassService.updatePinnable(pinnable.id, pinnableData).pipe(filter((res) => !!res));
+			});
 
-      const fresh = this.hallPassService.getPinnablesRequest()
+			const fresh = this.hallPassService.getPinnablesRequest();
 
 			zip(...patchRequests$, ...patchPinnables$)
 				.pipe(takeUntil(this.destroy$))
@@ -1192,7 +1194,7 @@ export class OverlayContainerComponent implements OnInit, OnDestroy {
 	}
 
 	bulkEditResult({ roomData, rooms, buttonState, pinnables }) {
-    const editingPinnables = this.editPinnables(roomData, pinnables)
+		const editingPinnables = this.editPinnables(roomData, pinnables);
 		const editingRooms = this.editRooms(roomData, rooms);
 		this.bulkEditData = { roomData, rooms: editingRooms, pinnables: editingPinnables };
 		this.roomValidButtons.next(buttonState);
@@ -1207,12 +1209,12 @@ export class OverlayContainerComponent implements OnInit, OnDestroy {
 		this.overlayService.back({ ...this.folderData, oldFolderData: this.oldFolderData });
 	}
 
-  editPinnables(roomData, pinnables) {
-    return pinnables.map(pin => {
-      pin.ignore_students_pass_limit = roomData.ignore_students_pass_limit
-      return pin;
-    })
-  }
+	editPinnables(roomData, pinnables) {
+		return pinnables.map((pin) => {
+			pin.ignore_students_pass_limit = roomData.ignore_students_pass_limit;
+			return pin;
+		});
+	}
 
 	editRooms(roomData, rooms) {
 		return rooms.map((room) => {

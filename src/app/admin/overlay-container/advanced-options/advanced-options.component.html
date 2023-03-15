@@ -1,7 +1,7 @@
 <div class="options-wrapper">
 	<div class="options-content">
 		<div class="content-wrapper">
-			<div class="block" *ngIf='allowChangingIgnoreStudentsPassLimit'>
+			<div class="block" *ngIf="allowChangingIgnoreStudentsPassLimit">
 				<div class="line">
 					<div class="toggle">
 						<app-toggle-input
@@ -16,7 +16,9 @@
 					</div>
 					<div class="toggle-content">
 						<div class="title-line">
-							<div class="label" [style.color]="restrictionForm.get('countsTowardsPassLimits').value ? '#1F194E' : '#7F879D'">Counts towards Pass Limits</div>
+							<div class="label" [style.color]="restrictionForm.get('countsTowardsPassLimits').value ? '#1F194E' : '#7F879D'">
+								Counts towards Pass Limits
+							</div>
 							<img
 								[customToolTip]="tooltipText.ignore_students_pass_limit"
 								class="support-icon"

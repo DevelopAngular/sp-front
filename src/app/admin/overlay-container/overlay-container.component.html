@@ -56,7 +56,7 @@
 						[visibilityForm]="visibilityForm"
 						[isEnableRoomTrigger$]="enableRoomTrigger"
 						[showErrors]="showErrors"
-            [allowChangingIgnoreStudentsPassLimit]='true'
+						[allowChangingIgnoreStudentsPassLimit]="true"
 						(roomDataResult)="roomResult($event)"></app-room>
 
 					<app-folder [form]="form" *ngIf="currentPage === 3 || currentPage === 4" (folderDataResult)="folderResult($event)"></app-folder>

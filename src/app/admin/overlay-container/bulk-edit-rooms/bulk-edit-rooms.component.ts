@@ -28,11 +28,11 @@ export class BulkEditRoomsComponent implements OnInit {
 		rooms: Location[];
 		roomData: RoomData;
 		buttonState: ValidButtons;
-    pinnables: Pinnable[];
+		pinnables: Pinnable[];
 	}> = new EventEmitter<{ rooms: Location[]; roomData: RoomData; buttonState: ValidButtons; pinnables: Pinnable[] }>();
 
 	selectedRooms: Location[] = [];
-  selectedPinnables: Pinnable[] = [];
+	selectedPinnables: Pinnable[] = [];
 
 	advOptionsButtons: ValidButtons;
 
@@ -49,7 +49,7 @@ export class BulkEditRoomsComponent implements OnInit {
 
 	ngOnInit() {
 		if (this.dialogData['rooms']) {
-      this.selectedPinnables = this.dialogData['rooms'];
+			this.selectedPinnables = this.dialogData['rooms'];
 
 			this.selectedPinnables.forEach((pinnable: Pinnable) => {
 				if (pinnable.type === 'category') {
@@ -103,7 +103,7 @@ export class BulkEditRoomsComponent implements OnInit {
 		this.bulkEditResult.emit({
 			roomData: this.roomData,
 			rooms: this.selectedRooms,
-      pinnables: this.selectedPinnables,
+			pinnables: this.selectedPinnables,
 			buttonState: this.roomsValidButtons,
 		});
 	}

@@ -36,7 +36,7 @@ export class RoomComponent implements OnInit, OnDestroy {
 
 	@Input() isEnableRoomTrigger$: Subject<boolean>;
 
-  @Input() allowChangingIgnoreStudentsPassLimit: boolean;
+	@Input() allowChangingIgnoreStudentsPassLimit: boolean;
 
 	@Output() back = new EventEmitter();
 
@@ -203,7 +203,7 @@ export class RoomComponent implements OnInit, OnDestroy {
 					travelType: data.travel_types,
 					restricted: !!data.restricted,
 					scheduling_restricted: !!data.scheduling_restricted,
-          // This technically should use the value of the pinnable, but since we don't show it, it doesn't matter.
+					// This technically should use the value of the pinnable, but since we don't show it, it doesn't matter.
 					ignore_students_pass_limit: false,
 					needs_check_in: !!data.needs_check_in,
 					advOptState: this.overlayService.pageState.getValue().data.advancedOptions,

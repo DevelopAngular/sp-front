@@ -12,7 +12,7 @@ export class Pinnable extends BaseModel {
 		public location: Location,
 		public category: string,
 		public color_profile: ColorProfile,
-    public ignore_students_pass_limit: boolean
+		public ignore_students_pass_limit: boolean
 	) {
 		super();
 	}
@@ -30,7 +30,7 @@ export class Pinnable extends BaseModel {
 			location: Location = JSON['location'],
 			category: string = JSON['category'],
 			color_profile: ColorProfile = ColorProfile.fromJSON(JSON['color_profile']),
-      ignore_students_pass_limit: boolean = JSON['ignore_students_pass_limit'];
+			ignore_students_pass_limit: boolean = JSON['ignore_students_pass_limit'];
 
 		return new Pinnable(id, title, gradient_color, icon, type, location, category, color_profile, ignore_students_pass_limit);
 	}

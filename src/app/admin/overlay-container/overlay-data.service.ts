@@ -61,7 +61,7 @@ export interface FolderData {
 	// folderName: Name of the Room Folder as it appears on the UI (without category name)
 	folderName: string;
 
-  ignore_students_pass_limit: boolean;
+	ignore_students_pass_limit: boolean;
 
 	// roomsInFolder: List of rooms associated with the folder. Associated by category
 	// TODO: Properly type this. Remove `any` type
