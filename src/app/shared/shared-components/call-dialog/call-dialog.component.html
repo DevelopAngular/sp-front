@@ -1,4 +1,4 @@
-<div class="wrapper plus" *ngIf="isProUser; else proUser">
+<div class="wrapper plus" *ngIf="!isProUser; else proUser">
 	<div class="header-wrapper">
 		<img class="pro-icon" [src]="'./assets/Plus Plan (Yellow).svg' | resolveAsset" alt="" />
 		<p>Unlock with the Plus Plan</p>
