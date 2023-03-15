@@ -503,17 +503,17 @@ export class NavbarComponent implements AfterViewInit, OnInit, OnDestroy {
 				isHiddenSearchField: this.representedUsers.length > 4,
 			},
 		});
-		representedUsersDialog
-			.afterClosed()
-			.pipe(filter((res) => !!res))
-			.subscribe((id) => {
-				if (id) {
-					const efUser = this.representedUsers.find((u) => +u.user.id === +id);
-					this.userService.updateEffectiveUser(efUser);
-					this.http.effectiveUserId.next(+efUser.user.id);
-					this.userService.getUserPinRequest();
-				}
-			});
+		representedUsersDialog.afterClosed().subscribe((userOrId: User | string) => {
+			if (userOrId instanceof User && userOrId.id == this.effectiveUser.user.id) {
+				return;
+			}
+
+			const id = userOrId as string;
+			const efUser = this.representedUsers.find((u) => +u.user.id === +id);
+			this.userService.updateEffectiveUser(efUser);
+			this.http.effectiveUserId.next(+efUser.user.id);
+			this.userService.getUserPinRequest();
+		});
 	}
 
 	settingsAction(action: string) {

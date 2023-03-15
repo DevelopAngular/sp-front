@@ -89,7 +89,7 @@
 							</div>
 						</span>
 						<span notranslate>
-							{{ effectiveUser ? effectiveUser.user.first_name : '' }}
+							{{ effectiveUser?.user?.first_name || '' }}
 						</span>
 						<img
 							*ngIf="effectiveUser.user && effectiveUser.user.badge"
