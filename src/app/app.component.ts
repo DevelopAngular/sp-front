@@ -36,6 +36,7 @@ import { ColorProfile } from './models/ColorProfile';
 import { Util } from '../Util';
 import { HelpCenterService } from './services/help-center.service';
 import { CallDialogComponent } from './shared/shared-components/call-dialog/call-dialog.component';
+import { FeatureFlagService, FLAGS } from './services/feature-flag.service';
 
 declare const window;
 declare var ResizeObserver;
@@ -88,6 +89,8 @@ export class AppComponent implements OnInit, AfterViewInit, OnDestroy {
 
 	public mainContentWidth: string = '100%';
 	public rightPosition;
+
+	public isUserHasPhoneAccess: boolean;
 
 	// @ViewChild('help-centre-iframe') iframe: ElementRef;
 
@@ -151,7 +154,8 @@ export class AppComponent implements OnInit, AfterViewInit, OnDestroy {
 		private localize: LocalizejsService,
 		private updateService: CheckForUpdateService,
 		public helpCenter: HelpCenterService,
-		private sanitizer: DomSanitizer
+		private sanitizer: DomSanitizer,
+		public featureFlags: FeatureFlagService
 	) {}
 
 	get isMobile() {
@@ -609,6 +613,7 @@ export class AppComponent implements OnInit, AfterViewInit, OnDestroy {
 	}
 
 	openHelpCenter(event) {
+		this.isUserHasPhoneAccess = this.featureFlags.isFeatureEnabled(FLAGS.PhoneAccess);
 		this.helpCentreURL = this.sanitizer.bypassSecurityTrustResourceUrl('https://www.smartpass.app/help-center');
 		this.helpCenter.isHelpCenterOpen.next(event);
 		setTimeout(() => {
@@ -699,7 +704,6 @@ export class AppComponent implements OnInit, AfterViewInit, OnDestroy {
 		window.document.querySelector('.invis-backdrop-helpcenter').parentNode.style.zIndex = '1009';
 
 		CDC.afterClosed().subscribe((status) => {
-			console.log('status : ', status);
 			window.document.querySelector('.cdk-overlay-container').style.zIndex = '1005';
 		});
 	}
