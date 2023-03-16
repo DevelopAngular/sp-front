@@ -75,15 +75,14 @@ export class AccountsHeaderComponent implements OnInit, AfterViewInit, OnDestroy
 
 	user$: Observable<User>;
 	isMiniButtons: boolean;
-	showPassLimitNux = new Subject<boolean>();
-	showNuxTooltip: Subject<boolean> = new Subject();
+	showPassLimitsOnlyCertainRoomsNux = new Subject<boolean>();
 	introsData: any;
 	nuxWrapperPosition: ConnectedPosition = {
-		originX: 'center',
+		originX: 'end',
 		originY: 'bottom',
 		overlayX: 'end',
 		overlayY: 'top',
-		offsetY: 25,
+		offsetY: 15,
 	};
 	bulkEditDialogRef: MatDialogRef<PassLimitBulkEditComponent>;
 
@@ -188,9 +187,10 @@ export class AccountsHeaderComponent implements OnInit, AfterViewInit, OnDestroy
 			.pipe(debounceTime(1000), takeUntil(this.destroy$))
 			.subscribe(([intros, nuxDates, user]) => {
 				this.introsData = intros;
-				const showNux = moment(user.first_login).isBefore(moment(nuxDates[0].created), 'day');
-				this.showNuxTooltip.next(!this.introsData.encounter_reminder.universal.seen_version && showNux);
-				this.showPassLimitNux.next(!intros?.student_pass_limit?.universal?.seen_version);
+				const showNux =
+					moment(user.first_login).isBefore(this.passLimitsOnlyForCertainRoomsLaunchDate) &&
+					!intros?.admin_pass_limits_only_certain_rooms?.universal?.seen_version;
+				this.showPassLimitsOnlyCertainRoomsNux.next(showNux);
 			});
 
 		this.actions$.pipe(ofType(addUserToProfilesSuccess)).subscribe({
@@ -198,17 +198,11 @@ export class AccountsHeaderComponent implements OnInit, AfterViewInit, OnDestroy
 		});
 	}
 
+	passLimitsOnlyForCertainRoomsLaunchDate = moment('03-15-2023', 'MM-DD-YYYY');
+
 	ngAfterViewInit(): void {
 		this.setCurrentUnderlinePos(this.tabRefs, this.navButtonsContainerRef);
 		this.isMiniButtons = this.wrapper.nativeElement.clientWidth <= 1260;
-		this.nuxWrapperPosition = {
-			originX: 'start',
-			originY: 'top',
-			overlayX: 'start',
-			overlayY: 'top',
-			offsetY: 60,
-			offsetX: 0,
-		};
 	}
 
 	ngOnDestroy() {
@@ -525,13 +519,8 @@ export class AccountsHeaderComponent implements OnInit, AfterViewInit, OnDestroy
 		});
 	}
 
-	closeNuxToolTip() {
-		this.showNuxTooltip.next(false);
-		this.userService.updateIntrosEncounterRequest(this.introsData, 'universal', '1');
-	}
-
-	dismissPassLimitsNux() {
-		this.showPassLimitNux.next(false);
-		this.userService.updateIntrosStudentPassLimitRequest(this.introsData, 'universal', '1');
+	dismissPassLimitsOnlyCertainRoomsNux() {
+		this.showPassLimitsOnlyCertainRoomsNux.next(false);
+		this.userService.updateIntrosPassLimitsOnlyCertainRoomsRequest(this.introsData, 'universal', '1');
 	}
 }

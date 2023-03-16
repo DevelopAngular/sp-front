@@ -205,5 +205,25 @@ export class IntrosEffects {
 		);
 	});
 
+	updateIntroPassLimitOnlyCertainRoom$ = createEffect(() => {
+		return this.action$.pipe(
+			ofType(introsActions.updateIntrosPassLimitsOnlyCertainRooms),
+			switchMap((action) => {
+				return this.userService.updateIntrosPassLimitsOnlyCertainRooms(action.device, action.version).pipe(
+					map((data) => {
+						const updatedData = {
+							...action.intros,
+							admin_pass_limits_only_certain_rooms: {
+								[action.device]: { seen_version: action.version },
+							},
+						};
+						return introsActions.updateIntrosPassLimitsOnlyCertainRoomsSuccess({ data: updatedData });
+					}),
+					catchError((error) => of(introsActions.updateIntrosPassLimitsOnlyCertainRoomsFailure({ errorMessage: error.message })))
+				);
+			})
+		);
+	});
+
 	constructor(private action$: Actions, private userService: UserService) {}
 }
