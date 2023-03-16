@@ -269,7 +269,7 @@ export class LocationsGroupContainerComponent implements OnInit, OnDestroy {
 							// ignore folders
 							return p;
 						}
-						if (!p?.location?.restricted && !p?.location?.ignore_students_pass_limit) {
+						if (!p?.location?.restricted && !p?.ignore_students_pass_limit) {
 							p.location.restricted = true;
 						}
 					});
@@ -469,7 +469,8 @@ export class LocationsGroupContainerComponent implements OnInit, OnDestroy {
 		}
 
 		const { passLimitInfo } = this.FORM_STATE;
-		location.restricted = location.restricted || (passLimitInfo?.showPasses && passLimitInfo?.current === 0);
+		location.restricted =
+			location.restricted || (passLimitInfo?.showPasses && passLimitInfo?.current === 0 && !this.pinnable.ignore_students_pass_limit);
 		this.data.toLocation = location;
 		this.FORM_STATE.data.direction.to = location;
 		if (((location.restricted && !this.FORM_STATE.forLater) || (location.scheduling_restricted && this.FORM_STATE.forLater)) && !this.isStaff) {
