@@ -5,9 +5,8 @@
 				<ng-template #waitInLineNuxTemplate>
 					<app-nux-universal
 						link="https://www.smartpass.app/passlimits"
-						description="“Wait in Line” lets puts students in a virtual waiting line when a room reaches the Active Pass Limit."
-						(gotItEvent)="dismissWaitInLineNux()"></app-nux-universal
-					>-->
+						description="“Wait in Line” puts students in a virtual waiting line when a room reaches the Active Pass Limit. Click on Options to enable."
+						(gotItEvent)="dismissWaitInLineNux()"></app-nux-universal>
 				</ng-template>
 
 				<div class="school-logo">
@@ -16,7 +15,15 @@
 							{{ selectedPinnables.length }} selected rooms
 						</div>
 						<ng-template #staticHeader>
-							<div class="school-name" [style.color]="darkTheme.getColor({ white: '#1E194F', dark: '#FFFFFF' })">Rooms</div>
+							<div
+								class="school-name"
+								[style.color]="darkTheme.getColor({ white: '#1E194F', dark: '#FFFFFF' })"
+								nuxTooltip
+								[contentTemplate]="passLimitsOnlyCertainRoomsNuxTemplate"
+								[showToolTip$]="showPassLimitsOnlyCertainRoomsNux"
+								[position]="{ originX: 'start', originY: 'bottom', overlayX: 'start', overlayY: 'top', offsetY: 15 }">
+								Rooms
+							</div>
 						</ng-template>
 					</div>
 

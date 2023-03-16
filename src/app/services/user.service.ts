@@ -107,6 +107,7 @@ import {
 	updateIntrosHelpCenter,
 	updateIntrosStudentPassLimits,
 	updateIntrosWaitInLine,
+	updateIntrosPassLimitsOnlyCertainRooms,
 } from '../ngrx/intros/actions';
 import { getIntrosData, IntroData } from '../ngrx/intros/state';
 import { clearSchools, getSchoolsFailure } from '../ngrx/schools/actions';
@@ -621,6 +622,10 @@ export class UserService implements OnDestroy {
 		this.store.dispatch(updateIntrosWaitInLine({ intros, device, version }));
 	}
 
+	updateIntrosPassLimitsOnlyCertainRoomsRequest(intros, device, version) {
+		this.store.dispatch(updateIntrosPassLimitsOnlyCertainRooms({ intros, device, version }));
+	}
+
 	// TODO: Make all update functions into a single function
 	// TODO: Have all update intro endpoints be part of an enum
 	// TODO: Share that enum with `intro.effects.ts`
@@ -659,6 +664,10 @@ export class UserService implements OnDestroy {
 
 	updateIntrosWaitInLine(device, version) {
 		return this.http.patch(`v1/intros/wait_in_line`, { device, version });
+	}
+
+	updateIntrosPassLimitsOnlyCertainRooms(device, version) {
+		return this.http.patch(`v1/intros/admin_pass_limits_only_certain_rooms`, { device, version });
 	}
 
 	saveKioskModeLocation(locId): Observable<ServerAuth> {

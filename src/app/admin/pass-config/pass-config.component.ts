@@ -105,7 +105,6 @@ export class PassConfigComponent implements OnInit, OnDestroy {
 	showRooms: boolean;
 	globalReloadSubs: Subscription;
 	showWaitInLineNux = new Subject<boolean>();
-	showNuxTooltip: Subject<boolean> = new Subject();
 	introsData: any;
 
 	@HostListener('window:scroll', ['$event'])
@@ -190,22 +189,27 @@ export class PassConfigComponent implements OnInit, OnDestroy {
 				this.selectPinnable({ action: 'room/folder_edit', selection: this.pinnable });
 			});
 
-		combineLatest(
-			this.userService.introsData$.pipe(filter((res) => !!res)),
-			this.userService.nuxDates$.pipe(filter((r) => !!r)),
-			this.userService.user$.pipe(filter((r) => !!r))
-		)
+		combineLatest(this.userService.introsData$.pipe(filter((res) => !!res)), this.userService.user$.pipe(filter((r) => !!r)))
 			.pipe(debounceTime(1000), takeUntil(this.destroy$))
-			.subscribe(([intros, nuxDates, user]) => {
+			.subscribe(([intros, user]) => {
 				this.introsData = intros;
-				const showNux = moment(user.first_login).isBefore(moment(nuxDates[0].created), 'day');
-				this.showNuxTooltip.next(!this.introsData.encounter_reminder.universal.seen_version && showNux);
 
-				if (this.features.isFeatureEnabled(FLAGS.WaitInLine)) {
-					this.showWaitInLineNux.next(!intros?.wait_in_line?.universal?.seen_version);
+				if (this.features.isFeatureEnabled(FLAGS.ShowWaitInLine)) {
+					const showNux = moment(user.first_login).isBefore(this.waitInLineLaunchDate) && !intros?.wait_in_line?.universal?.seen_version;
+					this.showWaitInLineNux.next(showNux);
 				}
+
+				(() => {
+					const showNux =
+						moment(user.first_login).isBefore(this.passLimitsOnlyForCertainRoomsLaunchDate) &&
+						!intros?.admin_pass_limits_only_certain_rooms?.universal?.seen_version;
+					console.log('pass limits: ' + showNux);
+					this.showPassLimitsOnlyCertainRoomsNux.next(showNux);
+				})();
 			});
 	}
+
+	waitInLineLaunchDate = moment('03-15-2023', 'MM-DD-YYYY');
 
 	ngOnDestroy() {
 		this.scrollPosition.saveComponentScroll(this.scrollableAreaName, this.scrollableArea.scrollTop);
@@ -452,5 +456,10 @@ export class PassConfigComponent implements OnInit, OnDestroy {
 	dismissWaitInLineNux() {
 		this.showWaitInLineNux.next(false);
 		this.userService.updateIntrosWaitInLineRequest(this.introsData, 'universal', '1');
+	}
+
+	dismissPassLimitsOnlyCertainRoomsNux() {
+		this.showPassLimitsOnlyCertainRoomsNux.next(false);
+		this.userService.updateIntrosPassLimitsOnlyCertainRoomsRequest(this.introsData, 'universal', '1');
 	}
 }

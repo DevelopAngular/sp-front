@@ -48,7 +48,7 @@ export class HelpCenterComponent implements OnInit, OnDestroy, AfterViewInit {
 		};
 
 		this.userService.user$.pipe(takeUntil(this.destroy$)).subscribe((user) => {
-			this.isOldUser = moment(user?.first_login).isBefore(moment('2023-02-14T01:14:00.000Z'));
+			this.isOldUser = moment(user?.first_login).isBefore(moment('2023-02-15T00:00:00.000Z'));
 			if (this.isOldUser) {
 				this.showBadge = true;
 				this.description = 'Discover our new Help sidebar to get the most out of SmartPass.';
