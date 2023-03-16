@@ -1,8 +1,7 @@
-import { Component, HostListener, OnDestroy, OnInit, TemplateRef, ViewChild } from '@angular/core';
+import { Component, OnDestroy, OnInit, TemplateRef, ViewChild } from '@angular/core';
 import { FormArray, FormControl, FormGroup, ValidationErrors, ValidatorFn, Validators } from '@angular/forms';
 
 import { MatDialog, MatDialogRef, MatDialogState } from '@angular/material/dialog';
-import { MatTabGroup } from '@angular/material/tabs';
 import { cloneDeep } from 'lodash';
 import { forkJoin, Observable, of, Subscription } from 'rxjs';
 import { concatMap, filter, map, tap } from 'rxjs/operators';
@@ -28,7 +27,7 @@ const schoolPassLimitRangeValidator =
 	(): ValidatorFn =>
 	(form: FormGroup): ValidationErrors => {
 		const num = parseInt(form.value['passLimit'], 10);
-		if (num === NaN || form.value['passLimit'] === '') {
+		if (Number.isNaN(num) || form.value['passLimit'] === '') {
 			return { format: true };
 		}
 		if (num < 0 || num > 50) {
@@ -64,7 +63,7 @@ const individualPassLimitRangeValidator =
 			return null;
 		}
 		const num = parseInt(form.value['passLimit'], 10);
-		if (num === NaN) {
+		if (Number.isNaN(num)) {
 			return { format: true };
 		}
 		if (num < -2 || num > 50) {
@@ -177,6 +176,8 @@ export class AdminPassLimitDialogComponent implements OnInit, OnDestroy {
 					if (this.hasPassLimit) {
 						this.passLimit = pl.pass_limit;
 						this.passLimitForm.patchValue(this.passLimit);
+					}
+					if (overrides.length) {
 						this.individualStudentLimits = overrides;
 					}
 					return of(true);
@@ -246,7 +247,7 @@ export class AdminPassLimitDialogComponent implements OnInit, OnDestroy {
 	}
 
 	async onEnabledToggle(change: boolean) {
-		await new Promise((resolve) => {
+		await new Promise<void>((resolve) => {
 			setTimeout(() => {
 				resolve();
 			}, 50);
