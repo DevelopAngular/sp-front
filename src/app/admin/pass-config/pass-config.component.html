@@ -15,15 +15,7 @@
 							{{ selectedPinnables.length }} selected rooms
 						</div>
 						<ng-template #staticHeader>
-							<div
-								class="school-name"
-								[style.color]="darkTheme.getColor({ white: '#1E194F', dark: '#FFFFFF' })"
-								nuxTooltip
-								[contentTemplate]="passLimitsOnlyCertainRoomsNuxTemplate"
-								[showToolTip$]="showPassLimitsOnlyCertainRoomsNux"
-								[position]="{ originX: 'start', originY: 'bottom', overlayX: 'start', overlayY: 'top', offsetY: 15 }">
-								Rooms
-							</div>
+							<div class="school-name" [style.color]="darkTheme.getColor({ white: '#1E194F', dark: '#FFFFFF' })">Rooms</div>
 						</ng-template>
 					</div>
 

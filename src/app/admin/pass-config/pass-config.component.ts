@@ -198,14 +198,6 @@ export class PassConfigComponent implements OnInit, OnDestroy {
 					const showNux = moment(user.first_login).isBefore(this.waitInLineLaunchDate) && !intros?.wait_in_line?.universal?.seen_version;
 					this.showWaitInLineNux.next(showNux);
 				}
-
-				(() => {
-					const showNux =
-						moment(user.first_login).isBefore(this.passLimitsOnlyForCertainRoomsLaunchDate) &&
-						!intros?.admin_pass_limits_only_certain_rooms?.universal?.seen_version;
-					console.log('pass limits: ' + showNux);
-					this.showPassLimitsOnlyCertainRoomsNux.next(showNux);
-				})();
 			});
 	}
 
@@ -404,7 +396,6 @@ export class PassConfigComponent implements OnInit, OnDestroy {
 					room: pin.room,
 					restricted: pin.restricted,
 					scheduling_restricted: pin.scheduling_restricted,
-					ignore_students_pass_limit: pin.ignore_students_pass_limit,
 					travel_types: pin.travel_types,
 					max_allowed_time: pin.max_allowed_time,
 				};
@@ -456,10 +447,5 @@ export class PassConfigComponent implements OnInit, OnDestroy {
 	dismissWaitInLineNux() {
 		this.showWaitInLineNux.next(false);
 		this.userService.updateIntrosWaitInLineRequest(this.introsData, 'universal', '1');
-	}
-
-	dismissPassLimitsOnlyCertainRoomsNux() {
-		this.showPassLimitsOnlyCertainRoomsNux.next(false);
-		this.userService.updateIntrosPassLimitsOnlyCertainRoomsRequest(this.introsData, 'universal', '1');
 	}
 }
