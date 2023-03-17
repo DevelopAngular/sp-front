@@ -10,11 +10,10 @@ describe('Teacher - Passes Dashboard', () => {
     cy.get(' div.content-right_next app-gradient-button > div').click();
   };
 
-  before(() => {
+  beforeEach(() => {
     // @ts-ignore
     cy.login(Cypress.env('teacherUsername'), Cypress.env('teacherPassword'));
-    cy.visit('http://localhost:4200/main/passes');
-    cy.wait(5000);
+    cy.visit('/main/passes');
   });
 
   afterEach(function() {
@@ -90,6 +89,7 @@ describe('Teacher - Passes Dashboard', () => {
       });
 
       it('should end an expired pass for a student', () => {
+        cy.wait(1000);
         // The test before this one should have successfully set a pass for 2 students
         // Wait for any one of them to expire and end the pass
         cy.clock(Date.now());

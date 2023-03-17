@@ -1,6 +1,7 @@
 <div
 	*ngIf="!mock"
 	class="clickRipple"
+	data-cy="pinnable-tile"
 	[@pressState]="buttonState"
 	[style.box-shadow]="shadow"
 	[style.cursor]="disabled ? 'default' : 'pointer'"
@@ -44,7 +45,7 @@
 				"
 				class="title-bar"
 				#title>
-				<div class="title" (mouseover)="onHover($event, title)" (mouseleave)="onLeave($event)">
+				<div class="title" data-cy="pinnable-title" (mouseover)="onHover($event, title)" (mouseleave)="onLeave($event)">
 					{{ pinnable.title }}
 				</div>
 			</div>

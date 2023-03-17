@@ -292,7 +292,7 @@ export class ViewProfileComponent implements OnInit {
 			url = url.replace('/app', '');
 		}
 		this.dialogRef.close();
-		window.open(url, '_blank');
+		window.open(url, '_self');
 	}
 
 	updateProfile(): Observable<any> {

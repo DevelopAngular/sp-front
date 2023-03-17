@@ -987,6 +987,7 @@ export class OverlayContainerComponent implements OnInit, OnDestroy {
 			const existingOrNewRoomRequests$ = this.folderData.roomsInFolder
 				.filter((room) => room.isEdit || !room.category)
 				.map((room) => {
+					console.log('');
 					return this.createOrUpdateLocation(room, this.pinnable.category);
 				});
 
@@ -1161,6 +1162,8 @@ export class OverlayContainerComponent implements OnInit, OnDestroy {
 			...this.normalizeAdvOptData(room),
 			isEdit: true,
 		});
+		console.log('edit: ');
+		console.log(room);
 		this.overlayService.back({ ...this.folderData, oldFolderData: this.oldFolderData, pinnable: this.pinnable });
 	}
 

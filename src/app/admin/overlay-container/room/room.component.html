@@ -3,6 +3,7 @@
 		<form [formGroup]="form">
 			<div class="room-inputs" *ngIf="currentPage !== 9 && currentPage !== 10">
 				<app-input
+					[dataCy]="'pinnable-title-inp'"
 					[width]="'222px'"
 					[maxLength]="'15'"
 					[input_label]="'Room Name'"

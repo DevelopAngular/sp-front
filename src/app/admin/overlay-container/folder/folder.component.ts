@@ -88,7 +88,7 @@ export class FolderComponent implements OnInit, OnDestroy {
 		ignore_students_pass_limit: boolean;
 	} = { folderName: null, roomsInFolder: [], ignore_students_pass_limit: false };
 
-	folderValidButtons: ValidButtons;
+	folderButtonState: ValidButtons;
 
 	pinnable: Pinnable;
 
@@ -157,6 +157,9 @@ export class FolderComponent implements OnInit, OnDestroy {
 		const data = this.overlayService.pageState.getValue().data;
 
 		if (data) {
+			this.initialFolderData.folderName = data.pinnable.title;
+			this.initialFolderData.ignore_students_pass_limit = data.pinnable.ignore_students_pass_limit;
+
 			if (data.roomsInFolderLoaded) {
 				this.initialFolderData = data.oldFolderData;
 				this.folderName = data.folderName;
@@ -169,11 +172,11 @@ export class FolderComponent implements OnInit, OnDestroy {
 				this.locationService.getLocationsWithCategory(this.pinnable.category).subscribe((res: Location[]) => {
 					this.roomsImFolder = res;
 					this.initialFolderData = {
-						folderName: this.folderName,
+						...this.initialFolderData,
 						roomsInFolder: cloneDeep(this.roomsImFolder),
-						ignore_students_pass_limit: this.pinnable.ignore_students_pass_limit,
 					};
 					this.folderRoomsLoaded = true;
+					this.updateFolderState(); // This function depends on initialFolder data, if it's not set it won't work.
 				});
 			}
 		} else {
@@ -198,22 +201,12 @@ export class FolderComponent implements OnInit, OnDestroy {
 		}
 
 		merge(
-			combineLatest(this.form.get('folderName').valueChanges, this.form.get('countsTowardsPassLimits').valueChanges, this.form.statusChanges),
+			this.form.get('folderName').valueChanges,
+			this.form.get('countsTowardsPassLimits').valueChanges,
+			this.form.statusChanges,
 			this.change$
 		).subscribe(() => {
-			this.changeFolderData();
-			this.folderDataResult.emit({
-				data: {
-					folderName: this.form.get('folderName').value === '' ? 'New Folder' : this.form.get('folderName').value,
-					ignore_students_pass_limit: !this.form.get('countsTowardsPassLimits').value,
-					roomsInFolder: this.roomsImFolder,
-					selectedRoomsInFolder: this.selectedRooms,
-					roomsInFolderLoaded: true,
-					selectedRoomToEdit: this.selectedRoomToEdit,
-					roomsToDelete: this.roomsToDelete,
-				},
-				buttonState: this.folderValidButtons,
-			});
+			this.updateFolderState();
 		});
 	}
 
@@ -222,29 +215,46 @@ export class FolderComponent implements OnInit, OnDestroy {
 		this.scrollPosition.saveComponentScroll(this.folderNameTitle, this.scrollableArea.scrollTop);
 	}
 
-	changeFolderData() {
-		if (
-			!isEqual(this.initialFolderData.roomsInFolder, this.roomsImFolder) ||
-			(this.initialFolderData.folderName && this.initialFolderData.folderName !== this.form.get('folderName').value) ||
-			this.initialFolderData.ignore_students_pass_limit === this.form.get('countsTowardsPassLimits').value
-		) {
-			if (this.form.get('folderName').invalid) {
-				if (this.form.get('folderName').touched) {
-					this.folderValidButtons = { publish: false, incomplete: true, cancel: true };
-				} else {
-					this.folderValidButtons = { publish: false, incomplete: false, cancel: false };
-				}
-			} else {
-				// if (this.roomsImFolder.length) {
-				//   this.folderValidButtons = {publish: true, incomplete: false, cancel: true};
-				// } else {
-				//     this.folderValidButtons = {publish: false, incomplete: true, cancel: true};
-				// }
-				this.folderValidButtons = { publish: true, incomplete: false, cancel: true };
-			}
-		} else {
-			this.folderValidButtons = { publish: false, incomplete: false, cancel: false };
+	updateFolderState() {
+		this.updateButtonState();
+
+		this.folderDataResult.emit({
+			data: {
+				folderName: this.form.get('folderName').value === '' ? 'New Folder' : this.form.get('folderName').value,
+				ignore_students_pass_limit: !this.form.get('countsTowardsPassLimits').value,
+				roomsInFolder: this.roomsImFolder,
+				selectedRoomsInFolder: this.selectedRooms,
+				roomsInFolderLoaded: true,
+				selectedRoomToEdit: this.selectedRoomToEdit,
+				roomsToDelete: this.roomsToDelete,
+			},
+			buttonState: this.folderButtonState,
+		});
+	}
+
+	updateButtonState() {
+		// Compare the folder data and set the buttons availabe
+		if (this.form.get('folderName').invalid) {
+			this.folderButtonState = { publish: false, incomplete: true, cancel: true };
+			return;
 		}
+
+		if (this.initialFolderData.folderName && this.initialFolderData.folderName !== this.form.get('folderName').value) {
+			this.folderButtonState = { publish: true, incomplete: false, cancel: true };
+			return;
+		}
+
+		if (!this.initialFolderData.ignore_students_pass_limit != this.form.get('countsTowardsPassLimits').value) {
+			this.folderButtonState = { publish: true, incomplete: false, cancel: true };
+			return;
+		}
+
+		if (!isEqual(this.initialFolderData.roomsInFolder, this.roomsImFolder)) {
+			this.folderButtonState = { publish: true, incomplete: false, cancel: true };
+			return;
+		}
+
+		this.folderButtonState = { publish: false, incomplete: false, cancel: false };
 	}
 
 	stickyButtonClick(page) {
