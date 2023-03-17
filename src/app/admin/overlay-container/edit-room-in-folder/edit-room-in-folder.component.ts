@@ -84,6 +84,7 @@ export class EditRoomInFolderComponent implements OnInit {
 			this.errorsEmit.emit();
 			return;
 		}
+		console.log(this.roomInFolderData);
 		this.save.emit(this.roomInFolderData);
 	}
 

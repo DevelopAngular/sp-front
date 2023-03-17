@@ -1,17 +1,16 @@
 import * as PassFunctions from '../../support/functions/passes';
 
-context('Hall Monitor Page', () => {
+describe('Hall Monitor Page', () => {
   /**
    * Page: /main/hallmonitor
    * User: Teacher
    */
 
   describe('Hall Monitor Page - DOM elements', () => {
-    before(() => {
+    beforeEach(() => {
       // @ts-ignore
       cy.login(Cypress.env('teacherUsername'), Cypress.env('teacherPassword'));
-      cy.visit('http://localhost:4200/main/hallmonitor');
-      cy.wait(5000);
+      cy.visit('/main/hallmonitor');
     });
 
     afterEach(function() {
@@ -54,11 +53,10 @@ context('Hall Monitor Page', () => {
   });
 
   describe('Active Passes', () => {
-    before(() => {
+    beforeEach(() => {
       // @ts-ignore
       cy.login(Cypress.env('teacherUsername'), Cypress.env('teacherPassword'));
-      cy.visit('http://localhost:4200/main/passes');
-      cy.wait(5000);
+      cy.visit('/main/passes');
     });
 
     it('should create a pass for a student and have it show on the hall monitor page', () => {

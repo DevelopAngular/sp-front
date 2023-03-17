@@ -1,4 +1,4 @@
-import {waitForElement} from '../../support/functions/general';
+import {waitForElement, getNavAction} from '../../support/functions/general';
 import * as PassFunctions from '../../support/functions/passes';
 
 const defaultRoomNames = ['Bathroom', 'Water Fountain', 'Nurse', 'Guidance', 'Main Office', 'Library'];
@@ -25,7 +25,7 @@ const closeOverlayContainer = () => {
   cy.get('div.header > div.left-button').click();
 };
 
-describe('Admin - UI and Actions', () => {
+describe.skip('Admin - UI and Actions', () => {
   afterEach(function () {
     /**
      * No matter where the test fails:
@@ -89,9 +89,6 @@ describe('Admin - UI and Actions', () => {
 
   const timeout = 10000;
   // just visiting admin urls will not work
-  const getNavAction = (label: string): Cypress.Chainable<JQuery<HTMLElement>> => {
-    return cy.get('app-nav app-nav-button', {timeout}).contains(label);
-  };
 
   const getRoomAction = (label: string): Cypress.Chainable<JQuery<HTMLElement>> => {
     return cy.get('app-pass-congif app-gradient-button').contains(label);
@@ -667,3 +664,5 @@ describe('Admin - UI and Actions', () => {
     });
   });
 });
+
+

@@ -17,7 +17,7 @@ describe('Teacher - Reports', () => {
   // random string to individualise tests
   const SUFFIX = '_' + rnd(3);
 
-  before(() => {
+  beforeEach(() => {
     // @ts-ignore
     cy.login(Cypress.env('teacherUsername'), Cypress.env('teacherPassword'));
   });
@@ -36,13 +36,7 @@ describe('Teacher - Reports', () => {
   // it goes to demoschool 1
   describe('Searching + reporting', () => {
     it('should expects a teacher to search for a student and report him to admin', () => {
-      cy.intercept({
-        method: 'GET',
-        url: ENDPOINT + 'hall_passes?**'
-      }).as('hallpasses');
-
-      cy.visit('http://localhost:4200/main/hallmonitor');
-      cy.wait('@hallpasses', {timeout});
+      cy.visit('/main/hallmonitor');
 
       // trigger report form popup
       cy.get('app-square-button.report-student-button').click();
@@ -75,14 +69,12 @@ describe('Teacher - Reports', () => {
     });
 
     it('should a teacher reports a pass', () => {
-
+      cy.visit('/');
       cy.intercept({
         method: 'GET',
         url: ENDPOINT + 'locations?limit=**'
       }).as('locations');
 
-      // press home tab
-      cy.get('app-navbar app-nav-button').contains('Home').click();
       cy.wait('@locations', {timeout});
 
       // press the first pass tile that exists

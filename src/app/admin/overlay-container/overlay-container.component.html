@@ -8,6 +8,7 @@
 		<div class="header" [ngStyle]="{ 'background-image': gradientColor }">
 			<div class="left-button">
 				<img
+					data-cy="pinnable-close-btn"
 					class="back-button"
 					draggable="false"
 					*ngIf="!showCancelButton && !disabledRightBlock"
@@ -23,6 +24,7 @@
 			</div>
 			<div class="right-button">
 				<app-gradient-button
+					data-cy="pinnable-save-btn"
 					*ngIf="isAllowedSave && (showCancelButton || currentPage === 1 || currentPage === 3)"
 					[disabled]="isFormIncomplete || isSaveButtonDisabled"
 					[minHeight]="'40px'"

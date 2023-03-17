@@ -9,7 +9,7 @@
 		</div>
 	</ng-template>
 
-	<span #opener class="chip with-triangle" [ngClass]="modeView.classname" (click)="handleOpenClose()">
+	<span #opener class="chip with-triangle" data-cy="visibility-dropdown" [ngClass]="modeView.classname" (click)="handleOpenClose()">
 		{{ modeView.text }}
 		<div class="after"></div>
 	</span>
@@ -26,6 +26,7 @@
 	</div>
 	<div class="students-search">
 		<app-sp-search
+			data-cy="visibility-student-search"
 			*ngIf="isShowSearch"
 			[overrideChipsInputField]="true"
 			[chipsMode]="true"
