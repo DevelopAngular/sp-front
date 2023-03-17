@@ -2,14 +2,20 @@
 	<div class="new-room-in-folder sticky-header">
 		<div class="new-room-in-folder-header">
 			<div class="back-button" *ngIf="!showCancel">
-				<app-icon-button [size]="20" [srcString]="'Chevron Left'" (clickEvent)="goBack()"></app-icon-button>
+				<app-icon-button data-cy="room-in-folder-back-btn" [size]="20" [srcString]="'Chevron Left'" (clickEvent)="goBack()"></app-icon-button>
 			</div>
 			<div class="cancel-button-in-folder-header" (click)="goBack()" *ngIf="showCancel">Cancel</div>
 			<div class="room-in-folder-title-inactive">
 				{{ roomInFolderData.roomName }}
 			</div>
 			<div class="header-in-folder-button">
-				<app-gradient-button *ngIf="showSave" [minHeight]="'30px'" [cursor]="'pointer'" [fontSize]="'12px'" (buttonClick)="saveInFolder()">
+				<app-gradient-button
+					data-cy="room-in-folder-save-btn"
+					*ngIf="showSave"
+					[minHeight]="'30px'"
+					[cursor]="'pointer'"
+					[fontSize]="'12px'"
+					(buttonClick)="saveInFolder()">
 					Save
 					<mat-spinner *ngIf="false" [color]="'accent'" [diameter]="30"></mat-spinner>
 				</app-gradient-button>

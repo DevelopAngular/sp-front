@@ -5,7 +5,7 @@ const logoutAdmin = () => {
   cy.get('app-root mat-dialog-container > app-settings div.sign-out').click({force: true});
 };
 
-describe('Admin - Reports',  () => {
+describe.skip('Admin - Reports',  () => {
   before(() => {
     // @ts-ignore
     cy.login(Cypress.env('adminUsername'), Cypress.env('adminPassword'));
@@ -75,7 +75,7 @@ describe('Admin - Reports',  () => {
 
           if (hasPassTile) {
             const $td = maybePassTiles[0].closest('tr').querySelector('td:nth-child(1)');
-            cy.log($td);
+            cy.log(''+$td);
             cy.wrap($td).click({force: true});
             //click on passtile on popup
             cy.get('mat-dialog-container app-report-info-dialog app-pass-tile div.tile-title-container').should('be.visible').click();

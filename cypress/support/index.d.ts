@@ -4,6 +4,8 @@ declare namespace Cypress {
      * Custom command to select DOM element by data-cy attribute.
      * @example cy.dataCy('greeting')
      */
+    dataCy(value: string): Chainable<Element>
+
     login(username: string, password: string): Chainable;
     logoutStudent(): Chainable;
     logoutTeacher(): Chainable;

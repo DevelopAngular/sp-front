@@ -3,6 +3,7 @@
 		*ngFor="let teacher of results; let i = index"
 		#chip
 		class="teacher"
+		data-cy="chip"
 		(mouseenter)="chipHover(chip, true)"
 		(mouseleave)="chipHover(chip, false)"
 		[style.opacity]="chip.hovered && !buttonDown ? 0.85 : buttonDown ? 0.7 : 1"
@@ -52,7 +53,7 @@
 						: teacher
 				}}
 			</span>
-			<div *ngIf="chip.hovered && !teacher.lockAccount" class="delete">
+			<div *ngIf="chip.hovered && !teacher.lockAccount" class="delete" data-cy="chip-delete-btn">
 				<img
 					(click)="selectedProfiles.splice(i, 1); updateSelectedEvent.emit(this.selectedProfiles)"
 					[src]="'./assets/Cancel (Navy).svg' | resolveAsset"
