@@ -193,7 +193,7 @@
             "headless": true,
             "record": false,
             "video": false,
-            "configFile": "./cypress.json"
+            "configFile": "./cypress.config.ts"
           },
 
           "configurations": {

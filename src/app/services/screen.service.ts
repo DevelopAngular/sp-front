@@ -5,6 +5,7 @@ import { Util } from '../../Util';
 import { BigStudentPassCardComponent } from '../big-student-pass-card/big-student-pass-card.component';
 import { MatDialog } from '@angular/material/dialog';
 import { FormFactorContainerComponent } from '../create-hallpass-forms/main-hallpass--form/form-factor-container/form-factor-container.component';
+import { HelpCenterService } from './help-center.service';
 
 @Injectable({
 	providedIn: 'root',
@@ -14,7 +15,7 @@ export class ScreenService {
 	customBackdropEvent$: Subject<boolean> = new Subject<boolean>();
 	customBackdropStyle$: Subject<any> = new Subject<any>();
 
-	constructor(private dialog: MatDialog) {}
+	constructor(private dialog: MatDialog, private helpCenter: HelpCenterService) {}
 
 	private extraSmallDeviceBreakPoint = 320;
 	private smallDevicesBreakPoint = 375;
@@ -70,8 +71,16 @@ export class ScreenService {
 		return this.extraLargeDeviceBreakPoint < this.windowWidth;
 	}
 
-	private get windowWidth() {
-		return window.innerWidth || document.documentElement.clientWidth || document.body.clientWidth;
+	public get windowWidth() {
+		if (this.helpCenter.isHelpCenterOpen.getValue()) {
+			return (
+				window.innerWidth - document.getElementById('help-center-content').offsetWidth ||
+				document.documentElement.clientWidth - document.getElementById('help-center-content').offsetWidth ||
+				document.body.clientWidth - document.getElementById('help-center-content').offsetWidth
+			);
+		} else {
+			return window.innerWidth || document.documentElement.clientWidth || document.body.clientWidth;
+		}
 	}
 
 	private get isIOSTablet() {

@@ -50,6 +50,7 @@
 			<div *ngIf="!showDummy; else noStudentsDummy" style="margin-top: -1px">
 				<div class="option-list_scrollable" [style.max-height]="listMaxHeight">
 					<div
+						data-cy="search-result-user"
 						[ngClass]="{ disabled: isDisabled(student) }"
 						#cell
 						*ngFor="let student of students | async"

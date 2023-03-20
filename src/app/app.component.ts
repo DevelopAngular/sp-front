@@ -1,11 +1,11 @@
 import { HttpClient } from '@angular/common/http';
 import { AfterViewInit, Component, ElementRef, HostListener, NgZone, OnDestroy, OnInit, ViewChild } from '@angular/core';
-import { MatDialog } from '@angular/material/dialog';
+import { MatDialog, MatDialogRef } from '@angular/material/dialog';
 import { ActivatedRoute, NavigationEnd, Router } from '@angular/router';
 import { filter as _filter } from 'lodash';
-import { BehaviorSubject, interval, Observable, ReplaySubject, Subject, zip } from 'rxjs';
+import { BehaviorSubject, fromEvent, interval, merge, Observable, ReplaySubject, Subject, zip } from 'rxjs';
 
-import { concatMap, filter, map, mergeMap, switchMap, take, takeUntil, withLatestFrom } from 'rxjs/operators';
+import { concatMap, filter, finalize, map, mergeMap, switchMap, take, takeUntil, tap, withLatestFrom } from 'rxjs/operators';
 import { BUILD_INFO_REAL } from '../build-info';
 import { DarkThemeSwitch } from './dark-theme-switch';
 
@@ -18,7 +18,7 @@ import { KioskModeService } from './services/kiosk-mode.service';
 import { StorageService } from './services/storage.service';
 import { OverlayContainer } from '@angular/cdk/overlay';
 import { APPLY_ANIMATED_CONTAINER, ConsentMenuOverlay } from './consent-menu-overlay';
-import { Meta } from '@angular/platform-browser';
+import { DomSanitizer, Meta, SafeResourceUrl } from '@angular/platform-browser';
 import { NotificationService } from './services/notification-service';
 import { GoogleAnalyticsService } from './services/google-analytics.service';
 import { ShortcutInput } from 'ng-keyboard-shortcuts';
@@ -34,8 +34,12 @@ import { CheckForUpdateService } from './services/check-for-update.service';
 import { LocalizejsService } from './services/localizejs.service';
 import { ColorProfile } from './models/ColorProfile';
 import { Util } from '../Util';
+import { HelpCenterService } from './services/help-center.service';
+import { CallDialogComponent } from './shared/shared-components/call-dialog/call-dialog.component';
+import { FeatureFlagService, FLAGS } from './services/feature-flag.service';
 
 declare const window;
+declare var ResizeObserver;
 
 export const INITIAL_LOCATION_PATHNAME = new ReplaySubject<string>(1);
 
@@ -52,6 +56,7 @@ export class AppComponent implements OnInit, AfterViewInit, OnDestroy {
 	currentRoute: string;
 
 	needToUpdateApp$: Subject<{ active: boolean; color: ColorProfile }>;
+	helpCentreURL: SafeResourceUrl;
 
 	private dialogContainer: HTMLElement;
 	@ViewChild('dialogContainer', { static: true }) set content(content: ElementRef) {
@@ -59,6 +64,7 @@ export class AppComponent implements OnInit, AfterViewInit, OnDestroy {
 	}
 
 	@ViewChild('trialBar') trialBarElementView: ElementRef;
+	@ViewChild('helpIframe') helpCenterIframe: ElementRef;
 
 	public isAuthenticated = null;
 	public hideScroll = true;
@@ -80,6 +86,13 @@ export class AppComponent implements OnInit, AfterViewInit, OnDestroy {
 	intercomObserver: MutationObserver;
 
 	private subscriber$ = new Subject();
+
+	public mainContentWidth: string = '100%';
+	public rightPosition;
+
+	public isUserHasPhoneAccess: boolean;
+
+	// @ViewChild('help-centre-iframe') iframe: ElementRef;
 
 	trialEndDate$ = this.http.currentSchoolSubject.pipe(
 		takeUntil(this.subscriber$),
@@ -110,6 +123,13 @@ export class AppComponent implements OnInit, AfterViewInit, OnDestroy {
 		}
 	}
 
+	// @HostListener('window:mousemove', ['$event'])
+	// onWindowBlur(event: any): void {
+	// 	addEventListener('mousemove', function (e) {
+	// 		console.log('On iframe');
+	// 	});
+	// }
+
 	constructor(
 		public darkTheme: DarkThemeSwitch,
 		public loginService: GoogleLoginService,
@@ -132,7 +152,10 @@ export class AppComponent implements OnInit, AfterViewInit, OnDestroy {
 		private screen: ScreenService,
 		private toastService: ToastService,
 		private localize: LocalizejsService,
-		private updateService: CheckForUpdateService
+		private updateService: CheckForUpdateService,
+		public helpCenter: HelpCenterService,
+		private sanitizer: DomSanitizer,
+		public featureFlags: FeatureFlagService
 	) {}
 
 	get isMobile() {
@@ -206,7 +229,8 @@ export class AppComponent implements OnInit, AfterViewInit, OnDestroy {
 					}
 
 					if (intercomWrapper) {
-						intercomWrapper.style.display = user.isStudent() ? 'none' : 'block';
+						// intercomWrapper.style.display = user.isStudent() ? 'none' : 'block';
+						intercomWrapper.style.display = 'none';
 					}
 
 					if (isAllowed && !this.isMobile) {
@@ -449,6 +473,7 @@ export class AppComponent implements OnInit, AfterViewInit, OnDestroy {
 					'Trial End Date': trialEndDateStr,
 				},
 				hide_default_launcher: false,
+				custom_launcher_selector: '.live-chat',
 			};
 			window.Intercom('update');
 
@@ -585,5 +610,105 @@ export class AppComponent implements OnInit, AfterViewInit, OnDestroy {
 
 	updateApp() {
 		this.updateService.update();
+	}
+
+	openHelpCenter(event) {
+		this.isUserHasPhoneAccess = this.featureFlags.isFeatureEnabled(FLAGS.PhoneAccess);
+		this.helpCentreURL = this.sanitizer.bypassSecurityTrustResourceUrl('https://www.smartpass.app/help-center');
+		this.helpCenter.isHelpCenterOpen.next(event);
+		setTimeout(() => {
+			const BORDER_SIZE = 8;
+			const panel = document.querySelector<HTMLElement>('#help-center-content');
+
+			const dragDivider = document.querySelector<HTMLElement>('.drag-divider');
+			setTimeout(() => {
+				const mainRouter = document.querySelector<HTMLElement>('.router-outlet');
+				mainRouter.style.transition = 'none';
+			}, 1000);
+			panel.style.transition = 'none';
+			let m_pos;
+			function resize(e) {
+				const dx = m_pos - e.x;
+				m_pos = e.x;
+				panel.style.width = parseInt(getComputedStyle(panel, '').width) + dx + 'px';
+			}
+
+			let iframe = document.querySelector<HTMLIFrameElement>('.help-center-unsubscribe');
+
+			const mouseDown$ = fromEvent<MouseEvent>(panel, 'mousedown');
+			const mouseMove$ = fromEvent<MouseEvent>(document, 'mousemove');
+			const mouseUp$ = merge(
+				fromEvent<MouseEvent>(dragDivider, 'mouseup'),
+				fromEvent<MouseEvent>(iframe, 'mouseup'),
+				fromEvent<MouseEvent>(panel, 'mouseup'),
+				fromEvent<MouseEvent>(document, 'mouseup')
+			);
+
+			mouseDown$
+				.pipe(
+					switchMap((event) =>
+						mouseMove$.pipe(
+							tap((ev) => {
+								if (event.offsetX < BORDER_SIZE) {
+									resize(ev);
+									iframe.style.display = 'block';
+									document.body.style.cursor = 'col-resize';
+									dragDivider.style.setProperty('--drag-after-color', '#00B476');
+									dragDivider.style.setProperty('--drag-after-shadow', '1px');
+									dragDivider.style.setProperty('--drag-after-left', '2px');
+								}
+							}),
+							takeUntil(mouseUp$),
+							finalize(() => {
+								document.body.style.cursor = 'default';
+								dragDivider.style.setProperty('--drag-after-color', '#B7C1CF');
+								dragDivider.style.setProperty('--drag-after-shadow', '0px');
+								dragDivider.style.setProperty('--drag-after-left', '0px');
+								iframe.style.display = 'none';
+							})
+						)
+					)
+				)
+				.subscribe();
+
+			const myEl = document.querySelector('#help-center-content');
+
+			// Create observer
+			const observer = new ResizeObserver((element) => {
+				if (!this.helpCenter.isHelpCenterOpen.getValue()) {
+					this.mainContentWidth = '100%';
+				} else if (document.getElementById('help-center-content')) {
+					this.mainContentWidth = `calc(100% - ${document.getElementById('help-center-content').offsetWidth}px)`;
+				}
+			});
+
+			// Add element (observe)
+			observer.observe(myEl);
+		}, 100);
+	}
+
+	closeHelpCenter() {
+		this.helpCenter.isHelpCenterOpen.next(false);
+		window.Intercom('update', { hide_default_launcher: true });
+	}
+
+	openCallDialog(event) {
+		const target = new ElementRef(event.currentTarget);
+		const CDC: MatDialogRef<CallDialogComponent> = this.dialog.open(CallDialogComponent, {
+			panelClass: 'consent-dialog-container-helpcenter',
+			backdropClass: 'invis-backdrop-helpcenter',
+			data: {
+				trigger: target,
+			},
+		});
+		window.document.querySelector('.invis-backdrop-helpcenter').parentNode.style.zIndex = '1009';
+
+		CDC.afterClosed().subscribe((status) => {
+			window.document.querySelector('.cdk-overlay-container').style.zIndex = '1005';
+		});
+	}
+
+	openLiveChat() {
+		window.Intercom('update', { hide_default_launcher: true });
 	}
 }

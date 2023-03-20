@@ -28,9 +28,11 @@ export class BulkEditRoomsComponent implements OnInit {
 		rooms: Location[];
 		roomData: RoomData;
 		buttonState: ValidButtons;
-	}> = new EventEmitter<{ rooms: Location[]; roomData: RoomData; buttonState: ValidButtons }>();
+		pinnables: Pinnable[];
+	}> = new EventEmitter<{ rooms: Location[]; roomData: RoomData; buttonState: ValidButtons; pinnables: Pinnable[] }>();
 
 	selectedRooms: Location[] = [];
+	selectedPinnables: Pinnable[] = [];
 
 	advOptionsButtons: ValidButtons;
 
@@ -47,13 +49,15 @@ export class BulkEditRoomsComponent implements OnInit {
 
 	ngOnInit() {
 		if (this.dialogData['rooms']) {
-			this.dialogData['rooms'].forEach((room: Pinnable) => {
-				if (room.type === 'category') {
-					this.locationService.getLocationsWithCategory(room.category).subscribe((res: Location[]) => {
+			this.selectedPinnables = this.dialogData['rooms'];
+
+			this.selectedPinnables.forEach((pinnable: Pinnable) => {
+				if (pinnable.type === 'category') {
+					this.locationService.getLocationsWithCategory(pinnable.category).subscribe((res: Location[]) => {
 						this.selectedRooms = [...this.selectedRooms, ...res];
 					});
 				} else {
-					this.selectedRooms.push(room.location);
+					this.selectedRooms.push(pinnable.location);
 				}
 			});
 		}
@@ -70,6 +74,7 @@ export class BulkEditRoomsComponent implements OnInit {
 			(this.roomData.travelType.length ||
 				!isNull(this.roomData.restricted) ||
 				!isNull(this.roomData.scheduling_restricted) ||
+				!isNull(this.roomData.ignore_students_pass_limit) ||
 				this.roomData.timeLimit ||
 				this.roomData.selectedTeachers.length) &&
 			!this.advOptionsButtons
@@ -79,6 +84,7 @@ export class BulkEditRoomsComponent implements OnInit {
 			this.roomData.travelType.length ||
 			!isNull(this.roomData.restricted) ||
 			!isNull(this.roomData.scheduling_restricted) ||
+			!isNull(this.roomData.ignore_students_pass_limit) ||
 			this.roomData.timeLimit ||
 			this.roomData.selectedTeachers.length ||
 			this.advOptionsButtons
@@ -97,6 +103,7 @@ export class BulkEditRoomsComponent implements OnInit {
 		this.bulkEditResult.emit({
 			roomData: this.roomData,
 			rooms: this.selectedRooms,
+			pinnables: this.selectedPinnables,
 			buttonState: this.roomsValidButtons,
 		});
 	}

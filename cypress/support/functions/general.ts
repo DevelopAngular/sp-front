@@ -13,3 +13,7 @@ export const searchForStudent = (spSearchSelector: string, studentName: string) 
   cy.get(spSearchSelector).find('app-round-input input').type(studentName);
   cy.wait('@searchstudents', {timeout: 10000});
 };
+
+export const getNavAction = (label: string): Cypress.Chainable<JQuery<HTMLElement>> => {
+  return cy.get('app-nav app-nav-button', {timeout: 10000}).contains(label);
+};

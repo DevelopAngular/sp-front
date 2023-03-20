@@ -85,9 +85,10 @@ export class FolderComponent implements OnInit, OnDestroy {
 	initialFolderData: {
 		folderName: string;
 		roomsInFolder: any[];
-	} = { folderName: null, roomsInFolder: [] };
+		ignore_students_pass_limit: boolean;
+	} = { folderName: null, roomsInFolder: [], ignore_students_pass_limit: false };
 
-	folderValidButtons: ValidButtons;
+	folderButtonState: ValidButtons;
 
 	pinnable: Pinnable;
 
@@ -144,7 +145,11 @@ export class FolderComponent implements OnInit, OnDestroy {
 		return sortBy(this.roomsImFolder, (res) => res.title.toLowerCase());
 	}
 
+	tooltipText;
+
 	ngOnInit() {
+		this.tooltipText = this.overlayService.tooltipText;
+
 		this.form.get('folderName').setValidators([Validators.required, Validators.maxLength(17)]);
 		this.scrollableAreaName = `Folder ${this.folderNameTitle}`;
 		this.frameMotion$ = this.formService.getFrameMotionDirection();
@@ -159,15 +164,18 @@ export class FolderComponent implements OnInit, OnDestroy {
 				this.roomsToDelete = data.roomsToDelete;
 				this.folderRoomsLoaded = true;
 			} else {
+				this.initialFolderData.folderName = data.pinnable.title;
+				this.initialFolderData.ignore_students_pass_limit = data.pinnable.ignore_students_pass_limit;
 				this.pinnable = data.pinnable;
 				this.folderName = this.pinnable.title;
 				this.locationService.getLocationsWithCategory(this.pinnable.category).subscribe((res: Location[]) => {
 					this.roomsImFolder = res;
 					this.initialFolderData = {
-						folderName: this.folderName,
+						...this.initialFolderData,
 						roomsInFolder: cloneDeep(this.roomsImFolder),
 					};
 					this.folderRoomsLoaded = true;
+					this.updateFolderState(); // This function depends on initialFolder data, if it's not set it won't work.
 				});
 			}
 		} else {
@@ -186,23 +194,18 @@ export class FolderComponent implements OnInit, OnDestroy {
 			this.initialFolderData = {
 				folderName: 'New Folder',
 				roomsInFolder: cloneDeep(this.roomsImFolder),
+				ignore_students_pass_limit: false,
 			};
 			this.folderRoomsLoaded = true;
 		}
 
-		merge(combineLatest(this.form.get('folderName').valueChanges, this.form.statusChanges), this.change$).subscribe(() => {
-			this.changeFolderData();
-			this.folderDataResult.emit({
-				data: {
-					folderName: this.form.get('folderName').value === '' ? 'New Folder' : this.form.get('folderName').value,
-					roomsInFolder: this.roomsImFolder,
-					selectedRoomsInFolder: this.selectedRooms,
-					roomsInFolderLoaded: true,
-					selectedRoomToEdit: this.selectedRoomToEdit,
-					roomsToDelete: this.roomsToDelete,
-				},
-				buttonState: this.folderValidButtons,
-			});
+		merge(
+			this.form.get('folderName').valueChanges,
+			this.form.get('countsTowardsPassLimits').valueChanges,
+			this.form.statusChanges,
+			this.change$
+		).subscribe(() => {
+			this.updateFolderState();
 		});
 	}
 
@@ -211,28 +214,46 @@ export class FolderComponent implements OnInit, OnDestroy {
 		this.scrollPosition.saveComponentScroll(this.folderNameTitle, this.scrollableArea.scrollTop);
 	}
 
-	changeFolderData() {
-		if (
-			!isEqual(this.initialFolderData.roomsInFolder, this.roomsImFolder) ||
-			(this.initialFolderData.folderName && this.initialFolderData.folderName !== this.form.get('folderName').value)
-		) {
-			if (this.form.get('folderName').invalid) {
-				if (this.form.get('folderName').touched) {
-					this.folderValidButtons = { publish: false, incomplete: true, cancel: true };
-				} else {
-					this.folderValidButtons = { publish: false, incomplete: false, cancel: false };
-				}
-			} else {
-				// if (this.roomsImFolder.length) {
-				//   this.folderValidButtons = {publish: true, incomplete: false, cancel: true};
-				// } else {
-				//     this.folderValidButtons = {publish: false, incomplete: true, cancel: true};
-				// }
-				this.folderValidButtons = { publish: true, incomplete: false, cancel: true };
-			}
-		} else {
-			this.folderValidButtons = { publish: false, incomplete: false, cancel: false };
+	updateFolderState() {
+		this.updateButtonState();
+
+		this.folderDataResult.emit({
+			data: {
+				folderName: this.form.get('folderName').value === '' ? 'New Folder' : this.form.get('folderName').value,
+				ignore_students_pass_limit: !this.form.get('countsTowardsPassLimits').value,
+				roomsInFolder: this.roomsImFolder,
+				selectedRoomsInFolder: this.selectedRooms,
+				roomsInFolderLoaded: true,
+				selectedRoomToEdit: this.selectedRoomToEdit,
+				roomsToDelete: this.roomsToDelete,
+			},
+			buttonState: this.folderButtonState,
+		});
+	}
+
+	updateButtonState() {
+		// Compare the folder data and set the buttons availabe
+		if (this.form.get('folderName').invalid) {
+			this.folderButtonState = { publish: false, incomplete: true, cancel: true };
+			return;
 		}
+
+		if (this.initialFolderData.folderName && this.initialFolderData.folderName !== this.form.get('folderName').value) {
+			this.folderButtonState = { publish: true, incomplete: false, cancel: true };
+			return;
+		}
+
+		if (!this.initialFolderData.ignore_students_pass_limit != this.form.get('countsTowardsPassLimits').value) {
+			this.folderButtonState = { publish: true, incomplete: false, cancel: true };
+			return;
+		}
+
+		if (!isEqual(this.initialFolderData.roomsInFolder, this.roomsImFolder)) {
+			this.folderButtonState = { publish: true, incomplete: false, cancel: true };
+			return;
+		}
+
+		this.folderButtonState = { publish: false, incomplete: false, cancel: false };
 	}
 
 	stickyButtonClick(page) {
