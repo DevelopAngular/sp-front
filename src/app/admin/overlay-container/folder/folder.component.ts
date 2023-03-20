@@ -164,8 +164,8 @@ export class FolderComponent implements OnInit, OnDestroy {
 				this.roomsToDelete = data.roomsToDelete;
 				this.folderRoomsLoaded = true;
 			} else {
-        this.initialFolderData.folderName = data.pinnable.title;
-        this.initialFolderData.ignore_students_pass_limit = data.pinnable.ignore_students_pass_limit;
+				this.initialFolderData.folderName = data.pinnable.title;
+				this.initialFolderData.ignore_students_pass_limit = data.pinnable.ignore_students_pass_limit;
 				this.pinnable = data.pinnable;
 				this.folderName = this.pinnable.title;
 				this.locationService.getLocationsWithCategory(this.pinnable.category).subscribe((res: Location[]) => {
