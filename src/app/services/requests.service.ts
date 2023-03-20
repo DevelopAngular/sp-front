@@ -239,4 +239,8 @@ export class RequestsService {
 	watchUpdateRequest() {
 		return this.pollingService.listen('pass_request.update');
 	}
+
+  watchCreateRequest() {
+    return this.pollingService.listen('pass_request.create');
+  }
 }
