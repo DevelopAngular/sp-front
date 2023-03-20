@@ -28,6 +28,7 @@ spec:
         backend:
           serviceName: {{ .Values.application.name }}
           servicePort: {{ .Values.service.externalPort }}
+{{- end -}}
 {{if (contains "testing.smartpass.app" .Values.service.url)}}      - path: /
         backend:
           serviceName: {{ .Values.application.name }}
