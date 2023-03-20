@@ -240,7 +240,7 @@ export class RequestsService {
 		return this.pollingService.listen('pass_request.update');
 	}
 
-  watchCreateRequest() {
-    return this.pollingService.listen('pass_request.create');
-  }
+	watchCreateRequest() {
+		return this.pollingService.listen('pass_request.create');
+	}
 }

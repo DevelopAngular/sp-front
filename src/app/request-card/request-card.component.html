@@ -193,28 +193,33 @@
 							</app-card-button>
 						</div>
 						<ng-template #noTeachPin>
+							<div *ngIf="isKioskMode && request.status === 'declined'; else teacherView">
+								<app-card-button
+									*ngIf="!forStaff"
+									[disabled]="performingAction"
+									(onClick)="resendRequest()"
+									[width]="'297px'"
+									[height]="'81px'"
+									[gradientColor]="request.color_profile.gradient_color">
+									<div class="resend-button-content">
+										<mat-spinner *ngIf="performingAction" [color]="'accent'" [diameter]="35"></mat-spinner>
+										<div *ngIf="!performingAction" class="resend-button-content-title">{{ forFuture ? 'Change Date & Time' : 'Resend Request' }}</div>
+										<div class="resend-button-content-subtitle">Pass Request Denied</div>
+									</div>
+								</app-card-button>
+							</div>
 
-              <div *ngIf="isKioskMode && request.status==='declined'; else teacherView">
-                <app-card-button *ngIf="!forStaff" [disabled]="performingAction" (onClick)="resendRequest()" [width]="'297px'" [height]="'81px'" [gradientColor]="request.color_profile.gradient_color">
-                  <div class="resend-button-content">
-                    <mat-spinner *ngIf="performingAction" [color]="'accent'" [diameter]="35"></mat-spinner>
-                    <div *ngIf="!performingAction" class="resend-button-content-title">{{ (forFuture?'Change Date & Time':'Resend Request') }}</div>
-                    <div class="resend-button-content-subtitle">Pass Request Denied</div>
-                  </div>
-                </app-card-button>
-              </div>
-
-              <ng-template #teacherView>
-                <div class="request-description">
-                  <img class="request-description-icon" [src]="'./assets/Lock (White).svg' | resolveAsset" />
-                  <div class="request-description-text">
-                    Pass Request sent to: <br />
-                    <span style="font-weight: normal; font-size: 17px" notranslate *ngFor="let teacher of filteredTeachers; let i = index">
-										{{ teacher.display_name + (i === filteredTeachers.length - 1 ? '' : ', ') }}
-									</span>
-                  </div>
-                </div>
-              </ng-template>
+							<ng-template #teacherView>
+								<div class="request-description">
+									<img class="request-description-icon" [src]="'./assets/Lock (White).svg' | resolveAsset" />
+									<div class="request-description-text">
+										Pass Request sent to: <br />
+										<span style="font-weight: normal; font-size: 17px" notranslate *ngFor="let teacher of filteredTeachers; let i = index">
+											{{ teacher.display_name + (i === filteredTeachers.length - 1 ? '' : ', ') }}
+										</span>
+									</div>
+								</div>
+							</ng-template>
 						</ng-template>
 						<div *ngIf="request.status === 'accepted'">
 							<div class="request-description">

@@ -109,7 +109,7 @@ export class RequestCardComponent implements OnInit, OnDestroy {
 		private createPassFormRef: MatDialogRef<CreateHallpassFormsComponent>,
 		private toast: ToastService,
 		private hallpassService: HallPassesService,
-    private kioskService: KioskModeService,
+		private kioskService: KioskModeService
 	) {}
 
 	get invalidDate() {
@@ -146,9 +146,9 @@ export class RequestCardComponent implements OnInit, OnDestroy {
 		return this.forStaff || this.invalidDate || (!this.forStaff && !this.forInput && !this.invalidDate) ? '' : 'icon-button';
 	}
 
-  get isKioskMode() {
-    return this.kioskService.isKisokMode();
-  }
+	get isKioskMode() {
+		return this.kioskService.isKisokMode();
+	}
 
 	ngOnInit() {
 		this.scaleCardTrigger$ = this.domCheckerService.scalePassCard;
@@ -167,30 +167,27 @@ export class RequestCardComponent implements OnInit, OnDestroy {
 		}
 
 		merge(
-      this.requestService.watchDenyRequest(),
-      this.requestService.watchUpdateRequest(),
-      this.requestService.watchCreateRequest().pipe(filter(() => this.isKioskMode)),
-    )
+			this.requestService.watchDenyRequest(),
+			this.requestService.watchUpdateRequest(),
+			this.requestService.watchCreateRequest().pipe(filter(() => this.isKioskMode))
+		)
 			.pipe(
 				takeUntil(this.destroy$),
 				map(({ action, data }) => {
-          if (isArray(data)) {
-            data = data[0]
-          }
-          return {request: Request.fromJSON(data), action}
-        })
+					if (isArray(data)) {
+						data = data[0];
+					}
+					return { request: Request.fromJSON(data), action };
+				})
 			)
-			.subscribe(({request, action}) => {
-        if (this.request.id == request.id || action === 'pass_request.create') {
-          this.request = request;
-          this.performingAction = false;
-        }
+			.subscribe(({ request, action }) => {
+				if (this.request.id == request.id || action === 'pass_request.create') {
+					this.request = request;
+					this.performingAction = false;
+				}
 			});
 
-		merge(
-      this.requestService.watchRequestCancel(),
-      this.requestService.watchRequestAccept(),
-    )
+		merge(this.requestService.watchRequestCancel(), this.requestService.watchRequestAccept())
 			.pipe(
 				takeUntil(this.destroy$),
 				map(({ action, data }) => Request.fromJSON(data))
@@ -773,24 +770,22 @@ export class RequestCardComponent implements OnInit, OnDestroy {
 		this.dialogRef.close();
 	}
 
-  resendRequest() {
-    const body: any = {
-      origin: this.request.origin.id,
-      destination: this.request.destination.id,
-      attachment_message: this.request.attachment_message,
-      travel_type: this.request.travel_type,
-      teachers: this.request.teachers.map((u) => parseInt(u.id, 10)),
-      duration: this.request.duration,
-      student_id: this.formState.data.kioskModeStudent.id
-    };
+	resendRequest() {
+		const body: any = {
+			origin: this.request.origin.id,
+			destination: this.request.destination.id,
+			attachment_message: this.request.attachment_message,
+			travel_type: this.request.travel_type,
+			teachers: this.request.teachers.map((u) => parseInt(u.id, 10)),
+			duration: this.request.duration,
+			student_id: this.formState.data.kioskModeStudent.id,
+		};
 
-    this.requestService
-      .createRequest(body)
-      .subscribe({
-        next: () => {
-          console.log('pass request resent');
-        },
-        error: console.log,
-      });
-  }
+		this.requestService.createRequest(body).subscribe({
+			next: () => {
+				console.log('pass request resent');
+			},
+			error: console.log,
+		});
+	}
 }
