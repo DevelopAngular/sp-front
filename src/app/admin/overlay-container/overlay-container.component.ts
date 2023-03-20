@@ -514,7 +514,7 @@ export class OverlayContainerComponent implements OnInit, OnDestroy {
 	}
 
 	buildForm() {
-		let countsTowardsPassLimits = false;
+		let countsTowardsPassLimits = true;
 		if (!!this.pinnable) {
 			countsTowardsPassLimits = !this.pinnable.ignore_students_pass_limit;
 		}
