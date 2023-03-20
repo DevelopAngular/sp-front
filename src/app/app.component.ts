@@ -151,8 +151,8 @@ export class AppComponent implements OnInit, AfterViewInit, OnDestroy {
 		public helpCenter: HelpCenterService,
 		private sanitizer: DomSanitizer,
 		public featureFlags: FeatureFlagService,
-    private cookie: CookieService,
-    private titleService: Title
+		private cookie: CookieService,
+		private titleService: Title
 	) {}
 
 	get isMobile() {
