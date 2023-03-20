@@ -13,7 +13,7 @@ import { DarkThemeSwitch } from '../../dark-theme-switch';
 import { RepresentedUser } from '../../navbar/navbar.component';
 import { GSuiteOrgs } from '../../models/GSuiteOrgs';
 import { DomSanitizer, SafeHtml } from '@angular/platform-browser';
-import { cloneDeep, repeat, uniqBy } from 'lodash';
+import { cloneDeep, uniqBy } from 'lodash';
 import { School } from '../../models/School';
 import { TableService } from '../sp-data-table/table.service';
 import { TotalAccounts } from '../../models/TotalAccounts';
