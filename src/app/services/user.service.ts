@@ -900,7 +900,7 @@ export class UserService implements OnDestroy {
 		return this.http.get<any>(constructUrl('v1/users', params));
 	}
 
-	getMoreUserListRequest(role) {
+	getMoreUserListRequest(role: string): Observable<User[]> {
 		this.store.dispatch(getMoreAccounts({ role }));
 		return this.lastAddedAccounts$[role];
 	}
