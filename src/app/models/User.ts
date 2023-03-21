@@ -142,6 +142,16 @@ export class User extends BaseModel {
 		);
 	}
 
+	abbreviatedName(initialFirstName = true) {
+		if (this.first_name === '' || this.last_name === '') {
+			return this.display_name;
+		}
+
+		return initialFirstName
+			? `${this.first_name[0].toLocaleUpperCase()}. ${this.last_name}`
+			: `${this.first_name} ${this.last_name[0].toLocaleUpperCase()}.`;
+	}
+
 	toString() {
 		return this.last_name;
 	}

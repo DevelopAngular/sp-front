@@ -3,7 +3,7 @@ import { BehaviorSubject, fromEvent, interval, Observable, Subject } from 'rxjs'
 import { bumpIn, studentPassFadeInOut } from '../animations';
 import { PassLike } from '../models';
 import { TimeService } from '../services/time.service';
-import { getFormattedPassDate, getInnerPassContent, getInnerPassName, isBadgeVisible } from './pass-display-util';
+import { getFormattedPassDate, getInnerPassContent, isBadgeVisible } from './pass-display-util';
 import { DomSanitizer } from '@angular/platform-browser';
 import { Request } from '../models/Request';
 import { Invitation } from '../models/Invitation';
@@ -13,6 +13,7 @@ import { DomCheckerService } from '../services/dom-checker.service';
 import { KioskModeService } from '../services/kiosk-mode.service';
 import { WaitingInLinePass } from '../models/WaitInLine';
 import { PositionPipe } from '../core/position.pipe';
+import { UserService } from '../services/user.service';
 
 const calculatePositionString = new PositionPipe().transform;
 
@@ -93,7 +94,7 @@ export class PassTileComponent implements OnInit, OnDestroy, OnChanges {
 	}
 
 	get tileName() {
-		return getInnerPassName(this.pass);
+		return this.pass.student.abbreviatedName(!this.userService.getFeatureFlagNewAbbreviation());
 	}
 
 	get isBadgeVisible() {
@@ -138,7 +139,8 @@ export class PassTileComponent implements OnInit, OnDestroy, OnChanges {
 		public overlay: Overlay,
 		private renderer: Renderer2,
 		private domCheckerService: DomCheckerService,
-		private kioskMode: KioskModeService
+		private kioskMode: KioskModeService,
+		private userService: UserService
 	) {}
 
 	ngOnInit() {
@@ -305,7 +307,6 @@ export class PassTileComponent implements OnInit, OnDestroy, OnChanges {
 	studentNameLeave() {
 		if (this.presentational) return;
 
-		// console.log('CLOSE ==>>>', this.destroyCloseQuickPreview);
 		if (this.allowPopup && !this.isKioskMode && !this.destroyCloseQuickPreview) {
 			this.destroyOpen$.next();
 			interval(300)

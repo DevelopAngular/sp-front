@@ -5,16 +5,13 @@ import { Location } from '../models/Location';
 import { Util } from '../../Util';
 import { MAT_DIALOG_DATA, MatDialog, MatDialogRef } from '@angular/material/dialog';
 import { ConsentMenuComponent } from '../consent-menu/consent-menu.component';
-import { getInnerPassName } from '../pass-tile/pass-display-util';
 import { DataService } from '../services/data-service';
-import { LoadingService } from '../services/loading.service';
 import { Navigation } from '../create-hallpass-forms/main-hallpass--form/main-hall-pass-form.component';
 import { catchError, filter, map, switchMap, takeUntil, tap } from 'rxjs/operators';
 import { CreateFormService } from '../create-hallpass-forms/create-form.service';
 import { CreateHallpassFormsComponent } from '../create-hallpass-forms/create-hallpass-forms.component';
 import { RequestsService } from '../services/requests.service';
 import { BehaviorSubject, Observable, of, Subject } from 'rxjs';
-import { ScreenService } from '../services/screen.service';
 import { UNANIMATED_CONTAINER } from '../consent-menu-overlay';
 import { School } from '../models/School';
 import { HttpService } from '../services/http-service';
@@ -77,9 +74,7 @@ export class InvitationCardComponent implements OnInit, OnDestroy {
 		public dialog: MatDialog,
 		private requestService: RequestsService,
 		public dataService: DataService,
-		private loadingService: LoadingService,
 		private createFormService: CreateFormService,
-		private screenService: ScreenService,
 		private http: HttpService,
 		private navbarData: NavbarDataService,
 		private domCheckerService: DomCheckerService,
@@ -94,13 +89,11 @@ export class InvitationCardComponent implements OnInit, OnDestroy {
 	}
 
 	get studentName() {
-		return getInnerPassName(this.invitation);
+		return this.invitation.student.abbreviatedName(!this.userService.getFeatureFlagNewAbbreviation());
 	}
 
 	get issuerName() {
-		return this.invitation.issuer.isSameObject(this.user)
-			? 'Me'
-			: this.invitation.issuer.first_name.substr(0, 1) + '. ' + this.invitation.issuer.last_name;
+		return this.invitation.issuer.isSameObject(this.user) ? 'Me' : this.invitation.issuer.abbreviatedName();
 	}
 
 	get gradient() {
