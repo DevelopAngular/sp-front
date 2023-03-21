@@ -1,4 +1,4 @@
-import { Component, ElementRef, Input, OnDestroy, OnInit, Renderer2 } from '@angular/core';
+import { ChangeDetectorRef, Component, ElementRef, Input, OnDestroy, OnInit, Renderer2 } from '@angular/core';
 import { Util } from '../../Util';
 import { Request } from '../models/Request';
 import { ConsentMenuComponent } from '../consent-menu/consent-menu.component';
@@ -59,7 +59,8 @@ export class InlineRequestCardComponent implements OnInit, OnDestroy {
 		private renderer: Renderer2,
 		private passesService: HallPassesService,
 		private storage: StorageService,
-		private locationsService: LocationsService
+		private locationsService: LocationsService,
+		private cdr: ChangeDetectorRef
 	) {}
 
 	get hasDivider() {
@@ -117,6 +118,7 @@ export class InlineRequestCardComponent implements OnInit, OnDestroy {
 			)
 			.subscribe((request) => {
 				this.request = request;
+				this.cdr.detectChanges();
 			});
 	}
 
