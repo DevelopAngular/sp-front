@@ -58,6 +58,7 @@ import { CheckForUpdateService } from '../services/check-for-update.service';
 import { SmartpassSearchComponent } from '../smartpass-search/smartpass-search.component';
 import { StreaksDialogComponent } from '../streaks-dialog/streaks-dialog.component';
 import { FeatureFlagService, FLAGS } from '../services/feature-flag.service';
+import { HelpCenterService } from '../services/help-center.service';
 
 declare const window;
 
@@ -210,7 +211,8 @@ export class NavbarComponent implements AfterViewInit, OnInit, OnDestroy {
 		private qrBarcodeGenerator: QRBarcodeGeneratorService,
 		private idCardService: IDCardService,
 		private updateService: CheckForUpdateService,
-		private featureService: FeatureFlagService
+		private featureService: FeatureFlagService,
+		private helpCenter: HelpCenterService
 	) {}
 
 	get optionsOpen() {
@@ -218,7 +220,7 @@ export class NavbarComponent implements AfterViewInit, OnInit, OnDestroy {
 	}
 
 	get isMobile() {
-		return DeviceDetection.isMobile();
+		return DeviceDetection.isMobile() || (this.screenService.windowWidth < 1170 && this.helpCenter.isHelpCenterOpen.getValue());
 	}
 
 	get showNav() {
@@ -258,6 +260,21 @@ export class NavbarComponent implements AfterViewInit, OnInit, OnDestroy {
 
 	get isStreaks(): boolean {
 		return this.featureService.isFeatureEnabled(FLAGS.ShowStreaks);
+	}
+	get mediaClass(): string {
+		let rightClass = '';
+		if (this.helpCenter.isHelpCenterOpen.getValue()) {
+			if (this.screenService.windowWidth < 320) {
+				rightClass = 'mediaWidth320';
+			} else if (this.screenService.windowWidth < 475) {
+				rightClass = 'mediaWidth475';
+			} else if (this.screenService.windowWidth < 700) {
+				rightClass = 'mediaWidth700';
+			} else if (this.screenService.windowWidth < 940) {
+				rightClass = 'mediaWidth940';
+			}
+		}
+		return rightClass;
 	}
 
 	ngOnInit() {

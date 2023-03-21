@@ -17,6 +17,7 @@ import { User } from '../models/User';
 import { PassLimitInfo } from '../models/HallPassLimits';
 import { cloneDeep } from 'lodash';
 import { MainHallPassFormComponent } from '../create-hallpass-forms/main-hallpass--form/main-hall-pass-form.component';
+import { Pinnable } from '../models/Pinnable';
 
 export interface Paged<T> {
 	results: T[];
@@ -239,10 +240,7 @@ export class LocationTableComponent implements OnInit, OnDestroy {
 					: this.locationService.getLocationsWithConfigRequest(url);
 
 				request$.pipe(takeUntil(this.destroy$)).subscribe((res) => {
-					this.choices = res.map((loc) => {
-						loc.restricted = loc.restricted || this.passLimitInfo?.current === 0;
-						return loc;
-					});
+					this.choices = this.filterChoices(res);
 				});
 			} else {
 				const request$ = this.isFavoriteForm
@@ -250,10 +248,7 @@ export class LocationTableComponent implements OnInit, OnDestroy {
 					: this.locationService.getLocationsFromCategory(this.category).pipe(filter((res) => !!res.length));
 
 				request$.pipe(takeUntil(this.destroy$)).subscribe((p) => {
-					this.choices = p.map((loc) => {
-						loc.restricted = loc.restricted || this.passLimitInfo?.current === 0;
-						return loc;
-					});
+					this.choices = this.filterChoices(p);
 					this.noChoices = !this.choices.length;
 					this.pinnablesLoaded = true;
 					this.mainContentVisibility = true;
@@ -292,6 +287,22 @@ export class LocationTableComponent implements OnInit, OnDestroy {
 			});
 
 		this.updatedLocation$?.pipe(takeUntil(this.destroy$)).subscribe((res) => this.updateOrAddChoices(res));
+	}
+
+	filterChoices(choices: Location[]): Location[] {
+		return choices.map((loc) => {
+			let pinnable: Pinnable;
+			if (this.pinnables && this.pinnables[loc.id]) {
+				pinnable = this.pinnables[loc.id];
+			} else if (this.pinnables && this.pinnables[loc.category]) {
+				pinnable = this.pinnables[loc.category];
+			}
+
+			const ignoreStudentsPassLimit = pinnable?.ignore_students_pass_limit ?? false;
+
+			loc.restricted = loc.restricted || (this.passLimitInfo?.current === 0 && !ignoreStudentsPassLimit);
+			return loc;
+		});
 	}
 
 	private choiceFunc(loc) {
@@ -368,12 +379,6 @@ export class LocationTableComponent implements OnInit, OnDestroy {
 			}
 		}
 
-		// We don't need to restrict the location by pass limit if the location is for later
-		if (this.forLater) {
-			return loc;
-		}
-
-		loc.restricted = loc.restricted || this.passLimitInfo?.current === 0;
 		return loc;
 	}
 

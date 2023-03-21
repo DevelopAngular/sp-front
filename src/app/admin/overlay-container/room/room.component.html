@@ -3,6 +3,7 @@
 		<form [formGroup]="form">
 			<div class="room-inputs" *ngIf="currentPage !== 9 && currentPage !== 10">
 				<app-input
+					[dataCy]="'pinnable-title-inp'"
 					[width]="'222px'"
 					[maxLength]="'15'"
 					[input_label]="'Room Name'"
@@ -100,6 +101,7 @@
 		<app-advanced-options
 			[roomName]="data.roomName"
 			[nowRestricted]="data.restricted"
+			[ignoreStudentsPassLimit]="data.ignore_students_pass_limit"
 			[futureRestricted]="data.scheduling_restricted"
 			[data]="data.advOptState"
 			[disabledOptions]="advDisabledOptions"
@@ -107,9 +109,11 @@
 			[roomData]="data"
 			[passLimitForm]="passLimitForm"
 			[showErrors]="showErrors"
+			[allowChangingIgnoreStudentsPassLimit]="allowChangingIgnoreStudentsPassLimit"
 			(resultOptions)="advancedOptions($event)"
 			(nowRestrEmit)="restrictedEvent($event)"
 			(checkInEmit)="checkInEvent($event)"
+			(ignoreStudentsPassLimitEmit)="ignoreStudentsPassLimitEvent($event)"
 			(futureRestEmit)="schedulingRestrictedEvent($event)"></app-advanced-options>
 	</div>
 	<div class="visibility-room">

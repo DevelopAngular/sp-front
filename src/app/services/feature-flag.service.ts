@@ -8,6 +8,7 @@ import { School } from '../models/School';
 export enum FLAGS {
 	EncounterDetection = 'feature_flag_encounter_detection',
 	DigitalId = 'feature_flag_digital_id',
+	PhoneAccess = 'feature_flag_phone',
 	ParentAccounts = 'feature_flag_parent_accounts',
 	WaitInLine = 'feature_flag_wait_in_line',
 	ShowWaitInLine = 'feature_flag_show_wait_in_line',

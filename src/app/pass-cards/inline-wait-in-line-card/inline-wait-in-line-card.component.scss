@@ -1,3 +1,5 @@
+@import '../../../sp-colors.scss';
+
 @media all and (max-width: 335px) {
 	div.inline-pass-card-wrapper {
 		width: 300px;
@@ -166,4 +168,26 @@
 
 .smaller {
 	font-size: 16px;
+}
+
+.leave-browser-hint {
+	width: 335px;
+	background: #ffffff;
+	border-radius: 12px;
+	margin-top: 20px;
+	.wrapper {
+		padding: 8px 13px;
+		display: flex;
+		.report-icon {
+			margin-right: 11px;
+		}
+		p {
+			font-family: 'Inter';
+			font-style: normal;
+			font-weight: 400;
+			font-size: 14px;
+			line-height: 17px;
+			color: $gray500;
+		}
+	}
 }

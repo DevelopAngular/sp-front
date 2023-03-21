@@ -210,7 +210,7 @@ export class HallPassesService {
 
 	updatePinnableRequest(id, pinnable) {
 		this.store.dispatch(updatePinnable({ id, pinnable }));
-		return this.currentPinnable$;
+		return this.pinnables$;
 	}
 
 	updatePinnable(id, data) {

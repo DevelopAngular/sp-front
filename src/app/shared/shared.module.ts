@@ -109,7 +109,10 @@ import { OverviewContainerComponent } from '../student-info-card/student-passes-
 import { SettingsComponent } from '../settings/settings.component';
 import { InviteFamiliesDialogComponent } from '../admin/invite-families-dialog/invite-families-dialog.component';
 import { InlineWaitInLineCardComponent } from '../pass-cards/inline-wait-in-line-card/inline-wait-in-line-card.component';
-
+import { HelpCenterComponent } from './shared-components/help-center/help-center.component';
+import { NuxHelpCenterComponent } from '../nux-components/nux-help-center/nux-help-center.component';
+import { CallDialogComponent } from './shared-components/call-dialog/call-dialog.component';
+import { TimeZoneService } from '../services/time-zone.service';
 const DEFAULT_SWIPER_CONFIG: SwiperConfigInterface = {
 	direction: 'horizontal',
 	slidesPerView: 'auto',
@@ -219,6 +222,9 @@ const DEFAULT_SWIPER_CONFIG: SwiperConfigInterface = {
 		OverviewContainerComponent,
 		SettingsComponent,
 		InviteFamiliesDialogComponent,
+		HelpCenterComponent,
+		NuxHelpCenterComponent,
+		CallDialogComponent,
 	],
 	exports: [
 		ReactiveFormsModule,
@@ -318,12 +324,16 @@ const DEFAULT_SWIPER_CONFIG: SwiperConfigInterface = {
 		OverviewContainerComponent,
 		SettingsComponent,
 		InviteFamiliesDialogComponent,
+		HelpCenterComponent,
+		NuxHelpCenterComponent,
+		CallDialogComponent,
 	],
 	providers: [
 		{
 			provide: SWIPER_CONFIG,
 			useValue: DEFAULT_SWIPER_CONFIG,
 		},
+		{ provide: 'TimeZoneService', useClass: TimeZoneService },
 		GettingStartedProgressService,
 	],
 })

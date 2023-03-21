@@ -87,14 +87,6 @@ export class NavComponent implements OnInit, AfterViewInit, OnDestroy {
 			requiredRoles: ['_profile_admin', 'access_user_config'],
 		},
 		{
-			title: 'My School',
-			id: 'mySchool',
-			route: 'myschool',
-			type: 'routerLink',
-			imgUrl: 'School',
-			requiredRoles: ['_profile_admin', 'manage_school'],
-		},
-		{
 			title: 'ID Cards',
 			id: 'idCards',
 			route: 'idcards',

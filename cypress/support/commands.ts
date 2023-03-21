@@ -25,30 +25,32 @@ const submitPassword = (password: string) => {
 };
 
 Cypress.Commands.add('login', (username: string, password: string) => {
-  cy.intercept({
-    method: 'POST',
-    url: 'https://smartpass.app/api/prod-us-central/o/token/**'
-  }).as('token');
+  cy.session([username, password], () => {
+    cy.intercept({
+      method: 'POST',
+      url: 'https://smartpass.app/api/prod-us-central/o/token/**'
+    }).as('token');
 
-  cy.intercept({
-    method: 'GET',
-    url: 'https://smartpass.app/api/prod-us-central/v1/**'
-  }).as('v1API');
+    cy.intercept({
+      method: 'GET',
+      url: 'https://smartpass.app/api/prod-us-central/v1/**'
+    }).as('v1API');
 
-  cy.intercept({
-    method: 'POST',
-    url: 'https://api-iam.intercom.io/messenger/web/ping'
-  }).as('intercom');
+    cy.intercept({
+      method: 'POST',
+      url: 'https://api-iam.intercom.io/messenger/web/ping'
+    }).as('intercom');
 
-  cy.visit('http://localhost:4200');
-  submitUsername(username);
-  cy.waitUntil(() => cy.get('div.input-password').should('have.css', 'opacity', '1'));
-  submitPassword(password);
-  cy.get('div.error').should('not.exist');
-  cy.wait('@token', {timeout: 20000});
-  cy.wait('@v1API', {timeout: 20000});
-  cy.wait('@intercom', {timeout: 20000});
-  cy.wait(2000);
+    cy.visit('/');
+    submitUsername(username);
+    cy.waitUntil(() => cy.get('div.input-password').should('have.css', 'opacity', '1'));
+    submitPassword(password);
+    cy.get('div.error').should('not.exist');
+    cy.wait('@token', {timeout: 20000});
+    cy.wait('@v1API', {timeout: 20000});
+    cy.wait('@intercom', {timeout: 20000});
+    cy.wait(2000);
+  })
 });
 
 Cypress.Commands.add('logoutStudent', () => {

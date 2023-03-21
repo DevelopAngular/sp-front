@@ -392,6 +392,18 @@ div {
     //text-align: center;
 }
 
+.consent-dialog-container-helpcenter {
+    z-index: 1009;
+ .mat-dialog-container {
+    @extend .editor-dialog;
+    overflow: visible;
+    padding: 0;
+    background-color: transparent;
+    //text-align: center;
+    z-index: 1009;
+}
+}
+
 .toasr .mat-dialog-container {
     padding: 0;
     border-radius: 9px;

@@ -41,6 +41,7 @@ import { EncounterDetectionService } from '../../services/EncounterDetectionServ
 import { EncounterDetection } from '../../models/EncounterDetection';
 import { EncounterDetectionDialogComponent } from './encounter-detection-dialog/encounter-detection-dialog.component';
 import { TotalAccounts } from '../../models/TotalAccounts';
+import { Location } from '@angular/common';
 
 declare const window: Window & typeof globalThis & { passClick: any; reportedPassClick: any };
 type OverflownTries = HttpErrorResponse & { overflown: boolean };
@@ -213,7 +214,8 @@ export class ExploreComponent implements OnInit, OnDestroy {
 		public xlsx: XlsxService,
 		private userService: UserService,
 		private componentService: ComponentsService,
-		private encounterDetectionService: EncounterDetectionService
+		private encounterDetectionService: EncounterDetectionService,
+		private location: Location
 	) {
 		window.passClick = (id) => {
 			this.passClick(id);
@@ -303,6 +305,7 @@ export class ExploreComponent implements OnInit, OnDestroy {
 				takeUntil(this.destroy$)
 			)
 			.subscribe((view: string) => {
+				this.setNewURL(view);
 				this.destroyPassClick.next();
 				this.allData = [];
 				if (view === 'pass_search') {
@@ -671,6 +674,28 @@ export class ExploreComponent implements OnInit, OnDestroy {
 
 		// count passes emits on a new search thata assumes any previous selection is cleared
 		this.passSearchState.countPasses$.subscribe((_) => this.clearTableSelection());
+	}
+
+	setNewURL(sub_rout: string) {
+		let end_point: string = '';
+		switch (sub_rout) {
+			case 'pass_search':
+				end_point = 'passes';
+				break;
+			case 'report_search':
+				end_point = 'report-submissions';
+				break;
+			case 'contact_trace':
+				end_point = 'contact-trace';
+				break;
+			case 'encounter_detection':
+				end_point = 'detected-encounters';
+				break;
+			default:
+				end_point = '';
+				break;
+		}
+		this.location.replaceState(`/admin/explore/${end_point}`);
 	}
 
 	createPasses(encounters) {

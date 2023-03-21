@@ -52,6 +52,13 @@
 					</app-round-input>
 				</div>
 
+				<ng-template #passLimitsOnlyCertainRoomsNuxTemplate>
+					<app-nux-universal
+						link="https://www.smartpass.app/passlimits-disablecertainrooms"
+						description="Disable certain rooms from counting toward the Pass Limit."
+						(gotItEvent)="dismissPassLimitsOnlyCertainRoomsNux()"></app-nux-universal>
+				</ng-template>
+
 				<!-- TODO: Come up with a better way to represent gradient/square buttons instead of separate components  -->
 				<div class="buttons" *ngIf="!isMiniButtons; else squareButtons">
 					<app-gradient-button
@@ -66,8 +73,8 @@
 
 					<app-gradient-button
 						nuxTooltip
-						[contentTemplate]="passLimitNuxTemplate"
-						[showToolTip$]="showPassLimitNux"
+						[contentTemplate]="passLimitsOnlyCertainRoomsNuxTemplate"
+						[showToolTip$]="showPassLimitsOnlyCertainRoomsNux"
 						[position]="nuxWrapperPosition"
 						gradient="#6651F1"
 						[style.margin-left]="'15px'"
@@ -81,10 +88,7 @@
 						[style.margin-left]="'15px'"
 						[gradient]="'#1F195E, #1F195E'"
 						[cursor]="'pointer'"
-						(buttonClick)="openEncounterPrevention()"
-						nuxTooltip
-						[contentTemplate]="tooltip"
-						[showToolTip$]="showNuxTooltip">
+						(buttonClick)="openEncounterPrevention()">
 						<div class="button-content">
 							<app-octagon [size]="28">
 								<img class="value" height="17" [src]="'./assets/Walking One (White).svg' | resolveAsset" />
@@ -94,18 +98,6 @@
 							</span>
 						</div>
 					</app-gradient-button>
-
-					<ng-template #passLimitNuxTemplate>
-						<app-nux-universal
-							link="https://www.smartpass.app/passlimits"
-							description="Limit the number of passes students can have per day"
-							(gotItEvent)="dismissPassLimitsNux()"></app-nux-universal
-						>-->
-					</ng-template>
-
-					<ng-template #tooltip>
-						<app-nux-encounter-prevention (close)="closeNuxToolTip()"></app-nux-encounter-prevention>
-					</ng-template>
 
 					<app-gradient-button
 						*ngIf="parentAccountAccess"
@@ -134,26 +126,23 @@
 							<img width="28" [src]="'./assets/Integrations (Navy).svg' | resolveAsset" />
 						</app-square-button>
 
-						<app-square-button (buttonClick)="openPassLimits()" [backgroundColor]="'#6651F1'">
+						<app-square-button
+							(buttonClick)="openPassLimits()"
+							[backgroundColor]="'#6651F1'"
+							nuxTooltip
+							[contentTemplate]="passLimitsOnlyCertainRoomsNuxTemplate"
+							[showToolTip$]="showPassLimitsOnlyCertainRoomsNux"
+							[position]="nuxWrapperPosition">
 							<img width="28" [src]="'./assets/Pass Limit (White).svg' | resolveAsset" />
 						</app-square-button>
 
-						<app-square-button
-							nuxTooltip
-							[contentTemplate]="tooltip"
-							[showToolTip$]="showNuxTooltip"
-							[backgroundColor]="'#1F195E'"
-							(buttonClick)="openEncounterPrevention()">
+						<app-square-button [backgroundColor]="'#1F195E'" (buttonClick)="openEncounterPrevention()">
 							<div class="button-content">
 								<app-octagon [size]="28">
 									<img class="value" height="17" [src]="'./assets/Walking One (White).svg' | resolveAsset" />
 								</app-octagon>
 							</div>
 						</app-square-button>
-
-						<ng-template #tooltip>
-							<app-nux-encounter-prevention (close)="closeNuxToolTip()"></app-nux-encounter-prevention>
-						</ng-template>
 
 						<app-square-button *ngIf="parentAccountAccess" (buttonClick)="inviteFamilies()" [backgroundColor]="'#72CC1B'">
 							<img width="20" [src]="'./assets/Invite Families (White).svg' | resolveAsset" />

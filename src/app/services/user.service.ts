@@ -104,8 +104,10 @@ import {
 	updateIntrosEncounter,
 	updateIntrosMain,
 	updateIntrosSearch,
+	updateIntrosHelpCenter,
 	updateIntrosStudentPassLimits,
 	updateIntrosWaitInLine,
+	updateIntrosPassLimitsOnlyCertainRooms,
 } from '../ngrx/intros/actions';
 import { getIntrosData, IntroData } from '../ngrx/intros/state';
 import { clearSchools, getSchoolsFailure } from '../ngrx/schools/actions';
@@ -600,6 +602,10 @@ export class UserService implements OnDestroy {
 		this.store.dispatch(updateIntrosSearch({ intros, device, version }));
 	}
 
+	updateIntrosHelpCenterRequest(intros, device, version) {
+		this.store.dispatch(updateIntrosHelpCenter({ intros, device, version }));
+	}
+
 	updateIntrosDisableRequest(intros, device, version) {
 		this.store.dispatch(updateIntrosDisableRoom({ intros, device, version }));
 	}
@@ -614,6 +620,10 @@ export class UserService implements OnDestroy {
 
 	updateIntrosWaitInLineRequest(intros, device, version) {
 		this.store.dispatch(updateIntrosWaitInLine({ intros, device, version }));
+	}
+
+	updateIntrosPassLimitsOnlyCertainRoomsRequest(intros, device, version) {
+		this.store.dispatch(updateIntrosPassLimitsOnlyCertainRooms({ intros, device, version }));
 	}
 
 	// TODO: Make all update functions into a single function
@@ -636,6 +646,10 @@ export class UserService implements OnDestroy {
 		return this.http.patch('v1/intros/search_reminder', { device, version });
 	}
 
+	updateIntrosHelpCenter(device, version) {
+		return this.http.patch('v1/intros/frontend_help_center', { device, version });
+	}
+
 	updateIntrosDisableRoom(device, version) {
 		return this.http.patch('v1/intros/disable_room_reminder', { device, version });
 	}
@@ -650,6 +664,10 @@ export class UserService implements OnDestroy {
 
 	updateIntrosWaitInLine(device, version) {
 		return this.http.patch(`v1/intros/wait_in_line`, { device, version });
+	}
+
+	updateIntrosPassLimitsOnlyCertainRooms(device, version) {
+		return this.http.patch(`v1/intros/admin_pass_limits_only_certain_rooms`, { device, version });
 	}
 
 	saveKioskModeLocation(locId): Observable<ServerAuth> {

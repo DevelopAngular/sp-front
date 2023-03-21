@@ -1,0 +1,33 @@
+<div class="wrapper plus" *ngIf="!isProUser; else proUser">
+	<div class="header-wrapper">
+		<img class="pro-icon" [src]="'./assets/Plus Plan (Yellow).svg' | resolveAsset" alt="" />
+		<p>Unlock with the Plus Plan</p>
+	</div>
+	<div class="description-wrapper">
+		<img class="check-icon" [src]="'./assets/Check (Yellow).svg' | resolveAsset" alt="" />
+		<p>Phone number for support</p>
+	</div>
+	<div class="description-wrapper">
+		<img class="check-icon" [src]="'./assets/Check (Yellow).svg' | resolveAsset" alt="" />
+		<p>Monthly Call with your Customer Success Manager</p>
+	</div>
+	<div class="button-wrapper">
+		<button id="contact-sales">Contact Sales</button>
+	</div>
+</div>
+
+<ng-template #proUser>
+	<div class="wrapper free">
+		<div class="list-wrapper">
+			<img class="check-icon" [src]="'./assets/Schedule Call (Navy).svg' | resolveAsset" alt="" />
+			<p class="title">Schedule Monthly Call with Customer Success Manager</p>
+		</div>
+		<p class="light schedule-call" id="schedule-call">Schedule Call -></p>
+		<div class="divider"></div>
+		<div class="list-wrapper">
+			<img class="check-icon" [src]="'./assets/Ringing Phone (Navy).svg' | resolveAsset" alt="" />
+			<p class="title">Need urgent help? <br />Call us at (610) 686-7778</p>
+		</div>
+		<p class="light">Available 9 AM - 4 PM EST</p>
+	</div>
+</ng-template>
