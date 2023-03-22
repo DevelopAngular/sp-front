@@ -547,6 +547,10 @@ export class UserService implements OnDestroy {
 		return this.getUserSchool().feature_flag_parent_accounts;
 	}
 
+	getFeatureFlagNewAbbreviation(): boolean {
+		return this.getUserSchool().feature_flag_new_abbreviation;
+	}
+
 	getCurrentUpdatedSchool$(): Observable<School> {
 		return this.http.currentUpdateSchool$;
 	}

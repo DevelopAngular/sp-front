@@ -40,16 +40,6 @@ export function getInnerPassContent(pass: PassLike, now?: boolean) {
 	return getFormattedPassDate(pass);
 }
 
-export function getInnerPassName(pass: PassLike) {
-	if (!pass.student) {
-		return '';
-	}
-	if (pass.student.first_name === '') {
-		return pass.student.display_name;
-	}
-	return pass.student.first_name.substr(0, 1) + '. ' + pass.student.last_name;
-}
-
 export function isBadgeVisible(pass: PassLike) {
 	return !(pass instanceof HallPass) && !('isRead' in pass);
 }

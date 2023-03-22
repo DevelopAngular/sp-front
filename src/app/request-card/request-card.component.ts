@@ -5,9 +5,7 @@ import { Util } from '../../Util';
 import { MAT_DIALOG_DATA, MatDialog, MatDialogRef } from '@angular/material/dialog';
 import { ConsentMenuComponent } from '../consent-menu/consent-menu.component';
 import { Navigation } from '../create-hallpass-forms/main-hallpass--form/main-hall-pass-form.component';
-import { getInnerPassName } from '../pass-tile/pass-display-util';
 import { DataService } from '../services/data-service';
-import { LoadingService } from '../services/loading.service';
 import { catchError, concatMap, filter, finalize, map, pluck, switchMap, takeUntil, tap } from 'rxjs/operators';
 import { CreateHallpassFormsComponent } from '../create-hallpass-forms/create-hallpass-forms.component';
 import { CreateFormService } from '../create-hallpass-forms/create-form.service';
@@ -96,7 +94,6 @@ export class RequestCardComponent implements OnInit, OnDestroy {
 		private requestService: RequestsService,
 		public dialog: MatDialog,
 		public dataService: DataService,
-		private loadingService: LoadingService,
 		private createFormService: CreateFormService,
 		public screenService: ScreenService,
 		private shortcutsService: KeyboardShortcutsService,
@@ -223,13 +220,13 @@ export class RequestCardComponent implements OnInit, OnDestroy {
 	}
 
 	get studentName() {
-		return getInnerPassName(this.request);
+		return this.request.student.abbreviatedName(!this.userService.getFeatureFlagNewAbbreviation());
 	}
 
 	get teacherName() {
 		return this.request.teachers
 			.map((t) => {
-				return t.isSameObject(this.user) ? 'Me' : t.first_name.substr(0, 1) + '. ' + t.last_name;
+				return t.isSameObject(this.user) ? 'Me' : t.abbreviatedName();
 			})
 			.join(', ');
 	}
