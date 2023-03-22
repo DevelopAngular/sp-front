@@ -102,7 +102,7 @@
 				</div>
 
 				<ng-template #notAssistant>
-					<div class="streaks" *ngIf="user.isStudent() && isStreaks && streaksCount > 2">
+					<div class="streaks" *ngIf="showStreakIcon()">
 						<div id="puff"></div>
 						<div class="wrapper" #streaksButton [ngClass]="{ active: isStreaksOpen }" (click)="openStreaks($event)">
 							<div class="title" notranslate>{{ streaksCount }}</div>

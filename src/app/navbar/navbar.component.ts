@@ -67,6 +67,8 @@ export interface RepresentedUser {
 	roles: string[];
 }
 
+const minStreakCount = 2;
+
 @Component({
 	selector: 'app-navbar',
 	templateUrl: './navbar.component.html',
@@ -277,6 +279,10 @@ export class NavbarComponent implements AfterViewInit, OnInit, OnDestroy {
 		return rightClass;
 	}
 
+  showStreakIcon(): boolean {
+    return this.user.isStudent() && this.isStreaks && this.streaksCount > minStreakCount
+  }
+
 	ngOnInit() {
 		this.isUpdateBar$ = this.updateService.needToUpdate$;
 		this.isEnabledProfilePictures$ = this.userService.isEnableProfilePictures$;
@@ -344,7 +350,7 @@ export class NavbarComponent implements AfterViewInit, OnInit, OnDestroy {
 				takeUntil(this.destroyer$),
 				switchMap(([eu, user]: [RepresentedUser, User]) => {
 					this.user = User.fromJSON(user);
-					if (this.isStreaks && this.user?.lost_streak_count != null) {
+					if (this.isStreaks && !!this.user?.lost_streak_count && this.user.lost_streak_count > minStreakCount ) {
 						setTimeout(() => {
 							this.openStreaks(this.streaksButton, true);
 						}, 2000);
