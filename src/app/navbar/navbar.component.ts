@@ -751,9 +751,10 @@ export class NavbarComponent implements AfterViewInit, OnInit, OnDestroy {
 
 		SDC.afterClosed().subscribe((status) => {
 			this.isStreaksOpen = false;
-			if (isLost) {
-				this.userService.updateUserRequest(this.user, { lost_streak_count: null });
-			}
 		});
+
+    if (isLost) {
+      this.userService.updateUserRequest(this.user, { lost_streak_count: null });
+    }
 	}
 }
