@@ -147,15 +147,10 @@ export class InvitationCardComponent implements OnInit, OnDestroy {
 			this.selectedOrigin = this.invitation.default_origin;
 		}
 
-		merge(this.requestService.watchInvitationCancel(), this.requestService.watchInvitationAccept())
-			.pipe(
-				takeUntil(this.destroy$),
-				map(({ action, data }) => Invitation.fromJSON(data))
-			)
+		merge(this.requestService.watchInvitationCancel(this.invitation.id), this.requestService.watchInvitationAccept(this.invitation.id))
+			.pipe(takeUntil(this.destroy$))
 			.subscribe((invitation) => {
-				if (invitation.id == this.invitation.id) {
-					this.dialogRef.close();
-				}
+				this.dialogRef.close();
 			});
 
 		this.userService.user$

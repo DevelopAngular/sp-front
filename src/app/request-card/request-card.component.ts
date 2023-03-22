@@ -163,36 +163,18 @@ export class RequestCardComponent implements OnInit, OnDestroy {
 			this.fromHistoryIndex = this.data['fromHistoryIndex'];
 		}
 
-		merge(
-			this.requestService.watchDenyRequest(),
-			this.requestService.watchUpdateRequest(),
-			this.requestService.watchCreateRequest().pipe(filter(() => this.isKioskMode))
-		)
-			.pipe(
-				takeUntil(this.destroy$),
-				map(({ action, data }) => {
-					if (isArray(data)) {
-						data = data[0];
-					}
-					return { request: Request.fromJSON(data), action };
-				})
-			)
-			.subscribe(({ request, action }) => {
-				if (this.request.id == request.id || action === 'pass_request.create') {
-					this.request = request;
-					this.performingAction = false;
-				}
+		// TODO: If a pass request is denied and resent, there is no good way to know if we should update the pass request.
+		merge(this.requestService.watchRequestDeny(this.request.id), this.requestService.watchRequestUpdate(this.request.id))
+			.pipe(takeUntil(this.destroy$))
+			.subscribe((request) => {
+				this.request = request;
+				this.performingAction = false;
 			});
 
-		merge(this.requestService.watchRequestCancel(), this.requestService.watchRequestAccept())
-			.pipe(
-				takeUntil(this.destroy$),
-				map(({ action, data }) => Request.fromJSON(data))
-			)
-			.subscribe((request) => {
-				if (request.id == this.request.id) {
-					this.dialogRef.close();
-				}
+		merge(this.requestService.watchRequestCancel(this.request.id), this.requestService.watchRequestAccept(this.request.id))
+			.pipe(takeUntil(this.destroy$))
+			.subscribe(() => {
+				this.dialogRef.close();
 			});
 
 		this.shortcutsService.onPressKeyEvent$.pipe(pluck('key'), takeUntil(this.destroy$)).subscribe((key) => {

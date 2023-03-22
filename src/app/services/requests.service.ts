@@ -216,31 +216,41 @@ export class RequestsService {
 		return this.http.post(`v1/pass_requests/${id}/cancel`);
 	}
 
-	watchDenyRequest(): Observable<PollingEvent> {
-		return this.pollingService.listen('pass_request.deny');
+	watchRequestDeny(id: string): Observable<Request> {
+		return this.filterRequestWithId(id, this.pollingService.listen('pass_request.deny'));
 	}
 
-	watchRequestAccept(): Observable<PollingEvent> {
-		return this.pollingService.listen('pass_request.accept');
+	watchRequestAccept(id): Observable<Request> {
+		return this.filterRequestWithId(id, this.pollingService.listen('pass_request.accept'));
 	}
 
-	watchRequestCancel(): Observable<PollingEvent> {
-		return this.pollingService.listen('pass_request.cancel');
+	watchRequestUpdate(id): Observable<Request> {
+		return this.filterRequestWithId(id, this.pollingService.listen('pass_request.update'));
 	}
 
-	watchInvitationCancel(): Observable<PollingEvent> {
-		return this.pollingService.listen('pass_invitation.cancel');
+	watchRequestCancel(id): Observable<Request> {
+		return this.filterRequestWithId(id, this.pollingService.listen('pass_request.cancel'));
 	}
 
-	watchInvitationAccept() {
-		return this.pollingService.listen('pass_invitation.accept');
+	watchInvitationCancel(id): Observable<Request> {
+		return this.filterInvitationWithId(id, this.pollingService.listen('pass_invitation.cancel'));
 	}
 
-	watchUpdateRequest() {
-		return this.pollingService.listen('pass_request.update');
+	watchInvitationAccept(id): Observable<Request> {
+		return this.filterInvitationWithId(id, this.pollingService.listen('pass_invitation.accept'));
 	}
 
-	watchCreateRequest() {
-		return this.pollingService.listen('pass_request.create');
+	filterRequestWithId(id: string, events: Observable<PollingEvent>): Observable<Request> {
+		return events.pipe(
+			map((e) => Request.fromJSON(e.data)),
+			filter((r) => r.id == id)
+		);
+	}
+
+	filterInvitationWithId(id: string, events: Observable<PollingEvent>): Observable<Request> {
+		return events.pipe(
+			map((e) => Request.fromJSON(e.data)),
+			filter((r) => r.id == id)
+		);
 	}
 }

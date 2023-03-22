@@ -393,7 +393,7 @@ export class PassesComponent implements OnInit, OnDestroy {
 				});
 			});
 
-		merge(this.passesService.watchPassStart(), this.passesService.watchEndPass())
+		merge(this.passesService.watchMessageAlert(), this.passesService.watchAllEndingPasses())
 			.pipe(
 				filter(() => !this.isStaff),
 				switchMap(({ action, data }) => {

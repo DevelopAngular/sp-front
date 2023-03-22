@@ -15,7 +15,7 @@ import {
 import { arrangedPinnable, getPinnables, postPinnables, removePinnable, updatePinnable } from '../ngrx/pinnables/actions';
 import { getPassStats } from '../ngrx/pass-stats/actions';
 import { getPassStatsResult } from '../ngrx/pass-stats/state/pass-stats-getters.state';
-import { bufferCount, filter, mergeMap, reduce } from 'rxjs/operators';
+import { bufferCount, filter, map, mergeMap, reduce } from 'rxjs/operators';
 import { constructUrl } from '../live-data/helpers';
 import {
 	changePassesCollectionAction,
@@ -36,7 +36,7 @@ import {
 	sortPasses,
 } from '../ngrx/passes';
 import { HallPass } from '../models/HallPass';
-import { PollingService } from './polling-service';
+import { PollingEvent, PollingService } from './polling-service';
 import { getPassFilter, updatePassFilter } from '../ngrx/pass-filters/actions';
 import { getFiltersData, getFiltersDataLoading } from '../ngrx/pass-filters/states';
 import { PassFilters } from '../models/PassFilters';
@@ -267,20 +267,34 @@ export class HallPassesService {
 		return this.http.post('v1/users/@me/test_push_message', new Date());
 	}
 
-	watchPassStart() {
+	watchMessageAlert() {
 		return this.pollingService.listen('message.alert');
 	}
 
-	watchEndPass() {
+	watchAllEndingPasses() {
 		return this.pollingService.listen('hall_pass.end');
 	}
 
-	watchCancelPass() {
-		return this.pollingService.listen('hall_pass.cancel');
+	// watchStartPass listens for hall pass start events for a specific hall pass with the given |id|.
+	watchStartPass(id: string) {
+		return this.filterHallPassEvent(id, this.pollingService.listen('hall_pass.start'));
 	}
 
-	watchHallPassStart() {
-		return this.pollingService.listen('hall_pass.start');
+	// watchEndPass listens for hall pass end events for a specific hall pass with the given |id|.
+	watchEndPass(id: string) {
+		return this.filterHallPassEvent(id, this.pollingService.listen('hall_pass.end'));
+	}
+
+	// watchCancelPass listens for hall pass start events for a specific hall pass with the given |id|.
+	watchCancelPass(id: string) {
+		return this.filterHallPassEvent(id, this.pollingService.listen('hall_pass.cancel'));
+	}
+
+	filterHallPassEvent(id: string, events: Observable<PollingEvent>): Observable<HallPass> {
+		return events.pipe(
+			map((e) => HallPass.fromJSON(e.data)),
+			filter((p) => p.id == id)
+		);
 	}
 
 	getFiltersRequest(model: string) {
