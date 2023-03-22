@@ -547,6 +547,10 @@ export class UserService implements OnDestroy {
 		return this.getUserSchool().feature_flag_parent_accounts;
 	}
 
+	getFeatureFlagNewAbbreviation(): boolean {
+		return this.getUserSchool().feature_flag_new_abbreviation;
+	}
+
 	getCurrentUpdatedSchool$(): Observable<School> {
 		return this.http.currentUpdateSchool$;
 	}
@@ -900,7 +904,7 @@ export class UserService implements OnDestroy {
 		return this.http.get<any>(constructUrl('v1/users', params));
 	}
 
-	getMoreUserListRequest(role) {
+	getMoreUserListRequest(role: string): Observable<User[]> {
 		this.store.dispatch(getMoreAccounts({ role }));
 		return this.lastAddedAccounts$[role];
 	}

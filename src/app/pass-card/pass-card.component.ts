@@ -139,12 +139,11 @@ export class PassCardComponent implements OnInit, OnDestroy {
 
 	getUserName(user: any) {
 		if (user instanceof User) {
-			return user.isSameObject(this.user) ? 'Me' : user.first_name.substr(0, 1) + '. ' + user.last_name;
+			return user.isSameObject(this.user) ? 'Me' : user.abbreviatedName();
 		} else {
 			return user.first_name.substr(0, 1) + '. ' + user.last_name;
 		}
 	}
-
 	get gradient() {
 		return 'radial-gradient(circle at 73% 71%, ' + this.pass.color_profile.gradient_color + ')';
 	}
