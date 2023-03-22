@@ -20,6 +20,7 @@ import { User } from '../models/User';
 import { HttpErrorResponse } from '@angular/common/http';
 import { HallPassErrors } from './hall-passes.service';
 import { FeatureFlagService, FLAGS } from './feature-flag.service';
+import { PollingEvent, PollingService } from './polling-service';
 
 export interface AcceptRequestBody {
 	duration?: string;
@@ -66,7 +67,8 @@ export class RequestsService {
 		private locationsService: LocationsService,
 		private passLimitService: PassLimitService,
 		private features: FeatureFlagService,
-		private dialog: MatDialog
+		private dialog: MatDialog,
+		private pollingService: PollingService
 	) {}
 
 	// Invitations
@@ -212,5 +214,33 @@ export class RequestsService {
 
 	cancelRequest(id) {
 		return this.http.post(`v1/pass_requests/${id}/cancel`);
+	}
+
+	watchDenyRequest(): Observable<PollingEvent> {
+		return this.pollingService.listen('pass_request.deny');
+	}
+
+	watchRequestAccept(): Observable<PollingEvent> {
+		return this.pollingService.listen('pass_request.accept');
+	}
+
+	watchRequestCancel(): Observable<PollingEvent> {
+		return this.pollingService.listen('pass_request.cancel');
+	}
+
+	watchInvitationCancel(): Observable<PollingEvent> {
+		return this.pollingService.listen('pass_invitation.cancel');
+	}
+
+	watchInvitationAccept() {
+		return this.pollingService.listen('pass_invitation.accept');
+	}
+
+	watchUpdateRequest() {
+		return this.pollingService.listen('pass_request.update');
+	}
+
+	watchCreateRequest() {
+		return this.pollingService.listen('pass_request.create');
 	}
 }

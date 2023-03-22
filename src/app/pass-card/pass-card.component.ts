@@ -116,6 +116,8 @@ export class PassCardComponent implements OnInit, OnDestroy {
 
 	scaleCardTrigger$: Observable<string>;
 
+	startPassTrigger$: Subject<any> = new Subject<any>();
+
 	destroy$: Subject<any> = new Subject<any>();
 
 	constructor(
@@ -228,6 +230,30 @@ export class PassCardComponent implements OnInit, OnDestroy {
 			this.selectedStudents = this.students;
 		}
 
+		this.hallPassService
+			.watchHallPassStart()
+			.pipe(
+				takeUntil(this.destroy$),
+				map(({ action, data }) => HallPass.fromJSON(data))
+			)
+			.subscribe((pass) => {
+				this.pass = pass;
+				this.isActive = true;
+				this.forFuture = false;
+				this.startPassTrigger$.next();
+			});
+
+		merge(this.hallPassService.watchEndPass(), this.hallPassService.watchCancelPass())
+			.pipe(
+				takeUntil(this.destroy$),
+				map(({ action, data }) => HallPass.fromJSON(data))
+			)
+			.subscribe((hallPass) => {
+				if (hallPass.id == this.pass.id) {
+					this.dialogRef.close();
+				}
+			});
+
 		if (this.pass?.schedule_config_id) {
 			this.recurringConfigService.getRecurringScheduledConfig(this.pass.schedule_config_id).subscribe({
 				next: (c) => (this.recurringConfig = c),
@@ -244,26 +270,27 @@ export class PassCardComponent implements OnInit, OnDestroy {
 				this.buildPages();
 			});
 
-		if (!!this.pass && this.isActive) {
-			merge(of(0), interval(1000))
-				.pipe(
-					tap((x) => {
-						const end: Date = this.pass.expiration_time;
-						const now: Date = this.timeService.nowDate();
-						const diff: number = (end.getTime() - now.getTime()) / 1000;
-						const mins: number = Math.floor(Math.abs(Math.floor(diff) / 60));
-						const secs: number = Math.abs(Math.floor(diff) % 60);
-						this.timeLeft = mins + ':' + (secs < 10 ? '0' + secs : secs);
-						this.valid = end > now;
+		// if (!!this.pass && this.isActive) {
+		merge(of(0), interval(1000), this.startPassTrigger$.pipe(switchMap(() => interval(1000))))
+			.pipe(
+				filter(() => !!this.pass && this.isActive),
+				tap((x) => {
+					const end: Date = this.pass.expiration_time;
+					const now: Date = this.timeService.nowDate();
+					const diff: number = (end.getTime() - now.getTime()) / 1000;
+					const mins: number = Math.floor(Math.abs(Math.floor(diff) / 60));
+					const secs: number = Math.abs(Math.floor(diff) % 60);
+					this.timeLeft = mins + ':' + (secs < 10 ? '0' + secs : secs);
+					this.valid = end > now;
 
-						const start: Date = this.pass.start_time;
-						const dur: number = Math.floor((end.getTime() - start.getTime()) / 1000);
-						this.overlayWidth = this.buttonWidth * (diff / dur) + 'px';
-					}),
-					takeUntil(this.destroy$)
-				)
-				.subscribe();
-		}
+					const start: Date = this.pass.start_time;
+					const dur: number = Math.floor((end.getTime() - start.getTime()) / 1000);
+					this.overlayWidth = this.buttonWidth * (diff / dur) + 'px';
+				}),
+				takeUntil(this.destroy$)
+			)
+			.subscribe();
+		// }
 		this.shortcutsService.onPressKeyEvent$
 			.pipe(
 				filter(() => this.forStaff),

@@ -1,4 +1,4 @@
-import { Component, ElementRef, Input, OnDestroy, OnInit, Renderer2 } from '@angular/core';
+import { ChangeDetectorRef, Component, ElementRef, Input, OnDestroy, OnInit, Renderer2 } from '@angular/core';
 import { Util } from '../../Util';
 import { Request } from '../models/Request';
 import { ConsentMenuComponent } from '../consent-menu/consent-menu.component';
@@ -6,7 +6,7 @@ import { MatDialog } from '@angular/material/dialog';
 import { DataService } from '../services/data-service';
 import { RequestsService } from '../services/requests.service';
 import { UNANIMATED_CONTAINER } from '../consent-menu-overlay';
-import { concatMap, takeUntil, tap } from 'rxjs/operators';
+import { concatMap, map, takeUntil, tap } from 'rxjs/operators';
 import { uniqBy } from 'lodash';
 import { DeviceDetection } from '../device-detection.helper';
 import { BehaviorSubject, interval, Subject } from 'rxjs';
@@ -48,6 +48,8 @@ export class InlineRequestCardComponent implements OnInit, OnDestroy {
 	activeTeacherPin: boolean;
 	activeRoomCodePin: boolean;
 
+	destroy$: Subject<any> = new Subject<any>();
+
 	constructor(
 		private requestService: RequestsService,
 		public dialog: MatDialog,
@@ -57,7 +59,8 @@ export class InlineRequestCardComponent implements OnInit, OnDestroy {
 		private renderer: Renderer2,
 		private passesService: HallPassesService,
 		private storage: StorageService,
-		private locationsService: LocationsService
+		private locationsService: LocationsService,
+		private cdr: ChangeDetectorRef
 	) {}
 
 	get hasDivider() {
@@ -106,9 +109,22 @@ export class InlineRequestCardComponent implements OnInit, OnDestroy {
 		this.locationsService.pass_limits_entities$.subscribe((res) => {
 			this.passLimits = res;
 		});
+
+		this.requestService
+			.watchDenyRequest()
+			.pipe(
+				takeUntil(this.destroy$),
+				map(({ action, data }) => Request.fromJSON(data))
+			)
+			.subscribe((request) => {
+				this.request = request;
+				this.cdr.detectChanges();
+			});
 	}
 
 	ngOnDestroy() {
+		this.destroy$.next();
+		this.destroy$.complete();
 		this.closeDialog();
 	}
 

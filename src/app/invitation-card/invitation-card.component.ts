@@ -13,7 +13,7 @@ import { catchError, filter, map, switchMap, takeUntil, tap } from 'rxjs/operato
 import { CreateFormService } from '../create-hallpass-forms/create-form.service';
 import { CreateHallpassFormsComponent } from '../create-hallpass-forms/create-hallpass-forms.component';
 import { RequestsService } from '../services/requests.service';
-import { BehaviorSubject, Observable, of, Subject } from 'rxjs';
+import { BehaviorSubject, merge, Observable, of, Subject } from 'rxjs';
 import { ScreenService } from '../services/screen.service';
 import { UNANIMATED_CONTAINER } from '../consent-menu-overlay';
 import { School } from '../models/School';
@@ -153,6 +153,18 @@ export class InvitationCardComponent implements OnInit, OnDestroy {
 		if (this.invitation) {
 			this.selectedOrigin = this.invitation.default_origin;
 		}
+
+		merge(this.requestService.watchInvitationCancel(), this.requestService.watchInvitationAccept())
+			.pipe(
+				takeUntil(this.destroy$),
+				map(({ action, data }) => Invitation.fromJSON(data))
+			)
+			.subscribe((invitation) => {
+				if (invitation.id == this.invitation.id) {
+					this.dialogRef.close();
+				}
+			});
+
 		this.userService.user$
 			.pipe(
 				map((user) => User.fromJSON(user)),

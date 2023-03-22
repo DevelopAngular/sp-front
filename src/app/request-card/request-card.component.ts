@@ -13,10 +13,10 @@ import { CreateHallpassFormsComponent } from '../create-hallpass-forms/create-ha
 import { CreateFormService } from '../create-hallpass-forms/create-form.service';
 import { RequestsService } from '../services/requests.service';
 import { NextStep, scalePassCards } from '../animations';
-import { BehaviorSubject, interval, Observable, of, Subject } from 'rxjs';
+import { BehaviorSubject, interval, merge, Observable, of, Subject } from 'rxjs';
 
 import * as moment from 'moment';
-import { isNull, uniq, uniqBy } from 'lodash';
+import { isArray, isNull, uniq, uniqBy } from 'lodash';
 import { ScreenService } from '../services/screen.service';
 import { UNANIMATED_CONTAINER } from '../consent-menu-overlay';
 import { DeviceDetection } from '../device-detection.helper';
@@ -32,6 +32,7 @@ import { ConfirmDeleteKioskModeComponent } from './confirm-delete-kiosk-mode/con
 import { ToastService } from '../services/toast.service';
 import { HttpErrorResponse } from '@angular/common/http';
 import { HallPassesService } from '../services/hall-passes.service';
+import { KioskModeService } from '../services/kiosk-mode.service';
 
 @Component({
 	selector: 'app-request-card',
@@ -107,7 +108,8 @@ export class RequestCardComponent implements OnInit, OnDestroy {
 		private locationsService: LocationsService,
 		private createPassFormRef: MatDialogRef<CreateHallpassFormsComponent>,
 		private toast: ToastService,
-		private hallpassService: HallPassesService
+		private hallpassService: HallPassesService,
+		private kioskService: KioskModeService
 	) {}
 
 	get invalidDate() {
@@ -144,6 +146,10 @@ export class RequestCardComponent implements OnInit, OnDestroy {
 		return this.forStaff || this.invalidDate || (!this.forStaff && !this.forInput && !this.invalidDate) ? '' : 'icon-button';
 	}
 
+	get isKioskMode() {
+		return this.kioskService.isKisokMode();
+	}
+
 	ngOnInit() {
 		this.scaleCardTrigger$ = this.domCheckerService.scalePassCard;
 		this.frameMotion$ = this.createFormService.getFrameMotionDirection();
@@ -159,6 +165,38 @@ export class RequestCardComponent implements OnInit, OnDestroy {
 			this.fromHistory = this.data['fromHistory'];
 			this.fromHistoryIndex = this.data['fromHistoryIndex'];
 		}
+
+		merge(
+			this.requestService.watchDenyRequest(),
+			this.requestService.watchUpdateRequest(),
+			this.requestService.watchCreateRequest().pipe(filter(() => this.isKioskMode))
+		)
+			.pipe(
+				takeUntil(this.destroy$),
+				map(({ action, data }) => {
+					if (isArray(data)) {
+						data = data[0];
+					}
+					return { request: Request.fromJSON(data), action };
+				})
+			)
+			.subscribe(({ request, action }) => {
+				if (this.request.id == request.id || action === 'pass_request.create') {
+					this.request = request;
+					this.performingAction = false;
+				}
+			});
+
+		merge(this.requestService.watchRequestCancel(), this.requestService.watchRequestAccept())
+			.pipe(
+				takeUntil(this.destroy$),
+				map(({ action, data }) => Request.fromJSON(data))
+			)
+			.subscribe((request) => {
+				if (request.id == this.request.id) {
+					this.dialogRef.close();
+				}
+			});
 
 		this.shortcutsService.onPressKeyEvent$.pipe(pluck('key'), takeUntil(this.destroy$)).subscribe((key) => {
 			if (key[0] === 'a') {
@@ -298,7 +336,10 @@ export class RequestCardComponent implements OnInit, OnDestroy {
 	}
 
 	formatDateTime(date: Date, timeOnly?: boolean) {
-		return Util.formatDateTime(date, timeOnly);
+		if (date instanceof Date) {
+			return Util.formatDateTime(date, timeOnly);
+		}
+		return '';
 	}
 
 	newRequest() {
@@ -727,5 +768,24 @@ export class RequestCardComponent implements OnInit, OnDestroy {
 			return;
 		}
 		this.dialogRef.close();
+	}
+
+	resendRequest() {
+		const body: any = {
+			origin: this.request.origin.id,
+			destination: this.request.destination.id,
+			attachment_message: this.request.attachment_message,
+			travel_type: this.request.travel_type,
+			teachers: this.request.teachers.map((u) => parseInt(u.id, 10)),
+			duration: this.request.duration,
+			student_id: this.formState.data.kioskModeStudent.id,
+		};
+
+		this.requestService.createRequest(body).subscribe({
+			next: () => {
+				console.log('pass request resent');
+			},
+			error: console.log,
+		});
 	}
 }
