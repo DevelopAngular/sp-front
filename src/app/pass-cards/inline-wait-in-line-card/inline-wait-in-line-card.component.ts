@@ -1,10 +1,10 @@
 import { Component, ElementRef, Inject, Input, OnChanges, OnDestroy, OnInit, Optional, SimpleChange, SimpleChanges, ViewChild } from '@angular/core';
 import { BehaviorSubject, from, Observable, of, Subject, Subscription, throwError, timer } from 'rxjs';
-import { HallPassErrors, HallPassesService } from '../../services/hall-passes.service';
+import { HallPassesService } from '../../services/hall-passes.service';
 import { MAT_DIALOG_DATA, MatDialog, MatDialogRef } from '@angular/material/dialog';
 import { DeviceDetection } from '../../device-detection.helper';
 import { WaitingInLinePass } from '../../models/WaitInLine';
-import { catchError, concatMap, filter, finalize, map, takeUntil, tap } from 'rxjs/operators';
+import { concatMap, filter, finalize, map, takeUntil, tap } from 'rxjs/operators';
 import { ConsentMenuComponent } from '../../consent-menu/consent-menu.component';
 import { KioskModeService } from '../../services/kiosk-mode.service';
 import { LocationsService } from '../../services/locations.service';
@@ -329,17 +329,16 @@ export class InlineWaitInLineCardComponent implements OnInit, OnChanges, OnDestr
 	async startPass() {
 		this.requestLoading = true;
 		const passRequest$ = this.wilService.startWilPassNow(this.wil.id).pipe(
-			takeUntil(this.destroy$),
-			catchError((error) => {
-				if (error === HallPassErrors.Encounter) {
+			tap((response) => {
+				if (response?.conflict_student_ids) {
 					this.hallPassService.showEncounterPreventionToast({
 						isStaff: this.forStaff,
 						exclusionPass: this.wil,
 					});
 				}
-
-				return throwError(error);
-			})
+				throw new Error('Encounter Prevention');
+			}),
+			takeUntil(this.destroy$)
 		);
 		let overallPassRequest$: Observable<any>;
 

@@ -14,7 +14,7 @@ import { NextStep, scalePassCards } from '../animations';
 import { BehaviorSubject, interval, merge, Observable, of, Subject } from 'rxjs';
 
 import * as moment from 'moment';
-import { isArray, isNull, uniq, uniqBy } from 'lodash';
+import { isNull, uniq, uniqBy } from 'lodash';
 import { ScreenService } from '../services/screen.service';
 import { UNANIMATED_CONTAINER } from '../consent-menu-overlay';
 import { DeviceDetection } from '../device-detection.helper';
