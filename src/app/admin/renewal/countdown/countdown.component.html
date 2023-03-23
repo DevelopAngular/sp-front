@@ -1,5 +1,5 @@
 <div class="timer">
-    <span *ngIf="daysTo > 0">{{daysTo}} days, </span>
-    <span *ngIf="hoursTo > 0">{{hoursTo}} hours, </span>
-    <span *ngIf="minutesTo > 0">{{minutesTo}} minutes</span>
+    <span *ngIf="daysTo > 0">{{daysTo}} day<span *ngIf="daysTo > 1">s</span>, </span>
+    <span *ngIf="hoursTo > 0">{{hoursTo}} hour<span *ngIf="hoursTo > 1">s</span>, </span>
+    <span *ngIf="minutesTo > 0">{{minutesTo}} minute<span *ngIf="minutesTo > 1">s</span></span>
 </div>
