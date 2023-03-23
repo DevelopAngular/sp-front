@@ -79,6 +79,7 @@ import { EncounterDetectionEffects } from './ngrx/encounter-detection/effects';
 import { SharedModule } from './shared/shared.module';
 import { ParentsEffects } from './ngrx/accounts/nested-states/parents/effects';
 import { IsParentGuard } from './guards/is-parent.guard';
+import { StreaksDialogComponent } from './streaks-dialog/streaks-dialog.component';
 // uncomment when app uses formatDate and so on
 //import {LOCALE_ID} from '@angular/core';
 //import {HttpService} from './services/http-service';
@@ -161,7 +162,14 @@ const appRoutes: Routes = [
 ];
 
 @NgModule({
-	declarations: [AppComponent, ScrollHolderDirective, SupportButtonComponent, CustomToastComponent, IdcardOverlayContainerComponent],
+	declarations: [
+		AppComponent,
+		ScrollHolderDirective,
+		SupportButtonComponent,
+		CustomToastComponent,
+		IdcardOverlayContainerComponent,
+		StreaksDialogComponent,
+	],
 	imports: [
 		BrowserModule,
 		BrowserAnimationsModule,
