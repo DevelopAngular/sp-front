@@ -230,11 +230,8 @@ export class PassCardComponent implements OnInit, OnDestroy {
 		}
 
 		this.hallPassService
-			.watchHallPassStart()
-			.pipe(
-				takeUntil(this.destroy$),
-				map(({ action, data }) => HallPass.fromJSON(data))
-			)
+			.watchStartPass(this.pass.id)
+			.pipe(takeUntil(this.destroy$))
 			.subscribe((pass) => {
 				this.pass = pass;
 				this.isActive = true;
@@ -242,15 +239,10 @@ export class PassCardComponent implements OnInit, OnDestroy {
 				this.startPassTrigger$.next();
 			});
 
-		merge(this.hallPassService.watchEndPass(), this.hallPassService.watchCancelPass())
-			.pipe(
-				takeUntil(this.destroy$),
-				map(({ action, data }) => HallPass.fromJSON(data))
-			)
+		merge(this.hallPassService.watchEndPass(this.pass.id), this.hallPassService.watchCancelPass(this.pass.id))
+			.pipe(takeUntil(this.destroy$))
 			.subscribe((hallPass) => {
-				if (hallPass.id == this.pass.id) {
-					this.dialogRef.close();
-				}
+				this.dialogRef.close();
 			});
 
 		if (this.pass?.schedule_config_id) {

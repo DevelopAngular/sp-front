@@ -21,6 +21,7 @@ import { HttpErrorResponse } from '@angular/common/http';
 import { HallPassErrors } from './hall-passes.service';
 import { FeatureFlagService, FLAGS } from './feature-flag.service';
 import { PollingEvent, PollingService } from './polling-service';
+import { Invitation } from '../models/Invitation';
 
 export interface AcceptRequestBody {
 	duration?: string;
@@ -216,31 +217,41 @@ export class RequestsService {
 		return this.http.post(`v1/pass_requests/${id}/cancel`);
 	}
 
-	watchDenyRequest(): Observable<PollingEvent> {
-		return this.pollingService.listen('pass_request.deny');
+	watchRequestDeny(id: string): Observable<Request> {
+		return this.filterRequestWithId(id, this.pollingService.listen('pass_request.deny'));
 	}
 
-	watchRequestAccept(): Observable<PollingEvent> {
-		return this.pollingService.listen('pass_request.accept');
+	watchRequestAccept(id): Observable<Request> {
+		return this.filterRequestWithId(id, this.pollingService.listen('pass_request.accept'));
 	}
 
-	watchRequestCancel(): Observable<PollingEvent> {
-		return this.pollingService.listen('pass_request.cancel');
+	watchRequestUpdate(id): Observable<Request> {
+		return this.filterRequestWithId(id, this.pollingService.listen('pass_request.update'));
 	}
 
-	watchInvitationCancel(): Observable<PollingEvent> {
-		return this.pollingService.listen('pass_invitation.cancel');
+	watchRequestCancel(id): Observable<Request> {
+		return this.filterRequestWithId(id, this.pollingService.listen('pass_request.cancel'));
 	}
 
-	watchInvitationAccept() {
-		return this.pollingService.listen('pass_invitation.accept');
+	watchInvitationCancel(id): Observable<Invitation> {
+		return this.filterInvitationWithId(id, this.pollingService.listen('pass_invitation.cancel'));
 	}
 
-	watchUpdateRequest() {
-		return this.pollingService.listen('pass_request.update');
+	watchInvitationAccept(id): Observable<Invitation> {
+		return this.filterInvitationWithId(id, this.pollingService.listen('pass_invitation.accept'));
 	}
 
-	watchCreateRequest() {
-		return this.pollingService.listen('pass_request.create');
+	filterRequestWithId(id: string, events: Observable<PollingEvent>): Observable<Request> {
+		return events.pipe(
+			map((e) => Request.fromJSON(e.data)),
+			filter((r) => r.id == id)
+		);
+	}
+
+	filterInvitationWithId(id: string, events: Observable<PollingEvent>): Observable<Invitation> {
+		return events.pipe(
+			map((e) => Invitation.fromJSON(e.data)),
+			filter((i) => i.id == id)
+		);
 	}
 }

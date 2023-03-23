@@ -111,11 +111,8 @@ export class InlineRequestCardComponent implements OnInit, OnDestroy {
 		});
 
 		this.requestService
-			.watchDenyRequest()
-			.pipe(
-				takeUntil(this.destroy$),
-				map(({ action, data }) => Request.fromJSON(data))
-			)
+			.watchRequestDeny(this.request.id)
+			.pipe(takeUntil(this.destroy$))
 			.subscribe((request) => {
 				this.request = request;
 				this.cdr.detectChanges();
