@@ -279,9 +279,9 @@ export class NavbarComponent implements AfterViewInit, OnInit, OnDestroy {
 		return rightClass;
 	}
 
-  showStreakIcon(): boolean {
-    return this.user.isStudent() && this.isStreaks && this.streaksCount > minStreakCount
-  }
+	showStreakIcon(): boolean {
+		return this.user.isStudent() && this.isStreaks && this.streaksCount > minStreakCount;
+	}
 
 	ngOnInit() {
 		this.isUpdateBar$ = this.updateService.needToUpdate$;
@@ -350,7 +350,7 @@ export class NavbarComponent implements AfterViewInit, OnInit, OnDestroy {
 				takeUntil(this.destroyer$),
 				switchMap(([eu, user]: [RepresentedUser, User]) => {
 					this.user = User.fromJSON(user);
-					if (this.isStreaks && !!this.user?.lost_streak_count && this.user.lost_streak_count > minStreakCount ) {
+					if (this.isStreaks && !!this.user?.lost_streak_count && this.user.lost_streak_count > minStreakCount) {
 						setTimeout(() => {
 							this.openStreaks(this.streaksButton, true);
 						}, 2000);
@@ -753,8 +753,8 @@ export class NavbarComponent implements AfterViewInit, OnInit, OnDestroy {
 			this.isStreaksOpen = false;
 		});
 
-    if (isLost) {
-      this.userService.updateUserRequest(this.user, { lost_streak_count: null });
-    }
+		if (isLost) {
+			this.userService.updateUserRequest(this.user, { lost_streak_count: null });
+		}
 	}
 }
