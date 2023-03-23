@@ -15,7 +15,7 @@
 	display: flex;
     flex-direction: column;
 	flex-wrap: nowrap;
-	padding: 25px;
+	padding: 40px;
 	box-sizing: border-box;
     // overflow-y: auto;
 }
@@ -45,13 +45,21 @@
     gap: 20px;
 }
 
+.arrow-icon {
+    transition: transform ease 0.5s;
+    height: 13px;
+}
+
+$arrowAnimation: translate(4px, 0);
+
+
 .reminder-box {
     display: flex;
     flex-direction: row;
     align-items: center;
     padding: 28px;
-    gap: 20px;
-    min-width: 657px;
+    gap: 72px;
+    min-width: 800px;
     max-width: 1190px;
     height: 316px;
     background: #E5F7F1;
@@ -59,23 +67,27 @@
     border-radius: 12px;
     color: #101418;
 
-    h5 {
-        margin-bottom: 16px;
+    > img {
+        height: 296px;
     }
+
 
     > div:first-child {
         display: flex;
         flex-direction: column;
     }
-}
 
+    h5 {
+        margin-bottom: 16px;
+    }
 
-.reminder-box span {
-    font-family: 'Inter';
-    font-style: normal;
-    font-weight: 400;
-    font-size: 16px;
-    line-height: 19px;
+    span {
+        font-family: 'Inter';
+        font-style: normal;
+        font-weight: 400;
+        font-size: 16px;
+        line-height: 19px;
+    }
 }
 
 .reminder-btn {
@@ -139,7 +151,7 @@
     display: flex; 
     flex-wrap: wrap;
     gap: 12px;
-    :last-child {
+    > :last-child {
         min-width: 370px;
     }
 }
@@ -154,8 +166,9 @@
 
     > div:first-child {
         display: flex;
+        align-items: center;
         gap: 8px;
-        img {
+        >img:first-child {
             height: 20px;
             width: 20px;
             border-radius: 5px;
@@ -174,6 +187,7 @@
             color: #101418;
         }
     }
+
     p {
         font-family: 'Inter';
         font-style: normal;
@@ -363,10 +377,10 @@
         margin: 0;
     }
     li {
-        background-image: url('https://www.w3docs.com/uploads/media/default/0001/02/1ac48d17fa5906a111bba2c4ca6f1363acb1893a.png');
+        background-image: url('/../assets/Checkmark (Silver).svg');
         background-repeat: no-repeat;
         background-position: 1px;
-        padding-left: 44px;      
+        padding-left: 28px;      
     }
     li:not(:last-child) {
         margin-bottom: 11px;
@@ -377,27 +391,53 @@
     }
 
     > :last-child {
+        display: flex;
+        align-items: center;
         color: white;
         font-weight: 700;
+        .arrow-icon {
+            margin-left: 12px;
+        }
+    }
+
+    > :last-child:hover {
+        .arrow-icon {
+            transform: $arrowAnimation;
+        }
     }
 }
 
 .feedback-footer {
+    margin-left: 28px;
     font-family: 'Inter';
     font-style: normal;
     font-weight: 500;
     font-size: 16px;
     line-height: 19px;
+    display: flex;
+    align-items: center;    
 
     /* gray/900 */
     color: #101418;
 
     a {
+        display: flex;
+        align-items: center;    
         text-decoration: none;
         font-weight: 700;
         margin-left: 12px;
 
         /* gray/900 */
         color: #101418;
+    }
+
+    a:hover {
+        .arrow-icon {
+            transform: $arrowAnimation;
+        }
+    }
+
+    img {
+        margin-left: 13px;
     }
 }
