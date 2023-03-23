@@ -21,6 +21,7 @@ import { HttpErrorResponse } from '@angular/common/http';
 import { HallPassErrors } from './hall-passes.service';
 import { FeatureFlagService, FLAGS } from './feature-flag.service';
 import { PollingEvent, PollingService } from './polling-service';
+import { Invitation } from '../models/Invitation';
 
 export interface AcceptRequestBody {
 	duration?: string;
@@ -232,11 +233,11 @@ export class RequestsService {
 		return this.filterRequestWithId(id, this.pollingService.listen('pass_request.cancel'));
 	}
 
-	watchInvitationCancel(id): Observable<Request> {
+	watchInvitationCancel(id): Observable<Invitation> {
 		return this.filterInvitationWithId(id, this.pollingService.listen('pass_invitation.cancel'));
 	}
 
-	watchInvitationAccept(id): Observable<Request> {
+	watchInvitationAccept(id): Observable<Invitation> {
 		return this.filterInvitationWithId(id, this.pollingService.listen('pass_invitation.accept'));
 	}
 
@@ -247,10 +248,10 @@ export class RequestsService {
 		);
 	}
 
-	filterInvitationWithId(id: string, events: Observable<PollingEvent>): Observable<Request> {
+	filterInvitationWithId(id: string, events: Observable<PollingEvent>): Observable<Invitation> {
 		return events.pipe(
-			map((e) => Request.fromJSON(e.data)),
-			filter((r) => r.id == id)
+			map((e) => Invitation.fromJSON(e.data)),
+			filter((i) => i.id == id)
 		);
 	}
 }
