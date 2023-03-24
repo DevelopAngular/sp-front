@@ -51,4 +51,7 @@
 
 .message-btn:hover {
     color: #101418;
+    img {
+        filter: brightness(200) invert(1);  
+    }
 }

@@ -23,28 +23,28 @@
                         <h5>Summer Action Items</h5>
                         <div class="action-items-container">
                             <app-action-item 
-                                *ngIf="status.integration_type === 'none'"
+                                *ngIf="status?.integration_type === 'none'"
                                 [link]="'/switch-to-an-integration'"
                                 [img]="'./assets/Integration (Gray).svg'"
                                 [title]="'Switch to an Integration'"
                                 [desc]="'Vorem ipsum dolor sit amet, consectetur adipiscing elit. Nunc vulputate libero et velit interdum, ac aliquet odio mattis.'"
                             ></app-action-item>
                             <app-action-item 
-                                *ngIf="status.integration_type === 'google'"
+                                *ngIf="status?.integration_type === 'google'"
                                 [link]="'/g-suite-rollover'"
                                 [img]="'./assets/Google (Color).svg'"
                                 [title]="'G Suite'"
                                 [desc]="'Vorem ipsum dolor sit amet, consectetur adipiscing elit. Nunc vulputate libero et velit interdum, ac aliquet odio mattis.'"
                             ></app-action-item>
                             <app-action-item 
-                                *ngIf="status.integration_type === 'classlink'"
+                                *ngIf="status?.integration_type === 'classlink'"
                                 [link]="'/classlink-rollover'"
                                 [img]="'./assets/ClassLink Icon.svg'"
                                 [title]="'ClassLink'"
                                 [desc]="'Vorem ipsum dolor sit amet, consectetur adipiscing elit. Nunc vulputate libero et velit interdum, ac aliquet odio mattis.'"
                             ></app-action-item>
                             <app-action-item 
-                                *ngIf="status.integration_type === 'clever'"
+                                *ngIf="status?.integration_type === 'clever'"
                                 [link]="'/clever-rollover'"
                                 [img]="'./assets/Clever.svg'"
                                 [title]="'Clever'"
@@ -74,17 +74,20 @@
                     <div class="content-box">
                         <h5>Your Team</h5>
                         <div class="team-container">
-                            <app-team-member 
+                            <app-team-member
+                                *ngIf="status?.customer_success_advocate_hubspot_id"
                                 [id]="status?.customer_success_advocate_hubspot_id"
                                 [job]="'Customer Success Advocate'"
                                 [showPic]="status?.using_profile_pictures"
                             ></app-team-member>
                             <app-team-member 
+                                *ngIf="status?.billing_coordinator_hubspot_id"
                                 [id]="status?.billing_coordinator_hubspot_id"
                                 [job]="'Billing Coordinator'"
                                 [showPic]="status?.using_profile_pictures"
                             ></app-team-member>
                             <app-team-member 
+                                *ngIf="status?.account_executive_hubspot_id"
                                 [id]="status?.account_executive_hubspot_id"
                                 [job]="'Account Executive'"
                                 [showPic]="status?.using_profile_pictures"

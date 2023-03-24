@@ -1,10 +1,10 @@
 <div class="team-member">
-    <img src="{{ showPic ? 'https://www.history.com/.image/ar_1:1%2Cc_fill%2Ccs_srgb%2Cfl_progressive%2Cq_auto:good%2Cw_1200/MTkxMTc1NzA2MzA1MTc3MzI0/portrait-of-john-smith.jpg' : './assets/Username (Blue-Gray).svg'}}" />
+    <img src="{{ showPic ? picUrl : './assets/Username (Blue-Gray).svg'}}" />
     <div>
-        <span>{{ id }}</span>
+        <span>{{ name }}</span>
         <span>{{ job }}</span>
     </div>
-    <a href="mailto: {{id}}@example.com" class="message-btn">
+    <a href="mailto: {{ email }}" class="message-btn">
         <img src="./assets/Chat Icon (Dark Gray).svg">
         <span>Send a message</span>
     </a>
