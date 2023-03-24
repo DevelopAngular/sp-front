@@ -186,47 +186,6 @@ $arrowAnimation: translate(4px, 0);
     gap: 12px;
 }
 
-.action-item {
-    display: flex;
-    flex-direction: column;
-    padding: 16px;
-    background: #F5F6F8;
-    border-radius: 8px;
-    width: 362px;
-
-    > a:first-child {
-        display: flex;
-        align-items: center;
-        gap: 8px;
-        text-decoration: none;
-        >img:first-child {
-            height: 20px;
-            width: 20px;
-            border-radius: 5px;
-        }
-
-        span {
-            font-weight: 500;
-            font-size: 16px;
-            line-height: 19px;
-
-            align-self: center;
-
-            /* gray/900 */
-            color: #101418;
-        }
-    }
-
-    p {
-        font-weight: 400;
-        font-size: 14px;
-        line-height: 17px;
-
-        /* gray/700 */
-        color: #4E5D74;
-    }
-}
-
 .team-container {
     display: flex;
     flex-direction: column;

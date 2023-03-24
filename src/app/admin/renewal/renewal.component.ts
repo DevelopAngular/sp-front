@@ -25,7 +25,7 @@ export class RenewalComponent implements OnInit {
 							title: 'You’re All Set for the New School Year!',
 							desc: 'Are there other schools in your area that could benefit from SmartPass? Spread the word and help us with our mission to make all schools safer and smarter.',
 							button: 'Refer a School',
-							link: '/',
+							link: '/referrals',
 						};
 						break;
 					case 'renewed_upgrade_available':
