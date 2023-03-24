@@ -51,39 +51,21 @@
                     <div class="content-box">
                         <h5>Your Team</h5>
                         <div class="team-container">
-                            <div class="team-member">
-                                <img src="{{ status?.using_profile_pictures ? 'https://www.history.com/.image/ar_1:1%2Cc_fill%2Ccs_srgb%2Cfl_progressive%2Cq_auto:good%2Cw_1200/MTkxMTc1NzA2MzA1MTc3MzI0/portrait-of-john-smith.jpg' : './assets/Username (Blue-Gray).svg'}}" />
-                                <div>
-                                    <span>{{ status?.customer_success_advocate_hubspot_id }}</span>
-                                    <span>Customer Success Advocate</span>
-                                </div>
-                                <div class="message-btn">
-                                    <img src="https://img.lemde.fr/2023/02/09/35/350/7039/4693/1440/960/60/0/9c953f5_1675942156998-pns-4816549.jpg">
-                                    <span>Send a message</span>
-                                </div>
-                            </div>
-                            <div class="team-member">
-                                <img src="{{ status?.using_profile_pictures ? 'https://www.history.com/.image/ar_1:1%2Cc_fill%2Ccs_srgb%2Cfl_progressive%2Cq_auto:good%2Cw_1200/MTkxMTc1NzA2MzA1MTc3MzI0/portrait-of-john-smith.jpg' : './assets/Username (Blue-Gray).svg'}}" />
-                                <div>
-                                    <span>{{ status?.billing_coordinator_hubspot_id }}</span>
-                                    <span>Billing Coordinator</span>
-                                </div>
-                                <div class="message-btn">
-                                    <img src="https://img.lemde.fr/2023/02/09/35/350/7039/4693/1440/960/60/0/9c953f5_1675942156998-pns-4816549.jpg">
-                                    <span>Send a message</span>
-                                </div>
-                            </div>
-                            <div class="team-member">
-                                <img src="{{ status?.using_profile_pictures ? 'https://www.history.com/.image/ar_1:1%2Cc_fill%2Ccs_srgb%2Cfl_progressive%2Cq_auto:good%2Cw_1200/MTkxMTc1NzA2MzA1MTc3MzI0/portrait-of-john-smith.jpg' : './assets/Username (Blue-Gray).svg'}}" />
-                                <div>
-                                    <span>{{ status?.account_executive_hubspot_id }}</span>
-                                    <span>Account Executive</span>
-                                </div>
-                                <div class="message-btn">
-                                    <img src="https://img.lemde.fr/2023/02/09/35/350/7039/4693/1440/960/60/0/9c953f5_1675942156998-pns-4816549.jpg">
-                                    <span>Send a message</span>
-                                </div>
-                            </div>
+                            <app-team-member 
+                                [id]="status?.customer_success_advocate_hubspot_id"
+                                [job]="'Customer Success Advocate'"
+                                [showPic]="status?.using_profile_pictures"
+                            ></app-team-member>
+                            <app-team-member 
+                                [id]="status?.billing_coordinator_hubspot_id"
+                                [job]="'Billing Coordinator'"
+                                [showPic]="status?.using_profile_pictures"
+                            ></app-team-member>
+                            <app-team-member 
+                                [id]="status?.account_executive_hubspot_id"
+                                [job]="'Account Executive'"
+                                [showPic]="status?.using_profile_pictures"
+                            ></app-team-member>
                         </div>
                     </div>
                     <div class="feedback-footer">
