@@ -5,8 +5,9 @@
     background: #F5F6F8;
     border-radius: 8px;
     width: 362px;
+    text-decoration: none;
 
-    > a:first-child {
+    > :first-child {
         display: flex;
         align-items: center;
         gap: 8px;
@@ -37,4 +38,8 @@
         /* gray/700 */
         color: #4E5D74;
     }
+}
+
+.action-item:hover {
+    background: #EAEDF1;
 }

@@ -36,6 +36,8 @@
     margin-left: auto;
     align-items: center;
     align-self: center;
+    color: #4E5D74;
+    text-decoration: none;
     img {
         width: 13px;
         height: 12.5px;
@@ -44,10 +46,9 @@
         font-weight: 500;
         font-size: 14px;
         line-height: 17px;
-        /* identical to box height */
-        text-align: center;
-
-        /* gray/700 */
-        color: #4E5D74;
     }
+}
+
+.message-btn:hover {
+    color: #101418;
 }
