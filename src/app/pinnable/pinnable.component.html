@@ -19,7 +19,7 @@
 	[nonDisappearing]="false">
 	<ng-template #tooltip>
 		<app-pass-limit-tooltip
-			[isHand]="pinnable.location && pinnable.location.enable"
+			[isHand]="isSameRoom ? false : pinnable.location && pinnable.location.enable"
 			*ngIf="showTooltipWithDelay"
 			[description]="tooltipDescription"></app-pass-limit-tooltip>
 	</ng-template>
