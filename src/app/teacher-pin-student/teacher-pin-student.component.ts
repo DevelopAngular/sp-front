@@ -1,15 +1,15 @@
 import {
-	ChangeDetectionStrategy,
-	ChangeDetectorRef,
-	Component,
-	ElementRef,
-	EventEmitter,
-	Input,
-	OnDestroy,
-	OnInit,
-	Output,
-	TemplateRef,
-	ViewChild,
+  ChangeDetectionStrategy,
+  ChangeDetectorRef,
+  Component,
+  ElementRef,
+  EventEmitter,
+  Input,
+  OnDestroy,
+  OnInit,
+  Output,
+  TemplateRef,
+  ViewChild,
 } from '@angular/core';
 import { fromEvent, of, Subject } from 'rxjs';
 import { isNaN } from 'lodash';
@@ -95,7 +95,7 @@ export class TeacherPinStudentComponent implements OnInit, OnDestroy {
 									if ((err as HttpErrorResponse).error?.conflict_student_ids) {
 										this.hallpassService.showEncounterPreventionToast({
 											exclusionPass: this.request,
-											isStaff: true,
+											isStaff: false,
 										});
 										return of('encounter prevention');
 									} else if (err.message === 'override cancelled') {
