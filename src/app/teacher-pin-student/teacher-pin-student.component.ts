@@ -95,7 +95,7 @@ export class TeacherPinStudentComponent implements OnInit, OnDestroy {
 									if ((err as HttpErrorResponse).error?.conflict_student_ids) {
 										this.hallpassService.showEncounterPreventionToast({
 											exclusionPass: this.request,
-											isStaff: false,
+											isStaff: true,
 										});
 										return of('encounter prevention');
 									} else if (err.message === 'override cancelled') {
