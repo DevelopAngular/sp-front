@@ -1,5 +1,6 @@
 import { Component, OnInit } from '@angular/core';
 import { AdminService, RenewalStatus } from '../../services/admin.service';
+import { HelpCenterService } from '../../services/help-center.service';
 
 @Component({
 	selector: 'app-renewal',
@@ -11,7 +12,7 @@ export class RenewalComponent implements OnInit {
 	public status: RenewalStatus;
 	public reminder: ReminderData;
 
-	constructor(private adminService: AdminService) {}
+	constructor(private adminService: AdminService, private helpCenterService: HelpCenterService) {}
 
 	ngOnInit(): void {
 		this.adminService.getRenewalData().subscribe({
@@ -57,6 +58,10 @@ export class RenewalComponent implements OnInit {
 		} else {
 			this.selectedFeature = clicked;
 		}
+	}
+
+	openHelpCenter() {
+		this.helpCenterService.openHelp();
 	}
 
 	printExpiration(month = false): string {

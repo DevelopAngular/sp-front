@@ -96,10 +96,10 @@
                     </div>
                     <div class="feedback-footer">
                         <span>Not interested in renewing? We’d love to know why! </span>
-                        <a href="/">
+                        <div (click)="openHelpCenter()">
                             <span>Provide Feedback</span>
                             <img class="arrow-icon" src="./assets/Chevron Right (Current Color).svg"/>
-                        </a>
+                        </div>
                     </div>
                 </div>
                 <div class="content-box">
@@ -131,7 +131,7 @@
                             </div>
                             <p *ngIf="selectedFeature === 3">Vorem ipsum dolor sit amet, consectetur adipiscing elit. Nunc vulputate libero et velit interdum, ac aliquet odio mattis.</p>
                         </div>
-                        <div class="feature-item">
+                        <div class="feature-item" (click)="openHelpCenter()">
                             <div>
                                 <img src="./assets/Lightbulb (Yellow).svg"/>
                                 <span>Suggest a feature for next year</span>

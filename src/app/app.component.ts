@@ -185,6 +185,12 @@ export class AppComponent implements OnInit, AfterViewInit, OnDestroy {
 
 		this.needToUpdateApp$ = this.updateService.needToUpdate$;
 
+		this.helpCenter.open$.subscribe((open) => {
+			if (open) {
+				this.openHelpCenter(open);
+			}
+		});
+
 		// set only an already set up language is found
 		// otherwise let the language component try to translate
 		/*const savedLang = this.storageService.getItem('codelang');

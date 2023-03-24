@@ -212,6 +212,7 @@ $arrowAnimation: translate(4px, 0);
 }
 
 .feature-item {
+    cursor: pointer;
     background-color: #F5F6F8;
     border-radius: 4px;
     padding: 12px;
@@ -263,7 +264,6 @@ $arrowAnimation: translate(4px, 0);
         }
     }
 }
-
 
 .feature-event {
     background-image: url('/../assets/event-banner.png');
@@ -344,6 +344,7 @@ $arrowAnimation: translate(4px, 0);
     }
 
     > :last-child {
+        cursor: pointer;
         display: flex;
         align-items: center;
         color: white;
@@ -371,18 +372,19 @@ $arrowAnimation: translate(4px, 0);
     /* gray/900 */
     color: #101418;
 
-    a {
+    :last-child {
         display: flex;
         align-items: center;    
         text-decoration: none;
         font-weight: 700;
         margin-left: 12px;
+        cursor: pointer;
 
         /* gray/900 */
         color: #101418;
     }
 
-    a:hover {
+    :last-child:hover {
         .arrow-icon {
             transform: $arrowAnimation;
         }
