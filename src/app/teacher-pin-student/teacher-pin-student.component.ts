@@ -1,15 +1,15 @@
 import {
-  ChangeDetectionStrategy,
-  ChangeDetectorRef,
-  Component,
-  ElementRef,
-  EventEmitter,
-  Input,
-  OnDestroy,
-  OnInit,
-  Output,
-  TemplateRef,
-  ViewChild,
+	ChangeDetectionStrategy,
+	ChangeDetectorRef,
+	Component,
+	ElementRef,
+	EventEmitter,
+	Input,
+	OnDestroy,
+	OnInit,
+	Output,
+	TemplateRef,
+	ViewChild,
 } from '@angular/core';
 import { fromEvent, of, Subject } from 'rxjs';
 import { isNaN } from 'lodash';

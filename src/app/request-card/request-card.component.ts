@@ -1,15 +1,4 @@
-import {
-  Component,
-  ElementRef,
-  EventEmitter,
-  Inject,
-  Input,
-  OnDestroy,
-  OnInit,
-  Output,
-  TemplateRef,
-  ViewChild,
-} from '@angular/core';
+import { Component, ElementRef, EventEmitter, Inject, Input, OnDestroy, OnInit, Output, TemplateRef, ViewChild } from '@angular/core';
 import { Request } from '../models/Request';
 import { User } from '../models/User';
 import { Util } from '../../Util';
@@ -119,7 +108,7 @@ export class RequestCardComponent implements OnInit, OnDestroy {
 		private toast: ToastService,
 		private hallpassService: HallPassesService,
 		private kioskService: KioskModeService,
-    private encounterService: EncounterPreventionService
+		private encounterService: EncounterPreventionService
 	) {}
 
 	get invalidDate() {
@@ -697,22 +686,22 @@ export class RequestCardComponent implements OnInit, OnDestroy {
 				concatMap((httpBody) => {
 					return this.requestService.acceptRequest(this.request, httpBody);
 				}),
-        catchError(error => {
-          if ((error instanceof HttpErrorResponse) && error.error?.conflict_student_ids) {
-            return this.encounterService.getExclusionGroups({ student: error.error?.conflict_student_ids }).pipe(
-              map(exclusionGroups => {
-                this.hallpassService.showEncounterPreventionToast({
-                  exclusionPass: this.request,
-                  isStaff: this.forStaff,
-                  exclusionGroups
-                });
-                return throwError(error);
-              })
-            )
-          }
+				catchError((error) => {
+					if (error instanceof HttpErrorResponse && error.error?.conflict_student_ids) {
+						return this.encounterService.getExclusionGroups({ student: error.error?.conflict_student_ids }).pipe(
+							map((exclusionGroups) => {
+								this.hallpassService.showEncounterPreventionToast({
+									exclusionPass: this.request,
+									isStaff: this.forStaff,
+									exclusionGroups,
+								});
+								return throwError(error);
+							})
+						);
+					}
 
-          return throwError(error);
-        }),
+					return throwError(error);
+				}),
 				finalize(() => (this.performingAction = false))
 			)
 			.subscribe({

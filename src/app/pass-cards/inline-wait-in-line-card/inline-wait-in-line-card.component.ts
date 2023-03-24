@@ -1,16 +1,4 @@
-import {
-  Component,
-  ElementRef,
-  Inject,
-  Input,
-  OnChanges,
-  OnDestroy,
-  OnInit,
-  Optional,
-  SimpleChange,
-  SimpleChanges,
-  ViewChild,
-} from '@angular/core';
+import { Component, ElementRef, Inject, Input, OnChanges, OnDestroy, OnInit, Optional, SimpleChange, SimpleChanges, ViewChild } from '@angular/core';
 import { BehaviorSubject, from, Observable, of, Subject, Subscription, throwError, timer } from 'rxjs';
 import { HallPassesService } from '../../services/hall-passes.service';
 import { MAT_DIALOG_DATA, MatDialog, MatDialogRef } from '@angular/material/dialog';
@@ -135,7 +123,7 @@ export class InlineWaitInLineCardComponent implements OnInit, OnChanges, OnDestr
 		private dialog: MatDialog,
 		public kioskService: KioskModeService,
 		private wilService: WaitInLineService,
-    private encounterService: EncounterPreventionService
+		private encounterService: EncounterPreventionService
 	) {}
 
 	private get scalingFactor() {
@@ -343,22 +331,22 @@ export class InlineWaitInLineCardComponent implements OnInit, OnChanges, OnDestr
 	async startPass() {
 		this.requestLoading = true;
 		const passRequest$ = this.wilService.startWilPassNow(this.wil.id).pipe(
-      concatMap(response => {
-        if (response?.conflict_student_ids) {
-          return this.encounterService.getExclusionGroups({ student: response?.conflict_student_ids }).pipe(
-            map(exclusionGroups => {
-              this.hallPassService.showEncounterPreventionToast({
-                isStaff: this.forStaff,
-                exclusionPass: this.wil,
-                exclusionGroups
-              });
-              return throwError(new Error('Encounter Prevention'));
-            })
-          )
-        }
+			concatMap((response) => {
+				if (response?.conflict_student_ids) {
+					return this.encounterService.getExclusionGroups({ student: response?.conflict_student_ids }).pipe(
+						map((exclusionGroups) => {
+							this.hallPassService.showEncounterPreventionToast({
+								isStaff: this.forStaff,
+								exclusionPass: this.wil,
+								exclusionGroups,
+							});
+							return throwError(new Error('Encounter Prevention'));
+						})
+					);
+				}
 
-        return of(response);
-      }),
+				return of(response);
+			}),
 			takeUntil(this.destroy$)
 		);
 		let overallPassRequest$: Observable<any>;
