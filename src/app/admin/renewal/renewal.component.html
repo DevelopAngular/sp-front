@@ -1,17 +1,20 @@
 <div class="host" appSafariScroll>
     <div class="renewal-wrapper" #scrollableArea>
-        <div class="header-title">
+        <div class="header-title" [ngClass]="{'expiring' : status?.renewal_status === 'expiring'}">
             <h3 >Prepare for the New School Year</h3>
             <span>Subscription Ends:</span>
-            <span>June 30th, 2024</span>
+            <span>{{ printExpiration() }}</span>
         </div>
         <div class="renewal-content">
-            <div class="reminder-box">
-                <img src="./assets/admin-images/upgrade-sub.png"/>
+            <div class="reminder-box" [ngClass]="{'expiring' : status?.renewal_status === 'expiring'}">
+                    <img src="{{ reminder?.img }}"/>
                 <div>
-                    <h5>Upgrade to Even More SmartPass</h5>
-                    <span>More analytics. More features. Even more SmartPass for you.</span>
-                    <div class="reminder-btn">Explore Upgrade Options <img class="arrow-icon" src="./assets/Chevron Right (Current Color).svg"/></div>
+                    <h5>{{ reminder?.title }}</h5>
+                    <span>{{ reminder?.desc }}</span>
+                    <a href="{{ reminder?.link }}" class="reminder-btn" [ngClass]="{'expiring' : status?.renewal_status === 'expiring'}">
+                        {{ reminder?.button }}
+                        <img class="arrow-icon" src="./assets/Chevron Right (Current Color).svg"/>
+                    </a>
                 </div>
             </div>
             <div class="action-boxes">
@@ -19,28 +22,28 @@
                     <div class="content-box">
                         <h5>Summer Action Items</h5>
                         <div class="action-items-container">
-                            <div class="action-item">
-                                <div>
-                                    <img src="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcRrxwAHELfGAGyLjDtA_ZWUreLbc01Ad9VGgP6upvCd&s"/>
+                            <div class="action-item" *ngIf="!status?.using_profile_pictures">
+                                <a href="/">
+                                    <img src="./assets/Female Profile (Blue).svg"/>
                                     <span>Profile Pictures</span>
                                     <img class="arrow-icon"  src="./assets/Chevron Right (Current Color).svg"/>
-                                </div>
+                                </a>
                                 <p>Vorem ipsum dolor sit amet, consectetur adipiscing elit. Nunc vulputate libero et velit interdum, ac aliquet odio mattis.</p>
                             </div>
                             <div class="action-item">
-                                <div>
+                                <a>
                                     <img src="https://cdn.britannica.com/77/170477-050-1C747EE3/Laptop-computer.jpg"/>
                                     <span>Discover New Ways to Set Up</span>
                                     <img class="arrow-icon" src="./assets/Chevron Right (Current Color).svg"/>
-                                </div>
+                                </a>
                                 <p>Vorem ipsum dolor sit amet, consectetur adipiscing elit. Nunc vulputate libero et velit interdum, ac aliquet odio mattis.</p>
                             </div>
                             <div class="action-item">
-                                <div>
+                                <a>
                                     <img src="https://res.infoq.com/articles/api-first-integration/en/headerimage/a-seven-step-guide-to-API-first-integration-large-logo-1604605389027.jpg"/>
                                     <span>Switch to an Integration</span>
                                     <img class="arrow-icon" src="./assets/Chevron Right (Current Color).svg"/>
-                                </div>
+                                </a>
                                 <p>Vorem ipsum dolor sit amet, consectetur adipiscing elit. Nunc vulputate libero et velit interdum, ac aliquet odio mattis.</p>
                             </div>
                         </div>
@@ -49,9 +52,9 @@
                         <h5>Your Team</h5>
                         <div class="team-container">
                             <div class="team-member">
-                                <img src="https://www.history.com/.image/ar_1:1%2Cc_fill%2Ccs_srgb%2Cfl_progressive%2Cq_auto:good%2Cw_1200/MTkxMTc1NzA2MzA1MTc3MzI0/portrait-of-john-smith.jpg"/>
+                                <img src="{{ status?.using_profile_pictures ? 'https://www.history.com/.image/ar_1:1%2Cc_fill%2Ccs_srgb%2Cfl_progressive%2Cq_auto:good%2Cw_1200/MTkxMTc1NzA2MzA1MTc3MzI0/portrait-of-john-smith.jpg' : './assets/Username (Blue-Gray).svg'}}" />
                                 <div>
-                                    <span>John Smith</span>
+                                    <span>{{ status?.customer_success_advocate_hubspot_id }}</span>
                                     <span>Customer Success Advocate</span>
                                 </div>
                                 <div class="message-btn">
@@ -60,10 +63,21 @@
                                 </div>
                             </div>
                             <div class="team-member">
-                                <img src="https://www.skateism.com/wp-content/uploads/2018/09/Lucy-Adams-interview-skateism-girl-skateboarding-5.jpg"/>
+                                <img src="{{ status?.using_profile_pictures ? 'https://www.history.com/.image/ar_1:1%2Cc_fill%2Ccs_srgb%2Cfl_progressive%2Cq_auto:good%2Cw_1200/MTkxMTc1NzA2MzA1MTc3MzI0/portrait-of-john-smith.jpg' : './assets/Username (Blue-Gray).svg'}}" />
                                 <div>
-                                    <span>Lucy Adams</span>
-                                    <span>Customer Success Advocate</span>
+                                    <span>{{ status?.billing_coordinator_hubspot_id }}</span>
+                                    <span>Billing Coordinator</span>
+                                </div>
+                                <div class="message-btn">
+                                    <img src="https://img.lemde.fr/2023/02/09/35/350/7039/4693/1440/960/60/0/9c953f5_1675942156998-pns-4816549.jpg">
+                                    <span>Send a message</span>
+                                </div>
+                            </div>
+                            <div class="team-member">
+                                <img src="{{ status?.using_profile_pictures ? 'https://www.history.com/.image/ar_1:1%2Cc_fill%2Ccs_srgb%2Cfl_progressive%2Cq_auto:good%2Cw_1200/MTkxMTc1NzA2MzA1MTc3MzI0/portrait-of-john-smith.jpg' : './assets/Username (Blue-Gray).svg'}}" />
+                                <div>
+                                    <span>{{ status?.account_executive_hubspot_id }}</span>
+                                    <span>Account Executive</span>
                                 </div>
                                 <div class="message-btn">
                                     <img src="https://img.lemde.fr/2023/02/09/35/350/7039/4693/1440/960/60/0/9c953f5_1675942156998-pns-4816549.jpg">
@@ -84,16 +98,16 @@
                     <h5>Features Coming Soon</h5>
                     <div class="feature-content">
                         <span>April 2023</span>
-                        <div class="feature-item" [ngClass]="{'selected' : selectedFeature === 1}">
-                            <div (click)="handleFeatureClick(1)">
+                        <div (click)="handleFeatureClick(1)" class="feature-item" [ngClass]="{'selected' : selectedFeature === 1}">
+                            <div>
                                 <img src="https://thumbs.dreamstime.com/b/school-bell-941501.jpg"/>
                                 <span>New Notification System</span>
                                 <img (click)="handleFeatureClick(1)" class="dropdown-arrow" src="./assets/Chevron Right (Blue-Gray).svg"/>
                             </div>
                             <p *ngIf="selectedFeature === 1">Vorem ipsum dolor sit amet, consectetur adipiscing elit. Nunc vulputate libero et velit interdum, ac aliquet odio mattis.</p>
                         </div>
-                        <div class="feature-item" [ngClass]="{'selected' : selectedFeature === 2}">
-                            <div (click)="handleFeatureClick(2)">
+                        <div (click)="handleFeatureClick(2)" class="feature-item" [ngClass]="{'selected' : selectedFeature === 2}">
+                            <div>
                                 <img src="https://www.thunderpowermegaphones.com/wp-content/uploads/2018/07/THUN250-500x500-1.png"/>
                                 <span>Alert Sounds</span>
                                 <img class="dropdown-arrow" src="./assets/Chevron Right (Blue-Gray).svg"/>
@@ -101,8 +115,8 @@
                             <p *ngIf="selectedFeature === 2">Vorem ipsum dolor sit amet, consectetur adipiscing elit. Nunc vulputate libero et velit interdum, ac aliquet odio mattis.</p>
 
                         </div>
-                        <div class="feature-item" [ngClass]="{'selected' : selectedFeature === 3}">
-                            <div (click)="handleFeatureClick(3)">
+                        <div (click)="handleFeatureClick(3)" class="feature-item" [ngClass]="{'selected' : selectedFeature === 3}">
+                            <div>
                                 <img src="https://video-images.vice.com/_uncategorized/1537368083565-Best-Buildings-in-LA-Bradbury-Building.jpeg"/>
                                 <span>District Version</span>
                                 <img class="dropdown-arrow" src="./assets/Chevron Right (Blue-Gray).svg"/>
