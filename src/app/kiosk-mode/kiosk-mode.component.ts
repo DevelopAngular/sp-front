@@ -7,8 +7,6 @@ import { UserService } from '../services/user.service';
 import { HallPassesService } from '../services/hall-passes.service';
 import { HallPass } from '../models/HallPass';
 import { catchError, filter, map, mergeMap, startWith, switchMap, takeUntil, tap } from 'rxjs/operators';
-import { JwtHelperService } from '@auth0/angular-jwt';
-import { StorageService } from '../services/storage.service';
 import { LocationsService } from '../services/locations.service';
 import { TimeService } from '../services/time.service';
 import { KioskSettingsDialogComponent } from '../kiosk-settings-dialog/kiosk-settings-dialog.component';
@@ -32,21 +30,8 @@ declare const window;
 export class KioskModeComponent implements OnInit, AfterViewInit, OnDestroy {
 	activePassesKiosk: Observable<HallPass[]>;
 	waitInLinePasses: Observable<WaitingInLinePass[]>;
-
 	cardReaderValue: string;
-
 	hideInput: boolean;
-
-	userData: {
-		email: string;
-		exp: number;
-		kiosk_location_id: number;
-		kiosk_mode: boolean;
-		school_ids: number[];
-		secret_id: string;
-		user_id: number;
-	};
-
 	destroy$: Subject<any> = new Subject<any>();
 	showButtons = new BehaviorSubject(true);
 	showScanner = new BehaviorSubject(false);
@@ -86,7 +71,6 @@ export class KioskModeComponent implements OnInit, AfterViewInit, OnDestroy {
 		private liveDataService: LiveDataService,
 		private userService: UserService,
 		private passesService: HallPassesService,
-		private storage: StorageService,
 		private timeService: TimeService,
 		private activatedRoute: ActivatedRoute,
 		private titleService: Title,
@@ -106,6 +90,7 @@ export class KioskModeComponent implements OnInit, AfterViewInit, OnDestroy {
 	}
 
 	ngOnInit() {
+		this.userService.userData.subscribe(console.log);
 		this.activatedRoute.data.subscribe((state) => {
 			if ('openDialog' in state && state.openDialog) {
 				this.dialog.open(KioskSettingsDialogComponent, {
@@ -137,10 +122,8 @@ export class KioskModeComponent implements OnInit, AfterViewInit, OnDestroy {
 				takeUntil(this.destroy$)
 			)
 			.subscribe((locations) => {
-				const kioskJwtToken = this.storage.getItem('kioskToken');
-				const jwtHelper = new JwtHelperService();
-				this.userData = jwtHelper.decodeToken(kioskJwtToken);
-				const kioskLocation = locations.find((loc) => parseInt(loc.id, 10) === this.userData.kiosk_location_id);
+				const locationFromStorage = this.kioskMode.getCurrentRoom().value;
+				const kioskLocation = locations.find((loc) => parseInt(loc.id, 10) === parseInt(locationFromStorage.id, 10));
 				this.titleService.setTitle(`${kioskLocation.title} | SmartPass`);
 				this.liveDataService.getMyRoomActivePassesRequest(
 					of({ sort: '-created', search_query: '' }),

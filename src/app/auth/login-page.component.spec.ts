@@ -1,19 +1,19 @@
 import { async, ComponentFixture, TestBed } from '@angular/core/testing';
 
-import { GoogleSigninComponent } from './google-signin.component';
+import { LoginPageComponent } from './login-page.component';
 
-describe('GoogleSigninComponent', () => {
-	let component: GoogleSigninComponent;
-	let fixture: ComponentFixture<GoogleSigninComponent>;
+describe('LoginPageComponent', () => {
+	let component: LoginPageComponent;
+	let fixture: ComponentFixture<LoginPageComponent>;
 
 	beforeEach(async(() => {
 		TestBed.configureTestingModule({
-			declarations: [GoogleSigninComponent],
+			declarations: [LoginPageComponent],
 		}).compileComponents();
 	}));
 
 	beforeEach(() => {
-		fixture = TestBed.createComponent(GoogleSigninComponent);
+		fixture = TestBed.createComponent(LoginPageComponent);
 		component = fixture.componentInstance;
 		fixture.detectChanges();
 	});

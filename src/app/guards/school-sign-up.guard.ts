@@ -1,14 +1,14 @@
 import { Injectable } from '@angular/core';
 import { ActivatedRouteSnapshot, CanActivate, Router, RouterStateSnapshot, UrlTree } from '@angular/router';
 import { Observable } from 'rxjs';
-import { GoogleLoginService } from '../services/google-login.service';
+import { LoginService } from '../services/login.service';
 import { map } from 'rxjs/operators';
 
 @Injectable({
 	providedIn: 'root',
 })
 export class SchoolSignUpGuard implements CanActivate {
-	constructor(private loginService: GoogleLoginService, private router: Router) {}
+	constructor(private loginService: LoginService, private router: Router) {}
 
 	canActivate(
 		route: ActivatedRouteSnapshot,

@@ -23,7 +23,7 @@ import { combineLatest, Observable, ReplaySubject, Subject } from 'rxjs';
 import { filter, map, pluck, switchMap, takeUntil } from 'rxjs/operators';
 
 import { DataService } from '../services/data-service';
-import { GoogleLoginService } from '../services/google-login.service';
+import { LoginService } from '../services/login.service';
 import { NavbarDataService } from '../main/navbar-data.service';
 import { User } from '../models/User';
 import { UserService } from '../services/user.service';
@@ -194,7 +194,7 @@ export class NavbarComponent implements AfterViewInit, OnInit, OnDestroy {
 		public dialog: MatDialog,
 		public router: Router,
 		private location: Location,
-		public loginService: GoogleLoginService,
+		public loginService: LoginService,
 		private locationService: LocationsService,
 		private _zone: NgZone,
 		private navbarData: NavbarDataService,
@@ -357,7 +357,7 @@ export class NavbarComponent implements AfterViewInit, OnInit, OnDestroy {
 					}
 					this.isStaff = this.user.isTeacher();
 					this.isAssistant = this.user.isAssistant();
-					if (this.userService.getFeatureFlagDigitalID()) {
+					if (this.userService.getFeatureFlagDigitalID() && !this.kioskMode.isKisokMode()) {
 						this.idCardService.getIDCardDetails().subscribe({
 							next: (result: any) => {
 								if (result?.results?.digital_id_card) {
@@ -554,17 +554,17 @@ export class NavbarComponent implements AfterViewInit, OnInit, OnDestroy {
 				isHiddenSearchField: this.representedUsers.length > 4,
 			},
 		});
-		representedUsersDialog
-			.afterClosed()
-			.pipe(filter((res) => !!res))
-			.subscribe((id) => {
-				if (id) {
-					const efUser = this.representedUsers.find((u) => +u.user.id === +id);
-					this.userService.updateEffectiveUser(efUser);
-					this.http.effectiveUserId.next(+efUser.user.id);
-					this.userService.getUserPinRequest();
-				}
-			});
+		representedUsersDialog.afterClosed().subscribe((userOrId: User | string) => {
+			if (userOrId instanceof User && userOrId.id == this.effectiveUser.user.id) {
+				return;
+			}
+
+			const id = userOrId as string;
+			const efUser = this.representedUsers.find((u) => +u.user.id === +id);
+			this.userService.updateEffectiveUser(efUser);
+			this.http.effectiveUserId.next(+efUser.user.id);
+			this.userService.getUserPinRequest();
+		});
 	}
 
 	settingsAction(action: string) {
