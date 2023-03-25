@@ -1,9 +1,9 @@
 import { Component, NgZone, OnDestroy, OnInit } from '@angular/core';
 import { MatDialog } from '@angular/material/dialog';
-import { BehaviorSubject, combineLatest, forkJoin, Observable, of, Subject } from 'rxjs';
+import { BehaviorSubject, combineLatest, EMPTY, forkJoin, Observable, of, Subject } from 'rxjs';
 import { UserService } from '../../services/user.service';
-import { ActivatedRoute, Router } from '@angular/router';
-import { debounceTime, filter, map, skipUntil, startWith, switchMap, take, takeUntil, tap } from 'rxjs/operators';
+import { ActivatedRoute, Params, Router } from '@angular/router';
+import { debounceTime, expand, filter, map, skipUntil, startWith, switchMap, take, takeUntil, tap } from 'rxjs/operators';
 import { Util } from '../../../Util';
 import { HttpService } from '../../services/http-service';
 import { AdminService } from '../../services/admin.service';
@@ -57,6 +57,8 @@ export class AccountsRoleComponent implements OnInit, OnDestroy {
 	sort$: Observable<string>;
 	sortLoading$: BehaviorSubject<boolean> = new BehaviorSubject<boolean>(false);
 
+	queryLimit = 50;
+
 	public accounts$: Observable<TotalAccounts> = this.adminService.countAccounts$;
 
 	schools$: Observable<School[]>;
@@ -84,7 +86,7 @@ export class AccountsRoleComponent implements OnInit, OnDestroy {
 		this.isLoaded$.next(false);
 		this.isLoading$.next(true);
 
-		this.accountRoleData$ = combineLatest(
+		this.accountRoleData$ = combineLatest([
 			this.actions$.pipe(
 				ofType(addUserToProfilesSuccess),
 				startWith({ updatedUser: null }),
@@ -100,97 +102,17 @@ export class AccountsRoleComponent implements OnInit, OnDestroy {
 					this.isLoading$.next(true);
 				})
 			),
-			this.http.globalReload$
-		).pipe(
+			this.http.globalReload$,
+		]).pipe(
 			switchMap(() => this.route.params),
-			tap((params) => {
+			tap((params: Params) => {
 				this.role = params.role;
-				this.userService.getAccountsRoles(this.role, '', 50);
+				this.userService.getAccountsRoles(this.role, '', this.queryLimit);
 				this.buildPermissions();
 				this.sort$ = this.userService.accountSort$[this.role];
 				this.accountRoleNextUrl$ = this.userService.nextRequests$[this.role];
 			}),
-			switchMap(() => {
-				if (this.role === '_profile_parent') {
-					return this.parentService.getConnectedParents().pipe(
-						map((connectedResponse) => {
-							return connectedResponse.results.map((account) => {
-								return <ParentResponse>{
-									id: account.id,
-									first_name: account.first_name,
-									last_name: account.last_name,
-									display_name: account.display_name,
-									created: account.created, // return as timestamp Date string
-									first_login: account.first_login, // return as timestamp Date string
-									last_login: account.last_login, // return as timestamp Date string
-									last_updated: account.last_updated, // return as timestamp Date string
-									last_active: account.last_active,
-									active: account.is_active,
-									primary_email: account.email,
-									profile_picture: null,
-									roles: account.roles,
-									sync_types: [],
-									username: account.username,
-									students: account.students,
-								};
-							});
-						})
-					);
-				}
-
-				return this.userService.getAccountsRole(this.role);
-			}),
-			switchMap((accounts: User[]) => {
-				if (accounts.length === 0) {
-					return of([]);
-				}
-
-				if (this.role !== '_profile_student') {
-					return of(accounts);
-				}
-
-				return forkJoin(accounts.map((a) => this.passLimitsService.getStudentPassLimit(a.id).pipe(map((limit) => ({ ...a, limit })))));
-			}),
-			map((accounts: (User & { limit: StudentPassLimit })[]) => {
-				const filterFunctions = Object.values(this.tableService.activeFilters$.getValue()).map((v) => v.filterCallback);
-				let filteredAccounts = [].concat(accounts);
-				for (const f of filterFunctions) {
-					filteredAccounts = filteredAccounts.filter(f);
-				}
-
-				this.sortLoading$.next(false);
-				const getColumns = this.storage.getItem(`order${this.role}`);
-				const columns = {};
-				if (getColumns) {
-					const columnsOrder = ('Name,' + getColumns).split(',');
-					for (let i = 0; i < columnsOrder.length; i++) {
-						Object.assign(columns, { [columnsOrder[i]]: null });
-					}
-					this.currentColumns = cloneDeep(columns);
-				}
-				if (!filteredAccounts.length) {
-					this.userEmptyState = true;
-					return this.emptyRoleObject(getColumns, this.currentColumns);
-				}
-				this.userEmptyState = false;
-				this.isLoading$.next(false);
-				this.isLoaded$.next(true);
-				return filteredAccounts.map((account) => {
-					const rowObj = this.buildDataForRole(account);
-					Object.defineProperty(rowObj, 'id', { enumerable: false, value: account.id });
-					Object.defineProperty(rowObj, 'me', { enumerable: false, value: +account.id === +this.user.id });
-					Object.defineProperty(rowObj, 'last_active', { enumerable: false, value: account.last_active });
-					Object.defineProperty(rowObj, '_originalUserProfile', {
-						enumerable: false,
-						configurable: false,
-						writable: false,
-						value: account,
-					});
-					// Object.defineProperty(rowObj, '_data', { enumerable: false, value: rowObj });
-
-					return rowObj;
-				});
-			})
+			this.buildRows
 		);
 
 		this.userService.userData.pipe(takeUntil(this.destroy$)).subscribe((user) => {
@@ -205,7 +127,6 @@ export class AccountsRoleComponent implements OnInit, OnDestroy {
 				tap((value) => this.userService.getAccountsRoles(this.role, value, 1000))
 			)
 			.subscribe((value) => {
-				console.log('emitting stuff');
 				this.searchValue = value;
 			});
 
@@ -226,6 +147,111 @@ export class AccountsRoleComponent implements OnInit, OnDestroy {
 				});
 			});
 	}
+
+	private buildRows = switchMap(() => {
+		if (this.role === '_profile_parent') {
+			return this.parentService.getConnectedParents().pipe(this.buildParentsRow);
+		}
+
+		return this.userService.getAccountsRole(this.role).pipe(
+			this.handleNonParents,
+			this.filterAccounts,
+			expand((filteredAccounts) => {
+				let hasNextPage = true;
+				this.accountRoleNextUrl$.pipe(take(1)).subscribe((url) => {
+					hasNextPage = !!url;
+				});
+				if (filteredAccounts.length < this.queryLimit && !!filteredAccounts.length && hasNextPage && !!!this.searchValue) {
+					this.isLoading$.next(true);
+					let moreAccounts = this.userService.getMoreUserListRequest(this.role).pipe(this.handleNonParents, this.filterAccounts);
+					forkJoin([of(filteredAccounts), moreAccounts]).pipe(map(([a, b]) => a.concat(b)));
+				}
+				return EMPTY;
+			}),
+			this.buildUserRows
+		);
+	});
+
+	private handleNonParents = switchMap((accounts: (User | StudentPassLimit)[]): Observable<User[]> | Observable<StudentWithLimit[]> => {
+		if (accounts.length === 0) {
+			return of([]);
+		}
+
+		if (this.role !== '_profile_student') {
+			return of(accounts as User[]);
+		}
+
+		return forkJoin(
+			accounts.map((a) => this.passLimitsService.getStudentPassLimit(a.id).pipe(map((limit) => ({ ...a, limit } as StudentWithLimit))))
+		);
+	});
+
+	private filterAccounts = map((accounts: (User | StudentWithLimit)[]) => {
+		const filterFunctions = Object.values(this.tableService.activeFilters$.getValue()).map((v) => v.filterCallback);
+		let filteredAccounts = [...accounts];
+		for (const f of filterFunctions) {
+			filteredAccounts = filteredAccounts.filter(f);
+		}
+
+		return filteredAccounts;
+	});
+
+	private buildParentsRow = map((connectedResponse: { results: any }) => {
+		return connectedResponse.results.map((account) => {
+			return <ParentResponse>{
+				id: account.id,
+				first_name: account.first_name,
+				last_name: account.last_name,
+				display_name: account.display_name,
+				created: account.created, // return as timestamp Date string
+				first_login: account.first_login, // return as timestamp Date string
+				last_login: account.last_login, // return as timestamp Date string
+				last_updated: account.last_updated, // return as timestamp Date string
+				last_active: account.last_active,
+				active: account.is_active,
+				primary_email: account.email,
+				profile_picture: null,
+				roles: account.roles,
+				sync_types: [],
+				username: account.username,
+				students: account.students,
+			};
+		});
+	});
+
+	private buildUserRows = map((accounts: (User | StudentWithLimit)[]) => {
+		this.sortLoading$.next(false);
+		const getColumns = this.storage.getItem(`order${this.role}`);
+		const columns = {};
+		if (getColumns) {
+			const columnsOrder = ('Name,' + getColumns).split(',');
+			for (let i = 0; i < columnsOrder.length; i++) {
+				Object.assign(columns, { [columnsOrder[i]]: null });
+			}
+			this.currentColumns = cloneDeep(columns);
+		}
+		if (!accounts.length) {
+			this.userEmptyState = true;
+			return this.emptyRoleObject(getColumns, this.currentColumns);
+		}
+		this.userEmptyState = false;
+		this.isLoading$.next(false);
+		this.isLoaded$.next(true);
+		return accounts.map((account) => {
+			const rowObj = this.buildDataForRole(account);
+			Object.defineProperty(rowObj, 'id', { enumerable: false, value: account.id });
+			Object.defineProperty(rowObj, 'me', { enumerable: false, value: +account.id === +this.user.id });
+			Object.defineProperty(rowObj, 'last_active', { enumerable: false, value: account.last_active });
+			Object.defineProperty(rowObj, '_originalUserProfile', {
+				enumerable: false,
+				configurable: false,
+				writable: false,
+				value: account,
+			});
+
+			return rowObj;
+		});
+	});
 
 	buildPermissions() {
 		this.profilePermissions = {};
@@ -622,9 +648,11 @@ export class AccountsRoleComponent implements OnInit, OnDestroy {
 			//if (sort === 'desc') {
 			//delete queryParams.sort;
 			//}
-			queryParams.limit = 50;
+			queryParams.limit = this.queryLimit;
 			queryParams.role = this.role;
 			this.userService.sortTableHeaderRequest(this.role, queryParams);
 		});
 	}
 }
+
+type StudentWithLimit = User & { limit: StudentPassLimit };

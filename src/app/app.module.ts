@@ -81,6 +81,7 @@ import { IsParentGuard } from './guards/is-parent.guard';
 import { AuthInterceptor } from './auth.interceptor';
 import { LoginService } from './services/login.service';
 import { CookieService } from 'ngx-cookie-service';
+import { StreaksDialogComponent } from './streaks-dialog/streaks-dialog.component';
 // uncomment when app uses formatDate and so on
 //import {LOCALE_ID} from '@angular/core';
 //import {HttpService} from './services/http-service';
@@ -163,7 +164,14 @@ const appRoutes: Routes = [
 ];
 
 @NgModule({
-	declarations: [AppComponent, ScrollHolderDirective, SupportButtonComponent, CustomToastComponent, IdcardOverlayContainerComponent],
+	declarations: [
+		AppComponent,
+		ScrollHolderDirective,
+		SupportButtonComponent,
+		CustomToastComponent,
+		IdcardOverlayContainerComponent,
+		StreaksDialogComponent,
+	],
 	imports: [
 		BrowserModule,
 		BrowserAnimationsModule,

@@ -32,7 +32,9 @@ export class User extends BaseModel {
 		public first_login: Date,
 		public grade_level: string,
 		public custom_id: string,
-		public last_active: Date
+		public last_active: Date,
+		public streak_count: number,
+		public lost_streak_count: any
 	) {
 		super();
 	}
@@ -64,7 +66,9 @@ export class User extends BaseModel {
 			first_login: Date = new Date(JSON['first_login']),
 			grade_level: string = JSON['grade_level'],
 			custom_id: string = JSON['custom_id'],
-			last_active: Date = new Date(JSON['last_active']);
+			last_active: Date = new Date(JSON['last_active']),
+			streak_count: number = JSON['streak_count'],
+			lost_streak_count: number = JSON['lost_streak_count'];
 
 		const rolesJSON: string[] = JSON['roles'];
 
@@ -99,7 +103,9 @@ export class User extends BaseModel {
 			first_login,
 			grade_level,
 			custom_id,
-			last_active
+			last_active,
+			streak_count,
+			lost_streak_count
 		);
 	}
 
@@ -140,6 +146,16 @@ export class User extends BaseModel {
 				role === '_profile_assistant' ||
 				role === '_profile_parent'
 		);
+	}
+
+	abbreviatedName(initialFirstName = true) {
+		if (this.first_name === '' || this.last_name === '') {
+			return this.display_name;
+		}
+
+		return initialFirstName
+			? `${this.first_name[0].toLocaleUpperCase()}. ${this.last_name}`
+			: `${this.first_name} ${this.last_name[0].toLocaleUpperCase()}.`;
 	}
 
 	toString() {

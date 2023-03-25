@@ -5,18 +5,16 @@ import { Util } from '../../Util';
 import { MAT_DIALOG_DATA, MatDialog, MatDialogRef } from '@angular/material/dialog';
 import { ConsentMenuComponent } from '../consent-menu/consent-menu.component';
 import { Navigation } from '../create-hallpass-forms/main-hallpass--form/main-hall-pass-form.component';
-import { getInnerPassName } from '../pass-tile/pass-display-util';
 import { DataService } from '../services/data-service';
-import { LoadingService } from '../services/loading.service';
 import { catchError, concatMap, filter, finalize, map, pluck, switchMap, takeUntil, tap } from 'rxjs/operators';
 import { CreateHallpassFormsComponent } from '../create-hallpass-forms/create-hallpass-forms.component';
 import { CreateFormService } from '../create-hallpass-forms/create-form.service';
 import { RequestsService } from '../services/requests.service';
 import { NextStep, scalePassCards } from '../animations';
-import { BehaviorSubject, interval, Observable, of, Subject } from 'rxjs';
+import { BehaviorSubject, interval, merge, Observable, of, Subject } from 'rxjs';
 
 import * as moment from 'moment';
-import { isNull, uniq, uniqBy } from 'lodash';
+import { isArray, isNull, uniq, uniqBy } from 'lodash';
 import { ScreenService } from '../services/screen.service';
 import { UNANIMATED_CONTAINER } from '../consent-menu-overlay';
 import { DeviceDetection } from '../device-detection.helper';
@@ -32,6 +30,7 @@ import { ConfirmDeleteKioskModeComponent } from './confirm-delete-kiosk-mode/con
 import { ToastService } from '../services/toast.service';
 import { HttpErrorResponse } from '@angular/common/http';
 import { HallPassesService } from '../services/hall-passes.service';
+import { KioskModeService } from '../services/kiosk-mode.service';
 
 @Component({
 	selector: 'app-request-card',
@@ -96,7 +95,6 @@ export class RequestCardComponent implements OnInit, OnDestroy {
 		private requestService: RequestsService,
 		public dialog: MatDialog,
 		public dataService: DataService,
-		private loadingService: LoadingService,
 		private createFormService: CreateFormService,
 		public screenService: ScreenService,
 		private shortcutsService: KeyboardShortcutsService,
@@ -107,7 +105,8 @@ export class RequestCardComponent implements OnInit, OnDestroy {
 		private locationsService: LocationsService,
 		private createPassFormRef: MatDialogRef<CreateHallpassFormsComponent>,
 		private toast: ToastService,
-		private hallpassService: HallPassesService
+		private hallpassService: HallPassesService,
+		private kioskService: KioskModeService
 	) {}
 
 	get invalidDate() {
@@ -144,6 +143,10 @@ export class RequestCardComponent implements OnInit, OnDestroy {
 		return this.forStaff || this.invalidDate || (!this.forStaff && !this.forInput && !this.invalidDate) ? '' : 'icon-button';
 	}
 
+	get isKioskMode() {
+		return this.kioskService.isKisokMode();
+	}
+
 	ngOnInit() {
 		this.scaleCardTrigger$ = this.domCheckerService.scalePassCard;
 		this.frameMotion$ = this.createFormService.getFrameMotionDirection();
@@ -159,6 +162,20 @@ export class RequestCardComponent implements OnInit, OnDestroy {
 			this.fromHistory = this.data['fromHistory'];
 			this.fromHistoryIndex = this.data['fromHistoryIndex'];
 		}
+
+		// TODO: If a pass request is denied and resent, there is no good way to know if we should update the pass request.
+		merge(this.requestService.watchRequestDeny(this.request.id), this.requestService.watchRequestUpdate(this.request.id))
+			.pipe(takeUntil(this.destroy$))
+			.subscribe((request) => {
+				this.request = request;
+				this.performingAction = false;
+			});
+
+		merge(this.requestService.watchRequestCancel(this.request.id), this.requestService.watchRequestAccept(this.request.id))
+			.pipe(takeUntil(this.destroy$))
+			.subscribe(() => {
+				this.dialogRef.close();
+			});
 
 		this.shortcutsService.onPressKeyEvent$.pipe(pluck('key'), takeUntil(this.destroy$)).subscribe((key) => {
 			if (key[0] === 'a') {
@@ -223,13 +240,13 @@ export class RequestCardComponent implements OnInit, OnDestroy {
 	}
 
 	get studentName() {
-		return getInnerPassName(this.request);
+		return this.request.student.abbreviatedName(!this.userService.getFeatureFlagNewAbbreviation());
 	}
 
 	get teacherName() {
 		return this.request.teachers
 			.map((t) => {
-				return t.isSameObject(this.user) ? 'Me' : t.first_name.substr(0, 1) + '. ' + t.last_name;
+				return t.isSameObject(this.user) ? 'Me' : t.abbreviatedName();
 			})
 			.join(', ');
 	}
@@ -298,7 +315,10 @@ export class RequestCardComponent implements OnInit, OnDestroy {
 	}
 
 	formatDateTime(date: Date, timeOnly?: boolean) {
-		return Util.formatDateTime(date, timeOnly);
+		if (date instanceof Date) {
+			return Util.formatDateTime(date, timeOnly);
+		}
+		return '';
 	}
 
 	newRequest() {
@@ -727,5 +747,24 @@ export class RequestCardComponent implements OnInit, OnDestroy {
 			return;
 		}
 		this.dialogRef.close();
+	}
+
+	resendRequest() {
+		const body: any = {
+			origin: this.request.origin.id,
+			destination: this.request.destination.id,
+			attachment_message: this.request.attachment_message,
+			travel_type: this.request.travel_type,
+			teachers: this.request.teachers.map((u) => parseInt(u.id, 10)),
+			duration: this.request.duration,
+			student_id: this.formState.data.kioskModeStudent.id,
+		};
+
+		this.requestService.createRequest(body).subscribe({
+			next: () => {
+				console.log('pass request resent');
+			},
+			error: console.log,
+		});
 	}
 }
