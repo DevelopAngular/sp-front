@@ -1,4 +1,5 @@
 import { Component, OnInit } from '@angular/core';
+import { DarkThemeSwitch } from '../../dark-theme-switch';
 import { AdminService, RenewalStatus } from '../../services/admin.service';
 import { HelpCenterService } from '../../services/help-center.service';
 
@@ -12,12 +13,11 @@ export class RenewalComponent implements OnInit {
 	public status: RenewalStatus;
 	public reminder: ReminderData;
 
-	constructor(private adminService: AdminService, private helpCenterService: HelpCenterService) {}
+	constructor(private adminService: AdminService, private helpCenterService: HelpCenterService, public darkTheme: DarkThemeSwitch) {}
 
 	ngOnInit(): void {
 		this.adminService.getRenewalData().subscribe({
 			next: (data) => {
-				console.log(data);
 				this.status = data;
 				switch (this.status.renewal_status) {
 					case 'renewed':
