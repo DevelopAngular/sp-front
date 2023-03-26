@@ -1,8 +1,10 @@
+@import '../../../../sp-colors';
+
 .action-item {
     display: flex;
     flex-direction: column;
     padding: 16px;
-    background: #F5F6F8;
+    background: $gray050;
     border-radius: 8px;
     width: 362px;
     text-decoration: none;
@@ -26,7 +28,7 @@
             align-self: center;
 
             /* gray/900 */
-            color: #101418;
+            color: $gray900;
         }
     }
 
@@ -36,10 +38,10 @@
         line-height: 17px;
 
         /* gray/700 */
-        color: #4E5D74;
+        color: $gray700;
     }
 }
 
 .action-item:hover {
-    background: #EAEDF1;
+    background: $gray150;
 }
