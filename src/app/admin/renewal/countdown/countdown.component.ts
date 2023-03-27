@@ -46,4 +46,12 @@ export class CountdownComponent implements OnInit {
 	ngOnDestroy() {
 		this.subscription.unsubscribe();
 	}
+
+	firstDigit(num: number): number {
+		return Math.floor((num % 100) / 10);
+	}
+
+	secondDigit(num): number {
+		return num % 10;
+	}
 }
