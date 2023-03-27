@@ -16,12 +16,12 @@
 			font-weight: 500;
 			font-size: 16px;
 			line-height: 19px;
+			color: $gray900
 		}
 		span:last-child {
 			font-weight: 400;
 			font-size: 14px;
 			line-height: 17px;
-			/* gray/500 */
 			color: $gray500;
 		}
 	}
@@ -29,7 +29,6 @@
 
 .message-btn {
 	background: $gray050;
-	/* gray/300 */
 	border: 1px solid $gray300;
 	border-radius: 4px;
 	display: flex;
