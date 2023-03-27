@@ -2,6 +2,11 @@
 @import '../../../design-system';
 @import '../../../sp-colors';
 
+// climb to assets by a relative path
+// to get an independence of the resolveAsset pipe
+// $climb is how to get from this file to the assets folder
+$climb: '../../..';
+
 .host {
 	width: calc(100vw - 234px);
 	height: 100%;
@@ -252,7 +257,7 @@ $maxItemWidth: 800px;
 }
 
 .feature-event {
-	background-image: url('/../assets/event-banner.png');
+	background-image: url($climb + '/assets/event-banner.png');
 	color: $white;
 	display: flex;
 	padding: 36px;
@@ -315,7 +320,7 @@ $maxItemWidth: 800px;
 		margin: 0;
 	}
 	li {
-		background-image: url('/../assets/Checkmark (Silver).svg');
+		background-image: url($climb + '/assets/Checkmark (Silver).svg');
 		background-repeat: no-repeat;
 		background-position: 1px;
 		padding-left: 28px;
