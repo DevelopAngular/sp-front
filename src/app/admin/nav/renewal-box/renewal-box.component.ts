@@ -1,4 +1,5 @@
 import { Component, OnInit } from '@angular/core';
+import { Router } from '@angular/router';
 import { AdminService } from '../../../services/admin.service';
 
 @Component({
@@ -9,7 +10,7 @@ import { AdminService } from '../../../services/admin.service';
 export class RenewalBoxComponent implements OnInit {
 	public expiring: boolean;
 
-	constructor(private adminService: AdminService) {}
+	constructor(public router: Router, private adminService: AdminService) {}
 
 	ngOnInit(): void {
 		this.adminService.getRenewalData().subscribe({
@@ -17,5 +18,9 @@ export class RenewalBoxComponent implements OnInit {
 				this.expiring = data.renewal_status === 'expiring';
 			},
 		});
+	}
+
+	navToRenewalPage() {
+		this.router.navigate(['admin/renewal']);
 	}
 }

@@ -1,4 +1,4 @@
-<a href="/admin/renewal" class="renewal-notif" [ngClass]="{ expiring: expiring }">
+<div (click)="navToRenewalPage()" class="renewal-notif" [ngClass]="{ expiring: expiring }">
 	<div>
 		<span>Summer Rollover</span>
 		<img src="./assets/Chevron Right (Navy).svg" />
@@ -7,4 +7,4 @@
 		<img src="./assets/Alert (Yellow).svg" />
 		<div>Subscription ending soon.</div>
 	</div>
-</a>
+</div>
