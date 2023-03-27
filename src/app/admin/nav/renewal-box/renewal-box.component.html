@@ -1,14 +1,10 @@
-<a 
-    href="/admin/renewal"
-    class="renewal-notif"
-    [ngClass]="{'expiring': expiring}"
->
-    <div>
-        <span>Summer Rollover</span>
-        <img src="./assets/Chevron Right (Navy).svg"/>
-    </div>
-    <div *ngIf="expiring">
-        <img src="./assets/Alert (Yellow).svg"/>
-        <div>Subscription ending soon.</div>
-    </div>
+<a href="/admin/renewal" class="renewal-notif" [ngClass]="{ expiring: expiring }">
+	<div>
+		<span>Summer Rollover</span>
+		<img src="./assets/Chevron Right (Navy).svg" />
+	</div>
+	<div *ngIf="expiring">
+		<img src="./assets/Alert (Yellow).svg" />
+		<div>Subscription ending soon.</div>
+	</div>
 </a>
