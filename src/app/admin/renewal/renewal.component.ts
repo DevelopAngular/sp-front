@@ -2,6 +2,7 @@ import { Component, OnInit } from '@angular/core';
 import { DarkThemeSwitch } from '../../dark-theme-switch';
 import { AdminService, RenewalStatus } from '../../services/admin.service';
 import { HelpCenterService } from '../../services/help-center.service';
+import _refiner from 'refiner-js';
 
 @Component({
 	selector: 'app-renewal',
@@ -12,6 +13,8 @@ export class RenewalComponent implements OnInit {
 	public selectedFeature = 0;
 	public status: RenewalStatus;
 	public reminder: ReminderData;
+
+	private surveyId = '300ba7c0-ccad-11ed-b709-fb336f73b73f';
 
 	constructor(private adminService: AdminService, private helpCenterService: HelpCenterService, public darkTheme: DarkThemeSwitch) {}
 
@@ -47,6 +50,10 @@ export class RenewalComponent implements OnInit {
 							link: '/',
 						};
 						break;
+				}
+				// Show survey for expiring schools
+				if (this.status.renewal_status === 'expiring') {
+					_refiner('showForm', this.surveyId);
 				}
 			},
 		});
