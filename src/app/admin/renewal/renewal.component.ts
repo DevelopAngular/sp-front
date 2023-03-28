@@ -50,7 +50,7 @@ export class RenewalComponent implements OnInit {
 						this.reminder = {
 							img: './assets/admin-images/upgrade-sub.png',
 							title: 'Upgrade to Even More SmartPass',
-							desc: 'More analytics. More features. Even more SmartPass for you.',
+							desc: 'How did we make SmartPass even smarter? Educators told us exactly what they needed. Enhanced usability. Better analytics. Improved safety.',
 							button: 'Explore Upgrade Options',
 							link: '/',
 						};
