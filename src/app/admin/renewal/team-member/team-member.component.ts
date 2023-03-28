@@ -7,7 +7,6 @@ import teamMembers from './member-data';
 	styleUrls: ['./team-member.component.scss'],
 })
 export class TeamMemberComponent implements OnInit {
-	@Input() showPic: boolean;
 	@Input() id: string;
 	@Input() job: string;
 
