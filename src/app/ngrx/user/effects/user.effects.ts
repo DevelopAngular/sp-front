@@ -10,7 +10,7 @@ import { ProfilePicture } from '../../../models/ProfilePicture';
 import { ProfileMap } from '../../../models/ProfileMap';
 import { KioskModeService } from '../../../services/kiosk-mode.service';
 import { StorageService } from '../../../services/storage.service';
-import { GoogleLoginService } from '../../../services/google-login.service';
+import { LoginService } from '../../../services/login.service';
 import { Router } from '@angular/router';
 import { HttpService } from '../../../services/http-service';
 
@@ -140,7 +140,7 @@ export class UserEffects {
 		private userService: UserService,
 		private kioskMode: KioskModeService,
 		private storage: StorageService,
-		public loginService: GoogleLoginService,
+		public loginService: LoginService,
 		private router: Router,
 		private http: HttpService
 	) {}

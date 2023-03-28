@@ -39,10 +39,9 @@ lint:
     - nvm use
     - yarn install
     - yarn lint:ci
-  only:
-    refs:
-      - merge_requests
-
+  rules:
+    - if: $CI_PIPELINE_SOURCE == 'merge_request_event'
+  interruptible: true
   tags:
     - "docker-passthrough"
 
@@ -76,10 +75,9 @@ testing_build:
     IMAGE_TAG_SUFFIX: "testing"
     INCLUDE_SOURCEMAPS: "true"
   needs: [lint]
-  only:
-    refs:
-      - merge_requests
-
+  rules:
+    - if: $CI_PIPELINE_SOURCE == 'merge_request_event'
+  interruptible: true
   tags:
     - "docker-passthrough"
 
@@ -89,9 +87,9 @@ testing_e2e:
   script:
     - yarn install --immutable
     - yarn run e2e:ci
-  only:
-    refs:
-      - merge_requests
+  rules:
+    - if: $CI_PIPELINE_SOURCE == 'merge_request_event'
+  interruptible: true
   tags:
     - "docker-passthrough"
 
@@ -116,11 +114,12 @@ testing_deploy:
     name: testing
     url: "https://testing.smartpass.app"
     deployment_tier: development
-  when: manual
   needs: [testing_build]
-  only:
-    refs:
-      - merge_requests
+  rules:
+    - if: $CI_MERGE_REQUEST_TARGET_BRANCH_NAME == 'master'
+      when: manual
+    - if: $CI_MERGE_REQUEST_TARGET_BRANCH_NAME == 'production'
+      when: manual
   tags:
     - "docker-passthrough"
 
@@ -161,9 +160,9 @@ deploy_staging:
   environment:
       name: staging
       url: "https://staging.smartpass.app"
-  only:
-    refs:
-      - master
+  rules:
+      - if: $CI_COMMIT_BRANCH == 'master'
+  interruptible: true
   tags:
       - "docker-passthrough"
 
@@ -196,9 +195,9 @@ build_production:
   variables:
     AUTO_DEVOPS_DOMAIN: "smartpass.app"
     IMAGE_TAG_SUFFIX: "production"
-  only:
-    refs:
-    - production
+  rules:
+    - if: $CI_COMMIT_BRANCH == 'production'
+  interruptible: true
   tags:
   - "docker-passthrough"
 
@@ -221,11 +220,10 @@ deploy_production:
   environment:
     name: production
     url: "https://smartpass.app"
-  when: manual
   needs: [build_production]
-  only:
-    refs:
-    - production
+  rules:
+    - if: $CI_COMMIT_BRANCH == 'production'
+      when: manual
   tags:
   - "docker-passthrough"
 

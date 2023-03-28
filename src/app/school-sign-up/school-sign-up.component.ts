@@ -6,7 +6,7 @@ import { BehaviorSubject, Observable, Subject, throwError } from 'rxjs';
 import { HttpClient, HttpHeaders } from '@angular/common/http';
 import { HttpService } from '../services/http-service';
 import { JwtHelperService } from '@auth0/angular-jwt';
-import { GoogleLoginService } from '../services/google-login.service';
+import { LoginService } from '../services/login.service';
 import { UserService } from '../services/user.service';
 import { StorageService } from '../services/storage.service';
 import { ActivatedRoute, Router } from '@angular/router';
@@ -228,7 +228,7 @@ export class SchoolSignUpComponent implements OnInit, AfterViewInit {
 		private http: HttpClient,
 		private httpService: HttpService,
 		private userService: UserService,
-		private loginService: GoogleLoginService,
+		private loginService: LoginService,
 		private storage: StorageService,
 		private router: Router,
 		private route: ActivatedRoute,

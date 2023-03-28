@@ -1,10 +1,9 @@
-import { AfterViewInit, Component, ElementRef, NgZone, OnDestroy, OnInit, ViewChild } from '@angular/core';
+import { AfterViewInit, Component, ElementRef, OnDestroy, OnInit, ViewChild } from '@angular/core';
 import { MatDialog } from '@angular/material/dialog';
 import { BehaviorSubject, combineLatest, interval, Observable, of, ReplaySubject, Subject } from 'rxjs';
 import { Util } from '../../Util';
 import { mergeObject } from '../live-data/helpers';
 import { LiveDataService } from '../live-data/live-data.service';
-import { LoadingService } from '../services/loading.service';
 import { Location } from '../models/Location';
 import { User } from '../models/User';
 import { DropdownComponent } from '../dropdown/dropdown.component';
@@ -22,13 +21,11 @@ import { KioskLogin, KioskLoginResponse, KioskModeService } from '../services/ki
 import { bumpIn } from '../animations';
 import { DomSanitizer, Title } from '@angular/platform-browser';
 import { Router } from '@angular/router';
-import { StorageService } from '../services/storage.service';
 import { HttpService } from '../services/http-service';
 import { ScrollPositionService } from '../scroll-position.service';
 import { DeviceDetection } from '../device-detection.helper';
 import { HallPassesService } from '../services/hall-passes.service';
 import { UNANIMATED_CONTAINER } from '../consent-menu-overlay';
-import { GoogleLoginService } from '../services/google-login.service';
 import * as moment from 'moment';
 import { CheckForUpdateService } from '../services/check-for-update.service';
 import { RoomCheckinCodeDialogComponent } from './room-checkin-code-dialog/room-checkin-code-dialog.component';
@@ -141,8 +138,6 @@ export class MyRoomComponent implements OnInit, OnDestroy, AfterViewInit {
 	holdScrollPosition: number = 0;
 
 	constructor(
-		private _zone: NgZone,
-		private loadingService: LoadingService,
 		private liveDataService: LiveDataService,
 		private timeService: TimeService,
 		private locationService: LocationsService,
@@ -150,10 +145,8 @@ export class MyRoomComponent implements OnInit, OnDestroy, AfterViewInit {
 		public darkTheme: DarkThemeSwitch,
 		public dialog: MatDialog,
 		public userService: UserService,
-		public loginService: GoogleLoginService,
 		public kioskMode: KioskModeService,
 		private sanitizer: DomSanitizer,
-		private storage: StorageService,
 		private http: HttpService,
 		public screenService: ScreenService,
 		public router: Router,
@@ -380,6 +373,12 @@ export class MyRoomComponent implements OnInit, OnDestroy, AfterViewInit {
 		if (this.setRoomToKioskModeProcesing) {
 			return;
 		}
+
+		const loginServer = this.http.getServerFromStorage();
+		if (!loginServer) {
+			throw new Error('No login server!');
+		}
+
 		this.setRoomToKioskModeProcesing = true;
 
 		let kioskLogin: KioskLogin;
@@ -407,7 +406,7 @@ export class MyRoomComponent implements OnInit, OnDestroy, AfterViewInit {
 							this.router.navigate(['main/kioskMode/settings']);
 							return this.kioskMode.enterKioskMode$.pipe(filter(Boolean));
 						}),
-						concatMap(() => {
+						tap(() => {
 							let kioskRoom;
 							if (this.roomOptions.length === 1) {
 								kioskRoom = this.roomOptions[0];
@@ -415,19 +414,6 @@ export class MyRoomComponent implements OnInit, OnDestroy, AfterViewInit {
 								kioskRoom = Object.assign({}, this.selectedLocation);
 							}
 							this.kioskMode.setCurrentRoom(kioskRoom);
-
-							return this.userService.saveKioskModeLocation(kioskRoom.id);
-						}),
-						tap((res) => {
-							this.storage.setItem('kioskToken', res.access_token);
-							// this.storage.setItem('refresh_token', res.refresh_token);
-							this.loginService.updateAuth({
-								username: kioskLogin.username,
-								password: kioskLogin.password,
-								type: 'demo-login',
-								kioskMode: true,
-							});
-							this.http.kioskTokenSubject$.next(res);
 							this.router.navigate(['main/kioskMode']);
 						})
 					);

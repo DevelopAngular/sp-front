@@ -1,8 +1,9 @@
-import { Inject, Injectable, NgZone, OnDestroy } from '@angular/core';
+import { Inject, Injectable, OnDestroy } from '@angular/core';
 import { BehaviorSubject, Observable, ReplaySubject, Subject } from 'rxjs';
 import { filter, takeUntil } from 'rxjs/operators';
 import { StorageService } from './storage.service';
 import { APP_BASE_HREF } from '@angular/common';
+import { CookieService } from 'ngx-cookie-service';
 
 declare const window;
 
@@ -31,6 +32,12 @@ export interface GoogleLogin {
 	type: 'google-login';
 }
 
+export interface SessionLogin {
+	provider: string;
+	token?: string;
+	username?: string;
+}
+
 export function isDemoLogin(d: any): d is DemoLogin {
 	return (<DemoLogin>d).type === 'demo-login';
 }
@@ -47,7 +54,7 @@ export function isGoogleLogin(d: any): d is GoogleLogin {
 	return (<GoogleLogin>d).type === 'google-login';
 }
 
-type AuthObject = GoogleLogin | DemoLogin | ClassLinkLogin | CleverLogin;
+export type AuthObject = GoogleLogin | DemoLogin | ClassLinkLogin | CleverLogin;
 
 enum OAuthType {
 	google = 'google',
@@ -56,7 +63,7 @@ enum OAuthType {
 @Injectable({
 	providedIn: 'root',
 })
-export class GoogleLoginService implements OnDestroy {
+export class LoginService implements OnDestroy {
 	static googleOAuthUrl = `https://accounts.google.com/o/oauth2/v2/auth?client_id=560691963710-220tggv4d3jo9rpc3l70opj1510keb59.apps.googleusercontent.com&response_type=code&access_type=offline&scope=profile%20email%20openid`;
 
 	private authObject$ = new BehaviorSubject<AuthObject>(null);
@@ -71,12 +78,13 @@ export class GoogleLoginService implements OnDestroy {
 	constructor(
 		@Inject(APP_BASE_HREF)
 		private baseHref: string,
-		private _zone: NgZone,
-		private storage: StorageService
+		private storage: StorageService,
+		private cookie: CookieService
 	) {
 		if (baseHref === '/app') {
 			this.baseHref = '/app/';
 		}
+
 		this.authObject$.pipe(takeUntil(this.destroy$)).subscribe((auth) => {
 			if (auth) {
 				const storageKey = isDemoLogin(auth)
@@ -86,18 +94,8 @@ export class GoogleLoginService implements OnDestroy {
 			}
 		});
 
-		const savedAuth = this.storage.getItem(STORAGE_KEY);
-		if (savedAuth) {
-			// console.log('Loading saved auth:', savedAuth);
-			const auth = JSON.parse(savedAuth);
-			if (isGoogleLogin(auth) || isDemoLogin(auth) || isClassLinkLogin(auth) || isCleverLogin(auth)) {
-				this.updateAuth(auth);
-			} else {
-				this.isAuthenticated$.next(false);
-			}
-		} else {
-			this.isAuthenticated$.next(false);
-		}
+		const savedServerConfig = this.storage.getItem('server');
+		this.isAuthenticated$.next(!!savedServerConfig);
 	}
 
 	ngOnDestroy(): void {
@@ -110,12 +108,16 @@ export class GoogleLoginService implements OnDestroy {
 		return this.authObject$.pipe(filter((t) => !!t));
 	}
 
+	// updating this triggers a login flow, clearing this logs the user out
 	public updateAuth(auth: AuthObject) {
 		this.authObject$.next(auth);
 	}
 
 	clearInternal(permanent: boolean = false) {
 		this.authObject$.next(null);
+		this.cookie.delete('smartpassToken', '/');
+		this.storage.removeItem('server');
+		this.storage.removeItem('current-kiosk-room');
 
 		if (!permanent) {
 			this.isAuthenticated$.next(false);
@@ -125,8 +127,6 @@ export class GoogleLoginService implements OnDestroy {
 		this.storage.removeItem('refresh_token');
 		this.storage.removeItem('google_id_token');
 		this.storage.removeItem('context');
-		this.storage.removeItem('kioskToken');
-		this.storage.removeItem('auth');
 		this.logout();
 	}
 
@@ -139,9 +139,9 @@ export class GoogleLoginService implements OnDestroy {
 	 * method.
 	 */
 
-	public signIn(userEmail?: string) {
+	public triggerGoogleAuthFlow(userEmail?: string) {
 		// TODO IMPLEMENT THIS
-		let url = GoogleLoginService.googleOAuthUrl + `&redirect_uri=${this.getRedirectUrl()}google_oauth`;
+		let url = LoginService.googleOAuthUrl + `&redirect_uri=${this.getRedirectUrl()}google_oauth`;
 		if (userEmail) {
 			url = url + `&login_hint=${userEmail}`;
 		}

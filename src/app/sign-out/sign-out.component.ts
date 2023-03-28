@@ -1,5 +1,5 @@
 import { AfterContentInit, Component } from '@angular/core';
-import { GoogleLoginService } from '../services/google-login.service';
+import { LoginService } from '../services/login.service';
 import { HttpService } from '../services/http-service';
 import { environment } from '../../environments/environment';
 import { UserService } from '../services/user.service';
@@ -14,12 +14,7 @@ declare const window;
 	styleUrls: ['./sign-out.component.scss'],
 })
 export class SignOutComponent implements AfterContentInit {
-	constructor(
-		private http: HttpService,
-		private loginService: GoogleLoginService,
-		private userService: UserService,
-		private storage: StorageService
-	) {
+	constructor(private http: HttpService, private loginService: LoginService, private userService: UserService, private storage: StorageService) {
 		if (this.storage.getItem('authType') === 'gg4l') {
 			this.storage.setItem('gg4l_invalidate', true);
 		}
@@ -33,13 +28,6 @@ export class SignOutComponent implements AfterContentInit {
 		setTimeout(() => {
 			this.http.clearInternal();
 			this.loginService.clearInternal(true);
-			// this.userService.userData.next(null);
-			// this.userService.userData.complete();
-
-			// debugger
-			// this.router.navigate(['']);
-
-			// window.location.href = '/';
 			const path = window.location.pathname;
 			if (path.includes('parent')) {
 				window.location.href = environment.production ? '/app/auth' : '/auth';

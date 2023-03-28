@@ -20,6 +20,8 @@ import { User } from '../models/User';
 import { HttpErrorResponse } from '@angular/common/http';
 import { HallPassErrors } from './hall-passes.service';
 import { FeatureFlagService, FLAGS } from './feature-flag.service';
+import { PollingEvent, PollingService } from './polling-service';
+import { Invitation } from '../models/Invitation';
 
 export interface AcceptRequestBody {
 	duration?: string;
@@ -66,7 +68,8 @@ export class RequestsService {
 		private locationsService: LocationsService,
 		private passLimitService: PassLimitService,
 		private features: FeatureFlagService,
-		private dialog: MatDialog
+		private dialog: MatDialog,
+		private pollingService: PollingService
 	) {}
 
 	// Invitations
@@ -212,5 +215,43 @@ export class RequestsService {
 
 	cancelRequest(id) {
 		return this.http.post(`v1/pass_requests/${id}/cancel`);
+	}
+
+	watchRequestDeny(id: string): Observable<Request> {
+		return this.filterRequestWithId(id, this.pollingService.listen('pass_request.deny'));
+	}
+
+	watchRequestAccept(id): Observable<Request> {
+		return this.filterRequestWithId(id, this.pollingService.listen('pass_request.accept'));
+	}
+
+	watchRequestUpdate(id): Observable<Request> {
+		return this.filterRequestWithId(id, this.pollingService.listen('pass_request.update'));
+	}
+
+	watchRequestCancel(id): Observable<Request> {
+		return this.filterRequestWithId(id, this.pollingService.listen('pass_request.cancel'));
+	}
+
+	watchInvitationCancel(id): Observable<Invitation> {
+		return this.filterInvitationWithId(id, this.pollingService.listen('pass_invitation.cancel'));
+	}
+
+	watchInvitationAccept(id): Observable<Invitation> {
+		return this.filterInvitationWithId(id, this.pollingService.listen('pass_invitation.accept'));
+	}
+
+	filterRequestWithId(id: string, events: Observable<PollingEvent>): Observable<Request> {
+		return events.pipe(
+			map((e) => Request.fromJSON(e.data)),
+			filter((r) => r.id == id)
+		);
+	}
+
+	filterInvitationWithId(id: string, events: Observable<PollingEvent>): Observable<Invitation> {
+		return events.pipe(
+			map((e) => Invitation.fromJSON(e.data)),
+			filter((i) => i.id == id)
+		);
 	}
 }

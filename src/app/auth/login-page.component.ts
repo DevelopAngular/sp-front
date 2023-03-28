@@ -1,29 +1,20 @@
-import { Component, ElementRef, EventEmitter, OnDestroy, AfterViewInit, OnInit, Output, ViewChild } from '@angular/core';
-import { ActivatedRoute, Router } from '@angular/router';
+import { Component, ElementRef, EventEmitter, OnDestroy, OnInit, Output, ViewChild } from '@angular/core';
+import { ActivatedRoute } from '@angular/router';
 import { DeviceDetection } from '../device-detection.helper';
-import { GoogleLoginService } from '../services/google-login.service';
-import { UserService } from '../services/user.service';
 import { DomSanitizer, Meta, SafeUrl, Title } from '@angular/platform-browser';
-import { filter, map, switchMap, takeUntil } from 'rxjs/operators';
-import { HttpService } from '../services/http-service';
+import { filter, takeUntil } from 'rxjs/operators';
 import { JwtHelperService } from '@auth0/angular-jwt';
-import { StorageService } from '../services/storage.service';
-import { User } from '../models/User';
-import { Observable, ReplaySubject, Subject, zip } from 'rxjs';
-import { INITIAL_LOCATION_PATHNAME } from '../app.component';
-import { NotificationService } from '../services/notification-service';
-import { environment } from '../../environments/environment.prod';
-import { ScreenService } from '../services/screen.service';
+import { Observable, ReplaySubject, Subject } from 'rxjs';
 import { LoginDataService } from '../services/login-data.service';
 
 declare const window;
 
 @Component({
-	selector: 'app-login',
-	templateUrl: './login.component.html',
-	styleUrls: ['./login.component.scss'],
+	selector: 'sp-login-page',
+	templateUrl: './login-page.component.html',
+	styleUrls: ['./login-page.component.scss'],
 })
-export class LoginComponent implements OnInit, OnDestroy {
+export class LoginPageComponent implements OnInit, OnDestroy {
 	@ViewChild('place') place: ElementRef;
 
 	@Output() errorEvent: EventEmitter<any> = new EventEmitter();
@@ -41,17 +32,10 @@ export class LoginComponent implements OnInit, OnDestroy {
 	private destroyer$ = new Subject<any>();
 
 	constructor(
-		private httpService: HttpService,
-		private userService: UserService,
-		private loginService: GoogleLoginService,
-		private storage: StorageService,
-		private router: Router,
 		private route: ActivatedRoute,
 		private sanitizer: DomSanitizer,
 		private titleService: Title,
 		private metaService: Meta,
-		private notifService: NotificationService,
-		public screen: ScreenService,
 		private loginDataService: LoginDataService
 	) {
 		this.jwt = new JwtHelperService();
@@ -74,36 +58,6 @@ export class LoginComponent implements OnInit, OnDestroy {
 		setTimeout(() => {
 			window.appLoaded();
 		}, 700);
-
-		this.loginService.isAuthenticated$
-			.pipe(
-				filter((v) => v),
-				switchMap((v): Observable<[User, Array<string>]> => {
-					return zip(
-						this.userService.userData.asObservable().pipe(filter((user) => !!user)),
-						INITIAL_LOCATION_PATHNAME.asObservable().pipe(map((p) => p.split('/').filter((v) => v && v !== 'app')))
-					);
-				}),
-				takeUntil(this.destroyer$)
-			)
-			.subscribe(([currentUser, path]) => {
-				if (NotificationService.hasPermission && environment.production) {
-					this.notifService.initNotifications(true);
-				}
-
-				const callbackUrl: string = window.history.state.callbackUrl;
-				if (callbackUrl != null || callbackUrl !== undefined) {
-					this.router.navigate([callbackUrl]);
-				} else if (this.isMobileDevice && currentUser.isAdmin() && currentUser.isTeacher()) {
-					this.router.navigate(['main']);
-				} else if (currentUser.isParent()) {
-					this.router.navigate(['parent']);
-				} else {
-					const loadView = currentUser.isAdmin() ? 'admin' : 'main';
-					this.router.navigate([loadView]);
-				}
-				this.titleService.setTitle('SmartPass');
-			});
 
 		this.trustedBackgroundUrl = this.sanitizer.bypassSecurityTrustStyle("url('./assets/Login Background.svg')");
 
