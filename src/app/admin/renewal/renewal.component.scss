@@ -354,33 +354,3 @@ $maxItemWidth: 800px;
 		}
 	}
 }
-
-.feedback-footer {
-	margin-left: 28px;
-	font-weight: 500;
-	font-size: 16px;
-	line-height: 19px;
-	display: flex;
-	align-items: center;
-	color: $gray900;
-
-	:last-child {
-		display: flex;
-		align-items: center;
-		text-decoration: none;
-		font-weight: 700;
-		margin-left: 12px;
-		cursor: pointer;
-		color: $gray900;
-	}
-
-	:last-child:hover {
-		.arrow-icon {
-			transform: $arrowAnimation;
-		}
-	}
-
-	img {
-		margin-left: 13px;
-	}
-}
