@@ -1,16 +1,16 @@
 import { HttpClient } from '@angular/common/http';
-import { Inject, Injectable, NgZone, OnDestroy } from '@angular/core';
+import { Inject, Injectable, OnDestroy } from '@angular/core';
 import { Store } from '@ngrx/store';
 import { LocalStorage } from '@ngx-pwa/local-storage';
-import { BehaviorSubject, combineLatest, iif, Observable, of, ReplaySubject, Subject, throwError } from 'rxjs';
-import { catchError, delay, exhaustMap, filter, map, mapTo, mergeMap, switchMap, take, takeUntil, tap } from 'rxjs/operators';
+import { BehaviorSubject, combineLatest, Observable, of, ReplaySubject, Subject, throwError } from 'rxjs';
+import { catchError, concatMap, delay, exhaustMap, filter, map, mapTo, switchMap, take, takeUntil, tap } from 'rxjs/operators';
 import { BUILD_DATE, RELEASE_NAME } from '../../build-info';
 import { environment } from '../../environments/environment';
 import { School } from '../models/School';
 import { AppState } from '../ngrx/app-state/app-state';
 import { clearSchools, getSchools } from '../ngrx/schools/actions';
 import { getCurrentSchool, getLoadedSchools, getSchoolsCollection, getSchoolsLength } from '../ngrx/schools/states';
-import { GoogleLoginService, isClassLinkLogin, isCleverLogin, isDemoLogin } from './google-login.service';
+import { AuthObject, isClassLinkLogin, isCleverLogin, isDemoLogin, isGoogleLogin, LoginService, SessionLogin } from './login.service';
 import { StorageService } from './storage.service';
 import { SafeHtml } from '@angular/platform-browser';
 import { MatDialog } from '@angular/material/dialog';
@@ -19,8 +19,6 @@ import { Router } from '@angular/router';
 import { APP_BASE_HREF } from '@angular/common';
 // uncomment when app uses formatDate and so on
 //import {APP_BASE_HREF, registerLocaleData} from '@angular/common';
-import { JwtHelperService } from '@auth0/angular-jwt';
-import * as moment from 'moment';
 import { LoginDataService } from './login-data.service';
 import { clearUser } from '../ngrx/user/actions';
 
@@ -28,6 +26,33 @@ declare const window: Window;
 
 export interface Config {
 	[key: string]: any;
+}
+
+export interface AuthProviderResponse {
+	provider: string;
+	sourceId: string;
+	name: string;
+}
+
+export enum AuthType {
+	Password = 'password',
+	Google = 'google',
+	Classlink = 'classlink',
+	Clever = 'clever',
+	GG4L = 'gg4l',
+	Empty = '',
+}
+
+export enum LoginProvider {
+	Password = 'password',
+	Classlink = 'classlink',
+	Clever = 'clever',
+	Google = 'google-access-token',
+}
+
+export interface DiscoverServerResponse {
+	auth_types: AuthType[];
+	auth_providers: AuthProviderResponse[];
 }
 
 export interface ServerAuth {
@@ -177,10 +202,21 @@ class SilentError extends Error {
 	}
 }
 
-const AuthTypeGoogle = 'google';
-const AuthTypeClever = 'clever';
-const AuthTypeClassLink = 'classlink';
+const discoveryEndpoint = (userName: string) =>
+	/proxy/.test(environment.buildType)
+		? `/api/discovery/email_info?email=${encodeURIComponent(userName)}`
+		: `https://smartpass.app/api/discovery/email_info?email=${encodeURIComponent(userName)}`;
 
+const discoveryV2Endpoint = /(proxy)/.test(environment.buildType) ? '/api/discovery/v2/find' : 'https://smartpass.app/api/discovery/v2/find';
+
+/**
+ * This service is supposed to build off Angular's HttpClient but it ends up
+ * also tracking the authentication state, authcontext and dealing with a bunch
+ * of other login behaviour
+ *
+ * This has to be refactored very heavily to remove the login behavior and to track
+ * the auth state elsewhere
+ */
 @Injectable({
 	providedIn: 'root',
 })
@@ -219,8 +255,6 @@ export class HttpService implements OnDestroy {
 	// should come from server
 	public langs$: Observable<string[]> = of(['en', 'es']);
 
-	public kioskTokenSubject$ = new BehaviorSubject<ServerAuth>(null);
-
 	public globalReload$ = this.currentSchool$.pipe(
 		filter((school) => !!school),
 		map((school) => (school ? school.id : null)),
@@ -237,11 +271,10 @@ export class HttpService implements OnDestroy {
 		@Inject(APP_BASE_HREF)
 		private baseHref: string,
 		private http: HttpClient,
-		private loginService: GoogleLoginService,
+		private loginService: LoginService,
 		private storage: StorageService,
 		private pwaStorage: LocalStorage,
 		private store: Store<AppState>,
-		private _zone: NgZone,
 		private matDialog: MatDialog,
 		private router: Router,
 		private loginDataService: LoginDataService
@@ -330,19 +363,6 @@ export class HttpService implements OnDestroy {
 		// HACK!
 		this.storage.setItem('ljs-lang', 'en');
 
-		this.kioskTokenSubject$
-			.pipe(
-				takeUntil(this.destroyed$),
-				filter((v) => !!v && !!this.getAuthContext()),
-				take(1), // TODO this take vs above takeUntil
-				map((newToken) => {
-					return { auth: newToken, server: this.getAuthContext().server };
-				})
-			)
-			.subscribe((res) => {
-				this.setAuthContext(res, true);
-			});
-
 		// When HTTPService is being constructed, if the user is already signed in, then authObject will resolve immediately.
 		// This creates a circular dependency for HTTPService in AccessTokenInterceptor.
 		// We break the cycle, by setting a timeout on the binding here.
@@ -352,28 +372,8 @@ export class HttpService implements OnDestroy {
 				.pipe(
 					takeUntil(this.destroyed$),
 					switchMap((authObj) => {
-						return this.getUserAuth(authObj);
-					}),
-					tap({
-						next: (errOrAuth) => {
-							if (!errOrAuth.auth) {
-								// Next object is error
-								if (errOrAuth instanceof SilentError) {
-									// Do nothing
-								} else if (errOrAuth instanceof Error) {
-									// Some error we declare in code
-									this.loginService.loginErrorMessage$.next(errOrAuth.message);
-								} else {
-									// Direct HTTP Errors
-									this.loginService.showLoginError$.next(true);
-								}
-
-								this.loginService.isAuthenticated$.next(false);
-								this.loginService.clearInternal(true);
-							}
-						},
-					}),
-					filter((authObj) => !!authObj?.auth)
+						return this.fetchServerAuth(authObj);
+					})
 				)
 				.subscribe({
 					next: (authCtx) => {
@@ -400,250 +400,59 @@ export class HttpService implements OnDestroy {
 		this.destroyed$.complete();
 	}
 
+	/**
+	 * Discover which server the user is on
+	 * @param userName the username or email of the account
+	 */
+	discoverServer(userName: string) {
+		return this.http.get<DiscoverServerResponse>(discoveryEndpoint(userName)).pipe(
+			tap((response) => {
+				if (response?.auth_types?.length === 0) {
+					throw new Error("Couldn't find that username or email");
+				}
+			})
+		);
+	}
+
+	getServerFromStorage(): { server: LoginServer } {
+		let server = this.storage.getItem('server');
+		if (!server) {
+			this.loginService.isAuthenticated$.next(false);
+			return null;
+		}
+
+		return JSON.parse(server);
+	}
+
 	// Used in AccessTokenInterceptor for token refresh and adding access token
 	getAuthContext(): AuthContext {
 		return this._authContext;
 	}
 
-	getUserAuth(authObj) {
-		const auth: AuthContext = JSON.parse(this.storage.getItem('auth'));
-		if (auth) {
-			console.log('Token will expire ==>>', moment(auth.auth.expires).format('DD HH:mm'));
-		}
-		return iif(() => auth && moment().isSameOrBefore(moment(auth.auth.expires)), of(auth), this.fetchServerAuth(authObj));
-	}
-
-	setAuthContext(ctx: AuthContext, forKioskMode: boolean = false): void {
-		if (ctx && (!this.storage.getItem('auth') || forKioskMode)) {
-			this.storage.setItem('auth', JSON.stringify(ctx));
+	setAuthContext(ctx: any, forKioskMode: boolean = false): void {
+		if (ctx && (!this.storage.getItem('server') || forKioskMode)) {
+			this.storage.setItem('server', JSON.stringify(ctx));
 		}
 		this._authContext = ctx;
 		this.authContext$.next(ctx);
 	}
 
-	dirtyAccessToken(): void {
-		const ctx = this.getAuthContext();
-		ctx.auth.access_token = ctx.auth.access_token + 'garbled';
-		this._authContext = ctx; // Will not update websocket, but it's ok for testing.
-	}
-
-	checkIfTokenIsKiosk(): boolean {
-		const ctx = this.getAuthContext();
-		if (!ctx) {
-			return false;
-		}
-		const token = ctx.auth.access_token;
-		if (!token) {
-			return false;
-		}
-		const jwt = new JwtHelperService();
-		const decoded = jwt.decodeToken(token);
-
-		return !!decoded.kiosk_location_id;
-	}
-
-	private getLoginServers(data: FormData): Observable<LoginChoice> {
-		const preferredEnvironment = environment.preferEnvironment;
-
-		if (preferredEnvironment && typeof preferredEnvironment === 'object') {
-			return of({ server: preferredEnvironment as LoginServer });
-		}
-		const discovery = /(proxy)/.test(environment.buildType) ? '/api/discovery/v2/find' : 'https://smartpass.app/api/discovery/v2/find';
-		return this.http.post(discovery, data).pipe(
-			switchMap((servers: LoginResponse) => {
-				return this.pwaStorage.setItem('servers', servers).pipe(mapTo(servers));
-			}),
-			map((servers: LoginResponse) => {
-				if (servers.servers.length > 0) {
-					const server: LoginServer = servers.servers.find((s) => s.name === (preferredEnvironment as any)) || servers.servers[0];
-
-					let clever_token: string;
-					let google_token: string;
-					let classlink_token: string;
-
-					const authType = this.storage.getItem('authType');
-
-					if (servers.token) {
-						if (authType === 'clever') {
-							clever_token = servers.token.access_token;
-						} else if (authType === 'google') {
-							google_token = servers.token.access_token;
-						} else if (authType === 'classlink') {
-							classlink_token = servers.token.access_token;
-						}
-					}
-
-					return { server, classlink_token, clever_token, google_token };
-				} else {
-					return null;
-				}
-			})
-		);
-	}
-
-	private loginManual(username: string, password?: string): Observable<AuthContext> {
-		const c = new FormData();
-		c.append('email', username);
-		c.append('platform_type', 'web');
-
-		const authContext: AuthContext = JSON.parse(this.storage.getItem('auth'));
-
-		const context = authContext ? authContext : null;
-
-		return iif(() => !!context, of(context), this.getLoginServers(c)).pipe(
-			mergeMap((response: LoginChoice) => {
-				const server = response.server;
-				if (server === null) {
-					return throwError(new LoginServerError('No login server!'));
-				}
-
-				// console.log(`Chosen server: ${server.name}`, server);
-
-				const config = new FormData();
-				config.append('client_id', server.client_id);
-
-				const isKioskMode = this.storage.getItem('kioskToken') != null;
-				if (password) {
-					config.append('grant_type', 'password');
-					config.append('username', username);
-					config.append('password', password);
-				} else {
-					config.append('grant_type', 'refresh_token');
-					const refreshToken = authContext.auth.refresh_token;
-					config.append('token', refreshToken);
-
-					if (isKioskMode) {
-						const token = this.storage.getItem('kioskToken');
-						const jwt = new JwtHelperService();
-						const locId = jwt.decodeToken(token).kiosk_location_id;
-						config.append('kiosk_mode_location_id', locId);
-					}
-				}
-
-				if (!navigator.onLine) {
-					console.log('AUTHDATA OFFLINE');
-					return this.pwaStorage.getItem('authData').pipe(
-						map((data: any) => {
-							if (data) {
-								data['expires'] = moment().add(data['expires_in'], 'seconds').toDate();
-
-								ensureFields(data, ['access_token', 'token_type', 'expires', 'scope']);
-
-								const auth = data as ServerAuth;
-
-								return { auth: auth, server: server } as AuthContext;
-							}
-						})
-					);
-				}
-
-				return this.http.post(makeUrl(server, 'o/token/'), config).pipe(
-					switchMap((data) => {
-						return this.pwaStorage.setItem('authData', data).pipe(mapTo(data));
-					}),
-					map((data: any) => {
-						// this.storage.setItem('refresh_token', data.refresh_token);
-						// don't use TimeService for auth because auth is required for time service
-						// to be useful
-						data['expires'] = moment().add(data['expires_in'], 'seconds').toDate();
-
-						ensureFields(data, ['access_token', 'token_type', 'expires', 'scope']);
-
-						const auth = data as ServerAuth;
-						if (isKioskMode) {
-							this.storage.setItem('kioskToken', auth.access_token);
-							this.kioskTokenSubject$.next(auth);
-						}
-						if (!password) {
-							this.storage.setItem('auth', JSON.stringify({ auth: auth, server: server }));
-						}
-						return { auth: auth, server: server } as AuthContext;
-					})
-				);
-			})
-		);
-	}
-
-	loginGoogle(code: string): Observable<AuthContext> {
-		const c = new FormData();
-		c.append('code', code);
-		c.append('provider', 'google-oauth-code');
-		c.append('platform_type', 'web');
-		c.append('redirect_uri', this.getRedirectUrl() + 'google_oauth');
-
-		const authContext: AuthContext = JSON.parse(this.storage.getItem('auth'));
-		const context = authContext ? authContext : null;
-
-		if ((!context || !context.google_token) && !code) {
-			return throwError(new LoginServerError('Please sign in again.'));
+	// THIS SHOULD BE IN THE LOGIN SERVICE
+	// The code is so tangled right now that doing a major refactor may be too time-consuming
+	updateAuthFromExternalLogin(url: string, loginCode: string, scope: string) {
+		if (url.includes('google_oauth')) {
+			this.storage.setItem('authType', AuthType.Google);
+			this.loginService.updateAuth({ google_code: loginCode, type: 'google-login' });
 		}
 
-		return iif(() => !!context && !!context.google_token, of(context), this.getLoginServers(c)).pipe(
-			mergeMap((response: LoginChoice) => {
-				const server = response.server;
-				if (server === null) {
-					return throwError(new LoginServerError('No login server!'));
-				}
-
-				const config = new FormData();
-
-				config.append('client_id', server.client_id);
-				config.append('provider', 'google-access-token');
-				config.append('token', response.google_token);
-
-				return this.http.post(makeUrl(server, 'auth/by-token'), config).pipe(
-					map((data: any) => {
-						// don't use TimeService for auth because auth is required for time service
-						// to be useful
-						data['expires'] = moment().add(data['expires_in'], 'seconds').toDate();
-
-						ensureFields(data, ['access_token', 'token_type', 'expires', 'scope']);
-
-						const auth = data as ServerAuth;
-
-						return { auth: auth, server: server, google_token: response.google_token } as AuthContext;
-					})
-				);
-			})
-		);
-	}
-
-	loginClassLink(code: string): Observable<AuthContext> {
-		const c = new FormData();
-		c.append('code', code);
-		c.append('provider', 'classlink');
-		c.append('platform_type', 'web');
-
-		const context = this.storage.getItem('auth');
-
-		return iif(() => !!context, of(context), this.getLoginServers(c)).pipe(
-			mergeMap((response: LoginChoice) => {
-				const server = response.server;
-				if (server === null) {
-					return throwError(new LoginServerError('No login server!'));
-				}
-
-				const config = new FormData();
-
-				config.append('client_id', server.client_id);
-				config.append('provider', 'classlink');
-				config.append('token', response.classlink_token || '');
-
-				return this.http.post(makeUrl(server, 'auth/by-token'), config).pipe(
-					map((data: any) => {
-						// don't use TimeService for auth because auth is required for time service
-						// to be useful
-						data['expires'] = moment().add(data['expires_in'], 'seconds').toDate();
-
-						ensureFields(data, ['access_token', 'token_type', 'expires', 'scope']);
-
-						const auth = data as ServerAuth;
-
-						return { auth: auth, server: server, classlink_token: response.classlink_token } as AuthContext;
-					})
-				);
-			})
-		);
+		if (url.includes('classlink_oauth')) {
+			this.storage.setItem('authType', AuthType.Classlink);
+			this.loginService.updateAuth({ classlink_code: loginCode, type: 'classlink-login' });
+		} else if (!!scope) {
+			this.clearInternal();
+			this.storage.setItem('authType', AuthType.Clever);
+			this.loginService.updateAuth({ clever_code: loginCode, type: 'clever-login' });
+		}
 	}
 
 	getRedirectUrl(): string {
@@ -656,74 +465,86 @@ export class HttpService implements OnDestroy {
 		return redirect;
 	}
 
-	loginClever(code: string): Observable<AuthContext> {
-		const c = new FormData();
-		c.append('code', code);
-		c.append('provider', 'clever');
-		c.append('platform_type', 'web');
-		c.append('redirect_uri', this.getRedirectUrl());
+	loginSession(authObject: AuthObject) {
+		const formData = new FormData();
+		let sessionLogin: Partial<SessionLogin> = {};
+		const authContext: AuthContext = JSON.parse(this.storage.getItem('auth'));
+		const context = authContext ? authContext : null;
+		const google_token = context?.google_token;
 
-		const context = this.storage.getItem('auth');
+		formData.append('platform_type', 'web');
+		if (isDemoLogin(authObject)) {
+			sessionLogin.provider = LoginProvider.Password;
+			sessionLogin.token = authObject.password;
+			sessionLogin.username = authObject.username;
+			formData.append('email', authObject.username);
+		} else if (isClassLinkLogin(authObject)) {
+			sessionLogin.provider = LoginProvider.Classlink;
+			formData.append('code', authObject.classlink_code);
+			formData.append('provider', 'classlink');
+		} else if (isCleverLogin(authObject)) {
+			sessionLogin.provider = LoginProvider.Clever;
+			formData.append('code', authObject.clever_code);
+			formData.append('provider', 'clever');
+			formData.append('redirect_uri', this.getRedirectUrl());
+		} else if (isGoogleLogin(authObject)) {
+			if (!google_token) {
+				return throwError(new LoginServerError('Please sign in again'));
+			}
+			sessionLogin.provider = LoginProvider.Google;
+			formData.append('code', authObject.google_code);
+			formData.append('provider', 'google-oauth-code');
+			formData.append('redirect_uri', this.getRedirectUrl() + 'google_oauth');
+		}
 
-		return iif(() => !!context, of(JSON.parse(context)), this.getLoginServers(c)).pipe(
-			mergeMap((response: LoginChoice) => {
-				const server = response.server;
-				if (server === null) {
-					return throwError(new LoginServerError('No login server!'));
+		return this.http.post(discoveryV2Endpoint, formData).pipe(
+			switchMap((servers: LoginResponse) => {
+				return this.pwaStorage.setItem('servers', servers).pipe(mapTo(servers));
+			}),
+			concatMap((servers: LoginResponse) => {
+				if (!isDemoLogin(authObject)) {
+					sessionLogin.token = servers.token.access_token;
 				}
-
-				const config = new FormData();
-
-				config.append('client_id', server.client_id);
-				config.append('provider', 'clever');
-				config.append('token', response.clever_token);
-				return this.http.post(makeUrl(server, 'auth/by-token'), config).pipe(
-					map((data: any) => {
-						// don't use TimeService for auth because auth is required for time service
-						// to be useful
-						data['expires'] = moment().add(data['expires_in'], 'seconds').toDate();
-
-						ensureFields(data, ['access_token', 'token_type', 'expires', 'scope']);
-
-						const auth = data as ServerAuth;
-
-						return { auth: auth, server: server, clever_token: response.clever_token } as AuthContext;
+				return this.http
+					.post<never>(makeUrl(servers.servers[0], 'sessions'), sessionLogin, {
+						withCredentials: true,
+						observe: 'response',
 					})
-				);
+					.pipe(
+						map((response) => {
+							console.log(response.headers);
+							return { server: servers.servers[0] };
+						})
+					);
 			})
 		);
 	}
 
-	private fetchServerAuth(authObject: any): Observable<AuthContext | any> {
-		let authContext$: Observable<AuthContext>;
-		if (isDemoLogin(authObject)) {
-			authContext$ = this.loginManual(authObject.username, authObject.password);
-		} else if (isClassLinkLogin(authObject)) {
-			authContext$ = this.loginClassLink(authObject.classlink_code);
-		} else if (isCleverLogin(authObject)) {
-			authContext$ = this.loginClever(authObject.clever_code);
-		} else {
-			authContext$ = this.loginGoogle(authObject.google_code);
-		}
-		return authContext$.pipe(
+	private fetchServerAuth(authObject: any): Observable<{ server: LoginServer }> {
+		return this.loginSession(authObject).pipe(
 			catchError((err) => {
 				console.log('Failed to fetch serverAuth, err: ', err);
 				// Attempt to refresh once...
-				return this.doRefresh().pipe(
-					catchError((err2) => {
-						return of(err2);
-					})
-				);
+				// return this.doRefresh().pipe(
+				// 	catchError((err2) => {
+				// 		return of(err2);
+				// 	})
+				// );
+				return throwError(err);
 			})
 		);
 	}
 
-	private performRequest<T>(predicate: (ctx: AuthContext) => Observable<T>): Observable<T> {
-		if (!this.getAuthContext()) {
-			return throwError(new LoginServerError('No authContext'));
+	private performRequest<T>(predicate: (ctx: LoginServer) => Observable<T>): Observable<T> {
+		let server = this.storage.getItem('server');
+		if (!server) {
+			this.loginService.isAuthenticated$.next(false);
+			return throwError(new LoginServerError('No login server!'));
 		}
 
-		return predicate(this.getAuthContext());
+		const parsedServer: { server: LoginServer } = JSON.parse(server);
+
+		return predicate(parsedServer.server);
 	}
 
 	// Used in AccessTokenInterceptor to trigger refresh
@@ -731,7 +552,7 @@ export class HttpService implements OnDestroy {
 		const signOutCatch = catchError((err) => {
 			this.showSignBackIn().subscribe((_) => {
 				if (err === this.cannotRefreshGoogle) {
-					const url = GoogleLoginService.googleOAuthUrl + `&redirect_uri=${this.getRedirectUrl()}google_oauth`;
+					const url = LoginService.googleOAuthUrl + `&redirect_uri=${this.getRedirectUrl()}google_oauth`;
 					this.loginService.clearInternal(true);
 					window.location.href = url;
 				} else if (err === this.cannotRefreshClever) {
@@ -746,84 +567,84 @@ export class HttpService implements OnDestroy {
 			throw err;
 		});
 
-		return this.doRefresh().pipe(tap({ next: (ctx: AuthContext) => this.setAuthContext(ctx) }), signOutCatch);
+		return of(1);
 	}
 
-	private doSPTokenRefresh(kioskMode: boolean): Observable<AuthContext> {
-		// We have to get the context from storage here because this.getAuthContext will be null during first load.
-		const auth: AuthContext = JSON.parse(this.storage.getItem('auth'));
-		const s = auth ? auth : null;
-		const refresh_token = auth ? auth.auth.refresh_token : null;
-
-		if (!s || !refresh_token) {
-			return throwError(new LoginServerError('Please sign in again.'));
-		}
-
-		const c: AuthContext = s;
-		const server = c.server;
-		const config = new FormData();
-		config.append('client_id', server.client_id);
-		config.append('grant_type', 'refresh_token');
-		config.append('token', refresh_token);
-
-		if (kioskMode) {
-			const token = this.storage.getItem('kioskToken');
-			const jwt = new JwtHelperService();
-			const locId = jwt.decodeToken(token).kiosk_location_id;
-			config.append('kiosk_mode_location_id', locId);
-		}
-
-		return this.http.post(makeUrl(server, 'o/token/'), config).pipe(
-			tap({ next: (o) => console.log('Received refresh object: ', o) }),
-			map((data: Object) => {
-				data['expires'] = moment().add(data['expires_in'], 'seconds').toDate();
-				const ctx: AuthContext = { auth: data as ServerAuth, server: server } as AuthContext;
-				return ctx;
-			}),
-			tap({
-				next: (ctx: AuthContext) => {
-					// this.storage.setItem('refresh_token', ctx.auth.refresh_token);
-					if (kioskMode) {
-						this.storage.setItem('kioskToken', ctx.auth.access_token);
-						this.kioskTokenSubject$.next(ctx.auth);
-					}
-					this.storage.setItem('auth', JSON.stringify(ctx));
-				},
-			})
-		);
-	}
+	// private doSPTokenRefresh(kioskMode: boolean): Observable<AuthContext> {
+	// 	// We have to get the context from storage here because this.getAuthContext will be null during first load.
+	// 	const auth: AuthContext = JSON.parse(this.storage.getItem('auth'));
+	// 	const s = auth ? auth : null;
+	// 	const refresh_token = auth ? auth.auth.refresh_token : null;
+	//
+	// 	if (!s || !refresh_token) {
+	// 		return throwError(new LoginServerError('Please sign in again.'));
+	// 	}
+	//
+	// 	const c: AuthContext = s;
+	// 	const server = c.server;
+	// 	const config = new FormData();
+	// 	config.append('client_id', server.client_id);
+	// 	config.append('grant_type', 'refresh_token');
+	// 	config.append('token', refresh_token);
+	//
+	// 	if (kioskMode) {
+	// 		const token = this.storage.getItem('kioskToken');
+	// 		const jwt = new JwtHelperService();
+	// 		const locId = jwt.decodeToken(token).kiosk_location_id;
+	// 		config.append('kiosk_mode_location_id', locId);
+	// 	}
+	//
+	// 	return this.http.post(makeUrl(server, 'o/token/'), config).pipe(
+	// 		tap({ next: (o) => console.log('Received refresh object: ', o) }),
+	// 		map((data: Object) => {
+	// 			data['expires'] = moment().add(data['expires_in'], 'seconds').toDate();
+	// 			const ctx: AuthContext = { auth: data as ServerAuth, server: server } as AuthContext;
+	// 			return ctx;
+	// 		}),
+	// 		tap({
+	// 			next: (ctx: AuthContext) => {
+	// 				// this.storage.setItem('refresh_token', ctx.auth.refresh_token);
+	// 				if (kioskMode) {
+	// 					this.storage.setItem('kioskToken', ctx.auth.access_token);
+	// 					this.kioskTokenSubject$.next(ctx.auth);
+	// 				}
+	// 				this.storage.setItem('auth', JSON.stringify(ctx));
+	// 			},
+	// 		})
+	// 	);
+	// }
 
 	// This will throw errors if encountered
-	private doRefresh(): Observable<AuthContext> {
-		const isKiosk = this.storage.getItem('kioskToken') != null;
-		if (isKiosk) {
-			return this.doSPTokenRefresh(true);
-		}
-
-		const authType = this.storage.getItem('authType');
-
-		if (!authType) {
-			return throwError(new LoginServerError('Please sign in again.'));
-		}
-
-		switch (authType) {
-			case 'password':
-				return this.doSPTokenRefresh(false);
-			case 'google':
-				const url = GoogleLoginService.googleOAuthUrl + `&redirect_uri=${this.getRedirectUrl()}google_oauth`;
-				this.showSignBackIn()
-					.pipe(takeUntil(this.destroyed$))
-					.subscribe((_) => {
-						this.loginService.clearInternal(true);
-						window.location.href = url;
-					});
-				return throwError(this.cannotRefreshGoogle);
-			case 'clever':
-				return throwError(this.cannotRefreshClever);
-			default:
-				return throwError(new Error('Unknown authType'));
-		}
-	}
+	// private doRefresh(): Observable<AuthContext> {
+	// 	const isKiosk = this.storage.getItem('kioskToken') != null;
+	// 	if (isKiosk) {
+	// 		return this.doSPTokenRefresh(true);
+	// 	}
+	//
+	// 	const authType = this.storage.getItem('authType');
+	//
+	// 	if (!authType) {
+	// 		return throwError(new LoginServerError('Please sign in again.'));
+	// 	}
+	//
+	// 	switch (authType) {
+	// 		case 'password':
+	// 			return this.doSPTokenRefresh(false);
+	// 		case 'google':
+	// 			const url = LoginService.googleOAuthUrl + `&redirect_uri=${this.getRedirectUrl()}google_oauth`;
+	// 			this.showSignBackIn()
+	// 				.pipe(takeUntil(this.destroyed$))
+	// 				.subscribe((_) => {
+	// 					this.loginService.clearInternal(true);
+	// 					window.location.href = url;
+	// 				});
+	// 			return throwError(this.cannotRefreshGoogle);
+	// 		case 'clever':
+	// 			return throwError(this.cannotRefreshClever);
+	// 		default:
+	// 			return throwError(new Error('Unknown authType'));
+	// 	}
+	// }
 
 	showSignBackIn(): Observable<any> {
 		const ref = this.matDialog.open(SignedOutToastComponent, {
@@ -902,17 +723,14 @@ export class HttpService implements OnDestroy {
 
 	searchIcons(search: string, config?: Config) {
 		return this.performRequest((ctx) => {
-			return this.http.get(`${ctx.server.icon_search_url}?query=${search}`);
+			return this.http.get(`${ctx.icon_search_url}?query=${search}`);
 		});
 	}
 
 	get<T>(url, config?: Config, schoolOverride?: School): Observable<T> {
-		return this.performRequest((ctx) => {
-			// Explicitly check for undefined because the caller may want to override with null.
-			const school = schoolOverride !== undefined ? schoolOverride : this.getSchool();
-			const effectiveUserId = this.getEffectiveUserId();
-			return this.http.get<T>(makeUrl(ctx.server, url), makeConfig(config, school, effectiveUserId));
-		});
+		const school = schoolOverride !== undefined ? schoolOverride : this.getSchool();
+		const effectiveUserId = this.getEffectiveUserId();
+		return this.performRequest<T>((server) => this.http.get<T>(makeUrl(server, url), makeConfig(config, school, effectiveUserId)));
 	}
 
 	post<T>(url: string, body?: any, config?: Config, isFormData = true): Observable<T> {
@@ -931,14 +749,15 @@ export class HttpService implements OnDestroy {
 			}
 			body = formData;
 		}
-		return this.performRequest((ctx) =>
-			this.http.post<T>(makeUrl(ctx.server, url), body, makeConfig(config, this.getSchool(), this.getEffectiveUserId()))
+
+		return this.performRequest((server) =>
+			this.http.post<T>(makeUrl(server, url), body, makeConfig(config, this.getSchool(), this.getEffectiveUserId()))
 		);
 	}
 
 	delete<T>(url, config?: Config): Observable<T> {
-		return this.performRequest((ctx) =>
-			this.http.delete<T>(makeUrl(ctx.server, url), makeConfig(config, this.getSchool(), this.getEffectiveUserId()))
+		return this.performRequest((server) =>
+			this.http.delete<T>(makeUrl(server, url), makeConfig(config, this.getSchool(), this.getEffectiveUserId()))
 		);
 	}
 
@@ -955,8 +774,8 @@ export class HttpService implements OnDestroy {
 				}
 			}
 		}
-		return this.performRequest((ctx) =>
-			this.http.put<T>(makeUrl(ctx.server, url), body, makeConfig(config, this.getSchool(), this.getEffectiveUserId()))
+		return this.performRequest((server) =>
+			this.http.put<T>(makeUrl(server, url), body, makeConfig(config, this.getSchool(), this.getEffectiveUserId()))
 		);
 	}
 
@@ -973,8 +792,8 @@ export class HttpService implements OnDestroy {
 				}
 			}
 		}
-		return this.performRequest((ctx) =>
-			this.http.patch<T>(makeUrl(ctx.server, url), body, makeConfig(config, this.getSchool(), this.getEffectiveUserId()))
+		return this.performRequest((server) =>
+			this.http.patch<T>(makeUrl(server, url), body, makeConfig(config, this.getSchool(), this.getEffectiveUserId()))
 		);
 	}
 }

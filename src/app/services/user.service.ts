@@ -108,6 +108,7 @@ import {
 	updateIntrosStudentPassLimits,
 	updateIntrosWaitInLine,
 	updateIntrosPassLimitsOnlyCertainRooms,
+	updateIntrosSeenRenewalStatusPage,
 } from '../ngrx/intros/actions';
 import { getIntrosData, IntroData } from '../ngrx/intros/state';
 import { clearSchools, getSchoolsFailure } from '../ngrx/schools/actions';
@@ -139,7 +140,7 @@ import { updateTeacherLocations } from '../ngrx/accounts/nested-states/teachers/
 import { ProfilePicturesUploadGroup } from '../models/ProfilePicturesUploadGroup';
 import { ProfilePicturesError } from '../models/ProfilePicturesError';
 import { LoginDataService } from './login-data.service';
-import { GoogleLoginService } from './google-login.service';
+import { LoginService } from './login.service';
 import { School } from '../models/School';
 import { UserStats } from '../models/UserStats';
 import { getStudentStats } from '../ngrx/accounts/nested-states/students/actions';
@@ -335,7 +336,7 @@ export class UserService implements OnDestroy {
 		private _logging: Logger,
 		private errorHandler: ErrorHandler,
 		private store: Store<AppState>,
-		private loginService: GoogleLoginService,
+		private loginService: LoginService,
 		private loginDataService: LoginDataService
 	) {
 		/**
@@ -547,6 +548,10 @@ export class UserService implements OnDestroy {
 		return this.getUserSchool().feature_flag_parent_accounts;
 	}
 
+	getFeatureFlagNewAbbreviation(): boolean {
+		return this.getUserSchool().feature_flag_new_abbreviation;
+	}
+
 	getCurrentUpdatedSchool$(): Observable<School> {
 		return this.http.currentUpdateSchool$;
 	}
@@ -626,6 +631,10 @@ export class UserService implements OnDestroy {
 		this.store.dispatch(updateIntrosPassLimitsOnlyCertainRooms({ intros, device, version }));
 	}
 
+	updateIntrosSeenRenewalStatusPageRequest(intros, device, version) {
+		this.store.dispatch(updateIntrosSeenRenewalStatusPage({ intros, device, version }));
+	}
+
 	// TODO: Make all update functions into a single function
 	// TODO: Have all update intro endpoints be part of an enum
 	// TODO: Share that enum with `intro.effects.ts`
@@ -668,6 +677,10 @@ export class UserService implements OnDestroy {
 
 	updateIntrosPassLimitsOnlyCertainRooms(device, version) {
 		return this.http.patch(`v1/intros/admin_pass_limits_only_certain_rooms`, { device, version });
+	}
+
+	updateIntrosSeenRenewalStatusPage(device, version) {
+		return this.http.patch(`v1/intros/seen_renewal_status_page`, { device, version });
 	}
 
 	saveKioskModeLocation(locId): Observable<ServerAuth> {
@@ -900,7 +913,7 @@ export class UserService implements OnDestroy {
 		return this.http.get<any>(constructUrl('v1/users', params));
 	}
 
-	getMoreUserListRequest(role) {
+	getMoreUserListRequest(role: string): Observable<User[]> {
 		this.store.dispatch(getMoreAccounts({ role }));
 		return this.lastAddedAccounts$[role];
 	}

@@ -89,7 +89,7 @@
 							</div>
 						</span>
 						<span notranslate>
-							{{ effectiveUser ? effectiveUser.user.first_name : '' }}
+							{{ effectiveUser?.user?.first_name || '' }}
 						</span>
 						<img
 							*ngIf="effectiveUser.user && effectiveUser.user.badge"
@@ -102,6 +102,13 @@
 				</div>
 
 				<ng-template #notAssistant>
+					<div class="streaks" *ngIf="showStreakIcon()">
+						<div id="puff"></div>
+						<div class="wrapper" #streaksButton [ngClass]="{ active: isStreaksOpen }" (click)="openStreaks($event)">
+							<div class="title" notranslate>{{ streaksCount }}</div>
+							<img width="20px" [src]="'./assets/Streaks.svg'" alt="" />
+						</div>
+					</div>
 					<div class="feedback" *ngIf="isStaff && !isKioskMode && !isParent && !isMobile && !isKioskModeSettingsPage()">
 						<app-feedback-button></app-feedback-button>
 					</div>

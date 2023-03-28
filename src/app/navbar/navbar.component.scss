@@ -510,6 +510,45 @@
 	}
 }
 
+.streaks {
+	#puff {
+		cursor: pointer;
+		display: none;
+		position: absolute;
+		height: 32px;
+		width: 32px;
+		background: url(http://i.imgur.com/wvPeK.png) no-repeat;
+	}
+	.wrapper {
+		display: flex;
+		align-items: center;
+		justify-content: center;
+		cursor: pointer;
+		margin: 0 10px;
+		transition: all 200ms ease;
+		padding: 5px 12px;
+		border-radius: 25px;
+		border: 1px solid transparent;
+		.title {
+			font-family: 'Inter';
+			font-style: normal;
+			font-weight: 500;
+			font-size: 20px;
+			line-height: 27px;
+			color: #1f195e;
+			padding: 0 2px;
+		}
+		&:hover {
+			background: #e2e6ec;
+			border-color: #e2e6ec;
+		}
+		&.active {
+			background: #fcf3e7;
+			border-color: #e48c15;
+		}
+	}
+}
+
 .setting-ryt-align {
 	margin-left: auto;
 }

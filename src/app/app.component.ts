@@ -1,26 +1,37 @@
-import { HttpClient } from '@angular/common/http';
 import { AfterViewInit, Component, ElementRef, HostListener, NgZone, OnDestroy, OnInit, ViewChild } from '@angular/core';
 import { MatDialog, MatDialogRef } from '@angular/material/dialog';
 import { ActivatedRoute, NavigationEnd, Router } from '@angular/router';
 import { filter as _filter } from 'lodash';
-import { BehaviorSubject, fromEvent, interval, merge, Observable, ReplaySubject, Subject, zip } from 'rxjs';
+import { BehaviorSubject, combineLatest, forkJoin, fromEvent, interval, merge, Observable, of, ReplaySubject, Subject, zip } from 'rxjs';
 
-import { concatMap, filter, finalize, map, mergeMap, switchMap, take, takeUntil, tap, withLatestFrom } from 'rxjs/operators';
+import {
+	catchError,
+	concatMap,
+	distinctUntilChanged,
+	filter,
+	finalize,
+	map,
+	mergeMap,
+	switchMap,
+	take,
+	takeUntil,
+	tap,
+	withLatestFrom,
+} from 'rxjs/operators';
 import { BUILD_INFO_REAL } from '../build-info';
 import { DarkThemeSwitch } from './dark-theme-switch';
 
 import { DeviceDetection } from './device-detection.helper';
 import { School } from './models/School';
 import { AdminService } from './services/admin.service';
-import { GoogleLoginService } from './services/google-login.service';
+import { LoginService } from './services/login.service';
 import { HttpService } from './services/http-service';
 import { KioskModeService } from './services/kiosk-mode.service';
 import { StorageService } from './services/storage.service';
 import { OverlayContainer } from '@angular/cdk/overlay';
 import { APPLY_ANIMATED_CONTAINER, ConsentMenuOverlay } from './consent-menu-overlay';
-import { DomSanitizer, Meta, SafeResourceUrl } from '@angular/platform-browser';
+import { DomSanitizer, SafeResourceUrl, Title } from '@angular/platform-browser';
 import { NotificationService } from './services/notification-service';
-import { GoogleAnalyticsService } from './services/google-analytics.service';
 import { ShortcutInput } from 'ng-keyboard-shortcuts';
 import { KeyboardShortcutsService } from './services/keyboard-shortcuts.service';
 import { NextReleaseComponent, Update } from './next-release/next-release.component';
@@ -31,12 +42,13 @@ import { ScreenService } from './services/screen.service';
 import { ToastService } from './services/toast.service';
 import _refiner from 'refiner-js';
 import { CheckForUpdateService } from './services/check-for-update.service';
-import { LocalizejsService } from './services/localizejs.service';
 import { ColorProfile } from './models/ColorProfile';
 import { Util } from '../Util';
 import { HelpCenterService } from './services/help-center.service';
 import { CallDialogComponent } from './shared/shared-components/call-dialog/call-dialog.component';
 import { FeatureFlagService, FLAGS } from './services/feature-flag.service';
+import { CookieService } from 'ngx-cookie-service';
+import { environment } from '../environments/environment';
 
 declare const window;
 declare var ResizeObserver;
@@ -132,11 +144,10 @@ export class AppComponent implements OnInit, AfterViewInit, OnDestroy {
 
 	constructor(
 		public darkTheme: DarkThemeSwitch,
-		public loginService: GoogleLoginService,
+		public loginService: LoginService,
 		private userService: UserService,
 		private nextReleaseService: NextReleaseService,
 		private http: HttpService,
-		private httpNative: HttpClient,
 		private adminService: AdminService,
 		private _zone: NgZone,
 		private activatedRoute: ActivatedRoute,
@@ -145,17 +156,16 @@ export class AppComponent implements OnInit, AfterViewInit, OnDestroy {
 		private overlayContainer: OverlayContainer,
 		private storageService: StorageService,
 		private kms: KioskModeService,
-		private meta: Meta,
 		private notifService: NotificationService,
-		private googleAnalytics: GoogleAnalyticsService,
 		private shortcutsService: KeyboardShortcutsService,
 		private screen: ScreenService,
 		private toastService: ToastService,
-		private localize: LocalizejsService,
 		private updateService: CheckForUpdateService,
 		public helpCenter: HelpCenterService,
 		private sanitizer: DomSanitizer,
-		public featureFlags: FeatureFlagService
+		public featureFlags: FeatureFlagService,
+		private cookie: CookieService,
+		private titleService: Title
 	) {}
 
 	get isMobile() {
@@ -314,22 +324,69 @@ export class AppComponent implements OnInit, AfterViewInit, OnDestroy {
 			document.head.appendChild(link);
 		}
 
-		this.loginService.isAuthenticated$.pipe(takeUntil(this.subscriber$)).subscribe((isAuth) => {
-			this._zone.run(() => {
-				this.showUISubject.next(true);
-				this.isAuthenticated = isAuth;
-				const path = window.location.pathname;
-
-				if (isAuth && path.includes('parent-sign-up')) {
-					this.router.navigate(['parent']);
-				} else if (!isAuth && (path.includes('admin') || path.includes('main'))) {
-					if (path.includes('main/student')) {
-						this.storageService.setItem('initialUrl', path);
+		combineLatest([this.checkIfAuthOnLoad(), this.loginService.isAuthenticated$.asObservable()])
+			.pipe(
+				map(([authOnLoad, authStateChanged]) => authOnLoad || authStateChanged),
+				distinctUntilChanged(),
+				tap((isAuth) => {
+					if (!isAuth) {
+						const path = window.location.pathname;
+						if (path.includes('main/student')) {
+							this.storageService.setItem('initialUrl', path);
+						}
+						this.router.navigate(['/']).then(() => {
+							this.showUISubject.next(true);
+						});
 					}
-					this.router.navigate(['/']);
-				}
-			});
-		});
+				}),
+				filter(Boolean),
+				tap(() => {
+					this.showUISubject.next(true);
+					this.userService.getUserRequest();
+					this.http.getSchoolsRequest();
+					this.userService.getIntrosRequest();
+				}),
+				mergeMap(() => this.userService.userData.pipe(takeUntil(this.subscriber$), filter<User>(Boolean))),
+				tap((user) => {
+					user = User.fromJSON(user);
+					if (NotificationService.hasPermission && environment.production) {
+						this.notifService.initNotifications(true);
+					}
+
+					const callbackUrl: string = window.history.state.callbackUrl;
+					if (callbackUrl != null || callbackUrl !== undefined) {
+						this.router.navigate([callbackUrl]);
+					} else if (this.isMobile && user.isAdmin() && user.isTeacher()) {
+						this.router.navigate(['main']);
+					} else if (user.isParent()) {
+						this.router.navigate(['parent']);
+					} else {
+						let showRenewalPage$ = of(false);
+						if (user.isAdmin()) {
+							showRenewalPage$ = this.isAdminUpForRenewal$();
+						}
+
+						showRenewalPage$.subscribe({
+							next: (show) => {
+								const href: string = window.location.href;
+								if (href.includes('admin') || href.includes('main')) {
+									return;
+								}
+
+								if (show) {
+									this.router.navigate(['admin', 'renewal']).then();
+									return;
+								}
+
+								const loadView = user.isAdmin() ? 'admin' : 'main';
+								this.router.navigate([loadView]).then();
+							},
+						});
+					}
+					this.titleService.setTitle('SmartPass');
+				})
+			)
+			.subscribe();
 
 		this.http.schoolsCollection$
 			.pipe(
@@ -385,8 +442,7 @@ export class AppComponent implements OnInit, AfterViewInit, OnDestroy {
 
 				if (
 					data.hubspot &&
-					((data.currentUser && !data.currentUser.isStudent() && data.authFree) ||
-						(!this.http.kioskTokenSubject$.value && !this.kms.getCurrentRoom().value)) &&
+					((data.currentUser && !data.currentUser.isStudent() && data.authFree) || !this.kms.getCurrentRoom().value) &&
 					!this.screen.isDeviceLargeExtra
 				) {
 					if (!existingHub) {
@@ -413,6 +469,23 @@ export class AppComponent implements OnInit, AfterViewInit, OnDestroy {
 				this.hideSchoolToggleBar = data.hideSchoolToggleBar;
 				this.hideScroll = data.hideScroll;
 			});
+	}
+
+	isAdminUpForRenewal$(): Observable<boolean> {
+		return forkJoin([this.adminService.getRenewalData(), this.userService.introsData$.pipe(take(1))]).pipe(
+			take(1),
+			map(([resp, intros]) => {
+				const show = resp.renewal_status == 'expiring' || !intros.seen_renewal_page?.universal?.seen_version;
+				return { intros, show };
+			}),
+			tap(({ intros, show }) => {
+				if (show && !intros.seen_renewal_page?.universal?.seen_version) {
+					this.userService.updateIntrosSeenRenewalStatusPageRequest(intros, 'universal', '1');
+				}
+			}),
+			map(({ show }) => show),
+			catchError(() => of(false))
+		);
 	}
 
 	registerRefiner(user: User) {
@@ -716,5 +789,20 @@ export class AppComponent implements OnInit, AfterViewInit, OnDestroy {
 
 	openLiveChat() {
 		window.Intercom('update', { hide_default_launcher: true });
+	}
+
+	private checkIfAuthOnLoad(): Observable<boolean> {
+		const isCookiePresent = !!this.cookie.get('smartpassToken');
+
+		if (!isCookiePresent) {
+			return of(false);
+		}
+
+		const svrString = this.storageService.getItem('server');
+		if (!svrString) {
+			return of(false);
+		}
+
+		return of(true);
 	}
 }

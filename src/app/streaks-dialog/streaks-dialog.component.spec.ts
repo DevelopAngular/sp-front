@@ -1,19 +1,19 @@
 import { ComponentFixture, TestBed } from '@angular/core/testing';
 
-import { ParentLoginComponent } from './parent-login.component';
+import { StreaksDialogComponent } from './streaks-dialog.component';
 
-describe('ParentLoginComponent', () => {
-	let component: ParentLoginComponent;
-	let fixture: ComponentFixture<ParentLoginComponent>;
+describe('StreaksDialogComponent', () => {
+	let component: StreaksDialogComponent;
+	let fixture: ComponentFixture<StreaksDialogComponent>;
 
 	beforeEach(async () => {
 		await TestBed.configureTestingModule({
-			declarations: [ParentLoginComponent],
+			declarations: [StreaksDialogComponent],
 		}).compileComponents();
 	});
 
 	beforeEach(() => {
-		fixture = TestBed.createComponent(ParentLoginComponent);
+		fixture = TestBed.createComponent(StreaksDialogComponent);
 		component = fixture.componentInstance;
 		fixture.detectChanges();
 	});

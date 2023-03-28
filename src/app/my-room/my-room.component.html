@@ -104,7 +104,7 @@
 				? 'calc(100vh - 103px)'
 				: 'calc(100vh - 64px)'
 		">
-		<div class="my-room-left" *ngIf="!(kioskMode.currentRoom$ | async)">
+		<div class="my-room-left" *ngIf="!(kioskMode.getCurrentRoom() | async)">
 			<div class="my-room-header" [@headerTrigger]="headerState" *ngIf="screenService.isDesktopWidth">
 				<div
 					class="selected-teacher"

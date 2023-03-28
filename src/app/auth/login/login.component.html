@@ -46,7 +46,7 @@
 					[minWidth]="'90px'"
 					[minHeight]="'30px'"
 					[fontSize]="'14px'"
-					(buttonClick)="!showSpinner ? nextButtonTapped() : null"
+					(buttonClick)="!showSpinner ? checkEmail() : null"
 					[style.width]="'90px'">
 					<div *ngIf="!showSpinner">
 						<span>Next</span>

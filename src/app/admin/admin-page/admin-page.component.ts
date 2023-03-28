@@ -2,7 +2,7 @@ import { AfterViewInit, Component, OnDestroy, OnInit } from '@angular/core';
 
 import { BehaviorSubject, Observable, of, Subject } from 'rxjs';
 import { UserService } from '../../services/user.service';
-import { ActivatedRoute, Router } from '@angular/router';
+import { Router } from '@angular/router';
 import { delay, exhaustMap, filter, map, skip, take, takeUntil, tap } from 'rxjs/operators';
 import { environment } from '../../../environments/environment';
 import { HttpService } from '../../services/http-service';
@@ -28,7 +28,6 @@ export class AdminPageComponent implements OnInit, AfterViewInit, OnDestroy {
 
 	constructor(
 		private router: Router,
-		private route: ActivatedRoute,
 		private userService: UserService,
 		private httpService: HttpService,
 		private updateService: CheckForUpdateService
@@ -91,7 +90,7 @@ export class AdminPageComponent implements OnInit, AfterViewInit, OnDestroy {
 				} else if (availableAccessTo.includes('access_user_config')) {
 					tab = 'accounts';
 				}
-				this.router.navigate(['/admin', tab]);
+				this.router.navigate(['admin', tab]);
 			});
 	}
 

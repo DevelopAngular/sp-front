@@ -7872,6 +7872,7 @@ __metadata:
     ng2-charts: ^2.4.2
     ng2-dragula: ^2.1.1
     ngx-connection-service: ^7.0.3
+    ngx-cookie-service: 12.0.3
     ngx-swiper-wrapper: ^8.0.0
     node-sass: ^4.12.0
     oboe: ^2.1.5
@@ -11042,6 +11043,18 @@ __metadata:
     "@angular/core": ">=7"
     lodash: ">=4"
   checksum: 25944f5e7f91b4056cd8f9a47bcdb90cfeb69996f6be922ff036accba895fad004905c1204a6bff21db24f3b94cacf014983930d88b52ab1f89c54fa395eef29
+  languageName: node
+  linkType: hard
+
+"ngx-cookie-service@npm:12.0.3":
+  version: 12.0.3
+  resolution: "ngx-cookie-service@npm:12.0.3"
+  dependencies:
+    tslib: ^2.0.0
+  peerDependencies:
+    "@angular/common": ^12.0.0
+    "@angular/core": ^12.0.0
+  checksum: 435b71b48c2852b9b78756d8fabd102845d0ec520c8ea055a19293d6da317a6bd02b72b02204ed65623a472cf69e8459a4f0b1ef7209f7179a5298d31cd502e1
   languageName: node
   linkType: hard
 

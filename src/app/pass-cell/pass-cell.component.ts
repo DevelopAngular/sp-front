@@ -1,12 +1,13 @@
-import { Component, Input, OnInit, OnDestroy, EventEmitter } from '@angular/core';
+import { Component, Input, OnInit, OnDestroy } from '@angular/core';
 import { Subject } from 'rxjs';
 import { HallPass } from '../models/HallPass';
 import { Invitation } from '../models/Invitation';
 import { Request } from '../models/Request';
-import { getInnerPassContent, getInnerPassName, isBadgeVisible } from '../pass-tile/pass-display-util';
+import { getInnerPassContent, isBadgeVisible } from '../pass-tile/pass-display-util';
 import { Util } from '../../Util';
 import { filter } from 'rxjs/operators';
 import { TimeService } from '../services/time.service';
+import { UserService } from '../services/user.service';
 
 @Component({
 	selector: 'app-pass-cell',
@@ -26,10 +27,10 @@ export class PassCellComponent implements OnInit, OnDestroy {
 	valid: boolean = true;
 	timers: number[] = [];
 
-	constructor(private timeService: TimeService) {}
+	constructor(private timeService: TimeService, private userService: UserService) {}
 
 	get cellName() {
-		return getInnerPassName(this.pass);
+		return this.pass.student.abbreviatedName(this.userService.getFeatureFlagNewAbbreviation());
 	}
 
 	get cellContent() {

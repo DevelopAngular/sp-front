@@ -1,9 +1,10 @@
 import { Injectable } from '@angular/core';
 import { $WebSocket } from 'angular2-websocket/angular2-websocket';
-import { BehaviorSubject, NEVER, Observable, Subject, Subscription, fromEvent, merge } from 'rxjs';
-import { filter, map, publish, refCount, switchMap, tap } from 'rxjs/operators';
+import { BehaviorSubject, fromEvent, Observable, Subject, Subscription } from 'rxjs';
+import { filter, map, publish, refCount, tap } from 'rxjs/operators';
 import { HttpService } from './http-service';
 import { Logger } from './logger.service';
+import { CookieService } from 'ngx-cookie-service';
 
 interface RawMessage {
 	type: string;
@@ -49,7 +50,7 @@ export class PollingService {
 	private failedHeartbeats: number = 0;
 	private lastHeartbeat: number = Date.now() + 30 * 1000;
 
-	constructor(private http: HttpService, private _logger: Logger) {
+	constructor(private http: HttpService, private _logger: Logger, private cookie: CookieService) {
 		this.connectWebsocket();
 		this.createEventListener();
 		this.listenForHeartbeat();
@@ -62,86 +63,88 @@ export class PollingService {
 
 	private connectWebsocket(): void {
 		if (this.websocket !== null) return;
+		const spCookie = this.cookie.get('smartpassToken');
+		if (!spCookie) {
+			return;
+		}
 
-		this.http.authContext$.subscribe((ctx) => {
-			if (ctx === null) {
-				return NEVER;
+		const serverFromStorage = this.http.getServerFromStorage();
+		if (!serverFromStorage) {
+			return;
+		}
+		const { server } = serverFromStorage;
+		let sendMessageSubscription: Subscription = null;
+
+		const url = server.ws_url;
+		const ws = new $WebSocket(url, null, {
+			reconnectIfNotNormalClose: false,
+		});
+		console.log('Websocket created');
+		this.websocket = ws;
+
+		let opened = false;
+		ws.onOpen(() => {
+			if (this.websocket !== ws) return;
+			opened = true;
+
+			console.log('Websocket opened');
+			ws.send4Direct(JSON.stringify({ action: 'authenticate', token: spCookie, token_type: 'cookie_value' }));
+
+			// any time the websocket opens, trigger an invalidation event because listeners can't trust their
+			// current state but by refreshing and listening from here, they will get all updates. (technically
+			// there is a small unsafe window because the invalidation event should be sent when the authentication
+			// success event is received)
+			this.rawMessageStream.next({
+				type: 'message',
+				data: {
+					action: 'invalidate',
+					data: null,
+				},
+			});
+
+			if (sendMessageSubscription !== null) {
+				sendMessageSubscription.unsubscribe();
+				sendMessageSubscription = null;
 			}
-
-			let sendMessageSubscription: Subscription = null;
-
-			const url = ctx.server.ws_url;
-			const ws = new $WebSocket(url, null, {
-				reconnectIfNotNormalClose: false,
+			sendMessageSubscription = this.sendMessageQueue$.subscribe((message) => {
+				ws.send4Direct(JSON.stringify(message));
 			});
-			console.log('Websocket created');
-			this.websocket = ws;
+		});
 
-			let opened = false;
+		setTimeout(() => {
+			if (!opened) ws.close(true);
+		}, 5000);
 
-			ws.onOpen(() => {
-				if (this.websocket !== ws) return;
-				opened = true;
-
-				console.log('Websocket opened');
-				ws.send4Direct(JSON.stringify({ action: 'authenticate', token: ctx.auth.access_token }));
-
-				// any time the websocket opens, trigger an invalidation event because listeners can't trust their
-				// current state but by refreshing and listening from here, they will get all updates. (technically
-				// there is a small unsafe window because the invalidation event should be sent when the authentication
-				// success event is received)
-				this.rawMessageStream.next({
-					type: 'message',
-					data: {
-						action: 'invalidate',
-						data: null,
-					},
-				});
-
-				if (sendMessageSubscription !== null) {
-					sendMessageSubscription.unsubscribe();
-					sendMessageSubscription = null;
-				}
-				sendMessageSubscription = this.sendMessageQueue$.subscribe((message) => {
-					ws.send4Direct(JSON.stringify(message));
-				});
+		ws.onMessage((event) => {
+			this.rawMessageStream.next({
+				type: 'message',
+				data: JSON.parse(event.data),
 			});
+		});
 
-			setTimeout(() => {
-				if (!opened) ws.close(true);
-			}, 5000);
-
-			ws.onMessage((event) => {
-				this.rawMessageStream.next({
-					type: 'message',
-					data: JSON.parse(event.data),
-				});
+		ws.onError((event) => {
+			this.rawMessageStream.next({
+				type: 'error',
+				data: event,
 			});
+		});
 
-			ws.onError((event) => {
-				this.rawMessageStream.next({
-					type: 'error',
-					data: event,
-				});
-			});
+		/* This observable should never complete, so the following code has been disabled.
 
-			/* This observable should never complete, so the following code has been disabled.
+      // we can't use .onClose() because onClose is triggered whenever the internal connection closes
+      // even if a reconnect will be attempted.
+      ws.getDataStream().subscribe(() => null, () => null, () => {
+        s.complete();
+      });
+       */
 
-        // we can't use .onClose() because onClose is triggered whenever the internal connection closes
-        // even if a reconnect will be attempted.
-        ws.getDataStream().subscribe(() => null, () => null, () => {
-          s.complete();
-        });
-         */
-
-			ws.onClose(() => {
-				if (sendMessageSubscription !== null) {
-					sendMessageSubscription.unsubscribe();
-					sendMessageSubscription = null;
-					// debugger
-				}
-				this.websocket = null;
-			});
+		ws.onClose(() => {
+			if (sendMessageSubscription !== null) {
+				sendMessageSubscription.unsubscribe();
+				sendMessageSubscription = null;
+				// debugger
+			}
+			this.websocket = null;
 		});
 	}
 
