@@ -10,7 +10,6 @@ export class CountdownComponent implements OnInit {
 	@Input() dateFuture: string;
 	private subscription: Subscription;
 
-	public dateNow = new Date();
 	milliSecondsInASecond = 1000;
 	hoursInADay = 24;
 	minutesInAnHour = 60;

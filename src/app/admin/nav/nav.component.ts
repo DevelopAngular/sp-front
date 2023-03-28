@@ -38,6 +38,17 @@ import { NavbarElementsRefsService } from '../../services/navbar-elements-refs.s
 
 declare const window;
 
+interface NavButtons {
+	title: string;
+	id: string;
+	route: string;
+	type: string;
+	imgUrl: string;
+	requiredRoles: string[];
+	isExpand?: boolean;
+	isPro?: boolean;
+}
+
 @Component({
 	selector: 'app-nav',
 	templateUrl: './nav.component.html',
@@ -384,15 +395,4 @@ export class NavComponent implements OnInit, AfterViewInit, OnDestroy {
 	hasRoles(roles: string[]): Observable<boolean> {
 		return this.userService.userData.pipe(map((u) => roles.every((_role) => u.roles.includes(_role))));
 	}
-}
-
-interface NavButtons {
-	title: string;
-	id: string;
-	route: string;
-	type: string;
-	imgUrl: string;
-	requiredRoles: string[];
-	isExpand?: boolean;
-	isPro?: boolean;
 }

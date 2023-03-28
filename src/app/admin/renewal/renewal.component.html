@@ -2,7 +2,7 @@
 	<div class="renewal-wrapper" #scrollableArea>
 		<div class="header-title" [ngClass]="{ expiring: status?.renewal_status === 'expiring' }">
 			<h3 [style.color]="darkTheme.getColor({ white: '#1F195E', dark: '#FFFFFF' })">Prepare for the New School Year</h3>
-			<span [style.color]="darkTheme.getColor({ white: '#4E5D74', dark: '#FFFFFF' })"> Subscription Ends: </span>
+			<span *ngIf="printExpiration()" [style.color]="darkTheme.getColor({ white: '#4E5D74', dark: '#FFFFFF' })"> Subscription Ends: </span>
 			<span>{{ printExpiration() }}</span>
 		</div>
 		<div class="renewal-content">

@@ -5,6 +5,14 @@ import { HelpCenterService } from '../../services/help-center.service';
 import _refiner from 'refiner-js';
 import { NavbarElementsRefsService } from '../../services/navbar-elements-refs.service';
 
+type ReminderData = {
+	img: string;
+	title: string;
+	desc: string;
+	button: string;
+	link: string;
+};
+
 @Component({
 	selector: 'app-renewal',
 	templateUrl: './renewal.component.html',
@@ -48,14 +56,23 @@ export class RenewalComponent implements OnInit {
 						};
 						break;
 					case 'expiring':
+						const month = this.printExpiration(true);
 						this.reminder = {
 							img: './assets/admin-images/expiring-sub.png',
-							title: 'Your SmartPass Subscription Expires in ' + this.printExpiration(true),
+							title: month ? 'Your SmartPass Subscription Expires in ' + month : 'Your SmartPass Subscription Will Expire',
 							desc: 'As you plan your budget for next year, we’d like to make sure you have a SmartPass quote to continue your subscription.',
 							button: 'Confirm Renewal Details',
 							link: '/',
 						};
 						break;
+					default:
+						this.reminder = {
+							img: './assets/admin-images/upgrade-sub.png',
+							title: 'Thanks for using SmartPass!',
+							desc: 'Are there other schools in your area that could benefit from SmartPass? Spread the word and help us with our mission to make all schools safer and smarter.',
+							button: 'Refer a School',
+							link: '/referrals',
+						};
 				}
 				// Show survey for expiring schools
 				if (this.status.renewal_status === 'expiring') {
@@ -85,18 +102,13 @@ export class RenewalComponent implements OnInit {
 	}
 
 	printExpiration(month = false): string {
-		let date = new Date(this.status?.subscription_end_date);
+		if (!this.status?.subscription_end_date) {
+			return '';
+		}
+		let date = new Date(this.status.subscription_end_date);
 		if (month) {
 			return date.toLocaleDateString('en-US', { month: 'long' });
 		}
 		return date.toLocaleDateString('en-US', { year: 'numeric', month: 'long', day: 'numeric' });
 	}
 }
-
-type ReminderData = {
-	img: string;
-	title: string;
-	desc: string;
-	button: string;
-	link: string;
-};
