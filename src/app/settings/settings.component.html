@@ -48,10 +48,6 @@
 					<div class="release" [class.release-language]="setting.action === 'language'" *ngIf="setting.isNew">NEW</div>
 					<div class="set-up" *ngIf="!(teacherPin$ | async) && setting.action === 'myPin'">Set-Up</div>
 				</div>
-				<!--        <mat-divider class="divider"-->
-				<!--                     [style.border-top-color]="darkTheme.isEnabled$.value ? 'rgba(255, 255, 255, .12)' : 'rgba(0, 0, 0, .12)'"-->
-				<!--                     *ngIf="i === 3 || i === 6 || (setting.action === 'appearance' && !!this.kioskMode.currentRoom$.value)">-->
-				<!--        </mat-divider>-->
 			</div>
 		</div>
 	</div>
@@ -69,7 +65,7 @@
 				(pointerClickEvent)="hoveredSignout = false; signOutAction()"
 				(pointerDownEvent)="signOut.pressed = true; hoveredSignout = true"
 				(pointerCancelEvent)="signOut.pressed = false; hoveredSignout = false">
-				{{ (kioskMode.currentRoom$ | async) ? 'Exit Kiosk Mode & Sign out' : 'Sign out' }}
+				{{ (kioskMode.getCurrentRoom() | async) ? 'Exit Kiosk Mode & Sign out' : 'Sign out' }}
 			</div>
 		</div>
 

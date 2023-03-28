@@ -3,8 +3,8 @@ import { ActivatedRoute, Router } from '@angular/router';
 import { UserService } from '../../services/user.service';
 
 import { combineLatest } from 'rxjs';
-import { switchMap } from 'rxjs/operators';
 
+// TODO: Need to decide if this component should live in the auth folder
 @Component({
 	selector: 'app-auth-guard-callback',
 	template: '',

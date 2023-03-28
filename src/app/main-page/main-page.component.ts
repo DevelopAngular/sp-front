@@ -1,12 +1,10 @@
 import { AfterViewInit, Component, HostListener, NgZone, OnDestroy, OnInit } from '@angular/core';
 import { UserService } from '../services/user.service';
-import { CreateFormService } from '../create-hallpass-forms/create-form.service';
 import { exhaustMap, filter, map, switchMap, take, takeUntil, tap } from 'rxjs/operators';
 import { ScreenService } from '../services/screen.service';
 import { SideNavService } from '../services/side-nav.service';
 import { BehaviorSubject, combineLatest, Observable, of, Subject } from 'rxjs';
 import { DataService } from '../services/data-service';
-import { LoadingService } from '../services/loading.service';
 import { LiveDataService } from '../live-data/live-data.service';
 import { Request } from '../models/Request';
 import { DarkThemeSwitch } from '../dark-theme-switch';
@@ -17,6 +15,7 @@ import { HallPassesService } from '../services/hall-passes.service';
 import { User } from '../models/User';
 import { CheckForUpdateService } from '../services/check-for-update.service';
 import { StorageService } from '../services/storage.service';
+import { KioskModeService } from '../services/kiosk-mode.service';
 
 declare const window;
 
@@ -66,18 +65,17 @@ export class MainPageComponent implements OnInit, AfterViewInit, OnDestroy {
 	constructor(
 		public userService: UserService,
 		public darkTheme: DarkThemeSwitch,
-		private createFormService: CreateFormService,
 		public screenService: ScreenService,
 		private sideNavService: SideNavService,
 		private dataService: DataService,
-		private loadingService: LoadingService,
 		private liveDataService: LiveDataService,
 		private _zone: NgZone,
 		private router: Router,
 		private http: HttpService,
 		private passesService: HallPassesService,
 		private updateService: CheckForUpdateService,
-		private storage: StorageService
+		private storage: StorageService,
+		private kioskModeService: KioskModeService
 	) {
 		this.http.schoolsCollection$
 			.pipe(
@@ -178,7 +176,7 @@ export class MainPageComponent implements OnInit, AfterViewInit, OnDestroy {
 	}
 
 	ngOnInit() {
-		this.isKioskMode = this.http.checkIfTokenIsKiosk();
+		this.isKioskMode = this.kioskModeService.isKisokMode();
 		this.isUpdateBar$ = this.updateService.needToUpdate$;
 		this.toggleLeft = this.sideNavService.toggleLeft;
 		this.toggleRight = this.sideNavService.toggleRight;
@@ -217,7 +215,7 @@ export class MainPageComponent implements OnInit, AfterViewInit, OnDestroy {
 
 		this.router.events.subscribe((event) => {
 			if (event instanceof NavigationEnd) {
-				this.isKioskMode = this.http.checkIfTokenIsKiosk();
+				this.isKioskMode = this.kioskModeService.isKisokMode();
 				this.navbarHeight = this.currentNavbarHeight();
 			}
 		});

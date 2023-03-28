@@ -118,6 +118,6 @@ export class SettingsComponent implements OnInit, OnDestroy {
 		this.dialogRef.close('signout');
 		localStorage.removeItem('fcm_sw_registered');
 		this.localize.setLanguageUntranslated();
-		combineLatest(this.pwaStorage.removeItem('servers'), this.pwaStorage.removeItem('authData')).subscribe();
+		combineLatest(this.pwaStorage.removeItem('server'), this.pwaStorage.removeItem('authData')).subscribe();
 	}
 }
