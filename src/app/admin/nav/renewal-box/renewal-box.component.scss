@@ -1,3 +1,7 @@
+@import '../../../../sp-colors';
+
+$margin: 0 20px 100px 20px;
+
 .renewal-notif {
 	font-family: 'Inter';
 	font-style: normal;
@@ -6,13 +10,12 @@
 	line-height: 19px;
 	text-decoration: none;
 	padding: 12px;
-	margin: 0 20px 100px 20px;
+	margin: $margin;
 	cursor: pointer;
 
-	/* navy/500 */
-	color: #1f195e;
-	background: #d9f4eb;
-	border: 1px solid #00b476;
+	color: $navy;
+	background: $green150;
+	border: 1px solid $jade;
 	border-radius: 8px;
 	box-shadow: 0px 4px 6px 5px rgba(0, 0, 0, 0.12);
 
@@ -43,10 +46,18 @@
 	}
 }
 
-.renewal-notif:hover,
+.renewal-notif:hover {
+	background: $green150;
+	border-width: 2px;
+	margin: -1px 19px 99px 19px;
+}
+
 .renewal-notif.active {
-	color: white;
-	background: #00b476;
+	margin: $margin;
+	border-width: 1px;
+	box-shadow: none;
+	color: $white;
+	background: $jade;
 	:first-child {
 		img {
 			filter: brightness(0) invert(1);
@@ -55,13 +66,20 @@
 }
 
 .renewal-notif.expiring {
-	background: #fdf8e5;
-	border-color: #ebbb00;
+	background: $yellow100;
+	border-color: $yellow500;
 }
 
-.renewal-notif.expiring:hover,
+.renewal-notif.expiring:hover {
+	background: $yellow150;
+	border-width: 2px;
+}
+
 .renewal-notif.expiring.active {
-	background: #ebbb00;
+	margin: $margin;
+	border-width: 1px;
+	box-shadow: none;
+	background: $yellow500;
 	:last-child {
 		img {
 			filter: brightness(0) invert(1);
