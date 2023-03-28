@@ -7,18 +7,6 @@
 // $climb is how to get from this file to the assets folder
 $climb: '../../..';
 
-// :host-selector(.app-nav) {
-// 	// visibility: hidden;
-// 	.selected-tab-pointer {
-// 		visibility: hidden !important;
-// 	}
-// }
-
-:host-context(.selected-tab-pointer) {
-	visibility: hidden !important;
-
-}
-
 .host {
 	width: calc(100vw - 234px);
 	height: 100%;
