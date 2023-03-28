@@ -42,7 +42,8 @@
 	}
 }
 
-.renewal-notif:hover {
+.renewal-notif:hover, 
+.renewal-notif.active {
 	color: white;
 	background: #00b476;
 	:first-child {
@@ -57,7 +58,8 @@
 	border-color: #ebbb00;
 }
 
-.renewal-notif.expiring:hover {
+.renewal-notif.expiring:hover,
+.renewal-notif.expiring.active {
 	background: #ebbb00;
 	:last-child {
 		img {

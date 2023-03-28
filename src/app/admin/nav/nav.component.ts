@@ -34,6 +34,7 @@ import { View } from '../explore/explore.component';
 import { StorageService } from '../../services/storage.service';
 import { ComponentsService } from '../../services/components.service';
 import { School } from '../../models/School';
+import { NavbarElementsRefsService } from '../../services/navbar-elements-refs.service';
 
 declare const window;
 
@@ -145,7 +146,8 @@ export class NavComponent implements OnInit, AfterViewInit, OnDestroy {
 		private shortcutsService: KeyboardShortcutsService,
 		private storage: StorageService,
 		private cdr: ChangeDetectorRef,
-		private componentService: ComponentsService
+		private componentService: ComponentsService,
+		private navbarService: NavbarElementsRefsService
 	) {}
 
 	get pointerTopSpace() {
@@ -175,7 +177,7 @@ export class NavComponent implements OnInit, AfterViewInit, OnDestroy {
 				this.currentTab = urlSplit[urlSplit.length - 1];
 				this.tab = urlSplit.slice(1);
 				this.tab = this.tab === [''] || this.tab === ['admin'] ? ['dashboard'] : this.tab;
-				this.hidePointer = this.process === 100 && this.tab.indexOf('gettingstarted') !== -1;
+				this.navbarService.setPointerVisible(!(this.process === 100 && this.tab.indexOf('gettingstarted') !== -1));
 			}
 		});
 
@@ -242,6 +244,10 @@ export class NavComponent implements OnInit, AfterViewInit, OnDestroy {
 			.subscribe((data) => {
 				this.introsData = data;
 			});
+
+		this.navbarService.getPointerVisible().subscribe((visible) => {
+			this.hidePointer = !visible;
+		});
 	}
 
 	ngOnDestroy() {

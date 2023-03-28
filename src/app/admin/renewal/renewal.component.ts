@@ -3,6 +3,7 @@ import { DarkThemeSwitch } from '../../dark-theme-switch';
 import { AdminService, RenewalStatus } from '../../services/admin.service';
 import { HelpCenterService } from '../../services/help-center.service';
 import _refiner from 'refiner-js';
+import { NavbarElementsRefsService } from '../../services/navbar-elements-refs.service';
 
 @Component({
 	selector: 'app-renewal',
@@ -16,7 +17,12 @@ export class RenewalComponent implements OnInit {
 
 	private surveyId = '300ba7c0-ccad-11ed-b709-fb336f73b73f';
 
-	constructor(private adminService: AdminService, private helpCenterService: HelpCenterService, public darkTheme: DarkThemeSwitch) {}
+	constructor(
+		private adminService: AdminService,
+		private helpCenterService: HelpCenterService,
+		public darkTheme: DarkThemeSwitch,
+		private navbarService: NavbarElementsRefsService
+	) {}
 
 	ngOnInit(): void {
 		this.adminService.getRenewalData().subscribe({
@@ -57,6 +63,13 @@ export class RenewalComponent implements OnInit {
 				}
 			},
 		});
+
+		this.navbarService.setPointerVisible(false);
+		this.navbarService.setRenewalFill(true);
+	}
+
+	ngOnDestroy() {
+		this.navbarService.setRenewalFill(false);
 	}
 
 	handleFeatureClick(clicked: number) {

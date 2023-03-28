@@ -7,6 +7,18 @@
 // $climb is how to get from this file to the assets folder
 $climb: '../../..';
 
+// :host-selector(.app-nav) {
+// 	// visibility: hidden;
+// 	.selected-tab-pointer {
+// 		visibility: hidden !important;
+// 	}
+// }
+
+:host-context(.selected-tab-pointer) {
+	visibility: hidden !important;
+
+}
+
 .host {
 	width: calc(100vw - 234px);
 	height: 100%;
@@ -17,7 +29,7 @@ $climb: '../../..';
 
 .renewal-wrapper {
 	height: 100%;
-	max-width: 1352px;
+	width: 1352px;
 	display: flex;
 	flex-direction: column;
 	flex-wrap: nowrap;
@@ -39,7 +51,7 @@ $climb: '../../..';
 	display: flex;
 	align-items: center;
 	h3 {
-		margin-right: auto;
+		margin: 0 auto 16px 0;
 		font-size: 28px;
 		line-height: 34px;
 	}
@@ -188,6 +200,7 @@ $maxItemWidth: 800px;
 }
 
 .feature-content {
+	margin-bottom: 20px;
 	> span {
 		font-weight: 400;
 		font-size: 14px;
@@ -195,7 +208,10 @@ $maxItemWidth: 800px;
 		text-transform: uppercase;
 
 		color: $gray500;
-		margin-bottom: 8px;
+	}
+
+	.feature-item:first-of-type {
+		margin-top: 8px;
 	}
 
 	.feature-item:last-child {
@@ -242,7 +258,7 @@ $maxItemWidth: 800px;
 .dropdown-arrow {
 	margin-left: auto;
 	height: 13px;
-	transition: transform ease 0.3s;
+	transition: transform ease 0.07s;
 }
 
 .feature-item.selected {
