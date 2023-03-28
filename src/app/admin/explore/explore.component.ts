@@ -413,7 +413,7 @@ export class ExploreComponent implements OnInit, OnDestroy {
 					}
 					const hours = moment.duration(diff).hours();
 					if (hours > 0) {
-						minutes = minutes * 60;
+						minutes = minutes + (hours * 60);
 					}
 					let seconds = moment.duration(diff).seconds();
 					if (seconds < 0) {
