@@ -2,9 +2,22 @@ import { AfterViewInit, Component, ElementRef, HostListener, NgZone, OnDestroy, 
 import { MatDialog, MatDialogRef } from '@angular/material/dialog';
 import { ActivatedRoute, NavigationEnd, Router } from '@angular/router';
 import { filter as _filter } from 'lodash';
-import { BehaviorSubject, combineLatest, fromEvent, interval, merge, Observable, of, ReplaySubject, Subject, zip } from 'rxjs';
+import { BehaviorSubject, combineLatest, forkJoin, fromEvent, interval, merge, Observable, of, ReplaySubject, Subject, zip } from 'rxjs';
 
-import { concatMap, distinctUntilChanged, filter, finalize, map, mergeMap, switchMap, take, takeUntil, tap, withLatestFrom } from 'rxjs/operators';
+import {
+	catchError,
+	concatMap,
+	distinctUntilChanged,
+	filter,
+	finalize,
+	map,
+	mergeMap,
+	switchMap,
+	take,
+	takeUntil,
+	tap,
+	withLatestFrom,
+} from 'rxjs/operators';
 import { BUILD_INFO_REAL } from '../build-info';
 import { DarkThemeSwitch } from './dark-theme-switch';
 
@@ -348,13 +361,27 @@ export class AppComponent implements OnInit, AfterViewInit, OnDestroy {
 					} else if (user.isParent()) {
 						this.router.navigate(['parent']);
 					} else {
-						const loadView = user.isAdmin() ? 'admin' : 'main';
-						const href: string = window.location.href;
-						if (!(href.includes('admin') || href.includes('main'))) {
-							this.router.navigate([loadView]).then(() => {
-								console.log('navigation finished');
-							});
+						let showRenewalPage$ = of(false);
+						if (user.isAdmin()) {
+							showRenewalPage$ = this.isAdminUpForRenewal$();
 						}
+
+						showRenewalPage$.subscribe({
+							next: (show) => {
+								const href: string = window.location.href;
+								if (href.includes('admin') || href.includes('main')) {
+									return;
+								}
+
+								if (show) {
+									this.router.navigate(['admin', 'renewal']).then();
+									return;
+								}
+
+								const loadView = user.isAdmin() ? 'admin' : 'main';
+								this.router.navigate([loadView]).then();
+							},
+						});
 					}
 					this.titleService.setTitle('SmartPass');
 				})
@@ -442,6 +469,23 @@ export class AppComponent implements OnInit, AfterViewInit, OnDestroy {
 				this.hideSchoolToggleBar = data.hideSchoolToggleBar;
 				this.hideScroll = data.hideScroll;
 			});
+	}
+
+	isAdminUpForRenewal$(): Observable<boolean> {
+		return forkJoin([this.adminService.getRenewalData(), this.userService.introsData$.pipe(take(1))]).pipe(
+			take(1),
+			map(([resp, intros]) => {
+				const show = resp.renewal_status == 'expiring' || !intros.seen_renewal_page?.universal?.seen_version;
+				return { intros, show };
+			}),
+			tap(({ intros, show }) => {
+				if (show && !intros.seen_renewal_page?.universal?.seen_version) {
+					this.userService.updateIntrosSeenRenewalStatusPageRequest(intros, 'universal', '1');
+				}
+			}),
+			map(({ show }) => show),
+			catchError(() => of(false))
+		);
 	}
 
 	registerRefiner(user: User) {
