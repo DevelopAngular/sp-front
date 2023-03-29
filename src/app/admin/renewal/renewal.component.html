@@ -1,4 +1,4 @@
-<div class="host" appSafariScroll>
+<div *ngIf="!showRenewConfirm" class="host" appSafariScroll>
 	<div class="renewal-wrapper" #scrollableArea>
 		<div class="header-title" [ngClass]="{ expiring: status?.renewal_status === 'expiring' }">
 			<h3 [style.color]="darkTheme.getColor({ white: '#1F195E', dark: '#FFFFFF' })">Prepare for the New School Year</h3>
@@ -11,10 +11,10 @@
 				<div>
 					<h5>{{ reminder?.title }}</h5>
 					<span>{{ reminder?.desc }}</span>
-					<a href="{{ reminder?.link }}" class="reminder-btn" [ngClass]="{ expiring: status?.renewal_status === 'expiring' }">
+					<div (click)="reminder?.action()" class="reminder-btn" [ngClass]="{ expiring: status?.renewal_status === 'expiring' }">
 						{{ reminder?.button }}
 						<img class="arrow-icon" src="./assets/Chevron Right (Current Color).svg" />
-					</a>
+					</div>
 				</div>
 			</div>
 			<div class="action-boxes">
@@ -161,4 +161,10 @@
 			</div>
 		</div>
 	</div>
+</div>
+<div class="iframe-container" *ngIf="showRenewConfirm">
+	<div (click)="toggleConfirm()">
+		<img src="./assets/Chevron Left (Blue-Gray).svg"/>
+	</div>
+	<iframe src="https://druvv.github.io/iframe-test/"></iframe>
 </div>
