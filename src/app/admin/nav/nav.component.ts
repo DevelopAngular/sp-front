@@ -322,7 +322,7 @@ export class NavComponent implements OnInit, AfterViewInit, OnDestroy {
 				if (action === 'signout') {
 					this.router.navigate(['sign-out']);
 				} else if (action === 'switch') {
-					this.router.navigate(['main']);
+					this.router.navigate(['main', 'passes']);
 				} else if (action === 'profile') {
 					this.dialog.open(MyProfileDialogComponent, {
 						panelClass: 'sp-form-dialog',

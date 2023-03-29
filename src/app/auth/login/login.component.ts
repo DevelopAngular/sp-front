@@ -180,7 +180,7 @@ export class LoginComponent implements OnInit, OnDestroy {
 					scope,
 					url,
 				});
-				// this.httpService.updateAuthFromExternalLogin(url, code as string, scope as string);
+				this.httpService.updateAuthFromExternalLogin(url, code as string, scope as string);
 			});
 
 		this.loginForm = new FormGroup({

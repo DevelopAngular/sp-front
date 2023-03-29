@@ -310,14 +310,13 @@ export class AppComponent implements OnInit, AfterViewInit, OnDestroy {
 				map(([authOnLoad, authStateChanged]) => authOnLoad || authStateChanged),
 				distinctUntilChanged(),
 				tap((isAuth) => {
+					const path = window.location.pathname;
 					if (!isAuth) {
-						const path = window.location.pathname;
 						if (path.includes('main/student')) {
 							this.storageService.setItem('initialUrl', path);
 						}
-						this.router.navigate(['/']).then(() => {
-							this.showUISubject.next(true);
-						});
+						this.showUISubject.next(true);
+						this.isAuthenticated = false;
 					}
 				}),
 				filter(Boolean),
@@ -326,6 +325,7 @@ export class AppComponent implements OnInit, AfterViewInit, OnDestroy {
 					this.userService.getUserRequest();
 					this.http.getSchoolsRequest();
 					this.userService.getIntrosRequest();
+					this.isAuthenticated = true;
 				}),
 				mergeMap(() => this.userService.userData.pipe(takeUntil(this.subscriber$), filter<User>(Boolean))),
 				tap((user) => {
@@ -342,10 +342,10 @@ export class AppComponent implements OnInit, AfterViewInit, OnDestroy {
 					} else if (user.isParent()) {
 						this.router.navigate(['parent']);
 					} else {
-						const loadView = user.isAdmin() ? 'admin' : 'main';
-						const href: string = window.location.href;
-						if (!(href.includes('admin') || href.includes('main'))) {
-							this.router.navigate([loadView]).then(() => {
+						const { href } = window.location;
+						if (!(href.includes('/admin') || href.includes('/main'))) {
+							const loadView = user.isAdmin() ? ['admin', 'dashboard'] : ['main', 'passes'];
+							this.router.navigate(loadView).then(() => {
 								console.log('navigation finished');
 							});
 						}
@@ -745,6 +745,7 @@ export class AppComponent implements OnInit, AfterViewInit, OnDestroy {
 		const isCookiePresent = !!this.cookie.get('smartpassToken');
 
 		if (!isCookiePresent) {
+			this.storageService.removeItem('server');
 			return of(false);
 		}
 
