@@ -22,7 +22,7 @@ export class AuthenticatedGuard implements CanActivate {
 			// filter(v => v),
 			map(([isAuthenticated, studentAllowMobile]) => {
 				if (!isAuthenticated) {
-					const path = window.location.pathname;
+					const path = state.url;
 					if (path.includes('parent')) {
 						this.router.navigate(['auth']);
 					} else {

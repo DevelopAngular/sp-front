@@ -3,7 +3,7 @@ import { Inject, Injectable, OnDestroy } from '@angular/core';
 import { Store } from '@ngrx/store';
 import { LocalStorage } from '@ngx-pwa/local-storage';
 import { BehaviorSubject, combineLatest, Observable, of, ReplaySubject, Subject, throwError } from 'rxjs';
-import { catchError, concatMap, delay, exhaustMap, filter, map, mapTo, switchMap, take, takeUntil, tap } from 'rxjs/operators';
+import { catchError, delay, exhaustMap, filter, map, mapTo, switchMap, take, takeUntil, tap } from 'rxjs/operators';
 import { BUILD_DATE, RELEASE_NAME } from '../../build-info';
 import { environment } from '../../environments/environment';
 import { School } from '../models/School';
@@ -443,13 +443,10 @@ export class HttpService implements OnDestroy {
 		if (url.includes('google_oauth')) {
 			this.storage.setItem('authType', AuthType.Google);
 			this.loginService.updateAuth({ google_code: loginCode, type: 'google-login' });
-		}
-
-		if (url.includes('classlink_oauth')) {
+		} else if (url.includes('classlink_oauth')) {
 			this.storage.setItem('authType', AuthType.Classlink);
 			this.loginService.updateAuth({ classlink_code: loginCode, type: 'classlink-login' });
 		} else if (!!scope) {
-			this.clearInternal();
 			this.storage.setItem('authType', AuthType.Clever);
 			this.loginService.updateAuth({ clever_code: loginCode, type: 'clever-login' });
 		}
@@ -468,9 +465,6 @@ export class HttpService implements OnDestroy {
 	loginSession(authObject: AuthObject) {
 		const formData = new FormData();
 		let sessionLogin: Partial<SessionLogin> = {};
-		const authContext: AuthContext = JSON.parse(this.storage.getItem('auth'));
-		const context = authContext ? authContext : null;
-		const google_token = context?.google_token;
 
 		formData.append('platform_type', 'web');
 		if (isDemoLogin(authObject)) {
@@ -488,9 +482,6 @@ export class HttpService implements OnDestroy {
 			formData.append('provider', 'clever');
 			formData.append('redirect_uri', this.getRedirectUrl());
 		} else if (isGoogleLogin(authObject)) {
-			if (!google_token) {
-				return throwError(new LoginServerError('Please sign in again'));
-			}
 			sessionLogin.provider = LoginProvider.Google;
 			formData.append('code', authObject.google_code);
 			formData.append('provider', 'google-oauth-code');
@@ -501,7 +492,7 @@ export class HttpService implements OnDestroy {
 			switchMap((servers: LoginResponse) => {
 				return this.pwaStorage.setItem('servers', servers).pipe(mapTo(servers));
 			}),
-			concatMap((servers: LoginResponse) => {
+			switchMap((servers: LoginResponse) => {
 				if (!isDemoLogin(authObject)) {
 					sessionLogin.token = servers.token.access_token;
 				}

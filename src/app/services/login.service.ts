@@ -95,7 +95,7 @@ export class LoginService implements OnDestroy {
 		});
 
 		const savedServerConfig = this.storage.getItem('server');
-		this.isAuthenticated$.next(!!savedServerConfig);
+		this.isAuthenticated$.next(!!savedServerConfig && !!this.cookie.get('smartpassToken'));
 	}
 
 	ngOnDestroy(): void {
@@ -115,7 +115,11 @@ export class LoginService implements OnDestroy {
 
 	clearInternal(permanent: boolean = false) {
 		this.authObject$.next(null);
-		this.cookie.delete('smartpassToken', '/');
+		if (window.location.host.includes('localhost')) {
+			this.cookie.delete('smartpassToken', '/', 'localhost', false);
+		} else {
+			this.cookie.delete('smartpassToken', '/', '.smartpass.app', true);
+		}
 		this.storage.removeItem('server');
 		this.storage.removeItem('current-kiosk-room');
 
