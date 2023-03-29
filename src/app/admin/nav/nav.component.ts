@@ -181,13 +181,15 @@ export class NavComponent implements OnInit, AfterViewInit, OnDestroy {
 		const url: string[] = this.router.url.split('/');
 		this.currentTab = url[url.length - 1];
 		this.tab = url.slice(1);
-		this.tab = this.tab === [''] || this.tab === ['admin'] ? ['dashboard'] : this.tab;
+		let tabStr = JSON.stringify(this.tab);
+		this.tab = tabStr === '' || tabStr === 'admin' ? ['dashboard'] : this.tab;
 		this.router.events.pipe(takeUntil(this.destroy$)).subscribe((value) => {
 			if (value instanceof NavigationEnd) {
 				const urlSplit: string[] = value.url.split('/');
 				this.currentTab = urlSplit[urlSplit.length - 1];
 				this.tab = urlSplit.slice(1);
-				this.tab = this.tab === [''] || this.tab === ['admin'] ? ['dashboard'] : this.tab;
+				tabStr = JSON.stringify(this.tab);
+				this.tab = tabStr === '' || tabStr === 'admin' ? ['dashboard'] : this.tab;
 				this.navbarService.setPointerVisible(!(this.process === 100 && this.tab.indexOf('gettingstarted') !== -1));
 			}
 		});
