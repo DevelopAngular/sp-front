@@ -51,16 +51,12 @@
 								[link]="'https://articles.smartpass.app/en/articles/7200153-smartpass-rollover-summer-action-items#h_cc676e6cf4'"
 								[img]="'./assets/Clever.svg'"
 								[title]="'Clever'"
-								[desc]="
-									'To prepare for next school year, update your SIS and set up automatic data syncing to Clever.'
-								"></app-action-item>
+								[desc]="'To prepare for next school year, update your SIS and set up automatic data syncing to Clever.'"></app-action-item>
 							<app-action-item
 								[link]="'https://www.smartpass.app/discover-guides'"
 								[img]="'./assets/Laptop Settings (Red).svg'"
 								[title]="'Make the most of SmartPass'"
-								[desc]="
-									'Explore how 1,000+ schools use SmartPass — everything from lunch detentions to daily nurse medications.'
-								"></app-action-item>
+								[desc]="'Explore how 1,000+ schools use SmartPass — everything from lunch detentions to daily nurse medications.'"></app-action-item>
 							<app-action-item
 								[link]="'/buy-kiosk-hardware'"
 								[img]="'./assets/Clipboard (Purple).svg'"
@@ -116,9 +112,7 @@
 								<span>Alert Sounds</span>
 								<img class="dropdown-arrow" src="./assets/Chevron Right (Blue-Gray).svg" />
 							</div>
-							<p *ngIf="selectedFeature === 2">
-								Get sound alerts when students are coming to your room and when a pass is expiring.
-							</p>
+							<p *ngIf="selectedFeature === 2">Get sound alerts when students are coming to your room and when a pass is expiring.</p>
 						</div>
 						<div (click)="handleFeatureClick(3)" class="feature-item" [ngClass]="{ selected: selectedFeature === 3 }">
 							<div>
@@ -126,9 +120,7 @@
 								<span>District Version</span>
 								<img class="dropdown-arrow" src="./assets/Chevron Right (Blue-Gray).svg" />
 							</div>
-							<p *ngIf="selectedFeature === 3">
-								A district-wide view in SmartPass, making it easy for new schools in your district to get started.
-							</p>
+							<p *ngIf="selectedFeature === 3">A district-wide view in SmartPass, making it easy for new schools in your district to get started.</p>
 						</div>
 						<div class="feature-item">
 							<div>
@@ -152,10 +144,7 @@
 							<li>Swag and Surprises</li>
 						</ul>
 						<app-countdown [dateFuture]="'May 9 2023 12:30:00 PST'"></app-countdown>
-						<a 
-						  href="https://app.livestorm.co/smartpass/new-at-smartpass-2023?s=e1ea91d4-911c-4b11-a95b-055c8db2ba17"
-						  target="_blank"
-						>
+						<a href="https://app.livestorm.co/smartpass/new-at-smartpass-2023?s=e1ea91d4-911c-4b11-a95b-055c8db2ba17" target="_blank">
 							<span>Register Now </span>
 							<img class="arrow-icon" src="./assets/Chevron Right (White).svg" />
 						</a>
@@ -167,7 +156,7 @@
 </div>
 <div class="iframe-container" *ngIf="showRenewConfirm">
 	<div (click)="toggleConfirm()">
-		<img src="./assets/Chevron Left (Blue-Gray).svg"/>
+		<img src="./assets/Chevron Left (Blue-Gray).svg" />
 	</div>
 	<iframe src="https://druvv.github.io/iframe-test/"></iframe>
 </div>
