@@ -1,4 +1,4 @@
-import { Component, EventEmitter, OnInit, Output } from '@angular/core';
+import { Component, OnInit } from '@angular/core';
 import { Router } from '@angular/router';
 import { AdminService } from '../../../services/admin.service';
 import { NavbarElementsRefsService } from '../../../services/navbar-elements-refs.service';

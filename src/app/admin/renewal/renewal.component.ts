@@ -61,7 +61,7 @@ export class RenewalComponent implements OnInit {
 						const month = this.printExpiration(true);
 						this.reminder = {
 							img: './assets/admin-images/expiring-sub.png',
-							title: month ? 'Your SmartPass Subscription Expires in ' + month : 'Your SmartPass Subscription Will Expire',
+							title: month ? 'Your SmartPass Subscription Expires in ' + month : 'Your SmartPass Subscription Expires Soon',
 							desc: 'As you plan your budget for next year, we’d like to make sure you have a SmartPass quote to continue your subscription.',
 							button: 'Confirm Renewal Details',
 							action: () => this.toggleConfirm(),

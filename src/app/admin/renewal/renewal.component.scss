@@ -341,6 +341,7 @@ $maxItemWidth: 800px;
 
 	> :last-child {
 		cursor: pointer;
+		text-decoration: none;
 		display: flex;
 		align-items: center;
 		color: $white;

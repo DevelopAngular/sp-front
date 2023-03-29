@@ -1,7 +1,7 @@
 <div *ngIf="!showRenewConfirm" class="host" appSafariScroll>
 	<div class="renewal-wrapper" #scrollableArea>
 		<div class="header-title" [ngClass]="{ expiring: status?.renewal_status === 'expiring' }">
-			<h3 [style.color]="darkTheme.getColor({ white: '#1F195E', dark: '#FFFFFF' })">Prepare for the New School Year</h3>
+			<h3 [style.color]="darkTheme.getColor({ white: '#1F195E', dark: '#FFFFFF' })">Prepare for Next School Year</h3>
 			<span *ngIf="printExpiration()" [style.color]="darkTheme.getColor({ white: '#4E5D74', dark: '#FFFFFF' })"> Subscription Ends: </span>
 			<span>{{ printExpiration() }}</span>
 		</div>
@@ -24,42 +24,42 @@
 						<div class="action-items-container">
 							<app-action-item
 								*ngIf="status?.integration_type === 'none'"
-								[link]="'/switch-to-an-integration'"
+								[link]="'https://articles.smartpass.app/en/articles/7200153-smartpass-rollover-summer-action-items#h_1948e74ee1'"
 								[img]="'./assets/Integration (Gray).svg'"
 								[title]="'Switch to an Integration'"
 								[desc]="
-									'Vorem ipsum dolor sit amet, consectetur adipiscing elit. Nunc vulputate libero et velit interdum, ac aliquet odio mattis.'
+									'Switch to G Suite, Clever, or ClassLink. With an integration, new students will automatically get added to SmartPass and makes login a breeze. Takes \< 1 hour to set up.'
 								"></app-action-item>
 							<app-action-item
 								*ngIf="status?.integration_type === 'google'"
-								[link]="'/g-suite-rollover'"
+								[link]="'https://articles.smartpass.app/en/articles/7200153-smartpass-rollover-summer-action-items#h_38e22d766a'"
 								[img]="'./assets/Google (Color).svg'"
 								[title]="'G Suite'"
 								[desc]="
-									'Vorem ipsum dolor sit amet, consectetur adipiscing elit. Nunc vulputate libero et velit interdum, ac aliquet odio mattis.'
+									'To prepare for next school year, remove inactive or graduated students if you’re using OUs for each grade level, a school-level OU, or Google Groups.'
 								"></app-action-item>
 							<app-action-item
 								*ngIf="status?.integration_type === 'classlink'"
-								[link]="'/classlink-rollover'"
+								[link]="'https://articles.smartpass.app/en/articles/7200153-smartpass-rollover-summer-action-items#h_60c3862c64'"
 								[img]="'./assets/ClassLink Icon.svg'"
 								[title]="'ClassLink'"
 								[desc]="
-									'Vorem ipsum dolor sit amet, consectetur adipiscing elit. Nunc vulputate libero et velit interdum, ac aliquet odio mattis.'
+									'To prepare for next school-year, update the user profiles — add incoming students, remove graduated or inactive students.'
 								"></app-action-item>
 							<app-action-item
 								*ngIf="status?.integration_type === 'clever'"
-								[link]="'/clever-rollover'"
+								[link]="'https://articles.smartpass.app/en/articles/7200153-smartpass-rollover-summer-action-items#h_cc676e6cf4'"
 								[img]="'./assets/Clever.svg'"
 								[title]="'Clever'"
 								[desc]="
-									'Vorem ipsum dolor sit amet, consectetur adipiscing elit. Nunc vulputate libero et velit interdum, ac aliquet odio mattis.'
+									'To prepare for next school year, update your SIS and set up automatic data syncing to Clever.'
 								"></app-action-item>
 							<app-action-item
-								[link]="'/discover-new-ways-to-set-up'"
+								[link]="'https://www.smartpass.app/discover-guides'"
 								[img]="'./assets/Laptop Settings (Red).svg'"
-								[title]="'Discover New Ways to Set Up'"
+								[title]="'Make the most of SmartPass'"
 								[desc]="
-									'Vorem ipsum dolor sit amet, consectetur adipiscing elit. Nunc vulputate libero et velit interdum, ac aliquet odio mattis.'
+									'Explore how 1,000+ schools use SmartPass — everything from lunch detentions to daily nurse medications.'
 								"></app-action-item>
 							<app-action-item
 								[link]="'/buy-kiosk-hardware'"
@@ -70,7 +70,7 @@
 								"></app-action-item>
 							<app-action-item
 								*ngIf="!status?.using_profile_pictures"
-								[link]="'/profile-pictures'"
+								[link]="'https://articles.smartpass.app/en/articles/6856156-adding-profile-pictures'"
 								[img]="'./assets/Female Profile (Blue).svg'"
 								[title]="'Profile Pictures'"
 								[desc]="
@@ -102,12 +102,12 @@
 						<span>April 2023</span>
 						<div (click)="handleFeatureClick(1)" class="feature-item" [ngClass]="{ selected: selectedFeature === 1 }">
 							<div>
-								<img src="./assets/Bell (Blue).svg" />
-								<span>New Notification System</span>
+								<img src="./assets/Room (Blue).svg" />
+								<span>Preventing rooms from being the “origin/from” room</span>
 								<img (click)="handleFeatureClick(1)" class="dropdown-arrow" src="./assets/Chevron Right (Blue-Gray).svg" />
 							</div>
 							<p *ngIf="selectedFeature === 1">
-								Vorem ipsum dolor sit amet, consectetur adipiscing elit. Nunc vulputate libero et velit interdum, ac aliquet odio mattis.
+								Disable the bathroom, water fountain, and locker from being an “origin” room so you can collect better data.
 							</p>
 						</div>
 						<div (click)="handleFeatureClick(2)" class="feature-item" [ngClass]="{ selected: selectedFeature === 2 }">
@@ -117,7 +117,7 @@
 								<img class="dropdown-arrow" src="./assets/Chevron Right (Blue-Gray).svg" />
 							</div>
 							<p *ngIf="selectedFeature === 2">
-								Vorem ipsum dolor sit amet, consectetur adipiscing elit. Nunc vulputate libero et velit interdum, ac aliquet odio mattis.
+								Get sound alerts when students are coming to your room and when a pass is expiring.
 							</p>
 						</div>
 						<div (click)="handleFeatureClick(3)" class="feature-item" [ngClass]="{ selected: selectedFeature === 3 }">
@@ -127,10 +127,10 @@
 								<img class="dropdown-arrow" src="./assets/Chevron Right (Blue-Gray).svg" />
 							</div>
 							<p *ngIf="selectedFeature === 3">
-								Vorem ipsum dolor sit amet, consectetur adipiscing elit. Nunc vulputate libero et velit interdum, ac aliquet odio mattis.
+								A district-wide view in SmartPass, making it easy for new schools in your district to get started.
 							</p>
 						</div>
-						<div class="feature-item" (click)="openHelpCenter()">
+						<div class="feature-item">
 							<div>
 								<img src="./assets/Lightbulb (Yellow).svg" />
 								<span>Suggest a feature for next year</span>
@@ -141,21 +141,24 @@
 					<div class="feature-event">
 						<div>
 							<img src="./assets/SP Arrow (Gradient).svg" />
-							<span>May 11, 2023</span>
+							<span>May 9, 2023</span>
 						</div>
 						<span>Summer '23 Feature Launch</span>
-						<span>New at Smartpass Event</span>
+						<span>New at SmartPass Event</span>
 						<p>Join us as we reveal a revolutionary set of upgrades happening in your hallways this year!</p>
 						<ul>
 							<li>15+ New Features</li>
 							<li>Guest Speakers</li>
 							<li>Swag and Surprises</li>
 						</ul>
-						<app-countdown [dateFuture]="'May 11 2023 12:30:00 PST'"></app-countdown>
-						<div>
+						<app-countdown [dateFuture]="'May 9 2023 12:30:00 PST'"></app-countdown>
+						<a 
+						  href="https://app.livestorm.co/smartpass/new-at-smartpass-2023?s=e1ea91d4-911c-4b11-a95b-055c8db2ba17"
+						  target="_blank"
+						>
 							<span>Register Now </span>
 							<img class="arrow-icon" src="./assets/Chevron Right (White).svg" />
-						</div>
+						</a>
 					</div>
 				</div>
 			</div>
