@@ -247,6 +247,7 @@ export class PassesComponent implements OnInit, OnDestroy {
 	) {
 		this.userService.user$
 			.pipe(
+				filter(Boolean),
 				take(1),
 				map((user) => {
 					this.user = User.fromJSON(user);
@@ -273,7 +274,7 @@ export class PassesComponent implements OnInit, OnDestroy {
 							})
 						);
 					} else {
-						this.titleService.setTitle(`${user.display_name} | SmartPass`);
+						this.titleService.setTitle(`${this.user.display_name} | SmartPass`);
 					}
 					return this.isStudent;
 				}),
