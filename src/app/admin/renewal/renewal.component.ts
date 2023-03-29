@@ -4,7 +4,6 @@ import { AdminService, RenewalStatus } from '../../services/admin.service';
 import { HelpCenterService } from '../../services/help-center.service';
 import _refiner from 'refiner-js';
 import { NavbarElementsRefsService } from '../../services/navbar-elements-refs.service';
-import { Router } from '@angular/router';
 
 type ReminderData = {
 	img: string;
@@ -30,8 +29,7 @@ export class RenewalComponent implements OnInit {
 		private adminService: AdminService,
 		private helpCenterService: HelpCenterService,
 		public darkTheme: DarkThemeSwitch,
-		private navbarService: NavbarElementsRefsService,
-		private router: Router
+		private navbarService: NavbarElementsRefsService
 	) {}
 
 	ngOnInit(): void {
@@ -39,15 +37,6 @@ export class RenewalComponent implements OnInit {
 			next: (data) => {
 				this.status = data;
 				switch (this.status.renewal_status) {
-					case 'renewed':
-						this.reminder = {
-							img: './assets/admin-images/upgrade-sub.png',
-							title: 'You’re All Set for the New School Year!',
-							desc: 'Are there other schools in your area that could benefit from SmartPass? Spread the word and help us with our mission to make all schools safer and smarter.',
-							button: 'Refer a School',
-							action: () => this.openRenewalRoute(),
-						};
-						break;
 					case 'renewed_upgrade_available':
 						this.reminder = {
 							img: './assets/admin-images/upgrade-sub.png',
@@ -67,14 +56,6 @@ export class RenewalComponent implements OnInit {
 							action: () => this.toggleConfirm(),
 						};
 						break;
-					default:
-						this.reminder = {
-							img: './assets/admin-images/upgrade-sub.png',
-							title: 'Thanks for using SmartPass!',
-							desc: 'Are there other schools in your area that could benefit from SmartPass? Spread the word and help us with our mission to make all schools safer and smarter.',
-							button: 'Refer a School',
-							action: () => this.openRenewalRoute(),
-						};
 				}
 				// Show survey for expiring schools
 				if (this.status.renewal_status === 'expiring') {
@@ -101,10 +82,6 @@ export class RenewalComponent implements OnInit {
 
 	openHelpCenter() {
 		this.helpCenterService.openHelp();
-	}
-
-	openRenewalRoute() {
-		this.router.navigate(['renewal']);
 	}
 
 	printExpiration(month = false): string {
