@@ -1,0 +1,392 @@
+@import '~@angular/material/_theming';
+@import '../../../design-system';
+@import '../../../sp-colors';
+
+// climb to assets by a relative path
+// to get an independence of the resolveAsset pipe
+// $climb is how to get from this file to the assets folder
+$climb: '../../..';
+
+$contentWidth: calc(100vw - 234px);
+
+.host {
+	width: $contentWidth;
+	height: 100%;
+	box-sizing: border-box;
+	background: #f5f5f5;
+	overflow: scroll;
+}
+
+.renewal-wrapper {
+	height: 100%;
+	min-width: 1058px;
+	max-width: 1352px;
+	display: flex;
+	flex-direction: column;
+	flex-wrap: nowrap;
+	padding: 40px;
+	box-sizing: border-box;
+	font-family: 'Inter', sans-serif;
+	font-style: normal;
+	font-weight: 700;
+}
+
+.renewal-wrapper h5 {
+	font-size: 20px;
+	line-height: 24px;
+	color: $gray900;
+	margin-top: 0px;
+}
+
+.header-title {
+	display: flex;
+	align-items: center;
+	h3 {
+		margin: 0 auto 16px 0;
+		font-size: 28px;
+		line-height: 34px;
+	}
+	> span {
+		font-size: 18px;
+		line-height: 22px;
+	}
+	> span:last-child {
+		margin-left: 8px;
+		color: $green700;
+	}
+}
+
+.header-title.expiring {
+	> span:last-child {
+		color: $red500;
+		text-decoration: underline;
+	}
+}
+
+.renewal-content {
+	display: flex;
+	flex-direction: column;
+	gap: 20px;
+}
+
+.arrow-icon {
+	transition: transform ease 0.5s;
+	height: 13px;
+}
+
+$arrowAnimation: translate(4px, 0);
+$maxItemWidth: 800px;
+
+.reminder-box {
+	display: flex;
+	flex-direction: row;
+	align-items: center;
+	padding: 28px;
+	gap: 72px;
+	min-width: 1028px;
+	height: 316px;
+	background: $green100;
+	border: 1px solid $green500;
+	border-radius: 12px;
+	color: $gray900;
+
+	> img {
+		height: 296px;
+	}
+
+	> div:first-of-type {
+		display: flex;
+		flex-direction: column;
+		width: 464px;
+	}
+
+	h5 {
+		margin-bottom: 16px;
+	}
+
+	span {
+		font-weight: 400;
+		font-size: 16px;
+		line-height: 19px;
+	}
+}
+
+.reminder-box.expiring {
+	background: $yellow100;
+	border-color: $yellow500;
+}
+
+.reminder-btn {
+	margin-top: 28px;
+	display: flex;
+	flex-direction: row;
+	align-items: center;
+	padding: 16px;
+	gap: 12px;
+	width: fit-content;
+	text-decoration: none;
+	color: $gray900;
+
+	background: $white;
+	border: 1px solid $green500;
+	cursor: pointer;
+
+	box-shadow: 0px 4px 6px 5px rgba(0, 0, 0, 0.12);
+	border-radius: 8px;
+
+	font-weight: 500;
+	font-size: 16px;
+	line-height: 19px;
+	text-align: center;
+}
+
+.reminder-btn:hover {
+	background: $green150;
+}
+
+.reminder-btn.expiring {
+	border-color: $yellow500;
+}
+
+.reminder-btn.expiring:hover {
+	background: #fcf5d9;
+}
+
+.action-boxes {
+	display: flex;
+	gap: 20px;
+	margin-bottom: 20px;
+	> div:first-child {
+		display: flex;
+		flex-direction: column;
+		gap: 20px;
+		> div {
+			max-width: $maxItemWidth;
+		}
+	}
+}
+
+.content-box {
+	padding: 28px;
+	border-radius: 12px;
+	background: $white;
+	display: flex;
+	flex-direction: column;
+	h5 {
+		margin-bottom: 20px;
+	}
+}
+
+$minContainerSize: 616px;
+
+.action-items-container {
+	display: grid;
+	grid-gap: 12px;
+	grid-template-columns: repeat(auto-fit, minmax(270px, 1fr));
+}
+
+.team-container {
+	min-width: $minContainerSize;
+	display: flex;
+	flex-direction: column;
+	gap: 16px;
+}
+
+.feature-content {
+	margin-bottom: 20px;
+	> span {
+		font-weight: 400;
+		font-size: 14px;
+		line-height: 17px;
+		text-transform: uppercase;
+
+		color: $gray500;
+	}
+
+	.feature-item:first-of-type {
+		margin-top: 8px;
+	}
+
+	.feature-item:last-child {
+		margin-top: 16px;
+		margin-bottom: 20px;
+	}
+}
+
+.feature-item {
+	cursor: pointer;
+	background-color: $gray050;
+	border-radius: 4px;
+	padding: 12px;
+	display: flex;
+	width: 314px;
+	flex-direction: column;
+	> div {
+		display: flex;
+		align-items: center;
+		> img:first-of-type {
+			height: 20px;
+			width: 20px;
+		}
+		> span {
+			margin-left: 15px;
+			font-weight: 500;
+			font-size: 16px;
+			line-height: 19px;
+
+			color: $gray900;
+		}
+	}
+	p {
+		margin-top: 10px;
+		margin-bottom: 14px;
+		font-weight: 400;
+		font-size: 14px;
+		line-height: 17px;
+
+		color: $gray900;
+	}
+}
+
+.dropdown-arrow {
+	margin-left: auto;
+	height: 13px;
+	transition: transform ease 0.07s;
+}
+
+.feature-item.selected {
+	.dropdown-arrow {
+		transform: rotate(90deg);
+	}
+	> div {
+		> span {
+			font-weight: 700;
+		}
+	}
+}
+
+.feature-event {
+	background-image: url($climb + '/assets/event-banner.png');
+	color: $white;
+	display: flex;
+	padding: 36px;
+	width: 268px;
+	box-shadow: 0px 5px 20px 5px rgba(0, 0, 0, 0.16);
+	border-radius: 8px;
+	font-weight: 500;
+	font-size: 14px;
+	line-height: 17px;
+	display: flex;
+	flex-direction: column;
+	color: rgba(255, 255, 255, 0.8);
+
+	> :first-child {
+		display: flex;
+		align-items: center;
+		margin-bottom: 37px;
+		img {
+			height: 26px;
+			width: 26px;
+		}
+		span {
+			margin-left: auto;
+			font-weight: 600;
+			font-size: 14px;
+			line-height: 17px;
+
+			background: linear-gradient(180deg, $white 0%, rgba(255, 255, 255, 0) 170.59%);
+			-webkit-background-clip: text;
+			-webkit-text-fill-color: transparent;
+			background-clip: text;
+
+			mix-blend-mode: normal;
+		}
+	}
+
+	> span {
+		font-weight: 700;
+		font-size: 16px;
+		line-height: 19px;
+		color: $white;
+	}
+
+	> span:first-of-type {
+		font-weight: 600;
+		font-size: 10px;
+		line-height: 12px;
+		color: rgba(255, 255, 255, 0.8);
+		margin-bottom: 6px;
+	}
+
+	p {
+		margin-top: 6px;
+		margin-bottom: 17px;
+	}
+
+	ul {
+		list-style-type: none;
+		padding: 0;
+		margin: 0;
+	}
+	li {
+		background-image: url($climb + '/assets/Checkmark (Silver).svg');
+		background-repeat: no-repeat;
+		background-position: 1px;
+		padding-left: 28px;
+	}
+	li:not(:last-child) {
+		margin-bottom: 11px;
+	}
+
+	li:last-child {
+		margin-bottom: 37px;
+	}
+
+	> :last-child {
+		cursor: pointer;
+		text-decoration: none;
+		display: flex;
+		align-items: center;
+		color: $white;
+		font-weight: 700;
+		.arrow-icon {
+			margin-left: 12px;
+		}
+	}
+
+	> :last-child:hover {
+		.arrow-icon {
+			transform: $arrowAnimation;
+		}
+	}
+}
+
+.iframe-container {
+	height: 100vh;
+	width: $contentWidth;
+	> div {
+		background: $white;
+		border: 1px solid $gray300;
+		box-shadow: 0px 2px 10px rgba(16, 20, 24, 0.1);
+		border-radius: 8px;
+		position: absolute;
+		display: flex;
+		align-items: center;
+		justify-content: center;
+		height: 48px;
+		width: 48px;
+		margin-top: 37px;
+		margin-left: 10%;
+		cursor: pointer;
+
+		> img {
+			height: 26px;
+			width: 14px;
+		}
+	}
+
+	> iframe {
+		height: 100%;
+		width: 100%;
+	}
+}

@@ -76,3 +76,14 @@ export const updateIntrosPassLimitsOnlyCertainRoomsFailure = createAction(
 	`[${INTROS}] Update intros Pass limits Only Certain Rooms Failure`,
 	props<{ errorMessage: string }>()
 );
+
+export const updateIntrosSeenRenewalStatusPage = createAction(`[${INTROS}] Update intros Seen Renewal Status Page`, props<UpdateIntrosProps>());
+
+export const updateIntrosSeenRenewalStatusPageSuccess = createAction(
+	`[${INTROS}] Update intros Seen Renewal Status Page Success`,
+	props<{ data: any }>()
+);
+export const updateIntrosSeenRenewalStatusPageFailure = createAction(
+	`[${INTROS}] Update intros Seen Renewal Status Page Failure`,
+	props<{ errorMessage: string }>()
+);

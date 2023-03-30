@@ -1,0 +1,58 @@
+@import '../../../../sp-colors';
+
+.team-member {
+	display: flex;
+	> img {
+		height: 43px;
+		width: 43px;
+		border-radius: 43px;
+	}
+	> div:first-of-type {
+		display: flex;
+		flex-direction: column;
+		margin-left: 12px;
+		align-self: center;
+		span:first-child {
+			font-weight: 500;
+			font-size: 16px;
+			line-height: 19px;
+			color: $gray900;
+		}
+		span:last-child {
+			font-weight: 400;
+			font-size: 14px;
+			line-height: 17px;
+			color: $gray500;
+		}
+	}
+}
+
+.message-btn {
+	background: $gray050;
+	border: 1px solid $gray300;
+	border-radius: 4px;
+	display: flex;
+	gap: 7px;
+	padding: 8px;
+	margin-left: auto;
+	align-items: center;
+	align-self: center;
+	color: $gray700;
+	text-decoration: none;
+	img {
+		width: 13px;
+		height: 12.5px;
+	}
+	span {
+		font-weight: 500;
+		font-size: 14px;
+		line-height: 17px;
+	}
+}
+
+.message-btn:hover {
+	color: $gray900;
+	img {
+		filter: brightness(200) invert(1);
+	}
+}

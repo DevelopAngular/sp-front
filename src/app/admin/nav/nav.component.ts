@@ -34,8 +34,20 @@ import { View } from '../explore/explore.component';
 import { StorageService } from '../../services/storage.service';
 import { ComponentsService } from '../../services/components.service';
 import { School } from '../../models/School';
+import { NavbarElementsRefsService } from '../../services/navbar-elements-refs.service';
 
 declare const window;
+
+interface NavButtons {
+	title: string;
+	id: string;
+	route: string;
+	type: string;
+	imgUrl: string;
+	requiredRoles: string[];
+	isExpand?: boolean;
+	isPro?: boolean;
+}
 
 @Component({
 	selector: 'app-nav',
@@ -49,8 +61,7 @@ export class NavComponent implements OnInit, AfterViewInit, OnDestroy {
 
 	@Output('restrictAccess') restrictAccess: EventEmitter<boolean> = new EventEmitter();
 
-	// gettingStarted = {title: '', route : 'gettingstarted', type: 'routerLink', imgUrl : 'Lamp', requiredRoles: ['_profile_admin']};
-	buttons = [
+	buttons: NavButtons[] = [
 		{
 			title: 'Dashboard',
 			id: 'dashboard',
@@ -67,7 +78,6 @@ export class NavComponent implements OnInit, AfterViewInit, OnDestroy {
 			imgUrl: 'Walking',
 			requiredRoles: ['_profile_admin', 'admin_hall_monitor'],
 		},
-		// {title: 'Search', id:'dashboard', route : 'search', type: 'routerLink', imgUrl : 'SearchEye', requiredRoles: ['_profile_admin', 'access_admin_search']},
 		{
 			title: 'Explore',
 			id: 'explore',
@@ -77,7 +87,14 @@ export class NavComponent implements OnInit, AfterViewInit, OnDestroy {
 			requiredRoles: ['_profile_admin', 'access_admin_search'],
 			isExpand: true,
 		},
-		{ title: 'Rooms', id: 'rooms', route: 'passconfig', type: 'routerLink', imgUrl: 'Room', requiredRoles: ['_profile_admin', 'access_pass_config'] },
+		{
+			title: 'Rooms',
+			id: 'rooms',
+			route: 'passconfig',
+			type: 'routerLink',
+			imgUrl: 'Room',
+			requiredRoles: ['_profile_admin', 'access_pass_config'],
+		},
 		{
 			title: 'Accounts',
 			id: 'accounts',
@@ -109,12 +126,9 @@ export class NavComponent implements OnInit, AfterViewInit, OnDestroy {
 			action: 'encounter_detection',
 			isPro: !this.userService.getFeatureEncounterDetection(),
 		},
-		// 'rooms_usage': {id: 4, title: 'Rooms Usage', color: 'orange', icon: 'Rooms Usage', action: 'rooms_usage'}
 	};
 
 	currentView$: BehaviorSubject<string> = new BehaviorSubject<string>(this.storage.getItem('explore_page') || 'pass_search');
-
-	// progress = 0;
 
 	fakeMenu = new BehaviorSubject<boolean>(false);
 	tab: string[] = ['dashboard'];
@@ -143,7 +157,8 @@ export class NavComponent implements OnInit, AfterViewInit, OnDestroy {
 		private shortcutsService: KeyboardShortcutsService,
 		private storage: StorageService,
 		private cdr: ChangeDetectorRef,
-		private componentService: ComponentsService
+		private componentService: ComponentsService,
+		private navbarService: NavbarElementsRefsService
 	) {}
 
 	get pointerTopSpace() {
@@ -166,14 +181,16 @@ export class NavComponent implements OnInit, AfterViewInit, OnDestroy {
 		const url: string[] = this.router.url.split('/');
 		this.currentTab = url[url.length - 1];
 		this.tab = url.slice(1);
-		this.tab = this.tab === [''] || this.tab === ['admin'] ? ['dashboard'] : this.tab;
+		let tabStr = JSON.stringify(this.tab);
+		this.tab = tabStr === '' || tabStr === 'admin' ? ['dashboard'] : this.tab;
 		this.router.events.pipe(takeUntil(this.destroy$)).subscribe((value) => {
 			if (value instanceof NavigationEnd) {
 				const urlSplit: string[] = value.url.split('/');
 				this.currentTab = urlSplit[urlSplit.length - 1];
 				this.tab = urlSplit.slice(1);
-				this.tab = this.tab === [''] || this.tab === ['admin'] ? ['dashboard'] : this.tab;
-				this.hidePointer = this.process === 100 && this.tab.indexOf('gettingstarted') !== -1;
+				tabStr = JSON.stringify(this.tab);
+				this.tab = tabStr === '' || tabStr === 'admin' ? ['dashboard'] : this.tab;
+				this.navbarService.setPointerVisible(!(this.process === 100 && this.tab.indexOf('gettingstarted') !== -1));
 			}
 		});
 
@@ -240,10 +257,10 @@ export class NavComponent implements OnInit, AfterViewInit, OnDestroy {
 			.subscribe((data) => {
 				this.introsData = data;
 			});
-		// if (!this.userService.getFeatureFlagDigitalID()) {
-		//   const removeIndex = this.buttons.map(item => { return item.id; }).indexOf('idCards');
-		//   this.buttons.splice(removeIndex, 1);
-		// }
+
+		this.navbarService.getPointerVisible().subscribe((visible) => {
+			this.hidePointer = !visible;
+		});
 	}
 
 	ngOnDestroy() {
@@ -265,14 +282,12 @@ export class NavComponent implements OnInit, AfterViewInit, OnDestroy {
 				}
 				break;
 			case 'openMenu':
-				// this.tab = ['admin', button.route];
 				if (button.id == 'explore') {
 					this.currentView$ = new BehaviorSubject<string>(this.storage.getItem('explore_page') || 'pass_search');
 					const pagesDialog = this.dialog.open(PagesDialogComponent, {
 						panelClass: 'consent-dialog-container',
 						backdropClass: 'invis-backdrop',
 						data: {
-							// 'trigger': event.currentTarget,
 							trigger: document.getElementById('explore'),
 							pages: Object.values(this.views),
 							selectedPage: this.views[this.currentView$.getValue()],
@@ -294,7 +309,6 @@ export class NavComponent implements OnInit, AfterViewInit, OnDestroy {
 							this.cdr.detectChanges();
 						});
 				}
-				// this.router.navigate(this.tab);
 				break;
 		}
 	}

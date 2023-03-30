@@ -1,6 +1,7 @@
 import { NgModule } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { NavComponent } from '../nav/nav.component';
+import { RenewalBoxComponent } from '../nav/renewal-box/renewal-box.component';
 import { NavButtonComponent } from '../nav-button/nav-button.component';
 import { PinnableCollectionComponent } from '../pinnable-collection/pinnable-collection.component';
 import { SharedModule } from '../../shared/shared.module';
@@ -19,6 +20,7 @@ import { OctagonComponent } from '../accounts/encounter-prevention-dialog/octago
 		ColorPalletPickerComponent,
 		IconPickerComponent,
 		NavComponent,
+		RenewalBoxComponent,
 		NavButtonComponent,
 		PinnableCollectionComponent,
 		ColorComponent,
@@ -30,6 +32,7 @@ import { OctagonComponent } from '../accounts/encounter-prevention-dialog/octago
 		ColorPalletPickerComponent,
 		IconPickerComponent,
 		NavComponent,
+		RenewalBoxComponent,
 		NavButtonComponent,
 		PinnableCollectionComponent,
 		ColorComponent,

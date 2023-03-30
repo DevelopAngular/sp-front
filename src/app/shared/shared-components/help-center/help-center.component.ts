@@ -4,6 +4,7 @@ import * as moment from 'moment';
 import { Subject, Subscription } from 'rxjs';
 import { takeUntil } from 'rxjs/operators';
 import { IntroData } from '../../../ngrx/intros';
+import { NavbarElementsRefsService } from '../../../services/navbar-elements-refs.service';
 import { UserService } from '../../../services/user.service';
 
 @Component({
@@ -35,7 +36,7 @@ export class HelpCenterComponent implements OnInit, OnDestroy, AfterViewInit {
 
 	@Output() onClick: EventEmitter<any> = new EventEmitter<any>();
 
-	constructor(private userService: UserService) {}
+	constructor(private userService: UserService, private navbarService: NavbarElementsRefsService) {}
 
 	ngOnInit(): void {
 		this.nuxWrapperPosition = {
@@ -56,6 +57,10 @@ export class HelpCenterComponent implements OnInit, OnDestroy, AfterViewInit {
 				this.showBadge = false;
 				this.description = 'Help is never more than a few clicks away in SmartPass.';
 			}
+		});
+
+		this.navbarService.getRenewalFill().subscribe((onRenewalPage) => {
+			this.showHelpCenterNux = onRenewalPage;
 		});
 	}
 
