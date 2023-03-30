@@ -376,7 +376,7 @@ $minContainerSize: 616px;
 		height: 48px;
 		width: 48px;
 		margin-top: 37px;
-		margin-left: 10%;
+		margin-left: 40px;
 		cursor: pointer;
 
 		> img {
@@ -386,6 +386,7 @@ $minContainerSize: 616px;
 	}
 
 	> iframe {
+		border: 0;
 		height: 100%;
 		width: 100%;
 	}
