@@ -19,8 +19,7 @@ $contentWidth: calc(100vw - 234px);
 
 .renewal-wrapper {
 	height: 100%;
-	min-width: 1058px;
-	max-width: 1352px;
+	width: 1372px;
 	display: flex;
 	flex-direction: column;
 	flex-wrap: nowrap;
@@ -29,6 +28,12 @@ $contentWidth: calc(100vw - 234px);
 	font-family: 'Inter', sans-serif;
 	font-style: normal;
 	font-weight: 700;
+}
+
+@media screen and (max-width: 1620px) {
+	.renewal-wrapper {
+		width: 956px;
+	}
 }
 
 .renewal-wrapper h5 {
@@ -75,7 +80,6 @@ $contentWidth: calc(100vw - 234px);
 }
 
 $arrowAnimation: translate(4px, 0);
-$maxItemWidth: 800px;
 
 .reminder-box {
 	display: flex;
@@ -83,8 +87,6 @@ $maxItemWidth: 800px;
 	align-items: center;
 	padding: 28px;
 	gap: 72px;
-	min-width: 1028px;
-	max-width: 1156px;
 	height: 316px;
 	background: $green100;
 	border: 1px solid $green500;
@@ -161,9 +163,6 @@ $maxItemWidth: 800px;
 		display: flex;
 		flex-direction: column;
 		gap: 20px;
-		> div {
-			max-width: $maxItemWidth;
-		}
 	}
 }
 
@@ -178,16 +177,13 @@ $maxItemWidth: 800px;
 	}
 }
 
-$minContainerSize: 616px;
-
 .action-items-container {
-	display: grid;
-	grid-gap: 12px;
-	grid-template-columns: repeat(auto-fit, minmax(270px, 1fr));
+	gap: 12px;
+	display: flex;
+	flex-wrap: wrap;
 }
 
 .team-container {
-	min-width: $minContainerSize;
 	display: flex;
 	flex-direction: column;
 	gap: 16px;

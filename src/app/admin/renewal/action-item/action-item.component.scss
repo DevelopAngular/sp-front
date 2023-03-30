@@ -8,6 +8,7 @@
 	border-radius: 8px;
 	height: 99px;
 	text-decoration: none;
+	width: 372px;
 
 	> :first-child {
 		display: flex;
@@ -26,6 +27,7 @@
 			line-height: 19px;
 			align-self: center;
 			color: $gray900;
+			white-space: nowrap;
 		}
 	}
 
