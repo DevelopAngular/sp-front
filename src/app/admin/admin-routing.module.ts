@@ -1,6 +1,8 @@
 import { NgModule } from '@angular/core';
 import { RouterModule, Routes } from '@angular/router';
 import { AdminPageComponent } from './admin-page/admin-page.component';
+import { FeatureFlagGuard } from '../guards/feature_flag.guard';
+import { FLAGS } from '../services/feature-flag.service';
 
 const routes: Routes = [
 	{
@@ -15,7 +17,7 @@ const routes: Routes = [
 			{ path: 'passconfig', loadChildren: () => import('app/admin/pass-config/pass-config.module').then((m) => m.PassConfigModule) },
 			{ path: 'myschool', loadChildren: () => import('app/admin/my-school/my-school.module').then((m) => m.MySchoolModule) },
 			{ path: 'idcards', loadChildren: () => import('app/admin/id-cards/id-cards.module').then((m) => m.IdCardsModule) },
-			{ path: 'renewal', loadChildren: () => import('app/admin/renewal/renewal.module').then((m) => m.RenewalModule) },
+			{ path: 'renewal', loadChildren: () => import('app/admin/renewal/renewal.module').then((m) => m.RenewalModule), canActivate: [FeatureFlagGuard], data: {feature_flag: FLAGS.RenewalChecklist}},
 			{ path: '**', redirectTo: '', pathMatch: 'full' },
 		],
 	},
