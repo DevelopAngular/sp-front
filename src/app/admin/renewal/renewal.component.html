@@ -69,16 +69,19 @@
 						<h5>Your Team</h5>
 						<div class="team-container">
 							<app-team-member
+								[id]="'renewal-customer-advocate'"
 								*ngIf="status?.customer_success_advocate_hubspot_id"
-								[id]="status?.customer_success_advocate_hubspot_id"
+								[uid]="status?.customer_success_advocate_hubspot_id"
 								[job]="'Customer Success Advocate'"></app-team-member>
 							<app-team-member
+								[id]="'renewal-billing-coordinator'"
 								*ngIf="status?.billing_coordinator_hubspot_id"
-								[id]="status?.billing_coordinator_hubspot_id"
+								[uid]="status?.billing_coordinator_hubspot_id"
 								[job]="'Billing Coordinator'"></app-team-member>
 							<app-team-member
+								[id]="'renewal-account-executive'"
 								*ngIf="status?.account_executive_hubspot_id"
-								[id]="status?.account_executive_hubspot_id"
+								[uid]="status?.account_executive_hubspot_id"
 								[job]="'Account Executive'"></app-team-member>
 						</div>
 					</div>
@@ -149,5 +152,5 @@
 	<div (click)="toggleConfirm()">
 		<img src="./assets/Chevron Left (Blue-Gray).svg" />
 	</div>
-	<iframe src="{{status?.confirm_renewal_link}}"></iframe>
+	<iframe src="{{ status?.confirm_renewal_link }}"></iframe>
 </div>
