@@ -321,9 +321,14 @@ export class AppComponent implements OnInit, AfterViewInit, OnDestroy {
 				}),
 				filter(Boolean),
 				tap(() => {
+					this.http.getSchoolsRequest();
+				}),
+				mergeMap(() => {
+					return this.http.schools$.pipe(filter(Boolean));
+				}),
+				tap(() => {
 					this.showUISubject.next(true);
 					this.userService.getUserRequest();
-					this.http.getSchoolsRequest();
 					this.userService.getIntrosRequest();
 					this.isAuthenticated = true;
 				}),

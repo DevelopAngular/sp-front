@@ -69,7 +69,6 @@ import { MyRoomPassesEffects } from './ngrx/pass-like-collection/nested-states/m
 import { RepresentedUsersEffects } from './ngrx/represented-users/effects';
 import { QuickPreviewPassesEffects } from './ngrx/quick-preview-passes/effects';
 import { ProfilePicturesEffects } from './ngrx/profile-pictures/effects';
-import { LoginDataEffects } from './ngrx/login-data/effects';
 import { ExclusionGroupsEffects } from './ngrx/encounters-prevention/excusion-groups/effects';
 import { ToastEffects } from './ngrx/toast/effects';
 import { SmartpassSearchEffects } from './ngrx/smartpass-search/effects';
@@ -232,7 +231,6 @@ const appRoutes: Routes = [
 			RepresentedUsersEffects,
 			QuickPreviewPassesEffects,
 			ProfilePicturesEffects,
-			LoginDataEffects,
 			ExclusionGroupsEffects,
 			ToastEffects,
 			SmartpassSearchEffects,
