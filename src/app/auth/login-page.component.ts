@@ -2,10 +2,8 @@ import { Component, ElementRef, EventEmitter, OnDestroy, OnInit, Output, ViewChi
 import { ActivatedRoute } from '@angular/router';
 import { DeviceDetection } from '../device-detection.helper';
 import { DomSanitizer, Meta, SafeUrl, Title } from '@angular/platform-browser';
-import { filter, takeUntil } from 'rxjs/operators';
 import { JwtHelperService } from '@auth0/angular-jwt';
 import { Observable, ReplaySubject, Subject } from 'rxjs';
-import { LoginDataService } from '../services/login-data.service';
 
 declare const window;
 
@@ -31,13 +29,7 @@ export class LoginPageComponent implements OnInit, OnDestroy {
 	private jwt: JwtHelperService;
 	private destroyer$ = new Subject<any>();
 
-	constructor(
-		private route: ActivatedRoute,
-		private sanitizer: DomSanitizer,
-		private titleService: Title,
-		private metaService: Meta,
-		private loginDataService: LoginDataService
-	) {
+	constructor(private route: ActivatedRoute, private sanitizer: DomSanitizer, private titleService: Title, private metaService: Meta) {
 		this.jwt = new JwtHelperService();
 		this.pending$ = this.pendingSubject.asObservable();
 	}
@@ -68,17 +60,6 @@ export class LoginPageComponent implements OnInit, OnDestroy {
 			this.appLink = 'https://play.google.com/store/apps/details?id=app.smartpass.smartpass';
 			this.titleText = 'Download SmartPass on the Google Play Store to start making passes.';
 		}
-
-		this.route.queryParams
-			.pipe(
-				filter((queryParams) => {
-					return queryParams.email || queryParams.school_id || queryParams.instant_login;
-				}),
-				takeUntil(this.destroyer$)
-			)
-			.subscribe((qp) => {
-				this.loginDataService.setLoginDataQueryParams({ email: qp.email, school_id: qp.school_id, instant_login: qp.instant_login });
-			});
 	}
 
 	ngOnDestroy() {

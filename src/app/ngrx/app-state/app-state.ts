@@ -21,9 +21,8 @@ import { passLikeCollectionReducer } from '../pass-like-collection/reducers';
 import { representedUsersReducer } from '../represented-users/reducers';
 import { quickPreviewPassesReducer } from '../quick-preview-passes/reducers';
 import { profilePicturesReducer } from '../profile-pictures/reducers';
-import { loginDataReducer } from '../login-data/reducers';
 import { exclusionGroupsReducer } from '../encounters-prevention/excusion-groups/reducers/exclusion-groups.reducer';
-import { smartpassSearchReducer } from '../smartpass-search/reducers/smartpass-search.reducer';
+import { smartpassSearchReducer } from '../smartpass-search/reducers';
 import { encounterDetectionReducer } from '../encounter-detection/reducers';
 
 export interface AppState {
@@ -80,7 +79,6 @@ export const reducers = {
 	representedUsers: representedUsersReducer,
 	quickPreviewPasses: quickPreviewPassesReducer,
 	profilePictures: profilePicturesReducer,
-	loginData: loginDataReducer,
 	exclusionGroups: exclusionGroupsReducer,
 	smartpassSearch: smartpassSearchReducer,
 	encounterDetection: encounterDetectionReducer,

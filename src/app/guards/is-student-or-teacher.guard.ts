@@ -2,18 +2,28 @@ import { Injectable, NgZone } from '@angular/core';
 import { ActivatedRouteSnapshot, CanActivate, Router, RouterStateSnapshot } from '@angular/router';
 import { Observable } from 'rxjs';
 import { UserService } from '../services/user.service';
-import { map } from 'rxjs/operators';
+import { filter, map, concatMap, take } from 'rxjs/operators';
 import { StorageService } from '../services/storage.service';
 import { User } from '../models/User';
+import { HttpService } from '../services/http-service';
 
 @Injectable({
 	providedIn: 'root',
 })
 export class IsStudentOrTeacherGuard implements CanActivate {
-	constructor(private userService: UserService, private router: Router, private _zone: NgZone, private storageService: StorageService) {}
+	constructor(
+		private userService: UserService,
+		private http: HttpService,
+		private router: Router,
+		private _zone: NgZone,
+		private storageService: StorageService
+	) {}
 
 	canActivate(next: ActivatedRouteSnapshot, state: RouterStateSnapshot): Observable<boolean> | Promise<boolean> | boolean {
-		return this.userService.getUser().pipe(
+		return this.http.schools$.pipe(
+			filter(Boolean),
+			take(1),
+			concatMap(() => this.userService.getUser()),
 			map((u) => {
 				if (u === null) {
 					return false;
@@ -32,10 +42,8 @@ export class IsStudentOrTeacherGuard implements CanActivate {
 							return false;
 						}
 					}
-
-					this._zone.run(() => {
-						this.router.navigate(['admin']);
-					});
+					this.router.navigate(['admin']).then();
+					return false;
 				}
 				return true;
 			})

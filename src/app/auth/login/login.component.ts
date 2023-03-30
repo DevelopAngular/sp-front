@@ -10,7 +10,6 @@ import { KeyboardShortcutsService } from '../../services/keyboard-shortcuts.serv
 import { StorageService } from '../../services/storage.service';
 import { DeviceDetection } from '../../device-detection.helper';
 import { ToastService } from '../../services/toast.service';
-import { LoginDataService } from '../../services/login-data.service';
 import { QueryParams } from '../../live-data/helpers';
 
 declare const window;
@@ -92,8 +91,7 @@ export class LoginComponent implements OnInit, OnDestroy {
 		private shortcuts: KeyboardShortcutsService,
 		private storage: StorageService,
 		private cdr: ChangeDetectorRef,
-		private toast: ToastService,
-		private loginDataService: LoginDataService
+		private toast: ToastService
 	) {
 		this.schoolAlreadyText$ = this.httpService.schoolSignInRegisterText$.asObservable();
 
@@ -214,35 +212,6 @@ export class LoginComponent implements OnInit, OnDestroy {
 		this.storage.showError$.pipe(takeUntil(this.destroy$)).subscribe((res) => {
 			this.toast.openToast({ title: 'Cookies are blocked', subtitle: 'Please un-block your cookies so you can sign into SmartPass.', type: 'error' });
 		});
-
-		this.loginDataService.loginDataQueryParams
-			.pipe(
-				filter((data) => !!data),
-				takeUntil(this.destroy$)
-			)
-			.subscribe((res) => {
-				if (res.email) {
-					this.loginForm.get('username').setValue(res.email);
-					this.loginData.demoUsername = res.email;
-				}
-				if (res.instant_login) {
-					switch ((res.instant_login as string).toLowerCase()) {
-						case 'google':
-							this.isGoogleLogin = true;
-							break;
-						// case 'password':
-						//   this.isStandardLogin = true;
-						//   break;
-						// case 'clever':
-						//   this.isClever = true;
-						//   break;
-						// case 'gg4l':
-						//   this.isGG4L = true;
-						//   break;
-					}
-					this.triggerAuthFromEmail();
-				}
-			});
 	}
 
 	ngOnDestroy(): void {
