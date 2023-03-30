@@ -156,6 +156,10 @@ export class AdminService {
 		return this.http.get('v1/admin/dashboard');
 	}
 
+	getRenewalData() {
+		return this.http.post<RenewalStatus>('v2/school/renewal_info', {}, undefined, false);
+	}
+
 	getOnboardProcessRequest() {
 		this.store.dispatch(getOnboardProcess());
 		return this.onboardProcessData$;
@@ -298,3 +302,14 @@ export class AdminService {
 		return this.http.post(url);
 	}
 }
+
+export type RenewalStatus = {
+	account_executive_hubspot_id: string;
+	billing_coordinator_hubspot_id: string;
+	confirm_renewal_link: string;
+	customer_success_advocate_hubspot_id: string;
+	integration_type: 'none' | 'google' | 'classlink' | 'clever';
+	renewal_status: 'expiring' | 'renewed_upgrade_available' | 'renewed';
+	subscription_end_date: string; //YYYY-MM-DD
+	using_profile_pictures: boolean;
+};

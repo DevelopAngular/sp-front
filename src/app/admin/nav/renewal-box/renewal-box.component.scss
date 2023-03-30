@@ -1,0 +1,88 @@
+@import '../../../../sp-colors';
+
+$margin: 0 20px 100px 20px;
+
+.renewal-notif {
+	font-family: 'Inter';
+	font-style: normal;
+	font-weight: 500;
+	font-size: 16px;
+	line-height: 19px;
+	text-decoration: none;
+	padding: 12px;
+	margin: $margin;
+	cursor: pointer;
+
+	color: $navy;
+	background: $green150;
+	border: 1px solid $jade;
+	border-radius: 8px;
+	box-shadow: 0px 4px 6px 5px rgba(0, 0, 0, 0.12);
+
+	display: flex;
+	flex-direction: column;
+	gap: 8px;
+
+	:first-child {
+		display: flex;
+		align-items: center;
+		justify-content: space-between;
+		img {
+			height: 13px;
+		}
+	}
+	:last-child {
+		display: flex;
+		align-items: center;
+		gap: 10px;
+		div {
+			word-break: break-word;
+			white-space: pre-wrap;
+			width: 115px;
+			font-weight: 400;
+			font-size: 14px;
+			line-height: 17px;
+		}
+	}
+}
+
+.renewal-notif:hover {
+	background: $green150;
+	border-width: 2px;
+	margin: -1px 19px 99px 19px;
+}
+
+.renewal-notif.active {
+	margin: $margin;
+	border-width: 1px;
+	box-shadow: none;
+	color: $white;
+	background: $jade;
+	:first-child {
+		img {
+			filter: brightness(0) invert(1);
+		}
+	}
+}
+
+.renewal-notif.expiring {
+	background: $yellow100;
+	border-color: $yellow500;
+}
+
+.renewal-notif.expiring:hover {
+	background: $yellow150;
+	border-width: 2px;
+}
+
+.renewal-notif.expiring.active {
+	margin: $margin;
+	border-width: 1px;
+	box-shadow: none;
+	background: $yellow500;
+	:last-child {
+		img {
+			filter: brightness(0) invert(1);
+		}
+	}
+}

@@ -1,5 +1,5 @@
 <div
-	[ngClass]="{ clicked: showHelpNuxTooltip | async }"
+	[ngClass]="{ clicked: showHelpNuxTooltip | async, hide: showHelpCenterNux }"
 	class="help-center-wrapper"
 	(click)="openHelpCenter()"
 	nuxTooltip

@@ -1,0 +1,42 @@
+@import '../../../../sp-colors';
+
+.action-item {
+	display: flex;
+	flex-direction: column;
+	padding: 16px;
+	background: $gray050;
+	border-radius: 8px;
+	height: 99px;
+	text-decoration: none;
+
+	> :first-child {
+		display: flex;
+		align-items: center;
+		gap: 8px;
+		text-decoration: none;
+		> img:first-child {
+			height: 20px;
+			width: 20px;
+			border-radius: 5px;
+		}
+
+		span {
+			font-weight: 500;
+			font-size: 16px;
+			line-height: 19px;
+			align-self: center;
+			color: $gray900;
+		}
+	}
+
+	p {
+		font-weight: 400;
+		font-size: 14px;
+		line-height: 17px;
+		color: $gray700;
+	}
+}
+
+.action-item:hover {
+	background: $gray150;
+}

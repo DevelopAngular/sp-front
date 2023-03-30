@@ -225,5 +225,25 @@ export class IntrosEffects {
 		);
 	});
 
+	updateSeenRenewalStatusPage$ = createEffect(() => {
+		return this.action$.pipe(
+			ofType(introsActions.updateIntrosSeenRenewalStatusPage),
+			switchMap((action) => {
+				return this.userService.updateIntrosSeenRenewalStatusPage(action.device, action.version).pipe(
+					map((data) => {
+						const updatedData = {
+							...action.intros,
+							seen_renewal_status_page: {
+								[action.device]: { seen_version: action.version },
+							},
+						};
+						return introsActions.updateIntrosSeenRenewalStatusPageSuccess({ data: updatedData });
+					}),
+					catchError((error) => of(introsActions.updateIntrosSeenRenewalStatusPageFailure({ errorMessage: error.message })))
+				);
+			})
+		);
+	});
+
 	constructor(private action$: Actions, private userService: UserService) {}
 }
