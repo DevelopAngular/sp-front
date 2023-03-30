@@ -87,5 +87,6 @@ export class RenewalComponent implements OnInit {
 
 	toggleConfirm() {
 		this.showRenewConfirm = !this.showRenewConfirm;
+		this.navbarService.setRenewalFill(!this.showRenewConfirm);
 	}
 }

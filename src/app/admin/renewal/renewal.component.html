@@ -6,7 +6,7 @@
 			<span>{{ printExpiration() }}</span>
 		</div>
 		<div class="renewal-content">
-			<div class="reminder-box" *ngIf="status && status.renewal_status !== 'renewed'" [ngClass]="{ expiring: status?.renewal_status === 'expiring' }">
+			<div *ngIf="status && status.renewal_status !== 'renewed'" class="reminder-box" [ngClass]="{ expiring: status?.renewal_status === 'expiring' }">
 				<img src="{{ reminder?.img }}" />
 				<div>
 					<h5>{{ reminder?.title }}</h5>
