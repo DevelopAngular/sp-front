@@ -2,14 +2,14 @@ import { HttpClient } from '@angular/common/http';
 import { Inject, Injectable, OnDestroy } from '@angular/core';
 import { Store } from '@ngrx/store';
 import { LocalStorage } from '@ngx-pwa/local-storage';
-import { BehaviorSubject, combineLatest, Observable, of, ReplaySubject, Subject, throwError } from 'rxjs';
-import { catchError, concatMap, delay, exhaustMap, filter, map, mapTo, switchMap, take, takeUntil, tap } from 'rxjs/operators';
+import { BehaviorSubject, Observable, of, ReplaySubject, Subject, throwError } from 'rxjs';
+import { catchError, delay, exhaustMap, filter, map, mapTo, switchMap, take, takeUntil, tap } from 'rxjs/operators';
 import { BUILD_DATE, RELEASE_NAME } from '../../build-info';
 import { environment } from '../../environments/environment';
 import { School } from '../models/School';
 import { AppState } from '../ngrx/app-state/app-state';
-import { clearSchools, getSchools } from '../ngrx/schools/actions';
-import { getCurrentSchool, getLoadedSchools, getSchoolsCollection, getSchoolsLength } from '../ngrx/schools/states';
+import { getSchools } from '../ngrx/schools/actions';
+import { getCurrentSchool, getSchoolsCollection, getSchoolsLength } from '../ngrx/schools/states';
 import { AuthObject, isClassLinkLogin, isCleverLogin, isDemoLogin, isGoogleLogin, LoginService, SessionLogin } from './login.service';
 import { StorageService } from './storage.service';
 import { SafeHtml } from '@angular/platform-browser';
@@ -19,8 +19,6 @@ import { Router } from '@angular/router';
 import { APP_BASE_HREF } from '@angular/common';
 // uncomment when app uses formatDate and so on
 //import {APP_BASE_HREF, registerLocaleData} from '@angular/common';
-import { LoginDataService } from './login-data.service';
-import { clearUser } from '../ngrx/user/actions';
 
 declare const window: Window;
 
@@ -231,8 +229,8 @@ export class HttpService implements OnDestroy {
 	public schoolToggle$: Subject<School> = new Subject<School>();
 	public schools$: Observable<School[]> = this.loginService.isAuthenticated$.pipe(
 		filter((v) => v),
-		exhaustMap((v) => {
-			return this.getSchoolsRequest();
+		tap(() => {
+			this.getSchoolsRequest();
 		}),
 		exhaustMap(() =>
 			this.schoolsCollection$.pipe(
@@ -243,7 +241,6 @@ export class HttpService implements OnDestroy {
 	);
 	public langToggle$: Subject<string> = new Subject<string>();
 	public schoolsCollection$: Observable<School[]> = this.store.select(getSchoolsCollection);
-	public schoolsLoaded$: Observable<boolean> = this.store.select(getLoadedSchools);
 	public currentUpdateSchool$: Observable<School> = this.store.select(getCurrentSchool);
 	public schoolsLength$: Observable<number> = this.store.select(getSchoolsLength);
 
@@ -276,8 +273,7 @@ export class HttpService implements OnDestroy {
 		private pwaStorage: LocalStorage,
 		private store: Store<AppState>,
 		private matDialog: MatDialog,
-		private router: Router,
-		private loginDataService: LoginDataService
+		private router: Router
 	) {
 		if (baseHref === '/app') {
 			this.baseHref = '/app/';
@@ -287,46 +283,38 @@ export class HttpService implements OnDestroy {
 		// First, if there is a current school loaded, try to use that one.
 		// Then, if there is a school id saved in local storage, try to use that.
 		// Last, choose a school arbitrarily.
-		combineLatest(this.schools$, this.loginDataService.loginDataQueryParams.pipe(filter((res) => !!res)))
+		this.schools$
 			.pipe(
 				takeUntil(this.destroyed$),
 				filter((schools) => !!schools.length)
 			)
-			.subscribe(([schools, queryParams]) => {
-				if (queryParams && queryParams.school_id) {
-					const selectedSchool = schools.find((school) => +school.id === +queryParams.school_id);
-					if (selectedSchool) {
-						this.currentSchoolSubject.next(selectedSchool);
-						this.storage.setItem('last_school_id', selectedSchool.id);
-						return;
-					} else {
-						this.setSchool(null);
-						this.clearInternal();
-						this.loginService.clearInternal();
-						this.store.dispatch(clearUser());
-						this.store.dispatch(clearSchools());
+			.subscribe({
+				next: (schools) => {
+					// choose the currently loaded school
+					const lastSchool = this.currentSchoolSubject.getValue();
+					if (lastSchool !== null && isSchoolInArray(lastSchool.id, schools)) {
+						this.currentSchoolSubject.next(getSchoolInArray(lastSchool.id, schools));
 						return;
 					}
-				}
-				const lastSchool = this.currentSchoolSubject.getValue();
-				if (lastSchool !== null && isSchoolInArray(lastSchool.id, schools)) {
-					this.currentSchoolSubject.next(getSchoolInArray(lastSchool.id, schools));
-					return;
-				}
 
-				const savedId = this.storage.getItem('last_school_id');
-				if (savedId !== null && isSchoolInArray(savedId, schools)) {
-					this.currentSchoolSubject.next(getSchoolInArray(savedId, schools));
-					return;
-				}
-				if (schools.length > 0) {
-					// sort schools alphabetically
-					const sortedSchools = schools.sort((a, b) => a.name.toLowerCase().localeCompare(b.name.toLowerCase()));
-					this.currentSchoolSubject.next(sortedSchools[0]);
-					return;
-				}
-				this.currentSchoolSubject.next(null);
-				return;
+					// choose a saved school from local storage
+					const savedId = this.storage.getItem('last_school_id');
+					if (savedId !== null && isSchoolInArray(savedId, schools)) {
+						this.currentSchoolSubject.next(getSchoolInArray(savedId, schools));
+						return;
+					}
+
+					// arbitrarily chooses a school
+					if (schools.length > 0) {
+						// sort schools alphabetically
+						const sortedSchools = schools.sort((a, b) => a.name.toLowerCase().localeCompare(b.name.toLowerCase()));
+						this.currentSchoolSubject.next(sortedSchools[0]);
+						return;
+					}
+
+					// No school selected (should we be worried about this?)
+					this.currentSchoolSubject.next(null);
+				},
 			});
 
 		this.langs$
@@ -443,13 +431,10 @@ export class HttpService implements OnDestroy {
 		if (url.includes('google_oauth')) {
 			this.storage.setItem('authType', AuthType.Google);
 			this.loginService.updateAuth({ google_code: loginCode, type: 'google-login' });
-		}
-
-		if (url.includes('classlink_oauth')) {
+		} else if (url.includes('classlink_oauth')) {
 			this.storage.setItem('authType', AuthType.Classlink);
 			this.loginService.updateAuth({ classlink_code: loginCode, type: 'classlink-login' });
 		} else if (!!scope) {
-			this.clearInternal();
 			this.storage.setItem('authType', AuthType.Clever);
 			this.loginService.updateAuth({ clever_code: loginCode, type: 'clever-login' });
 		}
@@ -468,9 +453,6 @@ export class HttpService implements OnDestroy {
 	loginSession(authObject: AuthObject) {
 		const formData = new FormData();
 		let sessionLogin: Partial<SessionLogin> = {};
-		const authContext: AuthContext = JSON.parse(this.storage.getItem('auth'));
-		const context = authContext ? authContext : null;
-		const google_token = context?.google_token;
 
 		formData.append('platform_type', 'web');
 		if (isDemoLogin(authObject)) {
@@ -488,9 +470,6 @@ export class HttpService implements OnDestroy {
 			formData.append('provider', 'clever');
 			formData.append('redirect_uri', this.getRedirectUrl());
 		} else if (isGoogleLogin(authObject)) {
-			if (!google_token) {
-				return throwError(new LoginServerError('Please sign in again'));
-			}
 			sessionLogin.provider = LoginProvider.Google;
 			formData.append('code', authObject.google_code);
 			formData.append('provider', 'google-oauth-code');
@@ -501,7 +480,7 @@ export class HttpService implements OnDestroy {
 			switchMap((servers: LoginResponse) => {
 				return this.pwaStorage.setItem('servers', servers).pipe(mapTo(servers));
 			}),
-			concatMap((servers: LoginResponse) => {
+			switchMap((servers: LoginResponse) => {
 				if (!isDemoLogin(authObject)) {
 					sessionLogin.token = servers.token.access_token;
 				}
@@ -672,7 +651,6 @@ export class HttpService implements OnDestroy {
 
 	getSchoolsRequest() {
 		this.store.dispatch(getSchools());
-		return of(null);
 	}
 
 	getSchools(): Observable<School[]> {

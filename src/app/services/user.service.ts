@@ -102,16 +102,16 @@ import {
 	updateIntrosAdminPassLimitsMessage,
 	updateIntrosDisableRoom,
 	updateIntrosEncounter,
-	updateIntrosMain,
-	updateIntrosSearch,
 	updateIntrosHelpCenter,
+	updateIntrosMain,
+	updateIntrosPassLimitsOnlyCertainRooms,
+	updateIntrosSearch,
 	updateIntrosStudentPassLimits,
 	updateIntrosWaitInLine,
-	updateIntrosPassLimitsOnlyCertainRooms,
 	updateIntrosSeenRenewalStatusPage,
 } from '../ngrx/intros/actions';
 import { getIntrosData, IntroData } from '../ngrx/intros/state';
-import { clearSchools, getSchoolsFailure } from '../ngrx/schools/actions';
+import { getSchoolsFailure } from '../ngrx/schools/actions';
 import { clearRUsers, getRUsers, updateEffectiveUser } from '../ngrx/represented-users/actions';
 import { getEffectiveUser, getRepresentedUsersCollections } from '../ngrx/represented-users/states';
 import {
@@ -139,7 +139,6 @@ import {
 import { updateTeacherLocations } from '../ngrx/accounts/nested-states/teachers/actions';
 import { ProfilePicturesUploadGroup } from '../models/ProfilePicturesUploadGroup';
 import { ProfilePicturesError } from '../models/ProfilePicturesError';
-import { LoginDataService } from './login-data.service';
 import { LoginService } from './login.service';
 import { School } from '../models/School';
 import { UserStats } from '../models/UserStats';
@@ -156,7 +155,6 @@ import {
 	getParentsAccountsEntities,
 	getParentSort,
 } from '../ngrx/accounts/nested-states/parents/states';
-import { LoginDataQueryParams } from '../models/LoginDataQueryParams';
 
 @Injectable({
 	providedIn: 'root',
@@ -336,8 +334,7 @@ export class UserService implements OnDestroy {
 		private _logging: Logger,
 		private errorHandler: ErrorHandler,
 		private store: Store<AppState>,
-		private loginService: LoginService,
-		private loginDataService: LoginDataService
+		private loginService: LoginService
 	) {
 		/**
 		 * /v1/schools is always called no matter the type of user that signs in.
@@ -402,31 +399,11 @@ export class UserService implements OnDestroy {
 					this.getNuxRequest();
 				}),
 				exhaustMap(() => {
-					return combineLatest(
-						this.user$.pipe(
-							filter(Boolean),
-							take(1),
-							map((raw) => User.fromJSON(raw))
-						),
-						this.loginDataService.loginDataQueryParams.pipe(filter<LoginDataQueryParams>(Boolean), take(1))
+					return this.user$.pipe(
+						filter(Boolean),
+						take(1),
+						map((raw) => User.fromJSON(raw))
 					);
-				}),
-				map(([user, queryParams]) => {
-					if (queryParams.email) {
-						const regexpEmail = new RegExp('^([A-Za-z0-9_\\-.])+@([A-Za-z0-9_\\-.])+\\.([A-Za-z]{2,4})$');
-						const isValidEmail = regexpEmail.test(queryParams.email)
-							? user.primary_email === queryParams.email
-							: user.primary_email === queryParams.email + '@spnx.local';
-						if (!isValidEmail) {
-							this.http.clearInternal();
-							this.http.setSchool(null);
-							this.loginService.clearInternal(true);
-							this.userData.next(null);
-							this.clearUser();
-							this.store.dispatch(clearSchools());
-						}
-					}
-					return user;
 				}),
 				tap((user) => {
 					if (user.isAssistant()) {

@@ -634,7 +634,7 @@ export class NavbarComponent implements AfterViewInit, OnInit, OnDestroy {
 				panelClass: 'sp-form-dialog',
 			});
 		} else if (action === 'switch') {
-			this.router.navigate(['admin']);
+			this.router.navigate(['admin', 'dashboard']);
 		} else if (action === 'team') {
 			window.open('https://smartpass.app/team.html');
 		} else if (action === 'support') {

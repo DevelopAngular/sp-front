@@ -113,7 +113,7 @@
 							</div>
 							<p *ngIf="selectedFeature === 3">A district-wide view in SmartPass, making it easy for new schools in your district to get started.</p>
 						</div>
-						<div class="feature-item">
+						<div (click)="goToWishlist()" class="feature-item">
 							<div>
 								<img src="./assets/Lightbulb (Yellow).svg" />
 								<span>Suggest a feature for next year</span>

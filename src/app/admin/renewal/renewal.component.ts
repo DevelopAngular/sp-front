@@ -80,8 +80,8 @@ export class RenewalComponent implements OnInit {
 		}
 	}
 
-	openHelpCenter() {
-		this.helpCenterService.openHelp();
+	goToWishlist() {
+		window.open('https://wishlist.smartpass.app/', '_blank');
 	}
 
 	printExpiration(month = false): string {
