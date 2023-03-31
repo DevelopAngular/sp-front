@@ -703,6 +703,8 @@ export class LiveDataService {
 		if (!this.features.isFeatureEnabled(FLAGS.WaitInLine)) {
 			return of([]);
 		}
+
+		const filters: FilterFunc<WaitingInLinePass>[] = [makeSchoolFilter(this.http)];
 		let requestFilter: Partial<{ student_id: number; issuer_id: number; origin_id: number }> = {};
 		if (filter) {
 			const { type, value } = filter;
@@ -710,12 +712,15 @@ export class LiveDataService {
 			switch (type) {
 				case 'student':
 					requestFilter.student_id = id;
+					filters.push((wilp) => wilp.student.id == id + '');
 					break;
 				case 'issuer':
 					requestFilter.issuer_id = id;
+					filters.push((wilp) => wilp.issuer.id == id + '');
 					break;
 				case 'origin':
 					requestFilter.origin_id = id;
+					filters.push((wilp) => wilp.origin.id == id + '');
 					break;
 				default:
 					console.error('NO FILTER APPLIED');
@@ -732,8 +737,8 @@ export class LiveDataService {
 			decoder: (data) => WaitingInLinePass.fromJSON(data),
 			handleExternalEvent: (s: State<WaitingInLinePass>, e: string) => s,
 			handlePollingEvent: makePollingEventHandler([
-				new AddItem([WaitingInLineEvents.Create], WaitingInLinePass.fromJSON),
-				new UpdateItem([WaitingInLineEvents.Update], WaitingInLinePass.fromJSON),
+				new AddItem([WaitingInLineEvents.Create], WaitingInLinePass.fromJSON, mergeFilters(filters)),
+				new UpdateItem([WaitingInLineEvents.Update], WaitingInLinePass.fromJSON, mergeFilters(filters)),
 				new RemoveItem([WaitingInLineEvents.Delete], WaitingInLinePass.fromJSON),
 			]),
 			handlePost: filterNewestFirst,
