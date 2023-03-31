@@ -1,9 +1,9 @@
 import { Injectable } from '@angular/core';
-import { Observable, of, throwError } from 'rxjs';
+import { Observable } from 'rxjs';
 import { WaitingInLinePass } from '../models/WaitInLine';
 import { HttpService } from './http-service';
-import { concatMap, filter } from 'rxjs/operators';
-import { HallPassErrors, StartWaitingInLinePassResponse } from './hall-passes.service';
+import { filter } from 'rxjs/operators';
+import { StartWaitingInLinePassResponse } from './hall-passes.service';
 import { LiveDataService } from '../live-data/live-data.service';
 
 export const sortWil = (pass1: WaitingInLinePass, pass2: WaitingInLinePass): number => {
@@ -30,17 +30,7 @@ export class WaitInLineService {
 
 	startWilPassNow(id: string | number): Observable<StartWaitingInLinePassResponse> {
 		const waiting_in_line_pass_id = parseInt(id.toString(), 10);
-		return this.http
-			.post<StartWaitingInLinePassResponse>('v2/hall_passes/start_waiting_in_line_pass', { waiting_in_line_pass_id }, undefined, false)
-			.pipe(
-				concatMap((response) => {
-					if (response?.conflict_student_ids?.length > 0) {
-						return throwError(HallPassErrors.Encounter);
-					}
-
-					return of(response);
-				})
-			);
+		return this.http.post<StartWaitingInLinePassResponse>('v2/hall_passes/start_waiting_in_line_pass', { waiting_in_line_pass_id }, undefined, false);
 	}
 
 	deleteWilPass(id: string | number): Observable<never> {

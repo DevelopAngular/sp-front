@@ -11,10 +11,10 @@ import { CreateHallpassFormsComponent } from '../create-hallpass-forms/create-ha
 import { CreateFormService } from '../create-hallpass-forms/create-form.service';
 import { RequestsService } from '../services/requests.service';
 import { NextStep, scalePassCards } from '../animations';
-import { BehaviorSubject, interval, merge, Observable, of, Subject } from 'rxjs';
+import { BehaviorSubject, interval, merge, Observable, of, Subject, throwError } from 'rxjs';
 
 import * as moment from 'moment';
-import { isArray, isNull, uniq, uniqBy } from 'lodash';
+import { isNull, uniq, uniqBy } from 'lodash';
 import { ScreenService } from '../services/screen.service';
 import { UNANIMATED_CONTAINER } from '../consent-menu-overlay';
 import { DeviceDetection } from '../device-detection.helper';
@@ -31,6 +31,7 @@ import { ToastService } from '../services/toast.service';
 import { HttpErrorResponse } from '@angular/common/http';
 import { HallPassesService } from '../services/hall-passes.service';
 import { KioskModeService } from '../services/kiosk-mode.service';
+import { EncounterPreventionService } from '../services/encounter-prevention.service';
 
 @Component({
 	selector: 'app-request-card',
@@ -106,7 +107,8 @@ export class RequestCardComponent implements OnInit, OnDestroy {
 		private createPassFormRef: MatDialogRef<CreateHallpassFormsComponent>,
 		private toast: ToastService,
 		private hallpassService: HallPassesService,
-		private kioskService: KioskModeService
+		private kioskService: KioskModeService,
+		private encounterService: EncounterPreventionService
 	) {}
 
 	get invalidDate() {
@@ -684,18 +686,27 @@ export class RequestCardComponent implements OnInit, OnDestroy {
 				concatMap((httpBody) => {
 					return this.requestService.acceptRequest(this.request, httpBody);
 				}),
+				catchError((error) => {
+					if (error instanceof HttpErrorResponse && error.error?.conflict_student_ids) {
+						return this.encounterService.getExclusionGroups({ student: error.error?.conflict_student_ids }).pipe(
+							map((exclusionGroups) => {
+								this.hallpassService.showEncounterPreventionToast({
+									exclusionPass: this.request,
+									isStaff: this.forStaff,
+									exclusionGroups,
+								});
+								return throwError(error);
+							})
+						);
+					}
+
+					return throwError(error);
+				}),
 				finalize(() => (this.performingAction = false))
 			)
 			.subscribe({
 				next: () => this.dialogRef.close(),
 				error: (err: Error) => {
-					if ((err as HttpErrorResponse).error.conflict_student_ids) {
-						this.hallpassService.showEncounterPreventionToast({
-							exclusionPass: this.request,
-							isStaff: this.forStaff,
-						});
-						return;
-					}
 					this.openErrorToast(err);
 					console.error(err);
 				},
