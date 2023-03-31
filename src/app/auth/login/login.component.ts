@@ -1,5 +1,5 @@
 import { ChangeDetectionStrategy, ChangeDetectorRef, Component, EventEmitter, OnDestroy, OnInit, Output } from '@angular/core';
-import { AuthObject, DemoLogin, LoginService } from '../../services/login.service';
+import { AuthObject, DemoLogin, LoginErrors, LoginService } from '../../services/login.service';
 import { BehaviorSubject, Observable, of, Subject } from 'rxjs';
 import { filter, finalize, pluck, takeUntil, tap } from 'rxjs/operators';
 import { AuthType, HttpService } from '../../services/http-service';
@@ -14,14 +14,18 @@ import { QueryParams } from '../../live-data/helpers';
 
 declare const window;
 
+const LoginErrorMap: Record<LoginErrors, string> = {
+	[LoginErrors.Suspended]: 'Account is suspended. Please contact your school admin.',
+	[LoginErrors.Disabled]: 'Account is disabled. Please contact your school admin.',
+	[LoginErrors.NotActive]: 'Account is not active. Please contact your school admin.',
+	[LoginErrors.TeacherNoAssistants]: 'Account does not have any associated teachers. Please contact your school admin.',
+	[LoginErrors.PopupBlocked]: 'Pop up blocked. Please allow pop ups.',
+	[LoginErrors.InvalidCreds]: 'Incorrect password. Try again or contact your school admin to reset it.',
+};
+
 export enum LoginMethod {
 	OAuth = 1,
 	LocalStrategy = 2,
-}
-
-interface LoginFormValue {
-	username: string;
-	password: string;
 }
 
 /**
@@ -95,29 +99,14 @@ export class LoginComponent implements OnInit, OnDestroy {
 	) {
 		this.schoolAlreadyText$ = this.httpService.schoolSignInRegisterText$.asObservable();
 
-		this.loginService.loginErrorMessage$.pipe(takeUntil(this.destroy$)).subscribe((message) => {
-			if (message === 'this user is suspended') {
-				this.error$.next('Account is suspended. Please contact your school admin.');
-			} else if (message === 'this user is disabled') {
-				this.error$.next('Account is disabled. Please contact your school admin.');
-			} else if (message === 'this profile is not active') {
-				this.error$.next('Account is not active. Please contact your school admin.');
-			} else if (message === 'Assistant does`t have teachers') {
-				this.error$.next('Account does not have any associated teachers. Please contact your school admin.');
-			} else if (message === 'pop up blocked') {
-				this.error$.next('Pop up blocked. Please allow pop ups.');
+		this.loginService.loginErrorMessage$.pipe(takeUntil(this.destroy$)).subscribe((srvErrorMessage) => {
+			if (!(srvErrorMessage in LoginErrorMap)) {
+				this.error$.next(srvErrorMessage);
 			} else {
-				this.error$.next(message);
+				this.error$.next(LoginErrorMap[srvErrorMessage]);
 			}
-			this.passwordError = !!message;
+			this.passwordError = !!srvErrorMessage;
 			this.showSpinner = false;
-		});
-		this.loginService.showLoginError$.pipe(takeUntil(this.destroy$)).subscribe((show: boolean) => {
-			if (show) {
-				this.error$.next('Incorrect password. Try again or contact your school admin to reset it.');
-				this.passwordError = true;
-				this.showSpinner = false;
-			}
 		});
 	}
 
@@ -173,11 +162,6 @@ export class LoginComponent implements OnInit, OnDestroy {
 				const { code, scope } = qp; // scope is only available for clever login
 				const { url } = this.router;
 				this.storage.removeItem('context');
-				console.log({
-					code,
-					scope,
-					url,
-				});
 				this.httpService.updateAuthFromExternalLogin(url, code as string, scope as string);
 			});
 
@@ -330,8 +314,6 @@ export class LoginComponent implements OnInit, OnDestroy {
 		this.titleService.setTitle('SmartPass');
 		this.metaService.removeTag('name = "description"');
 		this.loggedWith = LoginMethod.LocalStrategy;
-		this.loginService.showLoginError$.next(false);
-		// this.loginService.loginErrorMessage$.next(null);
 
 		const { username, password } = this.loginForm.value;
 		const loginDetails: AuthObject = {
@@ -351,7 +333,6 @@ export class LoginComponent implements OnInit, OnDestroy {
 
 	initGoogleLogin() {
 		this.loggedWith = LoginMethod.OAuth;
-		this.loginService.showLoginError$.next(false);
 		this.loginService.loginErrorMessage$.next(null);
 		this.loginService.triggerGoogleAuthFlow(this.loginData.demoUsername);
 		this.cdr.detectChanges();

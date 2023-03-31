@@ -72,7 +72,7 @@ export class User extends BaseModel {
 
 		const rolesJSON: string[] = JSON['roles'];
 
-		const sync_types_json = JSON['sync_types'];
+		const sync_types_json = JSON['sync_types'] || [];
 		for (let i = 0; i < rolesJSON.length; i++) {
 			roles.push(rolesJSON[i]);
 		}

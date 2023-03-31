@@ -35,6 +35,8 @@ export class AuthInterceptor implements HttpInterceptor {
 					this.loginService.isAuthenticated$.next(false);
 					return throwError(error);
 				}
+
+				return throwError(error);
 			})
 		);
 	}

@@ -5,6 +5,15 @@ import { StorageService } from './storage.service';
 import { APP_BASE_HREF } from '@angular/common';
 import { CookieService } from 'ngx-cookie-service';
 
+export enum LoginErrors {
+	Suspended = 'this user is suspended',
+	Disabled = 'this user is disabled',
+	NotActive = 'this profile is not active',
+	TeacherNoAssistants = 'Assistant does`t have teachers',
+	PopupBlocked = 'pop up blocked',
+	InvalidCreds = 'username/password is incorrect',
+}
+
 declare const window;
 
 const STORAGE_KEY = 'google_auth';
@@ -65,10 +74,7 @@ enum OAuthType {
 })
 export class LoginService implements OnDestroy {
 	static googleOAuthUrl = `https://accounts.google.com/o/oauth2/v2/auth?client_id=560691963710-220tggv4d3jo9rpc3l70opj1510keb59.apps.googleusercontent.com&response_type=code&access_type=offline&scope=profile%20email%20openid`;
-
 	private authObject$ = new BehaviorSubject<AuthObject>(null);
-
-	public showLoginError$ = new BehaviorSubject(false);
 	public loginErrorMessage$: Subject<string> = new Subject<string>();
 	public isAuthenticated$ = new ReplaySubject<boolean>(1);
 	// public isAuthenticated$ = new BehaviorSubject<boolean>(false);

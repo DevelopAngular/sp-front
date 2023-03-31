@@ -1,6 +1,6 @@
 import { Injectable, Injector } from '@angular/core';
 import { HttpEvent, HttpHandler, HttpInterceptor, HttpRequest } from '@angular/common/http';
-import { Observable, throwError, of } from 'rxjs';
+import { Observable, of, throwError } from 'rxjs';
 import { catchError } from 'rxjs/operators';
 import { Router } from '@angular/router';
 import { ToastService } from './services/toast.service';
@@ -20,8 +20,7 @@ export class ProgressInterceptor implements HttpInterceptor {
 					'onboard/schools/check_school',
 					'discovery/find',
 					'discovery/email_info',
-					'auth/by-token',
-					'o/token',
+					'sessions',
 					'pass_requests/',
 					'hall_passes/bulk_create',
 					'hall_passes',

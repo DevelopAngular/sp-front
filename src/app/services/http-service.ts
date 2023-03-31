@@ -1,4 +1,4 @@
-import { HttpClient } from '@angular/common/http';
+import { HttpClient, HttpErrorResponse } from '@angular/common/http';
 import { Inject, Injectable, OnDestroy } from '@angular/core';
 import { Store } from '@ngrx/store';
 import { LocalStorage } from '@ngx-pwa/local-storage';
@@ -360,8 +360,9 @@ export class HttpService implements OnDestroy {
 				.pipe(
 					takeUntil(this.destroyed$),
 					switchMap((authObj) => {
-						return this.fetchServerAuth(authObj);
-					})
+						return this.loginSession(authObj);
+					}),
+					filter(Boolean)
 				)
 				.subscribe({
 					next: (authCtx) => {
@@ -490,26 +491,21 @@ export class HttpService implements OnDestroy {
 						observe: 'response',
 					})
 					.pipe(
+						catchError((err) => {
+							if (err instanceof HttpErrorResponse) {
+								this.loginService.loginErrorMessage$.next(err.error.detail);
+								return of(null);
+							}
+
+							return throwError(err);
+						}),
 						map((response) => {
-							console.log(response.headers);
+							if (!response) {
+								return null;
+							}
 							return { server: servers.servers[0] };
 						})
 					);
-			})
-		);
-	}
-
-	private fetchServerAuth(authObject: any): Observable<{ server: LoginServer }> {
-		return this.loginSession(authObject).pipe(
-			catchError((err) => {
-				console.log('Failed to fetch serverAuth, err: ', err);
-				// Attempt to refresh once...
-				// return this.doRefresh().pipe(
-				// 	catchError((err2) => {
-				// 		return of(err2);
-				// 	})
-				// );
-				return throwError(err);
 			})
 		);
 	}
@@ -548,82 +544,6 @@ export class HttpService implements OnDestroy {
 
 		return of(1);
 	}
-
-	// private doSPTokenRefresh(kioskMode: boolean): Observable<AuthContext> {
-	// 	// We have to get the context from storage here because this.getAuthContext will be null during first load.
-	// 	const auth: AuthContext = JSON.parse(this.storage.getItem('auth'));
-	// 	const s = auth ? auth : null;
-	// 	const refresh_token = auth ? auth.auth.refresh_token : null;
-	//
-	// 	if (!s || !refresh_token) {
-	// 		return throwError(new LoginServerError('Please sign in again.'));
-	// 	}
-	//
-	// 	const c: AuthContext = s;
-	// 	const server = c.server;
-	// 	const config = new FormData();
-	// 	config.append('client_id', server.client_id);
-	// 	config.append('grant_type', 'refresh_token');
-	// 	config.append('token', refresh_token);
-	//
-	// 	if (kioskMode) {
-	// 		const token = this.storage.getItem('kioskToken');
-	// 		const jwt = new JwtHelperService();
-	// 		const locId = jwt.decodeToken(token).kiosk_location_id;
-	// 		config.append('kiosk_mode_location_id', locId);
-	// 	}
-	//
-	// 	return this.http.post(makeUrl(server, 'o/token/'), config).pipe(
-	// 		tap({ next: (o) => console.log('Received refresh object: ', o) }),
-	// 		map((data: Object) => {
-	// 			data['expires'] = moment().add(data['expires_in'], 'seconds').toDate();
-	// 			const ctx: AuthContext = { auth: data as ServerAuth, server: server } as AuthContext;
-	// 			return ctx;
-	// 		}),
-	// 		tap({
-	// 			next: (ctx: AuthContext) => {
-	// 				// this.storage.setItem('refresh_token', ctx.auth.refresh_token);
-	// 				if (kioskMode) {
-	// 					this.storage.setItem('kioskToken', ctx.auth.access_token);
-	// 					this.kioskTokenSubject$.next(ctx.auth);
-	// 				}
-	// 				this.storage.setItem('auth', JSON.stringify(ctx));
-	// 			},
-	// 		})
-	// 	);
-	// }
-
-	// This will throw errors if encountered
-	// private doRefresh(): Observable<AuthContext> {
-	// 	const isKiosk = this.storage.getItem('kioskToken') != null;
-	// 	if (isKiosk) {
-	// 		return this.doSPTokenRefresh(true);
-	// 	}
-	//
-	// 	const authType = this.storage.getItem('authType');
-	//
-	// 	if (!authType) {
-	// 		return throwError(new LoginServerError('Please sign in again.'));
-	// 	}
-	//
-	// 	switch (authType) {
-	// 		case 'password':
-	// 			return this.doSPTokenRefresh(false);
-	// 		case 'google':
-	// 			const url = LoginService.googleOAuthUrl + `&redirect_uri=${this.getRedirectUrl()}google_oauth`;
-	// 			this.showSignBackIn()
-	// 				.pipe(takeUntil(this.destroyed$))
-	// 				.subscribe((_) => {
-	// 					this.loginService.clearInternal(true);
-	// 					window.location.href = url;
-	// 				});
-	// 			return throwError(this.cannotRefreshGoogle);
-	// 		case 'clever':
-	// 			return throwError(this.cannotRefreshClever);
-	// 		default:
-	// 			return throwError(new Error('Unknown authType'));
-	// 	}
-	// }
 
 	showSignBackIn(): Observable<any> {
 		const ref = this.matDialog.open(SignedOutToastComponent, {

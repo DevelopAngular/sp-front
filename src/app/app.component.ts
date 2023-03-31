@@ -2,7 +2,7 @@ import { AfterViewInit, Component, ElementRef, HostListener, NgZone, OnDestroy, 
 import { MatDialog, MatDialogRef } from '@angular/material/dialog';
 import { ActivatedRoute, NavigationEnd, Router } from '@angular/router';
 import { filter as _filter } from 'lodash';
-import { BehaviorSubject, combineLatest, forkJoin, fromEvent, interval, merge, Observable, of, ReplaySubject, Subject, zip } from 'rxjs';
+import { BehaviorSubject, combineLatest, forkJoin, fromEvent, interval, merge, Observable, of, ReplaySubject, Subject, throwError, zip } from 'rxjs';
 
 import {
 	catchError,
@@ -49,6 +49,8 @@ import { CallDialogComponent } from './shared/shared-components/call-dialog/call
 import { FeatureFlagService, FLAGS } from './services/feature-flag.service';
 import { CookieService } from 'ngx-cookie-service';
 import { environment } from '../environments/environment';
+import { ParentAccountService } from './services/parent-account.service';
+import { HttpErrorResponse } from '@angular/common/http';
 
 declare const window;
 declare var ResizeObserver;
@@ -165,7 +167,8 @@ export class AppComponent implements OnInit, AfterViewInit, OnDestroy {
 		private sanitizer: DomSanitizer,
 		public featureFlags: FeatureFlagService,
 		private cookie: CookieService,
-		private titleService: Title
+		private titleService: Title,
+		private parentService: ParentAccountService
 	) {}
 
 	get isMobile() {
@@ -339,26 +342,57 @@ export class AppComponent implements OnInit, AfterViewInit, OnDestroy {
 					}
 				}),
 				filter(Boolean),
-				tap(() => {
-					this.http.getSchoolsRequest();
-				}),
 				mergeMap(() => {
-					return this.http.schools$.pipe(filter(Boolean));
+					/**
+					 * We need to determine if the user is a parent or not.
+					 * Since the login data is tied to an account, and we're already authenticated at this point, we can send
+					 * a parent info request. If the request returns a 403 error, that means the account is not a parent
+					 * account, and we can move forward to getting the schools and then the user data.
+					 * If the request completes successfully, that means the account is a parent and there's no need to get
+					 * schools data since schools are not tied to a parent account.
+					 *
+					 * We use a different endpoint instead of the regular v1/users/@me endpoint since those users are tied to
+					 * schools and parents aren't.
+					 *
+					 * We should make raw requests here instead of the NgRx since the store hasn't been populated yet
+					 */
+					return this.parentService.getParentInfo().pipe(
+						catchError((err) => {
+							if (err instanceof HttpErrorResponse && err.status === 403) {
+								// logged-in user is not a parent
+								return of(null);
+							}
+
+							return throwError(err);
+						}),
+						concatMap((parentAccount) => {
+							if (!parentAccount) {
+								this.userService.getUserRequest();
+								return this.http.schools$.pipe(
+									concatMap(() => {
+										return this.userService.userData.pipe(
+											takeUntil(this.subscriber$),
+											filter<User>(Boolean),
+											map((u) => User.fromJSON(u))
+										);
+									})
+								);
+							}
+
+							return of(User.fromJSON(parentAccount));
+						})
+					);
 				}),
-				tap(() => {
-					this.showUISubject.next(true);
-					this.userService.getUserRequest();
-					this.userService.getIntrosRequest();
-					this.isAuthenticated = true;
-				}),
-				mergeMap(() => this.userService.userData.pipe(takeUntil(this.subscriber$), filter<User>(Boolean))),
 				tap((user) => {
+					this.userService.getIntrosRequest();
+					this.showUISubject.next(true);
+					this.isAuthenticated = true;
+
 					user = User.fromJSON(user);
 					if (NotificationService.hasPermission && environment.production) {
 						this.notifService.initNotifications(true);
 					}
-
-					const callbackUrl: string = window.history.state.callbackUrl;
+					const callbackUrl: string = window.history.state?.callbackUrl;
 					if (callbackUrl != null || callbackUrl !== undefined) {
 						this.router.navigate([callbackUrl]);
 					} else if (this.isMobile && user.isAdmin() && user.isTeacher()) {
