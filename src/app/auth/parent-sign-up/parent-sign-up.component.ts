@@ -125,11 +125,10 @@ export class ParentSignUpComponent implements OnInit, OnDestroy {
 			next: () => {
 				const { email, password } = this.signUpForm.value;
 				this.loginService.signInDemoMode(email, password);
-				// this.router.navigate(['']);
 			},
 			error: (err) => {
 				if (err && err.error !== 'popup_closed_by_user') {
-					this.loginService.showLoginError$.next(true);
+					this.loginService.loginErrorMessage$.next('username/password is incorrect');
 				}
 				this.pending.next(false);
 			},
