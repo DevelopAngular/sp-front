@@ -17,7 +17,8 @@ import { RequestsService } from '../services/requests.service';
 import { catchError, concatMap, mapTo, switchMap, takeUntil } from 'rxjs/operators';
 import { StorageService } from '../services/storage.service';
 import { Request } from '../models/Request';
-import { HallPassErrors, HallPassesService } from '../services/hall-passes.service';
+import { HallPassesService } from '../services/hall-passes.service';
+import { HttpErrorResponse } from '@angular/common/http';
 
 /*
  * TODO: Restructure component
@@ -91,7 +92,7 @@ export class TeacherPinStudentComponent implements OnInit, OnDestroy {
 							return this.requestService.checkLimits({ teacher_pin: this.pin }, this.request, this.confirmDialogBody).pipe(
 								concatMap((httpBody) => this.requestService.acceptRequest(this.request, httpBody)),
 								catchError((err) => {
-									if (err === HallPassErrors.Encounter) {
+									if ((err as HttpErrorResponse).error?.conflict_student_ids) {
 										this.hallpassService.showEncounterPreventionToast({
 											exclusionPass: this.request,
 											isStaff: true,

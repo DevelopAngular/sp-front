@@ -51,7 +51,7 @@
 
 	<ng-template #tooltip>
 		<app-pass-limit-tooltip
-			[isHand]="value.enable"
+			[isHand]="isSameRoom ? false : value.enable"
 			*ngIf="showTooltipWithDelay"
 			[description]="
 				!isSameRoom ? tooltipDescription : 'You selected ' + value.title + ' as the origin (where you are now)!'

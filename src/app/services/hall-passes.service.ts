@@ -55,6 +55,7 @@ import { WaitingInLinePassResponse } from '../models/WaitInLine';
 import { openToastAction } from '../ngrx/toast/actions';
 import { ExclusionGroup } from '../models/ExclusionGroup';
 import { PassLike } from '../models';
+import { User } from '../models/User';
 
 interface EncounterPreventionToast {
 	exclusionPass: PassLike;
@@ -332,6 +333,7 @@ export class HallPassesService {
 	showEncounterPreventionToast({ exclusionPass, isStaff, exclusionGroups }: EncounterPreventionToast) {
 		const title = isStaff ? "This pass can't start now to prevent encounter." : "Sorry, you can't start your pass right now.";
 		const subtitle = isStaff ? "These students can't have a pass at the same time." : 'Please try again later.';
+		exclusionPass.student = User.fromJSON(exclusionPass.student);
 
 		this.store.dispatch(
 			openToastAction({

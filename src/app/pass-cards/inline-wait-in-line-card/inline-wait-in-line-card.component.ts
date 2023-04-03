@@ -1,10 +1,10 @@
 import { Component, ElementRef, Inject, Input, OnChanges, OnDestroy, OnInit, Optional, SimpleChange, SimpleChanges, ViewChild } from '@angular/core';
 import { BehaviorSubject, from, Observable, of, Subject, Subscription, throwError, timer } from 'rxjs';
-import { HallPassErrors, HallPassesService } from '../../services/hall-passes.service';
+import { HallPassesService } from '../../services/hall-passes.service';
 import { MAT_DIALOG_DATA, MatDialog, MatDialogRef } from '@angular/material/dialog';
 import { DeviceDetection } from '../../device-detection.helper';
 import { WaitingInLinePass } from '../../models/WaitInLine';
-import { catchError, concatMap, filter, finalize, map, takeUntil, tap } from 'rxjs/operators';
+import { concatMap, filter, finalize, map, takeUntil, tap } from 'rxjs/operators';
 import { ConsentMenuComponent } from '../../consent-menu/consent-menu.component';
 import { KioskModeService } from '../../services/kiosk-mode.service';
 import { LocationsService } from '../../services/locations.service';
@@ -16,6 +16,7 @@ import { WaitInLineService } from '../../services/wait-in-line.service';
 import { TimerSpinnerComponent } from '../../core/components/timer-spinner/timer-spinner.component';
 import { PositionPipe } from '../../core/position.pipe';
 import { PollingEvent } from '../../services/polling-service';
+import { EncounterPreventionService } from '../../services/encounter-prevention.service';
 
 const positionTransformer = new PositionPipe().transform;
 
@@ -121,7 +122,8 @@ export class InlineWaitInLineCardComponent implements OnInit, OnChanges, OnDestr
 		private hallPassService: HallPassesService,
 		private dialog: MatDialog,
 		public kioskService: KioskModeService,
-		private wilService: WaitInLineService
+		private wilService: WaitInLineService,
+		private encounterService: EncounterPreventionService
 	) {}
 
 	private get scalingFactor() {
@@ -329,17 +331,23 @@ export class InlineWaitInLineCardComponent implements OnInit, OnChanges, OnDestr
 	async startPass() {
 		this.requestLoading = true;
 		const passRequest$ = this.wilService.startWilPassNow(this.wil.id).pipe(
-			takeUntil(this.destroy$),
-			catchError((error) => {
-				if (error === HallPassErrors.Encounter) {
-					this.hallPassService.showEncounterPreventionToast({
-						isStaff: this.forStaff,
-						exclusionPass: this.wil,
-					});
+			concatMap((response) => {
+				if (response?.conflict_student_ids) {
+					return this.encounterService.getExclusionGroups({ student: response?.conflict_student_ids }).pipe(
+						map((exclusionGroups) => {
+							this.hallPassService.showEncounterPreventionToast({
+								isStaff: this.forStaff,
+								exclusionPass: this.wil,
+								exclusionGroups,
+							});
+							return throwError(new Error('Encounter Prevention'));
+						})
+					);
 				}
 
-				return throwError(error);
-			})
+				return of(response);
+			}),
+			takeUntil(this.destroy$)
 		);
 		let overallPassRequest$: Observable<any>;
 
