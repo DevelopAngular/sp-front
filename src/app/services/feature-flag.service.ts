@@ -14,7 +14,7 @@ export enum FLAGS {
 	ShowWaitInLine = 'feature_flag_show_wait_in_line',
 	AbbreviateLastName = 'feature_flag_new_abbreviation',
 	ShowStreaks = 'feature_flag_streaks',
-  RenewalChecklist = 'feature_flag_renewal_checklist'
+	RenewalChecklist = 'feature_flag_renewal_checklist',
 }
 
 // TODO: Replace individual feature flag functions with this service

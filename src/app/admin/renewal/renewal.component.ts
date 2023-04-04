@@ -4,6 +4,9 @@ import { AdminService, RenewalStatus } from '../../services/admin.service';
 import _refiner from 'refiner-js';
 import { NavbarElementsRefsService } from '../../services/navbar-elements-refs.service';
 import { DomSanitizer, SafeResourceUrl } from '@angular/platform-browser';
+import { UserService } from '../../services/user.service';
+import { filter, map, take } from 'rxjs/operators';
+import { User } from '../../models/User';
 
 type ReminderData = {
 	img: string;
@@ -34,7 +37,8 @@ export class RenewalComponent implements OnInit {
 		private adminService: AdminService,
 		public darkTheme: DarkThemeSwitch,
 		private navbarService: NavbarElementsRefsService,
-		private sanitizer: DomSanitizer
+		private sanitizer: DomSanitizer,
+		private userService: UserService
 	) {}
 
 	ngOnInit(): void {
@@ -67,6 +71,14 @@ export class RenewalComponent implements OnInit {
 					_refiner('showForm', this.surveyId);
 				}
 				this.iFrameURL = this.sanitizer.bypassSecurityTrustResourceUrl(data.confirm_renewal_link);
+				this.userService.user$
+					.pipe(
+						filter((u) => !!u),
+						map((u) => User.fromJSON(u))
+					)
+					.subscribe((u) => {
+						this.userService.registerThirdPartyPlugins(u, data);
+					});
 			},
 		});
 
@@ -92,9 +104,9 @@ export class RenewalComponent implements OnInit {
 		}
 		let date = new Date(this.status.subscription_end_date);
 		if (month) {
-			return date.toLocaleDateString('en-US', { month: 'long' });
+			return date.toLocaleDateString('en-US', { timeZone: 'UTC', month: 'long' });
 		}
-		return date.toLocaleDateString('en-US', { year: 'numeric', month: 'long', day: 'numeric' });
+		return date.toLocaleDateString('en-US', { timeZone: 'UTC', year: 'numeric', month: 'long', day: 'numeric' });
 	}
 
 	toggleConfirm() {

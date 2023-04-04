@@ -160,7 +160,7 @@ export class NavComponent implements OnInit, AfterViewInit, OnDestroy {
 		private storage: StorageService,
 		private cdr: ChangeDetectorRef,
 		private componentService: ComponentsService,
-		private navbarService: NavbarElementsRefsService,
+		private navbarService: NavbarElementsRefsService
 	) {}
 
 	get pointerTopSpace() {
@@ -400,5 +400,5 @@ export class NavComponent implements OnInit, AfterViewInit, OnDestroy {
 		return this.userService.userData.pipe(map((u) => roles.every((_role) => u.roles.includes(_role))));
 	}
 
-  protected readonly FLAGS = FLAGS;
+	protected readonly FLAGS = FLAGS;
 }

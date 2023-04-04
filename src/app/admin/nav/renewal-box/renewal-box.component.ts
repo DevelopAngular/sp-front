@@ -16,22 +16,26 @@ export class RenewalBoxComponent implements OnInit {
 	public onRenewalPage: boolean;
 	public showBox: boolean;
 
-	constructor(public router: Router, private http: HttpService, private adminService: AdminService, private navbarService: NavbarElementsRefsService) {}
+	constructor(
+		public router: Router,
+		private http: HttpService,
+		private adminService: AdminService,
+		private navbarService: NavbarElementsRefsService
+	) {}
 
 	ngOnInit(): void {
-		this.http.currentSchool$.pipe(
-			filter(s => !!s),
-			mergeMap(
-				(s) => !s.trial_end_date ? this.adminService.getRenewalData() : of(null)
-			),
-			filter(d => !!d),
-		).subscribe({
+		this.http.currentSchool$
+			.pipe(
+				filter((s) => !!s),
+				mergeMap((s) => (!s.trial_end_date ? this.adminService.getRenewalData() : of(null))),
+				filter((d) => !!d)
+			)
+			.subscribe({
 				next: (data) => {
 					this.expiring = data.renewal_status === 'expiring';
 					this.showBox = true;
-				}
-			}
-		)
+				},
+			});
 
 		this.navbarService.getRenewalReminderFill().subscribe((fill) => {
 			this.onRenewalPage = fill;

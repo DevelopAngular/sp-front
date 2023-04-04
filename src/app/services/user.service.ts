@@ -155,6 +155,7 @@ import {
 	getParentsAccountsEntities,
 	getParentSort,
 } from '../ngrx/accounts/nested-states/parents/states';
+import { RenewalStatus } from './admin.service';
 
 @Injectable({
 	providedIn: 'root',
@@ -467,6 +468,90 @@ export class UserService implements OnDestroy {
 	ngOnDestroy(): void {
 		this.destroy$.next();
 		this.destroy$.complete();
+	}
+
+	registerThirdPartyPlugins(user: User, renewalStatus: RenewalStatus = undefined) {
+		// const intercomLauncher = document.querySelector<HTMLDivElement>('div.intercom-lightweight-app');
+		// if (user.isStudent() && intercomLauncher) {
+		//   intercomLauncher.style.display = 'none';
+		// } else {
+		//   intercomLauncher.style.display = 'block';
+		// }
+		setTimeout(() => {
+			console.log('registering third party plugins');
+			const now = new Date();
+			const school: School = this.http.getSchool();
+
+			let trialEndDate: Date;
+			if (!!school.trial_end_date) {
+				const d = new Date(school.trial_end_date);
+				// Drop the time so that the date is the same when we call .toDateString()
+				trialEndDate = new Date(d.getUTCFullYear(), d.getUTCMonth(), d.getUTCDate());
+			}
+
+			let accountType = user.sync_types[0] === 'google' ? 'Google' : user.sync_types[0] === 'clever' ? 'Clever' : 'Standard';
+			let trialing = !!trialEndDate && trialEndDate > now;
+			let trialEndDateStr = !!trialEndDate ? trialEndDate.toDateString() : 'N/A';
+
+			let company = {
+				id: school.id,
+				name: school.name,
+				'Id Card Access': school.feature_flag_digital_id,
+				'Plus Access': school.feature_flag_encounter_detection,
+				Trialing: trialing,
+				'Trial End Date': trialEndDateStr,
+			};
+
+			if (!!renewalStatus) {
+				company['customer_success_advocate_hubspot_id'] = renewalStatus.customer_success_advocate_hubspot_id;
+				company['account_executive_hubspot_id'] = renewalStatus.account_executive_hubspot_id;
+				company['billing_coordinator_hubspot_id'] = renewalStatus.billing_coordinator_hubspot_id;
+			}
+
+			window.intercomSettings = {
+				user_id: user.id,
+				name: user.display_name,
+				email: user.primary_email,
+				created: new Date(user.created),
+				type: this.getUserType(user),
+				status: user.status,
+				account_type: accountType,
+				first_login_at: user.first_login,
+				company: company,
+				hide_default_launcher: true,
+				custom_launcher_selector: '.open-intercom-btn',
+			};
+			window.Intercom('update', { hideDefaultLauncher: true });
+
+			window.posthog.identify(user.id, {
+				name: user.display_name,
+				email: user.primary_email,
+				created: new Date(user.created),
+				type: this.getUserType(user),
+				status: user.status,
+				account_type: accountType,
+				first_login_at: user.first_login,
+				school_id: school.id,
+				school_name: school.name,
+				id_card_access: school.feature_flag_digital_id,
+				encounter_detection_access: school.feature_flag_encounter_detection,
+				trialing: trialing,
+				trial_end_date: trialEndDateStr,
+			});
+		}, 3000);
+	}
+
+	getUserType(user: User): string {
+		if (user.isAdmin()) {
+			return 'Admin';
+		} else if (user.isTeacher()) {
+			return 'Teacher';
+		} else if (user.isAssistant()) {
+			return 'Assistant';
+		} else if (user.isStudent()) {
+			return 'Student';
+		}
+		return 'unknown user';
 	}
 
 	getLoadingAccounts(role) {
