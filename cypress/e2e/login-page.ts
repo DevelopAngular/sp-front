@@ -92,7 +92,7 @@ describe('Login Page', () => {
         cy.get('div.input-container input[autocomplete="password"]').focus().type('bad password');
         cy.wait(100);
         submit();
-        cy.get('div.error').should('exist').should('contain.text', 'Please sign in again.');
+        cy.get('div.error').should('exist').should('contain.text', 'Incorrect password. Try again or contact your school admin to reset it.');
       });
 
       it('should redirect for correct email/password credentials', () => {
