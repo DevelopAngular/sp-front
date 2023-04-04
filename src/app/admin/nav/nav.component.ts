@@ -35,6 +35,7 @@ import { StorageService } from '../../services/storage.service';
 import { ComponentsService } from '../../services/components.service';
 import { School } from '../../models/School';
 import { NavbarElementsRefsService } from '../../services/navbar-elements-refs.service';
+import { FeatureFlagService, FLAGS } from '../../services/feature-flag.service';
 
 declare const window;
 
@@ -148,6 +149,7 @@ export class NavComponent implements OnInit, AfterViewInit, OnDestroy {
 
 	constructor(
 		public router: Router,
+		public featureFlagService: FeatureFlagService,
 		private activeRoute: ActivatedRoute,
 		private dataService: DataService,
 		private userService: UserService,
@@ -158,7 +160,7 @@ export class NavComponent implements OnInit, AfterViewInit, OnDestroy {
 		private storage: StorageService,
 		private cdr: ChangeDetectorRef,
 		private componentService: ComponentsService,
-		private navbarService: NavbarElementsRefsService
+		private navbarService: NavbarElementsRefsService,
 	) {}
 
 	get pointerTopSpace() {
@@ -397,4 +399,6 @@ export class NavComponent implements OnInit, AfterViewInit, OnDestroy {
 	hasRoles(roles: string[]): Observable<boolean> {
 		return this.userService.userData.pipe(map((u) => roles.every((_role) => u.roles.includes(_role))));
 	}
+
+  protected readonly FLAGS = FLAGS;
 }

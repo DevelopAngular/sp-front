@@ -403,7 +403,7 @@ export class AppComponent implements OnInit, AfterViewInit, OnDestroy {
 						this.router.navigate(['parent']);
 					} else {
 						let showRenewalPage$ = of(false);
-						if (user.isAdmin()) {
+						if (user.isAdmin() && this.featureFlags.isFeatureEnabled(FLAGS.RenewalChecklist)) {
 							showRenewalPage$ = this.isAdminUpForRenewal$();
 						}
 
