@@ -106,9 +106,9 @@ import {
 	updateIntrosMain,
 	updateIntrosPassLimitsOnlyCertainRooms,
 	updateIntrosSearch,
+	updateIntrosSeenRenewalStatusPage,
 	updateIntrosStudentPassLimits,
 	updateIntrosWaitInLine,
-	updateIntrosSeenRenewalStatusPage,
 } from '../ngrx/intros/actions';
 import { getIntrosData, IntroData } from '../ngrx/intros/state';
 import { getSchoolsFailure } from '../ngrx/schools/actions';
@@ -508,7 +508,7 @@ export class UserService implements OnDestroy {
 				company['billing_coordinator_hubspot_id'] = renewalStatus.billing_coordinator_hubspot_id;
 			}
 
-			window.intercomSettings = {
+			window['intercomSettings'] = {
 				user_id: user.id,
 				name: user.display_name,
 				email: user.primary_email,
@@ -521,9 +521,9 @@ export class UserService implements OnDestroy {
 				hide_default_launcher: true,
 				custom_launcher_selector: '.open-intercom-btn',
 			};
-			window.Intercom('update', { hideDefaultLauncher: true });
+			window['Intercom']('update', { hideDefaultLauncher: true });
 
-			window.posthog.identify(user.id, {
+			window['posthog'].identify(user.id, {
 				name: user.display_name,
 				email: user.primary_email,
 				created: new Date(user.created),
