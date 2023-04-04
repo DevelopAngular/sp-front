@@ -21,7 +21,7 @@ export class RenewalBoxComponent implements OnInit {
 			},
 		});
 
-		this.navbarService.getRenewalFill().subscribe((fill) => {
+		this.navbarService.getRenewalReminderFill().subscribe((fill) => {
 			this.onRenewalPage = fill;
 		});
 	}

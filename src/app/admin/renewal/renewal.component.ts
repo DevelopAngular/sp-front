@@ -17,6 +17,9 @@ type ReminderData = {
 	selector: 'app-renewal',
 	templateUrl: './renewal.component.html',
 	styleUrls: ['./renewal.component.scss'],
+	host: {
+		class: 'root-router-child'
+	}
 })
 export class RenewalComponent implements OnInit {
 	public selectedFeature = 0;
@@ -63,11 +66,11 @@ export class RenewalComponent implements OnInit {
 		});
 
 		this.navbarService.setPointerVisible(false);
-		this.navbarService.setRenewalFill(true);
+		this.navbarService.setRenewalReminderFill(true);
 	}
 
 	ngOnDestroy() {
-		this.navbarService.setRenewalFill(false);
+		this.navbarService.setRenewalReminderFill(false);
 	}
 
 	handleFeatureClick(clicked: number) {
@@ -91,6 +94,6 @@ export class RenewalComponent implements OnInit {
 
 	toggleConfirm() {
 		this.showRenewConfirm = !this.showRenewConfirm;
-		this.navbarService.setRenewalFill(!this.showRenewConfirm);
+		this.navbarService.setRenewalIFrameFill(this.showRenewConfirm);
 	}
 }

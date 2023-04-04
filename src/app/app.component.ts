@@ -245,6 +245,8 @@ export class AppComponent implements OnInit, AfterViewInit, OnDestroy {
 				switchMap((l) => this.userService.user$.pipe(take(1))),
 				filter((user) => !!user),
 				map((user) => User.fromJSON(user)),
+				// Wait for schools to load so that we can register intercom and refiner correctly.
+				mergeMap((user) => this.http.schools$.pipe(map(()=>user))),
 				concatMap((user) => {
 					return this.intercomLauncherAdded$.pipe(map((intercomWrapper) => [user, intercomWrapper]));
 				}),
@@ -614,10 +616,10 @@ export class AppComponent implements OnInit, AfterViewInit, OnDestroy {
 					Trialing: trialing,
 					'Trial End Date': trialEndDateStr,
 				},
-				hide_default_launcher: false,
-				custom_launcher_selector: '.live-chat',
+				hide_default_launcher: true,
+				custom_launcher_selector: '.open-intercom-btn',
 			};
-			window.Intercom('update');
+			window.Intercom('update', {hideDefaultLauncher: true});
 
 			window.posthog.identify(user.id, {
 				name: user.display_name,
@@ -848,10 +850,6 @@ export class AppComponent implements OnInit, AfterViewInit, OnDestroy {
 		CDC.afterClosed().subscribe((status) => {
 			window.document.querySelector('.cdk-overlay-container').style.zIndex = '1005';
 		});
-	}
-
-	openLiveChat() {
-		window.Intercom('update', { hide_default_launcher: true });
 	}
 
 	private checkIfAuthOnLoad(): Observable<boolean> {

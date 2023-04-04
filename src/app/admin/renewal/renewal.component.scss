@@ -7,18 +7,12 @@
 // $climb is how to get from this file to the assets folder
 $climb: '../../..';
 
-$contentWidth: calc(100vw - 234px);
-
 .host {
-	height: 100%;
-	width: $contentWidth;
-	overflow: auto;
 	box-sizing: border-box;
 	background: $gray100;
 }
 
 .renewal-wrapper {
-	height: 100%;
 	max-width: 1372px;
 	margin: 0 auto;
 	display: flex;
@@ -361,8 +355,7 @@ $arrowAnimation: translate(4px, 0);
 }
 
 .iframe-container {
-	height: 100%;
-	width: $contentWidth;
+	height: 99%; // <- hack to get rid of a scrollbar.
 	> div {
 		background: $white;
 		border: 1px solid $gray300;

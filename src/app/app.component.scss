@@ -1,6 +1,7 @@
 @import '../sp-colors.scss';
 @import '../design-system.scss';
 .global-container {
+	flex-grow: 1;
 	display: flex;
 	flex-direction: column;
 	background-color: #fbfeff;
@@ -12,6 +13,7 @@
 	display: flex;
 	flex-direction: column;
 	align-items: stretch;
+	flex-grow: 1;
 }
 
 .unanimated-dialog-container {
@@ -186,16 +188,13 @@
 //}
 
 .help-center-content-wrapper {
-	height: 100vh;
+	height: 100%;
 	max-width: 449px;
 	min-width: 320px;
-	width: 0px;
-	position: absolute;
-	right: 0;
 	transition: all 0.3s;
 	overflow-y: hidden;
 	background: rgb(251, 254, 255);
-	z-index: 1006;
+	position: relative;
 
 	.help-center-unsubscribe {
 		position: absolute;

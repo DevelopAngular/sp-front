@@ -30,7 +30,7 @@ export class HelpCenterComponent implements OnInit, OnDestroy, AfterViewInit {
 	destroy$: Subject<any> = new Subject<any>();
 
 	// nux props
-	showHelpCenterNux: boolean;
+	showHelpCenter: boolean;
 	introsData: IntroData;
 	introSubs: Subscription;
 
@@ -59,8 +59,9 @@ export class HelpCenterComponent implements OnInit, OnDestroy, AfterViewInit {
 			}
 		});
 
-		this.navbarService.getRenewalFill().subscribe((onRenewalPage) => {
-			this.showHelpCenterNux = !onRenewalPage;
+		this.navbarService.getRenewalIFrameFill().subscribe((iFrameFill) => {
+			console.log('fill: ' + iFrameFill);
+			this.showHelpCenter = !iFrameFill;
 		});
 	}
 
