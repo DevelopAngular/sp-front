@@ -36,8 +36,7 @@
 }
 
 .preloader-container__mobile .slogan {
-  color: #ffffff;
-  margin-top: 40px;
+  display: none;
 }
 .preloader-container__mobile .preloader-icon {
   padding-left: 0;
