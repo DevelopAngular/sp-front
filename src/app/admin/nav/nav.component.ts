@@ -171,6 +171,10 @@ export class NavComponent implements OnInit, AfterViewInit, OnDestroy {
 		return DeviceDetection.isMobile();
 	}
 
+	get isRenewalChecklistEnabled() {
+		return this.featureFlagService.isFeatureEnabled(FLAGS.RenewalChecklist);
+	}
+
 	get showNotificationBadge() {
 		return this.user && moment(this.user.first_login).add(30, 'days').isSameOrBefore(moment());
 	}
