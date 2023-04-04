@@ -13,6 +13,7 @@
   align-items: center;
   justify-content: center;
   transition: opacity .5s ease;
+  flex-direction: column;
 }
 
 .preloader-container__dark {
@@ -23,6 +24,23 @@
   background: radial-gradient(circle at 73% 71%, #00B467, #15D593) !important;
 }
 
+.preloader-icon {
+  padding-left: 55px;
+}
+
+.slogan {
+  font-weight: 500;
+  font-size: 17px;
+  text-align: center;
+  color: #7083A0;
+}
+
+.preloader-container__mobile .slogan {
+  display: none;
+}
+.preloader-container__mobile .preloader-icon {
+  padding-left: 0;
+}
 .test {
   width: 96px;
   height: 100px;
