@@ -134,6 +134,8 @@ function makeUrl(server: LoginServer, endpoint: string) {
 			url = proxyPath + endpoint;
 		} else if (/(local)/.test(environment.buildType)) {
 			url = environment.preferEnvironment.api_root + endpoint;
+		} else if (/(default)/.test(environment.buildType)) {
+			url = server.api_root.replace('https://smartpass.app', 'http://localhost:4200') + endpoint;
 		} else {
 			// url = 'https://smartpass.app/api/prod-us-central' + endpoint;
 			// url = 'https://smartpass.app/api/staging/' + endpoint;
