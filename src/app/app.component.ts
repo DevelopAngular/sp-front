@@ -2,20 +2,7 @@ import { AfterViewInit, Component, ElementRef, HostListener, NgZone, OnDestroy, 
 import { MatDialog, MatDialogRef } from '@angular/material/dialog';
 import { ActivatedRoute, NavigationEnd, Router } from '@angular/router';
 import { filter as _filter } from 'lodash';
-import {
-	BehaviorSubject,
-	combineLatest,
-	forkJoin,
-	fromEvent,
-	interval,
-	merge,
-	Observable,
-	of,
-	ReplaySubject,
-	Subject,
-	throwError,
-	zip,
-} from 'rxjs';
+import { BehaviorSubject, combineLatest, forkJoin, fromEvent, interval, merge, Observable, of, ReplaySubject, Subject, throwError, zip } from 'rxjs';
 
 import {
 	catchError,
@@ -246,7 +233,7 @@ export class AppComponent implements OnInit, AfterViewInit, OnDestroy {
 				filter((user) => !!user),
 				map((user) => User.fromJSON(user)),
 				// Wait for schools to load so that we can register intercom and refiner correctly.
-				mergeMap((user) => this.http.schools$.pipe(map(()=>user))),
+				mergeMap((user) => this.http.schools$.pipe(map(() => user))),
 				concatMap((user) => {
 					return this.intercomLauncherAdded$.pipe(map((intercomWrapper) => [user, intercomWrapper]));
 				}),
@@ -542,8 +529,8 @@ export class AppComponent implements OnInit, AfterViewInit, OnDestroy {
 		);
 
 		return this.http.currentSchool$.pipe(
-			filter(s => !!s),
-			switchMap(s => {
+			filter((s) => !!s),
+			switchMap((s) => {
 				if (s.trial_end_date) {
 					return of(false);
 				} else {
@@ -619,7 +606,7 @@ export class AppComponent implements OnInit, AfterViewInit, OnDestroy {
 				hide_default_launcher: true,
 				custom_launcher_selector: '.open-intercom-btn',
 			};
-			window.Intercom('update', {hideDefaultLauncher: true});
+			window.Intercom('update', { hideDefaultLauncher: true });
 
 			window.posthog.identify(user.id, {
 				name: user.display_name,

@@ -32,8 +32,8 @@ export const TABLE_RELOADING_TRIGGER = new Subject<any>();
 	templateUrl: './accounts-role.component.html',
 	styleUrls: ['./accounts-role.component.scss'],
 	host: {
-		class: 'accounts-role'
-	}
+		class: 'accounts-role',
+	},
 })
 export class AccountsRoleComponent implements OnInit, OnDestroy {
 	private destroy$: Subject<any> = new Subject();

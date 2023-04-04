@@ -18,8 +18,8 @@ type ReminderData = {
 	templateUrl: './renewal.component.html',
 	styleUrls: ['./renewal.component.scss'],
 	host: {
-		class: 'root-router-child'
-	}
+		class: 'root-router-child',
+	},
 })
 export class RenewalComponent implements OnInit {
 	public selectedFeature = 0;
@@ -30,7 +30,12 @@ export class RenewalComponent implements OnInit {
 
 	public iFrameURL: SafeResourceUrl;
 
-	constructor(private adminService: AdminService, public darkTheme: DarkThemeSwitch, private navbarService: NavbarElementsRefsService, private sanitizer: DomSanitizer) {}
+	constructor(
+		private adminService: AdminService,
+		public darkTheme: DarkThemeSwitch,
+		private navbarService: NavbarElementsRefsService,
+		private sanitizer: DomSanitizer
+	) {}
 
 	ngOnInit(): void {
 		this.adminService.getRenewalData().subscribe({
