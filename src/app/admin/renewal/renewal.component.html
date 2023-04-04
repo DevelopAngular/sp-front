@@ -6,7 +6,7 @@
 			<span>{{ printExpiration() }}</span>
 		</div>
 		<div class="renewal-content">
-			<div class="reminder-box" *ngIf="status && status.renewal_status !== 'renewed'" [ngClass]="{ expiring: status?.renewal_status === 'expiring' }">
+			<div *ngIf="status && status.renewal_status !== 'renewed'" class="reminder-box" [ngClass]="{ expiring: status?.renewal_status === 'expiring' }">
 				<img src="{{ reminder?.img }}" />
 				<div>
 					<h5>{{ reminder?.title }}</h5>
@@ -62,23 +62,33 @@
 								[link]="'https://articles.smartpass.app/en/articles/6856156-adding-profile-pictures'"
 								[img]="'./assets/Female Profile (Blue).svg'"
 								[title]="'Profile Pictures'"
-								[desc]="'Description: Add profile pictures of your students and teachers. Takes \<30 minutes to set up.'"></app-action-item>
+								[desc]="'Add profile pictures of your students and teachers. Takes \<30 minutes to set up.'"></app-action-item>
+							<app-action-item
+								[link]="'/referrals'"
+								[img]="'./assets/Referal (Green).svg'"
+								[title]="'Refer a School'"
+								[desc]="
+									'Share SmartPass with another school in your district and get a discount, or share it with neighboring schools to grow our SmartPass community.'
+								"></app-action-item>
 						</div>
 					</div>
 					<div class="content-box">
 						<h5>Your Team</h5>
 						<div class="team-container">
 							<app-team-member
+								[id]="'renewal-customer-advocate'"
 								*ngIf="status?.customer_success_advocate_hubspot_id"
-								[id]="status?.customer_success_advocate_hubspot_id"
+								[uid]="status?.customer_success_advocate_hubspot_id"
 								[job]="'Customer Success Advocate'"></app-team-member>
 							<app-team-member
+								[id]="'renewal-billing-coordinator'"
 								*ngIf="status?.billing_coordinator_hubspot_id"
-								[id]="status?.billing_coordinator_hubspot_id"
+								[uid]="status?.billing_coordinator_hubspot_id"
 								[job]="'Billing Coordinator'"></app-team-member>
 							<app-team-member
+								[id]="'renewal-account-executive'"
 								*ngIf="status?.account_executive_hubspot_id"
-								[id]="status?.account_executive_hubspot_id"
+								[uid]="status?.account_executive_hubspot_id"
 								[job]="'Account Executive'"></app-team-member>
 						</div>
 					</div>
@@ -113,7 +123,7 @@
 							</div>
 							<p *ngIf="selectedFeature === 3">A district-wide view in SmartPass, making it easy for new schools in your district to get started.</p>
 						</div>
-						<div (click)="goToWishlist()" class="feature-item">
+						<div class="feature-item">
 							<div>
 								<img src="./assets/Lightbulb (Yellow).svg" />
 								<span>Suggest a feature for next year</span>
@@ -149,5 +159,5 @@
 	<div (click)="toggleConfirm()">
 		<img src="./assets/Chevron Left (Blue-Gray).svg" />
 	</div>
-	<iframe src="https://druvv.github.io/iframe-test/"></iframe>
+	<iframe src="{{ status?.confirm_renewal_link }}"></iframe>
 </div>

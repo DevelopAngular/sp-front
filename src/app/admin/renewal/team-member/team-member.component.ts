@@ -8,6 +8,7 @@ import teamMembers from './member-data';
 })
 export class TeamMemberComponent implements OnInit {
 	@Input() id: string;
+	@Input() uid: string;
 	@Input() job: string;
 
 	public picUrl: string;
@@ -15,7 +16,7 @@ export class TeamMemberComponent implements OnInit {
 	public email: string;
 
 	ngOnInit(): void {
-		let teamMember = teamMembers[this.id];
+		let teamMember = teamMembers[this.uid];
 		this.picUrl = './assets/team-profiles/' + teamMember.image_name;
 		this.name = teamMember.name;
 		this.email = teamMember.email;

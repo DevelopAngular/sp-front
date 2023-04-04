@@ -1,7 +1,6 @@
 import { Component, OnInit } from '@angular/core';
 import { DarkThemeSwitch } from '../../dark-theme-switch';
 import { AdminService, RenewalStatus } from '../../services/admin.service';
-import { HelpCenterService } from '../../services/help-center.service';
 import _refiner from 'refiner-js';
 import { NavbarElementsRefsService } from '../../services/navbar-elements-refs.service';
 
@@ -25,12 +24,7 @@ export class RenewalComponent implements OnInit {
 	public showRenewConfirm = false;
 	private surveyId = '300ba7c0-ccad-11ed-b709-fb336f73b73f';
 
-	constructor(
-		private adminService: AdminService,
-		private helpCenterService: HelpCenterService,
-		public darkTheme: DarkThemeSwitch,
-		private navbarService: NavbarElementsRefsService
-	) {}
+	constructor(private adminService: AdminService, public darkTheme: DarkThemeSwitch, private navbarService: NavbarElementsRefsService) {}
 
 	ngOnInit(): void {
 		this.adminService.getRenewalData().subscribe({
@@ -80,10 +74,6 @@ export class RenewalComponent implements OnInit {
 		}
 	}
 
-	goToWishlist() {
-		window.open('https://wishlist.smartpass.app/', '_blank');
-	}
-
 	printExpiration(month = false): string {
 		if (!this.status?.subscription_end_date) {
 			return '';
@@ -97,5 +87,6 @@ export class RenewalComponent implements OnInit {
 
 	toggleConfirm() {
 		this.showRenewConfirm = !this.showRenewConfirm;
+		this.navbarService.setRenewalFill(!this.showRenewConfirm);
 	}
 }
