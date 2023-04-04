@@ -1,4 +1,4 @@
-import { AfterViewInit, Component, ElementRef, HostListener, NgZone, OnDestroy, OnInit, ViewChild } from '@angular/core';
+import { AfterViewInit, Component, ElementRef, HostListener, NgZone, OnDestroy, OnInit, SecurityContext, ViewChild } from '@angular/core';
 import { MatDialog, MatDialogRef } from '@angular/material/dialog';
 import { ActivatedRoute, NavigationEnd, Router } from '@angular/router';
 import { filter as _filter } from 'lodash';
@@ -23,7 +23,7 @@ import { DarkThemeSwitch } from './dark-theme-switch';
 
 import { DeviceDetection } from './device-detection.helper';
 import { School } from './models/School';
-import { AdminService } from './services/admin.service';
+import { AdminService, RenewalStatus } from './services/admin.service';
 import { LoginService } from './services/login.service';
 import { HttpService } from './services/http-service';
 import { KioskModeService } from './services/kiosk-mode.service';
@@ -232,6 +232,8 @@ export class AppComponent implements OnInit, AfterViewInit, OnDestroy {
 				switchMap((l) => this.userService.user$.pipe(take(1))),
 				filter((user) => !!user),
 				map((user) => User.fromJSON(user)),
+				// Wait for schools to load so that we can register intercom and refiner correctly.
+				mergeMap((user) => this.http.schools$.pipe(map(() => user))),
 				concatMap((user) => {
 					return this.intercomLauncherAdded$.pipe(map((intercomWrapper) => [user, intercomWrapper]));
 				}),
@@ -253,7 +255,7 @@ export class AppComponent implements OnInit, AfterViewInit, OnDestroy {
 					}
 
 					if (isAllowed && !this.isMobile) {
-						this.registerThirdPartyPlugins(user);
+						this.userService.registerThirdPartyPlugins(user);
 					}
 					return this.nextReleaseService.getLastReleasedUpdates(DeviceDetection.platform()).pipe(
 						map((release: Array<Update>): Array<Update> => {
@@ -401,7 +403,7 @@ export class AppComponent implements OnInit, AfterViewInit, OnDestroy {
 						this.router.navigate(['parent']);
 					} else {
 						let showRenewalPage$ = of(false);
-						if (user.isAdmin()) {
+						if (user.isAdmin() && this.featureFlags.isFeatureEnabled(FLAGS.RenewalChecklist)) {
 							showRenewalPage$ = this.isAdminUpForRenewal$();
 						}
 
@@ -511,7 +513,7 @@ export class AppComponent implements OnInit, AfterViewInit, OnDestroy {
 	}
 
 	isAdminUpForRenewal$(): Observable<boolean> {
-		return forkJoin([this.adminService.getRenewalData(), this.userService.introsData$.pipe(take(1))]).pipe(
+		const checkRenewal = forkJoin([this.adminService.getRenewalData(), this.userService.introsData$.pipe(take(1))]).pipe(
 			take(1),
 			map(([resp, intros]) => {
 				const show = resp.renewal_status == 'expiring' || !intros.seen_renewal_page?.universal?.seen_version;
@@ -524,6 +526,17 @@ export class AppComponent implements OnInit, AfterViewInit, OnDestroy {
 			}),
 			map(({ show }) => show),
 			catchError(() => of(false))
+		);
+
+		return this.http.currentSchool$.pipe(
+			filter((s) => !!s),
+			switchMap((s) => {
+				if (s.trial_end_date) {
+					return of(false);
+				} else {
+					return checkRenewal;
+				}
+			})
 		);
 	}
 
@@ -550,69 +563,6 @@ export class AppComponent implements OnInit, AfterViewInit, OnDestroy {
 		// _refiner('showForm', '31b6c030-820a-11ec-9c99-8b41a98d875d');
 	}
 
-	registerThirdPartyPlugins(user: User) {
-		// const intercomLauncher = document.querySelector<HTMLDivElement>('div.intercom-lightweight-app');
-		// if (user.isStudent() && intercomLauncher) {
-		//   intercomLauncher.style.display = 'none';
-		// } else {
-		//   intercomLauncher.style.display = 'block';
-		// }
-		setTimeout(() => {
-			console.log('registering third party plugins');
-			const now = new Date();
-			const school: School = this.http.getSchool();
-
-			let trialEndDate: Date;
-			if (!!school.trial_end_date) {
-				const d = new Date(school.trial_end_date);
-				// Drop the time so that the date is the same when we call .toDateString()
-				trialEndDate = new Date(d.getUTCFullYear(), d.getUTCMonth(), d.getUTCDate());
-			}
-
-			let accountType = user.sync_types[0] === 'google' ? 'Google' : user.sync_types[0] === 'clever' ? 'Clever' : 'Standard';
-			let trialing = !!trialEndDate && trialEndDate > now ? true : false;
-			let trialEndDateStr = !!trialEndDate ? trialEndDate.toDateString() : 'N/A';
-
-			window.intercomSettings = {
-				user_id: user.id,
-				name: user.display_name,
-				email: user.primary_email,
-				created: new Date(user.created),
-				type: this.getUserType(user),
-				status: user.status,
-				account_type: accountType,
-				first_login_at: user.first_login,
-				company: {
-					id: school.id,
-					name: school.name,
-					'Id Card Access': school.feature_flag_digital_id,
-					'Plus Access': school.feature_flag_encounter_detection,
-					Trialing: trialing,
-					'Trial End Date': trialEndDateStr,
-				},
-				hide_default_launcher: false,
-				custom_launcher_selector: '.live-chat',
-			};
-			window.Intercom('update');
-
-			window.posthog.identify(user.id, {
-				name: user.display_name,
-				email: user.primary_email,
-				created: new Date(user.created),
-				type: this.getUserType(user),
-				status: user.status,
-				account_type: accountType,
-				first_login_at: user.first_login,
-				school_id: school.id,
-				school_name: school.name,
-				id_card_access: school.feature_flag_digital_id,
-				encounter_detection_access: school.feature_flag_encounter_detection,
-				trialing: trialing,
-				trial_end_date: trialEndDateStr,
-			});
-		}, 3000);
-	}
-
 	getDaysUntil(date: Date): number {
 		const oneDay = 24 * 60 * 60 * 1000; // hours*minutes*seconds*milliseconds
 		// @ts-ignore
@@ -622,19 +572,6 @@ export class AppComponent implements OnInit, AfterViewInit, OnDestroy {
 
 	getDayText(days: number): string {
 		return days === 1 ? 'day' : 'days';
-	}
-
-	getUserType(user: User): string {
-		if (user.isAdmin()) {
-			return 'Admin';
-		} else if (user.isTeacher()) {
-			return 'Teacher';
-		} else if (user.isAssistant()) {
-			return 'Assistant';
-		} else if (user.isStudent()) {
-			return 'Student';
-		}
-		return 'unknown user';
 	}
 
 	hubSpotSettings(user) {
@@ -824,10 +761,6 @@ export class AppComponent implements OnInit, AfterViewInit, OnDestroy {
 		CDC.afterClosed().subscribe((status) => {
 			window.document.querySelector('.cdk-overlay-container').style.zIndex = '1005';
 		});
-	}
-
-	openLiveChat() {
-		window.Intercom('update', { hide_default_launcher: true });
 	}
 
 	private checkIfAuthOnLoad(): Observable<boolean> {

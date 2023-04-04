@@ -14,6 +14,9 @@ declare const window;
 	selector: 'app-admin-page',
 	templateUrl: './admin-page.component.html',
 	styleUrls: ['./admin-page.component.scss'],
+	host: {
+		class: 'root-router-child',
+	},
 })
 export class AdminPageComponent implements OnInit, AfterViewInit, OnDestroy {
 	private outletDummySwitcher$ = new BehaviorSubject<boolean>(false);

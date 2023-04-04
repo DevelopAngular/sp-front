@@ -1,8 +1,12 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, OnInit, SecurityContext } from '@angular/core';
 import { DarkThemeSwitch } from '../../dark-theme-switch';
 import { AdminService, RenewalStatus } from '../../services/admin.service';
 import _refiner from 'refiner-js';
 import { NavbarElementsRefsService } from '../../services/navbar-elements-refs.service';
+import { DomSanitizer, SafeResourceUrl } from '@angular/platform-browser';
+import { UserService } from '../../services/user.service';
+import { filter, map, take } from 'rxjs/operators';
+import { User } from '../../models/User';
 
 type ReminderData = {
 	img: string;
@@ -16,6 +20,9 @@ type ReminderData = {
 	selector: 'app-renewal',
 	templateUrl: './renewal.component.html',
 	styleUrls: ['./renewal.component.scss'],
+	host: {
+		class: 'root-router-child',
+	},
 })
 export class RenewalComponent implements OnInit {
 	public selectedFeature = 0;
@@ -24,7 +31,15 @@ export class RenewalComponent implements OnInit {
 	public showRenewConfirm = false;
 	private surveyId = '300ba7c0-ccad-11ed-b709-fb336f73b73f';
 
-	constructor(private adminService: AdminService, public darkTheme: DarkThemeSwitch, private navbarService: NavbarElementsRefsService) {}
+	public iFrameURL: SafeResourceUrl;
+
+	constructor(
+		private adminService: AdminService,
+		public darkTheme: DarkThemeSwitch,
+		private navbarService: NavbarElementsRefsService,
+		private sanitizer: DomSanitizer,
+		private userService: UserService
+	) {}
 
 	ngOnInit(): void {
 		this.adminService.getRenewalData().subscribe({
@@ -55,15 +70,24 @@ export class RenewalComponent implements OnInit {
 				if (this.status.renewal_status === 'expiring') {
 					_refiner('showForm', this.surveyId);
 				}
+				this.iFrameURL = this.sanitizer.bypassSecurityTrustResourceUrl(data.confirm_renewal_link);
+				this.userService.user$
+					.pipe(
+						filter((u) => !!u),
+						map((u) => User.fromJSON(u))
+					)
+					.subscribe((u) => {
+						this.userService.registerThirdPartyPlugins(u, data);
+					});
 			},
 		});
 
 		this.navbarService.setPointerVisible(false);
-		this.navbarService.setRenewalFill(true);
+		this.navbarService.setRenewalReminderFill(true);
 	}
 
 	ngOnDestroy() {
-		this.navbarService.setRenewalFill(false);
+		this.navbarService.setRenewalReminderFill(false);
 	}
 
 	handleFeatureClick(clicked: number) {
@@ -80,13 +104,13 @@ export class RenewalComponent implements OnInit {
 		}
 		let date = new Date(this.status.subscription_end_date);
 		if (month) {
-			return date.toLocaleDateString('en-US', { month: 'long' });
+			return date.toLocaleDateString('en-US', { timeZone: 'UTC', month: 'long' });
 		}
-		return date.toLocaleDateString('en-US', { year: 'numeric', month: 'long', day: 'numeric' });
+		return date.toLocaleDateString('en-US', { timeZone: 'UTC', year: 'numeric', month: 'long', day: 'numeric' });
 	}
 
 	toggleConfirm() {
 		this.showRenewConfirm = !this.showRenewConfirm;
-		this.navbarService.setRenewalFill(!this.showRenewConfirm);
+		this.navbarService.setRenewalIFrameFill(this.showRenewConfirm);
 	}
 }

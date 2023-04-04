@@ -1,6 +1,6 @@
 @import '../../../../sp-colors';
 
-$margin: 0 20px 83px 20px;
+$margin: 0 20px 20px 20px;
 
 .renewal-notif {
 	font-family: 'Inter';
@@ -49,7 +49,7 @@ $margin: 0 20px 83px 20px;
 .renewal-notif:hover {
 	background: $green150;
 	border-width: 2px;
-	margin: -1px 19px 82px 19px;
+	margin: -1px 19px 19px 19px;
 }
 
 .renewal-notif.active {

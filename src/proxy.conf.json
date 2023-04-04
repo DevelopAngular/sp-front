@@ -1,8 +1,9 @@
 {
-  "/api/*": {
+  "/api": {
     "target": "https://smartpass.app",
     "secure": false,
     "logLevel": "debug",
-    "changeOrigin": true
+    "changeOrigin": true,
+    "cookieDomainRewrite": ""
   }
 }

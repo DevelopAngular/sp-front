@@ -8,7 +8,7 @@
     },
     "scripts": {
         "ng": "ng",
-        "start": "ng serve",
+        "start": "ng serve --proxy-config=./src/proxy.conf.json",
         "build": "ng build",
         "test": "ng test",
         "lint:ci": "prettier ./src/app/**/*.(html|scss|ts) --check",

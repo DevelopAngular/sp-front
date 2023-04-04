@@ -107,7 +107,7 @@
 					[learnMoreLink]="'https://www.smartpass.app/grade-levels'"
 					(setUp)="openSettings($event, 'grade_level')"></app-integration-card>
 				<app-integration-card
-					id="intercom-Launcher"
+					class="live-chat open-intercom-btn"
 					*ngIf="alreadyUsing ? (classlinkSyncInfo$ | async)?.is_enabled : !(classlinkSyncInfo$ | async)?.is_enabled"
 					[icon]="'./assets/ClassLink.svg'"
 					[title]="'ClassLink'"

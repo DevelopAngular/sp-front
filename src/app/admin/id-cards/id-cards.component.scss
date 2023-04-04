@@ -38,8 +38,7 @@
 	padding: 35px 30px;
 	&.plus-plan {
 		background-color: $gray100;
-		overflow-y: auto;
-		height: 100vh;
+		height: 100%;
 		.content-wrapper {
 			.left {
 				width: 50%;

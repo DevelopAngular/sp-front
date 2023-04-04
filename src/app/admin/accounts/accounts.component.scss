@@ -7,6 +7,10 @@
 	overflow: hidden;
 }
 
+.accounts-bottom {
+	flex-grow: 1;
+}
+
 .host {
 	-webkit-overflow-scrolling: touch;
 	width: 100%;
@@ -23,6 +27,10 @@
 		flex: 1 1 auto;
 		width: 100%;
 		height: 100%;
+		display: flex;
+		flex-direction: column;
+		align-items: stretch;
+
 		.header-wrapper {
 			background-clip: padding-box;
 			padding: 25px;

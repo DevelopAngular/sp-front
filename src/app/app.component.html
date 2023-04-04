@@ -3,7 +3,6 @@
 	[ngClass]="{ 'ds-dark-theme': darkThemeEnabled }"
 	*ngIf="showUI | async"
 	ondragstart="return false"
-	[style.height]="'100%'"
 	[style.min-height]="!hideScroll ? '100%' : 'auto'">
 	<ng-keyboard-shortcuts [shortcuts]="shortcuts"></ng-keyboard-shortcuts>
 	<div class="toasts-wrapper" *ngIf="(toasts$ | async).length">
@@ -62,41 +61,48 @@
 		</ng-template>
 	</div>
 
-	<app-school-toggle-bar *ngIf="isAuthenticated && schools && schools.length > 1 && !hideSchoolToggleBar && !isKioskMode" [schools]="schools">
-	</app-school-toggle-bar>
-	<div class="router-outlet" [style.width]="mainContentWidth" [style.height]="setHeight">
-		<router-outlet></router-outlet>
-	</div>
-	<div class="notification-backdrop" *ngIf="hasCustomBackdrop" [ngStyle]="customStyle"></div>
-	<ng-container *ngIf="user$ | async as user">
-		<app-help-center
-			*ngIf="isAuthenticated && !!user && !user.isStudent() && !(helpCenter.isHelpCenterOpen | async) && !isKioskMode"
-			(onClick)="openHelpCenter($event)"></app-help-center>
-	</ng-container>
-	<ng-container *ngIf="helpCenter.isHelpCenterOpen | async">
-		<div class="help-center-content-wrapper" id="help-center-content">
-			<div class="help-center-unsubscribe"></div>
-			<div class="drag-divider" id="drag-divider"></div>
-			<div class="close-icon-wrapper" (click)="closeHelpCenter()">
-				<div class="circle">
-					<img class="close-icon" [src]="'./assets/Close (Grey).svg' | resolveAsset" alt="" />
+	<div style="flex-grow: 1; display: flex; flex-direction: row; align-items: stretch">
+		<div style="flex-grow: 1; display: flex; flex-direction: column">
+			<app-school-toggle-bar *ngIf="isAuthenticated && schools && schools.length > 1 && !hideSchoolToggleBar && !isKioskMode" [schools]="schools">
+			</app-school-toggle-bar>
+			<div class="router-outlet">
+				<div style="flex-grow: 1; display: flex; flex-direction: column">
+					<router-outlet></router-outlet>
 				</div>
 			</div>
-			<iframe #helpIframe class="help-centre-iframe" id="help-centre-iframe" src="https://www.smartpass.app/help-center" frameborder="0"></iframe>
-			<div class="contact-wrapper">
-				<div class="call-main">
-					<div class="call-contant" (click)="openCallDialog($event)" *ngIf="isAdmin$ | async">
-						<img class="pro-icon" *ngIf="!isUserHasPhoneAccess" [src]="'./assets/Plus Plan (Yellow).svg' | resolveAsset" alt="" />
-						<img class="call-icon" [src]="'./assets/Call (Gray).svg' | resolveAsset" alt="" />
+			<div class="notification-backdrop" *ngIf="hasCustomBackdrop" [ngStyle]="customStyle"></div>
+		</div>
+
+		<ng-container *ngIf="user$ | async as user">
+			<app-help-center
+				*ngIf="isAuthenticated && !!user && !user.isStudent() && !(helpCenter.isHelpCenterOpen | async) && !isKioskMode"
+				(onClick)="openHelpCenter($event)"></app-help-center>
+		</ng-container>
+		<ng-container *ngIf="helpCenter.isHelpCenterOpen | async">
+			<div class="help-center-content-wrapper" id="help-center-content">
+				<div class="help-center-unsubscribe"></div>
+				<div class="drag-divider" id="drag-divider"></div>
+				<div class="close-icon-wrapper" (click)="closeHelpCenter()">
+					<div class="circle">
+						<img class="close-icon" [src]="'./assets/Close (Grey).svg' | resolveAsset" alt="" />
 					</div>
 				</div>
-				<div class="live-chat" id="live-chat" (click)="openLiveChat()">
-					<img class="chat-icon" [src]="'./assets/Chat (Blue-Gray).svg' | resolveAsset" alt="" />
-					<p class="live-chat-text">Live Chat</p>
+				<iframe #helpIframe class="help-centre-iframe" id="help-centre-iframe" src="https://www.smartpass.app/help-center" frameborder="0"></iframe>
+				<div class="contact-wrapper">
+					<div class="call-main">
+						<div class="call-contant" (click)="openCallDialog($event)" *ngIf="isAdmin$ | async">
+							<img class="pro-icon" *ngIf="!isUserHasPhoneAccess" [src]="'./assets/Plus Plan (Yellow).svg' | resolveAsset" alt="" />
+							<img class="call-icon" [src]="'./assets/Call (Gray).svg' | resolveAsset" alt="" />
+						</div>
+					</div>
+					<div class="live-chat open-intercom-btn" id="live-chat">
+						<img class="chat-icon" [src]="'./assets/Chat (Blue-Gray).svg' | resolveAsset" alt="" />
+						<p class="live-chat-text">Live Chat</p>
+					</div>
 				</div>
 			</div>
-		</div>
-	</ng-container>
+		</ng-container>
+	</div>
 </div>
 
 <div #dialogContainer [@.disabled]="true"></div>

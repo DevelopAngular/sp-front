@@ -19,6 +19,9 @@ export class NavbarElementsRefsService {
 	private _renewalReminderFill = new BehaviorSubject<boolean>(false);
 	private _renewalReminderFill$ = this._renewalReminderFill.asObservable();
 
+	private _renewalReminderIFrameFill = new BehaviorSubject<boolean>(false);
+	private _renewalReminderIFrameFill$ = this._renewalReminderIFrameFill.asObservable();
+
 	getPointerVisible(): Observable<boolean> {
 		return this._pointerVisible$;
 	}
@@ -27,11 +30,19 @@ export class NavbarElementsRefsService {
 		this._pointerVisible.next(isVisible);
 	}
 
-	getRenewalFill(): Observable<boolean> {
+	getRenewalReminderFill(): Observable<boolean> {
 		return this._renewalReminderFill$;
 	}
 
-	setRenewalFill(isFilled: boolean) {
+	setRenewalReminderFill(isFilled: boolean) {
 		return this._renewalReminderFill.next(isFilled);
+	}
+
+	getRenewalIFrameFill(): Observable<boolean> {
+		return this._renewalReminderIFrameFill$;
+	}
+
+	setRenewalIFrameFill(isFilled: boolean) {
+		return this._renewalReminderIFrameFill.next(isFilled);
 	}
 }
