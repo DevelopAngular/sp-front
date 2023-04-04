@@ -1,67 +1,72 @@
-<div class="nav-wrapper">
-	<div class="nav-main" #navButtonsContainter>
-		<div class="selected-tab-pointer" [style.opacity]="hidePointer ? '0' : '1'" [style.margin-top]="pointerTopSpace">
+<div class='nav-wrapper'>
+	<div class='nav-main' #navButtonsContainter>
+		<div class='selected-tab-pointer' [style.opacity]="hidePointer ? '0' : '1'" [style.margin-top]='pointerTopSpace'>
 			<!-- Just a shape -->
 		</div>
-		<div class="nav-header ds-pr-10">
+		<div class='nav-header ds-pr-10'>
 			<app-smartpass-logo></app-smartpass-logo>
 		</div>
 
-		<div class="nav-buttons">
-			<div *ngIf="!(fakeMenu | async)">
-				<div *ngFor="let button of buttons; let i = index" [style.transition]="'transform .4s ease'" appCrossPointerEventTarget #tabRef>
-					<ng-container *ngIf="hasRoles(button.requiredRoles) | async">
+		<div class='nav-buttons'>
+			<div *ngIf='!(fakeMenu | async)'>
+				<div *ngFor='let button of buttons; let i = index' [style.transition]="'transform .4s ease'"
+						 appCrossPointerEventTarget #tabRef>
+					<ng-container *ngIf='hasRoles(button.requiredRoles) | async'>
 						<app-nav-button
 							[style.margin-bottom]="'15px'"
-							[selected]="isSelected(button.route)"
-							[button]="button"
-							[isExpand]="button.isExpand ? true : false"
-							[content]="button.title"
-							[icon]="button.imgUrl"
-							(selectedButton)="selectTab(tabRef, navButtonsContainter)"
+							[selected]='isSelected(button.route)'
+							[button]='button'
+							[isExpand]='button.isExpand ? true : false'
+							[content]='button.title'
+							[icon]='button.imgUrl'
+							(selectedButton)='selectTab(tabRef, navButtonsContainter)'
 							(onClick)="route(button); button.type == 'routerLink' ? selectTab(tabRef, navButtonsContainter) : null">
 						</app-nav-button>
-						<mat-divider style="margin: 7px 0" *ngIf="button.route === 'explore'"></mat-divider>
+						<mat-divider style='margin: 7px 0' *ngIf="button.route === 'explore'"></mat-divider>
 					</ng-container>
 				</div>
 			</div>
-			<div *ngIf="fakeMenu | async">
-				<ng-container *ngFor="let button of buttons">
-					<app-nav-button [style.margin-bottom]="'15px'" [content]="button.title" [icon]="button.imgUrl"> </app-nav-button>
+			<div *ngIf='fakeMenu | async'>
+				<ng-container *ngFor='let button of buttons'>
+					<app-nav-button [style.margin-bottom]="'15px'" [content]='button.title'
+													[icon]='button.imgUrl'></app-nav-button>
 				</ng-container>
 			</div>
 		</div>
 	</div>
-	<app-renewal-box></app-renewal-box>
-	<div class="nav-footer">
-		<ng-template #referSuccess>
-			<div class="ds-tooltip">
+	<div class='nav-bottom'>
+		<app-renewal-box></app-renewal-box>
+		<div class='nav-footer'>
+			<ng-template #referSuccess>
+				<div class='ds-tooltip'>
 				<span>
 					Thank you for referring a school to SmartPass! If you want to refer another school,
-					<a style="color: white" href="https://www.smartpass.app/referrals">click here</a>.
+					<a style='color: white' href='https://www.smartpass.app/referrals'>click here</a>.
 				</span>
-			</div>
-		</ng-template>
+				</div>
+			</ng-template>
 
-		<div
-			class="footer-text"
-			[style.color]="darkTheme.getColor({ white: '#7F879D', dark: '#FFFFFF' })"
-			[showToolTip]="!!user && !!user.badge"
-			customToolTip
-			[contentTemplate]="referSuccess"
-			[position]="'top'">
-			<span notranslate>{{ user ? user.display_name : '' }}</span>
-			<img *ngIf="user && user.badge" style="margin-left: 8px" width="25" height="25" [src]="'./assets/Badge.png' | resolveAsset" />
-		</div>
-		<div [style.display]="'flex'" #settingsButton>
-			<app-icon-button
-				[srcString]="'Settings'"
-				[size]="20"
-				(clickEvent)="openSettings($event)"
-				[notificationBadge]="
+			<div
+				class='footer-text'
+				[style.color]="darkTheme.getColor({ white: '#7F879D', dark: '#FFFFFF' })"
+				[showToolTip]='!!user && !!user.badge'
+				customToolTip
+				[contentTemplate]='referSuccess'
+				[position]="'top'">
+				<span notranslate>{{ user ? user.display_name : '' }}</span>
+				<img *ngIf='user && user.badge' style='margin-left: 8px' width='25' height='25'
+						 [src]="'./assets/Badge.png' | resolveAsset" />
+			</div>
+			<div [style.display]="'flex'" #settingsButton>
+				<app-icon-button
+					[srcString]="'Settings'"
+					[size]='20'
+					(clickEvent)='openSettings($event)'
+					[notificationBadge]='
 					introsData && introsData.referral_reminder ? !introsData?.referral_reminder.universal.seen_version && showNotificationBadge : false
-				"
-				[notificationCount]="1"></app-icon-button>
+				'
+					[notificationCount]='1'></app-icon-button>
+			</div>
 		</div>
 	</div>
 </div>

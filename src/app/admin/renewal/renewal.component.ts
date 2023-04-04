@@ -1,8 +1,9 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, OnInit, SecurityContext } from '@angular/core';
 import { DarkThemeSwitch } from '../../dark-theme-switch';
 import { AdminService, RenewalStatus } from '../../services/admin.service';
 import _refiner from 'refiner-js';
 import { NavbarElementsRefsService } from '../../services/navbar-elements-refs.service';
+import { DomSanitizer, SafeResourceUrl } from '@angular/platform-browser';
 
 type ReminderData = {
 	img: string;
@@ -24,7 +25,9 @@ export class RenewalComponent implements OnInit {
 	public showRenewConfirm = false;
 	private surveyId = '300ba7c0-ccad-11ed-b709-fb336f73b73f';
 
-	constructor(private adminService: AdminService, public darkTheme: DarkThemeSwitch, private navbarService: NavbarElementsRefsService) {}
+	public iFrameURL: SafeResourceUrl;
+
+	constructor(private adminService: AdminService, public darkTheme: DarkThemeSwitch, private navbarService: NavbarElementsRefsService, private sanitizer: DomSanitizer) {}
 
 	ngOnInit(): void {
 		this.adminService.getRenewalData().subscribe({
@@ -55,6 +58,7 @@ export class RenewalComponent implements OnInit {
 				if (this.status.renewal_status === 'expiring') {
 					_refiner('showForm', this.surveyId);
 				}
+				this.iFrameURL = this.sanitizer.bypassSecurityTrustResourceUrl(data.confirm_renewal_link);
 			},
 		});
 

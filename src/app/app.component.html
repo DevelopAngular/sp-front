@@ -3,7 +3,6 @@
 	[ngClass]="{ 'ds-dark-theme': darkThemeEnabled }"
 	*ngIf="showUI | async"
 	ondragstart="return false"
-	[style.height]="'100%'"
 	[style.min-height]="!hideScroll ? '100%' : 'auto'">
 	<ng-keyboard-shortcuts [shortcuts]="shortcuts"></ng-keyboard-shortcuts>
 	<div class="toasts-wrapper" *ngIf="(toasts$ | async).length">
@@ -65,7 +64,9 @@
 	<app-school-toggle-bar *ngIf="isAuthenticated && schools && schools.length > 1 && !hideSchoolToggleBar && !isKioskMode" [schools]="schools">
 	</app-school-toggle-bar>
 	<div class="router-outlet" [style.width]="mainContentWidth" [style.height]="setHeight">
-		<router-outlet></router-outlet>
+			<div style='flex-grow: 1'>
+				<router-outlet></router-outlet>
+			</div>
 	</div>
 	<div class="notification-backdrop" *ngIf="hasCustomBackdrop" [ngStyle]="customStyle"></div>
 	<ng-container *ngIf="user$ | async as user">

@@ -19,7 +19,6 @@ body {
     margin: 0 0;
     font-family: $primaryFont;
     width: 100%;
-    min-height: 100vh;
     // IOS PWA styles
     -webkit-overflow-scrolling: touch;
     -webkit-user-select: none;
@@ -475,7 +474,6 @@ textarea:focus {
 html,
 body {
     max-width: 100%;
-    height: 100vh;
     //overflow: hidden;
     overflow: auto;
     //overflow-x: hidden;

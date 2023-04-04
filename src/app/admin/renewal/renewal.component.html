@@ -159,5 +159,5 @@
 	<div (click)="toggleConfirm()">
 		<img src="./assets/Chevron Left (Blue-Gray).svg" />
 	</div>
-	<iframe src="{{ status?.confirm_renewal_link }}"></iframe>
+	<iframe [src]="iFrameURL"></iframe>
 </div>

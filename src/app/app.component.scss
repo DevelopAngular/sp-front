@@ -4,10 +4,14 @@
 	display: flex;
 	flex-direction: column;
 	background-color: #fbfeff;
-	.router-outlet {
-		height: 100%;
-		transition: all 0.3s;
-	}
+	height: 100%;
+}
+
+.router-outlet {
+	transition: all 0.3s;
+	display: flex;
+	flex-direction: column;
+	align-items: stretch;
 }
 
 .unanimated-dialog-container {

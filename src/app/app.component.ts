@@ -1,8 +1,21 @@
-import { AfterViewInit, Component, ElementRef, HostListener, NgZone, OnDestroy, OnInit, ViewChild } from '@angular/core';
+import { AfterViewInit, Component, ElementRef, HostListener, NgZone, OnDestroy, OnInit, SecurityContext, ViewChild } from '@angular/core';
 import { MatDialog, MatDialogRef } from '@angular/material/dialog';
 import { ActivatedRoute, NavigationEnd, Router } from '@angular/router';
 import { filter as _filter } from 'lodash';
-import { BehaviorSubject, combineLatest, forkJoin, fromEvent, interval, merge, Observable, of, ReplaySubject, Subject, throwError, zip } from 'rxjs';
+import {
+	BehaviorSubject,
+	combineLatest,
+	forkJoin,
+	fromEvent,
+	interval,
+	merge,
+	Observable,
+	of,
+	ReplaySubject,
+	Subject,
+	throwError,
+	zip,
+} from 'rxjs';
 
 import {
 	catchError,
@@ -511,7 +524,7 @@ export class AppComponent implements OnInit, AfterViewInit, OnDestroy {
 	}
 
 	isAdminUpForRenewal$(): Observable<boolean> {
-		return forkJoin([this.adminService.getRenewalData(), this.userService.introsData$.pipe(take(1))]).pipe(
+		const checkRenewal = forkJoin([this.adminService.getRenewalData(), this.userService.introsData$.pipe(take(1))]).pipe(
 			take(1),
 			map(([resp, intros]) => {
 				const show = resp.renewal_status == 'expiring' || !intros.seen_renewal_page?.universal?.seen_version;
@@ -524,6 +537,17 @@ export class AppComponent implements OnInit, AfterViewInit, OnDestroy {
 			}),
 			map(({ show }) => show),
 			catchError(() => of(false))
+		);
+
+		return this.http.currentSchool$.pipe(
+			filter(s => !!s),
+			switchMap(s => {
+				if (s.trial_end_date) {
+					return of(false);
+				} else {
+					return checkRenewal;
+				}
+			})
 		);
 	}
 

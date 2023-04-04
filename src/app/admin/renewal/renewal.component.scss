@@ -10,16 +10,17 @@ $climb: '../../..';
 $contentWidth: calc(100vw - 234px);
 
 .host {
-	width: $contentWidth;
 	height: 100%;
+	width: $contentWidth;
+	overflow: auto;
 	box-sizing: border-box;
 	background: $gray100;
-	overflow: scroll;
 }
 
 .renewal-wrapper {
 	height: 100%;
-	width: 1372px;
+	max-width: 1372px;
+	margin: 0 auto;
 	display: flex;
 	flex-direction: column;
 	flex-wrap: nowrap;
@@ -360,7 +361,7 @@ $arrowAnimation: translate(4px, 0);
 }
 
 .iframe-container {
-	height: 100vh;
+	height: 100%;
 	width: $contentWidth;
 	> div {
 		background: $white;

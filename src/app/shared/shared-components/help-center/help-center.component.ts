@@ -60,7 +60,7 @@ export class HelpCenterComponent implements OnInit, OnDestroy, AfterViewInit {
 		});
 
 		this.navbarService.getRenewalFill().subscribe((onRenewalPage) => {
-			this.showHelpCenterNux = onRenewalPage;
+			this.showHelpCenterNux = !onRenewalPage;
 		});
 	}
 
