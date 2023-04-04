@@ -1,4 +1,4 @@
-<div (click)="navToRenewalPage()" class="renewal-notif" [ngClass]="{ expiring: expiring, active: onRenewalPage }">
+<div *ngIf='showBox' (click)="navToRenewalPage()" class="renewal-notif" [ngClass]="{ expiring: expiring, active: onRenewalPage }">
 	<div>
 		<span>Summer Rollover</span>
 		<img src="./assets/Chevron Right (Navy).svg" />

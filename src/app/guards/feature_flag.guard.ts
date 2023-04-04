@@ -7,6 +7,9 @@ import { DeviceDetection } from '../device-detection.helper';
 import { StorageService } from '../services/storage.service';
 import { FeatureFlagService, FLAGS } from '../services/feature-flag.service';
 
+@Injectable({
+	providedIn: 'root',
+})
 export class FeatureFlagGuard implements CanActivate {
 	constructor(private featureFlagService: FeatureFlagService, private router: Router, private _zone: NgZone) {}
 

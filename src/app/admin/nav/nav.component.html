@@ -33,7 +33,7 @@
 		</div>
 	</div>
 	<div class="nav-bottom">
-		<app-renewal-box *ngIf='this.featureFlagService.isFeatureEnabled(FLAGS.RenewalChecklist)'></app-renewal-box>
+		<app-renewal-box *ngIf="this.featureFlagService.isFeatureEnabled(FLAGS.RenewalChecklist)"></app-renewal-box>
 		<div class="nav-footer">
 			<ng-template #referSuccess>
 				<div class="ds-tooltip">

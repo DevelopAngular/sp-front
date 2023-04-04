@@ -1,8 +1,10 @@
-import { NgModule } from '@angular/core';
+import { NgModule, NgZone } from '@angular/core';
 import { RouterModule, Routes } from '@angular/router';
 import { AdminPageComponent } from './admin-page/admin-page.component';
 import { FeatureFlagGuard } from '../guards/feature_flag.guard';
-import { FLAGS } from '../services/feature-flag.service';
+import { FeatureFlagService, FLAGS } from '../services/feature-flag.service';
+import { HttpService } from '../services/http-service';
+import { CommonModule } from '@angular/common';
 
 const routes: Routes = [
 	{
@@ -24,7 +26,7 @@ const routes: Routes = [
 ];
 
 @NgModule({
-	imports: [RouterModule.forChild(routes)],
+	imports: [RouterModule.forChild(routes), CommonModule],
 	exports: [RouterModule],
 })
 export class AdminRoutingModule {}
