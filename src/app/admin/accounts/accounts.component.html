@@ -9,7 +9,7 @@
 				[pending$]="pending$"
 				[schoolSyncInfoData]="schoolSyncInfoData$ | async"
 				[gSuiteOrgs]="gSuiteOrgs$ | async"
-				[showTabs]="!!onboardProcess['2.landing:first_account']?.done || !!onboardProcess['2.accounts:create_demo_accounts']?.done"
+				[showTabs]="true"
 				(tableStateEmit)="dataTableEditState.next($event)"
 				(currentPageEmit)="currentPage = $event"></app-accounts-header>
 		</div>
