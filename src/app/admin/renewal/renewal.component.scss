@@ -12,6 +12,11 @@ $climb: '../../..';
 	background: $gray100;
 }
 
+:host ::ng-deep .mat-progress-spinner circle,
+.mat-spinner circle {
+	stroke: $gray500;
+}
+
 .renewal-wrapper {
 	max-width: 1372px;
 	margin: 0 auto;
@@ -92,6 +97,7 @@ $arrowAnimation: translate(4px, 0);
 
 	> img {
 		height: 296px;
+		width: 387px;
 	}
 
 	> div:first-of-type {
@@ -114,6 +120,9 @@ $arrowAnimation: translate(4px, 0);
 .reminder-box.expiring {
 	background: $yellow100;
 	border-color: $yellow500;
+	> img {
+		width: 296px;
+	}
 }
 
 .reminder-btn {
@@ -138,6 +147,7 @@ $arrowAnimation: translate(4px, 0);
 	font-size: 16px;
 	line-height: 19px;
 	text-align: center;
+	transition: background 200ms ease;
 }
 
 .reminder-btn:hover {
@@ -180,10 +190,28 @@ $arrowAnimation: translate(4px, 0);
 	flex-wrap: wrap;
 }
 
+.action-items-container.loading {
+	min-height: 274px;
+	min-width: 820px;
+	justify-content: center;
+}
+
+@media screen and (max-width: 1620px) {
+	.action-items-container.loading {
+		min-width: 404px;
+		min-height: 560px;
+	}
+}
 .team-container {
 	display: flex;
 	flex-direction: column;
 	gap: 16px;
+}
+
+.team-container.loading {
+	// min-width: 820px;
+	min-height: 161px;
+	justify-content: center;
 }
 
 .feature-content {
@@ -226,6 +254,7 @@ $arrowAnimation: translate(4px, 0);
 			font-weight: 500;
 			font-size: 16px;
 			line-height: 19px;
+			width: 230px;
 
 			color: $gray900;
 		}
@@ -259,6 +288,7 @@ $arrowAnimation: translate(4px, 0);
 }
 
 .feature-event {
+	background-color: $gray900;
 	background-image: url($climb + '/assets/event-banner.png');
 	color: $white;
 	display: flex;
@@ -356,7 +386,7 @@ $arrowAnimation: translate(4px, 0);
 
 .iframe-container {
 	height: 99%; // <- hack to get rid of a scrollbar.
-	> div {
+	> div:first-of-type {
 		background: $white;
 		border: 1px solid $gray300;
 		box-shadow: 0px 2px 10px rgba(16, 20, 24, 0.1);
@@ -377,9 +407,18 @@ $arrowAnimation: translate(4px, 0);
 		}
 	}
 
+	.loading-theme.spinner {
+		margin-top: 50%;
+		margin-bottom: 50%;
+	}
+
 	> iframe {
 		border: 0;
 		height: 100%;
 		width: 100%;
+	}
+
+	> iframe.hidden {
+		display: none;
 	}
 }

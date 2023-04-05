@@ -21,7 +21,7 @@
 				<div>
 					<div class="content-box">
 						<h5>Summer Action Items</h5>
-						<div class="action-items-container">
+						<div class="action-items-container" *ngIf="status?.integration_type">
 							<app-action-item
 								*ngIf="status?.integration_type === 'none'"
 								[link]="'https://articles.smartpass.app/en/articles/7200153-smartpass-rollover-summer-action-items#h_1948e74ee1'"
@@ -71,10 +71,15 @@
 									'Share SmartPass with another school in your district and get a discount, or share it with neighboring schools to grow our SmartPass community.'
 								"></app-action-item>
 						</div>
+						<div *ngIf="!status?.integration_type" class="action-items-container loading">
+							<div class="loading-theme spinner ds-flex-center-center">
+								<mat-spinner [color]="'accent'" [diameter]="35"></mat-spinner>
+							</div>
+						</div>
 					</div>
 					<div class="content-box">
 						<h5>Your Team</h5>
-						<div class="team-container">
+						<div *ngIf="status" class="team-container">
 							<app-team-member
 								[id]="'renewal-customer-advocate'"
 								*ngIf="status?.customer_success_advocate_hubspot_id"
@@ -90,6 +95,11 @@
 								*ngIf="status?.account_executive_hubspot_id"
 								[uid]="status?.account_executive_hubspot_id"
 								[job]="'Account Executive'"></app-team-member>
+						</div>
+						<div *ngIf="!status" class="team-container loading">
+							<div class="loading-theme spinner ds-flex-center-center">
+								<mat-spinner [color]="'accent'" [diameter]="35"></mat-spinner>
+							</div>
 						</div>
 					</div>
 				</div>
@@ -159,5 +169,8 @@
 	<div (click)="toggleConfirm()">
 		<img src="./assets/Chevron Left (Blue-Gray).svg" />
 	</div>
-	<iframe [src]="iFrameURL"></iframe>
+	<div *ngIf="iframeLoading" class="loading-theme spinner ds-flex-center-center">
+		<mat-spinner [color]="'accent'" [diameter]="50"></mat-spinner>
+	</div>
+	<iframe [src]="iFrameURL" [ngClass]="{ hidden: iframeLoading }" id="renewal-iframe"></iframe>
 </div>
