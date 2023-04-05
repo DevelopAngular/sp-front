@@ -29,6 +29,8 @@ export class RenewalComponent implements OnInit {
 	public status: RenewalStatus;
 	public reminder: ReminderData;
 	public showRenewConfirm = false;
+	public iframeLoading = true;
+	private iframeLoadedInterval;
 	private surveyId = '300ba7c0-ccad-11ed-b709-fb336f73b73f';
 
 	public iFrameURL: SafeResourceUrl;
@@ -84,6 +86,15 @@ export class RenewalComponent implements OnInit {
 
 		this.navbarService.setPointerVisible(false);
 		this.navbarService.setRenewalReminderFill(true);
+
+		// Add an onload function to the iFrame which hides the loading spinner
+		this.iframeLoadedInterval = setInterval(() => {
+			const iframe = document.getElementById('renewal-iframe');
+			if (iframe) {
+				iframe.onload = () => (this.iframeLoading = false);
+				clearInterval(this.iframeLoadedInterval);
+			}
+		}, 100);
 	}
 
 	ngOnDestroy() {
