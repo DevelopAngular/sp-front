@@ -147,6 +147,7 @@ $arrowAnimation: translate(4px, 0);
 	font-size: 16px;
 	line-height: 19px;
 	text-align: center;
+	transition: background 200ms ease;
 }
 
 .reminder-btn:hover {
@@ -253,6 +254,7 @@ $arrowAnimation: translate(4px, 0);
 			font-weight: 500;
 			font-size: 16px;
 			line-height: 19px;
+			width: 230px;
 
 			color: $gray900;
 		}
