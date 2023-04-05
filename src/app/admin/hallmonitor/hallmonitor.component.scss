@@ -10,6 +10,9 @@
 	.container {
 		max-width: 720px;
 	}
+	.hallpass-box {
+		width: 100%;
+	}
 }
 
 /* Large devices (desktops, 992px and up) */
@@ -265,9 +268,4 @@
 	left: 50%;
 	transform: translateX(-50%);
 	bottom: -40px;
-}
-@media screen and (max-width: 768px) {
-	.hallpass-box {
-		width: 100%;
-	}
 }
