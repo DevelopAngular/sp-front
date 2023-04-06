@@ -513,7 +513,11 @@ export class AppComponent implements OnInit, AfterViewInit, OnDestroy {
 	}
 
 	isAdminUpForRenewal$(): Observable<boolean> {
-		const checkRenewal = forkJoin([this.adminService.getRenewalData(), this.userService.introsData$.pipe(take(1))]).pipe(
+		const intros$ = this.userService.introsData$.pipe(
+			filter((i) => !!i),
+			take(1)
+		);
+		const checkRenewal$ = forkJoin([this.adminService.getRenewalData(), intros$]).pipe(
 			take(1),
 			map(([resp, intros]) => {
 				const show = resp.renewal_status == 'expiring' || !intros.seen_renewal_page?.universal?.seen_version;
@@ -534,7 +538,7 @@ export class AppComponent implements OnInit, AfterViewInit, OnDestroy {
 				if (s.trial_end_date) {
 					return of(false);
 				} else {
-					return checkRenewal;
+					return checkRenewal$;
 				}
 			})
 		);
