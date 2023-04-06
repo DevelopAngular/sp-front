@@ -413,7 +413,7 @@ and the cycle is repeating endlessly causing an UI flickering
 
 			<div class="scrolling-container" #right (scroll)="rightScroll($event)">
 				<div class="header-container">
-					<div class="header">
+					<div class="header student-info-header">
 						<div class="buttons">
 							<div class="date-button" #dateButton customToolTip="Filter stats, passes, and reports" [nonDisappearing]="false" [editable]="true">
 								<app-date-button [date]="selectedDate" (buttonClick)="openDateFilter($event)"></app-date-button>
