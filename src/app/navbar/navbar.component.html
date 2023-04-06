@@ -10,7 +10,10 @@
 			appNavbarElementSender
 			[ngClass]="{ shadow: ((isStaff || isAssistant) && !isKioskMode && !isKioskModeSettingsPage()) || screenService.isDeviceLargeExtra }"
 			[ngStyle]="{
-				padding: (user && user.isStudent()) || isKioskMode ? '0 16px' : '0 16px 0 0'
+				padding: (user && user.isStudent()) || isKioskMode ? '0 16px' : '0 16px 0 0',
+				background: (user && user.isStudent()) ? 'transparent' : '#fff',
+				top: (user && user.isTeacher()) ? '50px' : '0',
+				position: (user && user.isTeacher()) ? 'fixed' : 'relative'
 			}"
 			#navbar>
 			<div class="logo" *ngIf="(user && user.isStudent()) || isKioskMode || isParent; else staffLogo">

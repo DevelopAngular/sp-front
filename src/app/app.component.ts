@@ -81,6 +81,7 @@ export class AppComponent implements OnInit, AfterViewInit, OnDestroy {
 	@ViewChild('helpIframe') helpCenterIframe: ElementRef;
 
 	public isAuthenticated = null;
+	public isStudent = true;
 	public hideScroll = true;
 	public hideSchoolToggleBar = false;
 	public showUISubject: BehaviorSubject<boolean> = new BehaviorSubject<boolean>(false);
@@ -239,6 +240,7 @@ export class AppComponent implements OnInit, AfterViewInit, OnDestroy {
 				}),
 				switchMap(([user, intercomWrapper]: [User, HTMLDivElement]) => {
 					this.currentRoute = window.location.pathname;
+					this.isStudent = user.isStudent();
 					const urlBlackList = [
 						'/forms',
 						'/kioskMode',
