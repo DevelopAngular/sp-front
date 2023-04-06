@@ -28,12 +28,12 @@ Cypress.Commands.add('login', (username: string, password: string) => {
   cy.session([username, password], () => {
     cy.intercept({
       method: 'POST',
-      url: 'https://smartpass.app/api/prod-us-central/o/token/**'
-    }).as('token');
+      url: '/api/prod-us-central/sessions'
+    }).as('sessions');
 
     cy.intercept({
       method: 'GET',
-      url: 'https://smartpass.app/api/prod-us-central/v1/**'
+      url: '/api/prod-us-central/v1/**'
     }).as('v1API');
 
     cy.intercept({
@@ -46,7 +46,7 @@ Cypress.Commands.add('login', (username: string, password: string) => {
     cy.waitUntil(() => cy.get('div.input-password').should('have.css', 'opacity', '1'));
     submitPassword(password);
     cy.get('div.error').should('not.exist');
-    cy.wait('@token', {timeout: 20000});
+    cy.wait('@sessions', {timeout: 20000});
     cy.wait('@v1API', {timeout: 20000});
     cy.wait('@intercom', {timeout: 20000});
     cy.wait(2000);
