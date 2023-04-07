@@ -62,9 +62,7 @@
 	</div>
 
 	<div style="flex-grow: 1; display: flex; flex-direction: row; align-items: stretch">
-		<div
-			style="flex-grow: 1; display: flex; flex-direction: column"
-			[ngStyle]="{ height: isAuthenticated && schools && schools.length > 1 && !hideSchoolToggleBar && !isKioskMode ? '50px' : 'auto' }">
+		<div style="flex-grow: 1; display: flex; flex-direction: column">
 			<app-school-toggle-bar *ngIf="isAuthenticated && schools && schools.length > 1 && !hideSchoolToggleBar && !isKioskMode" [schools]="schools">
 			</app-school-toggle-bar>
 			<div class="router-outlet">
