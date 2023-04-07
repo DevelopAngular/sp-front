@@ -2,18 +2,17 @@
 	<div
 		class="host"
 		[ngClass]="(helpCenter.isHelpCenterOpen | async) == true ? mediaClass : ''"
-		[style.background]="darkTheme.getColor({ dark: '#0F171E', white: (isStaff || isAssistant) && !isKioskMode ? '#FFFFFF' : 'transparent' })"
-		*ngIf="(showNav && !isHallMonitorRoute && showNav && !isMyRoomRoute) || (showNav && !islargeDeviceWidth)"
-		[style.border-bottom]="(darkTheme.isEnabled$ | async) && !user.isStudent() ? '1px solid #7083A0' : 'none'">
+		*ngIf="(showNav && !isHallMonitorRoute && showNav && !isMyRoomRoute) || (showNav && !islargeDeviceWidth)">
 		<div
 			class="bar"
 			appNavbarElementSender
 			[ngClass]="{ shadow: ((isStaff || isAssistant) && !isKioskMode && !isKioskModeSettingsPage()) || screenService.isDeviceLargeExtra }"
 			[ngStyle]="{
 				padding: (user && user.isStudent()) || isKioskMode ? '0 16px' : '0 16px 0 0',
-				background: user && user.isStudent() ? 'transparent' : '#fff',
+				background: darkTheme.getColor({ dark: '#0F171E', white: (isStaff || isAssistant) && !isKioskMode ? '#FFFFFF' : 'transparent' }),
 				top: user && user.isTeacher() ? '50px' : '0',
-				position: user && user.isTeacher() ? 'fixed' : 'relative'
+				position: user && user.isTeacher() ? 'fixed' : 'relative',
+				'border-bottom': (darkTheme.isEnabled$ | async) && !user.isStudent() ? '1px solid #7083A0' : 'none'
 			}"
 			#navbar>
 			<div class="logo" *ngIf="(user && user.isStudent()) || isKioskMode || isParent; else staffLogo">
