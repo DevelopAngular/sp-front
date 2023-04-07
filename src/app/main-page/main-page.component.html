@@ -46,7 +46,7 @@
 
 	<mat-sidenav-content>
 		<div class="sticky" [style.height]="navbarHeight">
-			<app-navbar (settingsClick)="onSettingClick($event)" hasMultipleSchools="schools.length > 1"></app-navbar>
+			<app-navbar (settingsClick)="onSettingClick($event)" [hasMultipleSchools]="schools.length > 1"></app-navbar>
 		</div>
 
 		<ng-container *ngIf="!(restriction$ | async); else restriction">
