@@ -42,7 +42,7 @@ export class MainPageComponent implements OnInit, AfterViewInit, OnDestroy {
 	data: any;
 	navbarHeight = DEFAULT_NAVBAR_HEIGHT;
 	restriction$: Observable<boolean>;
-	schools: School[];
+	schools: School[] = [];
 	isKioskMode: boolean;
 	isUpdateBar$: Subject<any>;
 
