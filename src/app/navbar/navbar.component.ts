@@ -77,6 +77,7 @@ const minStreakCount = 2;
 })
 export class NavbarComponent implements AfterViewInit, OnInit, OnDestroy {
 	@Input() hasNav = true;
+	@Input() hasMultipleSchools = false;
 	@Input() isParent: boolean = false;
 	@ViewChild('tabPointer') tabPointer: ElementRef;
 	@ViewChild('navButtonsContainer') navButtonsContainer: ElementRef;

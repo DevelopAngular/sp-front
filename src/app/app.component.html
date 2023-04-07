@@ -66,7 +66,7 @@
 			<app-school-toggle-bar *ngIf="isAuthenticated && schools && schools.length > 1 && !hideSchoolToggleBar && !isKioskMode" [schools]="schools">
 			</app-school-toggle-bar>
 			<div class="router-outlet">
-				<div style="flex-grow: 1; display: flex; flex-direction: column" [ngStyle]="{ 'padding-top': isStudent ? '0' : '50px' }">
+				<div style="flex-grow: 1; display: flex; flex-direction: column" [ngStyle]="{ 'padding-top': isAuthenticated && schools && schools.length > 1 && !hideSchoolToggleBar && !isKioskMode ?  '50px': '0' }">
 					<router-outlet></router-outlet>
 				</div>
 			</div>

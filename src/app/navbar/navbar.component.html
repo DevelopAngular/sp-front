@@ -10,7 +10,7 @@
 			[ngStyle]="{
 				padding: (user && user.isStudent()) || isKioskMode ? '0 16px' : '0 16px 0 0',
 				background: darkTheme.getColor({ dark: '#0F171E', white: (isStaff || isAssistant) && !isKioskMode ? '#FFFFFF' : 'transparent' }),
-				top: user && user.isTeacher() ? '50px' : '0',
+				top: user && user.isTeacher() && hasMultipleSchools ? '50px' : '0',
 				position: user && user.isTeacher() ? 'fixed' : 'relative',
 				'border-bottom': (darkTheme.isEnabled$ | async) && !user.isStudent() ? '1px solid #7083A0' : 'none'
 			}"
