@@ -1,6 +1,7 @@
 <div class="sp-search-wrapper" *ngIf="chipsMode && !inputField" #searchWrapper>
 	<div class="chip">
 		<app-sp-chips
+			data-cy="teacher-search"
 			[preventRemovingLast]="preventRemovingLast"
 			[selectedProfiles]="selectedOptions"
 			[suggestedTeacher]="suggestedTeacher"
@@ -19,6 +20,7 @@
 	<div class="input" [style.box-shadow]="isMobile ? 'none' : '0 0 6px 0 rgba(0, 0, 0, 0.1)'">
 		<div class="round-input-container">
 			<app-round-input
+				data-cy="search-inp"
 				[minWidth]="'auto'"
 				[width]="'100%'"
 				[backgroundColor]="isMobile && !studentInput.valueLength ? '#F4F4F4' : '#FFFFFF'"

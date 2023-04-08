@@ -6,14 +6,11 @@ describe('updating pinnables and their settings', function() {
     cy.visit('/admin/passconfig');
   });
 
-  const testUpdatingFolderName = 'test-upd-folder'
+  const testUpdatingFolderName = 'test-upd-folder';
 
   context('can change the title', function() {
-
-    const testUpdateTitlePinnableName = 'test-upd-name';
-    const testUpdateTitleFolderName = 'test-upd-fld-name';
-
     context('of a pinnable location', function() {
+      const testUpdateTitlePinnableName = 'test-upd-name';
       const newName = 'new-location';
 
       it('should be able to change the name to something else', function() {
@@ -22,7 +19,7 @@ describe('updating pinnables and their settings', function() {
         savePinnable({locationUpdate: false});
       })
 
-      it('maintain its new name', function() {
+      it('should maintain its new name', function() {
         clickPinnableWithTitle(newName);
         closePinnable();
       })
@@ -35,6 +32,7 @@ describe('updating pinnables and their settings', function() {
     });
 
     context('of a pinnable folder', function() {
+      const testUpdateTitleFolderName = 'test-upd-fld-name';
       const newName = 'new-folder';
 
       it('should be able to change the name to something else', function() {
@@ -57,10 +55,8 @@ describe('updating pinnables and their settings', function() {
   })
 
   context('can update room visiblity settings', function() {
-    const visibilityTestPinnableName = 'test-upt-visib';
-    const visibilityTestRoomInFolderName = 'test-upd-visib';
-
     context('Pinnable Location', function() {
+      const visibilityTestPinnableName = 'test-upt-visib';
 
       it('should be able to select show room for certain students with a specific student', () => {
         clickPinnableWithTitle(visibilityTestPinnableName);
@@ -86,6 +82,7 @@ describe('updating pinnables and their settings', function() {
     })
 
     context('Pinnable Folder', function() {
+      const visibilityTestRoomInFolderName = 'test-upd-visib';
 
       it('should be able to select show room for certain students with a specific student', function() {
         clickPinnableWithTitle(testUpdatingFolderName);
@@ -117,6 +114,82 @@ describe('updating pinnables and their settings', function() {
 
         saveRoomInFolder();
         savePinnable({locationUpdate: true});
+      })
+    })
+  })
+
+  context('can change teacher assignment', function() {
+    const teacherName = 'demoteacher1';
+
+    context('Pinnable Location', function() {
+      const testUpdateAssignmentPinnableName = 'test-upd-assign';
+
+      it('should be able to add a teacher to a room', function() {
+        clickPinnableWithTitle(testUpdateAssignmentPinnableName);
+        addPinnableTeacherAssignment(teacherName);
+        savePinnable({locationUpdate: false});
+      })
+
+      it('should still show the teacher when reopening the pinnable', function() {
+        clickPinnableWithTitle(testUpdateAssignmentPinnableName);
+        checkPinnableTeacherAssignment(teacherName);
+        closePinnable();
+      })
+
+      it('should be able to remove a teacher from a room', function() {
+        clickPinnableWithTitle(testUpdateAssignmentPinnableName);
+        removePinnableTeacherAssignment(teacherName);
+        savePinnable({locationUpdate: false});
+      })
+
+      it('should not show the teacher when reopening the pinnable', function() {
+        clickPinnableWithTitle(testUpdateAssignmentPinnableName);
+        checkPinnableTeacherNoAssignment(teacherName);
+        closePinnable();
+      })
+    })
+
+    context('Pinnable Folder', function() {
+      const testUpdateAssignmentRoomInFolderName = 'test-upd-asgn';
+
+      it('should be able to add a teacher to a room', function() {
+        clickPinnableWithTitle(testUpdatingFolderName);
+        clickRoomInFolder(testUpdateAssignmentRoomInFolderName);
+
+        addPinnableTeacherAssignment(teacherName);
+
+        saveRoomInFolder();
+        savePinnable({locationUpdate: true});
+      })
+
+      it('should still show the teacher when reopening the pinnable', function() {
+        clickPinnableWithTitle(testUpdatingFolderName);
+        clickRoomInFolder(testUpdateAssignmentRoomInFolderName);
+
+        checkPinnableTeacherAssignment(teacherName);
+
+        closeRoomInFolder();
+        closePinnable();
+      })
+
+      it('should be able to remove a teacher from a room', function() {
+        clickPinnableWithTitle(testUpdatingFolderName);
+        clickRoomInFolder(testUpdateAssignmentRoomInFolderName);
+
+        removePinnableTeacherAssignment(teacherName);
+
+        saveRoomInFolder();
+        savePinnable({locationUpdate: true});
+      })
+
+      it('should not show the teacher when reopening the pinnable', function() {
+        clickPinnableWithTitle(testUpdatingFolderName);
+        clickRoomInFolder(testUpdateAssignmentRoomInFolderName);
+
+        checkPinnableTeacherNoAssignment(teacherName);
+
+        closeRoomInFolder();
+        closePinnable();
       })
     })
   })
@@ -152,6 +225,27 @@ function changePinnableTitle(newTitle: string) {
   cy.dataCy('pinnable-title-inp').clear();
   cy.dataCy('pinnable-title-inp').type(newTitle);
   cy.wait(300);
+}
+
+function addPinnableTeacherAssignment(teacherName: string) {
+  cy.dataCy('teacher-search').click();
+  cy.dataCy('search-inp').type(teacherName);
+  cy.dataCy('search-result-user').contains(teacherName).click();
+}
+
+function checkPinnableTeacherAssignment(teacherName: string) {
+  cy.dataCy('chip').should('exist');
+}
+
+function checkPinnableTeacherNoAssignment(teacherName: string) {
+  cy.dataCy('chip').should('not.exist');
+}
+
+function removePinnableTeacherAssignment(teacherName: string) {
+  cy.dataCy('chip').each(e => {
+    cy.wrap(e).trigger('mouseenter');
+    cy.dataCy('chip-delete-btn').click();
+  })
 }
 
 function clickRoomInFolder(roomName: string) {
