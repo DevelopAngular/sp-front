@@ -124,7 +124,7 @@ export class AdminPageComponent implements OnInit, AfterViewInit, OnDestroy {
 		this.router.navigate(['/sign-out']);
 	}
 
-	public hideOutlet(event: boolean): void {
+	public hideOutlet(event: boolean): void  {
 		this.outletDummySwitcher$.next(event);
 	}
 }
