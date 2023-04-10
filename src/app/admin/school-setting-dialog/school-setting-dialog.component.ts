@@ -1,4 +1,4 @@
-import { Component, Inject, OnDestroy, OnInit } from '@angular/core';
+import { Component, OnDestroy, OnInit } from '@angular/core';
 import { FormControl, FormGroup, Validators } from '@angular/forms';
 import { MatDialogRef } from '@angular/material/dialog';
 import { AdminService } from '../../services/admin.service';
@@ -7,6 +7,7 @@ import { School } from '../../models/School';
 import { filter, switchMap, takeUntil } from 'rxjs/operators';
 import { HttpService } from '../../services/http-service';
 import * as moment from 'moment';
+declare const window;
 
 @Component({
 	selector: 'app-school-setting-dialog',
@@ -14,9 +15,9 @@ import * as moment from 'moment';
 	styleUrls: ['./school-setting-dialog.component.scss'],
 })
 export class SchoolSettingDialogComponent implements OnInit, OnDestroy {
-	schoolForm: FormGroup;
-	currentSchool: School;
-	initialState: {
+	public schoolForm: FormGroup;
+	public currentSchool: School;
+	private initialState: {
 		display_card_room: boolean;
 		pass_buffer_time: string | number;
 		show_active_passes_number: boolean;
@@ -25,23 +26,21 @@ export class SchoolSettingDialogComponent implements OnInit, OnDestroy {
 		timezone: string;
 	};
 
-	changeForm: boolean;
-	showSpinner: boolean;
-	hideMin: boolean;
+	public changeForm: boolean;
+	public showSpinner: boolean;
+	public hideMin: boolean;
 
-	changeSettings$ = new Subject();
-	destroy$ = new Subject();
+	private changeSettings$ = new Subject();
+	private destroy$ = new Subject();
 
 	public tzNames: string[];
-
-	public userTz: string;
 	public selectedTz: string;
 
 	constructor(private dialogRef: MatDialogRef<SchoolSettingDialogComponent>, private adminService: AdminService, private http: HttpService) {
 		this.tzNames = moment.tz.names();
 	}
 
-	ngOnInit() {
+	public ngOnInit(): void {
 		this.http.currentSchool$
 			.pipe(
 				filter((res) => !!res),
@@ -66,13 +65,13 @@ export class SchoolSettingDialogComponent implements OnInit, OnDestroy {
 				takeUntil(this.destroy$),
 				switchMap(() => {
 					return this.adminService.updateSchoolSettingsRequest(this.currentSchool, this.schoolForm.value);
-				})
+				}),
+				filter((res) => !!res)
 			)
 			.subscribe((res) => {
-				if (res) {
-					this.http.currentSchoolSubject.next(res);
-					this.dialogRef.close();
-				}
+				this.http.currentSchoolSubject.next(res);
+				window.waitForAppLoaded();
+				this.dialogRef.close();
 
 				// TODO: (BUG) it opens multiple toasts
 				// doublingng the number every time
@@ -84,12 +83,12 @@ export class SchoolSettingDialogComponent implements OnInit, OnDestroy {
 			});
 	}
 
-	ngOnDestroy() {
+	public ngOnDestroy(): void {
 		this.destroy$.next();
 		this.destroy$.complete();
 	}
 
-	buildForm(school: School) {
+	private buildForm(school: School): void {
 		this.schoolForm = new FormGroup({
 			display_card_room: new FormControl(school.display_card_room),
 			pass_buffer_time: new FormControl(school.pass_buffer_time || 0, [
@@ -105,16 +104,16 @@ export class SchoolSettingDialogComponent implements OnInit, OnDestroy {
 		});
 	}
 
-	save() {
+	public save(): void {
 		this.showSpinner = true;
 		this.changeSettings$.next();
 	}
 
-	close() {
+	public close(): void {
 		this.dialogRef.close();
 	}
 
-	timeZoneChanged(timeZone: string): void {
+	public timeZoneChanged(timeZone: string): void {
 		this.selectedTz = timeZone;
 		this.schoolForm.controls['timezone'].setValue(timeZone);
 		this.changeForm = true;

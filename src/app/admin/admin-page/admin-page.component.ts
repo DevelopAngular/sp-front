@@ -3,10 +3,14 @@ import { AfterViewInit, Component, OnDestroy, OnInit } from '@angular/core';
 import { BehaviorSubject, Observable, of, Subject } from 'rxjs';
 import { UserService } from '../../services/user.service';
 import { Router } from '@angular/router';
-import { delay, exhaustMap, filter, map, skip, take, takeUntil, tap } from 'rxjs/operators';
+import { delay, exhaustMap, filter, map, skip, take, takeUntil, tap, withLatestFrom } from 'rxjs/operators';
 import { environment } from '../../../environments/environment';
 import { HttpService } from '../../services/http-service';
 import { CheckForUpdateService } from '../../services/check-for-update.service';
+import { School } from '../../models/School';
+import * as moment from 'moment/moment';
+import { FormControl, FormGroup } from '@angular/forms';
+import { filter as _filter } from 'lodash';
 
 declare const window;
 
@@ -24,9 +28,6 @@ export class AdminPageComponent implements OnInit, AfterViewInit, OnDestroy {
 	public hostVisibility: boolean = true;
 	public showDummySwitcher$: Observable<boolean>;
 	public schoolsLength$: Observable<number>;
-
-	isUpdate$: Subject<any>;
-
 	private destroy$: Subject<any> = new Subject<any>();
 
 	constructor(
@@ -46,8 +47,7 @@ export class AdminPageComponent implements OnInit, AfterViewInit, OnDestroy {
 			});
 	}
 
-	ngOnInit() {
-		this.isUpdate$ = this.updateService.needToUpdate$;
+	public ngOnInit(): void {
 		this.schoolsLength$ = this.httpService.schoolsLength$;
 
 		this.adminPageReload$
@@ -95,22 +95,26 @@ export class AdminPageComponent implements OnInit, AfterViewInit, OnDestroy {
 				}
 				this.router.navigate(['admin', tab]);
 			});
+
+		this.httpService.schoolsLoaded$.pipe(takeUntil(this.destroy$)).subscribe((value) => {
+			window.appLoaded();
+		});
 	}
 
-	ngOnDestroy(): void {
+	public ngOnDestroy(): void {
 		this.destroy$.next();
 		this.destroy$.complete();
 	}
 
-	ngAfterViewInit() {
+	public ngAfterViewInit(): void {
 		window.appLoaded();
 	}
 
-	onReloadPage(event) {
+	public onReloadPage(event): void {
 		this.adminPageReload$.next(true);
 	}
 
-	goHome(user) {
+	private goHome(user): void {
 		if (user) {
 			if (user.isStudent() || user.isTeacher()) {
 				this.router.navigate(['/main']);
@@ -120,7 +124,7 @@ export class AdminPageComponent implements OnInit, AfterViewInit, OnDestroy {
 		this.router.navigate(['/sign-out']);
 	}
 
-	hideOutlet(event: boolean) {
+	public hideOutlet(event: boolean): void {
 		this.outletDummySwitcher$.next(event);
 	}
 }
