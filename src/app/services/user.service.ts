@@ -761,9 +761,12 @@ export class UserService implements OnDestroy {
 		return this.http.post(`v1/users/${id}/test_notification`, new Date());
 	}
 
-	searchProfile(role?, limit = 5, search?) {
+	searchProfile(role?, limit = 5, search?, status?: 'active' | 'suspended' | 'disabled' | 'all') {
+		if (status === 'all') {
+			status = undefined;
+		}
 		search = encodeURIComponent(search);
-		return this.http.get<Paged<any>>(`v1/users?${role ? `role=${role}&` : ``}limit=${limit}&search=${search}`);
+		return this.http.get<Paged<any>>(`v1/users?${role ? `role=${role}&` : ``}limit=${limit}&search=${search}${status ? `&status=${status}` : ``}`);
 	}
 
 	searchProfileById(id) {
