@@ -2,7 +2,6 @@ import { Component, ElementRef, Inject, OnDestroy, OnInit } from '@angular/core'
 import { Router } from '@angular/router';
 import { MAT_DIALOG_DATA, MatDialogConfig, MatDialogRef } from '@angular/material/dialog';
 import { DarkThemeSwitch } from '../../dark-theme-switch';
-import { RELEASE_NAME } from '../../../build-info';
 import { LocalStorage } from '@ngx-pwa/local-storage';
 import { LocalizejsService } from '../../services/localizejs.service';
 import { combineLatest, Subject } from 'rxjs';
@@ -13,18 +12,15 @@ import { combineLatest, Subject } from 'rxjs';
 	styleUrls: ['./settings.component.scss'],
 })
 export class SettingsComponent implements OnInit, OnDestroy {
-	triggerElementRef: ElementRef;
+	private triggerElementRef: ElementRef;
 
-	isSwitchOption: boolean;
-	showGetStarted: boolean;
-	hoveredProfile: boolean;
-	hoveredSignout: boolean;
-	hovered: boolean;
-	hoveredColor: string;
-	version = 'Version 1.5';
-	currentRelease = RELEASE_NAME;
+	public isSwitchOption: boolean;
+	public hoveredProfile: boolean;
+	public hoveredSignout: boolean;
+	private hovered: boolean;
+	private hoveredColor: string;
 
-	destroy$ = new Subject();
+	private destroy$ = new Subject();
 
 	public settings = [
 		{
@@ -67,18 +63,18 @@ export class SettingsComponent implements OnInit, OnDestroy {
 		private pwaStorage: LocalStorage
 	) {}
 
-	ngOnInit() {
+	public ngOnInit(): void {
 		this.triggerElementRef = this.data['trigger'];
 		this.isSwitchOption = this.data['isSwitch'];
 		this.updateSettingsPosition();
 	}
 
-	ngOnDestroy(): void {
+	public ngOnDestroy(): void {
 		this.destroy$.next();
 		this.destroy$.complete();
 	}
 
-	getIcon(iconName: string, setting: any, hover?: boolean, hoveredColor?: string) {
+	public getIcon(iconName: string, setting: any, hover?: boolean, hoveredColor?: string): string {
 		return this.darkTheme.getIcon({
 			iconName: iconName,
 			setting: setting,
@@ -87,11 +83,11 @@ export class SettingsComponent implements OnInit, OnDestroy {
 		});
 	}
 
-	getColor(dark, white) {
+	public getColor(dark, white): string {
 		return this.darkTheme.getColor({ dark, white });
 	}
 
-	handleAction(setting) {
+	private handleAction(setting): void {
 		if (typeof setting.action === 'string') {
 			this.dialogRef.close(setting.action);
 		} else {
@@ -99,22 +95,26 @@ export class SettingsComponent implements OnInit, OnDestroy {
 		}
 	}
 
-	updateSettingsPosition() {
+	private updateSettingsPosition(): void {
 		if (this.dialogRef) {
 			const matDialogConfig: MatDialogConfig = new MatDialogConfig();
 			const rect = this.triggerElementRef.nativeElement.getBoundingClientRect();
-			const top = rect.top - (!this.isSwitchOption ? 285 : 330);
-			matDialogConfig.position = { left: `${rect.left - 130}px`, top: `${top}px` };
+			// This is a workaround for positioning the dialog when window has scrolled.
+			// We need to determine the amount the window has scrolled, which is the
+			// document's scrolling element's height and top (a negative value if it has scrolled)
+			// minus the window's innerheight. Then add half the height of the triggering element.
+			const bottom = (document.scrollingElement.getClientRects()[0].height + document.scrollingElement.getClientRects()[0].top) - window.innerHeight + rect.height/2;
+			matDialogConfig.position = { left: `${rect.left - 130}px`, bottom: `${bottom}px` };
 			this.dialogRef.updatePosition(matDialogConfig.position);
 		}
 	}
 
-	onHover(color) {
+	private onHover(color): void {
 		this.hovered = true;
 		this.hoveredColor = color;
 	}
 
-	signOut() {
+	public signOut(): void {
 		this.dialogRef.close('signout');
 		localStorage.removeItem('fcm_sw_registered');
 		this.localize.setLanguageUntranslated();
