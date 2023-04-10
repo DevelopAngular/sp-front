@@ -7,6 +7,7 @@ import { School } from '../../models/School';
 import { filter, switchMap, takeUntil } from 'rxjs/operators';
 import { HttpService } from '../../services/http-service';
 import * as moment from 'moment';
+declare const window;
 
 @Component({
 	selector: 'app-school-setting-dialog',
@@ -66,13 +67,13 @@ export class SchoolSettingDialogComponent implements OnInit, OnDestroy {
 				takeUntil(this.destroy$),
 				switchMap(() => {
 					return this.adminService.updateSchoolSettingsRequest(this.currentSchool, this.schoolForm.value);
-				})
+				}),
+				filter((res) => !!res)
 			)
 			.subscribe((res) => {
-				if (res) {
-					this.http.currentSchoolSubject.next(res);
-					this.dialogRef.close();
-				}
+				this.http.currentSchoolSubject.next(res);
+				window.waitForAppLoaded();
+				this.dialogRef.close();
 
 				// TODO: (BUG) it opens multiple toasts
 				// doublingng the number every time

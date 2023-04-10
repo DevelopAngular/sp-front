@@ -9,7 +9,7 @@ import { environment } from '../../environments/environment';
 import { School } from '../models/School';
 import { AppState } from '../ngrx/app-state/app-state';
 import { getSchools } from '../ngrx/schools/actions';
-import { getCurrentSchool, getSchoolsCollection, getSchoolsLength } from '../ngrx/schools/states';
+import { getCurrentSchool, getLoadedSchools, getSchoolsCollection, getSchoolsLength } from '../ngrx/schools/states';
 import { AuthObject, isClassLinkLogin, isCleverLogin, isDemoLogin, isGoogleLogin, LoginService, SessionLogin } from './login.service';
 import { StorageService } from './storage.service';
 import { SafeHtml } from '@angular/platform-browser';
@@ -245,6 +245,8 @@ export class HttpService implements OnDestroy {
 	public schoolsCollection$: Observable<School[]> = this.store.select(getSchoolsCollection);
 	public currentUpdateSchool$: Observable<School> = this.store.select(getCurrentSchool);
 	public schoolsLength$: Observable<number> = this.store.select(getSchoolsLength);
+
+	public schoolsLoaded$: Observable<boolean> = this.store.select(getLoadedSchools);
 
 	public currentSchoolSubject = new BehaviorSubject<School>(null);
 	public currentSchool$: Observable<School> = this.currentSchoolSubject.asObservable();

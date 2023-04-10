@@ -3,10 +3,14 @@ import { AfterViewInit, Component, OnDestroy, OnInit } from '@angular/core';
 import { BehaviorSubject, Observable, of, Subject } from 'rxjs';
 import { UserService } from '../../services/user.service';
 import { Router } from '@angular/router';
-import { delay, exhaustMap, filter, map, skip, take, takeUntil, tap } from 'rxjs/operators';
+import { delay, exhaustMap, filter, map, skip, take, takeUntil, tap, withLatestFrom } from 'rxjs/operators';
 import { environment } from '../../../environments/environment';
 import { HttpService } from '../../services/http-service';
 import { CheckForUpdateService } from '../../services/check-for-update.service';
+import { School } from '../../models/School';
+import * as moment from 'moment/moment';
+import { FormControl, FormGroup } from '@angular/forms';
+import { filter as _filter } from 'lodash';
 
 declare const window;
 
@@ -95,6 +99,10 @@ export class AdminPageComponent implements OnInit, AfterViewInit, OnDestroy {
 				}
 				this.router.navigate(['admin', tab]);
 			});
+
+		this.httpService.schoolsLoaded$.pipe(takeUntil(this.destroy$)).subscribe((value) => {
+			window.appLoaded();
+		});
 	}
 
 	ngOnDestroy(): void {
