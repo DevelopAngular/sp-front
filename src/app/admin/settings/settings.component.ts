@@ -103,7 +103,11 @@ export class SettingsComponent implements OnInit, OnDestroy {
 			// We need to determine the amount the window has scrolled, which is the
 			// document's scrolling element's height and top (a negative value if it has scrolled)
 			// minus the window's innerheight. Then add half the height of the triggering element.
-			const bottom = (document.scrollingElement.getClientRects()[0].height + document.scrollingElement.getClientRects()[0].top) - window.innerHeight + rect.height/2;
+			const bottom =
+				document.scrollingElement.getClientRects()[0].height +
+				document.scrollingElement.getClientRects()[0].top -
+				window.innerHeight +
+				rect.height / 2;
 			matDialogConfig.position = { left: `${rect.left - 130}px`, bottom: `${bottom}px` };
 			this.dialogRef.updatePosition(matDialogConfig.position);
 		}
