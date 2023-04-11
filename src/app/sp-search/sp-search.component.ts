@@ -1,7 +1,7 @@
 import { Component, ElementRef, EventEmitter, HostListener, Input, OnDestroy, OnInit, Output, Renderer2, ViewChild } from '@angular/core';
 import { MapsAPILoader } from '@agm/core';
 import { User } from '../models/User';
-import { BehaviorSubject, interval, Observable, of, Subject, combineLatest, Subscription, fromEvent, zip, EMPTY } from 'rxjs';
+import { BehaviorSubject, combineLatest, EMPTY, fromEvent, interval, Observable, of, Subject, Subscription, zip } from 'rxjs';
 import { UserService } from '../services/user.service';
 import { DomSanitizer } from '@angular/platform-browser';
 import { HttpService } from '../services/http-service';
@@ -20,7 +20,7 @@ import {
 	tap,
 	withLatestFrom,
 } from 'rxjs/operators';
-import { filter as _filter, remove } from 'lodash';
+import { filter as _filter } from 'lodash';
 import { KeyboardShortcutsService } from '../services/keyboard-shortcuts.service';
 import { ScreenService } from '../services/screen.service';
 import { LocationsService } from '../services/locations.service';
@@ -131,6 +131,7 @@ export class SPSearchComponent implements OnInit, OnDestroy {
 	@Input() proposedSearchString: string;
 	@Input() displaySelectedTitle: boolean = true;
 	@Input() showStudentInfo: boolean = true;
+	@Input() status: 'active' | 'suspended' | 'disabled' | 'all' = 'active';
 
 	@Input() searchingTeachers: User[];
 	@Input() searchingRoles: { id: number; role: string; icon: string }[];
@@ -401,7 +402,7 @@ export class SPSearchComponent implements OnInit, OnDestroy {
 					if (this.type === 'alternative') {
 						if (this.kioskMode.isKisokMode()) {
 							if (this.kioskMode.getKioskModeSettings().findByName && this.kioskMode.getKioskModeSettings().findById) {
-								of([this.userService.searchProfile(this.role, 50, search), this.userService.possibleProfileByCustomId(search)])
+								of([this.userService.searchProfile(this.role, 50, search, this.status), this.userService.possibleProfileByCustomId(search)])
 									.pipe(switchMap((_) => combineLatest(_)))
 									.subscribe((res: any) => {
 										let finalResult = [];
@@ -421,7 +422,7 @@ export class SPSearchComponent implements OnInit, OnDestroy {
 									});
 							} else if (this.kioskMode.getKioskModeSettings().findByName && !this.kioskMode.getKioskModeSettings().findById) {
 								this.students = this.userService
-									.searchProfile(this.role, 50, search)
+									.searchProfile(this.role, 50, search, this.status)
 									.toPromise()
 									.then((paged: any) => {
 										this.pending$.next(false);
@@ -471,7 +472,7 @@ export class SPSearchComponent implements OnInit, OnDestroy {
 									filter((v) => !!v),
 									// ensures cancelation for previous request
 									switchMap((search: string) =>
-										this.userService.searchProfile(this.role, 50, search).pipe(
+										this.userService.searchProfile(this.role, 50, search, this.status).pipe(
 											filter(Boolean),
 											// ensures cancelation when clicking outside
 											takeUntil(this.lastClickOutside$),
