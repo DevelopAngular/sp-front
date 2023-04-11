@@ -72,7 +72,7 @@ export class RenewalComponent implements OnInit {
 				if (this.status.renewal_status === 'expiring') {
 					_refiner('showForm', this.surveyId);
 				}
-				this.iFrameURL = this.sanitizer.bypassSecurityTrustResourceUrl(data.confirm_renewal_link);
+				this.iFrameURL = this.sanitizer.bypassSecurityTrustResourceUrl(data.confirm_renewal_link + '?iframe=true');
 				this.userService.user$
 					.pipe(
 						filter((u) => !!u),
