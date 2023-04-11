@@ -1,12 +1,13 @@
-import { Component, OnDestroy, OnInit } from '@angular/core';
+import { Component, ElementRef, Inject, OnDestroy, OnInit, ViewChild } from '@angular/core';
 import { FormControl, FormGroup, Validators } from '@angular/forms';
-import { MatDialogRef } from '@angular/material/dialog';
+import { MAT_DIALOG_DATA, MatDialogRef } from '@angular/material/dialog';
 import { AdminService } from '../../services/admin.service';
 import { Subject } from 'rxjs';
 import { School } from '../../models/School';
 import { filter, switchMap, takeUntil } from 'rxjs/operators';
 import { HttpService } from '../../services/http-service';
 import * as moment from 'moment';
+
 declare const window;
 
 @Component({
@@ -15,6 +16,21 @@ declare const window;
 	styleUrls: ['./school-setting-dialog.component.scss'],
 })
 export class SchoolSettingDialogComponent implements OnInit, OnDestroy {
+	@ViewChild('wilControlBlock') set wilControlBlock(ref: ElementRef<HTMLDivElement>) {
+		if (!ref) {
+			return;
+		}
+
+		if (this.data?.enableWil) {
+			const { nativeElement } = ref;
+			nativeElement.classList.add('focus-background');
+
+			setTimeout(() => {
+				nativeElement.classList.remove('focus-background');
+			}, 2000);
+		}
+	}
+
 	public schoolForm: FormGroup;
 	public currentSchool: School;
 	private initialState: {
@@ -36,7 +52,12 @@ export class SchoolSettingDialogComponent implements OnInit, OnDestroy {
 	public tzNames: string[];
 	public selectedTz: string;
 
-	constructor(private dialogRef: MatDialogRef<SchoolSettingDialogComponent>, private adminService: AdminService, private http: HttpService) {
+	constructor(
+		@Inject(MAT_DIALOG_DATA) public data: { enableWil: boolean },
+		private dialogRef: MatDialogRef<SchoolSettingDialogComponent>,
+		private adminService: AdminService,
+		private http: HttpService
+	) {
 		this.tzNames = moment.tz.names();
 	}
 

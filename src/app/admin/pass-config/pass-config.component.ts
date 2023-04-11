@@ -23,10 +23,10 @@ import { Onboard } from '../../models/Onboard';
 import { SupportService } from '../../services/support.service';
 import { UserService } from '../../services/user.service';
 import * as moment from 'moment/moment';
-import { FeatureFlagService, FLAGS } from '../../services/feature-flag.service';
+import { FeatureFlagService } from '../../services/feature-flag.service';
 
 @Component({
-	selector: 'app-pass-congif',
+	selector: 'app-pass-config',
 	templateUrl: './pass-config.component.html',
 	styleUrls: ['./pass-config.component.scss'],
 })
@@ -194,10 +194,11 @@ export class PassConfigComponent implements OnInit, OnDestroy {
 			.subscribe(([intros, user]) => {
 				this.introsData = intros;
 
-				if (this.features.isFeatureEnabled(FLAGS.ShowWaitInLine)) {
-					const showNux = moment(user.first_login).isBefore(this.waitInLineLaunchDate) && !intros?.wait_in_line?.universal?.seen_version;
-					this.showWaitInLineNux.next(showNux);
-				}
+				this.showWaitInLineNux.next(true);
+				// if (this.features.isFeatureEnabled(FLAGS.ShowWaitInLine)) {
+				// 	const showNux = moment(user.first_login).isBefore(this.waitInLineLaunchDate) && !intros?.wait_in_line?.universal?.seen_version;
+				// 	this.showWaitInLineNux.next(showNux);
+				// }
 			});
 	}
 
@@ -445,7 +446,14 @@ export class PassConfigComponent implements OnInit, OnDestroy {
 	}
 
 	dismissWaitInLineNux() {
+		this.dialog.open(SchoolSettingDialogComponent, {
+			data: {
+				enableWil: true,
+			},
+			panelClass: 'overlay-dialog',
+			backdropClass: 'custom-bd',
+		});
 		this.showWaitInLineNux.next(false);
-		this.userService.updateIntrosWaitInLineRequest(this.introsData, 'universal', '1');
+		// this.userService.updateIntrosWaitInLineRequest(this.introsData, 'universal', '1');
 	}
 }

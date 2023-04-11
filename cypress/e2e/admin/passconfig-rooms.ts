@@ -1,4 +1,4 @@
-import {waitForElement, getNavAction} from '../../support/functions/general';
+import { getNavAction, waitForElement } from '../../support/functions/general';
 import * as PassFunctions from '../../support/functions/passes';
 
 const defaultRoomNames = ['Bathroom', 'Water Fountain', 'Nurse', 'Guidance', 'Main Office', 'Library'];
@@ -91,7 +91,7 @@ describe.skip('Admin - UI and Actions', () => {
   // just visiting admin urls will not work
 
   const getRoomAction = (label: string): Cypress.Chainable<JQuery<HTMLElement>> => {
-    return cy.get('app-pass-congif app-gradient-button').contains(label);
+    return cy.get('app-pass-config app-gradient-button').contains(label);
   };
 
   const getConsentAction = (label: string): Cypress.Chainable<JQuery<HTMLElement>> => {

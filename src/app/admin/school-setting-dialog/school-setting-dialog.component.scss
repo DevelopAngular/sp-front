@@ -36,7 +36,7 @@
 
 	.settings-content {
 		height: 370px;
-		padding: 20px;
+		padding: 10px;
 		display: flex;
 		flex-direction: column;
 		justify-content: space-between;
@@ -57,7 +57,10 @@
 				display: flex;
 				align-items: center;
 				justify-content: space-between;
-				margin-bottom: 20px;
+				padding: 10px;
+				margin-bottom: 10px;
+				border-radius: 6px;
+				transition: background 1s linear;
 
 				.controls-description {
 					display: flex;
@@ -87,6 +90,8 @@
 				display: flex;
 				justify-content: space-between;
 				align-items: center;
+				padding: 10px;
+				margin-bottom: 10px;
 			}
 		}
 
@@ -108,8 +113,9 @@
 }
 
 .block {
-	margin: 35px 0;
+	margin: 20px 0;
 	font-size: 15px;
+	padding: 10px;
 	.label {
 		display: flex;
 		align-items: center;
@@ -162,4 +168,8 @@
 		width: 100%;
 		background: #f7f7f7;
 	}
+}
+
+.focus-background {
+	background: #f6f6f6;
 }
