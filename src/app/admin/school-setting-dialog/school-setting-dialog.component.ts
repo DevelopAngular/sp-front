@@ -22,6 +22,10 @@ export class SchoolSettingDialogComponent implements OnInit, OnDestroy {
 		}
 
 		if (this.data?.enableWil) {
+			this.schoolForm.patchValue({
+				wait_in_line: true
+			});
+			this.adminService.updateSchoolSettingsRequest(this.currentSchool, this.schoolForm.value);
 			const { nativeElement } = ref;
 			nativeElement.classList.add('focus-background');
 
@@ -79,7 +83,7 @@ export class SchoolSettingDialogComponent implements OnInit, OnDestroy {
 				+res.pass_buffer_time !== +this.initialState.pass_buffer_time ||
 				res.show_active_passes_number !== this.initialState.show_active_passes_number ||
 				res.student_can_use_mobile !== this.initialState.student_can_use_mobile ||
-				res.wait_in_line !== this.initialState.wait_in_line;
+				(res.wait_in_line !== this.initialState.wait_in_line && !this.data?.enableWil);
 		});
 		this.changeSettings$
 			.pipe(

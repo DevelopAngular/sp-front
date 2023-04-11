@@ -1,7 +1,18 @@
 import { Component, ElementRef, HostListener, OnDestroy, OnInit, ViewChild } from '@angular/core';
 import { MatDialog } from '@angular/material/dialog';
 
-import { BehaviorSubject, combineLatest, forkJoin, interval, Observable, of, ReplaySubject, Subject, Subscription, zip } from 'rxjs';
+import {
+	BehaviorSubject,
+	combineLatest,
+	forkJoin,
+	interval,
+	Observable,
+	of,
+	ReplaySubject,
+	Subject,
+	Subscription,
+	zip,
+} from 'rxjs';
 import { debounceTime, filter, map, switchMap, take, takeUntil, tap } from 'rxjs/operators';
 
 import { HttpService } from '../../services/http-service';
@@ -453,7 +464,7 @@ export class PassConfigComponent implements OnInit, OnDestroy {
 			panelClass: 'overlay-dialog',
 			backdropClass: 'custom-bd',
 		});
-		this.showWaitInLineNux.next(false);
+		// this.showWaitInLineNux.next(false);
 		// this.userService.updateIntrosWaitInLineRequest(this.introsData, 'universal', '1');
 	}
 }
