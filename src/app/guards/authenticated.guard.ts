@@ -24,7 +24,7 @@ export class AuthenticatedGuard implements CanActivate {
 				if (!isAuthenticated) {
 					const path = state.url;
 					if (path.includes('parent')) {
-						this.router.navigate(['auth']);
+						this.router.navigate(['parent-sign-up']);
 					} else {
 						this.router.navigate(['']);
 					}
