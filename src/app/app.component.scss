@@ -188,15 +188,19 @@
 //}
 
 .help-center-content-wrapper {
-	height: 100%;
+	height: 100vh;
 	max-width: 449px;
 	min-width: 320px;
 	transition: all 0.3s;
 	overflow-y: hidden;
 	background: rgb(251, 254, 255);
-	z-index: 9999;
+	position: relative;
+	z-index: 2000;
+	display: flex;
 	.fixed-wrapper {
 		position: fixed;
+		right:0;
+		min-width: 320px;
 	}
 	.help-center-unsubscribe {
 		position: absolute;
@@ -207,11 +211,9 @@
 		display: none;
 	}
 	.drag-divider {
-		position: absolute;
-		left: 0;
-		height: inherit;
+		height: 100vh;
 		width: 8px;
-		z-index: 1000;
+		z-index: 1002;
 		// background-color: $gray400;
 		// border-left: 1px solid $gray400;
 		// transition: width 0.2s linear;

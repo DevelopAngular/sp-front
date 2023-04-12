@@ -1,4 +1,15 @@
-import { AfterViewInit, Component, ElementRef, HostListener, NgZone, OnDestroy, OnInit, SecurityContext, ViewChild } from '@angular/core';
+import {
+	AfterViewInit,
+	Component,
+	ElementRef,
+	HostListener,
+	NgZone,
+	OnDestroy,
+	OnInit,
+	Renderer2,
+	SecurityContext,
+	ViewChild,
+} from '@angular/core';
 import { MatDialog, MatDialogRef } from '@angular/material/dialog';
 import { ActivatedRoute, NavigationEnd, Router } from '@angular/router';
 import { filter as _filter } from 'lodash';
@@ -79,6 +90,7 @@ export class AppComponent implements OnInit, AfterViewInit, OnDestroy {
 
 	@ViewChild('trialBar') trialBarElementView: ElementRef;
 	@ViewChild('helpIframe') helpCenterIframe: ElementRef;
+	@ViewChild('helpCenterDiv') helpCenterDiv: ElementRef;
 
 	public isAuthenticated = null;
 	public isStudent = true;
@@ -138,6 +150,13 @@ export class AppComponent implements OnInit, AfterViewInit, OnDestroy {
 		}
 	}
 
+	@HostListener('document:scroll', ['$event'])
+	scroll(event) {
+		// adjust the height of the help center wrapping div if window is scrolled.
+		if (this.helpCenterDiv && this.helpCenterDiv.nativeElement.offsetHeight < document.scrollingElement.getClientRects()[0].height) {
+			this.renderer.setStyle(this.helpCenterDiv.nativeElement, 'height', `${this.helpCenterDiv.nativeElement.offsetHeight + event.target.scrollingElement.scrollTop}px`);
+			}
+	}
 	// @HostListener('window:mousemove', ['$event'])
 	// onWindowBlur(event: any): void {
 	// 	addEventListener('mousemove', function (e) {
@@ -169,6 +188,7 @@ export class AppComponent implements OnInit, AfterViewInit, OnDestroy {
 		public featureFlags: FeatureFlagService,
 		private cookie: CookieService,
 		private titleService: Title,
+		private renderer: Renderer2,
 		private parentService: ParentAccountService
 	) {}
 
@@ -680,8 +700,14 @@ export class AppComponent implements OnInit, AfterViewInit, OnDestroy {
 		setTimeout(() => {
 			const BORDER_SIZE = 8;
 			const panel = document.querySelector<HTMLElement>('#help-center-content');
+			const fixedWrapper = document.querySelector<HTMLElement>('#fixed-wrapper');
 
 			const dragDivider = document.querySelector<HTMLElement>('.drag-divider');
+
+			if (this.helpCenterDiv && this.helpCenterDiv.nativeElement.offsetHeight < document.scrollingElement.getClientRects()[0].height) {
+				console.log('render');
+				this.renderer.setStyle(this.helpCenterDiv.nativeElement, 'height', `${this.helpCenterDiv.nativeElement.offsetHeight + document.scrollingElement.scrollTop}px`);
+			}
 			setTimeout(() => {
 				const mainRouter = document.querySelector<HTMLElement>('.router-outlet');
 				mainRouter.style.transition = 'none';
@@ -692,6 +718,7 @@ export class AppComponent implements OnInit, AfterViewInit, OnDestroy {
 				const dx = m_pos - e.x;
 				m_pos = e.x;
 				panel.style.width = parseInt(getComputedStyle(panel, '').width) + dx + 'px';
+				fixedWrapper.style.width = parseInt(getComputedStyle(panel, '').width) + -1 + 'px';
 			}
 
 			let iframe = document.querySelector<HTMLIFrameElement>('.help-center-unsubscribe');
