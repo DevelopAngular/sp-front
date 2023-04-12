@@ -194,8 +194,10 @@
 	transition: all 0.3s;
 	overflow-y: hidden;
 	background: rgb(251, 254, 255);
-	position: relative;
-
+	z-index: 9999;
+	.fixed-wrapper {
+		position: fixed;
+	}
 	.help-center-unsubscribe {
 		position: absolute;
 		top: 0;
