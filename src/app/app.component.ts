@@ -1,15 +1,4 @@
-import {
-	AfterViewInit,
-	Component,
-	ElementRef,
-	HostListener,
-	NgZone,
-	OnDestroy,
-	OnInit,
-	Renderer2,
-	SecurityContext,
-	ViewChild,
-} from '@angular/core';
+import { AfterViewInit, Component, ElementRef, HostListener, NgZone, OnDestroy, OnInit, Renderer2, SecurityContext, ViewChild } from '@angular/core';
 import { MatDialog, MatDialogRef } from '@angular/material/dialog';
 import { ActivatedRoute, NavigationEnd, Router } from '@angular/router';
 import { filter as _filter } from 'lodash';
@@ -154,8 +143,12 @@ export class AppComponent implements OnInit, AfterViewInit, OnDestroy {
 	scroll(event) {
 		// adjust the height of the help center wrapping div if window is scrolled.
 		if (this.helpCenterDiv && this.helpCenterDiv.nativeElement.offsetHeight < document.scrollingElement.getClientRects()[0].height) {
-			this.renderer.setStyle(this.helpCenterDiv.nativeElement, 'height', `${this.helpCenterDiv.nativeElement.offsetHeight + event.target.scrollingElement.scrollTop}px`);
-			}
+			this.renderer.setStyle(
+				this.helpCenterDiv.nativeElement,
+				'height',
+				`${this.helpCenterDiv.nativeElement.offsetHeight + event.target.scrollingElement.scrollTop}px`
+			);
+		}
 	}
 	// @HostListener('window:mousemove', ['$event'])
 	// onWindowBlur(event: any): void {
@@ -706,7 +699,11 @@ export class AppComponent implements OnInit, AfterViewInit, OnDestroy {
 
 			if (this.helpCenterDiv && this.helpCenterDiv.nativeElement.offsetHeight < document.scrollingElement.getClientRects()[0].height) {
 				console.log('render');
-				this.renderer.setStyle(this.helpCenterDiv.nativeElement, 'height', `${this.helpCenterDiv.nativeElement.offsetHeight + document.scrollingElement.scrollTop}px`);
+				this.renderer.setStyle(
+					this.helpCenterDiv.nativeElement,
+					'height',
+					`${this.helpCenterDiv.nativeElement.offsetHeight + document.scrollingElement.scrollTop}px`
+				);
 			}
 			setTimeout(() => {
 				const mainRouter = document.querySelector<HTMLElement>('.router-outlet');
