@@ -50,7 +50,7 @@
 			(scroll)="scroll()">
 			<div *ngIf="students" class="appearing" style="border-top: 1px solid #d8d8d8; width: 92%; margin: 0 auto"></div>
 			<div *ngIf="!showDummy; else noStudentsDummy" style="margin-top: -1px">
-				<div *ngIf="(students | async)?.length; else noStudentFound" class="option-list_scrollable" [style.max-height]="listMaxHeight">
+				<div *ngIf="(students | async)?.length; else noUserFound" class="option-list_scrollable" [style.max-height]="listMaxHeight">
 					<div
 						data-cy="search-result-user"
 						[ngClass]="{ disabled: isDisabled(student) }"
@@ -113,7 +113,7 @@
 						</ng-template>
 					</div>
 				</div>
-				<ng-template #noStudentFound>
+				<ng-template #noUserFound>
 					<div
 						*ngIf="students && studentInput.valueLength > 0 && !(pending$ | async)"
 						class="option-list_scrollable"
