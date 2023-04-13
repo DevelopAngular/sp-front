@@ -6,7 +6,7 @@ import { catchError } from 'rxjs/operators';
 
 @Injectable()
 export class AuthInterceptor implements HttpInterceptor {
-	excludedCredUrls = ['email_info', 'sessions', 'discovery'];
+	excludedCredUrls = ['email_info', 'sessions', 'discovery', 'storage.googleapis.com'];
 
 	constructor(private loginService: LoginService) {}
 
