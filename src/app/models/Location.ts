@@ -1,10 +1,20 @@
 import { BaseModel } from './base';
 import { User } from './User';
 import { VisibilityMode, DEFAULT_VISIBILITY_STUDENTS } from '../admin/overlay-container/visibility-room/visibility-room.type';
+import { PassLimit } from './PassLimit';
+
+export interface Choice extends Location {
+	passLimit: PassLimit;
+	disabledToolTip: boolean;
+	isValidLocation: boolean;
+	normalizedLocation: Location;
+	roomIsHidden: boolean;
+	isSelected: boolean;
+}
 
 export class Location extends BaseModel {
 	constructor(
-		public id: string,
+		public id: number,
 		public title: string,
 		public campus: string,
 		public room: string,
@@ -36,7 +46,8 @@ export class Location extends BaseModel {
 		public current_active_pass_count_as_destination?: number,
 		public current_active_pass_count_as_origin?: number,
 		public has_reached_limit_as_destination?: boolean,
-		public has_reached_limit_as_origin?: boolean
+		public has_reached_limit_as_origin?: boolean,
+		public gradient?: string
 	) {
 		super();
 	}
@@ -46,7 +57,7 @@ export class Location extends BaseModel {
 			return null;
 		}
 
-		const id: string = '' + JSON['id'],
+		const id: number = JSON['id'],
 			title: string = JSON['title'],
 			campus: string = JSON['campus'],
 			room: string = JSON['room'],

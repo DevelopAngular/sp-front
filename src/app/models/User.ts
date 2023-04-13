@@ -10,7 +10,7 @@ export enum ROLES {
 
 export class User extends BaseModel {
 	constructor(
-		public id: string,
+		public id: number,
 		public active: boolean,
 		public created: Date,
 		public demo_account: boolean,
@@ -44,7 +44,7 @@ export class User extends BaseModel {
 			return null;
 		}
 
-		const id: string = '' + JSON['id'],
+		const id: number = JSON['id'],
 			active: boolean = !!JSON['active'],
 			created: Date = new Date(JSON['created']),
 			demo_account: boolean = !!JSON['demo_account'],

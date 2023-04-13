@@ -4,7 +4,7 @@ export class School extends BaseModel {
 	constructor(
 		public display_card_room: boolean,
 		public student_can_use_mobile: boolean,
-		public id: string,
+		public id: number,
 		public name: string,
 		public my_roles: string[],
 		public pass_buffer_time: number,
@@ -37,7 +37,7 @@ export class School extends BaseModel {
 		}
 
 		// console.log(JSON);
-		const id: string = '' + JSON['id'],
+		const id: number = JSON['id'],
 			display_card_room: boolean = JSON['display_card_room'],
 			student_can_use_mobile: boolean = JSON[' student_can_use_mobile'],
 			name: string = '' + JSON['name'],

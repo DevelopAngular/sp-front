@@ -5,7 +5,7 @@ import { User } from './User';
 
 export class Invitation extends BaseModel implements ReadableModel {
 	constructor(
-		public id: string,
+		public id: number,
 		public student: User,
 		public default_origin: Location,
 		public destination: Location,
@@ -35,7 +35,7 @@ export class Invitation extends BaseModel implements ReadableModel {
 			return null;
 		}
 
-		const id: string = '' + JSON['id'],
+		const id: number = JSON['id'],
 			student: User = User.fromJSON(JSON['student']),
 			destination: Location = Location.fromJSON(JSON['destination']),
 			date_choices: Date[] = [],

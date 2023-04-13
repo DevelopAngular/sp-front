@@ -70,13 +70,13 @@ export enum HallPassErrors {
 
 export interface BulkHallPassPostResponse {
 	passes: HallPass[];
-	conflict_student_ids: string[];
+	conflict_student_ids: number[];
 	waiting_in_line_passes: WaitingInLinePassResponse[];
 }
 
 export interface StartWaitingInLinePassResponse {
 	pass: HallPass;
-	conflict_student_ids: string[];
+	conflict_student_ids: number[];
 }
 
 @Injectable({
@@ -277,21 +277,21 @@ export class HallPassesService {
 	}
 
 	// watchStartPass listens for hall pass start events for a specific hall pass with the given |id|.
-	watchStartPass(id: string) {
+	watchStartPass(id: number) {
 		return this.filterHallPassEvent(id, this.pollingService.listen('hall_pass.start'));
 	}
 
 	// watchEndPass listens for hall pass end events for a specific hall pass with the given |id|.
-	watchEndPass(id: string) {
+	watchEndPass(id: number) {
 		return this.filterHallPassEvent(id, this.pollingService.listen('hall_pass.end'));
 	}
 
 	// watchCancelPass listens for hall pass start events for a specific hall pass with the given |id|.
-	watchCancelPass(id: string) {
+	watchCancelPass(id: number) {
 		return this.filterHallPassEvent(id, this.pollingService.listen('hall_pass.cancel'));
 	}
 
-	filterHallPassEvent(id: string, events: Observable<PollingEvent>): Observable<HallPass> {
+	filterHallPassEvent(id: number, events: Observable<PollingEvent>): Observable<HallPass> {
 		return events.pipe(
 			map((e) => HallPass.fromJSON(e.data)),
 			filter((p) => p.id == id)

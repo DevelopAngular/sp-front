@@ -121,7 +121,7 @@ export class StatusChipComponent implements OnInit {
 						this.isLoading = true;
 						const updata: ReportDataUpdate = {
 							status,
-							id: '' + this.remoteid,
+							id: this.remoteid,
 						};
 						this.updateEvent.emit(updata);
 					}),

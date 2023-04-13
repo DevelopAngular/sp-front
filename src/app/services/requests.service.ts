@@ -207,7 +207,7 @@ export class RequestsService {
 		return this.http.post(`v1/pass_requests/${id}/cancel`);
 	}
 
-	watchRequestDeny(id: string): Observable<Request> {
+	watchRequestDeny(id: number): Observable<Request> {
 		return this.filterRequestWithId(id, this.pollingService.listen('pass_request.deny'));
 	}
 
@@ -231,14 +231,14 @@ export class RequestsService {
 		return this.filterInvitationWithId(id, this.pollingService.listen('pass_invitation.accept'));
 	}
 
-	filterRequestWithId(id: string, events: Observable<PollingEvent>): Observable<Request> {
+	filterRequestWithId(id: number, events: Observable<PollingEvent>): Observable<Request> {
 		return events.pipe(
 			map((e) => Request.fromJSON(e.data)),
 			filter((r) => r.id == id)
 		);
 	}
 
-	filterInvitationWithId(id: string, events: Observable<PollingEvent>): Observable<Invitation> {
+	filterInvitationWithId(id: number, events: Observable<PollingEvent>): Observable<Invitation> {
 		return events.pipe(
 			map((e) => Invitation.fromJSON(e.data)),
 			filter((i) => i.id == id)

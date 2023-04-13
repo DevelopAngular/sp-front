@@ -3,7 +3,7 @@ import { User } from './User';
 
 export class Alert extends BaseModel {
 	constructor(
-		public id: string,
+		public id: number,
 		public created: Date,
 		public last_updated: Date,
 		public creator: User,
@@ -21,7 +21,7 @@ export class Alert extends BaseModel {
 			return null;
 		}
 
-		const id: string = '' + JSON['id'],
+		const id: number = JSON['id'],
 			created: Date = new Date(JSON['created']),
 			last_created: Date = new Date(JSON['last_updated']),
 			creator: User = User.fromJSON(JSON['creator']),

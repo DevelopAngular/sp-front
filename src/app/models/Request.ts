@@ -6,7 +6,7 @@ import { User } from './User';
 
 export class Request extends BaseModel implements ReadableModel {
 	constructor(
-		public id: string,
+		public id: number,
 		public student: User,
 		public origin: Location,
 		public destination: Location,
@@ -39,7 +39,7 @@ export class Request extends BaseModel implements ReadableModel {
 			return null;
 		}
 
-		const id: string = '' + JSON['id'],
+		const id: number = JSON['id'],
 			student: User = User.fromJSON(JSON['student']),
 			origin: Location = Location.fromJSON(JSON['origin']),
 			destination: Location = Location.fromJSON(JSON['destination']),

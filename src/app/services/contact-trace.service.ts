@@ -22,7 +22,7 @@ export class ContactTraceService {
 		return this.http.post('v1/stats/contact_tracing', { students: studentIds, start_time, end_time });
 	}
 
-	getContactsRequest(studentsIds: string[], start_time: string, end_time: string) {
+	getContactsRequest(studentsIds: number[], start_time: string, end_time: string) {
 		this.store.dispatch(getContacts({ studentsIds, start_time, end_time }));
 	}
 

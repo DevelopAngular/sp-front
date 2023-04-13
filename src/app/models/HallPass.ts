@@ -5,7 +5,7 @@ import { User } from './User';
 
 export class HallPass extends BaseModel {
 	constructor(
-		public id: string,
+		public id: number,
 		public student: User,
 		public issuer: User,
 		public reported_pass_id: number | null,
@@ -38,7 +38,7 @@ export class HallPass extends BaseModel {
 		}
 
 		// console.log(JSON);
-		const id: string = '' + JSON['id'],
+		const id: number = JSON['id'],
 			student: User = User.fromJSON(JSON['student']),
 			issuer: User = User.fromJSON(JSON['issuer']),
 			reported_pass_id: number | null = JSON['reported_pass_id'] ?? null,

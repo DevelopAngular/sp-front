@@ -386,7 +386,7 @@ export class UserService implements OnDestroy {
 			)
 			.subscribe({
 				next: (parentAccount) => {
-					this.http.effectiveUserId.next(parseInt(parentAccount.id, 10));
+					this.http.effectiveUserId.next(parentAccount.id);
 					this.userData.next(parentAccount);
 				},
 			});

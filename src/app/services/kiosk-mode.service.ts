@@ -83,7 +83,7 @@ export class KioskModeService {
 		return this.http.patch(`v1//kiosk/${location.id}/password`);
 	}
 
-	getKioskModeLogin(locationId: string): Observable<KioskLoginResponse> {
+	getKioskModeLogin(locationId: number): Observable<KioskLoginResponse> {
 		return this.http.get(`v1/kiosk/${locationId}/login`);
 	}
 

@@ -4,7 +4,7 @@ import { Location } from './Location';
 
 export class Pinnable extends BaseModel {
 	constructor(
-		public id: string,
+		public id: number,
 		public title: string,
 		public gradient_color: string,
 		public icon: string,
@@ -12,7 +12,8 @@ export class Pinnable extends BaseModel {
 		public location: Location,
 		public category: string,
 		public color_profile: ColorProfile,
-		public ignore_students_pass_limit: boolean
+		public ignore_students_pass_limit: boolean,
+		public show_as_origin_room: boolean
 	) {
 		super();
 	}
@@ -22,7 +23,7 @@ export class Pinnable extends BaseModel {
 			return null;
 		}
 
-		const id: string = '' + JSON['id'],
+		const id: number = JSON['id'],
 			title: string = JSON['title'],
 			gradient_color: string = JSON['gradient_color'],
 			icon: string = JSON['icon'],
@@ -30,8 +31,9 @@ export class Pinnable extends BaseModel {
 			location: Location = JSON['location'],
 			category: string = JSON['category'],
 			color_profile: ColorProfile = ColorProfile.fromJSON(JSON['color_profile']),
-			ignore_students_pass_limit: boolean = JSON['ignore_students_pass_limit'];
+			ignore_students_pass_limit: boolean = JSON['ignore_students_pass_limit'],
+			show_as_origin_room: boolean = JSON['show_as_origin_room'];
 
-		return new Pinnable(id, title, gradient_color, icon, type, location, category, color_profile, ignore_students_pass_limit);
+		return new Pinnable(id, title, gradient_color, icon, type, location, category, color_profile, ignore_students_pass_limit, show_as_origin_room);
 	}
 }

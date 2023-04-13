@@ -9,7 +9,7 @@ export enum Status {
 
 export class Report extends BaseModel {
 	constructor(
-		public id: string,
+		public id: number,
 		public created: Date,
 		public last_updated: Date,
 		public issuer: User,
@@ -27,7 +27,7 @@ export class Report extends BaseModel {
 			return null;
 		}
 
-		const id: string = '' + JSON['id'],
+		const id: number = JSON['id'],
 			created: Date = new Date(JSON['created']),
 			last_updated: Date = new Date(JSON['last_updated']),
 			issuer: User = User.fromJSON(JSON['issuer']),

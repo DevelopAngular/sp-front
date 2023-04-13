@@ -123,7 +123,7 @@ export class KioskModeComponent implements OnInit, AfterViewInit, OnDestroy {
 			)
 			.subscribe((locations) => {
 				const locationFromStorage = this.kioskMode.getCurrentRoom().value;
-				const kioskLocation = locations.find((loc) => parseInt(loc.id, 10) === parseInt(locationFromStorage.id, 10));
+				const kioskLocation = locations.find((loc) => loc.id === locationFromStorage.id);
 				this.titleService.setTitle(`${kioskLocation.title} | SmartPass`);
 				this.liveDataService.getMyRoomActivePassesRequest(
 					of({ sort: '-created', search_query: '' }),

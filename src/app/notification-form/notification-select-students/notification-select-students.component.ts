@@ -11,7 +11,7 @@ import { HttpErrorResponse } from '@angular/common/http';
 import { ToastService } from '../../services/toast.service';
 
 interface StudentDisplay {
-	id: string;
+	id: number;
 	name: string;
 	icon: string;
 }
@@ -131,7 +131,7 @@ export class NotificationSelectStudentsComponent implements OnInit {
 			return;
 		}
 
-		const ss = students.map<StudentDisplay>((student) => {
+		const ss: StudentDisplay[] = students.map<StudentDisplay>((student: User) => {
 			return {
 				id: student.id,
 				name: student.display_name,

@@ -79,7 +79,7 @@ export class PassLimitBulkEditComponent implements OnInit {
 		this.passLimitService
 			.updateIndividualLimit({
 				...parsedForm,
-				students: this.data.students.map((u) => parseInt(u.id, 10)),
+				students: this.data.students.map((u) => u.id),
 			})
 			.subscribe({
 				next: () => {
