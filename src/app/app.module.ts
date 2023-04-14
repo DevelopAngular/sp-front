@@ -183,7 +183,7 @@ const appRoutes: Routes = [
 		KeyboardShortcutsModule.forRoot(),
 
 		RouterModule.forRoot(appRoutes, {
-			enableTracing: false,
+			enableTracing: true,
 		}),
 		OAuthModule.forRoot(),
 		AngularFireModule.initializeApp(environment.firebase, 'notifyhallpass'),
