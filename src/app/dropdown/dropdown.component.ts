@@ -4,7 +4,6 @@ import { MAT_DIALOG_DATA, MatDialogConfig, MatDialogRef } from '@angular/materia
 import { School } from '../models/School';
 import { DarkThemeSwitch } from '../dark-theme-switch';
 import { User } from '../models/User';
-import { RepresentedUser } from '../navbar/navbar.component';
 import { DeviceDetection } from '../device-detection.helper';
 import { cloneDeep } from 'lodash';
 import { COUNTRY_CODES } from '../services/localizejs.service';

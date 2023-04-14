@@ -33,6 +33,7 @@ export class SettingsDescriptionPopupComponent implements OnInit, AfterViewInit 
 	disableCloseEvent$: Subject<{ action: string; event: any }> = new Subject<{ action: string; event: any }>();
 	profile: User;
 	profileStatusActive: string;
+	private adjustForScroll: boolean = false;
 
 	constructor(
 		public dialogRef: MatDialogRef<SettingsDescriptionPopupComponent>,
@@ -41,7 +42,9 @@ export class SettingsDescriptionPopupComponent implements OnInit, AfterViewInit 
 		private userService: UserService,
 		private viewContainerRef: ViewContainerRef,
 		@Inject(MAT_DIALOG_DATA) private data: any
-	) {}
+	) {
+		this.adjustForScroll = data['adjustForScroll'];
+	}
 
 	ngOnInit(): void {
 		this.triggerElementRef = this.data['trigger'];
@@ -90,12 +93,16 @@ export class SettingsDescriptionPopupComponent implements OnInit, AfterViewInit 
 		const matDialogConfig: MatDialogConfig = new MatDialogConfig();
 		const rect = this.triggerElementRef.getBoundingClientRect();
 		let top = rect.bottom + 15;
+		let scrollAdjustment = 0;
+		if (this.adjustForScroll) {
+			scrollAdjustment = Math.abs(document.scrollingElement.getClientRects()[0].top);
+		}
 		// calculate dif
 		const dy = dialogbox.height + top - (window.innerHeight || document.documentElement.clientHeight || document.body.clientHeight);
 		if (dy > 0) top -= dy + 15;
 		matDialogConfig.position = {
 			left: `${rect.left + rect.width - 230}px`,
-			top: `${Math.abs(document.scrollingElement.getClientRects()[0].top) + top}px`,
+			top: `${top + scrollAdjustment}px`,
 		};
 
 		this.dialogRef.updatePosition(matDialogConfig.position);
