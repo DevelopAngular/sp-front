@@ -189,13 +189,7 @@ export class MainPageComponent implements OnInit, AfterViewInit, OnDestroy {
 			}
 		});
 
-		// this.userService.userData sometimes doesn't update in time when switching schools
-		// The main problem this caused was sometimes using user data from the previous school
-		// after switching to the current school.
-
-		// TEMP FIX: change to this.userService.user$ (this makes an extra network request)
-		// PERMANENT FIX: ensure that this.userService.userData is updated and any dependencies wait on the update to complete
-		this.userService.userData
+		this.userService.user$
 			.pipe(
 				filter(Boolean),
 				map((user) => User.fromJSON(user)),
