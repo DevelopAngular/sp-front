@@ -93,7 +93,10 @@ export class SettingsDescriptionPopupComponent implements OnInit, AfterViewInit 
 		// calculate dif
 		const dy = dialogbox.height + top - (window.innerHeight || document.documentElement.clientHeight || document.body.clientHeight);
 		if (dy > 0) top -= dy + 15;
-		matDialogConfig.position = { left: `${rect.left + rect.width - 230}px`, top: `${top}px` };
+		matDialogConfig.position = {
+			left: `${rect.left + rect.width - 230}px`,
+			top: `${Math.abs(document.scrollingElement.getClientRects()[0].top) + top}px`,
+		};
 
 		this.dialogRef.updatePosition(matDialogConfig.position);
 	}

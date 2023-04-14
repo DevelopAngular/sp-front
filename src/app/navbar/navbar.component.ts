@@ -517,7 +517,7 @@ export class NavbarComponent implements AfterViewInit, OnInit, OnDestroy {
 				const settingRef = this.dialog.open(SettingsComponent, {
 					panelClass: ['calendar-dialog-container', 'animation'],
 					backdropClass: 'invis-backdrop',
-					data: { trigger: target, isSwitch: this.showSwitchButton },
+					data: { trigger: target, isSwitch: this.showSwitchButton, adjustForScroll: true },
 				});
 
 				settingRef.afterClosed().subscribe((action) => {

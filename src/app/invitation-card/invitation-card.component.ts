@@ -377,7 +377,7 @@ export class InvitationCardComponent implements OnInit, OnDestroy {
 			const consentDialog = this.dialog.open(ConsentMenuComponent, {
 				panelClass: 'consent-dialog-container',
 				backdropClass: 'invis-backdrop',
-				data: { header: this.header, options: this.options, trigger: target },
+				data: { header: this.header, options: this.options, trigger: target, adjustForScroll: true },
 			});
 
 			consentDialog

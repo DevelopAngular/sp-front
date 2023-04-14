@@ -52,6 +52,7 @@ export class SettingsComponent implements OnInit, OnDestroy {
 				: false,
 		},
 	];
+	private adjustForScroll: boolean = false;
 
 	constructor(
 		private router: Router,
@@ -61,7 +62,9 @@ export class SettingsComponent implements OnInit, OnDestroy {
 		private elemRef: ElementRef,
 		private localize: LocalizejsService,
 		private pwaStorage: LocalStorage
-	) {}
+	) {
+		this.adjustForScroll = data['adjustForScroll'];
+	}
 
 	public ngOnInit(): void {
 		this.triggerElementRef = this.data['trigger'];
@@ -108,7 +111,14 @@ export class SettingsComponent implements OnInit, OnDestroy {
 				document.scrollingElement.getClientRects()[0].top -
 				window.innerHeight +
 				rect.height / 2;
-			matDialogConfig.position = { left: `${rect.left - 130}px`, bottom: `${bottom}px` };
+			let scrollAdjustment = 0;
+			if (this.adjustForScroll) {
+				scrollAdjustment = document.scrollingElement.getClientRects()[0].top;
+			}
+			matDialogConfig.position = {
+				left: `${rect.left - 130}px`,
+				bottom: `${bottom + Math.abs(document.scrollingElement.getClientRects()[0].top) + scrollAdjustment}px`,
+			};
 			this.dialogRef.updatePosition(matDialogConfig.position);
 		}
 	}

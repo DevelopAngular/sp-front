@@ -50,7 +50,7 @@ export class StudentFilterComponent implements OnInit {
 	updateDialogPosition() {
 		const matDialogConfig: MatDialogConfig = new MatDialogConfig();
 		const rect = this.triggerElementRef.getBoundingClientRect();
-		matDialogConfig.position = { left: `${rect.left}px`, top: `${rect.bottom + 13}px` };
+		matDialogConfig.position = { left: `${rect.left}px`, top: `${rect.bottom + Math.abs(document.scrollingElement.getClientRects()[0].top) + 13}px` };
 		this.dialogRef.updatePosition(matDialogConfig.position);
 	}
 

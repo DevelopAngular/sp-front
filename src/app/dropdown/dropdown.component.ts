@@ -105,7 +105,7 @@ export class DropdownComponent implements OnInit {
 		// matDialogConfig.height = this.teachers ? '180px' : '215px';
 		matDialogConfig.position = {
 			left: `${rect.left + (rect.width / 2 - parseInt(matDialogConfig.width, 10) / 2) - (this.isMobile && this.sortData ? 100 : 0)}px`,
-			top: `${rect.bottom + 15}px`,
+			top: `${rect.bottom + Math.abs(document.scrollingElement.getClientRects()[0].top) + 15}px`,
 		};
 		this._matDialogRef.updateSize(matDialogConfig.width, matDialogConfig.height);
 		this._matDialogRef.updatePosition(matDialogConfig.position);
