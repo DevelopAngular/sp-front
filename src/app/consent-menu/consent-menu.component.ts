@@ -60,7 +60,7 @@ export class ConsentMenuComponent implements OnInit {
 		const rect = this.triggerElementRef.nativeElement.getBoundingClientRect();
 		matDialogConfig.position = {
 			left: `${DeviceDetection.isMobile() ? rect.left - 210 : rect.left + rect.width / 2 - 220}px`,
-			top: `${rect.bottom + 15}px`,
+			top: `${rect.bottom + Math.abs(document.scrollingElement.getClientRects()[0].top) + 15}px`,
 		};
 		matDialogConfig.width = '275px';
 		this._matDialogRef.updateSize(matDialogConfig.width, matDialogConfig.height);

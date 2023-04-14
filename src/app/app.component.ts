@@ -23,7 +23,7 @@ import { DarkThemeSwitch } from './dark-theme-switch';
 
 import { DeviceDetection } from './device-detection.helper';
 import { School } from './models/School';
-import { AdminService, RenewalStatus } from './services/admin.service';
+import { AdminService } from './services/admin.service';
 import { LoginService } from './services/login.service';
 import { HttpService } from './services/http-service';
 import { KioskModeService } from './services/kiosk-mode.service';
