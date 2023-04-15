@@ -1,4 +1,4 @@
-import { Component, ElementRef, Inject, OnDestroy, OnInit, ViewChild } from '@angular/core';
+import { AfterViewInit, Component, ElementRef, Inject, OnDestroy, OnInit, ViewChild } from '@angular/core';
 import { FormControl, FormGroup, Validators } from '@angular/forms';
 import { MAT_DIALOG_DATA, MatDialogRef } from '@angular/material/dialog';
 import { AdminService } from '../../services/admin.service';
@@ -15,26 +15,8 @@ declare const window;
 	templateUrl: './school-setting-dialog.component.html',
 	styleUrls: ['./school-setting-dialog.component.scss'],
 })
-export class SchoolSettingDialogComponent implements OnInit, OnDestroy {
-	@ViewChild('wilControlBlock') set wilControlBlock(ref: ElementRef<HTMLDivElement>) {
-		if (!ref) {
-			return;
-		}
-
-		if (this.data?.enableWil) {
-			this.schoolForm.patchValue({
-				wait_in_line: true
-			});
-			this.adminService.updateSchoolSettingsRequest(this.currentSchool, this.schoolForm.value);
-			const { nativeElement } = ref;
-			nativeElement.classList.add('focus-background');
-
-			setTimeout(() => {
-				nativeElement.classList.remove('focus-background');
-			}, 2000);
-		}
-	}
-
+export class SchoolSettingDialogComponent implements OnInit, AfterViewInit, OnDestroy {
+	@ViewChild('wilControlBlock') wilControlBlock: ElementRef<HTMLDivElement>;
 	public schoolForm: FormGroup;
 	public currentSchool: School;
 	private initialState: {
@@ -83,7 +65,7 @@ export class SchoolSettingDialogComponent implements OnInit, OnDestroy {
 				+res.pass_buffer_time !== +this.initialState.pass_buffer_time ||
 				res.show_active_passes_number !== this.initialState.show_active_passes_number ||
 				res.student_can_use_mobile !== this.initialState.student_can_use_mobile ||
-				(res.wait_in_line !== this.initialState.wait_in_line && !this.data?.enableWil);
+				res.wait_in_line !== this.initialState.wait_in_line;
 		});
 		this.changeSettings$
 			.pipe(
@@ -106,6 +88,30 @@ export class SchoolSettingDialogComponent implements OnInit, OnDestroy {
             type: 'success',
           });*/
 			});
+	}
+
+	public ngAfterViewInit() {
+		if (this.data?.enableWil) {
+			this.initialState = {
+				...this.schoolForm.value,
+				wait_in_line: true,
+			};
+			this.schoolForm.patchValue({
+				wait_in_line: true,
+			});
+			this.adminService.updateSchoolSettings(this.currentSchool.id, { wait_in_line: true }).subscribe({
+				next: (updatedSchool: School) => {
+					this.currentSchool = updatedSchool;
+				},
+			});
+			// this.adminService.updateSchoolSettingsRequest(this.currentSchool, { wait_in_line: true });
+			const { nativeElement } = this.wilControlBlock;
+			nativeElement.classList.add('focus-background');
+
+			setTimeout(() => {
+				nativeElement.classList.remove('focus-background');
+			}, 2000);
+		}
 	}
 
 	public ngOnDestroy(): void {

@@ -1,18 +1,7 @@
 import { Component, ElementRef, HostListener, OnDestroy, OnInit, ViewChild } from '@angular/core';
 import { MatDialog } from '@angular/material/dialog';
 
-import {
-	BehaviorSubject,
-	combineLatest,
-	forkJoin,
-	interval,
-	Observable,
-	of,
-	ReplaySubject,
-	Subject,
-	Subscription,
-	zip,
-} from 'rxjs';
+import { BehaviorSubject, combineLatest, forkJoin, interval, Observable, of, ReplaySubject, Subject, Subscription, zip } from 'rxjs';
 import { debounceTime, filter, map, switchMap, take, takeUntil, tap } from 'rxjs/operators';
 
 import { HttpService } from '../../services/http-service';
@@ -34,7 +23,7 @@ import { Onboard } from '../../models/Onboard';
 import { SupportService } from '../../services/support.service';
 import { UserService } from '../../services/user.service';
 import * as moment from 'moment/moment';
-import { FeatureFlagService } from '../../services/feature-flag.service';
+import { FeatureFlagService, FLAGS } from '../../services/feature-flag.service';
 
 @Component({
 	selector: 'app-pass-config',
@@ -205,11 +194,10 @@ export class PassConfigComponent implements OnInit, OnDestroy {
 			.subscribe(([intros, user]) => {
 				this.introsData = intros;
 
-				this.showWaitInLineNux.next(true);
-				// if (this.features.isFeatureEnabled(FLAGS.ShowWaitInLine)) {
-				// 	const showNux = moment(user.first_login).isBefore(this.waitInLineLaunchDate) && !intros?.wait_in_line?.universal?.seen_version;
-				// 	this.showWaitInLineNux.next(showNux);
-				// }
+				if (this.features.isFeatureEnabled(FLAGS.ShowWaitInLine)) {
+					const showNux = moment(user.first_login).isBefore(this.waitInLineLaunchDate) && !intros?.wait_in_line?.universal?.seen_version;
+					this.showWaitInLineNux.next(showNux);
+				}
 			});
 	}
 
@@ -464,7 +452,7 @@ export class PassConfigComponent implements OnInit, OnDestroy {
 			panelClass: 'overlay-dialog',
 			backdropClass: 'custom-bd',
 		});
-		// this.showWaitInLineNux.next(false);
-		// this.userService.updateIntrosWaitInLineRequest(this.introsData, 'universal', '1');
+		this.showWaitInLineNux.next(false);
+		this.userService.updateIntrosWaitInLineRequest(this.introsData, 'universal', '1');
 	}
 }

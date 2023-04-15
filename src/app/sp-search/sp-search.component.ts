@@ -1,29 +1,7 @@
-import {
-	Component,
-	ElementRef,
-	EventEmitter,
-	HostListener,
-	Input,
-	OnDestroy,
-	OnInit,
-	Output,
-	Renderer2,
-	ViewChild,
-} from '@angular/core';
+import { Component, ElementRef, EventEmitter, HostListener, Input, OnDestroy, OnInit, Output, Renderer2, ViewChild } from '@angular/core';
 import { MapsAPILoader } from '@agm/core';
 import { User } from '../models/User';
-import {
-	BehaviorSubject,
-	combineLatest,
-	EMPTY,
-	fromEvent,
-	interval,
-	Observable,
-	of,
-	Subject,
-	Subscription,
-	zip,
-} from 'rxjs';
+import { BehaviorSubject, combineLatest, EMPTY, fromEvent, interval, Observable, of, Subject, Subscription, zip } from 'rxjs';
 import { UserService } from '../services/user.service';
 import { DomSanitizer } from '@angular/platform-browser';
 import { HttpService } from '../services/http-service';
@@ -417,7 +395,8 @@ export class SPSearchComponent implements OnInit, OnDestroy {
 		this.lastSearchText = search;
 
 		switch (this.searchTarget) {
-			case 'users':``
+			case 'users':
+				``;
 				if (search !== '') {
 					this.pending$.next(true);
 					if (this.type === 'alternative') {
