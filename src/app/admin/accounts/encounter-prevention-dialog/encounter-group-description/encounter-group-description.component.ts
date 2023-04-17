@@ -17,5 +17,4 @@ export class EncounterGroupDescriptionComponent implements OnInit {
 	ngOnInit(): void {
 		this.group.prevented_encounters = this.group.prevented_encounters.reverse();
 	}
-
 }

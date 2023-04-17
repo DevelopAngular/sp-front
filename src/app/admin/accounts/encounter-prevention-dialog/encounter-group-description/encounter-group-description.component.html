@@ -11,10 +11,11 @@
 
 		<div class="encounters">
 			<div class="encounter" *ngFor="let encounter of group.prevented_encounters">
-				<app-report-description [date]="encounter.created | date" [encounter]="encounter" [group]='group'></app-report-description>
+				<app-report-description [date]="encounter.created | date" [encounter]="encounter" [group]="group"></app-report-description>
 			</div>
 			<div class="created">
-				<span>Created</span> {{ group.created | date }} at {{ group.created | date : 'hh:mm a' }} <span *ngIf="group.issuer">by {{ group.issuer }}</span>
+				<span>Created</span> {{ group.created | date }} at {{ group.created | date : 'hh:mm a' }}
+				<span *ngIf="group.issuer">by {{ group.issuer }}</span>
 			</div>
 		</div>
 	</div>
