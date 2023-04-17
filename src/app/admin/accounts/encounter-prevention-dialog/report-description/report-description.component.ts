@@ -1,6 +1,6 @@
 import { ChangeDetectionStrategy, ChangeDetectorRef, Component, ElementRef, Input, OnInit, ViewChild } from '@angular/core';
 import { resizeReportDescription } from '../../../../animations';
-import { SafeHtml } from '@angular/platform-browser';
+import { ExclusionGroup, PreventEncounters } from '../../../../models/ExclusionGroup';
 
 @Component({
 	selector: 'app-report-description',
@@ -11,7 +11,8 @@ import { SafeHtml } from '@angular/platform-browser';
 })
 export class ReportDescriptionComponent implements OnInit {
 	@Input() date: string;
-	@Input() description: string | SafeHtml;
+	@Input() encounter: PreventEncounters;
+	@Input() group: ExclusionGroup;
 
 	@ViewChild('wrapper') wrapper: ElementRef;
 
