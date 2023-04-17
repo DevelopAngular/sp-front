@@ -147,7 +147,7 @@ export class InlineRequestCardComponent implements OnInit, OnDestroy {
 			const cancelDialog = this.dialog.open(ConsentMenuComponent, {
 				panelClass: 'consent-dialog-container',
 				backdropClass: 'invis-backdrop',
-				data: { header: this.header, options: this.options, trigger: target },
+				data: { header: this.header, options: this.options, trigger: target, adjustForScroll: true },
 			});
 
 			cancelDialog
