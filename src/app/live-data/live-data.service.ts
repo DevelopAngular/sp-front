@@ -2,7 +2,8 @@ import { Injectable } from '@angular/core';
 
 import * as moment from 'moment';
 
-import { combineLatest, EMPTY, merge, Observable, of, Subject } from 'rxjs';
+// TODO: Replace deprecated empty() observable with EMPTY
+import { combineLatest, EMPTY, empty, merge, Observable, of, Subject } from 'rxjs';
 import { distinctUntilChanged, exhaustMap, filter, map, pluck, scan, startWith, switchMap } from 'rxjs/operators';
 import { Paged, PassLike } from '../models';
 import { BaseModel } from '../models/base';
@@ -410,17 +411,16 @@ export class LiveDataService {
 			config.rawDecoder !== undefined
 				? config.rawDecoder
 				: (json) => {
-						if (config.initialUrl.includes('&active=past')) {
-							this.hallPassesService.expiredPassesNextUrl$.next(json.next ? json.next.substring(json.next.search('offset')) : '');
-						}
-						return json.results.map((raw) => config.decoder(raw));
-				  };
+					if (config.initialUrl.includes('&active=past')) {
+						this.hallPassesService.expiredPassesNextUrl$.next(json.next ? json.next.substring(json.next.search('offset')) : '');
+					}
+					return json.results.map((raw) => config.decoder(raw));
+				};
 
-		// Listens to websocket and emits when disconnected or connected
-		const websocketConnection$ = this.polling.isConnected$.pipe(distinctUntilChanged());
-
-		const fullReload$: Observable<string> = websocketConnection$.pipe(
-			switchMap((connected) => (connected ? merge(of('invalidate 1'), this.globalReload$.pipe(map(() => 'invalidate 3'))) : EMPTY))
+		const fullReload$ = merge(
+			of('invalidate 1'),
+			// this.polling.listen('invalidate').pipe(map(() => 'invalidate 2')),
+			this.globalReload$.pipe(map(() => 'invalidate 3'))
 		);
 
 		/**
@@ -430,7 +430,7 @@ export class LiveDataService {
 		 * The State object's `filtered_passes` is returned.
 		 */
 		return fullReload$.pipe(
-			exhaustMap(() => {
+			exhaustMap((value) => {
 				return config.postType === 'POST'
 					? this.http.post<Paged<any>>(config.initialUrl, config.bodyParams, undefined, false)
 					: this.http.get<Paged<any>>(config.initialUrl);
@@ -630,7 +630,7 @@ export class LiveDataService {
 		}
 
 		return this.watch<HallPass, string>({
-			externalEvents: EMPTY,
+			externalEvents: empty(),
 			eventNamespace: 'hall_pass',
 			initialUrl: `v1/hall_passes?limit=20&active=future${queryFilter}`,
 			decoder: (data) => HallPass.fromJSON(data),
@@ -686,7 +686,7 @@ export class LiveDataService {
 		}
 
 		return this.watch<HallPass, string>({
-			externalEvents: EMPTY,
+			externalEvents: empty(),
 			eventNamespace: 'hall_pass',
 			initialUrl: `v1/hall_passes?limit=${limit}&active=past${queryFilter}`,
 			decoder: (data) => HallPass.fromJSON(data),
@@ -728,7 +728,7 @@ export class LiveDataService {
 		}
 
 		return this.watch<WaitingInLinePass, string>({
-			externalEvents: EMPTY,
+			externalEvents: empty(),
 			eventNamespace: WaitingInLineEvents.Root,
 			initialUrl: 'v2/waiting_in_line_pass/list_all',
 			postType: 'POST',
@@ -763,7 +763,7 @@ export class LiveDataService {
 			: new RemoveItem(['pass_request.deny'], Request.fromJSON);
 
 		return this.watch<Request, string>({
-			externalEvents: EMPTY,
+			externalEvents: empty(),
 			eventNamespace: 'pass_request',
 			initialUrl: `v1/inbox/${isStudent ? 'student' : 'teacher'}`,
 			rawDecoder: (json) => json.pass_requests.map((d) => Request.fromJSON(d)),
@@ -790,7 +790,7 @@ export class LiveDataService {
 			: new AddItem(['pass_invitation.deny'], Invitation.fromJSON, mergeFilters(filters));
 
 		return this.watch<Invitation, string>({
-			externalEvents: EMPTY,
+			externalEvents: empty(),
 			eventNamespace: 'pass_invitation',
 			initialUrl: `v1/inbox/${isStudent ? 'student' : 'teacher'}`,
 			rawDecoder: (json) => json.invitations.map((d) => Invitation.fromJSON(d)),
@@ -823,7 +823,7 @@ export class LiveDataService {
 		}
 
 		return this.watch<Request, string>({
-			externalEvents: EMPTY,
+			externalEvents: empty(),
 			eventNamespace: 'pass_request',
 			initialUrl: `v1/pass_requests?limit=20&active=true${queryFilter}`,
 			decoder: (data) => Request.fromJSON(data),
@@ -868,30 +868,36 @@ export class LiveDataService {
 	watchActivePassLike(student: User): Observable<PassLike> {
 		const passes$ = this.activePasses$.pipe(
 			map((passes) => (passes.length ? passes[0] : null)),
-			startWith(<HallPass>null)
+			startWith(null)
 		);
 		const requests$ = this.watchActiveRequests(student).pipe(
 			map((requests) => {
 				return requests.filter((req) => !req.request_time);
 			}),
 			map((requests) => (requests.length ? requests[0] : null)),
-			startWith(<Request>null)
+			startWith(null)
 		);
 		const waitingInLinePasses$ = this.watchWaitingInLinePasses({ type: 'student', value: student }).pipe(
 			map((wilPasses) => (wilPasses.length ? wilPasses[0] : null)),
-			startWith(<WaitingInLinePass>null)
+			startWith(null)
 		);
 
-		return combineLatest([passes$, requests$, waitingInLinePasses$]).pipe(
-			map(([pass, request, waitingInLine]) => {
-				if (pass) {
-					return pass;
-				} else if (request) {
-					return request;
-				}
-				return waitingInLine;
-			})
-		);
+		return combineLatest(passes$, requests$, waitingInLinePasses$, (pass, request, waitingInLine) => {
+			// console.log({
+			// 	pass,
+			// 	request,
+			// 	waitingInLine,
+			// });
+			if (pass) {
+				return pass;
+			}
+
+			if (request) {
+				return request;
+			}
+
+			return waitingInLine;
+		});
 	}
 
 	getPassLikeCollectionRequest(user) {
