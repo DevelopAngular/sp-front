@@ -411,11 +411,11 @@ export class LiveDataService {
 			config.rawDecoder !== undefined
 				? config.rawDecoder
 				: (json) => {
-					if (config.initialUrl.includes('&active=past')) {
-						this.hallPassesService.expiredPassesNextUrl$.next(json.next ? json.next.substring(json.next.search('offset')) : '');
-					}
-					return json.results.map((raw) => config.decoder(raw));
-				};
+						if (config.initialUrl.includes('&active=past')) {
+							this.hallPassesService.expiredPassesNextUrl$.next(json.next ? json.next.substring(json.next.search('offset')) : '');
+						}
+						return json.results.map((raw) => config.decoder(raw));
+				  };
 
 		const fullReload$ = merge(
 			of('invalidate 1'),
