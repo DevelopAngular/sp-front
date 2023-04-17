@@ -50,6 +50,7 @@ export class DropdownComponent implements OnInit {
 	mainHeader: string;
 	isSearchField: boolean;
 	isHiddenSearchField: boolean;
+	private adjustForScroll: boolean = false;
 
 	constructor(
 		@Inject(MAT_DIALOG_DATA) public data: any[],
@@ -80,6 +81,7 @@ export class DropdownComponent implements OnInit {
 		this.isHiddenSearchField = this.data['isHiddenSearchField'];
 
 		this.currentInitialObject = cloneDeep(this.schools || this.locations || this.teachers);
+		this.adjustForScroll = data['adjustForScroll'];
 	}
 
 	get isMobile() {
@@ -102,9 +104,13 @@ export class DropdownComponent implements OnInit {
 		const rect = this.triggerElementRef.getBoundingClientRect();
 		matDialogConfig.width = !!this.sortData ? '250px' : '300px';
 		// matDialogConfig.height = this.teachers ? '180px' : '215px';
+		let scrollAdjustment = 0;
+		if (this.adjustForScroll) {
+			scrollAdjustment = Math.abs(document.scrollingElement.getClientRects()[0].top);
+		}
 		matDialogConfig.position = {
 			left: `${rect.left + (rect.width / 2 - parseInt(matDialogConfig.width, 10) / 2) - (this.isMobile && this.sortData ? 100 : 0)}px`,
-			top: `${rect.bottom + Math.abs(document.scrollingElement.getClientRects()[0].top) + 15}px`,
+			top: `${rect.bottom + scrollAdjustment + 15}px`,
 		};
 		this._matDialogRef.updateSize(matDialogConfig.width, matDialogConfig.height);
 		this._matDialogRef.updatePosition(matDialogConfig.position);

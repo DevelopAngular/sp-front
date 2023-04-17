@@ -68,7 +68,7 @@ export class EncounterOptionsComponent implements OnInit, OnDestroy {
 		const matDialogConfig: MatDialogConfig = new MatDialogConfig();
 		const rect = this.triggerElementRef.getBoundingClientRect();
 
-		matDialogConfig.position = { left: `${rect.left + rect.width - 245}px`, top: `${rect.bottom}px` };
+		matDialogConfig.position = { left: `${rect.left + rect.width - 245}px`, top: `${rect.bottom + Math.abs(document.scrollingElement.getClientRects()[0].top)}px` };
 
 		this.dialogRef.updatePosition(matDialogConfig.position);
 	}

@@ -74,6 +74,7 @@ export class SettingsDescriptionPopupComponent implements OnInit, AfterViewInit 
 				profile: this.profile,
 				profileStatus: this.profileStatusActive,
 				withoutDelete: true,
+				adjustForScroll: true,
 			},
 		});
 

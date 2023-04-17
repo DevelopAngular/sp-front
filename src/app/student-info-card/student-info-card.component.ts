@@ -488,7 +488,7 @@ export class StudentInfoCardComponent implements OnInit, AfterViewInit, OnDestro
 		const st = this.dialog.open(SettingsDescriptionPopupComponent, {
 			panelClass: 'consent-dialog-container',
 			backdropClass: 'invis-backdrop',
-			data: { trigger: elem.currentTarget, settings },
+			data: { trigger: elem.currentTarget, settings, adjustForScroll: true },
 		});
 
 		st.afterClosed()
