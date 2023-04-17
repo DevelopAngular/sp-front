@@ -24,7 +24,6 @@ import { PassCardComponent } from '../pass-card/pass-card.component';
 import { ReportFormComponent } from '../report-form/report-form.component';
 import { RequestCardComponent } from '../request-card/request-card.component';
 import { filter, map, take, takeUntil, tap } from 'rxjs/operators';
-import { TimeService } from '../services/time.service';
 import { DarkThemeSwitch } from '../dark-theme-switch';
 import { KioskModeService } from '../services/kiosk-mode.service';
 import { DomSanitizer } from '@angular/platform-browser';
@@ -145,7 +144,6 @@ export class PassCollectionComponent implements OnInit, AfterViewInit, OnDestroy
 	constructor(
 		public dialog: MatDialog,
 		private dataService: DataService,
-		private timeService: TimeService,
 		public darkTheme: DarkThemeSwitch,
 		private kioskMode: KioskModeService,
 		private sanitizer: DomSanitizer,
@@ -368,9 +366,6 @@ export class PassCollectionComponent implements OnInit, AfterViewInit, OnDestroy
 	}
 
 	initializeDialog(pass: PassLike) {
-		const now = this.timeService.nowDate();
-		now.setSeconds(now.getSeconds() + 10);
-
 		let data: any;
 
 		if (pass instanceof HallPass) {
@@ -379,8 +374,8 @@ export class PassCollectionComponent implements OnInit, AfterViewInit, OnDestroy
 			}
 			data = {
 				pass: pass,
-				fromPast: pass['end_time'] < now,
-				forFuture: pass['start_time'] > now,
+				fromPast: this.fromPast,
+				forFuture: this.forFuture,
 				forMonitor: this.forMonitor,
 				forStaff: this.forStaff && !this.kioskMode.getCurrentRoom().value,
 				kioskMode: !!this.kioskMode.getCurrentRoom().value,
