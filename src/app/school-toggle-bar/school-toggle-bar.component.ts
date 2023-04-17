@@ -71,7 +71,7 @@ export class SchoolToggleBarComponent implements OnInit, OnDestroy, AfterViewIni
 				heading: 'SELECT SCHOOL',
 				trigger: target,
 				isSearchField: this.schools.length >= 5,
-				adjustForScroll: true
+				adjustForScroll: true,
 			},
 		});
 		optionDialog.afterClosed().subscribe((data) => {

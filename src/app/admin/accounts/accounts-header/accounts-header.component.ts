@@ -382,7 +382,7 @@ export class AccountsHeaderComponent implements OnInit, AfterViewInit, OnDestroy
 				profileStatus: true,
 				bulkEdit: true,
 				withoutDelete: true,
-				adjustForScroll: true
+				adjustForScroll: true,
 			},
 		});
 

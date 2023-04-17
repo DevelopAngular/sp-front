@@ -83,7 +83,7 @@ export class StatusPopupComponent implements OnInit {
 
 		let scrollAdjustment = 0;
 		if (this.adjustForScroll) {
-			scrollAdjustment =  Math.abs(document.scrollingElement.getClientRects()[0].top);
+			scrollAdjustment = Math.abs(document.scrollingElement.getClientRects()[0].top);
 		}
 		matDialogConfig.position = { left: `${rect.left + rect.width - 245}px`, top: `${rect.bottom + scrollAdjustment}px` };
 

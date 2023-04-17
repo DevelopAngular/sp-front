@@ -84,7 +84,7 @@ export class SpLanguageComponent implements OnInit, OnDestroy, AfterViewInit {
 				heading: 'SELECT LANGUAGE',
 				trigger: target,
 				isSearchField: false,
-				adjustForScroll: true
+				adjustForScroll: true,
 			},
 		});
 		optionDialog.afterClosed().subscribe((data) => {
