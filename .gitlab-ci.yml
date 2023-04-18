@@ -20,7 +20,6 @@ mr_build:
     - yarn install
     - yarn run lint:ci
     - scripts/cf_build.sh
-  needs: [mr_lint]
   rules:
     - if: $CI_PIPELINE_SOURCE == 'merge_request_event'
   artifacts:
@@ -40,7 +39,6 @@ mr_build:
 #  rules:
 #    - if: $CI_PIPELINE_SOURCE == 'merge_request_event'
 #  interruptible: true
-#  needs: [mr_lint]
 #  tags:
 #    - "docker-passthrough"
 
