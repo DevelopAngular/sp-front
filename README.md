@@ -1,4 +1,4 @@
-# hall-pass-web
+# smartpass-frontend
 
 This is the frontend for the SmartPass system. It is an Angular web app.
 It is used on Chromebooks primarily, but also as a PWA for Android devices.

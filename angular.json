@@ -3,7 +3,7 @@
   "version": 1,
   "newProjectRoot": "projects",
   "projects": {
-    "hallpass": {
+    "smartpass": {
       "root": "",
       "sourceRoot": "src",
       "projectType": "application",
@@ -122,30 +122,30 @@
         "serve": {
           "builder": "@angular-devkit/build-angular:dev-server",
           "options": {
-            "browserTarget": "hallpass:build"
+            "browserTarget": "smartpass:build"
           },
           "configurations": {
             "local": {
-              "browserTarget": "hallpass:build:local"
+              "browserTarget": "smartpass:build:local"
             },
             "local-prod": {
-              "browserTarget": "hallpass:build:local-prod"
+              "browserTarget": "smartpass:build:local-prod"
             },
             "proxy": {
-              "browserTarget": "hallpass:build:proxy"
+              "browserTarget": "smartpass:build:proxy"
             },
             "staging": {
-              "browserTarget": "hallpass:build:staging"
+              "browserTarget": "smartpass:build:staging"
             },
             "production": {
-              "browserTarget": "hallpass:build:production"
+              "browserTarget": "smartpass:build:production"
             }
           }
         },
         "extract-i18n": {
           "builder": "@angular-devkit/build-angular:extract-i18n",
           "options": {
-            "browserTarget": "hallpass:build"
+            "browserTarget": "smartpass:build"
           }
         },
         "test": {
@@ -172,11 +172,11 @@
         "cypress-run": {
           "builder": "@cypress/schematic:cypress",
           "options": {
-            "devServerTarget": "hallpass:serve"
+            "devServerTarget": "smartpass:serve"
           },
           "configurations": {
             "production": {
-              "devServerTarget": "hallpass:serve:production"
+              "devServerTarget": "smartpass:serve:production"
             }
           }
         },
@@ -190,7 +190,7 @@
         "e2e": {
           "builder": "@cypress/schematic:cypress",
           "options": {
-            "devServerTarget": "hallpass:serve",
+            "devServerTarget": "smartpass:serve",
             "watch": false,
             "headless": true,
             "record": false,
@@ -200,14 +200,14 @@
 
           "configurations": {
             "production": {
-              "devServerTarget": "hallpass:serve:production"
+              "devServerTarget": "smartpass:serve:production"
             }
           }
         }
       }
     }
   },
-  "defaultProject": "hallpass",
+  "defaultProject": "smartpass",
   "schematics": {
     "@schematics/angular:component": {
       "prefix": "sp",

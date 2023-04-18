@@ -5,14 +5,6 @@ yarn install --immutable
 
 export PATH="$PATH:$(pwd)/node_modules/.bin"
 
-deploy_url="${STATIC_URL-/static/}frontend/"
-echo "Frontend deploy url: $deploy_url"
-
-release_name=$(sentry-cli releases propose-version)
-sentry-cli releases new "$release_name"
-
-sentry-cli releases set-commits --auto "$release_name"
-
 
 echo 'Generating build-info.ts'
 scripts/make_build_info.sh
