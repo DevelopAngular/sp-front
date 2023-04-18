@@ -327,7 +327,7 @@ export class LocationsGroupContainerComponent implements OnInit, OnDestroy {
 		if (requestMode === 'teacher_in_room') {
 			teacher = this.getTeacherChoicesForTeacherInRoom()[0];
 		} else if (requestMode === 'specific_teachers') {
-			teacher = this.FORM_STATE.data.direction.to.request_teachers[0];
+			teacher = this.FORM_STATE.data.direction.to.request_teachers[0] as User;
 		} else {
 			teacher = this.user;
 		}

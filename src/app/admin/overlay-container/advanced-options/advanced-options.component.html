@@ -28,6 +28,35 @@
 				</div>
 			</div>
 
+			<div class="block" *ngIf="allowChangingShowAsOriginRoom">
+				<div class="line">
+					<div class="toggle">
+						<app-toggle-input
+							[form]="restrictionForm"
+							[controlName]="'showAsOriginRoom'"
+							[delimiter]="false"
+							[controlSize]="'small'"
+							[hasIcon]="true"
+							[icon]="'./assets/Locked (Navy).svg'"
+							[color]="'#1F195E'"
+							(pushOutValue)="showAsOriginRoomEvent($event)"></app-toggle-input>
+					</div>
+					<div class="toggle-content">
+						<div class="title-line">
+							<div class="label" [style.color]="restrictionForm.get('showAsOriginRoom').value ? '#1F194E' : '#7F879D'">Show as Origin Room</div>
+							<img customToolTip [contentTemplate]="showAsOriginRoomText" class="support-icon" [src]="'./assets/Support (Gray).svg' | resolveAsset" />
+						</div>
+
+						<ng-template #showAsOriginRoomText>
+							<div class="ds-tooltip" style="width: 200px">
+								<!-- TODO NEEDS URL TO LINK TO-->
+								{{ tooltipText.show_as_origin_room }} <a href="" target="_blank" class="link">Learn more</a>
+							</div>
+						</ng-template>
+					</div>
+				</div>
+			</div>
+
 			<div class="block">
 				<div class="line">
 					<div class="toggle">

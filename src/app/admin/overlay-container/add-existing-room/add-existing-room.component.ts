@@ -9,35 +9,22 @@ import { bumpIn } from '../../../animations';
 	animations: [bumpIn],
 })
 export class AddExistingRoomComponent implements OnInit {
-	@Input() roomsInFolder;
-	@Input() set data(items: Pinnable[]) {
-		this.pinnables = items;
-	}
+	@Input() roomsInFolder: Pinnable[];
+	@Input() pinnables: Pinnable[];
 	@Input() roomName: string;
 
-	@Output() back = new EventEmitter();
-	@Output() save = new EventEmitter();
-
-	buttonDown: boolean;
-	pinnables: Pinnable[];
+	@Output() back: EventEmitter<void> = new EventEmitter();
+	@Output() save: EventEmitter<Pinnable[]> = new EventEmitter();
 
 	constructor() {}
 
-	get buttonState() {
-		return this.buttonDown ? 'down' : 'up';
-	}
+	public ngOnInit(): void {}
 
-	ngOnInit() {}
-
-	onPress(press: boolean) {
-		this.buttonDown = press;
-	}
-
-	goBack() {
+	public goBack(): void {
 		this.back.emit();
 	}
 
-	addRooms() {
+	public addRooms(): void {
 		this.save.emit(this.roomsInFolder);
 	}
 }

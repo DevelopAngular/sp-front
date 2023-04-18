@@ -588,7 +588,7 @@ export class SPSearchComponent implements OnInit, OnDestroy {
 					this.pending$.next(true);
 					const url = `&search=${search}`;
 					this.locationService.searchLocations(100, url).subscribe((locs) => {
-						this.foundLocations = locs.results;
+						this.foundLocations = locs.results as any;
 						this.showDummy = !locs.results.length;
 					});
 				} else {

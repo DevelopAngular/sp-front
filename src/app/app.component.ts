@@ -452,9 +452,11 @@ export class AppComponent implements OnInit, AfterViewInit, OnDestroy {
 			)
 			.subscribe(([schools, currentSchool]) => {
 				this.schools = schools;
-				const isCurrentSchoolInList = schools.find((s) => s.id === currentSchool.id);
-				if (currentSchool && !isCurrentSchoolInList) {
-					this.http.setSchool(schools[0]);
+				if (currentSchool) {
+					const isCurrentSchoolInList = schools.find((s) => s.id === currentSchool.id);
+					if (!isCurrentSchoolInList) {
+						this.http.setSchool(schools[0]);
+					}
 				}
 			});
 
