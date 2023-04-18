@@ -17,6 +17,8 @@ stages:
 mr_build:
   stage: build
   script:
+    - chmod a+x $NVM_DIR/nvm.sh
+    - . $NVM_DIR/nvm.sh
     - nvm use lts/hydrogen
     - wrangler
     - yarn install
