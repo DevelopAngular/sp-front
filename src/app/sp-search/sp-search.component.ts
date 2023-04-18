@@ -1,7 +1,29 @@
-import { Component, ElementRef, EventEmitter, HostListener, Input, OnDestroy, OnInit, Output, Renderer2, ViewChild } from '@angular/core';
+import {
+	Component,
+	ElementRef,
+	EventEmitter,
+	HostListener,
+	Input,
+	OnDestroy,
+	OnInit,
+	Output,
+	Renderer2,
+	ViewChild,
+} from '@angular/core';
 import { MapsAPILoader } from '@agm/core';
 import { User } from '../models/User';
-import { BehaviorSubject, combineLatest, EMPTY, fromEvent, interval, Observable, of, Subject, Subscription, zip } from 'rxjs';
+import {
+	BehaviorSubject,
+	combineLatest,
+	EMPTY,
+	fromEvent,
+	interval,
+	Observable,
+	of,
+	Subject,
+	Subscription,
+	zip,
+} from 'rxjs';
 import { ProfileStatus, UserService } from '../services/user.service';
 import { DomSanitizer } from '@angular/platform-browser';
 import { HttpService } from '../services/http-service';
@@ -403,7 +425,7 @@ export class SPSearchComponent implements OnInit, OnDestroy {
 						if (this.kioskMode.isKisokMode()) {
 							if (this.kioskMode.getKioskModeSettings().findByName && this.kioskMode.getKioskModeSettings().findById) {
 								of([
-									this.userService.searchProfile(this.role, 50, search, this.hideStatuses.concat('disabled')),
+									this.userService.searchProfile(this.role, 50, search, this.hideStatuses),
 									this.userService.possibleProfileByCustomId(search),
 								])
 									.pipe(switchMap((_) => combineLatest(_)))
@@ -425,7 +447,7 @@ export class SPSearchComponent implements OnInit, OnDestroy {
 									});
 							} else if (this.kioskMode.getKioskModeSettings().findByName && !this.kioskMode.getKioskModeSettings().findById) {
 								this.students = this.userService
-									.searchProfile(this.role, 50, search, this.hideStatuses.concat('disabled'))
+									.searchProfile(this.role, 50, search, this.hideStatuses)
 									.toPromise()
 									.then((paged: any) => {
 										this.pending$.next(false);
