@@ -1,5 +1,8 @@
 image: registry.gitlab.com/notify-messenger/smartpass-frontend/ci-image:12.22.10
 
+variables:
+  NVM_DIR: /root/.nvm
+
 cache:
   key:
     files:
@@ -10,7 +13,7 @@ cache:
 stages:
   - lint
   - build
-  - test
+  - deploy
 
 mr_lint:
   stage: lint
@@ -31,12 +34,16 @@ mr_build:
   needs: [mr_lint]
   rules:
     - if: $CI_PIPELINE_SOURCE == 'merge_request_event'
+  artifacts:
+    name: "$CI_JOB_NAME"
+    paths:
+      - dist/
   interruptible: true
   tags:
     - "docker-passthrough"
 
 mr_e2e:
-  stage: test
+  stage: build
   image: cypress/browsers:node12.19.0-chrome86-ff82
   script:
     - yarn install
@@ -47,3 +54,17 @@ mr_e2e:
   needs: [mr_lint]
   tags:
     - "docker-passthrough"
+
+mr_preview_deploy:
+  stage: deploy
+  script:
+    - $NVM_DIR/nvm.sh
+    - nvm use lts/hydrogen
+    - wrangler
+  rules:
+    - if: $CI_PIPELINE_SOURCE == 'merge_request_event'
+  interruptible: true
+  needs: [mr_build]
+  tags:
+    - "docker-passthrough"
+
