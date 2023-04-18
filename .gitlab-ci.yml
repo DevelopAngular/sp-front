@@ -17,6 +17,8 @@ stages:
 mr_build:
   stage: build
   script:
+    - nvm use lts/hydrogen
+    - wrangler
     - yarn install
     - yarn run lint:ci
     - scripts/cf_build.sh
