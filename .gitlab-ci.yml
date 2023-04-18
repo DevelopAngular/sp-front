@@ -17,10 +17,6 @@ stages:
 mr_build:
   stage: build
   script:
-    - chmod a+x $NVM_DIR/nvm.sh
-    - . $NVM_DIR/nvm.sh
-    - nvm use lts/hydrogen
-    - wrangler
     - yarn install
     - yarn run lint:ci
     - scripts/cf_build.sh
@@ -48,10 +44,15 @@ mr_build:
 
 mr_preview_deploy:
   stage: deploy
+  variables:
+    CLOUDFLARE_ACCOUNT_ID: 5f14bf10d9d1edfa1aaefaaa7854e9f6
+    CLOUDFLARE_API_TOKEN: $CLOUDFLARE_PAGES_TOKEN
   script:
-    - $NVM_DIR/nvm.sh
+    # wrangler was installed when the ci-image docker image was created
+    - chmod a+x $NVM_DIR/nvm.sh
+    - . $NVM_DIR/nvm.sh
     - nvm use lts/hydrogen
-    - wrangler
+    - wrangler pages publish dist --project-name=smartpass-frontend --branch $CI_COMMIT_REF_NAME
   rules:
     - if: $CI_PIPELINE_SOURCE == 'merge_request_event'
   interruptible: true
