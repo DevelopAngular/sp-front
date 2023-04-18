@@ -1,8 +1,11 @@
 image: registry.gitlab.com/notify-messenger/smartpass-frontend/ci-image:12.22.10
 
 cache:
-  key: "global-yarn-cache"
-  paths: [ .yarn ]
+  key:
+    files:
+      - yarn.lock
+  paths:
+    - node_modules/
 
 stages:
   - lint
