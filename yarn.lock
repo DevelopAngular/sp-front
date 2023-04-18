@@ -7799,100 +7799,6 @@ __metadata:
   languageName: node
   linkType: hard
 
-"hallpass@workspace:.":
-  version: 0.0.0-use.local
-  resolution: "hallpass@workspace:."
-  dependencies:
-    "@agm/core": ^3.0.0-beta.0
-    "@angular-builders/custom-webpack": ^10.0.1
-    "@angular-devkit/build-angular": ~0.1002.0
-    "@angular-devkit/core": ^10.2.0
-    "@angular/animations": ^10.2.2
-    "@angular/cdk": ^10.2.7
-    "@angular/cli": ^10.2.0
-    "@angular/common": ^10.2.2
-    "@angular/compiler": ^10.2.2
-    "@angular/compiler-cli": ^10.2.2
-    "@angular/core": ^10.2.2
-    "@angular/fire": ^5.4.2
-    "@angular/forms": ^10.2.2
-    "@angular/language-service": ^10.2.2
-    "@angular/material": ^10.2.7
-    "@angular/platform-browser": ^10.2.2
-    "@angular/platform-browser-dynamic": ^10.2.2
-    "@angular/router": ^10.2.2
-    "@angular/service-worker": ^10.2.2
-    "@auth0/angular-jwt": ^2.1.0
-    "@cypress/schematic": ^1.6.0
-    "@ngrx/effects": ^8.6.0
-    "@ngrx/entity": ^8.6.0
-    "@ngrx/store": ^8.6.0
-    "@ngrx/store-devtools": ^8.6.0
-    "@ngx-pwa/local-storage": ^10.1.0
-    "@sentry/browser": ^4.6.6
-    "@types/crypto-js": ^4.1.1
-    "@types/googlemaps": 3.39.12
-    "@types/jasmine": ^2.8.16
-    "@types/jasminewd2": ~2.0.2
-    "@types/jspdf": ^1.3.0
-    "@types/lodash": ^4.14.123
-    "@types/node": ^12.11.1
-    "@types/oboe": ^2.0.28
-    angular-oauth2-oidc: ^8.0.4
-    angular2-websocket: ^0.9.8
-    chart.js: ^2.9.4
-    codelyzer: ^5.1.2
-    concat: ^1.0.3
-    concurrently: ^7.2.1
-    core-js: ^2.6.5
-    crypto-js: ^4.1.1
-    cypress: 12
-    cypress-wait-until: ^1.7.2
-    firebase: ^6.6.2
-    font-awesome: ^4.7.0
-    fuse.js: ^3.4.4
-    hammerjs: ^2.0.8
-    http-server: ^0.11.2
-    jasmine-core: ~3.5.0
-    jasmine-spec-reporter: ~5.0.0
-    jsbarcode: ^3.11.5
-    jspdf: ^1.5.3
-    jszip: ^3.4.0
-    karma: ~5.0.0
-    karma-chrome-launcher: ~3.1.0
-    karma-cli: ~1.0.1
-    karma-coverage-istanbul-reporter: ~3.0.2
-    karma-jasmine: ~4.0.0
-    karma-jasmine-html-reporter: ^1.5.0
-    localtunnel: ^1.9.2
-    lodash: ^4.17.20
-    moment: ^2.29.1
-    moment-timezone: ^0.5.38
-    ng-keyboard-shortcuts: ^10.1.16
-    ng2-charts: ^2.4.2
-    ng2-dragula: ^2.1.1
-    ngx-connection-service: ^7.0.3
-    ngx-cookie-service: 12.0.3
-    ngx-swiper-wrapper: ^8.0.0
-    node-sass: ^4.12.0
-    oboe: ^2.1.5
-    prettier: ^2.8.3
-    protractor: ~7.0.0
-    qrcode: ^1.5.0
-    refiner-js: ^1.0.2
-    rxjs: ^6.6.3
-    sass-loader: ^7.0.3
-    ts-node: ~6.0.5
-    tslib: ^2.0.0
-    typescript: ~4.0.5
-    wait-on: ^6.0.1
-    web-animations-js: ^2.3.2
-    webpack-bundle-analyzer: ^3.3.2
-    xlsx: ^0.14.5
-    zone.js: ~0.10.2
-  languageName: unknown
-  linkType: soft
-
 "hammerjs@npm:^2.0.8":
   version: 2.0.8
   resolution: "hammerjs@npm:2.0.8"
@@ -14195,6 +14101,100 @@ __metadata:
   checksum: b5167a7142c1da704c0e3af85c402002b597081dd9575031a90b4f229ca5678e9a36e8a374f1814c8156a725d17008ae3bde63b92f9cfd132526379e580bec8b
   languageName: node
   linkType: hard
+
+"smartpass@workspace:.":
+  version: 0.0.0-use.local
+  resolution: "smartpass@workspace:."
+  dependencies:
+    "@agm/core": ^3.0.0-beta.0
+    "@angular-builders/custom-webpack": ^10.0.1
+    "@angular-devkit/build-angular": ~0.1002.0
+    "@angular-devkit/core": ^10.2.0
+    "@angular/animations": ^10.2.2
+    "@angular/cdk": ^10.2.7
+    "@angular/cli": ^10.2.0
+    "@angular/common": ^10.2.2
+    "@angular/compiler": ^10.2.2
+    "@angular/compiler-cli": ^10.2.2
+    "@angular/core": ^10.2.2
+    "@angular/fire": ^5.4.2
+    "@angular/forms": ^10.2.2
+    "@angular/language-service": ^10.2.2
+    "@angular/material": ^10.2.7
+    "@angular/platform-browser": ^10.2.2
+    "@angular/platform-browser-dynamic": ^10.2.2
+    "@angular/router": ^10.2.2
+    "@angular/service-worker": ^10.2.2
+    "@auth0/angular-jwt": ^2.1.0
+    "@cypress/schematic": ^1.6.0
+    "@ngrx/effects": ^8.6.0
+    "@ngrx/entity": ^8.6.0
+    "@ngrx/store": ^8.6.0
+    "@ngrx/store-devtools": ^8.6.0
+    "@ngx-pwa/local-storage": ^10.1.0
+    "@sentry/browser": ^4.6.6
+    "@types/crypto-js": ^4.1.1
+    "@types/googlemaps": 3.39.12
+    "@types/jasmine": ^2.8.16
+    "@types/jasminewd2": ~2.0.2
+    "@types/jspdf": ^1.3.0
+    "@types/lodash": ^4.14.123
+    "@types/node": ^12.11.1
+    "@types/oboe": ^2.0.28
+    angular-oauth2-oidc: ^8.0.4
+    angular2-websocket: ^0.9.8
+    chart.js: ^2.9.4
+    codelyzer: ^5.1.2
+    concat: ^1.0.3
+    concurrently: ^7.2.1
+    core-js: ^2.6.5
+    crypto-js: ^4.1.1
+    cypress: 12
+    cypress-wait-until: ^1.7.2
+    firebase: ^6.6.2
+    font-awesome: ^4.7.0
+    fuse.js: ^3.4.4
+    hammerjs: ^2.0.8
+    http-server: ^0.11.2
+    jasmine-core: ~3.5.0
+    jasmine-spec-reporter: ~5.0.0
+    jsbarcode: ^3.11.5
+    jspdf: ^1.5.3
+    jszip: ^3.4.0
+    karma: ~5.0.0
+    karma-chrome-launcher: ~3.1.0
+    karma-cli: ~1.0.1
+    karma-coverage-istanbul-reporter: ~3.0.2
+    karma-jasmine: ~4.0.0
+    karma-jasmine-html-reporter: ^1.5.0
+    localtunnel: ^1.9.2
+    lodash: ^4.17.20
+    moment: ^2.29.1
+    moment-timezone: ^0.5.38
+    ng-keyboard-shortcuts: ^10.1.16
+    ng2-charts: ^2.4.2
+    ng2-dragula: ^2.1.1
+    ngx-connection-service: ^7.0.3
+    ngx-cookie-service: 12.0.3
+    ngx-swiper-wrapper: ^8.0.0
+    node-sass: ^4.12.0
+    oboe: ^2.1.5
+    prettier: ^2.8.3
+    protractor: ~7.0.0
+    qrcode: ^1.5.0
+    refiner-js: ^1.0.2
+    rxjs: ^6.6.3
+    sass-loader: ^7.0.3
+    ts-node: ~6.0.5
+    tslib: ^2.0.0
+    typescript: ~4.0.5
+    wait-on: ^6.0.1
+    web-animations-js: ^2.3.2
+    webpack-bundle-analyzer: ^3.3.2
+    xlsx: ^0.14.5
+    zone.js: ~0.10.2
+  languageName: unknown
+  linkType: soft
 
 "snapdragon-node@npm:^2.0.1":
   version: 2.1.1
