@@ -8,7 +8,7 @@ stages:
 mr_lint:
   stage: lint
   script:
-    - yarn install --immutable
+    - yarn install
     - yarn lint:ci
   rules:
     - if: $CI_PIPELINE_SOURCE == 'merge_request_event'
@@ -22,7 +22,7 @@ mr_lint:
 mr_build:
   stage: build
   script:
-    - yarn install --immutable
+    - yarn install
     - scripts/cf_build.sh
   needs: [mr_lint]
   rules:
@@ -38,7 +38,7 @@ mr_e2e:
   stage: test
   image: cypress/browsers:node12.19.0-chrome86-ff82
   script:
-    - yarn install --immutable
+    - yarn install
     - yarn run e2e:ci
   rules:
     - if: $CI_PIPELINE_SOURCE == 'merge_request_event'
