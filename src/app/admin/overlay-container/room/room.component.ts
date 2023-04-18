@@ -9,7 +9,6 @@ import { OverlayDataService, Pages, RoomData } from '../overlay-data.service';
 import { ValidButtons } from '../advanced-options/advanced-options.component';
 import { VisibilityOverStudents, DEFAULT_VISIBILITY_STUDENTS } from '../visibility-room/visibility-room.type';
 
-
 import { HallPassesService } from '../../../services/hall-passes.service';
 import { LocationsService } from '../../../services/locations.service';
 import { OverlayContainerComponent } from '../overlay-container.component';

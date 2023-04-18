@@ -171,13 +171,13 @@ export class AdvancedOptionsComponent implements OnInit, OnDestroy {
 		};
 	}
 
-	public changeState(action: string, data: User[] | string ): void {
+	public changeState(action: string, data: User[] | string): void {
 		switch (action) {
 			case 'now_teacher':
 				this.optionState.now.data.selectedTeachers = data as User[];
 				break;
 			case 'future_teacher':
-				this.optionState.future.data.selectedTeachers = data as  User[];
+				this.optionState.future.data.selectedTeachers = data as User[];
 				break;
 			case 'now_any':
 				this.optionState.now.data.any_teach_assign = data as string;

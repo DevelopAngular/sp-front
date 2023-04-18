@@ -1,6 +1,6 @@
 import { Component, ElementRef, EventEmitter, Inject, Input, OnDestroy, OnInit, Output, ViewChild } from '@angular/core';
 import { FormGroup, Validators } from '@angular/forms';
-import { DomSanitizer} from '@angular/platform-browser';
+import { DomSanitizer } from '@angular/platform-browser';
 import { MAT_DIALOG_DATA, MatDialog, MatDialogRef } from '@angular/material/dialog';
 import { MatCheckboxChange } from '@angular/material/checkbox';
 
@@ -12,13 +12,7 @@ import { User } from '../../../models/User';
 import { LocationsService } from '../../../services/locations.service';
 import { OverlayContainerComponent } from '../overlay-container.component';
 import { HallPassesService } from '../../../services/hall-passes.service';
-import {
-	FolderData,
-	OverlayDataService,
-	Pages,
-	PageStateData,
-	TooltipText,
-} from '../overlay-data.service';
+import { FolderData, OverlayDataService, Pages, PageStateData, TooltipText } from '../overlay-data.service';
 import { CreateFormService } from '../../../create-hallpass-forms/create-form.service';
 import { OptionState, ValidButtons } from '../advanced-options/advanced-options.component';
 
@@ -89,9 +83,12 @@ export class FolderComponent implements OnInit, OnDestroy {
 
 	private roomsToDelete: any[] = [];
 
-	private initialFolderData: Pick<FolderData, 'folderName' | 'roomsInFolder'	| 'ignore_students_pass_limit' |
-		'show_as_origin_room'>
-	 = { folderName: null, roomsInFolder: [], ignore_students_pass_limit: false, show_as_origin_room: null };
+	private initialFolderData: Pick<FolderData, 'folderName' | 'roomsInFolder' | 'ignore_students_pass_limit' | 'show_as_origin_room'> = {
+		folderName: null,
+		roomsInFolder: [],
+		ignore_students_pass_limit: false,
+		show_as_origin_room: null,
+	};
 
 	private folderButtonState: ValidButtons;
 

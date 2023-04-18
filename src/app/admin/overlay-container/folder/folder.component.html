@@ -76,10 +76,9 @@
 					<div class="rooms-list" *ngIf="roomsInFolder.length > 0">
 						<mat-list>
 							<div *ngFor="let room of sortSelectedRooms">
-								<div
-									data-cy="room-in-folder"
-									class="room">
-									<mat-checkbox style="margin-left: 12px" [checked]="selectedRooms.includes(room)" (change)="selectedRoomsEvent($event, room)"> </mat-checkbox>
+								<div data-cy="room-in-folder" class="room">
+									<mat-checkbox style="margin-left: 12px" [checked]="selectedRooms.includes(room)" (change)="selectedRoomsEvent($event, room)">
+									</mat-checkbox>
 									<div class="room-edit" (click)="setToEditRoom(room)">
 										<mat-list-item>
 											{{ room.title }}

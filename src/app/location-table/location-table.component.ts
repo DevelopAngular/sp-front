@@ -219,8 +219,7 @@ export class LocationTableComponent implements OnInit, OnDestroy {
 						if (this.currentPage === 'from') {
 							const choices: Location[] = this.filterChoicesForShowAsOrigin(filteredChoices);
 							this.choices = this.parseLocations(choices);
-						}
-						else {
+						} else {
 							this.choices = this.parseLocations(filteredChoices);
 						}
 					}
@@ -356,8 +355,7 @@ export class LocationTableComponent implements OnInit, OnDestroy {
 		const choiceIndex: number = this.choices.findIndex((c) => c.id.toString() === choice.id.toString());
 		if (choiceIndex !== -1) {
 			this.choices[choiceIndex] = choice;
-		}
-		else {
+		} else {
 			this.choices.push(choice);
 		}
 
@@ -367,8 +365,7 @@ export class LocationTableComponent implements OnInit, OnDestroy {
 		const starredChoiceIndex: number = this.choices.findIndex((c) => c.id.toString() === choice.id.toString());
 		if (starredChoiceIndex !== -1) {
 			this.starredChoices[starredChoiceIndex] = choice;
-		}
-		else {
+		} else {
 			this.starredChoices.push(choice);
 		}
 	}

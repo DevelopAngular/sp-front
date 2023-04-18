@@ -3,17 +3,7 @@ import { AbstractControl, FormControl, FormGroup, ValidationErrors, Validators }
 import { MAT_DIALOG_DATA, MatDialog, MatDialogRef } from '@angular/material/dialog';
 import { DomSanitizer } from '@angular/platform-browser';
 
-import {
-	BehaviorSubject,
-	combineLatest,
-	forkJoin,
-	fromEvent,
-	merge,
-	Observable,
-	of,
-	Subject,
-	zip,
-} from 'rxjs';
+import { BehaviorSubject, combineLatest, forkJoin, fromEvent, merge, Observable, of, Subject, zip } from 'rxjs';
 import { catchError, concatMap, debounceTime, distinctUntilChanged, filter, map, switchMap, take, takeUntil, tap } from 'rxjs/operators';
 
 import { bumpIn, NextStep } from '../../animations';
@@ -363,7 +353,7 @@ export class OverlayContainerComponent implements OnInit, OnDestroy {
 		return null;
 	}
 
-	get isValidRoomForm(): boolean{
+	get isValidRoomForm(): boolean {
 		return this.form.get('roomName').valid && this.form.get('roomNumber').valid && this.form.get('timeLimit').valid;
 	}
 
@@ -1088,7 +1078,7 @@ export class OverlayContainerComponent implements OnInit, OnDestroy {
 		}
 
 		if (this.currentPage === Pages.BulkEditRooms) {
-			const patchRequests$ = (this.bulkEditData.rooms).map((room) => {
+			const patchRequests$ = this.bulkEditData.rooms.map((room) => {
 				// ensure we have visibility data
 				const { mode, over, grade } = this.bulkEditData.roomData?.visibility ?? DEFAULT_VISIBILITY_STUDENTS;
 				const visibilityBulkData = {
@@ -1223,7 +1213,7 @@ export class OverlayContainerComponent implements OnInit, OnDestroy {
 		this.overlayService.back({ ...this.folderData, oldFolderData: this.oldFolderData });
 	}
 
-	private editPinnables(roomData: any, pinnables : Pinnable[]): Pinnable[] {
+	private editPinnables(roomData: any, pinnables: Pinnable[]): Pinnable[] {
 		return pinnables.map((pin: Pinnable) => {
 			pin.ignore_students_pass_limit = roomData.ignore_students_pass_limit;
 			pin.show_as_origin_room = roomData.show_as_origin_room;
@@ -1231,8 +1221,8 @@ export class OverlayContainerComponent implements OnInit, OnDestroy {
 		});
 	}
 
-	private editRooms(roomData: RoomData, rooms:any[]): Location[] {
-		console.log('editrooms',rooms)
+	private editRooms(roomData: RoomData, rooms: any[]): Location[] {
+		console.log('editrooms', rooms);
 		return rooms.map((room) => {
 			room.restricted = !!roomData.restricted;
 			room.scheduling_restricted = !!roomData.scheduling_restricted;
@@ -1267,8 +1257,7 @@ export class OverlayContainerComponent implements OnInit, OnDestroy {
 	}
 
 	private normalizeRoomData(room: RoomData): any {
-		const result =
-		 {
+		const result = {
 			id: room.id,
 			title: room.roomName,
 			room: room.roomNumber,
@@ -1290,7 +1279,6 @@ export class OverlayContainerComponent implements OnInit, OnDestroy {
 		};
 		return result;
 	}
-
 
 	private generateRandomString(): string {
 		let random = '';

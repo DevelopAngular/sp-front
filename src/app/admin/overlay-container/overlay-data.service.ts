@@ -6,12 +6,12 @@ import { cloneDeep } from 'lodash';
 import { User } from '../../models/User';
 import { Pinnable } from '../../models/Pinnable';
 import { OptionState } from './advanced-options/advanced-options.component';
-import {  VisibilityOverStudents } from './visibility-room/visibility-room.type';
+import { VisibilityOverStudents } from './visibility-room/visibility-room.type';
 
 export interface PageState {
 	currentPage: number;
 	previousPage: number;
-	data: PageStateData
+	data: PageStateData;
 }
 
 export interface PageStateData {
@@ -25,7 +25,7 @@ export interface PageStateData {
 	oldFolderData?: FolderData;
 	roomsToDelete?: any[];
 	show_as_origin_room?: boolean;
-};
+}
 export enum Pages {
 	NewRoom = 1,
 	EditRoom = 2,
@@ -89,14 +89,14 @@ export interface FolderData {
 }
 
 export interface TooltipText {
-	teachers: string,
-	travel: string,
-	timeLimit: string,
-	restriction: string,
-	scheduling_restricted: string,
-	ignore_students_pass_limit: string,
-	needs_check_in: string,
-	show_as_origin_room: string,
+	teachers: string;
+	travel: string;
+	timeLimit: string;
+	restriction: string;
+	scheduling_restricted: string;
+	ignore_students_pass_limit: string;
+	needs_check_in: string;
+	show_as_origin_room: string;
 }
 @Injectable({
 	providedIn: 'root',

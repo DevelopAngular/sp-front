@@ -76,11 +76,11 @@ export class NewRoomInFolderComponent implements OnInit {
 
 	public ngOnInit(): void {}
 
-	public goBack(): void  {
+	public goBack(): void {
 		this.back.emit();
 	}
 
-	public addInFolder(): void  {
+	public addInFolder(): void {
 		if (this.roomValidButtons.getValue().incomplete) {
 			this.errorsEmit.emit();
 			return;
@@ -88,7 +88,7 @@ export class NewRoomInFolderComponent implements OnInit {
 		this.add.emit(this.roomInFolderData);
 	}
 
-	public roomResult({ data, buttonState }): void  {
+	public roomResult({ data, buttonState }): void {
 		this.roomInFolderData = data;
 		this.roomValidButtons.next(buttonState);
 		this.roomDataResult.emit({ data, buttonState });
