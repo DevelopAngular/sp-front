@@ -6,24 +6,26 @@ import { cloneDeep } from 'lodash';
 import { User } from '../../models/User';
 import { Pinnable } from '../../models/Pinnable';
 import { OptionState } from './advanced-options/advanced-options.component';
-import { VisibilityOverStudents } from './visibility-room/visibility-room.type';
+import {  VisibilityOverStudents } from './visibility-room/visibility-room.type';
 
 export interface PageState {
 	currentPage: number;
 	previousPage: number;
-	data: {
-		pinnable: Pinnable;
-		advancedOptions: OptionState;
-		visibility?: VisibilityOverStudents;
-		roomsInFolder;
-		selectedRoomsInFolder: any[];
-		roomsInFolderLoaded: boolean;
-		folderName: string;
-		oldFolderData: FolderData;
-		roomsToDelete?: any[];
-	};
+	data: PageStateData
 }
 
+export interface PageStateData {
+	pinnable: Pinnable;
+	advancedOptions?: OptionState;
+	visibility?: VisibilityOverStudents;
+	roomsInFolder?: any[];
+	selectedRoomsInFolder?: any[];
+	roomsInFolderLoaded?: boolean;
+	folderName?: string;
+	oldFolderData?: FolderData;
+	roomsToDelete?: any[];
+	show_as_origin_room?: boolean;
+};
 export enum Pages {
 	NewRoom = 1,
 	EditRoom = 2,
@@ -38,19 +40,24 @@ export enum Pages {
 }
 
 export interface RoomData {
-	id?: string;
+	id?: number;
 	roomName: string;
 	roomNumber: string;
 	timeLimit: number | string;
 	selectedTeachers: User[];
-	travelType: string[];
+	travelType?: string[];
+	travel_types?: string[];
 	restricted: boolean;
 	scheduling_restricted: boolean;
 	ignore_students_pass_limit: boolean;
+	show_as_origin_room: boolean;
 	needs_check_in: boolean;
 	advOptState: OptionState;
 	visibility?: VisibilityOverStudents;
 	enable: boolean;
+	isEdit?: boolean;
+	gradient?: string;
+	category?: string;
 }
 
 /**
@@ -62,14 +69,13 @@ export interface FolderData {
 	folderName: string;
 
 	ignore_students_pass_limit: boolean;
+	show_as_origin_room: boolean;
 
 	// roomsInFolder: List of rooms associated with the folder. Associated by category
 	// TODO: Properly type this. Remove `any` type
 	roomsInFolder: any[];
 
-	// selectedRoomsInFolder: List of rooms in folder currently selected to be either edited or deleted
-	// TODO: Properly type this. Remove `any` type
-	selectedRoomsInFolder: any[];
+	selectedRoomsInFolder: Pinnable[];
 
 	// roomsInFolderLoaded: used as a check to tell when it's safe to pull data from this interface
 	roomsInFolderLoaded: boolean;
@@ -82,6 +88,16 @@ export interface FolderData {
 	roomsToDelete: any[];
 }
 
+export interface TooltipText {
+	teachers: string,
+	travel: string,
+	timeLimit: string,
+	restriction: string,
+	scheduling_restricted: string,
+	ignore_students_pass_limit: string,
+	needs_check_in: string,
+	show_as_origin_room: string,
+}
 @Injectable({
 	providedIn: 'root',
 })
@@ -91,10 +107,10 @@ export class OverlayDataService {
 	roomNameBlur$: Subject<any> = new Subject();
 	folderNameBlur$: Subject<any> = new Subject<any>();
 
-	dropEvent$ = new Subject();
-	dragEvent$ = new Subject();
+	dropEvent$: Subject<any> = new Subject();
+	dragEvent$: Subject<any> = new Subject();
 
-	public tooltipText = {
+	public tooltipText: TooltipText = {
 		teachers: 'Which teachers should see pass activity in this room?',
 		travel: 'Will the room will be available to make only round-trip passes, only one-way passes, or both?',
 		timeLimit: 'What is the maximum time limit that a student can make the pass for themselves?',
@@ -102,6 +118,7 @@ export class OverlayDataService {
 		scheduling_restricted: 'Does the pass need digital approval from a teacher to become a scheduled pass?',
 		ignore_students_pass_limit: `Should this room count toward student pass limits, if enabled?`,
 		needs_check_in: 'Passes must be ended using the Room Code, Teacher’s Pin, or from a Teacher’s device.',
+		show_as_origin_room: 'Should this room only be allowed as a destination?',
 	};
 
 	constructor() {}
@@ -111,13 +128,6 @@ export class OverlayDataService {
 			currentPage: next,
 			previousPage: previous,
 			data: data,
-		});
-	}
-
-	replaceData(data) {
-		this.pageState.next({
-			...this.pageState.getValue(),
-			data,
 		});
 	}
 

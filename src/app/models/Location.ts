@@ -23,12 +23,12 @@ export class Location extends BaseModel {
 		public request_mode: string,
 		public request_send_destination_teachers: boolean,
 		public request_send_origin_teachers: boolean,
-		public request_teachers: User[],
+		public request_teachers: User[] | number[],
 		public scheduling_restricted: boolean,
 		public scheduling_request_mode: string,
 		public scheduling_request_send_destination_teachers: boolean,
 		public scheduling_request_send_origin_teachers: boolean,
-		public scheduling_request_teachers: User[],
+		public scheduling_request_teachers: User[] | number[],
 		public required_attachments: string[],
 		public travel_types: string[],
 		public teachers: User[],
@@ -47,6 +47,7 @@ export class Location extends BaseModel {
 		public current_active_pass_count_as_origin?: number,
 		public has_reached_limit_as_destination?: boolean,
 		public has_reached_limit_as_origin?: boolean,
+		public isEdit?: boolean,
 		public gradient?: string
 	) {
 		super();

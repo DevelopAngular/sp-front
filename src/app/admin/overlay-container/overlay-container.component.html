@@ -59,6 +59,7 @@
 						[isEnableRoomTrigger$]="enableRoomTrigger"
 						[showErrors]="showErrors"
 						[allowChangingIgnoreStudentsPassLimit]="true"
+						[allowChangingShowAsOriginRoom]="true"
 						(roomDataResult)="roomResult($event)"></app-room>
 
 					<app-folder [form]="form" *ngIf="currentPage === 3 || currentPage === 4" (folderDataResult)="folderResult($event)"></app-folder>
@@ -90,7 +91,7 @@
 
 					<div class="existing-rooms" *ngIf="currentPage === 8">
 						<app-add-existing-room
-							[data]="pinnables$ | async"
+							[pinnables]="pinnables"
 							[roomName]="folderData.folderName"
 							[roomsInFolder]="folderData.selectedRoomsInFolder"
 							(back)="back(false)"

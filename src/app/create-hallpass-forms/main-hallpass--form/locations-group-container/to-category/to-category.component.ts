@@ -3,7 +3,7 @@ import { Component, ElementRef, EventEmitter, HostListener, Inject, Input, OnIni
 import { Navigation } from '../../main-hall-pass-form.component';
 import { Pinnable } from '../../../../models/Pinnable';
 import { User } from '../../../../models/User';
-import { Location } from '../../../../models/Location';
+import { Choice, Location } from '../../../../models/Location';
 import { CreateFormService } from '../../../create-form.service';
 import { Observable, BehaviorSubject, fromEvent, Subject, of, combineLatest } from 'rxjs';
 import { filter, tap, takeUntil, map, shareReplay } from 'rxjs/operators';
@@ -207,7 +207,7 @@ export class ToCategoryComponent implements OnInit {
 							pinn.myLocations = updated;
 						}
 						// trigger RV filtering here
-						this.locTableRef.choices = updated;
+						this.locTableRef.choices = updated as Choice[];
 					} catch (e) {
 						console.log(e);
 					}

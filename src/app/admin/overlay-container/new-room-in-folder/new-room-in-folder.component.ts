@@ -34,14 +34,14 @@ export class NewRoomInFolderComponent implements OnInit {
 
 	@Output() errorsEmit: EventEmitter<any> = new EventEmitter<any>();
 
-	roomValidButtons = new BehaviorSubject<ValidButtons>({
+	private roomValidButtons: BehaviorSubject<ValidButtons> = new BehaviorSubject<ValidButtons>({
 		publish: false,
 		incomplete: false,
 		cancel: false,
 	});
 
-	roomInFolderData: RoomData = {
-		id: '',
+	public roomInFolderData: RoomData = {
+		id: null,
 		roomName: '',
 		roomNumber: '',
 		timeLimit: '',
@@ -50,6 +50,7 @@ export class NewRoomInFolderComponent implements OnInit {
 		restricted: null,
 		scheduling_restricted: null,
 		ignore_students_pass_limit: false,
+		show_as_origin_room: true,
 		needs_check_in: null,
 		advOptState: {
 			now: { state: '', data: { all_teach_assign: null, any_teach_assign: null, selectedTeachers: [] } },
@@ -61,25 +62,25 @@ export class NewRoomInFolderComponent implements OnInit {
 
 	constructor() {}
 
-	get showPubish() {
+	public get showPubish(): boolean {
 		return this.roomValidButtons.getValue().publish && this.visibilityForm.valid;
 	}
 
-	get showIncomplete() {
+	public get showIncomplete(): boolean {
 		return this.roomValidButtons.getValue().incomplete && this.visibilityForm.invalid;
 	}
 
-	get showCancel() {
+	public get showCancel(): boolean {
 		return this.roomValidButtons.getValue().cancel;
 	}
 
-	ngOnInit() {}
+	public ngOnInit(): void {}
 
-	goBack() {
+	public goBack(): void  {
 		this.back.emit();
 	}
 
-	addInFolder() {
+	public addInFolder(): void  {
 		if (this.roomValidButtons.getValue().incomplete) {
 			this.errorsEmit.emit();
 			return;
@@ -87,7 +88,7 @@ export class NewRoomInFolderComponent implements OnInit {
 		this.add.emit(this.roomInFolderData);
 	}
 
-	roomResult({ data, buttonState }) {
+	public roomResult({ data, buttonState }): void  {
 		this.roomInFolderData = data;
 		this.roomValidButtons.next(buttonState);
 		this.roomDataResult.emit({ data, buttonState });

@@ -324,7 +324,7 @@ export class PassConfigComponent implements OnInit, OnDestroy {
 				break;
 			case 'editFolder':
 				data = {
-					type: 'newFolder',
+					type: action,
 					pinnable: this.pinnable,
 					pinnables$: this.pinnables$,
 					isEditFolder: true,

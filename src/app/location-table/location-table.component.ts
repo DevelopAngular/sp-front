@@ -1,7 +1,7 @@
 import { Component, ElementRef, EventEmitter, Input, OnDestroy, OnInit, Output, ViewChild, Optional } from '@angular/core';
 import { HttpService } from '../services/http-service';
-import { Location } from '../models/Location';
-import { filter, map, pluck, switchMap, takeUntil, take } from 'rxjs/operators';
+import { Choice, Location } from '../models/Location';
+import { filter, map, pluck, switchMap, takeUntil, take, tap } from 'rxjs/operators';
 import { LocationsService } from '../services/locations.service';
 import { combineLatest, iif, Observable, of, Subject, zip } from 'rxjs';
 import { filter as _filter, sortBy } from 'lodash';
@@ -15,15 +15,8 @@ import { LocationVisibilityService } from '../create-hallpass-forms/main-hallpas
 import { UserService } from '../services/user.service';
 import { User } from '../models/User';
 import { PassLimitInfo } from '../models/HallPassLimits';
-import { cloneDeep } from 'lodash';
 import { MainHallPassFormComponent } from '../create-hallpass-forms/main-hallpass--form/main-hall-pass-form.component';
 import { Pinnable } from '../models/Pinnable';
-
-export interface Paged<T> {
-	results: T[];
-	next: string;
-	previous: string;
-}
 
 // TODO: it does wipe out any existent get set
 function Visibility(): any {
@@ -90,7 +83,6 @@ export class LocationTableComponent implements OnInit, OnDestroy {
 	@Input() type: string;
 	@Input() showStars: boolean;
 	@Input() showFavorites: boolean;
-	@Input() staticChoices: any[];
 	@Input() forStaff: boolean;
 	@Input() forLater: boolean;
 	@Input() hasLocks: boolean;
@@ -107,43 +99,43 @@ export class LocationTableComponent implements OnInit, OnDestroy {
 	@Input() searchExceptFavourites: boolean = false;
 	@Input() allowOnStar: boolean = false;
 	@Input() isFavoriteForm: boolean;
-	@Input() originLocation: any;
+	@Input() originLocation: Location;
 	@Input() searchTeacherLocations: boolean;
 	@Input() currentPage: 'from' | 'to';
 	@Input() updatedLocation$?: Observable<Location> | undefined;
 	@Input() selectedStudents: User[] = [];
 	@Input() passLimitInfo: PassLimitInfo;
 
-	@Output() onSelect: EventEmitter<any> = new EventEmitter();
-	@Output() onStar: EventEmitter<string> = new EventEmitter();
+	@Output() onSelect: EventEmitter<Choice> = new EventEmitter();
+	@Output() onStar: EventEmitter<Location> = new EventEmitter();
 	@Output() onUpdate: EventEmitter<Location[]> = new EventEmitter<Location[]>();
 	@Output() onLoaded: EventEmitter<boolean> = new EventEmitter();
 
 	@ViewChild('item') currentItem: ElementRef;
 
 	@Visibility()
-	choices: any[] = [];
-	noChoices: boolean = false;
-	mainContentVisibility: boolean = false;
+	public choices: Choice[] = [];
+	public noChoices: boolean = false;
+	public mainContentVisibility: boolean = false;
 	@Visibility()
-	starredChoices: any[] = [];
-	search: string = '';
-	favoritesLoaded: boolean;
-	hideFavorites: boolean;
-	pinnables;
-	pinnablesLoaded: boolean;
+	public starredChoices: Choice[] = [];
+	public search: string = '';
+	public favoritesLoaded: boolean;
+	public hideFavorites: boolean;
+	private pinnables;
+	public pinnablesLoaded: boolean;
 
-	passLimits: { [id: number]: PassLimit } = {};
+	private passLimits: PassLimit[] = [];
 
 	private user: User;
 
-	showSpinner$: Observable<boolean>;
-	loaded$: Observable<boolean>;
-	loading$: Observable<boolean>;
+	private showSpinner$: Observable<boolean>;
+	public loaded$: Observable<boolean>;
+	public loading$: Observable<boolean>;
 
-	isFocused: boolean;
+	public isFocused: boolean;
 
-	destroy$: Subject<any> = new Subject<any>();
+	private destroy$: Subject<void> = new Subject<void>();
 
 	constructor(
 		private http: HttpService,
@@ -159,14 +151,33 @@ export class LocationTableComponent implements OnInit, OnDestroy {
 		@Optional() private mainHallPassFormComponent: MainHallPassFormComponent
 	) {}
 
-	get isMobile() {
+	get isMobile(): boolean {
 		return DeviceDetection.isMobile();
 	}
 
-	ngOnInit() {
+	public ngOnInit(): void {
 		this.userService.user$.pipe(takeUntil(this.destroy$), filter(Boolean), take(1)).subscribe((u: User) => {
 			this.user = u;
 		});
+
+		const url: string =
+			'v1/' +
+			(this.type === 'teachers' ? 'users?role=_profile_teacher&' : 'locations?') +
+			'limit=1000&' +
+			(this.type === 'location' && this.showFavorites ? 'starred=false' : '');
+
+		let request$: Observable<Location[]>;
+		if (this.mergedAllRooms) {
+			request$ = this.mergeLocations(url, this.withMergedStars, this.category);
+		} else if (this.forKioskMode) {
+			request$ = !!this.category
+				? this.locationService.getLocationsFromCategory(this.category)
+				: this.locationService.getLocationsWithConfigRequest(url);
+		} else {
+			request$ = this.isFavoriteForm
+				? this.locationService.getLocationsWithConfigRequest(url).pipe(filter((res) => !!res.length))
+				: this.locationService.getLocationsFromCategory(this.category).pipe(filter((res) => !!res.length));
+		}
 
 		this.pinnableService.loadedPinnables$
 			.pipe(
@@ -183,22 +194,42 @@ export class LocationTableComponent implements OnInit, OnDestroy {
 						}
 					}, {});
 				}),
+				tap((pins) => {
+					this.pinnables = pins;
+					this.pinnablesLoaded = true;
+					this.onLoaded.emit(true);
+				}),
+				switchMap((pins) => {
+					return this.locationService.pass_limits_entities$;
+				}),
+				filter((passLimits) => !this.isFavoriteForm),
+				tap((passLimits) => {
+					this.passLimits = Object.values(passLimits);
+				}),
+				switchMap(() => {
+					return request$;
+				}),
+				filter((res: Location[]) => !!res.length),
+				tap((res: Location[]) => {
+					if (this.mergedAllRooms) {
+						const choices: Location[] = this.filterChoicesForShowAsOrigin(res);
+						this.choices = this.parseLocations(choices);
+					} else {
+						const filteredChoices: Location[] = this.filterChoicesForPassLimit(res);
+						if (this.currentPage === 'from') {
+							const choices: Location[] = this.filterChoicesForShowAsOrigin(filteredChoices);
+							this.choices = this.parseLocations(choices);
+						}
+						else {
+							this.choices = this.parseLocations(filteredChoices);
+						}
+					}
+					this.noChoices = !this.choices.length;
+					this.mainContentVisibility = true;
+				}),
 				takeUntil(this.destroy$)
 			)
-			.subscribe((res) => {
-				this.pinnables = res;
-				this.pinnablesLoaded = true;
-				this.onLoaded.emit(true);
-			});
-
-		this.locationService.pass_limits_entities$
-			.pipe(
-				filter(() => !this.isFavoriteForm),
-				takeUntil(this.destroy$)
-			)
-			.subscribe((res) => {
-				this.passLimits = res;
-			});
+			.subscribe();
 
 		this.showSpinner$ = combineLatest(
 			this.locationService.loadingLocations$,
@@ -215,53 +246,24 @@ export class LocationTableComponent implements OnInit, OnDestroy {
 			this.locationService.focused.next(true);
 		}
 
-		if (this.staticChoices && this.staticChoices.length) {
-			this.choices = this.staticChoices;
-			this.noChoices = !this.choices.length;
-			this.mainContentVisibility = true;
-		} else {
-			const url =
-				'v1/' +
-				(this.type === 'teachers' ? 'users?role=_profile_teacher&' : 'locations?') +
-				'limit=1000&' +
-				(this.type === 'location' && this.showFavorites ? 'starred=false' : '');
-			if (this.mergedAllRooms) {
-				this.mergeLocations(url, this.withMergedStars, this.category)
-					.pipe(takeUntil(this.destroy$))
-					.subscribe((res) => {
-						this.choices = res;
-						this.noChoices = !this.choices.length;
-						this.mainContentVisibility = true;
-					});
-			} else if (this.forKioskMode) {
-				const request$ = !!this.category
-					? this.locationService.getLocationsFromCategory(this.category)
-					: this.locationService.getLocationsWithConfigRequest(url);
+		this.locationService.pass_limits_entities$
+			.pipe(
+				filter((passLimits) => !!Object.keys(passLimits)),
+				tap((passLimits) => {
+					this.passLimits = Object.values(passLimits);
+				})
+			)
+			.subscribe();
 
-				request$.pipe(takeUntil(this.destroy$)).subscribe((res) => {
-					this.choices = this.filterChoices(res);
-				});
-			} else {
-				const request$ = this.isFavoriteForm
-					? this.locationService.getLocationsWithConfigRequest(url).pipe(filter((res) => !!res.length))
-					: this.locationService.getLocationsFromCategory(this.category).pipe(filter((res) => !!res.length));
+		this.isFocused = !this.isFavoriteForm && !DeviceDetection.isMobile();
 
-				request$.pipe(takeUntil(this.destroy$)).subscribe((p) => {
-					this.choices = this.filterChoices(p);
-					this.noChoices = !this.choices.length;
-					this.pinnablesLoaded = true;
-					this.mainContentVisibility = true;
-				});
-			}
-
-			this.isFocused = !this.isFavoriteForm && !DeviceDetection.isMobile();
-		}
 		if (this.type === 'location') {
-			this.locationService.favoriteLocations$.pipe(takeUntil(this.destroy$)).subscribe((stars: any[]) => {
+			this.locationService.favoriteLocations$.pipe(takeUntil(this.destroy$)).subscribe((stars: Location[]) => {
 				this.pinnablesLoaded = true;
-				this.starredChoices = stars.map((val) => Location.fromJSON(val));
+				const starredChoices: Location[] = stars.map((val) => Location.fromJSON(val));
+				this.starredChoices = this.parseLocations(starredChoices);
 				if (this.isFavoriteForm) {
-					this.choices = [...this.starredChoices, ...this.choices].sort((a, b) => a.id - b.id);
+					this.choices = [...this.starredChoices, ...this.choices].sort((a, b) => Number(a.id) - Number(b.id));
 				}
 				this.favoritesLoaded = true;
 				this.mainContentVisibility = true;
@@ -285,10 +287,23 @@ export class LocationTableComponent implements OnInit, OnDestroy {
 				}
 			});
 
-		this.updatedLocation$?.pipe(takeUntil(this.destroy$)).subscribe((res) => this.updateOrAddChoices(res));
+		// this observable is triggered whenever a location is modified by an admin or teacher
+		this.updatedLocation$
+			?.pipe(
+				tap((res: Location) => {
+					let loc: Location = res;
+					if (!(res instanceof Location)) {
+						loc = Location.fromJSON(res);
+					}
+					const choice = this.parseLocations([loc]);
+					this.updateOrAddChoices(choice[0]);
+				}),
+				takeUntil(this.destroy$)
+			)
+			.subscribe();
 	}
 
-	filterChoices(choices: Location[]): Location[] {
+	private filterChoicesForPassLimit(choices: Location[]): Location[] {
 		return choices.map((loc) => {
 			let pinnable: Pinnable;
 			if (this.pinnables && this.pinnables[loc.id]) {
@@ -304,64 +319,61 @@ export class LocationTableComponent implements OnInit, OnDestroy {
 		});
 	}
 
-	private choiceFunc(loc) {
-		return function (choice) {
-			if (choice instanceof Location) {
-				if ('' + choice.id === '' + loc.id) {
+	private filterChoicesForShowAsOrigin(choices: Location[]): Location[] {
+		return choices.filter((loc) => {
+			if (this.pinnables && this.pinnables[loc.id]) {
+				const pinnable = this.pinnables[loc.id];
+				if (pinnable.show_as_origin_room) {
 					return loc;
-				} else {
-					return choice;
 				}
-			} else {
-				try {
-					const l = Location.fromJSON(choice);
-					if ('' + l.id === '' + loc.id) {
-						return cloneDeep(loc);
-					}
-				} catch (e) {}
-				return cloneDeep(choice);
 			}
-		};
+			// choice with a category is within a pinnable folder
+			else if (loc.category !== null) {
+				const pinnable = this.pinnables[loc.category];
+				if (pinnable.show_as_origin_room) {
+					return loc;
+				}
+			}
+		});
 	}
 
-	// check if modified location exists on choices
-	private isFoundChoice(loc: Location, choices: Location[] | any[]) {
-		for (let i = 0; i < choices.length; i++) {
-			if (choices[i] instanceof Location) {
-				if ('' + choices[i].id === '' + loc.id) {
-					return true;
-				}
-			} else {
-				try {
-					const l = Location.fromJSON(choices[i]);
-					if ('' + l.id === '' + loc.id) {
-						return true;
-					}
-				} catch (e) {}
-			}
-		}
-		return false;
+	private parseLocations(choices: Location[]): Choice[] {
+		return choices.map((choice: Location) => {
+			const choiceData: Partial<Choice> = {
+				id: choice.id,
+				passLimit: this.getPassLimit(choice),
+				disabledToolTip: this.getDisabledTooltip(choice),
+				isValidLocation: this.isValidLocation(choice.id),
+				normalizedLocation: this.normalizeLocations(choice),
+				roomIsHidden: this.checkRoomIsHidden(choice),
+				isSelected: this.isSelected(choice),
+			};
+			return Object.assign(choiceData, choice) as Choice;
+		});
 	}
 
-	private updateOrAddChoices(loc: Location) {
-		const mapping = this.choiceFunc(loc);
-		if (!this.isFoundChoice(loc, this.choices)) {
-			this.choices = [cloneDeep(loc), ...this.choices];
-		} else {
-			this.choices = this.choices.map(mapping);
+	private updateOrAddChoices(choice: Choice): void {
+		const choiceIndex: number = this.choices.findIndex((c) => c.id.toString() === choice.id.toString());
+		if (choiceIndex !== -1) {
+			this.choices[choiceIndex] = choice;
+		}
+		else {
+			this.choices.push(choice);
 		}
 
-		if (!loc.starred) {
+		if (!choice.starred) {
 			return;
 		}
-		if (!this.isFoundChoice(loc, this.starredChoices)) {
-			this.starredChoices = [cloneDeep(loc), ...this.starredChoices];
-		} else {
-			this.starredChoices = this.starredChoices.map(mapping);
+		const starredChoiceIndex: number = this.choices.findIndex((c) => c.id.toString() === choice.id.toString());
+		if (starredChoiceIndex !== -1) {
+			this.starredChoices[starredChoiceIndex] = choice;
+		}
+		else {
+			this.starredChoices.push(choice);
 		}
 	}
 
-	normalizeLocations(loc) {
+	public normalizeLocations(loc: Location): Location {
 		if (this.pinnables && this.currentPage !== 'from' && !this.isFavoriteForm) {
 			if (loc.category) {
 				if (!this.pinnables[loc.category] || !this.pinnables[loc.category].gradient_color) {
@@ -381,17 +393,17 @@ export class LocationTableComponent implements OnInit, OnDestroy {
 		return loc;
 	}
 
-	ngOnDestroy(): void {
+	public ngOnDestroy(): void {
 		this.destroy$.next();
 		this.destroy$.complete();
 	}
 
-	updateOrderLocation(event: CdkDragDrop<string[]>) {
+	public updateOrderLocation(event: CdkDragDrop<string[]>): void {
 		moveItemInArray(this.starredChoices, event.previousIndex, event.currentIndex);
 		this.onUpdate.emit(this.starredChoices);
 	}
 
-	onSearch(search: string) {
+	public onSearch(search: string): void {
 		this.search = search.toLowerCase();
 		if (search !== '') {
 			const url =
@@ -432,15 +444,15 @@ export class LocationTableComponent implements OnInit, OnDestroy {
 					})
 				)
 				.subscribe((p) => {
+					const parsedLocations: Choice[] = this.parseLocations(p);
 					this.hideFavorites = true;
 					const filtFevLoc = _filter(this.starredChoices, (item) => {
 						return item.title.toLowerCase().includes(this.search);
 					});
-
 					this.choices = (
 						(this.searchExceptFavourites && !this.forKioskMode) || !!this.category
-							? [...this.filterResults(p)]
-							: [...filtFevLoc, ...this.filterResults(p)]
+							? [...this.filterResults(parsedLocations)]
+							: [...filtFevLoc, ...this.filterResults(parsedLocations)]
 					).filter((r) => {
 						if (this.category) {
 							return this.category === r.category;
@@ -450,46 +462,43 @@ export class LocationTableComponent implements OnInit, OnDestroy {
 					this.noChoices = !this.choices.length;
 				});
 		} else {
-			if (this.staticChoices && this.staticChoices.length) {
-				this.choices = this.staticChoices;
-			} else {
-				iif(() => !!this.category, this.locationService.locsFromCategory$, this.locationService.locations$)
-					.pipe(takeUntil(this.destroy$))
-					.subscribe((res) => {
-						this.choices = res.filter((r) => {
-							if (this.category) {
-								return r.category === this.category;
-							}
-							return r;
-						});
-						this.hideFavorites = false;
-						this.noChoices = !this.choices.length;
+			iif(() => !!this.category, this.locationService.locsFromCategory$, this.locationService.locations$)
+				.pipe(takeUntil(this.destroy$))
+				.subscribe((res: Location[]) => {
+					const choices: Location[] = res.filter((r) => {
+						if (this.category) {
+							return r.category === this.category;
+						}
+						return r;
 					});
-			}
+					this.choices = this.parseLocations(choices);
+					this.hideFavorites = false;
+					this.noChoices = !this.choices.length;
+				});
 		}
 	}
 
-	isValidLocation(locationId: any) {
+	private isValidLocation(locationId: number): boolean {
 		if (this.isFavoriteForm) return true;
 		else if (+locationId === +this.invalidLocation) return false;
 		else if (this.forStaff && !this.forKioskMode) return true;
 
-		const location = this.passLimits[locationId];
+		const location = this.passLimits.find((pl) => pl.id === locationId);
 		if (!location) return false;
 
 		// return this.tooltipService.reachedPassLimit(this.currentPage, location);
 		return true;
 	}
 
-	mergeLocations(url, withStars: boolean, category: string) {
+	private mergeLocations(url: string, withStars: boolean, category: string): Observable<Location[]> {
 		const locsRequest$ = !!category
 			? this.locationService.getLocationsFromCategory(category)
 			: this.locationService.getLocationsWithConfigRequest(url);
 		return zip(locsRequest$, this.locationService.getFavoriteLocationsRequest()).pipe(
 			takeUntil(this.destroy$),
-			map(([rooms, favorites]: [any, any[]]) => {
+			map(([rooms, favorites]: [Location[], Location[]]) => {
 				if (withStars) {
-					const locs = sortBy([...rooms, ...favorites], (item) => {
+					const locs: Location[] = sortBy([...rooms, ...favorites], (item) => {
 						return item.title.toLowerCase();
 					});
 					return locs;
@@ -500,7 +509,7 @@ export class LocationTableComponent implements OnInit, OnDestroy {
 		);
 	}
 
-	filterResults(results: any[]) {
+	private filterResults(results: Choice[]): Choice[] {
 		return results.filter((felement) => {
 			return (
 				this.starredChoices.findIndex((ielement) => {
@@ -510,26 +519,27 @@ export class LocationTableComponent implements OnInit, OnDestroy {
 		});
 	}
 
-	choiceSelected(choice: any) {
-		if (choice.id in this.passLimits) {
-			choice['numberOfStudentsInRoom'] = this.passLimits[choice.id].to_count;
+	public choiceSelected(choice: Choice): void {
+		const passLimit = this.passLimits.find((pl) => pl.id === choice.id);
+		if (passLimit) {
+			choice['numberOfStudentsInRoom'] = passLimit.to_count;
 		}
 		this.locationService.focused.next(false);
 		this.onSelect.emit(choice);
 	}
 
-	checkRoomIsHidden(location): boolean {
+	private checkRoomIsHidden(loc: Location): boolean {
 		if (this.forKioskMode) {
-			return this.isValidLocation(location.id);
+			return this.isValidLocation(loc.id);
 		}
 		return true;
 	}
 
-	isSelected(choice) {
-		return !!this.starredChoices.find((item) => item.id === choice.id);
+	private isSelected(loc: Location): boolean {
+		return !!this.starredChoices.find((item) => item.id === loc.id);
 	}
 
-	star(event) {
+	public star(event: Choice): void {
 		if (!this.isEdit) {
 			return this.choiceSelected(event);
 		}
@@ -539,28 +549,28 @@ export class LocationTableComponent implements OnInit, OnDestroy {
 			this.removeLoc(event, this.starredChoices);
 		}
 		this.onSearch('');
-		this.onStar.emit(event);
+		this.onStar.emit(event as Location);
 		this.search = '';
 	}
 
-	addLoc(loc: any, array: any[]) {
-		if (!array.includes(loc)) {
-			array.push(loc);
+	private addLoc(choice: Choice, array: Location[]): void {
+		if (!array.includes(choice)) {
+			array.push(choice);
 		}
 	}
 
-	removeLoc(loc: any, array: any[]) {
+	private removeLoc(loc: Choice, array: Choice[]): void {
 		const index = array.findIndex((element) => element.id === loc.id);
 		if (index > -1) {
 			array.splice(index, 1);
 		}
 	}
 
-	getDisabledTooltip(choice) {
-		return this.originLocation && this.originLocation.id === choice.id;
+	private getDisabledTooltip(loc: Location): boolean {
+		return this.originLocation && this.originLocation.id === loc.id;
 	}
 
-	getPassLimit(choice: any): PassLimit {
-		return this.passLimits ? this.passLimits[choice.id] : null;
+	private getPassLimit(loc: Location): PassLimit {
+		return this.passLimits ? this.passLimits.find((pl) => pl.id === loc.id) : null;
 	}
 }

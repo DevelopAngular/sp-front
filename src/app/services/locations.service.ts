@@ -39,7 +39,7 @@ import { getFavoriteLocations, updateFavoriteLocations } from '../ngrx/favorite-
 import { PassLimit } from '../models/PassLimit';
 import { getPassLimitCollection, getPassLimitEntities } from '../ngrx/pass-limits/states';
 import { getPassLimits, updatePassLimit } from '../ngrx/pass-limits/actions';
-import { PollingService } from './polling-service';
+import { PollingEvent, PollingService } from './polling-service';
 import { FeatureFlagService, FLAGS } from './feature-flag.service';
 import { PassLimitDialogComponent } from '../create-hallpass-forms/main-hallpass--form/locations-group-container/pass-limit-dialog/pass-limit-dialog.component';
 import { MatDialog } from '@angular/material/dialog';
@@ -78,7 +78,7 @@ export class LocationsService {
 	) {}
 
 	// TODO: Convert params of function into an object
-	getLocationsWithCategory(category: string, show_removed: boolean = false) {
+	getLocationsWithCategory(category: string, show_removed: boolean = false): Observable<Location[]> {
 		return this.http.get('v1/locations', {
 			params: {
 				category: category,
@@ -92,7 +92,7 @@ export class LocationsService {
 		return this.teacherLocations$;
 	}
 
-	getLocationsWithTeacher(teacher: User) {
+	getLocationsWithTeacher(teacher: User): Observable<Location[]> {
 		return this.http.get<any[]>(`v1/locations?teacher_id=${teacher.id}`);
 	}
 
@@ -110,61 +110,61 @@ export class LocationsService {
 		);
 	}
 
-	getLocation(id) {
+	getLocation(id): Observable<Location> {
 		return this.http.get(`v1/locations/${id}`);
 	}
 
-	createLocationRequest(data) {
+	createLocationRequest(data): Observable<Location> {
 		this.store.dispatch(postLocation({ data }));
 		return this.createdLocation$;
 	}
 
-	createLocation(data) {
+	createLocation(data): Observable<Location> {
 		return this.http.post('v1/locations', data);
 	}
 
-	updateLocationRequest(id, data) {
+	updateLocationRequest(id, data): Observable<Location> {
 		this.store.dispatch(updateLocation({ id, data }));
 		return this.updatedLocation$;
 	}
 
-	updateLocation(id, data) {
+	updateLocation(id, data): Observable<Location> {
 		return this.http.patch(`v1/locations/${id}`, data);
 	}
 
-	deleteLocationRequest(id) {
+	deleteLocationRequest(id): Observable<boolean> {
 		this.store.dispatch(removeLocation({ id }));
 		return of(true);
 	}
 
-	deleteLocation(id) {
+	deleteLocation(id): Observable<Location> {
 		return this.http.delete(`v1/locations/${id}`);
 	}
 
-	searchLocationsRequest(url) {
+	searchLocationsRequest(url): Observable<Location[]> {
 		this.store.dispatch(searchLocations({ url }));
 		return this.foundLocations$;
 	}
 
-	getLocationsFromCategory(category) {
+	getLocationsFromCategory(category): Observable<Location[]> {
 		this.store.dispatch(getLocationsFromCategory({ category }));
 		return this.locsFromCategory$;
 	}
 
-	getLocationsWithConfigRequest(url) {
+	getLocationsWithConfigRequest(url): Observable<Location[]> {
 		this.store.dispatch(getLocations({ url }));
 		return this.locations$;
 	}
 
-	getLocationsWithConfig(url) {
+	getLocationsWithConfig(url): Observable<Location[]> {
 		return this.http.get<Location[]>(url);
 	}
 
-	searchLocations(limit = 10, config = '') {
-		return this.http.get<Paged<any>>(`v1/locations?limit=${limit}${config}`);
+	searchLocations(limit = 10, config = ''): Observable<Paged<Location[]>> {
+		return this.http.get<Paged<Location[]>>(`v1/locations?limit=${limit}${config}`);
 	}
 
-	getLocationsWithFolder() {
+	getLocationsWithFolder(): Observable<Location[]> {
 		return this.http.get('v1/locations/categorized');
 	}
 
@@ -188,12 +188,12 @@ export class LocationsService {
 		this.store.dispatch(updatePassLimit({ item }));
 	}
 
-	listenPassLimitSocket() {
+	listenPassLimitSocket(): Observable<PollingEvent> {
 		this.pollingService.sendMessage('location.active_pass_counts.enable', null);
 		return this.pollingService.listen('location.active_pass_counts');
 	}
 
-	updateLocationSuccessState(location: Location) {
+	updateLocationSuccessState(location: Location): void {
 		this.store.dispatch(updateLocationSuccess({ location }));
 	}
 
@@ -201,29 +201,29 @@ export class LocationsService {
 		this.store.dispatch(updatePinnableSuccess({ pinnable }));
 	}
 
-	listenLocationSocket() {
+	listenLocationSocket(): Observable<PollingEvent> {
 		return this.pollingService.listen('location.patched');
 	}
 
-	listenPinnableSocket() {
+	listenPinnableSocket(): Observable<PollingEvent> {
 		return this.pollingService.listen('pinnable.patched');
 	}
 
 	/////// Favorite Locations
-	getFavoriteLocationsRequest() {
+	public getFavoriteLocationsRequest(): Observable<Location[]> {
 		this.store.dispatch(getFavoriteLocations());
 		return this.favoriteLocations$;
 	}
 
-	getFavoriteLocations() {
+	getFavoriteLocations(): Observable<Location[]> {
 		return this.http.get('v1/users/@me/starred');
 	}
 
-	updateFavoriteLocationsRequest(locations: Location[]) {
+	public updateFavoriteLocationsRequest(locations: Location[]): void {
 		this.store.dispatch(updateFavoriteLocations({ locations }));
 	}
 
-	updateFavoriteLocations(body) {
+	updateFavoriteLocations(body): Observable<number[]> {
 		return this.http.put('v1/users/@me/starred', body);
 	}
 

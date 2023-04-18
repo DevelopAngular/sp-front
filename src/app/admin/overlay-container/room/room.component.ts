@@ -9,7 +9,7 @@ import { OverlayDataService, Pages, RoomData } from '../overlay-data.service';
 import { ValidButtons } from '../advanced-options/advanced-options.component';
 import { VisibilityOverStudents, DEFAULT_VISIBILITY_STUDENTS } from '../visibility-room/visibility-room.type';
 
-import { Location } from '../../../models/Location';
+
 import { HallPassesService } from '../../../services/hall-passes.service';
 import { LocationsService } from '../../../services/locations.service';
 import { OverlayContainerComponent } from '../overlay-container.component';
@@ -37,6 +37,7 @@ export class RoomComponent implements OnInit, OnDestroy {
 	@Input() isEnableRoomTrigger$: Subject<boolean>;
 
 	@Input() allowChangingIgnoreStudentsPassLimit: boolean;
+	@Input() allowChangingShowAsOriginRoom: boolean = true;
 
 	@Output() back = new EventEmitter();
 
@@ -48,7 +49,7 @@ export class RoomComponent implements OnInit, OnDestroy {
 	}>();
 
 	data: RoomData = {
-		id: `Fake ${Math.floor(Math.random() * (1 - 1000)) + 1000}`,
+		id: null,
 		roomName: 'New Room',
 		roomNumber: '',
 		timeLimit: 0,
@@ -58,6 +59,7 @@ export class RoomComponent implements OnInit, OnDestroy {
 		scheduling_restricted: null,
 		ignore_students_pass_limit: false,
 		needs_check_in: null,
+		show_as_origin_room: this.allowChangingShowAsOriginRoom ? true : null,
 		advOptState: {
 			now: { state: '', data: { all_teach_assign: null, any_teach_assign: null, selectedTeachers: [] } },
 			future: { state: '', data: { all_teach_assign: null, any_teach_assign: null, selectedTeachers: [] } },
@@ -177,6 +179,7 @@ export class RoomComponent implements OnInit, OnDestroy {
 					restricted: !!pinnable.location.restricted,
 					scheduling_restricted: !!pinnable.location.scheduling_restricted,
 					ignore_students_pass_limit: !!pinnable.ignore_students_pass_limit,
+					show_as_origin_room: !!pinnable.show_as_origin_room,
 					needs_check_in: !!pinnable.location.needs_check_in,
 					timeLimit: pinnable.location.max_allowed_time,
 					advOptState: this.overlayService.pageState.getValue().data.advancedOptions,
@@ -184,7 +187,7 @@ export class RoomComponent implements OnInit, OnDestroy {
 					enable: pinnable.location.enable,
 				};
 			} else if (this.currentPage === Pages.EditRoomInFolder) {
-				const data: Location = this.overlayService.pageState.getValue().data.selectedRoomsInFolder[0];
+				const data: any = this.overlayService.pageState.getValue().data.selectedRoomsInFolder[0];
 				const visibility: VisibilityOverStudents = { mode: data.visibility_type, over: data.visibility_students, grade: data.visibility_grade };
 				this.visibilityForm.patchValue({ visibility });
 				this.overlayService.patchData({ visibility });
@@ -205,6 +208,7 @@ export class RoomComponent implements OnInit, OnDestroy {
 					scheduling_restricted: !!data.scheduling_restricted,
 					// This technically should use the value of the pinnable, but since we don't show it, it doesn't matter.
 					ignore_students_pass_limit: false,
+					show_as_origin_room: false,
 					needs_check_in: !!data.needs_check_in,
 					advOptState: this.overlayService.pageState.getValue().data.advancedOptions,
 					visibility: this.overlayService.pageState.getValue().data?.visibility,
@@ -361,6 +365,12 @@ export class RoomComponent implements OnInit, OnDestroy {
 
 	ignoreStudentsPassLimitEvent(isIgnored) {
 		this.data.ignore_students_pass_limit = isIgnored;
+		this.change$.next();
+	}
+
+	showAsOriginRoomEvent(isShown: boolean) {
+		this.data.show_as_origin_room = isShown;
+		this.data.show_as_origin_room = isShown;
 		this.change$.next();
 	}
 

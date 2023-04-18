@@ -49,6 +49,15 @@
 				.room {
 					display: flex;
 					align-items: center;
+					color: #555558;
+				}
+
+				.room:hover {
+					background-color: #ECF1FF;
+					color: #1F195E;
+				}
+				.room:active {
+					background-color: #E2E7F4;
 				}
 
 				.room-edit {
