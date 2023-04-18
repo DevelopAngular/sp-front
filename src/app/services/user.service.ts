@@ -157,6 +157,8 @@ import {
 } from '../ngrx/accounts/nested-states/parents/states';
 import { RenewalStatus } from './admin.service';
 
+export type ProfileStatus = 'disabled' | 'suspended' | 'active';
+
 @Injectable({
 	providedIn: 'root',
 })
@@ -761,12 +763,31 @@ export class UserService implements OnDestroy {
 		return this.http.post(`v1/users/${id}/test_notification`, new Date());
 	}
 
-	searchProfile(role?, limit = 5, search?, status?: 'active' | 'suspended' | 'disabled' | 'all') {
+	searchProfile(role?, limit = 5, search?, ignoreProfileWithStatuses: ProfileStatus[] = ['suspended']) {
 		if (status === 'all') {
 			status = undefined;
 		}
-		search = encodeURIComponent(search);
-		return this.http.get<Paged<any>>(`v1/users?${role ? `role=${role}&` : ``}limit=${limit}&search=${search}${status ? `&status=${status}` : ``}`);
+
+		let url: string = 'v1/users?';
+		if (role) {
+			url += `role=${role}&`;
+		}
+		if (limit) {
+			url += `limit=${limit}&`;
+		}
+		if (search) {
+			url += `search=${search}&`;
+		}
+
+		for (const hideStatus of ignoreProfileWithStatuses) {
+			url += `hideStatus=${hideStatus}&`;
+		}
+
+		if (url[url.length - 1] === '&') {
+			url = url.slice(0, -1);
+		}
+
+		return this.http.get<Paged<any>>(url);
 	}
 
 	searchProfileById(id) {
