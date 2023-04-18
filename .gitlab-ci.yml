@@ -24,7 +24,7 @@ mr_build:
   script:
     - yarn install --immutable
     - scripts/cf_build.sh
-  needs: [lint]
+  needs: [mr_lint]
   rules:
     - if: $CI_PIPELINE_SOURCE == 'merge_request_event'
   cache:
@@ -43,7 +43,7 @@ mr_e2e:
   rules:
     - if: $CI_PIPELINE_SOURCE == 'merge_request_event'
   interruptible: true
-  needs: [lint]
+  needs: [mr_lint]
   cache:
     key: "yarn-cache-$CI_COMMIT_REF_SLUG"
     paths: [ .yarn ]
