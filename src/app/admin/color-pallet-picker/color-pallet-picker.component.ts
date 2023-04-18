@@ -2,6 +2,7 @@ import { Component, EventEmitter, Input, OnInit, Output, ViewChild } from '@angu
 import { delay, map, share, switchMap } from 'rxjs/operators';
 import { AdminService } from '../../services/admin.service';
 import { Observable } from 'rxjs';
+import { ColorProfile } from '../../models/ColorProfile';
 
 @Component({
 	selector: 'app-color-pallet-picker',
@@ -13,12 +14,12 @@ export class ColorPalletPickerComponent implements OnInit {
 
 	@Input() showError: boolean;
 
-	@Output() selectedEvent: EventEmitter<any> = new EventEmitter();
+	@Output() selectedEvent: EventEmitter<ColorProfile> = new EventEmitter();
 
 	@ViewChild('col') pickColor;
 
 	selectedId: number;
-	colors$;
+	colors$: Observable<ColorProfile[]>;
 	loading$: Observable<boolean>;
 	loaded$: Observable<boolean>;
 
@@ -36,7 +37,7 @@ export class ColorPalletPickerComponent implements OnInit {
 					return this.adminService.getColorsRequest();
 				}
 			}),
-			map((colors: any[]) => {
+			map((colors: ColorProfile[]) => {
 				return colors.filter((color) => color.id !== 1 && color.id !== 6);
 			})
 		);
@@ -45,7 +46,7 @@ export class ColorPalletPickerComponent implements OnInit {
 		}
 	}
 
-	changeColor(color) {
+	changeColor(color: ColorProfile) {
 		this.selectedId = color.id;
 		this.selectedEvent.emit(color);
 	}

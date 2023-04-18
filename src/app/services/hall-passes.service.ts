@@ -79,6 +79,11 @@ export interface StartWaitingInLinePassResponse {
 	conflict_student_ids: number[];
 }
 
+export interface CheckPinnableName {
+	title_used: boolean,
+}
+
+
 @Injectable({
 	providedIn: 'root',
 })
@@ -209,7 +214,7 @@ export class HallPassesService {
 		return this.http.post('v1/pinnables', data);
 	}
 
-	updatePinnableRequest(id, pinnable) {
+	updatePinnableRequest(id, pinnable): Observable<Pinnable[]> {
 		this.store.dispatch(updatePinnable({ id, pinnable }));
 		return this.pinnables$;
 	}
@@ -227,7 +232,7 @@ export class HallPassesService {
 		return this.http.delete(`v1/pinnables/${id}?add_to_folder=${add_to_folder}`);
 	}
 
-	checkPinnableName(value) {
+	checkPinnableName(value): Observable<CheckPinnableName> {
 		return this.http.get(`v1/pinnables/check_fields?title=${value}`);
 	}
 

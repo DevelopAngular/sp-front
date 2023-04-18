@@ -6,7 +6,7 @@ import { debounceTime, filter, map, switchMap, take, takeUntil, tap } from 'rxjs
 
 import { HttpService } from '../../services/http-service';
 import { Pinnable } from '../../models/Pinnable';
-import { OverlayContainerComponent } from '../overlay-container/overlay-container.component';
+import { OverlayContainerComponent, RoomDialogData } from '../overlay-container/overlay-container.component';
 import { PinnableCollectionComponent } from '../pinnable-collection/pinnable-collection.component';
 import { isArray } from 'lodash';
 import { HallPassesService } from '../../services/hall-passes.service';
@@ -300,8 +300,8 @@ export class PassConfigComponent implements OnInit, OnDestroy {
 		}
 	}
 
-	buildData(action) {
-		let data;
+	buildData(action): void {
+		let data: RoomDialogData;
 		const component = OverlayContainerComponent;
 		switch (action) {
 			case 'newRoom':
@@ -369,7 +369,8 @@ export class PassConfigComponent implements OnInit, OnDestroy {
 		return this.dialogContainer(data, component);
 	}
 
-	dialogContainer(data, component) {
+	dialogContainer(data: RoomDialogData, component) {
+		console.log('data in dialog',data);
 		this.forceSelectedLocation = null;
 		const overlayDialog = this.dialog.open(component, {
 			panelClass: 'overlay-dialog-no-background',

@@ -44,6 +44,10 @@ import { FeatureFlagService, FLAGS } from './feature-flag.service';
 import { PassLimitDialogComponent } from '../create-hallpass-forms/main-hallpass--form/locations-group-container/pass-limit-dialog/pass-limit-dialog.component';
 import { MatDialog } from '@angular/material/dialog';
 
+export interface CheckLocationTitle {
+	title_used: boolean,
+}
+
 @Injectable({
 	providedIn: 'root',
 })
@@ -168,7 +172,7 @@ export class LocationsService {
 		return this.http.get('v1/locations/categorized');
 	}
 
-	checkLocationName(value) {
+	checkLocationName(value): Observable<CheckLocationTitle> {
 		return this.http.get(`v1/locations/check_fields?title=${value}`);
 	}
 
