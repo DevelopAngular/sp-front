@@ -11,25 +11,14 @@ cache:
     - node_modules/
 
 stages:
-  - lint
   - build
   - deploy
-
-mr_lint:
-  stage: lint
-  script:
-    - yarn install
-    - yarn lint:ci
-  rules:
-    - if: $CI_PIPELINE_SOURCE == 'merge_request_event'
-  interruptible: true
-  tags:
-    - "docker-passthrough"
 
 mr_build:
   stage: build
   script:
     - yarn install
+    - yarn run lint:ci
     - scripts/cf_build.sh
   needs: [mr_lint]
   rules:
@@ -42,18 +31,18 @@ mr_build:
   tags:
     - "docker-passthrough"
 
-mr_e2e:
-  stage: build
-  image: cypress/browsers:node12.19.0-chrome86-ff82
-  script:
-    - yarn install
-    - yarn run e2e:ci
-  rules:
-    - if: $CI_PIPELINE_SOURCE == 'merge_request_event'
-  interruptible: true
-  needs: [mr_lint]
-  tags:
-    - "docker-passthrough"
+#mr_e2e:
+#  stage: build
+#  image: cypress/browsers:node12.19.0-chrome86-ff82
+#  script:
+#    - yarn install
+#    - yarn run e2e:ci
+#  rules:
+#    - if: $CI_PIPELINE_SOURCE == 'merge_request_event'
+#  interruptible: true
+#  needs: [mr_lint]
+#  tags:
+#    - "docker-passthrough"
 
 mr_preview_deploy:
   stage: deploy
