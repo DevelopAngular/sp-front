@@ -30,7 +30,7 @@ export class ToolTipRendererDirective implements OnInit, OnDestroy, OnChanges {
 	@Input() showToolTip: boolean = true;
 	@Input() nonDisappearing: boolean = true;
 	@Input() position: 'mouse' | 'top' | 'bottom' | 'left' | 'right' = 'bottom';
-	@Input() editable: boolean = false;
+	@Input() editable: boolean = true;
 	@Input() positionStrategy: ConnectedPosition;
 	@Input() width: string = 'auto';
 	@Input() allowVarTag: boolean = false;
@@ -210,9 +210,7 @@ export class ToolTipRendererDirective implements OnInit, OnDestroy, OnChanges {
 	@HostListener('pointerout')
 	@HostListener('mouseleave')
 	hide() {
-		if (this.editable) {
-			this.closeToolTip();
-		}
+		this.closeToolTip();
 		this.destroyOpen$.next();
 	}
 
