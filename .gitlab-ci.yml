@@ -65,6 +65,7 @@ mr_preview_stop:
   rules:
     - if: $CI_PIPELINE_SOURCE == 'merge_request_event'
       when: manual
+      allow_failure: true
   script:
     - |
       # Get the deployments list
