@@ -72,7 +72,15 @@
 					</div>
 					<div class="toggle-content">
 						<div class="title-line">
-							<div class="label" [style.color]="nowRestricted ? (isRestrictionEmpty('now') ? '#E32C66' : '#1F194E') : '#7F879D'">
+							<div
+								class="label"
+								[style.color]="
+									nowRestricted
+										? showErrors && this.optionState.now.state === this.toggleChoices[3] && optionState.now.data.selectedTeachers.length === 0
+											? '#E32C66'
+											: '#1F194E'
+										: '#7F879D'
+								">
 								Restriction for now
 							</div>
 							<img [customToolTip]="tooltipText.restriction" class="support-icon" [src]="'./assets/Support (Gray).svg' | resolveAsset" />
@@ -169,7 +177,17 @@
 					</div>
 					<div class="toggle-content">
 						<div class="title-line">
-							<div class="label" [style.color]="futureRestricted ? (isRestrictionEmpty('future') ? '#E32C66' : '#1F194E') : '#7F879D'">
+							<div
+								class="label"
+								[style.color]="
+									futureRestricted
+										? showErrors &&
+										  this.optionState.future.state === this.toggleChoices[3] &&
+										  this.optionState.future.data.selectedTeachers.length === 0
+											? '#E32C66'
+											: '#1F194E'
+										: '#7F879D'
+								">
 								Restriction for future
 							</div>
 							<img [customToolTip]="tooltipText.scheduling_restricted" class="support-icon" [src]="'./assets/Support (Gray).svg' | resolveAsset" />
@@ -267,7 +285,17 @@
 					</div>
 					<div class="toggle-content">
 						<div class="title-line">
-							<div class="label" [style.color]="futureRestricted ? (isRestrictionEmpty('future') ? '#E32C66' : '#1F194E') : '#7F879D'">
+							<div
+								class="label"
+								[style.color]="
+									futureRestricted
+										? showErrors &&
+										  this.optionState.future.state === this.toggleChoices[3] &&
+										  this.optionState.future.data.selectedTeachers.length === 0
+											? '#E32C66'
+											: '#1F194E'
+										: '#7F879D'
+								">
 								Restrict Ending Passes
 							</div>
 							<img customToolTip [contentTemplate]="needCheckInText" class="support-icon" [src]="'./assets/Support (Gray).svg' | resolveAsset" />

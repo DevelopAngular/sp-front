@@ -15,18 +15,18 @@ export class RestrictionPickerComponent implements OnInit {
 	@Input() color: string = '#7F879D';
 	@Input() selectedColor: string = '#FFFFFF';
 	@Input() backgroundColor: string = '#1E194F';
-	@Input() selectedChoice: any;
+	@Input() selectedChoice: string;
 	@Input() fontSize: number = 13; // px
 	@Input() disabled: boolean;
 	@Input() disabledOptions: string[];
 	@Input() padding: number = 5; // px
 	@Input() tooltipText: string;
 
-	@Output() result: EventEmitter<any> = new EventEmitter<any>();
+	@Output() result: EventEmitter<string> = new EventEmitter<string>();
 
 	constructor() {}
 
-	ngOnInit() {
+	public ngOnInit(): void {
 		if (this.selectedChoice) {
 			if (this.disabledOptions && this.choices.length - this.disabledOptions.length === 1) {
 				this.selectedChoice = pullAll([...this.choices], [...this.disabledOptions])[0];
@@ -35,7 +35,7 @@ export class RestrictionPickerComponent implements OnInit {
 		}
 	}
 
-	isDisabled(option) {
+	public isDisabled(option: string): boolean {
 		return (
 			findIndex(this.disabledOptions, (opt) => {
 				return option === opt;
@@ -43,7 +43,7 @@ export class RestrictionPickerComponent implements OnInit {
 		);
 	}
 
-	onClick(choice) {
+	public onClick(choice: string): void {
 		if (!this.isDisabled(choice)) {
 			this.selectedChoice = choice;
 			this.result.emit(choice);

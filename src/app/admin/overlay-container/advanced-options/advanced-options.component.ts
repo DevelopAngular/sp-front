@@ -291,12 +291,4 @@ export class AdvancedOptionsComponent implements OnInit, OnDestroy {
 	public showAsOriginRoomEvent(value: boolean): void {
 		this.showAsOriginRoomEmit.emit(value);
 	}
-
-	public isRestrictionEmpty(restriction: string): boolean {
-		if (!this.showErrors) return;
-
-		if (restriction === 'now') {
-			if (this.optionState.now.state === this.toggleChoices[3]) return this.optionState.now.data.selectedTeachers.length === 0;
-		} else if (this.optionState.future.state === this.toggleChoices[3]) return this.optionState.future.data.selectedTeachers.length === 0;
-	}
 }

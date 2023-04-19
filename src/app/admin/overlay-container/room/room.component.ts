@@ -5,8 +5,8 @@ import { MatDialog, MatDialogRef } from '@angular/material/dialog';
 import { combineLatest, merge, Subject } from 'rxjs';
 import { filter, pluck, takeUntil, tap } from 'rxjs/operators';
 
-import { OverlayDataService, OverlayPages, RoomData, RoomDataResult } from '../overlay-data.service';
-import { ValidButtons } from '../advanced-options/advanced-options.component';
+import { OverlayDataService, OverlayPages, RoomData, RoomDataResult, TooltipText } from '../overlay-data.service';
+import { OptionState, ValidButtons } from '../advanced-options/advanced-options.component';
 import { VisibilityOverStudents, DEFAULT_VISIBILITY_STUDENTS } from '../visibility-room/visibility-room.type';
 
 import { HallPassesService } from '../../../services/hall-passes.service';
@@ -44,7 +44,7 @@ export class RoomComponent implements OnInit, OnDestroy {
 	@Output()
 	roomDataResult: EventEmitter<RoomDataResult> = new EventEmitter<RoomDataResult>();
 
-	data: RoomData = {
+	public data: RoomData = {
 		id: null,
 		roomName: 'New Room',
 		roomNumber: '',
@@ -64,27 +64,28 @@ export class RoomComponent implements OnInit, OnDestroy {
 		enable: true,
 	};
 
-	initialData: RoomData;
+	private initialData: RoomData;
 
-	currentPage: OverlayPages;
-	tooltipText;
-	inputFocusNumber: number = 1;
-	forceFocus$: Subject<any> = new Subject<any>();
+	public currentPage: OverlayPages;
+	public tooltipText: TooltipText;
+	public inputFocusNumber: number = 1;
+	public forceFocus$: Subject<any> = new Subject<any>();
 
-	advOptionsValidButtons: ValidButtons = {
+	private advOptionsValidButtons: ValidButtons = {
 		publish: false,
 		cancel: false,
 		incomplete: false,
 	};
 
-	roomValidButtons: ValidButtons;
+	private roomValidButtons: ValidButtons;
 	public PagesEnum = OverlayPages; // for use in template
 
-	change$: Subject<any> = new Subject();
+	public travelType: string;
+	public advDisabledOptions: string[];
 
-	resetadvOpt$ = new Subject();
-
-	destroy$ = new Subject();
+	private change$: Subject<void> = new Subject();
+	public resetadvOpt$: Subject<OptionState> = new Subject();
+	private destroy$: Subject<void> = new Subject();
 
 	constructor(
 		private dialog: MatDialog,
@@ -96,68 +97,15 @@ export class RoomComponent implements OnInit, OnDestroy {
 		private toast: ToastService
 	) {}
 
-	get travelTypes() {
-		if (this.data.travelType.includes('round_trip') && this.data.travelType.includes('one_way')) {
-			return 'Both';
-		} else if (this.data.travelType.includes('round_trip')) {
-			return 'Round-trip';
-		} else if (this.data.travelType.includes('one_way')) {
-			return 'One-way';
-		}
-	}
-
-	get restricted() {
-		if (!isNull(this.data.restricted)) {
-			if (this.data.restricted) {
-				return 'Restricted';
-			} else {
-				return 'Unrestricted';
-			}
-		}
-	}
-
-	get schedulingRestricted() {
-		if (!isNull(this.data.scheduling_restricted)) {
-			if (this.data.scheduling_restricted) {
-				return 'Restricted';
-			} else {
-				return 'Unrestricted';
-			}
-		}
-	}
-
-	get needCheckIn() {
-		if (!isNull(this.data.needs_check_in)) {
-			if (this.data.needs_check_in) {
-				return 'True';
-			} else {
-				return 'False';
-			}
-		}
-	}
-
-	get advDisabledOptions() {
-		const page: OverlayPages = this.currentPage;
-		if (
-			!this.data.selectedTeachers.length &&
-			(page === OverlayPages.NewRoom ||
-				page === OverlayPages.EditRoom ||
-				page === OverlayPages.NewRoomInFolder ||
-				page === OverlayPages.EditRoomInFolder)
-		) {
-			return ['This Room', 'Both'];
-		}
-	}
-
-	get validForm() {
+	get validForm(): boolean {
 		return this.form.get('roomName').valid && this.form.get('roomNumber').valid && this.form.get('timeLimit').valid;
 	}
 
-	get isValidRestrictions() {
+	get isValidRestrictions(): boolean {
 		return !isNull(this.data.restricted) && !isNull(this.data.scheduling_restricted);
 	}
 
-	ngOnInit() {
+	public ngOnInit(): void {
 		this.form.get('roomName').setValidators([Validators.required, Validators.maxLength(15)]);
 		this.tooltipText = this.overlayService.tooltipText;
 		this.currentPage = this.overlayService.pageState.getValue().currentPage;
@@ -215,6 +163,24 @@ export class RoomComponent implements OnInit, OnDestroy {
 					enable: data.enable,
 				};
 			}
+
+			if (this.data.travelType.includes('round_trip') && this.data.travelType.includes('one_way')) {
+				this.travelType = 'Both';
+			} else if (this.data.travelType.includes('round_trip')) {
+				this.travelType = 'Round-trip';
+			} else if (this.data.travelType.includes('one_way')) {
+				this.travelType = 'One-way';
+			}
+
+			if (
+				!this.data.selectedTeachers.length &&
+				(this.currentPage === OverlayPages.NewRoom ||
+					this.currentPage === OverlayPages.EditRoom ||
+					this.currentPage === OverlayPages.NewRoomInFolder ||
+					this.currentPage === OverlayPages.EditRoomInFolder)
+			) {
+				this.advDisabledOptions = ['This Room', 'Both'];
+			}
 		}
 
 		this.shortcuts.onPressKeyEvent$.pipe(takeUntil(this.destroy$), pluck('key')).subscribe((key) => {
@@ -246,7 +212,7 @@ export class RoomComponent implements OnInit, OnDestroy {
 			: console.log('isEnableRoomTrigger$ undefined');
 	}
 
-	ngOnDestroy(): void {
+	public ngOnDestroy(): void {
 		this.form.get('roomName').setValidators([Validators.maxLength(15)]);
 		this.destroy$.next();
 		this.destroy$.complete();
@@ -254,7 +220,7 @@ export class RoomComponent implements OnInit, OnDestroy {
 		this.visibilityForm?.reset();
 	}
 
-	checkValidRoomOptions() {
+	private checkValidRoomOptions(): void {
 		if (isEqual(omit(this.initialData, 'advOptState'), omit(this.data, 'advOptState'))) {
 			/**
 			 * If the initial form and the changed form are equal, execution should be here
@@ -323,7 +289,7 @@ export class RoomComponent implements OnInit, OnDestroy {
 		this.roomDataResult.emit({ data: this.data, buttonState: buttonsResult, advOptButtons: this.advOptionsValidButtons });
 	}
 
-	selectTeacherEvent(teachers) {
+	public selectTeacherEvent(teachers): void {
 		this.data.selectedTeachers = teachers;
 		if (!this.data.selectedTeachers.length) {
 			this.data.advOptState = {
@@ -335,7 +301,7 @@ export class RoomComponent implements OnInit, OnDestroy {
 		this.change$.next();
 	}
 
-	travelUpdate(type) {
+	public travelUpdate(type: string): void {
 		let travelType: string[];
 		if (type === 'Round-trip') {
 			travelType = ['round_trip'];
@@ -348,44 +314,44 @@ export class RoomComponent implements OnInit, OnDestroy {
 		this.change$.next();
 	}
 
-	restrictedEvent(isRestricted) {
+	public restrictedEvent(isRestricted: boolean): void {
 		this.data.restricted = isRestricted;
 		this.change$.next();
 	}
 
-	schedulingRestrictedEvent(isRestricted) {
+	public schedulingRestrictedEvent(isRestricted: boolean): void {
 		this.data.scheduling_restricted = isRestricted;
 		this.change$.next();
 	}
 
-	checkInEvent(isRestricted) {
+	public checkInEvent(isRestricted: boolean): void {
 		this.data.needs_check_in = isRestricted;
 		this.change$.next();
 	}
 
-	ignoreStudentsPassLimitEvent(isIgnored) {
+	public ignoreStudentsPassLimitEvent(isIgnored: boolean): void {
 		this.data.ignore_students_pass_limit = isIgnored;
 		this.change$.next();
 	}
 
-	showAsOriginRoomEvent(isShown: boolean) {
+	public showAsOriginRoomEvent(isShown: boolean): void {
 		this.data.show_as_origin_room = isShown;
 		this.data.show_as_origin_room = isShown;
 		this.change$.next();
 	}
 
-	advancedOptions({ options, validButtons }) {
+	public advancedOptions({ options, validButtons }): void {
 		this.data.advOptState = options;
 		this.advOptionsValidButtons = validButtons;
 		this.change$.next();
 	}
 
-	visibilityChange(visibility: VisibilityOverStudents) {
+	public visibilityChange(visibility: VisibilityOverStudents): void {
 		this.data.visibility = visibility;
 		this.change$.next();
 	}
 
-	deleteRoom(target: HTMLElement) {
+	public deleteRoom(target: HTMLElement): void {
 		const header = `Are you sure you want to permanently delete this room? All associated passes associated with this room <b>will not</b> be deleted.`;
 		const options = [{ display: 'Confirm Delete', color: '#DA2370', buttonColor: '#DA2370, #FB434A', action: 'delete' }];
 		UNANIMATED_CONTAINER.next(true);
