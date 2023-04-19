@@ -19,6 +19,8 @@ import { sortWil } from '../services/wait-in-line.service';
 import { WaitingInLinePass } from '../models/WaitInLine';
 import { InlineWaitInLineCardComponent } from '../pass-cards/inline-wait-in-line-card/inline-wait-in-line-card.component';
 import { PassLike } from '../models';
+import { Pinnable } from '../models/Pinnable';
+import { ToastService } from '../services/toast.service';
 
 declare const window;
 
@@ -28,21 +30,28 @@ declare const window;
 	styleUrls: ['./kiosk-mode.component.scss'],
 })
 export class KioskModeComponent implements OnInit, AfterViewInit, OnDestroy {
-	activePassesKiosk: Observable<HallPass[]>;
-	waitInLinePasses: Observable<WaitingInLinePass[]>;
-	cardReaderValue: string;
-	hideInput: boolean;
-	destroy$: Subject<any> = new Subject<any>();
-	showButtons = new BehaviorSubject(true);
-	showScanner = new BehaviorSubject(false);
-	invalidId = new BehaviorSubject({
+	public activePassesKiosk: Observable<HallPass[]>;
+	public waitInLinePasses: Observable<WaitingInLinePass[]>;
+	public cardReaderValue: string;
+	public hideInput: boolean;
+	private destroy$: Subject<any> = new Subject<any>();
+	private pinnables$: Observable<Pinnable[]> = this.passesService.getPinnablesRequest().pipe(filter((r: Pinnable[]) => !!r.length));
+	private pinnable: Pinnable;
+	private currentLocation: Location;
+	private showAsOriginRoom: boolean = true;
+
+	public showProfilePicture: boolean = false;
+	public waitInLinePassesEnabled: boolean = false;
+	public showButtons: BehaviorSubject<boolean> = new BehaviorSubject(true);
+	public showScanner: BehaviorSubject<boolean> = new BehaviorSubject(false);
+	public invalidId: BehaviorSubject<{ id: string; show: boolean }> = new BehaviorSubject({
 		id: '',
 		show: false,
 	});
 
-	mainFormRef: MatDialogRef<MainHallPassFormComponent>;
-	frontOfWaitInLineDialogRef: MatDialogRef<InlineWaitInLineCardComponent>;
-	alreadyOpenedWil: Record<string, boolean> = {};
+	private mainFormRef: MatDialogRef<MainHallPassFormComponent>;
+	private frontOfWaitInLineDialogRef: MatDialogRef<InlineWaitInLineCardComponent>;
+	private alreadyOpenedWil: Record<string, boolean> = {};
 
 	@ViewChild('input', { read: ElementRef, static: true }) input: ElementRef;
 
@@ -51,12 +60,12 @@ export class KioskModeComponent implements OnInit, AfterViewInit, OnDestroy {
 		this.inputFocus();
 	}
 
-	waitInLineTitle: Observable<string> = timer(0, 750).pipe(
+	public waitInLineTitle: Observable<string> = timer(0, 750).pipe(
 		takeUntil(this.destroy$),
 		map((count) => `Waiting in Line${'.'.repeat(count % 4)}`)
 	);
 
-	applyShakeToReadyWil = (pass: PassLike): string => {
+	public applyShakeToReadyWil = (pass: PassLike): string => {
 		if (!(pass instanceof WaitingInLinePass)) {
 			return '';
 		}
@@ -74,23 +83,20 @@ export class KioskModeComponent implements OnInit, AfterViewInit, OnDestroy {
 		private timeService: TimeService,
 		private activatedRoute: ActivatedRoute,
 		private titleService: Title,
-		private featureService: FeatureFlagService
+		private featureService: FeatureFlagService,
+		private toast: ToastService
 	) {}
 
-	get showProfilePicture() {
-		return this.userService.getUserSchool()?.profile_pictures_enabled;
-	}
+	public ngOnInit(): void {
+		this.showProfilePicture = this.userService.getUserSchool()?.profile_pictures_enabled;
+		this.waitInLinePassesEnabled = this.featureService.isFeatureEnabled(FLAGS.WaitInLine);
 
-	get isWaitInLine(): boolean {
-		return this.featureService.isFeatureEnabled(FLAGS.WaitInLine);
-	}
+		// opens "learn more" link in show as origin error toast
+		this.toast.toastButtonClick$.pipe(filter((action) => action === 'update_show_as_origin')).subscribe((res) => {
+			window.open('https://www.smartpass.app/show-as-origin-room', '_blank');
+		});
 
-	get waitInLinePassesPresent() {
-		return this.isWaitInLine;
-	}
-
-	ngOnInit() {
-		this.userService.userData.subscribe(console.log);
+		this.userService.userData.subscribe();
 		this.activatedRoute.data.subscribe((state) => {
 			if ('openDialog' in state && state.openDialog) {
 				this.dialog.open(KioskSettingsDialogComponent, {
@@ -118,20 +124,39 @@ export class KioskModeComponent implements OnInit, AfterViewInit, OnDestroy {
 					}
 					return of([]);
 				}),
-				filter((res: any[]) => !!res.length),
+				filter((res: Location[]) => !!res.length),
+				tap((res: Location[]) => {
+					const locationFromStorage = this.kioskMode.getCurrentRoom().value;
+					this.currentLocation = res.find((loc) => loc.id === locationFromStorage.id);
+					this.titleService.setTitle(`${this.currentLocation.title} | SmartPass`);
+					this.liveDataService.getMyRoomActivePassesRequest(
+						of({ sort: '-created', search_query: '' }),
+						{ type: 'location', value: [this.currentLocation] },
+						this.timeService.nowDate()
+					);
+					this.kioskMode.setCurrentRoom(this.currentLocation);
+				}),
+				switchMap(() => {
+					return this.pinnables$;
+				}),
+				// check if pinnable's show as origin room setting is false
+				// to show a toast if the user tries to create a pass.
+				tap((pinnables: Pinnable[]) => {
+					this.pinnable = pinnables.find((p: Pinnable) => p.location.id === this.currentLocation.id);
+					this.showAsOriginRoom = this.pinnable?.show_as_origin_room;
+				}),
+				// listen for the pinnable's show as origin room setting being changed
+				// to show a toast if the user tries to create a pass.
+				switchMap(() => {
+					return this.locationService.listenPinnableSocket();
+				}),
+				tap((res) => {
+					this.locationService.updatePinnableSuccessState(res.data);
+					this.showAsOriginRoom = res.data.show_as_origin_room;
+				}),
 				takeUntil(this.destroy$)
 			)
-			.subscribe((locations) => {
-				const locationFromStorage = this.kioskMode.getCurrentRoom().value;
-				const kioskLocation = locations.find((loc) => loc.id === locationFromStorage.id);
-				this.titleService.setTitle(`${kioskLocation.title} | SmartPass`);
-				this.liveDataService.getMyRoomActivePassesRequest(
-					of({ sort: '-created', search_query: '' }),
-					{ type: 'location', value: [kioskLocation] },
-					this.timeService.nowDate()
-				);
-				this.kioskMode.setCurrentRoom(kioskLocation);
-			});
+			.subscribe();
 
 		this.activePassesKiosk = this.liveDataService.myRoomActivePasses$;
 		this.waitInLinePasses = this.kioskMode.getCurrentRoom().pipe(
@@ -203,25 +228,25 @@ export class KioskModeComponent implements OnInit, AfterViewInit, OnDestroy {
 		});
 	}
 
-	ngAfterViewInit() {
+	public ngAfterViewInit(): void {
 		this.inputFocus();
 		if (window && window.appLoaded) {
 			window.appLoaded(1000);
 		}
 	}
 
-	ngOnDestroy() {
+	public ngOnDestroy(): void {
 		this.destroy$.next();
 		this.destroy$.complete();
 	}
 
-	inputFocus() {
+	private inputFocus(): void {
 		setTimeout(() => {
 			this.input.nativeElement.focus();
 		}, 50);
 	}
 
-	cardReader(event: KeyboardEvent) {
+	public cardReader(event: KeyboardEvent): void {
 		if (event.key !== 'Enter') {
 			return;
 		}
@@ -245,7 +270,7 @@ export class KioskModeComponent implements OnInit, AfterViewInit, OnDestroy {
 					return combineLatest(of(user), this.passesService.getActivePassesKioskMode(this.kioskMode.getCurrentRoom().value.id));
 				}),
 				map(([user, passes]) => {
-					const myPass = (passes as HallPass[]).find((pass) => pass.student.id === user.id);
+					const myPass: HallPass = (passes as HallPass[]).find((pass: HallPass) => pass.student.id === user.id);
 					if (myPass) {
 						this.passesService
 							.endPass(myPass.id)
@@ -264,11 +289,24 @@ export class KioskModeComponent implements OnInit, AfterViewInit, OnDestroy {
 		this.cardReaderValue = '';
 	}
 
-	onCardReaderBlur() {
+	public onCardReaderBlur(): void {
 		this.inputFocus();
 	}
 
-	showMainForm(forLater: boolean, student?): void {
+	public showMainForm(forLater: boolean, student?): void {
+		// don't allow creating a pass if the room does not have show as origin room setting set to true.
+		if (!this.showAsOriginRoom) {
+			this.toast.openToast({
+				title: 'Passes cannot be created on this kiosk',
+				subtitle: 'This room is only allowed as a destination, and therefore cannot become a kiosk.',
+				showButton: true,
+				action: 'update_show_as_origin',
+				buttonText: 'Learn more.',
+				type: 'error',
+			});
+			return;
+		}
+
 		this.hideInput = true;
 		this.mainFormRef = this.dialog.open(MainHallPassFormComponent, {
 			panelClass: 'main-form-dialog-container',
@@ -290,7 +328,7 @@ export class KioskModeComponent implements OnInit, AfterViewInit, OnDestroy {
 		});
 	}
 
-	notFound(id: string, show: boolean) {
+	private notFound(id: string, show: boolean): void {
 		this.invalidId.next({ id, show });
 		setTimeout(() => {
 			this.invalidId.next({ id: '', show: false });
