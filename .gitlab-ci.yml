@@ -130,7 +130,7 @@ deploy_prod:
 
   environment:
     name: production
-    url: https://appp.smartpass.app
+    url: https://app.smartpass.app
   tags:
     - "docker-passthrough"
 
