@@ -52,7 +52,6 @@
 						(buttonClick)="previewPDF()"
 						customToolTip
 						[contentTemplate]="tooltip"
-						[editable]="true"
 						[nonDisappearing]="false"
 						[disabled]="!(activePassProvider | async).length"
 						style="margin-right: 12px"></app-white-button>
@@ -68,7 +67,6 @@
 						customToolTip
 						[contentTemplate]="reportStudentTooltip"
 						[nonDisappearing]="false"
-						[editable]="true"
 						[width]="'40px'"
 						[height]="'40px'">
 						<ng-template #reportStudentTooltip>
