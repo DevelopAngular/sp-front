@@ -87,7 +87,27 @@ mr_preview_stop:
   tags:
     - "docker-passthrough"
 
-deploy:
+deploy_staging:
+  stage: deploy
+  variables:
+    CLOUDFLARE_ACCOUNT_ID: 5f14bf10d9d1edfa1aaefaaa7854e9f6
+    CLOUDFLARE_API_TOKEN: $CLOUDFLARE_PAGES_TOKEN
+  script:
+    # wrangler was installed when the ci-image docker image was created
+    - chmod a+x $NVM_DIR/nvm.sh
+    - . $NVM_DIR/nvm.sh
+    - nvm use lts/hydrogen
+    - wrangler pages publish dist --project-name=smartpass-frontend --branch staging
+  rules:
+    - if: $CI_COMMIT_BRANCH == 'master'
+  needs: [build]
+  environment:
+    name: staging
+    url: https://staging.smartpass.app
+  tags:
+    - "docker-passthrough"
+
+deploy_prod:
   stage: deploy
   variables:
     CLOUDFLARE_ACCOUNT_ID: 5f14bf10d9d1edfa1aaefaaa7854e9f6
@@ -102,10 +122,10 @@ deploy:
     - if: $CI_COMMIT_BRANCH == 'master'
       when: manual
       allow_failure: true
-  needs: [build]
+  needs: [ deploy_staging ]
   environment:
     name: production
-    url: https://app.smartpass.app
+    url: https://appp.smartpass.app
   tags:
     - "docker-passthrough"
 
