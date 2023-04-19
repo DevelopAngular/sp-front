@@ -107,6 +107,7 @@ import {
 	updateIntrosPassLimitsOnlyCertainRooms,
 	updateIntrosSearch,
 	updateIntrosSeenRenewalStatusPage,
+	updateIntrosShowRoomAsOrigin,
 	updateIntrosStudentPassLimits,
 	updateIntrosWaitInLine,
 } from '../ngrx/intros/actions';
@@ -691,6 +692,11 @@ export class UserService implements OnDestroy {
 		this.store.dispatch(updateIntrosWaitInLine({ intros, device, version }));
 	}
 
+	updateIntrosShowRoomAsOriginRequest(intros, device, version) {
+		this.store.dispatch(updateIntrosShowRoomAsOrigin({ intros, device, version }));
+		return of(null);
+	}
+
 	updateIntrosPassLimitsOnlyCertainRoomsRequest(intros, device, version) {
 		this.store.dispatch(updateIntrosPassLimitsOnlyCertainRooms({ intros, device, version }));
 	}
@@ -713,6 +719,10 @@ export class UserService implements OnDestroy {
 
 	updateIntrosEncounter(device, version) {
 		return this.http.patch('v1/intros/encounter_reminder', { device, version });
+	}
+
+	updateIntrosShowRoomAsOrigin(device, version) {
+		return this.http.patch('v1/intros/show_room_as_origin', { device, version });
 	}
 
 	updateIntrosSearch(device, version) {

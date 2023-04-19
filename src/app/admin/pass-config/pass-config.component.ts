@@ -105,6 +105,7 @@ export class PassConfigComponent implements OnInit, OnDestroy {
 	showRooms: boolean;
 	globalReloadSubs: Subscription;
 	showWaitInLineNux = new Subject<boolean>();
+	private showRoomAsOriginNux = new Subject<boolean>();
 	introsData: any;
 
 	@HostListener('window:scroll', ['$event'])
@@ -193,10 +194,12 @@ export class PassConfigComponent implements OnInit, OnDestroy {
 			.pipe(debounceTime(1000), takeUntil(this.destroy$))
 			.subscribe(([intros, user]) => {
 				this.introsData = intros;
-
 				if (this.features.isFeatureEnabled(FLAGS.ShowWaitInLine)) {
 					const showNux = moment(user.first_login).isBefore(this.waitInLineLaunchDate) && !intros?.wait_in_line?.universal?.seen_version;
 					this.showWaitInLineNux.next(showNux);
+				}
+				if (!this.introsData.show_room_as_origin) {
+					this.showRoomAsOriginNux.next(true);
 				}
 			});
 	}
@@ -447,5 +450,9 @@ export class PassConfigComponent implements OnInit, OnDestroy {
 	dismissWaitInLineNux() {
 		this.showWaitInLineNux.next(false);
 		this.userService.updateIntrosWaitInLineRequest(this.introsData, 'universal', '1');
+	}
+	dismissShowRoomAsOriginNux() {
+		this.showRoomAsOriginNux.next(false);
+		this.userService.updateIntrosShowRoomAsOriginRequest(this.introsData, 'universal', '1');
 	}
 }
