@@ -180,7 +180,6 @@ export class OverlayDataService {
 	constructor() {}
 
 	public changePage(next: OverlayPages, previous: OverlayPages, data: PageStateData): void {
-		console.log('changePage', data);
 		this.pageState.next({
 			currentPage: next,
 			previousPage: previous,
