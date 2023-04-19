@@ -80,9 +80,8 @@ export interface StartWaitingInLinePassResponse {
 }
 
 export interface CheckPinnableName {
-	title_used: boolean,
+	title_used: boolean;
 }
-
 
 @Injectable({
 	providedIn: 'root',

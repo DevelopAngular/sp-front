@@ -15,14 +15,7 @@ import { HallPassesService } from '../../services/hall-passes.service';
 import { LocationsService } from '../../services/locations.service';
 import { OptionState, ValidButtons } from './advanced-options/advanced-options.component';
 import { CreateFormService } from '../../create-hallpass-forms/create-form.service';
-import {
-	BulkEditDataResult,
-	FolderData, FolderDataResult,
-	OverlayDataService,
-	OverlayPages,
-	RoomData,
-	RoomDataResult,
-} from './overlay-data.service';
+import { BulkEditDataResult, FolderData, FolderDataResult, OverlayDataService, OverlayPages, RoomData, RoomDataResult } from './overlay-data.service';
 import { cloneDeep, differenceBy, filter as _filter, isString, pullAll } from 'lodash';
 import { ColorProfile } from '../../models/ColorProfile';
 import { User } from '../../models/User';
@@ -33,21 +26,20 @@ import { BlockScrollService } from './block-scroll.service';
 import { Icon } from '../icon-picker/icon-picker.component';
 import { IntroData } from '../../ngrx/intros';
 
-
 export interface RoomDialogData {
-	type: string,
-	pinnables$?: Observable<Pinnable[]>,
-	pinnable?: Pinnable,
-	rooms?: Pinnable[],
-	isEditFolder?: boolean,
-	forceSelectedLocation?: Location,
+	type: string;
+	pinnables$?: Observable<Pinnable[]>;
+	pinnable?: Pinnable;
+	rooms?: Pinnable[];
+	isEditFolder?: boolean;
+	forceSelectedLocation?: Location;
 }
 interface UniqueRoomName {
-	room_name: boolean,
+	room_name: boolean;
 }
 
 interface UniqueFiolderName {
-	folder_name: boolean,
+	folder_name: boolean;
 }
 
 @Component({
@@ -149,7 +141,6 @@ export class OverlayContainerComponent implements OnInit, OnDestroy {
 		private blockScrollService: BlockScrollService
 	) {}
 
-
 	get roomTitle(): string {
 		if (this.currentPage === OverlayPages.NewRoom || this.currentPage === OverlayPages.EditRoom) {
 			return this.roomData ? this.roomData.roomName : null;
@@ -234,7 +225,11 @@ export class OverlayContainerComponent implements OnInit, OnDestroy {
 					missing.push('room name');
 				}
 			}
-			if (this.currentPage === OverlayPages.NewFolder || this.currentPage === OverlayPages.EditFolder || this.currentPage === OverlayPages.BulkEditRoomsInFolder) {
+			if (
+				this.currentPage === OverlayPages.NewFolder ||
+				this.currentPage === OverlayPages.EditFolder ||
+				this.currentPage === OverlayPages.BulkEditRoomsInFolder
+			) {
 				if (this.form.get('folderName').invalid) {
 					missing.push('folder name');
 				}
@@ -406,7 +401,11 @@ export class OverlayContainerComponent implements OnInit, OnDestroy {
 				this.visibility = cloneDeep(v);
 			});
 
-		if (this.currentPage === OverlayPages.EditFolder || this.currentPage === OverlayPages.EditRoom || this.currentPage === OverlayPages.EditRoomInFolder) {
+		if (
+			this.currentPage === OverlayPages.EditFolder ||
+			this.currentPage === OverlayPages.EditRoom ||
+			this.currentPage === OverlayPages.EditRoomInFolder
+		) {
 			this.icons$ = merge(this.form.get('roomName').valueChanges, this.form.get('folderName').valueChanges).pipe(
 				debounceTime(300),
 				distinctUntilChanged(),
@@ -784,7 +783,7 @@ export class OverlayContainerComponent implements OnInit, OnDestroy {
 			this.formService.setFrameMotionDirection('back');
 			setTimeout(() => {
 				const oldFolderData: FolderData = this.oldFolderData ? this.oldFolderData : this.folderData;
-				console.log('oldFolderData',oldFolderData);
+				console.log('oldFolderData', oldFolderData);
 				if (this.overlayService.pageState.getValue().previousPage === OverlayPages.BulkEditRoomsInFolder) {
 					if (!!this.pinnable) {
 						this.overlayService.updatePage(OverlayPages.EditFolder, this.currentPage, { ...this.folderData, oldFolderData });
@@ -1157,7 +1156,7 @@ export class OverlayContainerComponent implements OnInit, OnDestroy {
 	}
 
 	public folderResult(result: FolderDataResult): void {
-		console.log('folder result',result.data);
+		console.log('folder result', result.data);
 		this.folderData = result.data;
 		this.roomValidButtons.next(result.buttonState);
 		this.visibilityForm.setValue({ visibility: this.visibility });
@@ -1165,7 +1164,7 @@ export class OverlayContainerComponent implements OnInit, OnDestroy {
 	}
 
 	public newRoomInFolder(room: RoomData): void {
-		console.log('newRoomInFolder',room);
+		console.log('newRoomInFolder', room);
 		this.oldFolderData = cloneDeep(this.folderData);
 		this.isOpenRoom = room.enable;
 		this.folderData.roomsInFolder.push({
@@ -1180,7 +1179,7 @@ export class OverlayContainerComponent implements OnInit, OnDestroy {
 	}
 
 	public editRoomFolder(room: RoomData): void {
-		console.log('editRoomFolder',room);
+		console.log('editRoomFolder', room);
 		this.oldFolderData = cloneDeep(this.folderData);
 		this.isOpenRoom = room.enable;
 		this.folderData.roomsInFolder = this.folderData.roomsInFolder.filter((r) => r.id !== room.id);
@@ -1193,7 +1192,7 @@ export class OverlayContainerComponent implements OnInit, OnDestroy {
 	}
 
 	public addToFolder(rooms: Pinnable[]): void {
-		console.log('addToFolder',rooms);
+		console.log('addToFolder', rooms);
 		this.oldFolderData = cloneDeep(this.folderData);
 		this.pinnableToDeleteIds = rooms.map((pin) => +pin.id);
 		const locationsToAdd: any[] = rooms.map((room) => {
@@ -1207,8 +1206,8 @@ export class OverlayContainerComponent implements OnInit, OnDestroy {
 	}
 
 	public bulkEditInFolder(result: BulkEditDataResult): void {
-		console.log('bulkEditInFolder',result);
-		console.log('bulkEditInFolder',this.folderData);
+		console.log('bulkEditInFolder', result);
+		console.log('bulkEditInFolder', this.folderData);
 		this.oldFolderData = cloneDeep(this.folderData);
 		this.folderData.roomsInFolder = differenceBy(this.folderData.roomsInFolder, result.rooms, 'id');
 		const editingRooms: any[] = this.editRooms(result.roomData, result.rooms);
@@ -1225,7 +1224,7 @@ export class OverlayContainerComponent implements OnInit, OnDestroy {
 	}
 
 	public bulkEditResult(result: BulkEditDataResult): void {
-		console.log('bulkEditResult',result);
+		console.log('bulkEditResult', result);
 		const editingPinnables: Pinnable[] = this.editPinnables(result.roomData, result.pinnables);
 		const editingRooms: any[] = this.editRooms(result.roomData, result.rooms);
 		this.bulkEditData = { roomData: result.roomData, rooms: editingRooms, pinnables: editingPinnables };
@@ -1233,7 +1232,7 @@ export class OverlayContainerComponent implements OnInit, OnDestroy {
 	}
 
 	public deleteRoomInFolder(room: any): void {
-		console.log('deleteRoomInFolder',room);
+		console.log('deleteRoomInFolder', room);
 		this.oldFolderData = cloneDeep(this.folderData);
 		if (!isString(room.id)) {
 			this.folderData.roomsToDelete.push(room);
@@ -1251,8 +1250,8 @@ export class OverlayContainerComponent implements OnInit, OnDestroy {
 	}
 
 	private editRooms(roomData: RoomData, rooms: any[]): any[] {
-		console.log('editRooms roomData',roomData);
-		console.log('editRooms rooms',rooms);
+		console.log('editRooms roomData', roomData);
+		console.log('editRooms rooms', rooms);
 		return rooms.map((room) => {
 			room.restricted = !!roomData.restricted;
 			room.scheduling_restricted = !!roomData.scheduling_restricted;

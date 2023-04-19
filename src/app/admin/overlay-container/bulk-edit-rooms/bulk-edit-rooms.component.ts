@@ -44,7 +44,8 @@ export class BulkEditRoomsComponent implements OnInit {
 	constructor(
 		@Inject(MAT_DIALOG_DATA) public dialogData: RoomDialogData,
 		private locationService: LocationsService,
-		private overlayData: OverlayDataService) {}
+		private overlayData: OverlayDataService
+	) {}
 
 	ngOnInit() {
 		if (this.dialogData.rooms) {

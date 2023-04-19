@@ -62,7 +62,10 @@
 						[allowChangingShowAsOriginRoom]="true"
 						(roomDataResult)="roomResult($event)"></app-room>
 
-					<app-folder [form]="form" *ngIf="currentPage === PagesEnum.NewFolder || currentPage === PagesEnum.EditFolder" (folderDataResult)="folderResult($event)"></app-folder>
+					<app-folder
+						[form]="form"
+						*ngIf="currentPage === PagesEnum.NewFolder || currentPage === PagesEnum.EditFolder"
+						(folderDataResult)="folderResult($event)"></app-folder>
 
 					<app-new-room-in-folder
 						[form]="form"
@@ -128,8 +131,18 @@
 			<div class="right-block">
 				<div class="right-content">
 					<div class="appearance-content" *ngIf="currentPage !== PagesEnum.BulkEditRooms">
-						<div class="inactive" *ngIf="disabledRightBlock" [style.top]="currentPage === PagesEnum.NewRoomInFolder || currentPage === PagesEnum.EditRoomInFolder ? '64px' : 0"></div>
-						<div class="enable-room" *ngIf="currentPage === PagesEnum.NewRoom || currentPage === PagesEnum.EditRoom || currentPage === PagesEnum.NewRoomInFolder || currentPage === PagesEnum.EditRoomInFolder">
+						<div
+							class="inactive"
+							*ngIf="disabledRightBlock"
+							[style.top]="currentPage === PagesEnum.NewRoomInFolder || currentPage === PagesEnum.EditRoomInFolder ? '64px' : 0"></div>
+						<div
+							class="enable-room"
+							*ngIf="
+								currentPage === PagesEnum.NewRoom ||
+								currentPage === PagesEnum.EditRoom ||
+								currentPage === PagesEnum.NewRoomInFolder ||
+								currentPage === PagesEnum.EditRoomInFolder
+							">
 							<div class="info">Availability</div>
 							<div class="toggle" nuxTooltip [contentTemplate]="tooltip" [showToolTip$]="showNuxTooltip">
 								<div

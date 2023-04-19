@@ -45,7 +45,7 @@ import { PassLimitDialogComponent } from '../create-hallpass-forms/main-hallpass
 import { MatDialog } from '@angular/material/dialog';
 
 export interface CheckLocationTitle {
-	title_used: boolean,
+	title_used: boolean;
 }
 
 @Injectable({

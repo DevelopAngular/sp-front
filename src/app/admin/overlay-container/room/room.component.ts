@@ -140,7 +140,10 @@ export class RoomComponent implements OnInit, OnDestroy {
 		const page: OverlayPages = this.currentPage;
 		if (
 			!this.data.selectedTeachers.length &&
-			(page === OverlayPages.NewRoom || page === OverlayPages.EditRoom || page === OverlayPages.NewRoomInFolder || page === OverlayPages.EditRoomInFolder)
+			(page === OverlayPages.NewRoom ||
+				page === OverlayPages.EditRoom ||
+				page === OverlayPages.NewRoomInFolder ||
+				page === OverlayPages.EditRoomInFolder)
 		) {
 			return ['This Room', 'Both'];
 		}

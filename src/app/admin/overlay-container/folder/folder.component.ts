@@ -12,14 +12,7 @@ import { User } from '../../../models/User';
 import { LocationsService } from '../../../services/locations.service';
 import { OverlayContainerComponent } from '../overlay-container.component';
 import { HallPassesService } from '../../../services/hall-passes.service';
-import {
-	FolderData,
-	FolderDataResult,
-	OverlayDataService,
-	OverlayPages,
-	PageStateData,
-	TooltipText,
-} from '../overlay-data.service';
+import { FolderData, FolderDataResult, OverlayDataService, OverlayPages, PageStateData, TooltipText } from '../overlay-data.service';
 import { CreateFormService } from '../../../create-hallpass-forms/create-form.service';
 import { OptionState, ValidButtons } from '../advanced-options/advanced-options.component';
 

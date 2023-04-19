@@ -287,12 +287,14 @@ export class MyRoomComponent implements OnInit, OnDestroy, AfterViewInit {
 				});
 			});
 
-		this.pinnables$.pipe(
-			tap((res: Pinnable[])=> {
-				this.pinnables = res;
-			}),
-			takeUntil(this.destroy$)
-		).subscribe()
+		this.pinnables$
+			.pipe(
+				tap((res: Pinnable[]) => {
+					this.pinnables = res;
+				}),
+				takeUntil(this.destroy$)
+			)
+			.subscribe();
 
 		this.hasPasses = combineLatest(
 			this.liveDataService.myRoomActivePassesTotalNumber$,
@@ -380,7 +382,7 @@ export class MyRoomComponent implements OnInit, OnDestroy, AfterViewInit {
 	private setRoomToKioskModeProcesing: boolean;
 
 	setRoomToKioskMode() {
-		const pin: Pinnable = this.pinnables.find(p => p.location.id === this.roomOptions[0].id);
+		const pin: Pinnable = this.pinnables.find((p) => p.location.id === this.roomOptions[0].id);
 		if (pin && !pin.show_as_origin_room) {
 			this.showAsOriginRoom = false;
 		}

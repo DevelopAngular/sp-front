@@ -369,7 +369,7 @@ export class PassConfigComponent implements OnInit, OnDestroy {
 		return this.dialogContainer(data, component);
 	}
 
-	dialogContainer(data: RoomDialogData, component):void  {
+	dialogContainer(data: RoomDialogData, component): void {
 		this.forceSelectedLocation = null;
 		const overlayDialog = this.dialog.open(component, {
 			panelClass: 'overlay-dialog-no-background',

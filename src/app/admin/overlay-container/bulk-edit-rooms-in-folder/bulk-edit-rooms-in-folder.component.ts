@@ -1,12 +1,6 @@
 import { Component, EventEmitter, Input, OnInit, Output } from '@angular/core';
 import { FormGroup } from '@angular/forms';
-import {
-	BulkEditDataResult,
-	OverlayDataService,
-	OverlayPages,
-	RoomData,
-	RoomDataResult,
-} from '../overlay-data.service';
+import { BulkEditDataResult, OverlayDataService, OverlayPages, RoomData, RoomDataResult } from '../overlay-data.service';
 import { ValidButtons } from '../advanced-options/advanced-options.component';
 import { BehaviorSubject, Subject } from 'rxjs';
 import { isNull } from 'lodash';
