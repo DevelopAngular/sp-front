@@ -82,8 +82,10 @@ mr_preview_stop:
       fi
 
       # Delete the deployment
-      DELETE_DEPLOYMENT_URL="https://api.cloudflare.com/client/v4/accounts/5f14bf10d9d1edfa1aaefaaa7854e9f6/pages/projects/smartpass-frontend/deployments/${DEPLOYMENT_ID}"
+      DELETE_DEPLOYMENT_URL="https://api.cloudflare.com/client/v4/accounts/5f14bf10d9d1edfa1aaefaaa7854e9f6/pages/projects/smartpass-frontend/deployments/${DEPLOYMENT_ID}?force=true"
       curl -X DELETE -H "Authorization: Bearer $CLOUDFLARE_PAGES_TOKEN" -H "Content-Type: application/json" ${DELETE_DEPLOYMENT_URL}
+  tags:
+    - "docker-passthrough"
 
 deploy:
   stage: deploy
