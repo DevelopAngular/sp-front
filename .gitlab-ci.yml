@@ -14,6 +14,7 @@ cache:
 stages:
   - build
   - deploy
+  - deploy_prod
   - e2e
 
 build:
@@ -101,7 +102,6 @@ deploy_staging:
     - wrangler pages publish dist --project-name=smartpass-frontend --branch staging
   rules:
     - if: $CI_COMMIT_BRANCH == 'master'
-  needs: [build]
   environment:
     name: staging
     url: https://staging.smartpass.app
@@ -109,7 +109,7 @@ deploy_staging:
     - "docker-passthrough"
 
 deploy_prod:
-  stage: deploy
+  stage: deploy_prod
   variables:
     CLOUDFLARE_ACCOUNT_ID: 5f14bf10d9d1edfa1aaefaaa7854e9f6
     CLOUDFLARE_API_TOKEN: $CLOUDFLARE_PAGES_TOKEN
@@ -123,7 +123,11 @@ deploy_prod:
     - if: $CI_COMMIT_BRANCH == 'master'
       when: manual
       allow_failure: true
-  needs: [ deploy_staging ]
+  needs:
+    - job: build
+      artifacts: true
+    - job: deploy_staging
+
   environment:
     name: production
     url: https://appp.smartpass.app
