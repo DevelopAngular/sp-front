@@ -48,9 +48,42 @@ mr_preview_deploy:
     - if: $CI_PIPELINE_SOURCE == 'merge_request_event'
   interruptible: true
   needs: [build]
+  environment:
+    name: preview/$CI_COMMIT_REF_NAME
+    url: https://$CI_COMMIT_REF_SLUG.smartpass-frontend.pages.dev
+    on_stop: mr_preview_stop
+    auto_stop_in: 1 week
   tags:
     - "docker-passthrough"
 
+mr_preview_stop:
+  stage: deploy
+  needs: [mr_preview_deploy]
+  environment:
+      name: preview/$CI_COMMIT_REF_NAME
+      action: stop
+  rules:
+    - if: $CI_PIPELINE_SOURCE == 'merge_request_event'
+      when: manual
+  script:
+    - |
+      # Get the deployments list
+      DEPLOYMENTS_URL="https://api.cloudflare.com/client/v4/accounts/5f14bf10d9d1edfa1aaefaaa7854e9f6/pages/projects/smartpass-frontend/deployments"
+      DEPLOYMENTS=$(curl -s -H "Authorization: Bearer $CLOUDFLARE_PAGES_TOKEN" -H "Content-Type: application/json" ${DEPLOYMENTS_URL})
+
+      # Extract deployment ID for the current environment
+      COMMIT_REF_SLUG=$(echo $CI_COMMIT_REF_SLUG | sed 's/\//-/g') # Replace slashes with hyphens
+      ALIAS="https://$COMMIT_REF_SLUG.smartpass-frontend.pages.dev"
+      DEPLOYMENT_ID=$(echo ${DEPLOYMENTS} | jq -r --arg ALIAS "${ALIAS}" '.result[] | select(.aliases[0] == $ALIAS) | .id')
+
+      if [ -z "${DEPLOYMENT_ID}" ]; then
+        echo "Deployment ID not found for the current environment."
+        exit 1
+      fi
+
+      # Delete the deployment
+      DELETE_DEPLOYMENT_URL="https://api.cloudflare.com/client/v4/accounts/5f14bf10d9d1edfa1aaefaaa7854e9f6/pages/projects/smartpass-frontend/deployments/${DEPLOYMENT_ID}"
+      curl -X DELETE -H "Authorization: Bearer $CLOUDFLARE_PAGES_TOKEN" -H "Content-Type: application/json" ${DELETE_DEPLOYMENT_URL}
 
 deploy:
   stage: deploy
@@ -68,6 +101,9 @@ deploy:
       when: manual
       allow_failure: true
   needs: [build]
+  environment:
+    name: production
+    url: https://app.smartpass.app
   tags:
     - "docker-passthrough"
 
