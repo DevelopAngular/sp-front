@@ -303,7 +303,7 @@ export class InlineWaitInLineCardComponent implements OnInit, OnChanges, OnDestr
 			backdropClass: 'invis-backdrop',
 			data: { options: options, trigger: target },
 			position: {
-				top: `${targetCoords.bottom + 20}px`,
+				top: `${targetCoords.bottom + Math.abs(document.scrollingElement.getClientRects()[0].top) + 20}px`,
 				left: `${targetCoords.left}px`,
 			},
 		});

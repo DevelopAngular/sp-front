@@ -22,6 +22,7 @@ export class ConsentMenuComponent implements OnInit {
 	ConsentYesText: string;
 	ConsentNoText: string;
 	ConsentButtonColor: string;
+	adjustForScroll: boolean = false;
 
 	isSort = false;
 	sortMode;
@@ -49,6 +50,7 @@ export class ConsentMenuComponent implements OnInit {
 		this.ConsentYesText = data['ConsentYesText'];
 		this.ConsentNoText = data['ConsentNoText'];
 		this.ConsentButtonColor = data['ConsentButtonColor'];
+		this.adjustForScroll = data['adjustForScroll'];
 	}
 
 	ngOnInit() {
@@ -58,9 +60,13 @@ export class ConsentMenuComponent implements OnInit {
 	updatePosition() {
 		const matDialogConfig: MatDialogConfig = new MatDialogConfig();
 		const rect = this.triggerElementRef.nativeElement.getBoundingClientRect();
+		let scrollAdjustment = 0;
+		if (this.adjustForScroll) {
+			scrollAdjustment = Math.abs(document.scrollingElement.getClientRects()[0].top);
+		}
 		matDialogConfig.position = {
 			left: `${DeviceDetection.isMobile() ? rect.left - 210 : rect.left + rect.width / 2 - 220}px`,
-			top: `${rect.bottom + 15}px`,
+			top: `${rect.bottom + scrollAdjustment + 15}px`,
 		};
 		matDialogConfig.width = '275px';
 		this._matDialogRef.updateSize(matDialogConfig.width, matDialogConfig.height);

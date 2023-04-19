@@ -519,7 +519,7 @@ export class ViewProfileComponent implements OnInit {
 		const cancelDialog = this.matDialog.open(ConsentMenuComponent, {
 			panelClass: 'consent-dialog-container',
 			backdropClass: 'invis-backdrop',
-			data: { options: options, trigger: new ElementRef(evt) },
+			data: { options: options, trigger: new ElementRef(evt), adjustForScroll: true },
 		});
 
 		cancelDialog

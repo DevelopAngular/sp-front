@@ -50,7 +50,7 @@
 			(scroll)="scroll()">
 			<div *ngIf="students" class="appearing" style="border-top: 1px solid #d8d8d8; width: 92%; margin: 0 auto"></div>
 			<div *ngIf="!showDummy; else noStudentsDummy" style="margin-top: -1px">
-				<div class="option-list_scrollable" [style.max-height]="listMaxHeight">
+				<div *ngIf="(students | async)?.length; else noUserFound" class="option-list_scrollable" [style.max-height]="listMaxHeight">
 					<div
 						data-cy="search-result-user"
 						[ngClass]="{ disabled: isDisabled(student) }"
@@ -113,6 +113,14 @@
 						</ng-template>
 					</div>
 				</div>
+				<ng-template #noUserFound>
+					<div
+						*ngIf="students && studentInput.valueLength > 0 && !(pending$ | async)"
+						class="option-list_scrollable"
+						[style.max-height]="listMaxHeight">
+						<p class="no-user-found">No {{ role == '_profile_student' ? 'students' : 'teachers' }} found</p>
+					</div>
+				</ng-template>
 			</div>
 			<ng-template #noStudentsDummy>
 				<div class="no-students-dummy">

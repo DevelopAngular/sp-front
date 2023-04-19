@@ -37,7 +37,10 @@ export class StatusBaseComponent implements OnInit {
 		const rect = this.triggerElementRef.getBoundingClientRect();
 		// align to left as it appears to be aligned to the right
 		// 204 is width of status container
-		matDialogConfig.position = { left: `${rect.left - (204 - rect.width)}px`, top: `${rect.bottom + 13}px` };
+		matDialogConfig.position = {
+			left: `${rect.left - (204 - rect.width)}px`,
+			top: `${rect.bottom + Math.abs(document.scrollingElement.getClientRects()[0].top) + 13}px`,
+		};
 		this.dialogRef.updatePosition(matDialogConfig.position);
 	}
 

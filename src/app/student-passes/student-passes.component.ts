@@ -313,7 +313,7 @@ export class StudentPassesComponent implements OnInit, OnDestroy, AfterViewInit 
 		const st = this.dialog.open(SettingsDescriptionPopupComponent, {
 			panelClass: 'consent-dialog-container',
 			backdropClass: 'invis-backdrop',
-			data: { trigger: event.currentTarget, settings },
+			data: { trigger: event.currentTarget, settings, adjustForScroll: true },
 		});
 
 		st.afterClosed()

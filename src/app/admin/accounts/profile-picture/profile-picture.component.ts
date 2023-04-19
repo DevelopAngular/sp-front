@@ -571,7 +571,7 @@ export class ProfilePictureComponent implements OnInit, OnDestroy {
 		const st = this.dialog.open(SettingsDescriptionPopupComponent, {
 			panelClass: 'consent-dialog-container',
 			backdropClass: 'invis-backdrop',
-			data: { trigger: this.dots.nativeElement, settings },
+			data: { trigger: this.dots.nativeElement, settings, adjustForScroll: true },
 		});
 
 		st.afterClosed()

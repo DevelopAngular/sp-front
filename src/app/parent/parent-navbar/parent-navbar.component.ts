@@ -84,7 +84,9 @@ export class ParentNavbarComponent implements OnInit {
 				data: {
 					trigger: target,
 					isSwitch: this.showSwitchButton,
-					settings: [{ hidden: false, background: '#134482', icon: 'Language', action: 'language', title: 'Language', isNew: true }],
+					settings: [
+						{ hidden: false, background: '#134482', icon: 'Language', action: 'language', title: 'Language', isNew: true, adjustForScroll: true },
+					],
 				},
 			});
 

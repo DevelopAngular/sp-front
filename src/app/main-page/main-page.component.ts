@@ -189,7 +189,7 @@ export class MainPageComponent implements OnInit, AfterViewInit, OnDestroy {
 			}
 		});
 
-		this.userService.userData
+		this.userService.user$
 			.pipe(
 				filter(Boolean),
 				map((user) => User.fromJSON(user)),

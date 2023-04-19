@@ -36,7 +36,10 @@ export class DateTimeFilterComponent implements OnInit {
 		const matDialogConfig: MatDialogConfig = new MatDialogConfig();
 		const rect = this.targetElementRef.nativeElement.getBoundingClientRect();
 
-		matDialogConfig.position = { left: `${rect.left - 100}px`, top: `${rect.bottom + 15}px` };
+		matDialogConfig.position = {
+			left: `${rect.left - 100}px`,
+			top: `${rect.bottom + Math.abs(document.scrollingElement.getClientRects()[0].top) + 15}px`,
+		};
 
 		this._matDialogRef.updatePosition(matDialogConfig.position);
 	}

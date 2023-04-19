@@ -46,7 +46,7 @@
 	}
 	&__role {
 		position: relative;
-		width: 465px;
+		max-width: 465px;
 		margin: 15px;
 		.label-icon {
 			position: absolute;

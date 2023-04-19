@@ -4,12 +4,14 @@
 			<div class="sticky-container">
 				<div
 					class="left"
-					#left
 					cdkScrollable
+					id="left-column"
 					(scroll)="scroll($event)"
-					[style.height]="(schoolsLength$ | async) > 1 ? 'calc(100vh - 154px)' : 'calc(100vh - 104px)'">
+					[style.height]="(schoolsLength$ | async) > 1 ? 'calc(100vh - 154px)' : 'calc(100vh - 104px)'"
+					[style.top]="leftColumnTopPosition ? leftColumnTopPosition : null">
 					<div
 						class="left-header"
+						id="left-column-header"
 						[style.height]="isScrollable ? '97px' : '166px'"
 						[style.box-shadow]="isScrollable ? '0 2px 4px 0 rgba(0, 0, 0, 0.1)' : 'none'">
 						<div class="back">
@@ -413,7 +415,10 @@ and the cycle is repeating endlessly causing an UI flickering
 
 			<div class="scrolling-container" #right (scroll)="rightScroll($event)">
 				<div class="header-container">
-					<div class="header student-info-header">
+					<div
+						class="header student-info-header"
+						id="right-column-header"
+						[style.top]="rightColumnHeaderTopPosition ? rightColumnHeaderTopPosition : null">
 						<div class="buttons">
 							<div class="date-button" #dateButton customToolTip="Filter stats, passes, and reports" [nonDisappearing]="false" [editable]="true">
 								<app-date-button [date]="selectedDate" (buttonClick)="openDateFilter($event)"></app-date-button>
