@@ -34,7 +34,7 @@ import { HttpErrorResponse } from '@angular/common/http';
 })
 export class TeacherPinStudentComponent implements OnInit, OnDestroy {
 	@Input() request: Request;
-	@Input() requestId: string;
+	@Input() requestId: number;
 
 	@Output() pinResult: EventEmitter<any> = new EventEmitter<any>();
 	@Output() blurEvent: EventEmitter<any> = new EventEmitter<any>();
