@@ -1,7 +1,7 @@
 <div class="wrapper">
 	<div class="content">
 		<form [formGroup]="form">
-			<div class="room-inputs" *ngIf="currentPage !== 9 && currentPage !== 10">
+			<div class="room-inputs" *ngIf="currentPage !== PagesEnum.BulkEditRooms && currentPage !== PagesEnum.BulkEditRoomsInFolder">
 				<app-input
 					[dataCy]="'pinnable-title-inp'"
 					[width]="'222px'"
@@ -11,7 +11,7 @@
 					[formGroup]="form"
 					[controlName]="form.get('roomName')"
 					(onUpdate)="data.roomName = $event === '' ? 'New Room' : $event"
-					[isFocus]="currentPage === 1 || (currentPage === 5 && inputFocusNumber === 1)"
+					[isFocus]="currentPage === PagesEnum.NewRoom || (currentPage === PagesEnum.NewRoomInFolder && inputFocusNumber === 1)"
 					[forceFocus$]="forceFocus$"
 					(blurEvent)="overlayService.roomNameBlur$.next($event)">
 				</app-input>
@@ -127,7 +127,7 @@
 			(onVisibilityChange)="visibilityChange($event)"></app-visibility-room>
 	</div>
 
-	<div class="delete-button" *ngIf="currentPage === 2">
+	<div class="delete-button" *ngIf="currentPage === PagesEnum.EditRoom">
 		<app-gradient-button
 			[hoverColor]="'#DA2370'"
 			[gradient]="'#E32C66, #E32C66'"

@@ -5,12 +5,12 @@ import { cloneDeep } from 'lodash';
 
 import { User } from '../../models/User';
 import { Pinnable } from '../../models/Pinnable';
-import { OptionState } from './advanced-options/advanced-options.component';
+import { OptionState, ValidButtons } from './advanced-options/advanced-options.component';
 import { VisibilityOverStudents } from './visibility-room/visibility-room.type';
 
 export interface PageState {
-	currentPage: number;
-	previousPage: number;
+	currentPage: OverlayPages;
+	previousPage: OverlayPages;
 	data: PageStateData;
 }
 
@@ -26,17 +26,18 @@ export interface PageStateData {
 	roomsToDelete?: any[];
 	show_as_origin_room?: boolean;
 }
-export enum Pages {
-	NewRoom = 1,
-	EditRoom = 2,
-	NewFolder = 3,
-	EditFolder = 4,
-	NewRoomInFolder = 5,
-	EditRoomInFolder = 6,
-	ImportRooms = 7,
-	AddExistingRooms = 8,
-	BulkEditRooms = 9,
-	BulkEditRoomsInFolder = 10,
+export enum OverlayPages {
+	NewRoom = 'new room', // 1
+	EditRoom = 'edit room', // 2
+	NewFolder = 'new folder', // 3
+	EditFolder = 'edit folder', // 4
+	NewRoomInFolder = 'new room in folder', // 5
+	EditRoomInFolder = 'edit room in folder', // 6
+	ImportRooms = 'import rooms', // 7
+	AddExistingRooms = 'add existing rooms', //8
+	BulkEditRooms = 'bulk edit rooms', // 9
+	BulkEditRoomsInFolder = 'bulk edit rooms in folder', //10
+	Delete = 'delete',
 }
 
 export interface RoomData {
@@ -60,6 +61,23 @@ export interface RoomData {
 	category?: string;
 }
 
+export interface RoomDataResult {
+	data: RoomData;
+	buttonState: ValidButtons;
+	advOptButtons?: ValidButtons;
+}
+
+export interface BulkEditDataResult {
+	roomData: RoomData;
+	rooms: any[];
+	buttonState?: ValidButtons;
+	pinnables?: Pinnable[];
+}
+export interface FolderDataResult {
+	data: FolderData;
+	buttonState: ValidButtons;
+}
+
 /**
  * FolderData is responsible for describing the data between the OverlayContainerComponent
  * and its children regarding editing folders
@@ -70,18 +88,13 @@ export interface FolderData {
 
 	ignore_students_pass_limit: boolean;
 	show_as_origin_room: boolean;
-
-	// roomsInFolder: List of rooms associated with the folder. Associated by category
-	// TODO: Properly type this. Remove `any` type
 	roomsInFolder: any[];
-
 	selectedRoomsInFolder: Pinnable[];
 
 	// roomsInFolderLoaded: used as a check to tell when it's safe to pull data from this interface
 	roomsInFolderLoaded: boolean;
 
 	// selectedRoomToEdit: A single room selected to be edited
-	// TODO: Properly type this. Remove `any` type
 	selectedRoomToEdit: any;
 
 	// roomsToDelete: List of rooms to be deleted from a folder. This list is filled
@@ -123,7 +136,8 @@ export class OverlayDataService {
 
 	constructor() {}
 
-	changePage(next, previous, data) {
+	public changePage(next: OverlayPages, previous: OverlayPages, data: PageStateData): void {
+		console.log('changePage',data)
 		this.pageState.next({
 			currentPage: next,
 			previousPage: previous,
@@ -131,7 +145,17 @@ export class OverlayDataService {
 		});
 	}
 
-	public patchData(data) {
+	public updatePage(next: OverlayPages, previous: OverlayPages, data: Partial<PageStateData>): void {
+		const old = this.pageState.getValue();
+		const newdata = cloneDeep({ ...old.data, ...data });
+		const updated = {
+			currentPage: next,
+			previousPage: previous,
+			data: newdata,
+		};
+		this.pageState.next(updated);
+	}
+	public patchData(data: Partial<PageStateData>): void {
 		const old = this.pageState.getValue();
 		const newdata = cloneDeep({ ...old.data, ...data });
 		const patched = {
@@ -142,7 +166,8 @@ export class OverlayDataService {
 		this.pageState.next(patched);
 	}
 
-	back(data) {
-		this.changePage(this.pageState.getValue().previousPage, this.pageState.getValue().currentPage, data);
+	public back(data: Partial<PageStateData>): void {
+		this.updatePage(this.pageState.getValue().previousPage, this.pageState.getValue().currentPage, data);
 	}
+
 }

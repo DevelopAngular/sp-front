@@ -5,7 +5,7 @@ import { MatDialog, MatDialogRef } from '@angular/material/dialog';
 import { combineLatest, merge, Subject } from 'rxjs';
 import { filter, pluck, takeUntil, tap } from 'rxjs/operators';
 
-import { OverlayDataService, Pages, RoomData } from '../overlay-data.service';
+import { OverlayDataService, OverlayPages, RoomData, RoomDataResult } from '../overlay-data.service';
 import { ValidButtons } from '../advanced-options/advanced-options.component';
 import { VisibilityOverStudents, DEFAULT_VISIBILITY_STUDENTS } from '../visibility-room/visibility-room.type';
 
@@ -18,6 +18,7 @@ import { KeyboardShortcutsService } from '../../../services/keyboard-shortcuts.s
 import { ConsentMenuComponent } from '../../../consent-menu/consent-menu.component';
 import { UNANIMATED_CONTAINER } from '../../../consent-menu-overlay';
 import { ToastService } from '../../../services/toast.service';
+import { User } from '../../../models/User';
 
 @Component({
 	selector: 'app-room',
@@ -41,11 +42,7 @@ export class RoomComponent implements OnInit, OnDestroy {
 	@Output() back = new EventEmitter();
 
 	@Output()
-	roomDataResult: EventEmitter<{ data: RoomData; buttonState: ValidButtons; advOptButtons: ValidButtons }> = new EventEmitter<{
-		data: RoomData;
-		buttonState: ValidButtons;
-		advOptButtons: ValidButtons;
-	}>();
+	roomDataResult: EventEmitter<RoomDataResult> = new EventEmitter<RoomDataResult>();
 
 	data: RoomData = {
 		id: null,
@@ -69,7 +66,7 @@ export class RoomComponent implements OnInit, OnDestroy {
 
 	initialData: RoomData;
 
-	currentPage: number;
+	currentPage: OverlayPages;
 	tooltipText;
 	inputFocusNumber: number = 1;
 	forceFocus$: Subject<any> = new Subject<any>();
@@ -81,6 +78,7 @@ export class RoomComponent implements OnInit, OnDestroy {
 	};
 
 	roomValidButtons: ValidButtons;
+	public PagesEnum = OverlayPages; // for use in template
 
 	change$: Subject<any> = new Subject();
 
@@ -139,10 +137,10 @@ export class RoomComponent implements OnInit, OnDestroy {
 	}
 
 	get advDisabledOptions() {
-		const page = this.currentPage;
+		const page: OverlayPages = this.currentPage;
 		if (
 			!this.data.selectedTeachers.length &&
-			(page === Pages.NewRoom || page === Pages.EditRoom || page === Pages.NewRoomInFolder || page === Pages.EditRoomInFolder)
+			(page === OverlayPages.NewRoom || page === OverlayPages.EditRoom || page === OverlayPages.NewRoomInFolder || page === OverlayPages.EditRoomInFolder)
 		) {
 			return ['This Room', 'Both'];
 		}
@@ -162,11 +160,11 @@ export class RoomComponent implements OnInit, OnDestroy {
 		this.currentPage = this.overlayService.pageState.getValue().currentPage;
 
 		if (this.overlayService.pageState.getValue().data) {
-			if (this.currentPage === Pages.EditRoom) {
+			if (this.currentPage === OverlayPages.EditRoom) {
 				const pinnable = this.overlayService.pageState.getValue().data.pinnable;
 				const visibility: VisibilityOverStudents = {
 					mode: pinnable.location.visibility_type,
-					over: pinnable.location.visibility_students,
+					over: pinnable.location.visibility_students as User[],
 					grade: pinnable.location.visibility_grade,
 				};
 				this.overlayService.patchData({ visibility });
@@ -174,7 +172,7 @@ export class RoomComponent implements OnInit, OnDestroy {
 					roomName: pinnable.location.title,
 					roomNumber: pinnable.location.room,
 					travelType: pinnable.location.travel_types,
-					selectedTeachers: pinnable.location.teachers,
+					selectedTeachers: pinnable.location.teachers as User[],
 					restricted: !!pinnable.location.restricted,
 					scheduling_restricted: !!pinnable.location.scheduling_restricted,
 					ignore_students_pass_limit: !!pinnable.ignore_students_pass_limit,
@@ -185,7 +183,7 @@ export class RoomComponent implements OnInit, OnDestroy {
 					visibility: this.overlayService.pageState.getValue().data?.visibility,
 					enable: pinnable.location.enable,
 				};
-			} else if (this.currentPage === Pages.EditRoomInFolder) {
+			} else if (this.currentPage === OverlayPages.EditRoomInFolder) {
 				const data: any = this.overlayService.pageState.getValue().data.selectedRoomsInFolder[0];
 				const visibility: VisibilityOverStudents = { mode: data.visibility_type, over: data.visibility_students, grade: data.visibility_grade };
 				this.visibilityForm.patchValue({ visibility });
@@ -402,12 +400,12 @@ export class RoomComponent implements OnInit, OnDestroy {
 			)
 			.subscribe((action) => {
 				const pinnable = this.overlayService.pageState.getValue().data.pinnable;
-				if (this.currentPage === Pages.EditRoom) {
+				if (this.currentPage === OverlayPages.EditRoom) {
 					this.hallPassService.deletePinnableRequest(pinnable.id).subscribe((res) => {
 						this.toast.openToast({ title: 'Room deleted', type: 'error' });
 						this.dialogRef.close();
 					});
-				} else if (this.currentPage === Pages.EditRoomInFolder) {
+				} else if (this.currentPage === OverlayPages.EditRoomInFolder) {
 					this.locationService.deleteLocationRequest(this.data.id).subscribe((res) => {
 						this.back.emit();
 					});

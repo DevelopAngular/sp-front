@@ -420,7 +420,7 @@ export class LocationTableComponent implements OnInit, OnDestroy {
 							return this.locationService.locations$.pipe(
 								map((locations) => {
 									const teachersRoom = locations.filter((location: Location) => {
-										return location.teachers.find((teacher) => teacher.display_name.toLowerCase().includes(this.search));
+										return (location.teachers as User[]).find((teacher) => teacher.display_name.toLowerCase().includes(this.search));
 									});
 
 									// deduplicate rooms when searching

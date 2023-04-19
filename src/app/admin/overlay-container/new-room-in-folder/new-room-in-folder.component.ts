@@ -1,6 +1,6 @@
 import { Component, EventEmitter, Input, OnInit, Output } from '@angular/core';
 import { FormGroup } from '@angular/forms';
-import { RoomData } from '../overlay-data.service';
+import { RoomData, RoomDataResult } from '../overlay-data.service';
 import { BehaviorSubject, Subject } from 'rxjs';
 import { ValidButtons } from '../advanced-options/advanced-options.component';
 import { DEFAULT_VISIBILITY_STUDENTS } from '../visibility-room/visibility-room.type';
@@ -25,10 +25,7 @@ export class NewRoomInFolderComponent implements OnInit {
 
 	@Output() back = new EventEmitter();
 
-	@Output() roomDataResult: EventEmitter<{ data: RoomData; buttonState: ValidButtons }> = new EventEmitter<{
-		data: RoomData;
-		buttonState: ValidButtons;
-	}>();
+	@Output() roomDataResult: EventEmitter<RoomDataResult> = new EventEmitter<RoomDataResult>();
 
 	@Output() add: EventEmitter<RoomData> = new EventEmitter<RoomData>();
 
@@ -88,9 +85,9 @@ export class NewRoomInFolderComponent implements OnInit {
 		this.add.emit(this.roomInFolderData);
 	}
 
-	public roomResult({ data, buttonState }): void {
-		this.roomInFolderData = data;
-		this.roomValidButtons.next(buttonState);
-		this.roomDataResult.emit({ data, buttonState });
+	public roomResult(result: RoomDataResult): void {
+		this.roomInFolderData = result.data;
+		this.roomValidButtons.next(result.buttonState);
+		this.roomDataResult.emit(result);
 	}
 }

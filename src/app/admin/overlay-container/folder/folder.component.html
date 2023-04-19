@@ -9,7 +9,7 @@
 				[input_value]="folderName !== 'New Folder' ? folderName : ''"
 				(onUpdate)="folderName = $event === '' ? 'New Folder' : $event"
 				[formGroup]="form"
-				[isFocus]="currentPage === 3"
+				[isFocus]="currentPage === PagesEnum.NewFolder"
 				[controlName]="form.get('folderName')"
 				(blurEvent)="overlayService.folderNameBlur$.next($event)">
 			</app-input>
@@ -148,7 +148,7 @@
 			</div>
 		</ng-template>
 
-		<div class="delete-button" *ngIf="currentPage === 4 && folderRoomsLoaded">
+		<div class="delete-button" *ngIf="currentPage === PagesEnum.EditFolder && folderRoomsLoaded">
 			<app-gradient-button
 				[hoverColor]="'#DA2370'"
 				[gradient]="'#E32C66, #E32C66'"

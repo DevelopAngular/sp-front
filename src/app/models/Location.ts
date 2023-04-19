@@ -2,6 +2,7 @@ import { BaseModel } from './base';
 import { User } from './User';
 import { VisibilityMode, DEFAULT_VISIBILITY_STUDENTS } from '../admin/overlay-container/visibility-room/visibility-room.type';
 import { PassLimit } from './PassLimit';
+import { RoomData } from '../admin/overlay-container/overlay-data.service';
 
 export interface Choice extends Location {
 	passLimit: PassLimit;

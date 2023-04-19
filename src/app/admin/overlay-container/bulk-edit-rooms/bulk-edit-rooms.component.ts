@@ -5,9 +5,10 @@ import { MAT_DIALOG_DATA } from '@angular/material/dialog';
 import { Pinnable } from '../../../models/Pinnable';
 import { Location } from '../../../models/Location';
 import { LocationsService } from '../../../services/locations.service';
-import { OverlayDataService, RoomData } from '../overlay-data.service';
+import { BulkEditDataResult, OverlayDataService, OverlayPages, RoomData } from '../overlay-data.service';
 import { ValidButtons } from '../advanced-options/advanced-options.component';
 import { isNull } from 'lodash';
+import { RoomDialogData } from '../overlay-container.component';
 
 @Component({
 	selector: 'app-bulk-edit-rooms',
@@ -24,14 +25,9 @@ export class BulkEditRoomsComponent implements OnInit {
 	@Input() showErrors: boolean;
 
 	@Output()
-	bulkEditResult: EventEmitter<{
-		rooms: Location[];
-		roomData: RoomData;
-		buttonState: ValidButtons;
-		pinnables: Pinnable[];
-	}> = new EventEmitter<{ rooms: Location[]; roomData: RoomData; buttonState: ValidButtons; pinnables: Pinnable[] }>();
+	bulkEditResult: EventEmitter<BulkEditDataResult> = new EventEmitter<BulkEditDataResult>();
 
-	selectedRooms: Location[] = [];
+	selectedRooms: any[] = [];
 	selectedPinnables: Pinnable[] = [];
 
 	advOptionsButtons: ValidButtons;
@@ -43,13 +39,16 @@ export class BulkEditRoomsComponent implements OnInit {
 	};
 
 	roomData: RoomData;
-	currentPage: number = this.overlayData.pageState.getValue().currentPage;
+	currentPage: OverlayPages = this.overlayData.pageState.getValue().currentPage;
 
-	constructor(@Inject(MAT_DIALOG_DATA) public dialogData: any, private locationService: LocationsService, private overlayData: OverlayDataService) {}
+	constructor(
+		@Inject(MAT_DIALOG_DATA) public dialogData: RoomDialogData,
+		private locationService: LocationsService,
+		private overlayData: OverlayDataService) {}
 
 	ngOnInit() {
-		if (this.dialogData['rooms']) {
-			this.selectedPinnables = this.dialogData['rooms'];
+		if (this.dialogData.rooms) {
+			this.selectedPinnables = this.dialogData.rooms;
 
 			this.selectedPinnables.forEach((pinnable: Pinnable) => {
 				if (pinnable.type === 'category') {

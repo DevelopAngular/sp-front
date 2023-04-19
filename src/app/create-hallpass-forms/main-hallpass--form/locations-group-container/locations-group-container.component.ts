@@ -170,20 +170,20 @@ export class LocationsGroupContainerComponent implements OnInit, OnDestroy {
 		const from = this.FORM_STATE.data.direction.from;
 		if (to.request_mode === 'teacher_in_room') {
 			if (to.request_send_origin_teachers && !to.request_send_destination_teachers) {
-				return from.teachers;
+				return from.teachers as User[];
 			} else if (!to.request_send_origin_teachers && to.request_send_destination_teachers) {
-				return to.teachers;
+				return to.teachers as User[];
 			} else if (to.request_send_origin_teachers && to.request_send_destination_teachers) {
-				return to.teachers.concat(from.teachers); // TODO does not handle teacher being in origin and destination
+				return (to.teachers as User[]).concat(from.teachers as User[]); // TODO does not handle teacher being in origin and destination
 			}
 		}
 		if (to.scheduling_request_mode === 'teacher_in_room') {
 			if (to.scheduling_request_send_origin_teachers && !to.scheduling_request_send_destination_teachers) {
-				return from.teachers;
+				return from.teachers as User[];
 			} else if (!to.scheduling_request_send_origin_teachers && to.scheduling_request_send_destination_teachers) {
-				return to.teachers;
+				return to.teachers as User[];
 			} else if (to.scheduling_request_send_origin_teachers && to.scheduling_request_send_destination_teachers) {
-				return to.teachers.concat(from.teachers);
+				return (to.teachers as User[]).concat(from.teachers as User[]);
 			}
 		}
 

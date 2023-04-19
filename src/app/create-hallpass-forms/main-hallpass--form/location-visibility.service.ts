@@ -21,7 +21,7 @@ export class LocationVisibilityService {
 		}
 
 		const students = users.map((s: User) => this.getIdOrThrow(s));
-		const ruleStudents = location.visibility_students.map((s: User) => this.getIdOrThrow(s));
+		const ruleStudents = (location.visibility_students as User[]).map((s: User) => this.getIdOrThrow(s));
 
 		let byid: string[] = [];
 

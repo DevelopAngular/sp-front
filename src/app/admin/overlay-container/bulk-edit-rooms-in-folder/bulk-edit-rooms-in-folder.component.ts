@@ -1,6 +1,12 @@
 import { Component, EventEmitter, Input, OnInit, Output } from '@angular/core';
 import { FormGroup } from '@angular/forms';
-import { OverlayDataService, Pages, RoomData } from '../overlay-data.service';
+import {
+	BulkEditDataResult,
+	OverlayDataService,
+	OverlayPages,
+	RoomData,
+	RoomDataResult,
+} from '../overlay-data.service';
 import { ValidButtons } from '../advanced-options/advanced-options.component';
 import { BehaviorSubject, Subject } from 'rxjs';
 import { isNull } from 'lodash';
@@ -24,10 +30,7 @@ export class BulkEditRoomsInFolderComponent implements OnInit {
 	@Output() back = new EventEmitter();
 
 	@Output()
-	bulkEditResult: EventEmitter<{
-		rooms: Location[];
-		roomData: RoomData;
-	}> = new EventEmitter<{ rooms: any[]; roomData: RoomData }>();
+	bulkEditResult: EventEmitter<BulkEditDataResult> = new EventEmitter<BulkEditDataResult>();
 
 	@Output() errorsEmit: EventEmitter<any> = new EventEmitter<any>();
 
@@ -41,7 +44,7 @@ export class BulkEditRoomsInFolderComponent implements OnInit {
 
 	roomData: RoomData;
 
-	selectedRoomsInFolder: Location[];
+	selectedRoomsInFolder: any[];
 
 	constructor(private overlayService: OverlayDataService) {}
 
@@ -58,7 +61,7 @@ export class BulkEditRoomsInFolderComponent implements OnInit {
 	}
 
 	get isImportState() {
-		return this.overlayService.pageState.getValue().previousPage === Pages.ImportRooms;
+		return this.overlayService.pageState.getValue().previousPage === OverlayPages.ImportRooms;
 	}
 
 	ngOnInit() {
@@ -69,9 +72,9 @@ export class BulkEditRoomsInFolderComponent implements OnInit {
 		this.back.emit();
 	}
 
-	roomResult({ data, buttonState, advOptButtons }) {
-		this.roomData = data;
-		this.advOptionsButtons = advOptButtons;
+	roomResult(result: RoomDataResult): void {
+		this.roomData = result.data;
+		this.advOptionsButtons = result.advOptButtons;
 		this.checkValidForm();
 	}
 

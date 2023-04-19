@@ -12,7 +12,14 @@ import { User } from '../../../models/User';
 import { LocationsService } from '../../../services/locations.service';
 import { OverlayContainerComponent } from '../overlay-container.component';
 import { HallPassesService } from '../../../services/hall-passes.service';
-import { FolderData, OverlayDataService, Pages, PageStateData, TooltipText } from '../overlay-data.service';
+import {
+	FolderData,
+	FolderDataResult,
+	OverlayDataService,
+	OverlayPages,
+	PageStateData,
+	TooltipText,
+} from '../overlay-data.service';
 import { CreateFormService } from '../../../create-hallpass-forms/create-form.service';
 import { OptionState, ValidButtons } from '../advanced-options/advanced-options.component';
 
@@ -33,10 +40,7 @@ import { ToastService } from '../../../services/toast.service';
 export class FolderComponent implements OnInit, OnDestroy {
 	@Input() form: FormGroup;
 
-	@Output() folderDataResult: EventEmitter<{ data: FolderData; buttonState: ValidButtons }> = new EventEmitter<{
-		data: FolderData;
-		buttonState: ValidButtons;
-	}>();
+	@Output() folderDataResult: EventEmitter<FolderDataResult> = new EventEmitter<FolderDataResult>();
 
 	private scrollableAreaName: string;
 	private scrollableArea: HTMLElement;
@@ -79,7 +83,8 @@ export class FolderComponent implements OnInit, OnDestroy {
 		}
 	}
 
-	public currentPage: number;
+	public currentPage: OverlayPages;
+	public PagesEnum = OverlayPages; // for use in template
 
 	private roomsToDelete: any[] = [];
 
@@ -106,13 +111,13 @@ export class FolderComponent implements OnInit, OnDestroy {
 	public folderName: string = '';
 
 	public buttonsInFolder = [
-		{ title: 'New Room', icon: './assets/Plus (White).svg', page: Pages.NewRoomInFolder },
-		{ title: 'Import Rooms', icon: null, page: Pages.ImportRooms },
-		{ title: 'Add Existing', icon: null, page: Pages.AddExistingRooms },
+		{ title: 'New Room', icon: './assets/Plus (White).svg', page: OverlayPages.NewRoomInFolder },
+		{ title: 'Import Rooms', icon: null, page: OverlayPages.ImportRooms },
+		{ title: 'Add Existing', icon: null, page: OverlayPages.AddExistingRooms },
 	];
 
 	public buttonsWithSelectedRooms = [
-		{ title: 'Bulk Edit Rooms', action: Pages.BulkEditRoomsInFolder, color: '#FFFFFF, #FFFFFF', textColor: '#1F195E', hover: '#FFFFFF' },
+		{ title: 'Bulk Edit Rooms', action: OverlayPages.BulkEditRoomsInFolder, color: '#FFFFFF, #FFFFFF', textColor: '#1F195E', hover: '#FFFFFF' },
 		{ title: 'Delete Rooms', action: 'delete', textColor: '#FFFFFF', color: '#DA2370,#FB434A', hover: '#DA2370' },
 	];
 
@@ -143,7 +148,7 @@ export class FolderComponent implements OnInit, OnDestroy {
 		}
 	}
 
-	public get sortSelectedRooms(): Location[] {
+	public get sortSelectedRooms(): any[] {
 		return sortBy(this.roomsInFolder, (res) => res.title.toLowerCase());
 	}
 
@@ -269,12 +274,12 @@ export class FolderComponent implements OnInit, OnDestroy {
 	public stickyButtonClick(page): void {
 		this.formService.setFrameMotionDirection('forward');
 		setTimeout(() => {
-			if (page === 'delete') {
+			if (page === OverlayPages.Delete) {
 				this.roomsInFolder = differenceBy(this.roomsInFolder, this.selectedRooms, 'id');
 				this.roomsToDelete = cloneDeep(this.selectedRooms);
 				this.selectedRooms = [];
 			} else {
-				this.overlayService.changePage(page, this.currentPage, {
+				this.overlayService.updatePage(page, this.currentPage, {
 					selectedRoomsInFolder: this.selectedRooms,
 				});
 			}
@@ -295,7 +300,7 @@ export class FolderComponent implements OnInit, OnDestroy {
 				} catch (e) {}
 			}),
 		};
-		this.overlayService.changePage(Pages.EditRoomInFolder, this.currentPage, {
+		this.overlayService.updatePage(OverlayPages.EditRoomInFolder, this.currentPage, {
 			advancedOptions: this.advOptState,
 			visibility,
 			selectedRoomsInFolder: [room],
