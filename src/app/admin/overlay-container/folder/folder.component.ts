@@ -79,7 +79,7 @@ export class FolderComponent implements OnInit, OnDestroy {
 	public currentPage: OverlayPages;
 	public PagesEnum = OverlayPages; // for use in template
 
-	private roomsToDelete: any[] = [];
+	private roomIdsToDelete: number[] = [];
 
 	private initialFolderData: Pick<FolderData, 'folderName' | 'roomsInFolder' | 'ignore_students_pass_limit' | 'show_as_origin_room'> = {
 		folderName: null,
@@ -141,10 +141,6 @@ export class FolderComponent implements OnInit, OnDestroy {
 		}
 	}
 
-	public get sortSelectedRooms(): any[] {
-		return sortBy(this.roomsInFolder, (res) => res.title.toLowerCase());
-	}
-
 	public tooltipText: TooltipText;
 
 	public ngOnInit(): void {
@@ -160,8 +156,8 @@ export class FolderComponent implements OnInit, OnDestroy {
 			if (data.roomsInFolderLoaded) {
 				this.initialFolderData = data.oldFolderData;
 				this.folderName = data.folderName;
-				this.roomsInFolder = data.roomsInFolder;
-				this.roomsToDelete = data.roomsToDelete;
+				this.roomsInFolder = sortBy(data.roomsInFolder, (res) => res.title.toLowerCase());
+				this.roomIdsToDelete = data.roomIdsToDelete;
 				this.folderRoomsLoaded = true;
 			} else {
 				this.initialFolderData.folderName = data.pinnable.title;
@@ -229,7 +225,7 @@ export class FolderComponent implements OnInit, OnDestroy {
 				selectedRoomsInFolder: this.selectedRooms as any,
 				roomsInFolderLoaded: true,
 				selectedRoomToEdit: this.selectedRoomToEdit,
-				roomsToDelete: this.roomsToDelete,
+				roomIdsToDelete: this.roomIdsToDelete,
 			},
 			buttonState: this.folderButtonState,
 		});
@@ -269,7 +265,7 @@ export class FolderComponent implements OnInit, OnDestroy {
 		setTimeout(() => {
 			if (page === OverlayPages.Delete) {
 				this.roomsInFolder = differenceBy(this.roomsInFolder, this.selectedRooms, 'id');
-				this.roomsToDelete = cloneDeep(this.selectedRooms);
+				this.roomIdsToDelete = this.selectedRooms.map((sr) => sr.id);
 				this.selectedRooms = [];
 			} else {
 				this.overlayService.updatePage(page, this.currentPage, {

@@ -24,7 +24,7 @@ export class EditRoomInFolderComponent implements OnInit {
 	@Input() showErrors: boolean;
 
 	@Output() back = new EventEmitter();
-	@Output() deleteRoom = new EventEmitter();
+	@Output() deleteRoom: EventEmitter<number> = new EventEmitter();
 
 	@Output() roomDataResult: EventEmitter<RoomDataResult> = new EventEmitter<RoomDataResult>();
 
@@ -93,6 +93,6 @@ export class EditRoomInFolderComponent implements OnInit {
 	}
 
 	public deleteRoomEvent(): void {
-		this.deleteRoom.emit(this.roomInFolderData);
+		this.deleteRoom.emit(this.roomInFolderData.id);
 	}
 }

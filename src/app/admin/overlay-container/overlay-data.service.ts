@@ -23,7 +23,7 @@ export interface PageStateData {
 	roomsInFolderLoaded?: boolean;
 	folderName?: string;
 	oldFolderData?: FolderData;
-	roomsToDelete?: any[];
+	roomIdsToDelete?: number[];
 	show_as_origin_room?: boolean;
 }
 export enum OverlayPages {
@@ -97,8 +97,8 @@ export interface FolderData {
 	// selectedRoomToEdit: A single room selected to be edited
 	selectedRoomToEdit: any;
 
-	// roomsToDelete: List of rooms to be deleted from a folder. This list is filled
-	roomsToDelete: any[];
+	// roomIdsToDelete: List of room IDs to be deleted from a folder.
+	roomIdsToDelete: number[];
 }
 
 export interface TooltipText {

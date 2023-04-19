@@ -1019,8 +1019,8 @@ export class OverlayContainerComponent implements OnInit, OnDestroy {
 				: of(null);
 
 			const roomDeletionRequest$ = forkJoin(
-				this.folderData.roomsToDelete.length
-					? this.folderData.roomsToDelete.map((room) => this.locationService.deleteLocationRequest(room.id).pipe(filter((res) => !!res)))
+				this.folderData.roomIdsToDelete.length
+					? this.folderData.roomIdsToDelete.map((roomId) => this.locationService.deleteLocationRequest(roomId).pipe(filter((res) => !!res)))
 					: [of(null)]
 			).pipe(takeUntil(this.destroy$));
 
@@ -1231,13 +1231,12 @@ export class OverlayContainerComponent implements OnInit, OnDestroy {
 		this.roomValidButtons.next(result.buttonState);
 	}
 
-	public deleteRoomInFolder(room: any): void {
-		console.log('deleteRoomInFolder', room);
+	public deleteRoomInFolder(roomId: number): void {
 		this.oldFolderData = cloneDeep(this.folderData);
-		if (!isString(room.id)) {
-			this.folderData.roomsToDelete.push(room);
+		if (!isString(roomId)) {
+			this.folderData.roomIdsToDelete.push(roomId);
 		}
-		this.folderData.roomsInFolder = this.folderData.roomsInFolder.filter((r) => r.id !== room.id);
+		this.folderData.roomsInFolder = this.folderData.roomsInFolder.filter((r) => r.id !== roomId);
 		this.overlayService.back({ ...this.folderData, oldFolderData: this.oldFolderData });
 	}
 
