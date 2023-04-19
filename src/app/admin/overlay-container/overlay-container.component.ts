@@ -15,7 +15,16 @@ import { HallPassesService } from '../../services/hall-passes.service';
 import { LocationsService } from '../../services/locations.service';
 import { OptionState, ValidButtons } from './advanced-options/advanced-options.component';
 import { CreateFormService } from '../../create-hallpass-forms/create-form.service';
-import { BulkEditDataResult, FolderData, FolderDataResult, OverlayDataService, OverlayPages, RoomData, RoomDataResult } from './overlay-data.service';
+import {
+	BulkEditDataResult,
+	FolderData,
+	FolderDataResult,
+	OverlayDataService,
+	OverlayPages,
+	RoomData,
+	RoomDataResult,
+	RoomInFolder,
+} from './overlay-data.service';
 import { cloneDeep, differenceBy, filter as _filter, isString, pullAll } from 'lodash';
 import { ColorProfile } from '../../models/ColorProfile';
 import { User } from '../../models/User';
@@ -61,7 +70,7 @@ export class OverlayContainerComponent implements OnInit, OnDestroy {
 
 	private bulkEditData: {
 		roomData: RoomData;
-		rooms: any;
+		rooms: RoomInFolder[];
 		pinnables: Pinnable[];
 	};
 
@@ -949,7 +958,6 @@ export class OverlayContainerComponent implements OnInit, OnDestroy {
 				category,
 			};
 
-			// todo roomsInFolder should be mapped to location in createOrUpdateLocation
 			const roomsInFolderUpdateRequests$ =
 				this.folderData.roomsInFolder.length === 0
 					? [of([])]
@@ -1024,7 +1032,6 @@ export class OverlayContainerComponent implements OnInit, OnDestroy {
 					: [of(null)]
 			).pipe(takeUntil(this.destroy$));
 
-			// todo roomsInFolder should be mapped to location in createOrUpdateLocation
 			const existingOrNewRoomRequests$: Observable<Location>[] = this.folderData.roomsInFolder
 				.filter((room) => room.isEdit || !room.category)
 				.map((room) => {
@@ -1248,13 +1255,12 @@ export class OverlayContainerComponent implements OnInit, OnDestroy {
 		});
 	}
 
-	private editRooms(roomData: RoomData, rooms: any[]): any[] {
-		console.log('editRooms roomData', roomData);
-		console.log('editRooms rooms', rooms);
+	private editRooms(roomData: RoomData, rooms: RoomInFolder[]): RoomInFolder[] {
 		return rooms.map((room) => {
 			room.restricted = !!roomData.restricted;
 			room.scheduling_restricted = !!roomData.scheduling_restricted;
 			room.needs_check_in = !!roomData.needs_check_in;
+			room.visibility = roomData.visibility;
 			if (roomData.travelType.length) {
 				room.travelType = roomData.travelType;
 			}
@@ -1284,7 +1290,7 @@ export class OverlayContainerComponent implements OnInit, OnDestroy {
 		});
 	}
 
-	private normalizeRoomData(room: RoomData): any {
+	private normalizeRoomData(room: RoomData | RoomInFolder): RoomInFolder {
 		const result = {
 			id: room.id,
 			title: room.roomName,

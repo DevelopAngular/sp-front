@@ -12,7 +12,7 @@ import { User } from '../../../models/User';
 import { LocationsService } from '../../../services/locations.service';
 import { OverlayContainerComponent } from '../overlay-container.component';
 import { HallPassesService } from '../../../services/hall-passes.service';
-import { FolderData, FolderDataResult, OverlayDataService, OverlayPages, PageStateData, TooltipText } from '../overlay-data.service';
+import { FolderData, FolderDataResult, OverlayDataService, OverlayPages, PageStateData, RoomInFolder, TooltipText } from '../overlay-data.service';
 import { CreateFormService } from '../../../create-hallpass-forms/create-form.service';
 import { OptionState, ValidButtons } from '../advanced-options/advanced-options.component';
 
@@ -23,6 +23,7 @@ import { ScrollPositionService } from '../../../scroll-position.service';
 import { UNANIMATED_CONTAINER } from '../../../consent-menu-overlay';
 import { ConsentMenuComponent } from '../../../consent-menu/consent-menu.component';
 import { ToastService } from '../../../services/toast.service';
+import { VisibilityOverStudents } from '../visibility-room/visibility-room.type';
 
 @Component({
 	selector: 'app-folder',
@@ -97,9 +98,8 @@ export class FolderComponent implements OnInit, OnDestroy {
 		future: { state: '', data: { all_teach_assign: null, any_teach_assign: null, selectedTeachers: [] } },
 	};
 
-	public roomsInFolder: any[] = [];
-	public selectedRooms: any[] = [];
-	private selectedRoomToEdit;
+	public roomsInFolder: RoomInFolder[] = [];
+	public selectedRooms: RoomInFolder[] = [];
 
 	public folderName: string = '';
 
@@ -169,7 +169,7 @@ export class FolderComponent implements OnInit, OnDestroy {
 					this.roomsInFolder = res;
 					this.initialFolderData = {
 						...this.initialFolderData,
-						roomsInFolder: cloneDeep(this.roomsInFolder) as any[],
+						roomsInFolder: cloneDeep(this.roomsInFolder),
 					};
 					this.folderRoomsLoaded = true;
 					this.updateFolderState(); // This function depends on initialFolder data, if it's not set it won't work.
@@ -190,7 +190,7 @@ export class FolderComponent implements OnInit, OnDestroy {
 			}
 			this.initialFolderData = {
 				folderName: 'New Folder',
-				roomsInFolder: cloneDeep(this.roomsInFolder) as any,
+				roomsInFolder: cloneDeep(this.roomsInFolder),
 				ignore_students_pass_limit: false,
 				show_as_origin_room: true,
 			};
@@ -221,10 +221,9 @@ export class FolderComponent implements OnInit, OnDestroy {
 				folderName: this.form.get('folderName').value === '' ? 'New Folder' : this.form.get('folderName').value,
 				ignore_students_pass_limit: !this.form.get('countsTowardsPassLimits').value,
 				show_as_origin_room: this.form.get('showAsOriginRoom').value,
-				roomsInFolder: this.roomsInFolder as any,
-				selectedRoomsInFolder: this.selectedRooms as any,
+				roomsInFolder: this.roomsInFolder,
+				selectedRoomsInFolder: this.selectedRooms,
 				roomsInFolderLoaded: true,
-				selectedRoomToEdit: this.selectedRoomToEdit,
 				roomIdsToDelete: this.roomIdsToDelete,
 			},
 			buttonState: this.folderButtonState,
@@ -276,14 +275,13 @@ export class FolderComponent implements OnInit, OnDestroy {
 		}, 50);
 	}
 
-	public setToEditRoom(room: any): void {
-		this.selectedRoomToEdit = room;
+	public setToEditRoom(room: RoomInFolder): void {
 		this.generateAdvOptionsModel(room);
 		this.change$.next();
 
-		const visibility = {
+		const visibility: VisibilityOverStudents = {
 			mode: room.visibility_type,
-			over: room.visibility_students.map((s) => {
+			over: (room.visibility_students as User[]).map((s) => {
 				try {
 					return User.fromJSON(s);
 				} catch (e) {}
@@ -296,7 +294,7 @@ export class FolderComponent implements OnInit, OnDestroy {
 		});
 	}
 
-	public selectedRoomsEvent(event: MatCheckboxChange, room: any, all?: boolean): void {
+	public selectedRoomsEvent(event: MatCheckboxChange, room: RoomInFolder, all?: boolean): void {
 		this.formService.setFrameMotionDirection('forward');
 		setTimeout(() => {
 			if (all) {
@@ -344,50 +342,50 @@ export class FolderComponent implements OnInit, OnDestroy {
 			});
 	}
 
-	private generateAdvOptionsModel(loc: any): OptionState {
-		if (loc.request_mode === 'teacher_in_room' || loc.request_mode === 'all_teachers_in_room') {
-			const mode = loc.request_mode === 'teacher_in_room' ? 'any_teach_assign' : 'all_teach_assign';
+	private generateAdvOptionsModel(room: RoomInFolder): OptionState {
+		if (room.request_mode === 'teacher_in_room' || room.request_mode === 'all_teachers_in_room') {
+			const mode = room.request_mode === 'teacher_in_room' ? 'any_teach_assign' : 'all_teach_assign';
 
-			if (loc.request_send_destination_teachers && loc.request_send_origin_teachers) {
+			if (room.request_send_destination_teachers && room.request_send_origin_teachers) {
 				this.advOptState.now.data[mode] = 'Both';
-			} else if (loc.request_send_destination_teachers) {
+			} else if (room.request_send_destination_teachers) {
 				this.advOptState.now.data[mode] = 'This Room';
-			} else if (loc.request_send_origin_teachers) {
+			} else if (room.request_send_origin_teachers) {
 				this.advOptState.now.data[mode] = 'Origin';
 			}
-		} else if (loc.request_mode === 'specific_teachers') {
-			this.advOptState.now.data.selectedTeachers = loc.request_teachers;
+		} else if (room.request_mode === 'specific_teachers') {
+			this.advOptState.now.data.selectedTeachers = room.request_teachers as User[];
 		}
-		if (loc.scheduling_request_mode === 'teacher_in_room' || loc.scheduling_request_mode === 'all_teachers_in_room') {
-			const mode = loc.scheduling_request_mode === 'teacher_in_room' ? 'any_teach_assign' : 'all_teach_assign';
+		if (room.scheduling_request_mode === 'teacher_in_room' || room.scheduling_request_mode === 'all_teachers_in_room') {
+			const mode = room.scheduling_request_mode === 'teacher_in_room' ? 'any_teach_assign' : 'all_teach_assign';
 
-			if (loc.scheduling_request_send_destination_teachers && loc.scheduling_request_send_origin_teachers) {
+			if (room.scheduling_request_send_destination_teachers && room.scheduling_request_send_origin_teachers) {
 				this.advOptState.future.data[mode] = 'Both';
-			} else if (loc.scheduling_request_send_destination_teachers) {
+			} else if (room.scheduling_request_send_destination_teachers) {
 				this.advOptState.future.data[mode] = 'This Room';
-			} else if (loc.scheduling_request_send_origin_teachers) {
+			} else if (room.scheduling_request_send_origin_teachers) {
 				this.advOptState.future.data[mode] = 'Origin';
 			}
-		} else if (loc.scheduling_request_mode === 'specific_teachers') {
-			this.advOptState.future.data.selectedTeachers = loc.scheduling_request_teachers;
+		} else if (room.scheduling_request_mode === 'specific_teachers') {
+			this.advOptState.future.data.selectedTeachers = room.scheduling_request_teachers as User[];
 		}
 
-		if (loc.request_mode === 'any_teacher') {
+		if (room.request_mode === 'any_teacher') {
 			this.advOptState.now.state = 'Any teacher';
-		} else if (loc.request_mode === 'teacher_in_room') {
+		} else if (room.request_mode === 'teacher_in_room') {
 			this.advOptState.now.state = 'Any teachers in room';
-		} else if (loc.request_mode === 'all_teachers_in_room') {
+		} else if (room.request_mode === 'all_teachers_in_room') {
 			this.advOptState.now.state = 'All teachers in room';
-		} else if (loc.request_mode === 'specific_teachers') {
+		} else if (room.request_mode === 'specific_teachers') {
 			this.advOptState.now.state = 'Certain \n teachers';
 		}
-		if (loc.scheduling_request_mode === 'any_teacher') {
+		if (room.scheduling_request_mode === 'any_teacher') {
 			this.advOptState.future.state = 'Any teacher';
-		} else if (loc.scheduling_request_mode === 'teacher_in_room') {
+		} else if (room.scheduling_request_mode === 'teacher_in_room') {
 			this.advOptState.future.state = 'Any teachers in room';
-		} else if (loc.scheduling_request_mode === 'all_teachers_in_room') {
+		} else if (room.scheduling_request_mode === 'all_teachers_in_room') {
 			this.advOptState.future.state = 'All teachers in room';
-		} else if (loc.scheduling_request_mode === 'specific_teachers') {
+		} else if (room.scheduling_request_mode === 'specific_teachers') {
 			this.advOptState.future.state = 'Certain \n teachers';
 		}
 		return this.advOptState;

@@ -6,7 +6,7 @@ import { cloneDeep } from 'lodash';
 import { User } from '../../models/User';
 import { Pinnable } from '../../models/Pinnable';
 import { OptionState, ValidButtons } from './advanced-options/advanced-options.component';
-import { VisibilityOverStudents } from './visibility-room/visibility-room.type';
+import { VisibilityMode, VisibilityOverStudents } from './visibility-room/visibility-room.type';
 
 export interface PageState {
 	currentPage: OverlayPages;
@@ -69,7 +69,7 @@ export interface RoomDataResult {
 
 export interface BulkEditDataResult {
 	roomData: RoomData;
-	rooms: any[];
+	rooms: RoomInFolder[];
 	buttonState?: ValidButtons;
 	pinnables?: Pinnable[];
 }
@@ -88,17 +88,60 @@ export interface FolderData {
 
 	ignore_students_pass_limit: boolean;
 	show_as_origin_room: boolean;
-	roomsInFolder: any[];
-	selectedRoomsInFolder: Pinnable[];
+	roomsInFolder: RoomInFolder[];
+	selectedRoomsInFolder: RoomInFolder[];
 
 	// roomsInFolderLoaded: used as a check to tell when it's safe to pull data from this interface
 	roomsInFolderLoaded: boolean;
 
-	// selectedRoomToEdit: A single room selected to be edited
-	selectedRoomToEdit: any;
-
 	// roomIdsToDelete: List of room IDs to be deleted from a folder.
 	roomIdsToDelete: number[];
+}
+
+// This is a combination of Location and normalized room data that is passed to the
+// folder rooms when editing a room in a folder or bulk editing rooms in a folder.
+// It could use some heavy clean up, but for now this was the easiest way to type the data.
+// - SM 4/19/23.
+export interface RoomInFolder {
+	id: number;
+	created?: string;
+	last_updated?: string;
+	title: string;
+	room: string;
+	campus?: string;
+	category?: string;
+	teachers: User[] | number[];
+	restricted: boolean;
+	scheduling_restricted: boolean;
+	max_allowed_time: number;
+	required_attachments?: string[];
+	travel_types: string[];
+	request_send_origin_teachers?: boolean;
+	request_send_destination_teachers?: boolean;
+	request_mode?: string;
+	request_teachers?: User[] | number[];
+	scheduling_request_send_origin_teachers?: boolean;
+	scheduling_request_send_destination_teachers?: boolean;
+	scheduling_request_mode?: string;
+	scheduling_request_teachers?: User[] | number[];
+	max_passes_to: number;
+	max_passes_to_active: boolean;
+	max_passes_from: number;
+	max_passes_from_active: boolean;
+	allow_override?: boolean;
+	enable_queue?: boolean;
+	enable: boolean;
+	visibility_type: VisibilityMode;
+	visibility_students: User[] | number[];
+	visibility_grade: string[];
+	visibility?: VisibilityOverStudents;
+	needs_check_in: boolean;
+	isEdit?: boolean;
+	travelType?: string[];
+	timeLimit?: number | string;
+	roomName?: string;
+	roomNumber?: string;
+	selectedTeachers?: User[] | number[];
 }
 
 export interface TooltipText {
