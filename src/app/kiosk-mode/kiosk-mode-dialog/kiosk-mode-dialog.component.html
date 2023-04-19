@@ -10,6 +10,7 @@
 	</div>
 	<div class="content">
 		<div class="page">
+			<ng-container *ngIf="kioskData.showAsOriginRoom; else nonOriginRoom">
 			<div class="block" style="margin-top: 15px">
 				<div class="kiosk-mode ds-flex-start-between">
 					<div class="left">
@@ -64,6 +65,15 @@
 					</div>
 				</div>
 			</div>
+			</ng-container>
 		</div>
 	</div>
 </div>
+
+<ng-template #nonOriginRoom>
+	<div class="non-origin">
+		<img (click)="back()" [src]="'./assets/Home-no.svg'" alt="This room is not an origin" width="80" />
+		<div class="non-origin-title">This room is not an origin</div>
+		<div class="non-origin-copy">Sign in directly to Kiosk Mode for this room using this login. Go to smartpass.app/sign-in to sign in.</div>
+	</div>
+</ng-template>

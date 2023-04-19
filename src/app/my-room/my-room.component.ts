@@ -30,6 +30,7 @@ import * as moment from 'moment';
 import { CheckForUpdateService } from '../services/check-for-update.service';
 import { RoomCheckinCodeDialogComponent } from './room-checkin-code-dialog/room-checkin-code-dialog.component';
 import { KioskModeDialogComponent } from '../kiosk-mode/kiosk-mode-dialog/kiosk-mode-dialog.component';
+import { Pinnable } from '../models/Pinnable';
 
 @Component({
 	selector: 'app-my-room',
@@ -98,6 +99,7 @@ export class MyRoomComponent implements OnInit, OnDestroy, AfterViewInit {
 	isStaff = false;
 	min: Date = new Date('December 17, 1995 03:24:00');
 	roomOptions: Location[];
+	public showAsOriginRoom: boolean = true;
 	selectedLocation: Location;
 	optionsOpen = false;
 	canView = false;
@@ -109,7 +111,8 @@ export class MyRoomComponent implements OnInit, OnDestroy, AfterViewInit {
 	searchQuery$ = new BehaviorSubject('');
 	searchDate$ = new BehaviorSubject<Date>(null);
 	selectedLocation$ = new ReplaySubject<Location[]>(1);
-
+	private pinnables$: Observable<Pinnable[]> = this.passesService.getPinnablesRequest().pipe(filter((r: Pinnable[]) => !!r.length));
+	private pinnables: Pinnable[];
 	schoolsLength$: Observable<number>;
 
 	searchPending$: Subject<boolean> = new Subject<boolean>();
@@ -284,6 +287,13 @@ export class MyRoomComponent implements OnInit, OnDestroy, AfterViewInit {
 				});
 			});
 
+		this.pinnables$.pipe(
+			tap((res: Pinnable[])=> {
+				this.pinnables = res;
+			}),
+			takeUntil(this.destroy$)
+		).subscribe()
+
 		this.hasPasses = combineLatest(
 			this.liveDataService.myRoomActivePassesTotalNumber$,
 			this.liveDataService.fromLocationPassesTotalNumber$,
@@ -370,6 +380,10 @@ export class MyRoomComponent implements OnInit, OnDestroy, AfterViewInit {
 	private setRoomToKioskModeProcesing: boolean;
 
 	setRoomToKioskMode() {
+		const pin: Pinnable = this.pinnables.find(p => p.location.id === this.roomOptions[0].id);
+		if (pin && !pin.show_as_origin_room) {
+			this.showAsOriginRoom = false;
+		}
 		if (this.setRoomToKioskModeProcesing) {
 			return;
 		}
@@ -397,7 +411,7 @@ export class MyRoomComponent implements OnInit, OnDestroy, AfterViewInit {
 						backdropClass: 'custom-bd',
 						width: '425px',
 						height: '480px',
-						data: { selectedRoom: this.selectedLocation, loginData: kioskLoginInfo },
+						data: { selectedRoom: this.selectedLocation, loginData: kioskLoginInfo, showAsOriginRoom: this.showAsOriginRoom },
 					});
 
 					return dialogRef.afterClosed().pipe(
