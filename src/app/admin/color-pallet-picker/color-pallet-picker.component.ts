@@ -38,7 +38,7 @@ export class ColorPalletPickerComponent implements OnInit {
 				}
 			}),
 			map((colors: ColorProfile[]) => {
-				return colors.filter((color) => color.id !== 1 && color.id !== 6);
+				return colors.filter((color: ColorProfile) => color.id !== 1 && color.id !== 6);
 			})
 		);
 		if (this.selectedColorProfile) {
