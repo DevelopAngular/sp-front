@@ -142,7 +142,12 @@ export class KioskModeComponent implements OnInit, AfterViewInit, OnDestroy {
 				// check if pinnable's show as origin room setting is false
 				// to show a toast if the user tries to create a pass.
 				tap((pinnables: Pinnable[]) => {
-					this.pinnable = pinnables.find((p: Pinnable) => p.location.id === this.currentLocation.id);
+					if (this.currentLocation.category) {
+						this.pinnable = pinnables.find((p: Pinnable) => p.category === this.currentLocation.category);
+					}
+					else {
+						this.pinnable = pinnables.find((p: Pinnable) => p.location.id === this.currentLocation.id);
+					}
 					this.showAsOriginRoom = this.pinnable?.show_as_origin_room;
 				}),
 				// listen for the pinnable's show as origin room setting being changed
