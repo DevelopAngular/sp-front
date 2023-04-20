@@ -198,7 +198,7 @@ export class PassConfigComponent implements OnInit, OnDestroy {
 					const showNux = moment(user.first_login).isBefore(this.waitInLineLaunchDate) && !intros?.wait_in_line?.universal?.seen_version;
 					this.showWaitInLineNux.next(showNux);
 				}
-				if (!this.introsData.show_room_as_origin) {
+				if (!this.introsData.show_as_origin_room) {
 					this.showRoomAsOriginNux.next(true);
 				}
 			});

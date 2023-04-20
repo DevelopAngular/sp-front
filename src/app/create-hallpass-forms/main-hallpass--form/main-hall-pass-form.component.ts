@@ -294,12 +294,8 @@ export class MainHallPassFormComponent implements OnInit, OnDestroy {
 				takeUntil(this.destroy$),
 				filter((res) => !!res),
 				tap((res) => {
-					this.locationsService.updatePinnableSuccessState(res.data);
-
-					// update interface using filtering
-					// try catch here?
-					//const loc: Location = Location.fromJSON(res.data.location);
-					//this.formService.setUpdatedChoice(loc);
+					const pinnable: Pinnable = Pinnable.fromJSON(res.data);
+					this.passesService.updatePinnableRequest(pinnable.id,pinnable);
 				})
 			)
 			.subscribe();

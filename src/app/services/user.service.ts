@@ -722,7 +722,7 @@ export class UserService implements OnDestroy {
 	}
 
 	updateIntrosShowRoomAsOrigin(device, version) {
-		return this.http.patch('v1/intros/show_room_as_origin', { device, version });
+		return this.http.patch('v1/intros/show_as_origin_room', { device, version });
 	}
 
 	updateIntrosSearch(device, version) {

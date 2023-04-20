@@ -292,6 +292,15 @@ export class MyRoomComponent implements OnInit, OnDestroy, AfterViewInit {
 				tap((res: Pinnable[]) => {
 					this.pinnables = res;
 				}),
+				// listen for the pinnable's show as origin room setting being changed
+				// to show a toast if the user tries to create a pass.
+				switchMap(() => {
+					return this.locationService.listenPinnableSocket();
+				}),
+				tap((res) => {
+					this.locationService.updatePinnableSuccessState(res.data);
+					this.showAsOriginRoom = res.data.show_as_origin_room;
+				}),
 				takeUntil(this.destroy$)
 			)
 			.subscribe();
@@ -382,9 +391,15 @@ export class MyRoomComponent implements OnInit, OnDestroy, AfterViewInit {
 	private setRoomToKioskModeProcesing: boolean;
 
 	setRoomToKioskMode() {
-		const pin: Pinnable = this.pinnables.find((p) => p.location.id === this.roomOptions[0].id);
-		if (pin && !pin.show_as_origin_room) {
-			this.showAsOriginRoom = false;
+		let pin: Pinnable;
+		if (this.selectedLocation.category) {
+			pin = this.pinnables.find((p: Pinnable) => p.category === this.selectedLocation.category);
+		}
+		else {
+			pin = this.pinnables.find((p: Pinnable) => p.location.id === this.selectedLocation.id);
+		}
+		if (pin) {
+			this.showAsOriginRoom = pin.show_as_origin_room;
 		}
 		if (this.setRoomToKioskModeProcesing) {
 			return;
