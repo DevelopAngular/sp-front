@@ -45,13 +45,14 @@ mr_preview_deploy:
     - . $NVM_DIR/nvm.sh
     - nvm use lts/hydrogen
     - wrangler pages publish dist --project-name=smartpass-frontend --branch $CI_COMMIT_REF_NAME
+    - echo "Successfully deployed to https://$CI_COMMIT_REF_SLUG-dev.smartpass.app"
   rules:
     - if: $CI_PIPELINE_SOURCE == 'merge_request_event'
   interruptible: true
   needs: [build]
   environment:
     name: preview/$CI_COMMIT_REF_NAME
-    url: https://$CI_COMMIT_REF_SLUG.smartpass-frontend.pages.dev
+    url: https://$CI_COMMIT_REF_SLUG-dev.smartpass.app
     on_stop: mr_preview_stop
     auto_stop_in: 1 week
   tags:
