@@ -196,7 +196,6 @@ interface WatchData<ModelType extends BaseModel, ExternalEventType> {
 }
 
 export enum PassLimitEvent {
-	Create = 'pass_limit.create',
 	Update = 'pass_limit.update',
 }
 
@@ -848,10 +847,7 @@ export class LiveDataService {
 			rawDecoder: (data) => [data['pass_limit']],
 			decoder: (s) => s,
 			handleExternalEvent: (s) => s,
-			handlePollingEvent: makePollingEventHandler([
-				new AddItem([PassLimitEvent.Create], (s) => s),
-				new UpdateItem([PassLimitEvent.Update], (s) => s)
-			]),
+			handlePollingEvent: makePollingEventHandler([new UpdateItem([PassLimitEvent.Update], (s) => s)]),
 			handlePost: identityFilter,
 		});
 	}
@@ -864,10 +860,7 @@ export class LiveDataService {
 			rawDecoder: (data) => [data],
 			decoder: (s) => s,
 			handleExternalEvent: (s) => s,
-			handlePollingEvent: makePollingEventHandler([
-				new AddItem([PassLimitEvent.Create], (s) => s),
-				new UpdateItem([PassLimitEvent.Update], (s) => s)
-			]),
+			handlePollingEvent: makePollingEventHandler([new UpdateItem([PassLimitEvent.Update], (s) => s)]),
 			handlePost: identityFilter,
 		});
 	}
