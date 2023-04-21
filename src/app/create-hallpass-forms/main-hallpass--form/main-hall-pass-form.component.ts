@@ -7,7 +7,7 @@ import { StudentList } from '../../models/StudentList';
 import { NextStep } from '../../animations';
 import { BehaviorSubject, combineLatest, Subject } from 'rxjs';
 import { CreateFormService } from '../create-form.service';
-import { filter, map, takeUntil, tap } from 'rxjs/operators';
+import { distinctUntilChanged, filter, map, takeUntil, tap } from 'rxjs/operators';
 import { cloneDeep, find } from 'lodash';
 import { LocationsService } from '../../services/locations.service';
 import { ScreenService } from '../../services/screen.service';
@@ -293,9 +293,18 @@ export class MainHallPassFormComponent implements OnInit, OnDestroy {
 			.pipe(
 				takeUntil(this.destroy$),
 				filter((res) => !!res),
+				distinctUntilChanged((prev, res) => prev.data.show_as_origin_room === res.data.show_as_origin_room || prev.data.ignore_students_pass_limit.show_as_origin_room === res.data.ignore_students_pass_limit),
 				tap((res) => {
 					const pinnable: Pinnable = Pinnable.fromJSON(res.data);
-					this.passesService.updatePinnableRequest(pinnable.id,pinnable);
+					const pinnableData = {
+						// data to create the pinnable
+						ignore_students_pass_limit: pinnable.ignore_students_pass_limit,
+						show_as_origin_room: pinnable.show_as_origin_room,
+					};
+					if (this.user.isAdmin()) {
+						this.passesService.updatePinnableRequest(pinnable.id,pinnableData);
+					}
+					this.locationsService.updatePinnableSuccessState(Pinnable.fromJSON(res.data));
 				})
 			)
 			.subscribe();
