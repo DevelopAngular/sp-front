@@ -36,6 +36,7 @@
             "polyfills": "src/polyfills.ts",
             "showCircularDependencies": false,
             "assets": [
+              "src/_headers",
               "src/assets",
               "src/preloader.js",
               "src/firebase-messaging-sw.js",
