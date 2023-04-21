@@ -24,7 +24,6 @@
               "xlsx",
               "dragula",
               "chart.js",
-              "@sentry/browser",
               "hammerjs",
               "@firebase/util",
               "url"
