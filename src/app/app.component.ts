@@ -18,7 +18,6 @@ import {
 	tap,
 	withLatestFrom,
 } from 'rxjs/operators';
-import { BUILD_INFO_REAL } from '../build-info';
 import { DarkThemeSwitch } from './dark-theme-switch';
 
 import { DeviceDetection } from './device-detection.helper';
@@ -481,47 +480,6 @@ export class AppComponent implements OnInit, AfterViewInit, OnDestroy {
 				mergeMap((route) => route.data)
 			)
 			.subscribe((data) => {
-				const existingHub: any = document.querySelector('#hubspot-messages-iframe-container');
-				let newHub: any;
-
-				if (!existingHub) {
-					newHub = document.createElement('script');
-					newHub.type = 'text/javascript';
-					newHub.id = 'hs-script-loader';
-					newHub.setAttribute('id', 'hs-script-loader');
-					newHub.src = '//js.hs-scripts.com/5943240.js';
-				}
-
-				if (data.currentUser) {
-					this.hubSpotSettings(data.currentUser);
-				}
-
-				if (
-					data.hubspot &&
-					((data.currentUser && !data.currentUser.isStudent() && data.authFree) || !this.kms.getCurrentRoom().value) &&
-					!this.screen.isDeviceLargeExtra
-				) {
-					if (!existingHub) {
-						this.showSupportButton = true;
-						document.body.appendChild(newHub);
-						const dst = new Subject<any>();
-						interval(100)
-							.pipe(takeUntil(dst))
-							.subscribe(() => {
-								if (window._hsq) {
-									dst.next();
-									dst.complete();
-								}
-							});
-					} else {
-						(existingHub as HTMLElement).setAttribute('style', 'display: block !important;width: 100px;height: 100px');
-					}
-				} else {
-					if (existingHub) {
-						(existingHub as HTMLElement).setAttribute('style', 'display: none !important');
-					}
-				}
-
 				this.hideSchoolToggleBar = data.hideSchoolToggleBar;
 				this.hideScroll = data.hideScroll;
 			});
@@ -591,29 +549,6 @@ export class AppComponent implements OnInit, AfterViewInit, OnDestroy {
 
 	getDayText(days: number): string {
 		return days === 1 ? 'day' : 'days';
-	}
-
-	hubSpotSettings(user) {
-		const _hsq = (window._hsq = window._hsq || []);
-
-		const myPush = function (a) {
-			if (!BUILD_INFO_REAL) {
-				// console.log('Pushed:', a);
-			}
-			_hsq.push(a);
-		};
-
-		myPush([
-			'identify',
-			{
-				email: user.primary_email,
-				firstname: user.first_name,
-				lastname: user.last_name,
-			},
-		]);
-
-		myPush(['setPath', '/admin/dashboard']);
-		myPush(['trackPageView']);
 	}
 
 	getBarBg(color, hovered, pressed) {
