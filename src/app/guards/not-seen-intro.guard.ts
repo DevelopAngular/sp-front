@@ -1,8 +1,8 @@
 import { ErrorHandler, Injectable } from '@angular/core';
 import { ActivatedRouteSnapshot, CanActivate, Router, RouterStateSnapshot } from '@angular/router';
-import {Observable, of, zip} from 'rxjs';
+import { Observable, of, zip } from 'rxjs';
 import { UserService } from '../services/user.service';
-import {combineLatest, filter, map, switchMap, take, tap} from 'rxjs/operators';
+import { combineLatest, filter, map, switchMap, take, tap } from 'rxjs/operators';
 import { User } from '../models/User';
 import { StorageService } from '../services/storage.service';
 import { DeviceDetection } from '../device-detection.helper';
@@ -21,10 +21,13 @@ export class NotSeenIntroGuard implements CanActivate {
 				return User.fromJSON(raw);
 			}),
 			switchMap((user) => {
-				return zip(of(user), this.userService.introsData$.pipe(
-					filter((res) => !!res),
-					take(1)
-				))
+				return zip(
+					of(user),
+					this.userService.introsData$.pipe(
+						filter((res) => !!res),
+						take(1)
+					)
+				);
 			}),
 			map(([user, intros]: [any, any]) => {
 				if (!user) {
@@ -41,15 +44,15 @@ export class NotSeenIntroGuard implements CanActivate {
 				if (!isSaveOnServer) {
 					this.router.navigateByUrl('intro').catch((e) => this.errorHandler.handleError(e));
 				}
-			// 	if (user.isStudent()) {
-          // debugger;
-			//
-			// 	} else if (user.isTeacher()) {
-			// 		if (this.storage.getItem('smartpass_intro_teacher') !== 'seen' && !isSaveOnServer) {
-			// 			this.router.navigateByUrl('intro').catch((e) => this.errorHandler.handleError(e));
-			// 		}
-			// 	}
-			// 	this.router.navigateByUrl('main/passes');
+				// 	if (user.isStudent()) {
+				// debugger;
+				//
+				// 	} else if (user.isTeacher()) {
+				// 		if (this.storage.getItem('smartpass_intro_teacher') !== 'seen' && !isSaveOnServer) {
+				// 			this.router.navigateByUrl('intro').catch((e) => this.errorHandler.handleError(e));
+				// 		}
+				// 	}
+				// 	this.router.navigateByUrl('main/passes');
 				return true;
 			})
 		);
