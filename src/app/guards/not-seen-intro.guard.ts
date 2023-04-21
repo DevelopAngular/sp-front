@@ -41,18 +41,9 @@ export class NotSeenIntroGuard implements CanActivate {
 				} else if (intros.main_intro.web.seen_version) {
 					isSaveOnServer = true;
 				}
-				if (!isSaveOnServer) {
+				if (!isSaveOnServer && !user.isAdmin()) {
 					this.router.navigateByUrl('intro').catch((e) => this.errorHandler.handleError(e));
 				}
-				// 	if (user.isStudent()) {
-				// debugger;
-				//
-				// 	} else if (user.isTeacher()) {
-				// 		if (this.storage.getItem('smartpass_intro_teacher') !== 'seen' && !isSaveOnServer) {
-				// 			this.router.navigateByUrl('intro').catch((e) => this.errorHandler.handleError(e));
-				// 		}
-				// 	}
-				// 	this.router.navigateByUrl('main/passes');
 				return true;
 			})
 		);
