@@ -181,7 +181,7 @@ export class LocationTableComponent implements OnInit, OnDestroy {
 
 		this.pinnableService.loadedPinnables$
 			.pipe(
-				filter((res) => res && !this.isFavoriteForm),
+				filter((res) => res),
 				switchMap((value) => {
 					return this.pinnableService.pinnables$;
 				}),
@@ -199,12 +199,18 @@ export class LocationTableComponent implements OnInit, OnDestroy {
 					this.pinnablesLoaded = true;
 					this.onLoaded.emit(true);
 				}),
-				switchMap((pins) => {
-					return this.locationService.pass_limits_entities$;
+				switchMap(() => {
+					return this.locationService.favoriteLocations$;
 				}),
-				filter((passLimits) => !this.isFavoriteForm),
-				tap((passLimits) => {
-					this.passLimits = Object.values(passLimits);
+				tap((stars)=> {
+					const starredChoices: Location[] = stars.map((val) => Location.fromJSON(val));
+					const choices: Location[] = this.filterChoicesForShowAsOrigin(starredChoices);
+					this.starredChoices = this.parseLocations(choices);
+					if (this.isFavoriteForm) {
+						this.choices = [...this.starredChoices, ...this.choices].sort((a, b) => Number(a.id) - Number(b.id));
+					}
+					this.favoritesLoaded = true;
+					this.mainContentVisibility = true;
 				}),
 				switchMap(() => {
 					return request$;
@@ -247,27 +253,14 @@ export class LocationTableComponent implements OnInit, OnDestroy {
 
 		this.locationService.pass_limits_entities$
 			.pipe(
-				filter((passLimits) => !!Object.keys(passLimits)),
-				tap((passLimits) => {
-					this.passLimits = Object.values(passLimits);
-				})
+				filter((passLimits) => !this.isFavoriteForm &&  !!Object.keys(passLimits)),
+				takeUntil(this.destroy$)
 			)
-			.subscribe();
+			.subscribe((passLimits) => {
+				this.passLimits = Object.values(passLimits);
+			});
 
 		this.isFocused = !this.isFavoriteForm && !DeviceDetection.isMobile();
-
-		if (this.type === 'location') {
-			this.locationService.favoriteLocations$.pipe(takeUntil(this.destroy$)).subscribe((stars: Location[]) => {
-				this.pinnablesLoaded = true;
-				const starredChoices: Location[] = stars.map((val) => Location.fromJSON(val));
-				this.starredChoices = this.parseLocations(starredChoices);
-				if (this.isFavoriteForm) {
-					this.choices = [...this.starredChoices, ...this.choices].sort((a, b) => Number(a.id) - Number(b.id));
-				}
-				this.favoritesLoaded = true;
-				this.mainContentVisibility = true;
-			});
-		}
 
 		this.shortcutsService.onPressKeyEvent$
 			.pipe(

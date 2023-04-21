@@ -9,6 +9,7 @@ import { mapTo, publish, refCount } from 'rxjs/operators';
 import { ScreenService } from '../services/screen.service';
 import { LocationVisibilityService } from '../create-hallpass-forms/main-hallpass--form/location-visibility.service';
 import { MAT_DIALOG_DATA } from '@angular/material/dialog';
+import { HallPassesService } from '../services/hall-passes.service';
 
 @Component({
 	selector: 'app-favorite-form',
@@ -26,10 +27,15 @@ export class FavoriteFormComponent implements OnInit, OnDestroy {
 		private locationService: LocationsService,
 		private dragulaService: DragulaService,
 		public screen: ScreenService,
+		private passesService: HallPassesService,
 		@Optional() @Inject(MAT_DIALOG_DATA) public data: { isStaff: boolean }
 	) {}
 
 	ngOnInit() {
+
+		// trigger populating ngrx store in case user hasn't yet
+		this.passesService.getPinnablesRequest();
+
 		this.overflow$ = merge(
 			of(true),
 			this.dragulaService.drag('locations').pipe(mapTo(false)),

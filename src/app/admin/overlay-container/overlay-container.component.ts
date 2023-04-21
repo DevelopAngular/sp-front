@@ -557,8 +557,8 @@ export class OverlayContainerComponent implements OnInit, OnDestroy {
 	}
 
 	private buildForm(): void {
-		let countsTowardsPassLimits = true;
-		let showAsOriginRoom = true;
+		let countsTowardsPassLimits: boolean = true;
+		let showAsOriginRoom: boolean = true;
 		if (!!this.pinnable) {
 			countsTowardsPassLimits = !this.pinnable.ignore_students_pass_limit;
 			showAsOriginRoom = this.pinnable.show_as_origin_room;
@@ -792,7 +792,6 @@ export class OverlayContainerComponent implements OnInit, OnDestroy {
 			this.formService.setFrameMotionDirection('back');
 			setTimeout(() => {
 				const oldFolderData: FolderData = this.oldFolderData ? this.oldFolderData : this.folderData;
-				console.log('oldFolderData', oldFolderData);
 				if (this.overlayService.pageState.getValue().previousPage === OverlayPages.BulkEditRoomsInFolder) {
 					if (!!this.pinnable) {
 						this.overlayService.updatePage(OverlayPages.EditFolder, this.currentPage, { ...this.folderData, oldFolderData });
@@ -1131,18 +1130,17 @@ export class OverlayContainerComponent implements OnInit, OnDestroy {
 				return this.locationService.updateLocationRequest(room.id, data).pipe(filter((res) => !!res));
 			});
 
-			const patchPinnables$ = this.bulkEditData.pinnables.map((pinnable) => {
-				const pinnableData = {
+			const patchPinnables$: Observable<Pinnable[]>[] = this.bulkEditData.pinnables.map((pinnable: Pinnable) => {
+				const pinnableData: Partial<Pinnable> = {
 					ignore_students_pass_limit: pinnable.ignore_students_pass_limit,
 					show_as_origin_room: pinnable.show_as_origin_room,
 				};
-				return this.hallPassService.updatePinnable(pinnable.id, pinnableData).pipe(filter((res) => !!res));
+				return this.hallPassService.updatePinnableRequest(pinnable.id, pinnableData).pipe(filter((res) => !!res));
 			});
-
-			const fresh = this.hallPassService.getPinnablesRequest();
-
-			zip(...patchRequests$, ...patchPinnables$)
-				.pipe(takeUntil(this.destroy$))
+			// Using a zip here was causing the pinnables to not be updated when opening them again.
+			// Using a take(1) prevents multiple toasts from opening.
+			combineLatest([patchRequests$, patchPinnables$])
+				.pipe(take(1))
 				.subscribe((res) => {
 					this.toast.openToast({ title: 'Rooms updated', type: 'success' });
 					this.isSaveButtonDisabled = false;
@@ -1163,7 +1161,6 @@ export class OverlayContainerComponent implements OnInit, OnDestroy {
 	}
 
 	public folderResult(result: FolderDataResult): void {
-		console.log('folder result', result.data);
 		this.folderData = result.data;
 		this.roomValidButtons.next(result.buttonState);
 		this.visibilityForm.setValue({ visibility: this.visibility });
@@ -1171,7 +1168,6 @@ export class OverlayContainerComponent implements OnInit, OnDestroy {
 	}
 
 	public newRoomInFolder(room: RoomData): void {
-		console.log('newRoomInFolder', room);
 		this.oldFolderData = cloneDeep(this.folderData);
 		this.isOpenRoom = room.enable;
 		this.folderData.roomsInFolder.push({
@@ -1186,7 +1182,6 @@ export class OverlayContainerComponent implements OnInit, OnDestroy {
 	}
 
 	public editRoomFolder(room: RoomData): void {
-		console.log('editRoomFolder', room);
 		this.oldFolderData = cloneDeep(this.folderData);
 		this.isOpenRoom = room.enable;
 		this.folderData.roomsInFolder = this.folderData.roomsInFolder.filter((r) => r.id !== room.id);
@@ -1199,7 +1194,6 @@ export class OverlayContainerComponent implements OnInit, OnDestroy {
 	}
 
 	public addToFolder(rooms: Pinnable[]): void {
-		console.log('addToFolder', rooms);
 		this.oldFolderData = cloneDeep(this.folderData);
 		this.pinnableToDeleteIds = rooms.map((pin) => +pin.id);
 		const locationsToAdd: any[] = rooms.map((room) => {
@@ -1213,8 +1207,6 @@ export class OverlayContainerComponent implements OnInit, OnDestroy {
 	}
 
 	public bulkEditInFolder(result: BulkEditDataResult): void {
-		console.log('bulkEditInFolder', result);
-		console.log('bulkEditInFolder', this.folderData);
 		this.oldFolderData = cloneDeep(this.folderData);
 		this.folderData.roomsInFolder = differenceBy(this.folderData.roomsInFolder, result.rooms, 'id');
 		const editingRooms: any[] = this.editRooms(result.roomData, result.rooms);
@@ -1231,7 +1223,6 @@ export class OverlayContainerComponent implements OnInit, OnDestroy {
 	}
 
 	public bulkEditResult(result: BulkEditDataResult): void {
-		console.log('bulkEditResult', result);
 		const editingPinnables: Pinnable[] = this.editPinnables(result.roomData, result.pinnables);
 		const editingRooms: any[] = this.editRooms(result.roomData, result.rooms);
 		this.bulkEditData = { roomData: result.roomData, rooms: editingRooms, pinnables: editingPinnables };

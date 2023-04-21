@@ -52,6 +52,7 @@ import { Invitation } from '../models/Invitation';
 import { InlineWaitInLineCardComponent } from '../pass-cards/inline-wait-in-line-card/inline-wait-in-line-card.component';
 import { Util } from '../../Util';
 import { RepresentedUser } from '../navbar/navbar.component';
+import { Pinnable } from '../models/Pinnable';
 
 @Component({
 	selector: 'app-passes',
@@ -501,6 +502,19 @@ export class PassesComponent implements OnInit, OnDestroy {
 			this.locationsService.getLocationsWithConfigRequest('v1/locations?limit=1000&starred=false');
 			this.locationsService.getFavoriteLocationsRequest();
 		});
+
+
+		this.locationsService
+			.listenPinnableSocket()
+			.pipe(
+				takeUntil(this.destroy$),
+				filter((res) => !!res),
+				tap((res) => {
+					const pinnable: Pinnable = Pinnable.fromJSON(res.data);
+					this.locationsService.updatePinnableSuccessState(pinnable);
+				})
+			)
+			.subscribe();
 	}
 
 	ngOnDestroy(): void {
