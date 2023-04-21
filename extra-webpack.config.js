@@ -7,7 +7,7 @@ module.exports = {
       new webpack.IgnorePlugin(/^\.\/locale$/, /moment$/),
       new SentryWebpackPlugin({
         org: "smartpass-ec",
-        project: "smartpass-forntend",
+        project: "smartpass-frontend",
         authToken: process.env.SENTRY_AUTH_TOKEN,
         include: "./dist",
       }),
