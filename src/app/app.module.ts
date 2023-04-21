@@ -93,7 +93,7 @@ const DEFAULT_SWIPER_CONFIG: SwiperConfigInterface = {
 // @ts-ignore
 const appRoutes: Routes = [
 	{
-		path: 'main/intro',
+		path: 'intro',
 		canActivate: [AuthenticatedGuard],
 		loadChildren: () => import('app/intro-route/intro-route.module').then((m) => m.IntroRouteModule),
 		data: { hideSchoolToggleBar: true },

@@ -1,8 +1,8 @@
 import { ErrorHandler, Injectable } from '@angular/core';
 import { ActivatedRouteSnapshot, CanActivate, Router, RouterStateSnapshot } from '@angular/router';
-import { Observable } from 'rxjs';
+import {Observable, of, zip} from 'rxjs';
 import { UserService } from '../services/user.service';
-import { combineLatest, filter, map, take, tap } from 'rxjs/operators';
+import {combineLatest, filter, map, switchMap, take, tap} from 'rxjs/operators';
 import { User } from '../models/User';
 import { StorageService } from '../services/storage.service';
 import { DeviceDetection } from '../device-detection.helper';
@@ -20,12 +20,12 @@ export class NotSeenIntroGuard implements CanActivate {
 			map((raw) => {
 				return User.fromJSON(raw);
 			}),
-			combineLatest(
-				this.userService.introsData$.pipe(
+			switchMap((user) => {
+				return zip(of(user), this.userService.introsData$.pipe(
 					filter((res) => !!res),
 					take(1)
-				)
-			),
+				))
+			}),
 			map(([user, intros]: [any, any]) => {
 				if (!user) {
 					return false;
@@ -38,15 +38,18 @@ export class NotSeenIntroGuard implements CanActivate {
 				} else if (intros.main_intro.web.seen_version) {
 					isSaveOnServer = true;
 				}
-				if (user.isStudent()) {
-					if (this.storage.getItem('smartpass_intro_student') !== 'seen' && !isSaveOnServer) {
-						this.router.navigateByUrl('/main/intro').catch((e) => this.errorHandler.handleError(e));
-					}
-				} else if (user.isTeacher()) {
-					if (this.storage.getItem('smartpass_intro_teacher') !== 'seen' && !isSaveOnServer) {
-						this.router.navigateByUrl('/main/intro').catch((e) => this.errorHandler.handleError(e));
-					}
+				if (!isSaveOnServer) {
+					this.router.navigateByUrl('intro').catch((e) => this.errorHandler.handleError(e));
 				}
+			// 	if (user.isStudent()) {
+          // debugger;
+			//
+			// 	} else if (user.isTeacher()) {
+			// 		if (this.storage.getItem('smartpass_intro_teacher') !== 'seen' && !isSaveOnServer) {
+			// 			this.router.navigateByUrl('intro').catch((e) => this.errorHandler.handleError(e));
+			// 		}
+			// 	}
+			// 	this.router.navigateByUrl('main/passes');
 				return true;
 			})
 		);
