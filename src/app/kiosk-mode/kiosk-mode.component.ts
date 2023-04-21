@@ -144,8 +144,7 @@ export class KioskModeComponent implements OnInit, AfterViewInit, OnDestroy {
 				tap((pinnables: Pinnable[]) => {
 					if (this.currentLocation.category) {
 						this.pinnable = pinnables.find((p: Pinnable) => p.category === this.currentLocation.category);
-					}
-					else {
+					} else {
 						this.pinnable = pinnables.find((p: Pinnable) => p.location.id === this.currentLocation.id);
 					}
 					this.showAsOriginRoom = this.pinnable?.show_as_origin_room;

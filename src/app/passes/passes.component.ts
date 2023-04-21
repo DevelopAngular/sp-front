@@ -503,7 +503,6 @@ export class PassesComponent implements OnInit, OnDestroy {
 			this.locationsService.getFavoriteLocationsRequest();
 		});
 
-
 		this.locationsService
 			.listenPinnableSocket()
 			.pipe(

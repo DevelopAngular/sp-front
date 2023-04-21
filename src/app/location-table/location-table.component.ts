@@ -202,7 +202,7 @@ export class LocationTableComponent implements OnInit, OnDestroy {
 				switchMap(() => {
 					return this.locationService.favoriteLocations$;
 				}),
-				tap((stars)=> {
+				tap((stars) => {
 					const starredChoices: Location[] = stars.map((val) => Location.fromJSON(val));
 					const choices: Location[] = this.filterChoicesForShowAsOrigin(starredChoices);
 					this.starredChoices = this.parseLocations(choices);
@@ -253,7 +253,7 @@ export class LocationTableComponent implements OnInit, OnDestroy {
 
 		this.locationService.pass_limits_entities$
 			.pipe(
-				filter((passLimits) => !this.isFavoriteForm &&  !!Object.keys(passLimits)),
+				filter((passLimits) => !this.isFavoriteForm && !!Object.keys(passLimits)),
 				takeUntil(this.destroy$)
 			)
 			.subscribe((passLimits) => {

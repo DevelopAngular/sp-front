@@ -32,7 +32,6 @@ export class FavoriteFormComponent implements OnInit, OnDestroy {
 	) {}
 
 	ngOnInit() {
-
 		// trigger populating ngrx store in case user hasn't yet
 		this.passesService.getPinnablesRequest();
 

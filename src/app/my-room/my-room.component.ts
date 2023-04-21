@@ -394,8 +394,7 @@ export class MyRoomComponent implements OnInit, OnDestroy, AfterViewInit {
 		let pin: Pinnable;
 		if (this.selectedLocation.category) {
 			pin = this.pinnables.find((p: Pinnable) => p.category === this.selectedLocation.category);
-		}
-		else {
+		} else {
 			pin = this.pinnables.find((p: Pinnable) => p.location.id === this.selectedLocation.id);
 		}
 		if (pin) {
