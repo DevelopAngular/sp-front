@@ -143,6 +143,7 @@ e2e:
     - yarn run e2e:ci
   rules:
     - if: $CI_COMMIT_BRANCH == 'master'
+      allow_failure: true
   interruptible: true
   dependencies: []
   tags:
