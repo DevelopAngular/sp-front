@@ -138,8 +138,8 @@ export class PdfGeneratorService {
 	}
 
 	drawLink(doc) {
-		const linkPlaceholder = 'View more information at smartpass.app/app';
-		const link = 'https://smartpass.app/app';
+		const linkPlaceholder = 'View more information at app.smartpass.app';
+		const link = 'https://app.smartpass.app/';
 		const linkRoundSpace = this.A4.width - doc.getStringUnitWidth(linkPlaceholder) * 12;
 
 		doc.setTextColor('#666666');

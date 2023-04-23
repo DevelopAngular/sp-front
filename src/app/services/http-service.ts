@@ -275,10 +275,6 @@ export class HttpService implements OnDestroy {
 		private matDialog: MatDialog,
 		private router: Router
 	) {
-		if (baseHref === '/app') {
-			this.baseHref = '/app/';
-		}
-
 		// the school list is loaded when a user authenticates and we need to choose a current school of the school array.
 		// First, if there is a current school loaded, try to use that one.
 		// Then, if there is a school id saved in local storage, try to use that.
