@@ -1059,25 +1059,23 @@ export class OverlayContainerComponent implements OnInit, OnDestroy {
 		}
 
 		if (this.currentPage === OverlayPages.EditRoom) {
-			const location: Partial<Location> = {
-				title: this.roomData.roomName,
-				room: this.roomData.roomNumber,
-				restricted: !!this.roomData.restricted,
-				scheduling_restricted: !!this.roomData.scheduling_restricted,
-				needs_check_in: !!this.roomData.needs_check_in,
-				teachers: this.roomData.selectedTeachers.map((teacher) => teacher.id) as number[],
-				travel_types: this.roomData.travelType,
-				max_allowed_time: +this.roomData.timeLimit,
-				max_passes_from: +this.passLimitForm.get('from').value,
-				max_passes_from_active: this.passLimitForm.get('fromEnabled').value,
-				max_passes_to: this.passLimitForm.get('to').valid ? +this.passLimitForm.get('to').value : 0,
-				max_passes_to_active: this.passLimitForm.get('toEnabled').value && this.passLimitForm.get('to').valid,
-				enable: this.roomData.enable,
-				visibility_type: this.visibility.mode,
-				visibility_students: this.visibility.over.map((el: User) => el.id) as number[],
-				visibility_grade: this.visibility.grade,
-			};
-
+			let location: Location = cloneDeep(this.pinnable.location);
+			location.title = this.roomData.roomName;
+			location.room = this.roomData.roomNumber;
+			location.restricted = !!this.roomData.restricted;
+			location.scheduling_restricted = !!this.roomData.scheduling_restricted;
+			location.needs_check_in = !!this.roomData.needs_check_in;
+			location.teachers = this.roomData.selectedTeachers.map((teacher) => teacher.id) as number[];
+			location.travel_types = this.roomData.travelType;
+			location.max_allowed_time = +this.roomData.timeLimit;
+			location.max_passes_from = +this.passLimitForm.get('from').value;
+			location.max_passes_from_active = this.passLimitForm.get('fromEnabled').value;
+			location.max_passes_to = this.passLimitForm.get('to').valid ? +this.passLimitForm.get('to').value : 0;
+			location.max_passes_to_active = this.passLimitForm.get('toEnabled').value && this.passLimitForm.get('to').valid;
+			location.enable = this.roomData.enable;
+			location.visibility_type = this.visibility.mode;
+			location.visibility_students = this.visibility.over.map((el: User) => el.id) as number[];
+			location.visibility_grade = this.visibility.grade;
 			const mergedData = { ...location, ...this.normalizeAdvOptData() };
 
 			this.locationService

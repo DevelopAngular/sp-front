@@ -308,7 +308,7 @@ export class MainHallPassFormComponent implements OnInit, OnDestroy {
 					if (this.user.isAdmin()) {
 						this.passesService.updatePinnableRequest(pinnable.id, pinnableData);
 					}
-					this.locationsService.updatePinnableSuccessState(Pinnable.fromJSON(res.data));
+					this.locationsService.updatePinnableSuccessState(pinnable);
 				})
 			)
 			.subscribe();
