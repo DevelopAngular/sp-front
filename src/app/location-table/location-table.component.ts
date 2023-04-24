@@ -206,7 +206,9 @@ export class LocationTableComponent implements OnInit, OnDestroy {
 					const starredChoices: Location[] = stars.map((val) => Location.fromJSON(val));
 					const choices: Location[] = this.filterChoicesForShowAsOrigin(starredChoices);
 					this.starredChoices = this.parseLocations(choices);
+					// don't filter for show as origin if this is the favorites form
 					if (this.isFavoriteForm) {
+						this.starredChoices = this.parseLocations(starredChoices);
 						this.choices = [...this.starredChoices, ...this.choices].sort((a, b) => Number(a.id) - Number(b.id));
 					}
 					this.favoritesLoaded = true;
