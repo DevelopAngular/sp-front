@@ -436,20 +436,6 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@angular/service-worker@npm:^10.2.2":
-  version: 10.2.5
-  resolution: "@angular/service-worker@npm:10.2.5"
-  dependencies:
-    tslib: ^2.0.0
-  peerDependencies:
-    "@angular/common": 10.2.5
-    "@angular/core": 10.2.5
-  bin:
-    ngsw-config: ngsw-config.js
-  checksum: 976e7deec3edcfe91f2e0a79eb870ba697665bc3b58b723965e2591f8e3a9c96fe4737b045c5b084ac1787e330a75e3a5a08665932000ba5df18a127be06808a
-  languageName: node
-  linkType: hard
-
 "@auth0/angular-jwt@npm:^2.1.0":
   version: 2.1.2
   resolution: "@auth0/angular-jwt@npm:2.1.2"
@@ -14196,7 +14182,6 @@ __metadata:
     "@angular/platform-browser": ^10.2.2
     "@angular/platform-browser-dynamic": ^10.2.2
     "@angular/router": ^10.2.2
-    "@angular/service-worker": ^10.2.2
     "@auth0/angular-jwt": ^2.1.0
     "@cypress/schematic": ^1.6.0
     "@ngrx/effects": ^8.6.0
