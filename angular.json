@@ -24,7 +24,6 @@
               "xlsx",
               "dragula",
               "chart.js",
-              "@sentry/browser",
               "hammerjs",
               "@firebase/util",
               "url"
@@ -36,10 +35,13 @@
             "polyfills": "src/polyfills.ts",
             "showCircularDependencies": false,
             "assets": [
+              "src/_headers",
               "src/assets",
               "src/preloader.js",
               "src/firebase-messaging-sw.js",
-              "src/manifest.json"
+              "src/manifest.json",
+              "src/ngsw-worker.js",
+              "src/.well-known"
             ],
             "styles": [
               "src/styles.scss",
@@ -95,8 +97,6 @@
                   "with": "src/environments/environment.staging.ts"
                 }
               ],
-              "serviceWorker": true,
-              "ngswConfigPath": "src/ngsw-config.json"
             },
             "production": {
               "optimization": true,
@@ -114,8 +114,6 @@
                   "with": "src/environments/environment.prod.ts"
                 }
               ],
-              "serviceWorker": true,
-              "ngswConfigPath": "src/ngsw-config.json"
             }
           }
         },

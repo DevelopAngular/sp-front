@@ -13,7 +13,6 @@ import { filter as _filter } from 'lodash';
 import { HttpService } from '../services/http-service';
 import { HallPassesService } from '../services/hall-passes.service';
 import { User } from '../models/User';
-import { CheckForUpdateService } from '../services/check-for-update.service';
 import { StorageService } from '../services/storage.service';
 import { KioskModeService } from '../services/kiosk-mode.service';
 
@@ -73,7 +72,6 @@ export class MainPageComponent implements OnInit, AfterViewInit, OnDestroy {
 		private router: Router,
 		private http: HttpService,
 		private passesService: HallPassesService,
-		private updateService: CheckForUpdateService,
 		private storage: StorageService,
 		private kioskModeService: KioskModeService
 	) {
@@ -177,7 +175,6 @@ export class MainPageComponent implements OnInit, AfterViewInit, OnDestroy {
 
 	ngOnInit() {
 		this.isKioskMode = this.kioskModeService.isKisokMode();
-		this.isUpdateBar$ = this.updateService.needToUpdate$;
 		this.toggleLeft = this.sideNavService.toggleLeft;
 		this.toggleRight = this.sideNavService.toggleRight;
 

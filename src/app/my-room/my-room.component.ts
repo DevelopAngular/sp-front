@@ -27,7 +27,6 @@ import { DeviceDetection } from '../device-detection.helper';
 import { HallPassesService } from '../services/hall-passes.service';
 import { UNANIMATED_CONTAINER } from '../consent-menu-overlay';
 import * as moment from 'moment';
-import { CheckForUpdateService } from '../services/check-for-update.service';
 import { RoomCheckinCodeDialogComponent } from './room-checkin-code-dialog/room-checkin-code-dialog.component';
 import { KioskModeDialogComponent } from '../kiosk-mode/kiosk-mode-dialog/kiosk-mode-dialog.component';
 import { Pinnable } from '../models/Pinnable';
@@ -155,7 +154,6 @@ export class MyRoomComponent implements OnInit, OnDestroy {
 		public screenService: ScreenService,
 		public router: Router,
 		private scrollPosition: ScrollPositionService,
-		private updateService: CheckForUpdateService,
 		private titleService: Title
 	) {
 		this.setSearchDate(this.timeService.nowDate());

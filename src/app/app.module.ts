@@ -54,7 +54,6 @@ import { CustomToastComponent } from './custom-toast/custom-toast.component';
 import { PassesEffects } from './ngrx/passes';
 import { ContactTraceEffects } from './ngrx/contact-trace/effects';
 import { IntrosEffects } from './ngrx/intros';
-import { ServiceWorkerModule } from '@angular/service-worker';
 import { FiltersEffects } from './ngrx/pass-filters/effects';
 import { InvitationsEffects } from './ngrx/pass-like-collection/nested-states/invitations/effects';
 import { PassLikeCollectionEffects } from './ngrx/pass-like-collection/effects/pass-like-collection.effects';
@@ -239,7 +238,6 @@ const appRoutes: Routes = [
 		]),
 		StoreDevtoolsModule.instrument({}),
 		HammerModule,
-		ServiceWorkerModule.register('ngsw-worker.js', { enabled: environment.production }),
 		SharedModule,
 	],
 	providers: [
@@ -248,9 +246,8 @@ const appRoutes: Routes = [
 		{ provide: HTTP_INTERCEPTORS, useClass: AuthInterceptor, multi: true, deps: [LoginService] },
 		{ provide: HTTP_INTERCEPTORS, useClass: ProgressInterceptor, multi: true },
 		// { provide: HTTP_INTERCEPTORS, useClass: AccessTokenInterceptor, multi: true },
-		{ provide: APP_BASE_HREF, useValue: environment.production ? '/app' : '/' },
+		{ provide: APP_BASE_HREF, useValue: '/' },
 		{ provide: SWIPER_CONFIG, useValue: DEFAULT_SWIPER_CONFIG },
-		,
 		// uncomment when app uses formatDate and so on
 		/*{
       provide: LOCALE_ID,

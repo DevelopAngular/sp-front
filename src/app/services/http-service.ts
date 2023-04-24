@@ -4,7 +4,6 @@ import { Store } from '@ngrx/store';
 import { LocalStorage } from '@ngx-pwa/local-storage';
 import { BehaviorSubject, Observable, of, ReplaySubject, Subject, throwError } from 'rxjs';
 import { catchError, delay, exhaustMap, filter, map, mapTo, switchMap, take, takeUntil, tap } from 'rxjs/operators';
-import { BUILD_DATE, RELEASE_NAME } from '../../build-info';
 import { environment } from '../../environments/environment';
 import { School } from '../models/School';
 import { AppState } from '../ngrx/app-state/app-state';
@@ -84,10 +83,7 @@ function isSchoolInArray(id: string | number, schools: School[]) {
 }
 
 function makeConfig(config: Config, school: School, effectiveUserId): Config & { responseType: 'json' } {
-	const headers: any = {
-		'build-release-name': RELEASE_NAME,
-		'build-date': BUILD_DATE,
-	};
+	const headers: any = {};
 
 	if (school) {
 		headers['X-School-Id'] = '' + school.id;
@@ -279,10 +275,6 @@ export class HttpService implements OnDestroy {
 		private matDialog: MatDialog,
 		private router: Router
 	) {
-		if (baseHref === '/app') {
-			this.baseHref = '/app/';
-		}
-
 		// the school list is loaded when a user authenticates and we need to choose a current school of the school array.
 		// First, if there is a current school loaded, try to use that one.
 		// Then, if there is a school id saved in local storage, try to use that.

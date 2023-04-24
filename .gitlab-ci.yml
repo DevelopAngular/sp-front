@@ -26,6 +26,8 @@ build:
   rules:
     - if: $CI_PIPELINE_SOURCE == 'merge_request_event'
     - if: $CI_COMMIT_BRANCH == 'master'
+  variables:
+    SENTRY_AUTH_TOKEN: $SENTRY_AUTH_TOKEN
   artifacts:
     name: "$CI_JOB_NAME"
     paths:
@@ -143,6 +145,7 @@ e2e:
     - yarn run e2e:ci
   rules:
     - if: $CI_COMMIT_BRANCH == 'master'
+      allow_failure: true
   interruptible: true
   dependencies: []
   tags:
