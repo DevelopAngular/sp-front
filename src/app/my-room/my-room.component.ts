@@ -1,4 +1,4 @@
-import { AfterViewInit, Component, ElementRef, OnDestroy, OnInit, ViewChild } from '@angular/core';
+import { Component, ElementRef, OnDestroy, OnInit, ViewChild } from '@angular/core';
 import { MatDialog } from '@angular/material/dialog';
 import { BehaviorSubject, combineLatest, interval, Observable, of, ReplaySubject, Subject } from 'rxjs';
 import { Util } from '../../Util';
@@ -44,8 +44,8 @@ import { Pinnable } from '../models/Pinnable';
 		bumpIn,
 	],
 })
-export class MyRoomComponent implements OnInit, OnDestroy, AfterViewInit {
-	private scrollableAreaName = 'MyRoom';
+export class MyRoomComponent implements OnInit, OnDestroy {
+	private scrollableAreaName: string = 'MyRoom';
 	private scrollableArea: HTMLElement;
 
 	@ViewChild('scrollableArea') set scrollable(scrollable: ElementRef) {
@@ -89,56 +89,57 @@ export class MyRoomComponent implements OnInit, OnDestroy, AfterViewInit {
 
 	@ViewChild('calendar') calendar: ElementRef;
 
-	activePasses: any;
-	originPasses: any;
-	destinationPasses: any;
+	public activePasses: any;
+	public originPasses: any;
+	public destinationPasses: any;
 
-	inputValue = '';
-	user: User;
-	effectiveUser: RepresentedUser;
-	isStaff = false;
-	min: Date = new Date('December 17, 1995 03:24:00');
-	roomOptions: Location[];
+	public inputValue: string = '';
+	public user: User;
+	private effectiveUser: RepresentedUser;
+	public isStaff: boolean = false;
+	public roomOptions: Location[];
 	public showAsOriginRoom: boolean = true;
-	selectedLocation: Location;
-	optionsOpen = false;
-	canView = false;
-	userLoaded = false;
+	public selectedLocation: Location;
+	private optionsOpen: boolean = false;
+	private canView: boolean = false;
+	public userLoaded: boolean = false;
 
-	buttonDown: boolean;
-	hovered: boolean;
+	private buttonDown: boolean;
 
-	searchQuery$ = new BehaviorSubject('');
-	searchDate$ = new BehaviorSubject<Date>(null);
-	selectedLocation$ = new ReplaySubject<Location[]>(1);
+	private searchQuery$: BehaviorSubject<string> = new BehaviorSubject('');
+	public searchDate$: BehaviorSubject<Date>  = new BehaviorSubject<Date>(null);
+	private selectedLocation$: ReplaySubject<Location[]> = new ReplaySubject<Location[]>(1);
 	private pinnables$: Observable<Pinnable[]> = this.passesService.getPinnablesRequest().pipe(filter((r: Pinnable[]) => !!r.length));
 	private pinnables: Pinnable[];
-	schoolsLength$: Observable<number>;
+	public schoolsLength$: Observable<number>;
 
-	searchPending$: Subject<boolean> = new Subject<boolean>();
+	public searchPending$: Subject<boolean> = new Subject<boolean>();
 
-	hasPasses: Observable<boolean> = of(false);
-	passesLoaded: Observable<boolean> = of(false);
-	isEnableProfilePictures$: Observable<boolean>;
+	public hasPasses: Observable<boolean> = of(false);
+	public passesLoaded: Observable<boolean> = of(false);
+	public isEnableProfilePictures$: Observable<boolean>;
 
-	destroy$ = new Subject();
+	private destroy$: Subject<void> = new Subject();
 
-	optionsClick: boolean;
+	private optionsClick: boolean;
 
-	isCalendarShowed: boolean;
+	private isCalendarShowed: boolean;
 
-	isCalendarClick: boolean;
+	private isCalendarClick: boolean;
 
-	isSearchBarClicked: boolean;
+	public isSearchBarClicked: boolean;
 
-	resetValue = new Subject();
+	public resetValue: Subject<string> = new Subject();
 
-	currentPasses$ = new Subject();
+	public currentPasses$: Subject<void> = new Subject();
 
-	isUpdateBar$: Subject<any>;
+	public isUpdateBar$: Subject<any>;
 
-	currentPassesDates: Map<string, number> = new Map();
-	holdScrollPosition: number = 0;
+	public currentPassesDates: Map<string, number> = new Map();
+	private holdScrollPosition: number = 0;
+
+	public isIOSTablet: boolean = false;
+	public UI: boolean = false;
 
 	constructor(
 		private liveDataService: LiveDataService,
@@ -159,7 +160,7 @@ export class MyRoomComponent implements OnInit, OnDestroy, AfterViewInit {
 	) {
 		this.setSearchDate(this.timeService.nowDate());
 
-		const selectedLocationArray$ = this.selectedLocation$.pipe(
+		const selectedLocationArray$: Observable<Location[]> = this.selectedLocation$.pipe(
 			map((location) => {
 				return location && location.length ? location.map((l) => Location.fromJSON(l)) : [];
 			})
@@ -181,17 +182,17 @@ export class MyRoomComponent implements OnInit, OnDestroy, AfterViewInit {
 		this.destinationPasses = this.liveDataService.toLocationPasses$;
 	}
 
-	setSearchDate(date: Date) {
+	private setSearchDate(date: Date): void {
 		date.setHours(0);
 		date.setMinutes(0);
 		this.searchDate$.next(date);
 	}
 
-	get buttonState() {
+	get buttonState(): string {
 		return this.buttonDown ? 'down' : 'up';
 	}
 
-	get searchDate() {
+	private get searchDate(): Date {
 		return this.searchDate$.value;
 	}
 
@@ -203,35 +204,16 @@ export class MyRoomComponent implements OnInit, OnDestroy, AfterViewInit {
 		return Util.formatDateTime(this.searchDate).split(',')[0];
 	}
 
-	get showArrow() {
-		if (this.roomOptions) {
-			if (this.roomOptions.length > 1) {
-				return true;
-			}
-		} else {
-			return false;
-		}
-	}
-
 	get myRoomHeaderColor() {
 		return this.darkTheme.getColor({ dark: '#FFFFFF', white: '#1F195E' });
-	}
-	get UI() {
-		return this.isStaff && this.roomOptions.length && this.canView;
 	}
 	get error() {
 		return !this.isStaff || (this.isStaff && !this.roomOptions.length) || !this.canView;
 	}
 
-	get shadow() {
-		return this.sanitizer.bypassSecurityTrustStyle(this.hovered ? '0 2px 4px 1px rgba(0, 0, 0, 0.3)' : '0 1px 4px 0px rgba(0, 0, 0, 0.25)');
-	}
+	public ngOnInit(): void {
 
-	get showProfilePictures() {
-		return this.http.getSchool().profile_pictures_enabled && this.user.show_profile_pictures;
-	}
-
-	ngOnInit() {
+		this.isIOSTablet = DeviceDetection.isIOSTablet();
 		this.isUpdateBar$ = this.updateService.needToUpdate$;
 		this.isEnableProfilePictures$ = this.userService.isEnableProfilePictures$;
 		this.schoolsLength$ = this.http.schoolsLength$;
@@ -261,6 +243,7 @@ export class MyRoomComponent implements OnInit, OnDestroy, AfterViewInit {
 			)
 			.subscribe(([locations, selected]: [Location[], Location]) => {
 				this.roomOptions = locations;
+				this.UI = this.isStaff && this.roomOptions.length && this.canView;
 				if (!selected) {
 					this.selectedLocation = locations[0];
 					this.selectedLocation$.next([locations[0]]);
@@ -322,7 +305,7 @@ export class MyRoomComponent implements OnInit, OnDestroy, AfterViewInit {
 		);
 	}
 
-	ngOnDestroy() {
+	public ngOnDestroy(): void {
 		if (this.scrollableArea && this.scrollableAreaName) {
 			this.scrollPosition.saveComponentScroll(this.scrollableAreaName, this.scrollableArea.scrollTop);
 		}
@@ -331,13 +314,7 @@ export class MyRoomComponent implements OnInit, OnDestroy, AfterViewInit {
 		this.locationService.myRoomSelectedLocation$.next(this.selectedLocation);
 	}
 
-	ngAfterViewInit() {}
-
-	onPress(press: boolean) {
-		this.buttonDown = press;
-	}
-
-	getSelectedDateText(date) {
+	public getSelectedDateText(date): string {
 		if (moment(date).isSame(moment(), 'day')) {
 			return 'Today';
 		} else if (moment(date).isSame(moment().add(1, 'day'), 'day')) {
@@ -349,18 +326,7 @@ export class MyRoomComponent implements OnInit, OnDestroy, AfterViewInit {
 		}
 	}
 
-	onHover(hover: boolean) {
-		this.hovered = hover;
-		if (!hover) {
-			this.buttonDown = false;
-		}
-	}
-
-	openCalendar() {
-		this.chooseDate(this.calendar.nativeElement as HTMLElement);
-	}
-
-	getIcon(icon) {
+	getIcon(icon): string {
 		return this.darkTheme.getIcon({
 			iconName: icon,
 			darkFill: 'White',
@@ -369,7 +335,7 @@ export class MyRoomComponent implements OnInit, OnDestroy, AfterViewInit {
 		});
 	}
 
-	chooseDate(event) {
+	chooseDate(event): void  {
 		const target = event.currentTarget;
 		const DR = this.dialog.open(CalendarComponent, {
 			panelClass: 'calendar-dialog-container',
@@ -388,9 +354,9 @@ export class MyRoomComponent implements OnInit, OnDestroy, AfterViewInit {
 	}
 
 	// used to prevent multiple clicks while dialog hasn't been opened
-	private setRoomToKioskModeProcesing: boolean;
+	public setRoomToKioskModeProcessing: boolean;
 
-	setRoomToKioskMode() {
+	public setRoomToKioskMode(): void {
 		let pin: Pinnable;
 		if (this.selectedLocation.category) {
 			pin = this.pinnables.find((p: Pinnable) => p.category === this.selectedLocation.category);
@@ -400,7 +366,7 @@ export class MyRoomComponent implements OnInit, OnDestroy, AfterViewInit {
 		if (pin) {
 			this.showAsOriginRoom = pin.show_as_origin_room;
 		}
-		if (this.setRoomToKioskModeProcesing) {
+		if (this.setRoomToKioskModeProcessing) {
 			return;
 		}
 
@@ -409,7 +375,7 @@ export class MyRoomComponent implements OnInit, OnDestroy, AfterViewInit {
 			throw new Error('No login server!');
 		}
 
-		this.setRoomToKioskModeProcesing = true;
+		this.setRoomToKioskModeProcessing = true;
 
 		let kioskLogin: KioskLogin;
 
@@ -419,7 +385,7 @@ export class MyRoomComponent implements OnInit, OnDestroy, AfterViewInit {
 				// Get Dedicated Login details
 				takeUntil<KioskLoginResponse>(this.destroy$),
 				map(({ results }) => results), // de-nest server response
-				finalize(() => (this.setRoomToKioskModeProcesing = false)),
+				finalize(() => (this.setRoomToKioskModeProcessing = false)),
 				concatMap((kioskLoginInfo) => {
 					kioskLogin = kioskLoginInfo;
 					const dialogRef = this.dialog.open(KioskModeDialogComponent, {
@@ -452,8 +418,8 @@ export class MyRoomComponent implements OnInit, OnDestroy, AfterViewInit {
 			.subscribe();
 	}
 
-	openRoomCodeDialog() {
-		const dialogRef = this.dialog.open(RoomCheckinCodeDialogComponent, {
+	public openRoomCodeDialog(): void {
+		this.dialog.open(RoomCheckinCodeDialogComponent, {
 			panelClass: 'checkin-room-code-dialog-container',
 			backdropClass: 'custom-bd',
 			maxWidth: '100vw',
@@ -464,13 +430,13 @@ export class MyRoomComponent implements OnInit, OnDestroy, AfterViewInit {
 		});
 	}
 
-	onSearch(search: string) {
+	public onSearch(search: string): void {
 		this.inputValue = search;
 		this.searchPending$.next(true);
 		this.searchQuery$.next(search);
 	}
 
-	displayOptionsPopover(target: HTMLElement) {
+	private displayOptionsPopover(target: HTMLElement): void {
 		if (!this.optionsOpen && this.roomOptions && this.roomOptions.length > 1) {
 			this.optionsOpen = true;
 			UNANIMATED_CONTAINER.next(true);
@@ -505,7 +471,7 @@ export class MyRoomComponent implements OnInit, OnDestroy, AfterViewInit {
 		}
 	}
 
-	showOptions(target: HTMLElement) {
+	public showOptions(target: HTMLElement): void {
 		this.optionsClick = !this.optionsClick;
 		if (this.screenService.isDeviceMid || this.screenService.isIpadWidth) {
 			this.openOptionsMenu();
@@ -514,27 +480,27 @@ export class MyRoomComponent implements OnInit, OnDestroy, AfterViewInit {
 		}
 	}
 
-	calendarClick() {
+	public calendarClick(): void {
 		this.isCalendarShowed = !this.isCalendarShowed;
 		this.isCalendarClick = !this.isCalendarClick;
 	}
 
-	toggleSearchBar() {
+	public toggleSearchBar(): void {
 		this.isSearchBarClicked = !this.isSearchBarClicked;
 	}
 
-	cleanSearchValue() {
+	public cleanSearchValue(): void {
 		this.resetValue.next('');
 		this.inputValue = '';
 		this.searchQuery$.next('');
 		this.toggleSearchBar();
 	}
 
-	onDate(event) {
+	public onDate(event): void {
 		this.setSearchDate(event[0]._d);
 	}
 
-	openOptionsMenu() {
+	public openOptionsMenu(): void {
 		const dialogRef = this.dialog.open(SortMenuComponent, {
 			position: { bottom: '0' },
 			panelClass: 'options-dialog',
@@ -554,7 +520,7 @@ export class MyRoomComponent implements OnInit, OnDestroy, AfterViewInit {
 		});
 	}
 
-	calendarSlideState(stateName: string): string {
+	public calendarSlideState(stateName: string): string {
 		switch (stateName) {
 			case 'leftRight':
 				return this.isCalendarClick ? 'slideLeft' : 'slideRight';
@@ -563,7 +529,7 @@ export class MyRoomComponent implements OnInit, OnDestroy, AfterViewInit {
 		}
 	}
 
-	get collectionsSlideState() {
+	get collectionsSlideState(): string {
 		if (!this.screenService.isIpadWidth && this.isCalendarClick && !this.isSearchBarClicked) {
 			return 'collectionsTop';
 		}
@@ -573,19 +539,7 @@ export class MyRoomComponent implements OnInit, OnDestroy, AfterViewInit {
 		}
 	}
 
-	get headerState() {
-		return this.isSearchBarClicked ? 'headerTop' : 'headerBottom';
-	}
-
-	get calendarIconState() {
-		return this.isSearchBarClicked ? 'calendarIconLeft' : 'calendarIconRight';
-	}
-
-	get isIOSTablet() {
-		return DeviceDetection.isIOSTablet();
-	}
-
-	get collectionWidth() {
+	get collectionWidth(): string {
 		let maxWidth = 755;
 
 		if (this.screenService.createCustomBreakPoint(maxWidth)) {
@@ -601,7 +555,7 @@ export class MyRoomComponent implements OnInit, OnDestroy, AfterViewInit {
 		return maxWidth + 'px';
 	}
 
-	get is670pxBreakPoint() {
+	get is670pxBreakPoint(): boolean {
 		const customBreakPoint = 670;
 		return this.screenService.createCustomBreakPoint(customBreakPoint);
 	}

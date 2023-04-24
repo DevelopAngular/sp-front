@@ -35,7 +35,7 @@
 					(pointerClickEvent)="showOptions(target)"
 					#target>
 					{{ selectedLocation ? selectedLocation.title : roomOptions.length > 1 ? 'All Rooms' : roomOptions[0].title }}
-					<img *ngIf="showArrow" class="disclosure-icon" [src]="getIcon('./assets/Chevron Down (Navy).svg') | resolveAsset" />
+					<img *ngIf="roomOptions && roomOptions.length > 1" class="disclosure-icon" [src]="getIcon('./assets/Chevron Down (Navy).svg') | resolveAsset" />
 				</div>
 				<div [style.margin-left]="'auto'" [style.margin-right]="'10px'">
 					<div [ngClass]="isIOSTablet ? 'ios-search' : 'search'">
@@ -71,7 +71,7 @@
 				</div>
 				<div class="kioskButton ds-my-10">
 					<app-gradient-button
-						[disabled]="!showKioskModeButton"
+						[disabled]="!selectedLocation || this.roomOptions.length === 1"
 						[gradient]="'#1F195E, #1F195E'"
 						[leftIcon]="'./assets/Kiosk Mode (White).svg'"
 						[textColor]="'#FFFFFF'"
@@ -83,7 +83,7 @@
 
 			<div class="option-wrapper option-wrapper-calendar" *ngIf="!isSearchBarClicked">
 				<app-icon-button
-					[@calendarIconTrigger]="calendarIconState"
+					[@calendarIconTrigger]="isSearchBarClicked ? 'calendarIconLeft' : 'calendarIconRight'"
 					[srcString]="'Calendar'"
 					[size]="20"
 					(clickEvent)="calendarClick()"></app-icon-button>
@@ -105,7 +105,7 @@
 				: 'calc(100vh - 64px)'
 		">
 		<div class="my-room-left" *ngIf="!(kioskMode.getCurrentRoom() | async)">
-			<div class="my-room-header" [@headerTrigger]="headerState" *ngIf="screenService.isDesktopWidth">
+			<div class="my-room-header" [@headerTrigger]="isSearchBarClicked ? 'headerTop' : 'headerBottom'" *ngIf="screenService.isDesktopWidth">
 				<div
 					class="selected-teacher"
 					[style.font-size]="selectedLocation && selectedLocation.title.length > 13 ? 29 - (selectedLocation.title.length - 13) * 2 + 'px' : '29px'"
@@ -114,7 +114,7 @@
 					(click)="showOptions(target)"
 					[style.color]="myRoomHeaderColor">
 					{{ selectedLocation ? selectedLocation.title : roomOptions.length > 1 ? 'All Rooms' : roomOptions[0].title }}
-					<img *ngIf="showArrow" class="disclosure-icon" [src]="getIcon('./assets/Rect (Navy).svg') | resolveAsset" />
+					<img *ngIf="roomOptions && roomOptions.length > 1" class="disclosure-icon" [src]="getIcon('./assets/Rect (Navy).svg') | resolveAsset" />
 				</div>
 				<div [style.margin-left]="'auto'" [style.margin-right]="'10px'">
 					<div class="search">
@@ -160,15 +160,15 @@
 				<div class="kioskButton">
 					<app-gradient-button
 						style="margin-left: 10px"
-						[disabled]="!showKioskModeButton || setRoomToKioskModeProcesing"
+						[disabled]="!(selectedLocation || this.roomOptions.length === 1) || setRoomToKioskModeProcessing"
 						[gradient]="'#1F195E, #1F195E'"
-						[leftIcon]="setRoomToKioskModeProcesing ? null : './assets/Kiosk Mode (White).svg'"
+						[leftIcon]="setRoomToKioskModeProcessing ? null : './assets/Kiosk Mode (White).svg'"
 						[textColor]="'#FFFFFF'"
 						(buttonClick)="setRoomToKioskMode()">
-						<div *ngIf="setRoomToKioskModeProcesing" class="loading-theme_white">
+						<div *ngIf="setRoomToKioskModeProcessing" class="loading-theme_white">
 							<mat-spinner [diameter]="20"></mat-spinner>
 						</div>
-						<ng-container *ngIf="!setRoomToKioskModeProcesing"> Kiosk Mode </ng-container>
+						<ng-container *ngIf="!setRoomToKioskModeProcessing"> Kiosk Mode </ng-container>
 					</app-gradient-button>
 					<!-- <app-gradient-button
             style="margin-left: 10px"
