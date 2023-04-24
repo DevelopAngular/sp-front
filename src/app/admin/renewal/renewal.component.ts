@@ -70,7 +70,10 @@ export class RenewalComponent implements OnInit {
 				}
 				// Show survey for expiring schools
 				if (this.status.renewal_status === 'expiring') {
-					_refiner('showForm', this.surveyId);
+					setTimeout(() => {
+						console.log('Showing renewal refiner survey');
+						_refiner('showForm', this.surveyId);
+					}, 1000);
 				}
 				this.iFrameURL = this.sanitizer.bypassSecurityTrustResourceUrl(data.confirm_renewal_link + '?iframe=true');
 				this.userService.user$
