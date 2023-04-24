@@ -222,11 +222,7 @@ export class LocationTableComponent implements OnInit, OnDestroy {
 					// TODO Weird bug here when admin edits a room, it'll show in these results twice.
 					// Super edge case, but we'll remove it so that it doesn't appear
 					// twice in the list of rooms.
-					const filteredForDuplicateId: Location[] = res.filter((value, index, self) =>
-							index === self.findIndex((t) => (
-								t.id === value.id
-							))
-					)
+					const filteredForDuplicateId: Location[] = res.filter((value, index, self) => index === self.findIndex((t) => t.id === value.id));
 					if (this.mergedAllRooms) {
 						const choices: Location[] = this.filterChoicesForShowAsOrigin(filteredForDuplicateId);
 						this.choices = this.parseLocations(choices);
