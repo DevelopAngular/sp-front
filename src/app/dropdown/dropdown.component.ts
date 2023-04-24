@@ -4,7 +4,6 @@ import { MAT_DIALOG_DATA, MatDialogConfig, MatDialogRef } from '@angular/materia
 import { School } from '../models/School';
 import { DarkThemeSwitch } from '../dark-theme-switch';
 import { User } from '../models/User';
-import { RepresentedUser } from '../navbar/navbar.component';
 import { DeviceDetection } from '../device-detection.helper';
 import { cloneDeep } from 'lodash';
 import { COUNTRY_CODES } from '../services/localizejs.service';
@@ -51,6 +50,7 @@ export class DropdownComponent implements OnInit {
 	mainHeader: string;
 	isSearchField: boolean;
 	isHiddenSearchField: boolean;
+	private adjustForScroll: boolean = false;
 
 	constructor(
 		@Inject(MAT_DIALOG_DATA) public data: any[],
@@ -81,6 +81,7 @@ export class DropdownComponent implements OnInit {
 		this.isHiddenSearchField = this.data['isHiddenSearchField'];
 
 		this.currentInitialObject = cloneDeep(this.schools || this.locations || this.teachers);
+		this.adjustForScroll = data['adjustForScroll'];
 	}
 
 	get isMobile() {
@@ -103,9 +104,13 @@ export class DropdownComponent implements OnInit {
 		const rect = this.triggerElementRef.getBoundingClientRect();
 		matDialogConfig.width = !!this.sortData ? '250px' : '300px';
 		// matDialogConfig.height = this.teachers ? '180px' : '215px';
+		let scrollAdjustment = 0;
+		if (this.adjustForScroll) {
+			scrollAdjustment = Math.abs(document.scrollingElement.getClientRects()[0].top);
+		}
 		matDialogConfig.position = {
 			left: `${rect.left + (rect.width / 2 - parseInt(matDialogConfig.width, 10) / 2) - (this.isMobile && this.sortData ? 100 : 0)}px`,
-			top: `${rect.bottom + 15}px`,
+			top: `${rect.bottom + scrollAdjustment + 15}px`,
 		};
 		this._matDialogRef.updateSize(matDialogConfig.width, matDialogConfig.height);
 		this._matDialogRef.updatePosition(matDialogConfig.position);

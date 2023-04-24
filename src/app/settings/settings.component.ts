@@ -2,7 +2,6 @@ import { Component, ElementRef, Inject, Input, OnDestroy, OnInit, Optional } fro
 import { MAT_DIALOG_DATA, MatDialog, MatDialogConfig, MatDialogRef } from '@angular/material/dialog';
 import { User } from '../models/User';
 import { DarkThemeSwitch } from '../dark-theme-switch';
-import { BUILD_DATE, RELEASE_NAME } from '../../build-info';
 import { KioskModeService } from '../services/kiosk-mode.service';
 import { SideNavService } from '../services/side-nav.service';
 import { Router } from '@angular/router';
@@ -65,9 +64,8 @@ export class SettingsComponent implements OnInit, OnDestroy {
 	pressed: boolean;
 	hoveredColor: string;
 	version = 'Version 1.5';
-	currentRelease = RELEASE_NAME;
-	currentBuildTime = BUILD_DATE;
 	teacherPin$: Observable<string | number>;
+	private adjustForScroll: boolean = false;
 
 	destroy$: Subject<any> = new Subject<any>();
 
@@ -84,6 +82,7 @@ export class SettingsComponent implements OnInit, OnDestroy {
 		private localize: LocalizejsService
 	) {
 		// this.initializeSettings();
+		this.adjustForScroll = data['adjustForScroll'];
 	}
 
 	get isKioskMode(): boolean {
@@ -191,9 +190,13 @@ export class SettingsComponent implements OnInit, OnDestroy {
 
 	updateDialogPosition() {
 		const matDialogConfig: MatDialogConfig = new MatDialogConfig();
+		let scrollAdjustment = 0;
+		if (this.adjustForScroll) {
+			scrollAdjustment = Math.abs(document.scrollingElement.getClientRects()[0].top);
+		}
 		if (this.targetElementRef && this.dialogRef) {
 			const rect = this.targetElementRef.nativeElement.getBoundingClientRect();
-			matDialogConfig.position = { left: `${rect.left + rect.width / 2 - 230}px`, top: `${rect.bottom + 10}px` };
+			matDialogConfig.position = { left: `${rect.left + rect.width / 2 - 230}px`, top: `${rect.bottom + scrollAdjustment + 10}px` };
 			this.dialogRef.updatePosition(matDialogConfig.position);
 		}
 	}

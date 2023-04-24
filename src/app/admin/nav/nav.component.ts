@@ -333,6 +333,7 @@ export class NavComponent implements OnInit, AfterViewInit, OnDestroy {
 					darkBackground: this.darkTheme.isEnabled$.value,
 					introsData: this.introsData,
 					showNotificationBadge: this.showNotificationBadge,
+					adjustForScroll: true,
 				},
 			});
 

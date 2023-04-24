@@ -13,24 +13,6 @@
 		</div>
 	</div>
 
-	<div
-		class="update-bar"
-		#updateBar
-		*ngIf="needToUpdateApp$ | async as update"
-		[style.background-color]="getBarBg(update.color.solid_color, updateBar.hover, updateBar.pressed)"
-		(mouseenter)="updateBar.hover = true"
-		(mouseleave)="updateBar.hover = false; updateBar.pressed = false"
-		appCrossPointerEventTarget
-		(pointerClickEvent)="updateApp(); updateBar.pressed = false"
-		(pointerDownEvent)="updateBar.pressed = true"
-		[style.border-bottom]="'1px solid ' + getBarBg(update.color.solid_color, true, true)">
-		<div class="circle" [style.background-color]="update.color.solid_color"></div>
-		<div class="title" [style.color]="update.color.solid_color">
-			Update available.
-			<span style="font-weight: 600">Click to update</span>
-		</div>
-	</div>
-
 	<div #trialBar class="trial-bar" *ngIf="isAuthenticated && !isKioskMode && (isAdmin$ | async) && trialEndDate$ | async as trialEndDate">
 		<div class="trialing" *ngIf="trialEndDate >= todayDate; else ended">
 			<div class="daysLeft">
@@ -68,7 +50,9 @@
 			<div class="router-outlet">
 				<div
 					style="flex-grow: 1; display: flex; flex-direction: column"
-					[ngStyle]="{ 'padding-top': isAuthenticated && schools && schools.length > 1 && !hideSchoolToggleBar && !isKioskMode ? '50px' : '0' }">
+					[ngStyle]="{
+						'padding-top': isAuthenticated && schools && schools.length > 1 && !hideSchoolToggleBar && !isKioskMode ? '50px' : '0'
+					}">
 					<router-outlet></router-outlet>
 				</div>
 			</div>
@@ -81,25 +65,27 @@
 				(onClick)="openHelpCenter($event)"></app-help-center>
 		</ng-container>
 		<ng-container *ngIf="helpCenter.isHelpCenterOpen | async">
-			<div class="help-center-content-wrapper" id="help-center-content">
-				<div class="help-center-unsubscribe"></div>
+			<div class="help-center-content-wrapper" #helpCenterDiv id="help-center-content">
 				<div class="drag-divider" id="drag-divider"></div>
-				<div class="close-icon-wrapper" (click)="closeHelpCenter()">
-					<div class="circle">
-						<img class="close-icon" [src]="'./assets/Close (Grey).svg' | resolveAsset" alt="" />
-					</div>
-				</div>
-				<iframe #helpIframe class="help-centre-iframe" id="help-centre-iframe" src="https://www.smartpass.app/help-center" frameborder="0"></iframe>
-				<div class="contact-wrapper">
-					<div class="call-main">
-						<div class="call-contant" (click)="openCallDialog($event)" *ngIf="isAdmin$ | async">
-							<img class="pro-icon" *ngIf="!isUserHasPhoneAccess" [src]="'./assets/Plus Plan (Yellow).svg' | resolveAsset" alt="" />
-							<img class="call-icon" [src]="'./assets/Call (Gray).svg' | resolveAsset" alt="" />
+				<div class="fixed-wrapper" id="fixed-wrapper">
+					<div class="help-center-unsubscribe"></div>
+					<div class="close-icon-wrapper" (click)="closeHelpCenter()">
+						<div class="circle">
+							<img class="close-icon" [src]="'./assets/Close (Grey).svg' | resolveAsset" alt="" />
 						</div>
 					</div>
-					<div class="live-chat open-intercom-btn" id="live-chat">
-						<img class="chat-icon" [src]="'./assets/Chat (Blue-Gray).svg' | resolveAsset" alt="" />
-						<p class="live-chat-text">Live Chat</p>
+					<iframe #helpIframe class="help-centre-iframe" id="help-centre-iframe" src="https://www.smartpass.app/help-center" frameborder="0"></iframe>
+					<div class="contact-wrapper">
+						<div class="call-main">
+							<div class="call-contant" (click)="openCallDialog($event)" *ngIf="isAdmin$ | async">
+								<img class="pro-icon" *ngIf="!isUserHasPhoneAccess" [src]="'./assets/Plus Plan (Yellow).svg' | resolveAsset" alt="" />
+								<img class="call-icon" [src]="'./assets/Call (Gray).svg' | resolveAsset" alt="" />
+							</div>
+						</div>
+						<div class="live-chat open-intercom-btn" id="live-chat">
+							<img class="chat-icon" [src]="'./assets/Chat (Blue-Gray).svg' | resolveAsset" alt="" />
+							<p class="live-chat-text">Live Chat</p>
+						</div>
 					</div>
 				</div>
 			</div>

@@ -1,5 +1,7 @@
 <div class="admin-wrapper" *ngIf="hostVisibility">
-	<app-nav (restrictAccess)="hideOutlet($event)"></app-nav>
+	<div class="admin-nav-wrapper">
+		<app-nav (restrictAccess)="hideOutlet($event)"></app-nav>
+	</div>
 	<ng-container *ngIf="showDummySwitcher$ | async">
 		<app-restriction-dummy (reloadPage)="onReloadPage($event)"></app-restriction-dummy>
 	</ng-container>

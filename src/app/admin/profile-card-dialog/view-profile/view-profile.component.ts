@@ -287,10 +287,7 @@ export class ViewProfileComponent implements OnInit {
 	}
 
 	goToStudent() {
-		let url = window.location.origin + `/app/main/student/${this.user.id}`;
-		if (window.location.href.includes('localhost')) {
-			url = url.replace('/app', '');
-		}
+		let url = window.location.origin + `/main/student/${this.user.id}`;
 		this.dialogRef.close();
 		window.open(url, '_self');
 	}
@@ -519,7 +516,7 @@ export class ViewProfileComponent implements OnInit {
 		const cancelDialog = this.matDialog.open(ConsentMenuComponent, {
 			panelClass: 'consent-dialog-container',
 			backdropClass: 'invis-backdrop',
-			data: { options: options, trigger: new ElementRef(evt) },
+			data: { options: options, trigger: new ElementRef(evt), adjustForScroll: true },
 		});
 
 		cancelDialog

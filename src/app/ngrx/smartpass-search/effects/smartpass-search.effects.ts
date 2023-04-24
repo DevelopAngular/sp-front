@@ -12,7 +12,7 @@ export class SmartpassSearchEffects {
 		return this.actions$.pipe(
 			ofType(searchActions.searchAction),
 			switchMap((action: any) => {
-				return this.userService.searchProfile('_profile_student', 50, action.searchValue).pipe(
+				return this.userService.searchProfile('_profile_student', 50, action.searchValue, action.hideStatuses).pipe(
 					map((searchResult) => {
 						return searchActions.searchActionSuccess({ searchResult: searchResult.results });
 					}),

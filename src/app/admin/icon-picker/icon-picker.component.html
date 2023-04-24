@@ -26,7 +26,7 @@
 	<div class="ds-mt-15 icon-collection-title" *ngIf="iconCollectionTitle">{{ iconCollectionTitle }}</div>
 	<div class="icon-collection ds-mt-5" *ngIf="icons.length; else empty">
 		<div class="icon-container" *ngFor="let icon of icons" (click)="changeIcon(icon)">
-			<div class="icon-wrapper" [customToolTip]="iconTooltipText(icon)" [editable]="true" [nonDisappearing]="false">
+			<div class="icon-wrapper" [customToolTip]="iconTooltipText(icon)" [nonDisappearing]="false">
 				<img draggable="false" class="icon" [ngStyle]="{ opacity: selectedIconId === icon.id && icon.active ? 1 : 0 }" [src]="icon.active_icon" />
 				<img
 					draggable="false"

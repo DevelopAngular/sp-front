@@ -73,7 +73,8 @@ export class StudentInfoCardComponent implements OnInit, AfterViewInit, OnDestro
 	@ViewChild('editIcon') editIcon: ElementRef;
 
 	profile: User;
-
+	public leftColumnTopPosition: string;
+	public rightColumnHeaderTopPosition: string;
 	loadingPassesStats$: Observable<boolean>;
 	studentsStatsLoading$: Observable<boolean>;
 
@@ -348,6 +349,7 @@ export class StudentInfoCardComponent implements OnInit, AfterViewInit, OnDestro
 	}
 
 	openStudentSettings(elem) {
+		this.setPositions();
 		const settings: any = [
 			{
 				label: 'Copy private link',
@@ -402,7 +404,7 @@ export class StudentInfoCardComponent implements OnInit, AfterViewInit, OnDestro
 		const st = this.dialog.open(SettingsDescriptionPopupComponent, {
 			panelClass: 'consent-dialog-container',
 			backdropClass: 'invis-backdrop',
-			data: { trigger: elem.currentTarget, settings, profile: this.profile },
+			data: { trigger: elem.currentTarget, settings, profile: this.profile, adjustForScroll: true },
 		});
 
 		st.afterClosed()
@@ -465,6 +467,7 @@ export class StudentInfoCardComponent implements OnInit, AfterViewInit, OnDestro
 	}
 
 	openCreatePassPopup(elem) {
+		this.setPositions();
 		const settings = [
 			{
 				label: 'Create pass for now',
@@ -485,7 +488,7 @@ export class StudentInfoCardComponent implements OnInit, AfterViewInit, OnDestro
 		const st = this.dialog.open(SettingsDescriptionPopupComponent, {
 			panelClass: 'consent-dialog-container',
 			backdropClass: 'invis-backdrop',
-			data: { trigger: elem.currentTarget, settings },
+			data: { trigger: elem.currentTarget, settings, adjustForScroll: true },
 		});
 
 		st.afterClosed()
@@ -510,6 +513,7 @@ export class StudentInfoCardComponent implements OnInit, AfterViewInit, OnDestro
 	}
 
 	openDateFilter(event) {
+		this.setPositions();
 		UNANIMATED_CONTAINER.next(true);
 		const calendar = this.dialog.open(DateTimeFilterComponent, {
 			id: 'calendar_filter',
@@ -629,6 +633,7 @@ export class StudentInfoCardComponent implements OnInit, AfterViewInit, OnDestro
 	}
 
 	openPassLimitsDialog() {
+		this.setPositions();
 		this.passLimitStudentInfoRef = this.dialog.open(PassLimitStudentInfoComponent, {
 			...RecommendedDialogConfig,
 			height: '500px',
@@ -641,6 +646,7 @@ export class StudentInfoCardComponent implements OnInit, AfterViewInit, OnDestro
 	}
 
 	editWindow(event) {
+		this.setPositions();
 		this.isOpenAvatarDialog = true;
 		if (!this.userService.getUserSchool().profile_pictures_completed) {
 			this.consentDialogOpen(this.editIcon.nativeElement);
@@ -679,7 +685,7 @@ export class StudentInfoCardComponent implements OnInit, AfterViewInit, OnDestro
 		const cancelDialog = this.dialog.open(ConsentMenuComponent, {
 			panelClass: 'consent-dialog-container',
 			backdropClass: 'invis-backdrop',
-			data: { options: options, trigger: new ElementRef(evt) },
+			data: { options: options, trigger: new ElementRef(evt), adjustForScroll: true },
 		});
 
 		cancelDialog
@@ -716,7 +722,7 @@ export class StudentInfoCardComponent implements OnInit, AfterViewInit, OnDestro
 		const ED = this.dialog.open(EditAvatarComponent, {
 			panelClass: 'consent-dialog-container',
 			backdropClass: 'invis-backdrop',
-			data: { trigger: target, user: this.profile },
+			data: { trigger: target, user: this.profile, context: 'onPage' },
 		});
 
 		ED.afterClosed()
@@ -833,5 +839,11 @@ export class StudentInfoCardComponent implements OnInit, AfterViewInit, OnDestro
 	// predicate tu use in filtering HallPass array
 	isNotCancelledPass(p: HallPass): boolean {
 		return !(p.cancellable_by_student === false && p.cancelled !== null);
+	}
+
+	private setPositions(): void {
+		// have to set this top position of these elements because there is a matDialog bug that messes up the position of fixed elements
+		this.leftColumnTopPosition = `${document.getElementById('left-column').offsetTop}px`;
+		this.rightColumnHeaderTopPosition = `${document.getElementById('right-column-header').offsetTop + 20}px`;
 	}
 }

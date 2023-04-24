@@ -1,229 +1,152 @@
-image: docker:19.03.10
-
-services:
-  - docker:19.03.10-dind
+image: registry.gitlab.com/notify-messenger/smartpass-frontend/ci-image:12.22.10
 
 variables:
-  # AUTO_DEVOPS_DOMAIN is the application deployment domain and should be set as a variable at the group or project level.
-  # AUTO_DEVOPS_DOMAIN: notify-messenger-notify-server-staging.lavanote.com
-  # AUTO_DEVOPS_DOMAIN: smartpass.app
-  DOCKER_TLS_CERTDIR: "/certs"
-  KUBERNETES_VERSION: 1.21.6
-  HELM_VERSION: 3.6.2
-  SENTRY_ORG: "smartpass"
-  SENTRY_PROJECT: "hall-pass-web"
-  KUBE_NAMESPACE: "hall-pass-web-4996193"
+  NVM_DIR: /root/.nvm
+
+cache:
+  key:
+    files:
+      - yarn.lock
+  paths:
+    - node_modules/
+    - .yarn/
 
 stages:
-  - lint
   - build
   - deploy
+  - deploy_prod
+  - e2e
 
-lint:
-  stage: lint
+build:
+  stage: build
   script:
-    - 'echo "http://dl-3.alpinelinux.org/alpine/v3.10/main/" >> /etc/apk/repositories'
-    - 'echo "http://dl-3.alpinelinux.org/alpine/v3.10/community/" >> /etc/apk/repositories'
-    - apk add --no-cache bash tree git python make g++ libstdc++ coreutils yarn
-    - wget -qO- https://raw.githubusercontent.com/nvm-sh/nvm/v0.39.1/install.sh | bash
-    - export NVM_DIR="$HOME/.nvm" && . "$NVM_DIR/nvm.sh" --no-use
-    - mkdir ~/.nvm/versions
-    - echo "export NVM_NODEJS_ORG_MIRROR=https://unofficial-builds.nodejs.org/download/release" >> ~/.profile
-    - echo "nvm_get_arch() { nvm_echo \"x64-musl\"; }" >> ~/.profile
-    - source ~/.profile
-    - bash
-    - nvm -v
-    - "mkdir ~/.nvm/.cache && mkdir ~/.nvm/.cache/bin && mkdir ~/.nvm/.cache/bin/node-v$(cat .nvmrc)-linux-x64-musl"
-    - "wget -P ~/.nvm/.cache/bin/node-v$(cat .nvmrc)-linux-x64-musl https://unofficial-builds.nodejs.org/download/release/v$(cat .nvmrc)/node-v$(cat .nvmrc)-linux-x64-musl.tar.xz"
-    - nvm install $(cat .nvmrc)
-    - nvm use
     - yarn install
-    - yarn lint:ci
+    - yarn run lint:ci
+    - scripts/cf_build.sh
   rules:
     - if: $CI_PIPELINE_SOURCE == 'merge_request_event'
-  interruptible: true
-  tags:
-    - "docker-passthrough"
-
-testing_build:
-  stage: build
-  script:
-    - 'echo "http://dl-3.alpinelinux.org/alpine/v3.10/main/" >> /etc/apk/repositories'
-    - 'echo "http://dl-3.alpinelinux.org/alpine/v3.10/community/" >> /etc/apk/repositories'
-    - apk add --no-cache bash tree git python make g++ libstdc++ coreutils yarn
-    - wget -qO- https://raw.githubusercontent.com/nvm-sh/nvm/v0.39.1/install.sh | bash
-    - export NVM_DIR="$HOME/.nvm" && . "$NVM_DIR/nvm.sh" --no-use
-    - mkdir ~/.nvm/versions
-    - echo "export NVM_NODEJS_ORG_MIRROR=https://unofficial-builds.nodejs.org/download/release" >> ~/.profile
-    - echo "nvm_get_arch() { nvm_echo \"x64-musl\"; }" >> ~/.profile
-    - source ~/.profile
-    - bash
-    - nvm -v
-    - "mkdir ~/.nvm/.cache && mkdir ~/.nvm/.cache/bin && mkdir ~/.nvm/.cache/bin/node-v$(cat .nvmrc)-linux-x64-musl"
-    - "wget -P ~/.nvm/.cache/bin/node-v$(cat .nvmrc)-linux-x64-musl https://unofficial-builds.nodejs.org/download/release/v$(cat .nvmrc)/node-v$(cat .nvmrc)-linux-x64-musl.tar.xz"
-    - nvm install $(cat .nvmrc)
-    - nvm use
-    - "wget 'https://github.com/getsentry/sentry-cli/releases/download/1.49.0/sentry-cli-Linux-x86_64' -O /usr/local/bin/sentry-cli"
-    - chmod +x /usr/local/bin/sentry-cli
-    - ls -l / ; pwd
-    - "[ -d /mem_fs ] && cp -r /notify-messenger/hall-pass-web /mem_fs/hall-pass-web && cd /mem_fs/hall-pass-web || echo 'Not using mem disk!'"
-    - pwd
-    - source scripts/auto_devops.sh
-    - scripts/build.sh
+    - if: $CI_COMMIT_BRANCH == 'master'
   variables:
-    AUTO_DEVOPS_DOMAIN: "testing.smartpass.app"
-    IMAGE_TAG_SUFFIX: "testing"
-    INCLUDE_SOURCEMAPS: "true"
-  needs: [lint]
-  rules:
-    - if: $CI_PIPELINE_SOURCE == 'merge_request_event'
+    SENTRY_AUTH_TOKEN: $SENTRY_AUTH_TOKEN
+  artifacts:
+    name: "$CI_JOB_NAME"
+    paths:
+      - dist/
   interruptible: true
   tags:
     - "docker-passthrough"
 
-testing_e2e:
-  stage: build
-  image: cypress/browsers:node12.19.0-chrome86-ff82
-  script:
-    - yarn install --immutable
-    - yarn run e2e:ci
-  rules:
-    - if: $CI_PIPELINE_SOURCE == 'merge_request_event'
-  interruptible: true
-  tags:
-    - "docker-passthrough"
-
-testing_deploy:
+mr_preview_deploy:
   stage: deploy
-  script:
-    - 'echo "@old http://dl-3.alpinelinux.org/alpine/v3.10/main/" >> /etc/apk/repositories'
-    - 'echo "@old http://dl-3.alpinelinux.org/alpine/v3.10/community/" >> /etc/apk/repositories'
-    - apk add --no-cache bash tree git python make g++ libstdc++ coreutils
-    - source scripts/auto_devops.sh
-    # no build command. This causes it to reuse the pre-built images because IMAGE_TAG_SUFFIX is shared.
-    - install_dependencies
-    - ensure_namespace
-    - install_tiller
-    - create_secret
-    - deploy
   variables:
-    AUTO_DEVOPS_DOMAIN: "testing.smartpass.app"
-    IMAGE_TAG_SUFFIX: "testing"
-    INCLUDE_SOURCEMAPS: "true"
-  environment:
-    name: testing
-    url: "https://testing.smartpass.app"
-    deployment_tier: development
-  needs: [testing_build]
+    CLOUDFLARE_ACCOUNT_ID: 5f14bf10d9d1edfa1aaefaaa7854e9f6
+    CLOUDFLARE_API_TOKEN: $CLOUDFLARE_PAGES_TOKEN
+  script:
+    # wrangler was installed when the ci-image docker image was created
+    - chmod a+x $NVM_DIR/nvm.sh
+    - . $NVM_DIR/nvm.sh
+    - nvm use lts/hydrogen
+    - wrangler pages publish dist --project-name=smartpass-frontend --branch $CI_COMMIT_REF_NAME
+    - echo "Successfully deployed to https://$CI_COMMIT_REF_SLUG-dev.smartpass.app"
   rules:
-    - if: $CI_MERGE_REQUEST_TARGET_BRANCH_NAME == 'master'
+    - if: $CI_PIPELINE_SOURCE == 'merge_request_event'
+  interruptible: true
+  needs: [build]
+  environment:
+    name: preview/$CI_COMMIT_REF_NAME
+    url: https://$CI_COMMIT_REF_SLUG-dev.smartpass.app
+    on_stop: mr_preview_stop
+    auto_stop_in: 1 week
+  tags:
+    - "docker-passthrough"
+
+mr_preview_stop:
+  stage: deploy
+  needs: [mr_preview_deploy]
+  environment:
+      name: preview/$CI_COMMIT_REF_NAME
+      action: stop
+  rules:
+    - if: $CI_PIPELINE_SOURCE == 'merge_request_event'
       when: manual
-    - if: $CI_MERGE_REQUEST_TARGET_BRANCH_NAME == 'production'
-      when: manual
+      allow_failure: true
+  script:
+    - |
+      # Get the deployments list
+      DEPLOYMENTS_URL="https://api.cloudflare.com/client/v4/accounts/5f14bf10d9d1edfa1aaefaaa7854e9f6/pages/projects/smartpass-frontend/deployments"
+      DEPLOYMENTS=$(curl -s -H "Authorization: Bearer $CLOUDFLARE_PAGES_TOKEN" -H "Content-Type: application/json" ${DEPLOYMENTS_URL})
+
+      # Extract deployment ID for the current environment
+      COMMIT_REF_SLUG=$(echo $CI_COMMIT_REF_SLUG | sed 's/\//-/g') # Replace slashes with hyphens
+      ALIAS="https://$COMMIT_REF_SLUG.smartpass-frontend.pages.dev"
+      DEPLOYMENT_ID=$(echo ${DEPLOYMENTS} | jq -r --arg ALIAS "${ALIAS}" '.result[] | select(.aliases[0] == $ALIAS) | .id')
+
+      if [ -z "${DEPLOYMENT_ID}" ]; then
+        echo "Deployment ID not found for the current environment."
+        exit 1
+      fi
+
+      # Delete the deployment
+      DELETE_DEPLOYMENT_URL="https://api.cloudflare.com/client/v4/accounts/5f14bf10d9d1edfa1aaefaaa7854e9f6/pages/projects/smartpass-frontend/deployments/${DEPLOYMENT_ID}?force=true"
+      curl -X DELETE -H "Authorization: Bearer $CLOUDFLARE_PAGES_TOKEN" -H "Content-Type: application/json" ${DELETE_DEPLOYMENT_URL}
   tags:
     - "docker-passthrough"
 
 deploy_staging:
   stage: deploy
-  script:
-    - 'echo "@old http://dl-3.alpinelinux.org/alpine/v3.10/main/" >> /etc/apk/repositories'
-    - 'echo "@old http://dl-3.alpinelinux.org/alpine/v3.10/community/" >> /etc/apk/repositories'
-    - apk add --no-cache bash tree git python make g++ libstdc++ coreutils yarn
-    - wget -qO- https://raw.githubusercontent.com/nvm-sh/nvm/v0.39.1/install.sh | bash
-    - export NVM_DIR="$HOME/.nvm" && . "$NVM_DIR/nvm.sh" --no-use
-    - mkdir ~/.nvm/versions
-    - echo "export NVM_NODEJS_ORG_MIRROR=https://unofficial-builds.nodejs.org/download/release" >> ~/.profile
-    - echo "nvm_get_arch() { nvm_echo \"x64-musl\"; }" >> ~/.profile
-    - source ~/.profile
-    - bash
-    - nvm -v
-    - "mkdir ~/.nvm/.cache && mkdir ~/.nvm/.cache/bin && mkdir ~/.nvm/.cache/bin/node-v$(cat .nvmrc)-linux-x64-musl"
-    - "wget -P ~/.nvm/.cache/bin/node-v$(cat .nvmrc)-linux-x64-musl https://unofficial-builds.nodejs.org/download/release/v$(cat .nvmrc)/node-v$(cat .nvmrc)-linux-x64-musl.tar.xz"
-    - nvm install $(cat .nvmrc)
-    - nvm use
-    - "wget 'https://github.com/getsentry/sentry-cli/releases/download/1.49.0/sentry-cli-Linux-x86_64' -O /usr/local/bin/sentry-cli"
-    - chmod +x /usr/local/bin/sentry-cli
-    - ls -l / ; pwd
-    - "[ -d /mem_fs ] && cp -r /notify-messenger/hall-pass-web /mem_fs/hall-pass-web && cd /mem_fs/hall-pass-web || echo 'Not using mem disk!'"
-    - pwd
-    - source scripts/auto_devops.sh
-    - scripts/build.sh
-    - yarn lint:ci
-    - install_dependencies
-    - ensure_namespace
-    - install_tiller
-    - create_secret
-    - deploy
   variables:
-    AUTO_DEVOPS_DOMAIN: "staging.smartpass.app"
-    IMAGE_TAG_SUFFIX: "staging"
+    CLOUDFLARE_ACCOUNT_ID: 5f14bf10d9d1edfa1aaefaaa7854e9f6
+    CLOUDFLARE_API_TOKEN: $CLOUDFLARE_PAGES_TOKEN
+  script:
+    # wrangler was installed when the ci-image docker image was created
+    - chmod a+x $NVM_DIR/nvm.sh
+    - . $NVM_DIR/nvm.sh
+    - nvm use lts/hydrogen
+    - wrangler pages publish dist --project-name=smartpass-frontend --branch staging
+  rules:
+    - if: $CI_COMMIT_BRANCH == 'master'
   environment:
-      name: staging
-      url: "https://staging.smartpass.app"
-  rules:
-      - if: $CI_COMMIT_BRANCH == 'master'
-  interruptible: true
+    name: staging
+    url: https://staging.smartpass.app
   tags:
-      - "docker-passthrough"
+    - "docker-passthrough"
 
-build_production:
-  stage: build
-  script:
-    - 'echo "@old http://dl-3.alpinelinux.org/alpine/v3.10/main/" >> /etc/apk/repositories'
-    - 'echo "@old http://dl-3.alpinelinux.org/alpine/v3.10/community/" >> /etc/apk/repositories'
-    - apk add --no-cache bash tree git python make g++ libstdc++ coreutils yarn
-    - wget -qO- https://raw.githubusercontent.com/nvm-sh/nvm/v0.39.1/install.sh | bash
-    - export NVM_DIR="$HOME/.nvm" && . "$NVM_DIR/nvm.sh" --no-use
-    - mkdir ~/.nvm/versions
-    - echo "export NVM_NODEJS_ORG_MIRROR=https://unofficial-builds.nodejs.org/download/release" >> ~/.profile
-    - echo "nvm_get_arch() { nvm_echo \"x64-musl\"; }" >> ~/.profile
-    - source ~/.profile
-    - bash
-    - nvm -v
-    - "mkdir ~/.nvm/.cache && mkdir ~/.nvm/.cache/bin && mkdir ~/.nvm/.cache/bin/node-v$(cat .nvmrc)-linux-x64-musl"
-    - "wget -P ~/.nvm/.cache/bin/node-v$(cat .nvmrc)-linux-x64-musl https://unofficial-builds.nodejs.org/download/release/v$(cat .nvmrc)/node-v$(cat .nvmrc)-linux-x64-musl.tar.xz"
-    - nvm install $(cat .nvmrc)
-    - nvm use
-    - "wget 'https://github.com/getsentry/sentry-cli/releases/download/1.49.0/sentry-cli-Linux-x86_64' -O /usr/local/bin/sentry-cli"
-    - chmod +x /usr/local/bin/sentry-cli
-    - ls -l / ; pwd
-    - "[ -d /mem_fs ] && cp -r /notify-messenger/hall-pass-web /mem_fs/hall-pass-web && cd /mem_fs/hall-pass-web || echo 'Not using mem disk!'"
-    - pwd
-    - source scripts/auto_devops.sh
-    - scripts/build.sh
-    - yarn lint:ci
+deploy_prod:
+  stage: deploy_prod
   variables:
-    AUTO_DEVOPS_DOMAIN: "smartpass.app"
-    IMAGE_TAG_SUFFIX: "production"
+    CLOUDFLARE_ACCOUNT_ID: 5f14bf10d9d1edfa1aaefaaa7854e9f6
+    CLOUDFLARE_API_TOKEN: $CLOUDFLARE_PAGES_TOKEN
+  script:
+    # wrangler was installed when the ci-image docker image was created
+    - chmod a+x $NVM_DIR/nvm.sh
+    - . $NVM_DIR/nvm.sh
+    - nvm use lts/hydrogen
+    - wrangler pages publish dist --project-name=smartpass-frontend --branch master
   rules:
-    - if: $CI_COMMIT_BRANCH == 'production'
-  interruptible: true
-  tags:
-  - "docker-passthrough"
+    - if: $CI_COMMIT_BRANCH == 'master'
+      when: manual
+      allow_failure: true
+  needs:
+    - job: build
+      artifacts: true
+    - job: deploy_staging
 
-deploy_production:
-  stage: deploy
-  script:
-    - 'echo "@old http://dl-3.alpinelinux.org/alpine/v3.10/main/" >> /etc/apk/repositories'
-    - 'echo "@old http://dl-3.alpinelinux.org/alpine/v3.10/community/" >> /etc/apk/repositories'
-    - apk add --no-cache bash tree git python make g++ libstdc++ coreutils
-    - source scripts/auto_devops.sh
-    # build is not specified here. The IMAGE_TAG_SUFFIX will be used to match to the build with the same commit sha.
-    - install_dependencies
-    - ensure_namespace
-    - install_tiller
-    - create_secret
-    - deploy
-  variables:
-    AUTO_DEVOPS_DOMAIN: "smartpass.app"
-    IMAGE_TAG_SUFFIX: "production"
   environment:
     name: production
-    url: "https://smartpass.app"
-  needs: [build_production]
-  rules:
-    - if: $CI_COMMIT_BRANCH == 'production'
-      when: manual
+    url: https://app.smartpass.app
   tags:
-  - "docker-passthrough"
+    - "docker-passthrough"
 
+e2e:
+  stage: e2e
+  image: cypress/browsers:node12.19.0-chrome86-ff82
+  script:
+    - yarn install
+    - yarn run e2e:ci
+  rules:
+    - if: $CI_COMMIT_BRANCH == 'master'
+      allow_failure: true
+  interruptible: true
+  dependencies: []
+  tags:
+    - "docker-passthrough"

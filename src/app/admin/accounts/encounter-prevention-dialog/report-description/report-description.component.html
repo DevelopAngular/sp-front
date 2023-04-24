@@ -1,12 +1,28 @@
-<div class="wrapper" #wrapper [@grow]="animationTrigger">
-	<div class="header">
-		<div class="date">{{ date }}</div>
-		<img
-			width="18"
-			style="cursor: pointer"
-			(click)="setStartHeight()"
-			[src]="'./assets/Chevron ' + (isOpen ? 'Up' : 'Down') + ' (Blue-Gray).svg' | resolveAsset"
-			alt="Chevron" />
+<ng-container *ngIf="group && encounter && date">
+	<div class="wrapper" #wrapper [@grow]="animationTrigger">
+		<div class="header">
+			<div class="date">{{ date }}</div>
+			<img
+				width="18"
+				style="cursor: pointer"
+				(click)="setStartHeight()"
+				[src]="'./assets/Chevron ' + (isOpen ? 'Up' : 'Down') + ' (Blue-Gray).svg' | resolveAsset"
+				alt="Chevron" />
+		</div>
+		<div class="description" *ngIf="isOpen">
+			<span style="word-break: break-word; user-select: text"
+				>{{ encounter.conflict_pass_student_name }} was going from
+				<span style="text-decoration: underline">{{ encounter.conflict_pass_origin }}</span> to
+				<span style="text-decoration: underline">{{ encounter.conflict_pass_destination }}</span> on
+				{{ encounter.conflict_pass_start_time | date }} from {{ encounter.conflict_pass_start_time | date : 'hh:mm a' }} to
+				{{ encounter.conflict_pass_end | date : 'hh:mm a' }}. At {{ encounter.pass_time | date : 'hh:mm a' }},
+				{{ encounter.conflict_pass_issuer_name || encounter.first_name + encounter.last_name }} attempted to create a pass
+				<span>{{ encounter.conflict_pass_issuer_is_staff ? 'for ' + group.users[1].first_name : '' }}</span>
+				from
+				<span style="text-decoration: underline">{{ encounter.origin }}</span> to
+				<span style="text-decoration: underline">{{ encounter.destination }}</span
+				>, but it was prevented.
+			</span>
+		</div>
 	</div>
-	<div class="description" *ngIf="isOpen" [innerHTML]="description"></div>
-</div>
+</ng-container>

@@ -269,7 +269,7 @@ export class PassConfigComponent implements OnInit, OnDestroy {
 			const cancelDialog = this.dialog.open(ConsentMenuComponent, {
 				panelClass: 'consent-dialog-container',
 				backdropClass: 'invis-backdrop',
-				data: { options: options, trigger: target },
+				data: { options: options, trigger: target, adjustForScroll: true },
 			});
 
 			cancelDialog

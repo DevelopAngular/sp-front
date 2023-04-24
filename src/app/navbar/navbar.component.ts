@@ -54,7 +54,6 @@ import * as moment from 'moment';
 import { QRBarcodeGeneratorService } from '../services/qrbarcode-generator.service';
 import { IdcardOverlayContainerComponent } from '../idcard-overlay-container/idcard-overlay-container.component';
 import { IDCard, IDCardService } from '../services/IDCardService';
-import { CheckForUpdateService } from '../services/check-for-update.service';
 import { SmartpassSearchComponent } from '../smartpass-search/smartpass-search.component';
 import { StreaksDialogComponent } from '../streaks-dialog/streaks-dialog.component';
 import { FeatureFlagService, FLAGS } from '../services/feature-flag.service';
@@ -213,7 +212,6 @@ export class NavbarComponent implements AfterViewInit, OnInit, OnDestroy {
 		private shortcutsService: KeyboardShortcutsService,
 		private qrBarcodeGenerator: QRBarcodeGeneratorService,
 		private idCardService: IDCardService,
-		private updateService: CheckForUpdateService,
 		private featureService: FeatureFlagService,
 		private helpCenter: HelpCenterService
 	) {}
@@ -285,7 +283,6 @@ export class NavbarComponent implements AfterViewInit, OnInit, OnDestroy {
 	}
 
 	ngOnInit() {
-		this.isUpdateBar$ = this.updateService.needToUpdate$;
 		this.isEnabledProfilePictures$ = this.userService.isEnableProfilePictures$;
 		this.shortcutsService.onPressKeyEvent$
 			.pipe(
@@ -517,7 +514,7 @@ export class NavbarComponent implements AfterViewInit, OnInit, OnDestroy {
 				const settingRef = this.dialog.open(SettingsComponent, {
 					panelClass: ['calendar-dialog-container', 'animation'],
 					backdropClass: 'invis-backdrop',
-					data: { trigger: target, isSwitch: this.showSwitchButton },
+					data: { trigger: target, isSwitch: this.showSwitchButton, adjustForScroll: true },
 				});
 
 				settingRef.afterClosed().subscribe((action) => {

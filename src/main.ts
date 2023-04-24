@@ -5,7 +5,6 @@ import {AppModule} from './app/app.module';
 import {environment} from './environments/environment';
 
 import 'hammerjs';
-import './monkey-patches';
 
 if (environment.production) {
   enableProdMode();
@@ -13,28 +12,8 @@ if (environment.production) {
 
 console.log(`Frontend build type: ${environment.buildType}`);
 
-function registerSW() {
-  if ('serviceWorker' in navigator && environment.production) {
-    navigator.serviceWorker.register('./ngsw-worker.js');
-  }
-}
-
 platformBrowserDynamic().bootstrapModule(AppModule)
   .then(module => {
-    console.log('Module loaded');
-    console.log('Future ONLINE:', navigator.onLine);
-    if (navigator.onLine) {
-      navigator.serviceWorker.getRegistrations().then(function(registrations) {
-        for (const registration of registrations) {
-          registration.unregister();
-          console.log('UNREGISTERED');
-        }
-        registerSW();
-      });
-    } else {
-      registerSW();
-      console.log('REGISTERED');
-    }
-      registerSW();
+    console.log('AppModule loaded.');
   })
   .catch(err => console.log(err));

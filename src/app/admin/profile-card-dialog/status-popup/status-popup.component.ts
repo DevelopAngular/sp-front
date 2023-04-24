@@ -17,8 +17,11 @@ export class StatusPopupComponent implements OnInit {
 	withoutDelete: boolean;
 
 	options: { label: string; textColor: string; hoverColor: string; icon: string; description: string; status?: string }[];
+	private adjustForScroll: boolean = false;
 
-	constructor(@Inject(MAT_DIALOG_DATA) public data: any[], public dialogRef: MatDialogRef<StatusPopupComponent>) {}
+	constructor(@Inject(MAT_DIALOG_DATA) public data: any[], public dialogRef: MatDialogRef<StatusPopupComponent>) {
+		this.adjustForScroll = data['adjustForScroll'];
+	}
 
 	ngOnInit() {
 		this.triggerElementRef = this.data['trigger'];
@@ -78,7 +81,11 @@ export class StatusPopupComponent implements OnInit {
 		const matDialogConfig: MatDialogConfig = new MatDialogConfig();
 		const rect = this.triggerElementRef.getBoundingClientRect();
 
-		matDialogConfig.position = { left: `${rect.left + rect.width - 245}px`, top: `${rect.bottom}px` };
+		let scrollAdjustment = 0;
+		if (this.adjustForScroll) {
+			scrollAdjustment = Math.abs(document.scrollingElement.getClientRects()[0].top);
+		}
+		matDialogConfig.position = { left: `${rect.left + rect.width - 245}px`, top: `${rect.bottom + scrollAdjustment}px` };
 
 		this.dialogRef.updatePosition(matDialogConfig.position);
 	}

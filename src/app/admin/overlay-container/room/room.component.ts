@@ -382,7 +382,7 @@ export class RoomComponent implements OnInit, OnDestroy {
 		const confirmDialog = this.dialog.open(ConsentMenuComponent, {
 			panelClass: 'consent-dialog-container',
 			backdropClass: 'invis-backdrop',
-			data: { trigger: new ElementRef(target), header, options },
+			data: { trigger: new ElementRef(target), header, options, adjustForScroll: true },
 		});
 
 		confirmDialog

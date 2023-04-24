@@ -1,4 +1,4 @@
-import { AfterViewInit, Component, ElementRef, HostListener, NgZone, OnDestroy, OnInit, SecurityContext, ViewChild } from '@angular/core';
+import { AfterViewInit, Component, ElementRef, HostListener, NgZone, OnDestroy, OnInit, Renderer2, SecurityContext, ViewChild } from '@angular/core';
 import { MatDialog, MatDialogRef } from '@angular/material/dialog';
 import { ActivatedRoute, NavigationEnd, Router } from '@angular/router';
 import { filter as _filter } from 'lodash';
@@ -18,12 +18,11 @@ import {
 	tap,
 	withLatestFrom,
 } from 'rxjs/operators';
-import { BUILD_INFO_REAL } from '../build-info';
 import { DarkThemeSwitch } from './dark-theme-switch';
 
 import { DeviceDetection } from './device-detection.helper';
 import { School } from './models/School';
-import { AdminService, RenewalStatus } from './services/admin.service';
+import { AdminService } from './services/admin.service';
 import { LoginService } from './services/login.service';
 import { HttpService } from './services/http-service';
 import { KioskModeService } from './services/kiosk-mode.service';
@@ -41,7 +40,6 @@ import { NextReleaseService } from './next-release/services/next-release.service
 import { ScreenService } from './services/screen.service';
 import { ToastService } from './services/toast.service';
 import _refiner from 'refiner-js';
-import { CheckForUpdateService } from './services/check-for-update.service';
 import { ColorProfile } from './models/ColorProfile';
 import { Util } from '../Util';
 import { HelpCenterService } from './services/help-center.service';
@@ -69,7 +67,6 @@ export class AppComponent implements OnInit, AfterViewInit, OnDestroy {
 	shortcuts: ShortcutInput[];
 	currentRoute: string;
 
-	needToUpdateApp$: Subject<{ active: boolean; color: ColorProfile }>;
 	helpCentreURL: SafeResourceUrl;
 
 	private dialogContainer: HTMLElement;
@@ -79,6 +76,7 @@ export class AppComponent implements OnInit, AfterViewInit, OnDestroy {
 
 	@ViewChild('trialBar') trialBarElementView: ElementRef;
 	@ViewChild('helpIframe') helpCenterIframe: ElementRef;
+	@ViewChild('helpCenterDiv') helpCenterDiv: ElementRef;
 
 	public isAuthenticated = null;
 	public isStudent = true;
@@ -138,6 +136,17 @@ export class AppComponent implements OnInit, AfterViewInit, OnDestroy {
 		}
 	}
 
+	@HostListener('document:scroll', ['$event'])
+	scroll(event) {
+		// adjust the height of the help center wrapping div if window is scrolled.
+		if (this.helpCenterDiv && this.helpCenterDiv.nativeElement.offsetHeight < document.scrollingElement.getClientRects()[0].height) {
+			this.renderer.setStyle(
+				this.helpCenterDiv.nativeElement,
+				'height',
+				`${this.helpCenterDiv.nativeElement.offsetHeight + event.target.scrollingElement.scrollTop}px`
+			);
+		}
+	}
 	// @HostListener('window:mousemove', ['$event'])
 	// onWindowBlur(event: any): void {
 	// 	addEventListener('mousemove', function (e) {
@@ -163,12 +172,12 @@ export class AppComponent implements OnInit, AfterViewInit, OnDestroy {
 		private shortcutsService: KeyboardShortcutsService,
 		private screen: ScreenService,
 		private toastService: ToastService,
-		private updateService: CheckForUpdateService,
 		public helpCenter: HelpCenterService,
 		private sanitizer: DomSanitizer,
 		public featureFlags: FeatureFlagService,
 		private cookie: CookieService,
 		private titleService: Title,
+		private renderer: Renderer2,
 		private parentService: ParentAccountService
 	) {}
 
@@ -177,7 +186,6 @@ export class AppComponent implements OnInit, AfterViewInit, OnDestroy {
 	}
 
 	ngOnInit() {
-		this.updateService.check();
 		this.customToastOpen$ = this.toastService.isOpen$;
 		this.toasts$ = this.toastService.toasts$;
 		this.user$ = this.userService.user$.pipe(map((user) => User.fromJSON(user)));
@@ -196,8 +204,6 @@ export class AppComponent implements OnInit, AfterViewInit, OnDestroy {
 				window.history.pushState({}, '');
 			}
 		});
-
-		this.needToUpdateApp$ = this.updateService.needToUpdate$;
 
 		this.helpCenter.open$.subscribe((open) => {
 			if (open) {
@@ -404,27 +410,13 @@ export class AppComponent implements OnInit, AfterViewInit, OnDestroy {
 					} else if (user.isParent()) {
 						this.router.navigate(['parent']);
 					} else {
-						let showRenewalPage$ = of(false);
-						if (user.isAdmin() && this.featureFlags.isFeatureEnabled(FLAGS.RenewalChecklist)) {
-							showRenewalPage$ = this.isAdminUpForRenewal$();
+						const href = window.location.href;
+						if (href.includes('/admin') || href.includes('/main')) {
+							return;
 						}
 
-						showRenewalPage$.subscribe({
-							next: (show) => {
-								const href = window.location.href;
-								if (href.includes('/admin') || href.includes('/main')) {
-									return;
-								}
-
-								if (show) {
-									this.router.navigate(['admin', 'renewal']).then();
-									return;
-								}
-
-								const loadView = user.isAdmin() ? ['admin', 'dashboard'] : ['main', 'passes'];
-								this.router.navigate(loadView).then();
-							},
-						});
+						const loadView = user.isAdmin() ? ['admin'] : ['main', 'passes'];
+						this.router.navigate(loadView).then();
 					}
 					this.titleService.setTitle('SmartPass');
 				})
@@ -468,87 +460,14 @@ export class AppComponent implements OnInit, AfterViewInit, OnDestroy {
 				mergeMap((route) => route.data)
 			)
 			.subscribe((data) => {
-				const existingHub: any = document.querySelector('#hubspot-messages-iframe-container');
-				let newHub: any;
-
-				if (!existingHub) {
-					newHub = document.createElement('script');
-					newHub.type = 'text/javascript';
-					newHub.id = 'hs-script-loader';
-					newHub.setAttribute('id', 'hs-script-loader');
-					newHub.src = '//js.hs-scripts.com/5943240.js';
-				}
-
-				if (data.currentUser) {
-					this.hubSpotSettings(data.currentUser);
-				}
-
-				if (
-					data.hubspot &&
-					((data.currentUser && !data.currentUser.isStudent() && data.authFree) || !this.kms.getCurrentRoom().value) &&
-					!this.screen.isDeviceLargeExtra
-				) {
-					if (!existingHub) {
-						this.showSupportButton = true;
-						document.body.appendChild(newHub);
-						const dst = new Subject<any>();
-						interval(100)
-							.pipe(takeUntil(dst))
-							.subscribe(() => {
-								if (window._hsq) {
-									dst.next();
-									dst.complete();
-								}
-							});
-					} else {
-						(existingHub as HTMLElement).setAttribute('style', 'display: block !important;width: 100px;height: 100px');
-					}
-				} else {
-					if (existingHub) {
-						(existingHub as HTMLElement).setAttribute('style', 'display: none !important');
-					}
-				}
-
 				this.hideSchoolToggleBar = data.hideSchoolToggleBar;
 				this.hideScroll = data.hideScroll;
 			});
 	}
 
-	isAdminUpForRenewal$(): Observable<boolean> {
-		const intros$ = this.userService.introsData$.pipe(
-			filter((i) => !!i),
-			take(1)
-		);
-		const checkRenewal$ = forkJoin([this.adminService.getRenewalData(), intros$]).pipe(
-			take(1),
-			map(([resp, intros]) => {
-				const show = resp.renewal_status == 'expiring' || !intros.seen_renewal_page?.universal?.seen_version;
-				return { intros, show };
-			}),
-			tap(({ intros, show }) => {
-				if (show && !intros.seen_renewal_page?.universal?.seen_version) {
-					this.userService.updateIntrosSeenRenewalStatusPageRequest(intros, 'universal', '1');
-				}
-			}),
-			map(({ show }) => show),
-			catchError(() => of(false))
-		);
-
-		return this.http.currentSchool$.pipe(
-			filter((s) => !!s),
-			switchMap((s) => {
-				if (s.trial_end_date) {
-					return of(false);
-				} else {
-					return checkRenewal$;
-				}
-			})
-		);
-	}
-
 	registerRefiner(user: User) {
 		_refiner('setProject', 'e832a600-7fe2-11ec-9b7a-cd5d0014e33d');
-		_refiner('identifyUser', {
+		const data = {
 			id: user.id,
 			email: user.primary_email,
 			created_at: user.created,
@@ -565,8 +484,10 @@ export class AppComponent implements OnInit, AfterViewInit, OnDestroy {
 				id: this.http.getSchool().id, // <- School Id
 				name: this.http.getSchool().name,
 			},
-		});
+		};
+		_refiner('identifyUser', data);
 		// _refiner('showForm', '31b6c030-820a-11ec-9c99-8b41a98d875d');
+		console.log('refiner registered');
 	}
 
 	getDaysUntil(date: Date): number {
@@ -578,29 +499,6 @@ export class AppComponent implements OnInit, AfterViewInit, OnDestroy {
 
 	getDayText(days: number): string {
 		return days === 1 ? 'day' : 'days';
-	}
-
-	hubSpotSettings(user) {
-		const _hsq = (window._hsq = window._hsq || []);
-
-		const myPush = function (a) {
-			if (!BUILD_INFO_REAL) {
-				// console.log('Pushed:', a);
-			}
-			_hsq.push(a);
-		};
-
-		myPush([
-			'identify',
-			{
-				email: user.primary_email,
-				firstname: user.first_name,
-				lastname: user.last_name,
-			},
-		]);
-
-		myPush(['setPath', '/admin/dashboard']);
-		myPush(['trackPageView']);
 	}
 
 	getBarBg(color, hovered, pressed) {
@@ -669,10 +567,6 @@ export class AppComponent implements OnInit, AfterViewInit, OnDestroy {
 		}
 	}
 
-	updateApp() {
-		this.updateService.update();
-	}
-
 	openHelpCenter(event) {
 		this.isUserHasPhoneAccess = this.featureFlags.isFeatureEnabled(FLAGS.PhoneAccess);
 		this.helpCentreURL = this.sanitizer.bypassSecurityTrustResourceUrl('https://www.smartpass.app/help-center');
@@ -680,8 +574,18 @@ export class AppComponent implements OnInit, AfterViewInit, OnDestroy {
 		setTimeout(() => {
 			const BORDER_SIZE = 8;
 			const panel = document.querySelector<HTMLElement>('#help-center-content');
+			const fixedWrapper = document.querySelector<HTMLElement>('#fixed-wrapper');
 
 			const dragDivider = document.querySelector<HTMLElement>('.drag-divider');
+
+			if (this.helpCenterDiv && this.helpCenterDiv.nativeElement.offsetHeight < document.scrollingElement.getClientRects()[0].height) {
+				console.log('render');
+				this.renderer.setStyle(
+					this.helpCenterDiv.nativeElement,
+					'height',
+					`${this.helpCenterDiv.nativeElement.offsetHeight + document.scrollingElement.scrollTop}px`
+				);
+			}
 			setTimeout(() => {
 				const mainRouter = document.querySelector<HTMLElement>('.router-outlet');
 				mainRouter.style.transition = 'none';
@@ -692,6 +596,7 @@ export class AppComponent implements OnInit, AfterViewInit, OnDestroy {
 				const dx = m_pos - e.x;
 				m_pos = e.x;
 				panel.style.width = parseInt(getComputedStyle(panel, '').width) + dx + 'px';
+				fixedWrapper.style.width = parseInt(getComputedStyle(panel, '').width) + -1 + 'px';
 			}
 
 			let iframe = document.querySelector<HTMLIFrameElement>('.help-center-unsubscribe');
