@@ -40,7 +40,6 @@ import { NextReleaseService } from './next-release/services/next-release.service
 import { ScreenService } from './services/screen.service';
 import { ToastService } from './services/toast.service';
 import _refiner from 'refiner-js';
-import { CheckForUpdateService } from './services/check-for-update.service';
 import { ColorProfile } from './models/ColorProfile';
 import { Util } from '../Util';
 import { HelpCenterService } from './services/help-center.service';
@@ -68,7 +67,6 @@ export class AppComponent implements OnInit, AfterViewInit, OnDestroy {
 	shortcuts: ShortcutInput[];
 	currentRoute: string;
 
-	needToUpdateApp$: Subject<{ active: boolean; color: ColorProfile }>;
 	helpCentreURL: SafeResourceUrl;
 
 	private dialogContainer: HTMLElement;
@@ -174,7 +172,6 @@ export class AppComponent implements OnInit, AfterViewInit, OnDestroy {
 		private shortcutsService: KeyboardShortcutsService,
 		private screen: ScreenService,
 		private toastService: ToastService,
-		private updateService: CheckForUpdateService,
 		public helpCenter: HelpCenterService,
 		private sanitizer: DomSanitizer,
 		public featureFlags: FeatureFlagService,
@@ -189,7 +186,6 @@ export class AppComponent implements OnInit, AfterViewInit, OnDestroy {
 	}
 
 	ngOnInit() {
-		this.updateService.check();
 		this.customToastOpen$ = this.toastService.isOpen$;
 		this.toasts$ = this.toastService.toasts$;
 		this.user$ = this.userService.user$.pipe(map((user) => User.fromJSON(user)));
@@ -208,8 +204,6 @@ export class AppComponent implements OnInit, AfterViewInit, OnDestroy {
 				window.history.pushState({}, '');
 			}
 		});
-
-		this.needToUpdateApp$ = this.updateService.needToUpdate$;
 
 		this.helpCenter.open$.subscribe((open) => {
 			if (open) {
@@ -615,10 +609,6 @@ export class AppComponent implements OnInit, AfterViewInit, OnDestroy {
 		} else {
 			return '100%';
 		}
-	}
-
-	updateApp() {
-		this.updateService.update();
 	}
 
 	openHelpCenter(event) {

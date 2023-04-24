@@ -95,8 +95,6 @@
                   "with": "src/environments/environment.staging.ts"
                 }
               ],
-              "serviceWorker": true,
-              "ngswConfigPath": "src/ngsw-config.json"
             },
             "production": {
               "optimization": true,
@@ -114,8 +112,6 @@
                   "with": "src/environments/environment.prod.ts"
                 }
               ],
-              "serviceWorker": true,
-              "ngswConfigPath": "src/ngsw-config.json"
             }
           }
         },

@@ -6,11 +6,6 @@ import { Router } from '@angular/router';
 import { delay, exhaustMap, filter, map, skip, take, takeUntil, tap, withLatestFrom } from 'rxjs/operators';
 import { environment } from '../../../environments/environment';
 import { HttpService } from '../../services/http-service';
-import { CheckForUpdateService } from '../../services/check-for-update.service';
-import { School } from '../../models/School';
-import * as moment from 'moment/moment';
-import { FormControl, FormGroup } from '@angular/forms';
-import { filter as _filter } from 'lodash';
 
 declare const window;
 
@@ -30,12 +25,7 @@ export class AdminPageComponent implements OnInit, AfterViewInit, OnDestroy {
 	public schoolsLength$: Observable<number>;
 	private destroy$: Subject<any> = new Subject<any>();
 
-	constructor(
-		private router: Router,
-		private userService: UserService,
-		private httpService: HttpService,
-		private updateService: CheckForUpdateService
-	) {
+	constructor(private router: Router, private userService: UserService, private httpService: HttpService) {
 		this.userService.userData
 			.pipe(
 				takeUntil(this.destroy$),

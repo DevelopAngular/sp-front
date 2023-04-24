@@ -8,7 +8,6 @@ import { Subject } from 'rxjs';
 import { UNANIMATED_CONTAINER } from '../consent-menu-overlay';
 import { NavbarDataService } from '../main/navbar-data.service';
 import { NavbarElementsRefsService } from '../services/navbar-elements-refs.service';
-import { CheckForUpdateService } from '../services/check-for-update.service';
 
 @Component({
 	selector: 'app-school-toggle-bar',
@@ -30,12 +29,10 @@ export class SchoolToggleBarComponent implements OnInit, OnDestroy, AfterViewIni
 		private dialog: MatDialog,
 		private http: HttpService,
 		private navbarService: NavbarDataService,
-		private navbarElementsService: NavbarElementsRefsService,
-		private updateService: CheckForUpdateService
+		private navbarElementsService: NavbarElementsRefsService
 	) {}
 
 	ngOnInit() {
-		this.isUpdateBar$ = this.updateService.needToUpdate$;
 		this.schools = this.schools.sort((school, schoolToCompare) => {
 			return school.name.localeCompare(schoolToCompare.name);
 		});
