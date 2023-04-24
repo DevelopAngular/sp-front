@@ -40,7 +40,8 @@
               "src/preloader.js",
               "src/firebase-messaging-sw.js",
               "src/manifest.json",
-              "src/ngsw-worker.js"
+              "src/ngsw-worker.js",
+              "src/.well-known"
             ],
             "styles": [
               "src/styles.scss",
