@@ -19,6 +19,7 @@
 			style="width: 100%; height: 100%; display: flex; justify-content: center; flex: 1 1 auto">
 			<div class="search-wrapper">
 				<app-sp-search
+					[hideStatuses]="['suspended', 'disabled']"
 					[focused]="false"
 					[width]="'100%'"
 					[role]="'_profile_teacher'"
