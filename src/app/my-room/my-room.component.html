@@ -35,7 +35,10 @@
 					(pointerClickEvent)="showOptions(target)"
 					#target>
 					{{ selectedLocation ? selectedLocation.title : roomOptions.length > 1 ? 'All Rooms' : roomOptions[0].title }}
-					<img *ngIf="roomOptions && roomOptions.length > 1" class="disclosure-icon" [src]="getIcon('./assets/Chevron Down (Navy).svg') | resolveAsset" />
+					<img
+						*ngIf="roomOptions && roomOptions.length > 1"
+						class="disclosure-icon"
+						[src]="getIcon('./assets/Chevron Down (Navy).svg') | resolveAsset" />
 				</div>
 				<div [style.margin-left]="'auto'" [style.margin-right]="'10px'">
 					<div [ngClass]="isIOSTablet ? 'ios-search' : 'search'">

@@ -106,7 +106,7 @@ export class MyRoomComponent implements OnInit, OnDestroy {
 	private buttonDown: boolean;
 
 	private searchQuery$: BehaviorSubject<string> = new BehaviorSubject('');
-	public searchDate$: BehaviorSubject<Date>  = new BehaviorSubject<Date>(null);
+	public searchDate$: BehaviorSubject<Date> = new BehaviorSubject<Date>(null);
 	private selectedLocation$: ReplaySubject<Location[]> = new ReplaySubject<Location[]>(1);
 	private pinnables$: Observable<Pinnable[]> = this.passesService.getPinnablesRequest().pipe(filter((r: Pinnable[]) => !!r.length));
 	private pinnables: Pinnable[];
@@ -131,8 +131,6 @@ export class MyRoomComponent implements OnInit, OnDestroy {
 	public resetValue: Subject<string> = new Subject();
 
 	public currentPasses$: Subject<void> = new Subject();
-
-	public isUpdateBar$: Subject<any>;
 
 	public currentPassesDates: Map<string, number> = new Map();
 	private holdScrollPosition: number = 0;
@@ -210,9 +208,7 @@ export class MyRoomComponent implements OnInit, OnDestroy {
 	}
 
 	public ngOnInit(): void {
-
 		this.isIOSTablet = DeviceDetection.isIOSTablet();
-		this.isUpdateBar$ = this.updateService.needToUpdate$;
 		this.isEnableProfilePictures$ = this.userService.isEnableProfilePictures$;
 		this.schoolsLength$ = this.http.schoolsLength$;
 		combineLatest(
@@ -333,7 +329,7 @@ export class MyRoomComponent implements OnInit, OnDestroy {
 		});
 	}
 
-	chooseDate(event): void  {
+	chooseDate(event): void {
 		const target = event.currentTarget;
 		const DR = this.dialog.open(CalendarComponent, {
 			panelClass: 'calendar-dialog-container',
