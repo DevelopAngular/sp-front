@@ -1,7 +1,6 @@
 @import '../../../design-system.scss';
 @import '../../../sp-colors.scss';
 .dialog-wrapper {
-	height: 200px;
 	width: 350px;
 	padding: 20px 30px;
 	.header {
@@ -29,4 +28,10 @@
 		align-items: center;
 		justify-content: space-between;
 	}
+}
+
+.error {
+	color: red;
+	font-size: 13px;
+	margin-top: 10px;
 }

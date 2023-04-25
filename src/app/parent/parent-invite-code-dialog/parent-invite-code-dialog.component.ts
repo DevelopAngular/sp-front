@@ -1,7 +1,8 @@
 import { Component, Inject, OnInit } from '@angular/core';
-import { FormControl, FormGroup } from '@angular/forms';
+import { FormControl, FormGroup, Validators } from '@angular/forms'
 import { MatDialogRef, MAT_DIALOG_DATA } from '@angular/material/dialog';
 import { ParentAccountService } from '../../services/parent-account.service';
+import { HttpErrorResponse } from '@angular/common/http'
 
 @Component({
 	selector: 'app-parent-invite-code-dialog',
@@ -9,8 +10,9 @@ import { ParentAccountService } from '../../services/parent-account.service';
 	styleUrls: ['./parent-invite-code-dialog.component.scss'],
 })
 export class ParentInviteCodeDialogComponent implements OnInit {
+	errorMessage: string;
 	inviteCodeForm = new FormGroup({
-		student_code: new FormControl(),
+		student_code: new FormControl(null, Validators.required),
 	});
 
 	constructor(
@@ -22,11 +24,20 @@ export class ParentInviteCodeDialogComponent implements OnInit {
 	ngOnInit(): void {}
 
 	addStudent() {
-		this.parentService.addStudent({ ...this.inviteCodeForm.value }).subscribe({
-			next: (result: any) => {
-				console.log('result : ', result);
-				this.dialogRef.close();
-			},
+		this.errorMessage = '';
+		this.parentService.addStudent({ ...this.inviteCodeForm.value })
+			.subscribe({
+				next: () => {
+					this.dialogRef.close();
+				},
+				error: (err: HttpErrorResponse) => {
+					try {
+						const { detail } = err.error;
+						this.errorMessage = detail[0].toUpperCase() + detail.slice(1) + '!';
+					} catch { // in the case the above code tries to access undefined values from the error object
+						this.errorMessage = 'Could not link student!';
+					}
+				}
 		});
 	}
 
