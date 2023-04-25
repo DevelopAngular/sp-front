@@ -1,8 +1,8 @@
 import { Component, Inject, OnInit } from '@angular/core';
-import { FormControl, FormGroup, Validators } from '@angular/forms'
+import { FormControl, FormGroup, Validators } from '@angular/forms';
 import { MatDialogRef, MAT_DIALOG_DATA } from '@angular/material/dialog';
 import { ParentAccountService } from '../../services/parent-account.service';
-import { HttpErrorResponse } from '@angular/common/http'
+import { HttpErrorResponse } from '@angular/common/http';
 
 @Component({
 	selector: 'app-parent-invite-code-dialog',
@@ -25,19 +25,19 @@ export class ParentInviteCodeDialogComponent implements OnInit {
 
 	addStudent() {
 		this.errorMessage = '';
-		this.parentService.addStudent({ ...this.inviteCodeForm.value })
-			.subscribe({
-				next: () => {
-					this.dialogRef.close();
-				},
-				error: (err: HttpErrorResponse) => {
-					try {
-						const { detail } = err.error;
-						this.errorMessage = detail[0].toUpperCase() + detail.slice(1) + '!';
-					} catch { // in the case the above code tries to access undefined values from the error object
-						this.errorMessage = 'Could not link student!';
-					}
+		this.parentService.addStudent({ ...this.inviteCodeForm.value }).subscribe({
+			next: () => {
+				this.dialogRef.close();
+			},
+			error: (err: HttpErrorResponse) => {
+				try {
+					const { detail } = err.error;
+					this.errorMessage = detail[0].toUpperCase() + detail.slice(1) + '!';
+				} catch {
+					// in the case the above code tries to access undefined values from the error object
+					this.errorMessage = 'Could not link student!';
 				}
+			},
 		});
 	}
 
