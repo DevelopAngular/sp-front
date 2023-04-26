@@ -292,7 +292,7 @@ export class MainHallPassFormComponent implements OnInit, OnDestroy {
 			.listenPinnableSocket()
 			.pipe(
 				takeUntil(this.destroy$),
-				filter((res) => !!res),
+				filter<PollingEvent>(Boolean),
 				distinctUntilChanged(
 					(prev, res) =>
 						prev.data.show_as_origin_room === res.data.show_as_origin_room ||
