@@ -18,6 +18,7 @@ import { UserService } from '../../services/user.service';
 import { LocationVisibilityService } from './location-visibility.service';
 import { PassLimitInfo } from '../../models/HallPassLimits';
 import { RecurringOption } from '../../models/RecurringFutureConfig';
+import { PollingEvent } from '../../services/polling-service';
 
 export enum Role {
 	Teacher = 1,
