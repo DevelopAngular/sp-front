@@ -4,7 +4,7 @@ export const environment = {
   schoolOnboardApiRoot: 'https://smartpass.app/api/prod-us-central',
   //schoolOnboardApiRoot: 'https://smartpass.app/api/prod-us-central',
   preferEnvironment: {
-    api_root: 'http://localhost:4200/api/prod-us-central/',
+    api_root: 'http://localhost:8000/api/prod-us-central/',
     client_id: 'owoWOrdXll6xDJrlKXDSOboHuEXbUtG7iRaN72Ey',
     client_secret: 'HBk7Xgll8NT4OLXd9zFdN2HFLeckUVEG6M8yD3GDFNb3u1u28Svwo9vNpCS6t8zGuvQE60CWKRzA9g1jf0NQCDBrZ5nBB7s6lg0X9EArW6YTCXwxpliwWSwNELH3gkCX',
     domain: 'example.com',
