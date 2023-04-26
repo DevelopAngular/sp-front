@@ -149,7 +149,7 @@ export class LoginComponent implements OnInit, OnDestroy {
 		this.route.queryParams
 			.pipe(
 				takeUntil(this.destroy$),
-				filter((qp: QueryParams) => !!qp.code),
+				filter((qp: QueryParams) => !!qp.code || !!qp.instant_login),
 				tap(() => {
 					this.disabledButton = false;
 					this.showSpinner = true;
@@ -159,7 +159,12 @@ export class LoginComponent implements OnInit, OnDestroy {
 				// These query parameters are present after logging into the respective platforms
 				// and then being redirected here with new params in the URL
 				// The redirect back into this component will be a result of the triggerAuthFromEmail function
-				const { code, scope } = qp; // scope is only available for clever login
+				const { code, scope, instant_login } = qp; // scope is only available for clever login
+				if (!!instant_login) {
+					this.storage.setItem('authType', this.loginData.authType);
+					this.initGoogleLogin();
+					return;
+				}
 				const { url } = this.router;
 				this.storage.removeItem('context');
 				this.httpService.updateAuthFromExternalLogin(url, code as string, scope as string);
