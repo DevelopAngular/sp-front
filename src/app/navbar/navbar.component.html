@@ -1,7 +1,7 @@
 <ng-container *ngIf="user">
 	<div
 		class="host"
-		[ngClass]="(helpCenter.isHelpCenterOpen | async) == true ? mediaClass : ''"
+		[ngClass]="(isHelpCenterOpen$ | async) == true ? mediaClass : ''"
 		*ngIf="(showNav && !isHallMonitorRoute && showNav && !isMyRoomRoute) || (showNav && !islargeDeviceWidth)">
 		<div
 			class="bar"
@@ -232,7 +232,7 @@
 			(isAssistant && !isAdminRoute && !hideButtons && this.screenService.isDeviceLargeExtra)
 		"
 		[style.width]="screenService.windowWidth + 'px'"
-		[ngClass]="[isIOSTablet ? 'ios-teacherNav-mobile' : 'teacherNav-mobile', (helpCenter.isHelpCenterOpen | async) == true ? mediaClass : '']"
+		[ngClass]="[isIOSTablet ? 'ios-teacherNav-mobile' : 'teacherNav-mobile', (isHelpCenterOpen$ | async) == true ? mediaClass : '']"
 		[style.background-color]="darkTheme.getBackground('low', false)">
 		<div [ngClass]="isIOSTablet ? 'ios-teacherNav-mobile-wrapper' : 'teacherNav-mobile-wrapper'" #navButtonsContainerMobile>
 			<div
