@@ -43,6 +43,7 @@ export class KioskModeComponent implements OnInit, AfterViewInit, OnDestroy {
 	mainFormRef: MatDialogRef<MainHallPassFormComponent>;
 	frontOfWaitInLineDialogRef: MatDialogRef<InlineWaitInLineCardComponent>;
 	alreadyOpenedWil: Record<string, boolean> = {};
+	showProfilePicture: boolean;
 
 	@ViewChild('input', { read: ElementRef, static: true }) input: ElementRef;
 
@@ -77,10 +78,6 @@ export class KioskModeComponent implements OnInit, AfterViewInit, OnDestroy {
 		private featureService: FeatureFlagService
 	) {}
 
-	get showProfilePicture() {
-		return this.userService.getUserSchool()?.profile_pictures_enabled;
-	}
-
 	get isWaitInLine(): boolean {
 		return this.featureService.isFeatureEnabled(FLAGS.WaitInLine);
 	}
@@ -90,7 +87,13 @@ export class KioskModeComponent implements OnInit, AfterViewInit, OnDestroy {
 	}
 
 	ngOnInit() {
-		this.userService.userData.subscribe(console.log);
+		if (this.userService.getUserSchool()?.profile_pictures_enabled) {
+			this.userService.userData.subscribe({
+				next: user => {
+					this.showProfilePicture = user?.show_profile_pictures === 'everywhere';
+				}
+			})
+		}
 		this.activatedRoute.data.subscribe((state) => {
 			if ('openDialog' in state && state.openDialog) {
 				this.dialog.open(KioskSettingsDialogComponent, {
