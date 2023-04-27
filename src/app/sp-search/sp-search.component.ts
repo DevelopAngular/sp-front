@@ -397,6 +397,7 @@ export class SPSearchComponent implements OnInit, OnDestroy {
 
 		switch (this.searchTarget) {
 			case 'users':
+				``;
 				if (search !== '') {
 					this.pending$.next(true);
 					if (this.type === 'alternative') {

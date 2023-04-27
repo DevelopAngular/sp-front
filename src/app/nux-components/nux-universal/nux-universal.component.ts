@@ -9,5 +9,7 @@ export class NuxUniversalComponent {
 	@Input() showBadge = true;
 	@Input() description: string;
 	@Input() link: string;
+	@Input() learnMoreText: string = 'Learn More';
+	@Input() dismissText: string = 'Got it!';
 	@Output() gotItEvent: EventEmitter<any> = new EventEmitter<any>();
 }
