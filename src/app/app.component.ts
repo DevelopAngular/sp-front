@@ -1,8 +1,8 @@
-import { AfterViewInit, Component, ElementRef, HostListener, NgZone, OnDestroy, OnInit, Renderer2, SecurityContext, ViewChild } from '@angular/core';
+import { AfterViewInit, Component, ElementRef, HostListener, NgZone, OnDestroy, OnInit, Renderer2, ViewChild } from '@angular/core';
 import { MatDialog, MatDialogRef } from '@angular/material/dialog';
 import { ActivatedRoute, NavigationEnd, Router } from '@angular/router';
 import { filter as _filter } from 'lodash';
-import { BehaviorSubject, combineLatest, forkJoin, fromEvent, interval, merge, Observable, of, ReplaySubject, Subject, throwError, zip } from 'rxjs';
+import { BehaviorSubject, combineLatest, fromEvent, merge, Observable, of, ReplaySubject, Subject, throwError, zip } from 'rxjs';
 
 import {
 	catchError,
@@ -40,7 +40,6 @@ import { NextReleaseService } from './next-release/services/next-release.service
 import { ScreenService } from './services/screen.service';
 import { ToastService } from './services/toast.service';
 import _refiner from 'refiner-js';
-import { ColorProfile } from './models/ColorProfile';
 import { Util } from '../Util';
 import { HelpCenterService } from './services/help-center.service';
 import { CallDialogComponent } from './shared/shared-components/call-dialog/call-dialog.component';
