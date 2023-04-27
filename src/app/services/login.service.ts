@@ -1,5 +1,5 @@
 import { Inject, Injectable, OnDestroy } from '@angular/core';
-import { BehaviorSubject, Observable, ReplaySubject, Subject } from 'rxjs';
+import { BehaviorSubject, Observable, of, ReplaySubject, Subject } from 'rxjs';
 import { filter, takeUntil } from 'rxjs/operators';
 import { StorageService } from './storage.service';
 import { APP_BASE_HREF } from '@angular/common';
@@ -98,6 +98,22 @@ export class LoginService implements OnDestroy {
 
 		const savedServerConfig = this.storage.getItem('server');
 		this.isAuthenticated$.next(!!savedServerConfig && !!this.cookie.get('smartpassToken'));
+	}
+
+	checkIfAuthStored(): Observable<boolean> {
+		const isCookiePresent = !!this.cookie.get('smartpassToken');
+
+		if (!isCookiePresent) {
+			this.storage.removeItem('server');
+			return of(false);
+		}
+
+		const svrString = this.storage.getItem('server');
+		if (!svrString) {
+			return of(false);
+		}
+
+		return of(true);
 	}
 
 	ngOnDestroy(): void {

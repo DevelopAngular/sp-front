@@ -1,7 +1,7 @@
 import { ChangeDetectionStrategy, ChangeDetectorRef, Component, EventEmitter, OnDestroy, OnInit, Output } from '@angular/core';
 import { AuthObject, DemoLogin, LoginErrors, LoginService } from '../../services/login.service';
-import { BehaviorSubject, Observable, of, Subject } from 'rxjs';
-import { filter, finalize, pluck, takeUntil, tap } from 'rxjs/operators';
+import { BehaviorSubject, combineLatest, Observable, of, Subject } from 'rxjs';
+import { concatMap, filter, finalize, map, pluck, takeUntil, tap } from 'rxjs/operators';
 import { AuthType, HttpService } from '../../services/http-service';
 import { Meta, Title } from '@angular/platform-browser';
 import { ActivatedRoute, Router } from '@angular/router';
@@ -146,8 +146,11 @@ export class LoginComponent implements OnInit, OnDestroy {
 	}
 
 	ngOnInit(): void {
-		this.route.queryParams
+		combineLatest([this.loginService.checkIfAuthStored(), this.loginService.isAuthenticated$.asObservable()])
 			.pipe(
+				map(([authOnLoad, authStateChanged]) => authOnLoad || authStateChanged),
+				filter((isAuth) => !isAuth),
+				concatMap(() => this.route.queryParams),
 				takeUntil(this.destroy$),
 				filter((qp: QueryParams) => !!qp.code || !!qp.instant_login),
 				tap(() => {
