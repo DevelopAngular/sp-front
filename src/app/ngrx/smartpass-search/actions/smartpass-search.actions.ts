@@ -1,8 +1,9 @@
 import { createAction, props } from '@ngrx/store';
+import { ProfileStatus } from '../../../services/user.service';
 
 const SPS = 'Smartpass Search';
 
-export const searchAction = createAction(`[${SPS}] Search`, props<{ searchValue: string }>());
+export const searchAction = createAction(`[${SPS}] Search`, props<{ searchValue: string; hideStatuses: ProfileStatus[] }>());
 export const searchActionSuccess = createAction(`[${SPS}] Search Success`, props<{ searchResult: any[] }>());
 export const searchActionFailure = createAction(`[${SPS}] Search Failure`, props<{ errorMessage: string }>());
 

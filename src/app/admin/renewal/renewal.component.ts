@@ -1,12 +1,13 @@
-import { Component, OnInit, SecurityContext } from '@angular/core';
+import { Component, OnInit } from '@angular/core';
 import { DarkThemeSwitch } from '../../dark-theme-switch';
 import { AdminService, RenewalStatus } from '../../services/admin.service';
 import _refiner from 'refiner-js';
 import { NavbarElementsRefsService } from '../../services/navbar-elements-refs.service';
 import { DomSanitizer, SafeResourceUrl } from '@angular/platform-browser';
 import { UserService } from '../../services/user.service';
-import { filter, map, take } from 'rxjs/operators';
+import { filter, map } from 'rxjs/operators';
 import { User } from '../../models/User';
+import { DatePipe } from '@angular/common';
 
 type ReminderData = {
 	img: string;
@@ -23,6 +24,7 @@ type ReminderData = {
 	host: {
 		class: 'root-router-child',
 	},
+	providers: [DatePipe],
 })
 export class RenewalComponent implements OnInit {
 	public selectedFeature = 0;
@@ -40,7 +42,8 @@ export class RenewalComponent implements OnInit {
 		public darkTheme: DarkThemeSwitch,
 		private navbarService: NavbarElementsRefsService,
 		private sanitizer: DomSanitizer,
-		private userService: UserService
+		private userService: UserService,
+		private datepipe: DatePipe
 	) {}
 
 	ngOnInit(): void {
@@ -58,7 +61,7 @@ export class RenewalComponent implements OnInit {
 						};
 						break;
 					case 'expiring':
-						const month = this.printExpiration(true);
+						const month = this.datepipe.transform(this.status?.subscription_end_date, 'MMMM', 'UTC');
 						this.reminder = {
 							img: './assets/admin-images/expiring-sub.png',
 							title: month ? 'Your SmartPass Subscription Expires in ' + month : 'Your SmartPass Subscription Expires Soon',
@@ -70,7 +73,10 @@ export class RenewalComponent implements OnInit {
 				}
 				// Show survey for expiring schools
 				if (this.status.renewal_status === 'expiring') {
-					_refiner('showForm', this.surveyId);
+					setTimeout(() => {
+						console.log('Showing renewal refiner survey');
+						_refiner('showForm', this.surveyId);
+					}, 1000);
 				}
 				this.iFrameURL = this.sanitizer.bypassSecurityTrustResourceUrl(data.confirm_renewal_link + '?iframe=true');
 				this.userService.user$
@@ -107,17 +113,6 @@ export class RenewalComponent implements OnInit {
 		} else {
 			this.selectedFeature = clicked;
 		}
-	}
-
-	printExpiration(month = false): string {
-		if (!this.status?.subscription_end_date) {
-			return '';
-		}
-		let date = new Date(this.status.subscription_end_date);
-		if (month) {
-			return date.toLocaleDateString('en-US', { timeZone: 'UTC', month: 'long' });
-		}
-		return date.toLocaleDateString('en-US', { timeZone: 'UTC', year: 'numeric', month: 'long', day: 'numeric' });
 	}
 
 	toggleConfirm() {

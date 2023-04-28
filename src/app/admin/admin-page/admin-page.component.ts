@@ -1,16 +1,13 @@
 import { AfterViewInit, Component, OnDestroy, OnInit } from '@angular/core';
 
-import { BehaviorSubject, Observable, of, Subject } from 'rxjs';
+import { BehaviorSubject, forkJoin, Observable, of, Subject } from 'rxjs';
 import { UserService } from '../../services/user.service';
 import { Router } from '@angular/router';
-import { delay, exhaustMap, filter, map, skip, take, takeUntil, tap, withLatestFrom } from 'rxjs/operators';
+import { catchError, delay, exhaustMap, filter, map, skip, switchMap, take, takeUntil, tap, withLatestFrom } from 'rxjs/operators';
 import { environment } from '../../../environments/environment';
 import { HttpService } from '../../services/http-service';
-import { CheckForUpdateService } from '../../services/check-for-update.service';
-import { School } from '../../models/School';
-import * as moment from 'moment/moment';
-import { FormControl, FormGroup } from '@angular/forms';
-import { filter as _filter } from 'lodash';
+import { FeatureFlagService, FLAGS } from '../../services/feature-flag.service';
+import { AdminService } from '../../services/admin.service';
 
 declare const window;
 
@@ -34,7 +31,8 @@ export class AdminPageComponent implements OnInit, AfterViewInit, OnDestroy {
 		private router: Router,
 		private userService: UserService,
 		private httpService: HttpService,
-		private updateService: CheckForUpdateService
+		private adminService: AdminService,
+		private featureFlags: FeatureFlagService
 	) {
 		this.userService.userData
 			.pipe(
@@ -64,6 +62,30 @@ export class AdminPageComponent implements OnInit, AfterViewInit, OnDestroy {
 				this.hostVisibility = true;
 			});
 
+		this.httpService.schoolsLoaded$.pipe(takeUntil(this.destroy$)).subscribe((value) => {
+			window.appLoaded();
+		});
+
+		this.userService.user$
+			.pipe(
+				takeUntil(this.destroy$),
+				filter((u) => !!u),
+				filter(() => this.featureFlags.isFeatureEnabled(FLAGS.RenewalChecklist)),
+				switchMap(() => this.isAdminUpForRenewal$())
+			)
+			.subscribe({
+				next: (show) => {
+					if (show) {
+						this.router.navigate(['admin', 'renewal']).then();
+						return;
+					}
+
+					this.goToDefaultPage();
+				},
+			});
+	}
+
+	goToDefaultPage() {
 		of(location.pathname.split('/'))
 			.pipe(
 				takeUntil(this.destroy$),
@@ -95,10 +117,38 @@ export class AdminPageComponent implements OnInit, AfterViewInit, OnDestroy {
 				}
 				this.router.navigate(['admin', tab]);
 			});
+	}
 
-		this.httpService.schoolsLoaded$.pipe(takeUntil(this.destroy$)).subscribe((value) => {
-			window.appLoaded();
-		});
+	isAdminUpForRenewal$(): Observable<boolean> {
+		const intros$ = this.userService.introsData$.pipe(
+			filter((i) => !!i),
+			take(1)
+		);
+		const checkRenewal$ = forkJoin([this.adminService.getRenewalData(), intros$]).pipe(
+			take(1),
+			map(([resp, intros]) => {
+				const show = resp.renewal_status == 'expiring' || !intros.seen_renewal_status_page?.universal?.seen_version;
+				return { intros, show };
+			}),
+			tap(({ intros, show }) => {
+				if (show && !intros.seen_renewal_status_page?.universal?.seen_version) {
+					this.userService.updateIntrosSeenRenewalStatusPageRequest(intros, 'universal', '1');
+				}
+			}),
+			map(({ show }) => show),
+			catchError(() => of(false))
+		);
+
+		return this.httpService.currentSchool$.pipe(
+			filter((s) => !!s),
+			switchMap((s) => {
+				if (s.trial_end_date) {
+					return of(false);
+				} else {
+					return checkRenewal$;
+				}
+			})
+		);
 	}
 
 	public ngOnDestroy(): void {

@@ -10,6 +10,7 @@ import {
 } from '../ngrx/smartpass-search/states/smartpass-search-getters.state';
 import { clearSearchResult, postRecentSearch, searchAction } from '../ngrx/smartpass-search/actions';
 import { HttpService } from './http-service';
+import { ProfileStatus } from './user.service';
 
 @Injectable({
 	providedIn: 'root',
@@ -22,8 +23,8 @@ export class SmartpassSearchService {
 
 	constructor(private store: Store<AppState>, private http: HttpService) {}
 
-	searchRequest(searchValue) {
-		this.store.dispatch(searchAction({ searchValue }));
+	searchRequest(searchValue, hideStatuses?: ProfileStatus[]) {
+		this.store.dispatch(searchAction({ searchValue, hideStatuses: hideStatuses || [] }));
 	}
 
 	clearResult() {

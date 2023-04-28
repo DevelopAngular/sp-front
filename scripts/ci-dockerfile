@@ -1,0 +1,29 @@
+FROM --platform=linux/amd64 ubuntu:latest
+ARG NODE_VERSION
+
+# Install required dependencies
+RUN apt-get update && \
+    apt-get install -y curl wget gnupg2 build-essential git jq && \
+    apt-get clean
+
+# Install NVM
+ENV NVM_DIR /root/.nvm
+ENV NODE_VERSION $NODE_VERSION
+RUN curl -o- https://raw.githubusercontent.com/nvm-sh/nvm/v0.39.1/install.sh | bash && \
+    . $NVM_DIR/nvm.sh && \
+    nvm install $NODE_VERSION && \
+    nvm alias default $NODE_VERSION && \
+    nvm use default && \
+    ln -s $NVM_DIR/versions/node/v$NODE_VERSION/bin/node /usr/bin/node && \
+    ln -s $NVM_DIR/versions/node/v$NODE_VERSION/bin/npm /usr/bin/npm && \
+    # Install node version for Wrangler (Cloudflare Pages Dependency)
+    nvm install lts/hydrogen && \
+    nvm use lts/hydrogen && \
+    npm install -g wrangler && \
+    nvm use default
+
+# Update PATH to include the installed Node.js version
+ENV PATH $NVM_DIR/versions/node/v$NODE_VERSION/bin:$PATH
+
+# Install yarn
+RUN npm install -g yarn

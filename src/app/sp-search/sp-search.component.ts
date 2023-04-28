@@ -2,7 +2,7 @@ import { Component, ElementRef, EventEmitter, HostListener, Input, OnDestroy, On
 import { MapsAPILoader } from '@agm/core';
 import { User } from '../models/User';
 import { BehaviorSubject, combineLatest, EMPTY, fromEvent, interval, Observable, of, Subject, Subscription, zip } from 'rxjs';
-import { UserService } from '../services/user.service';
+import { ProfileStatus, UserService } from '../services/user.service';
 import { DomSanitizer } from '@angular/platform-browser';
 import { HttpService } from '../services/http-service';
 import { School } from '../models/School';
@@ -131,7 +131,7 @@ export class SPSearchComponent implements OnInit, OnDestroy {
 	@Input() proposedSearchString: string;
 	@Input() displaySelectedTitle: boolean = true;
 	@Input() showStudentInfo: boolean = true;
-	@Input() status: 'active' | 'suspended' | 'disabled' | 'all' = 'active';
+	@Input() hideStatuses: ProfileStatus[] = ['suspended'];
 
 	@Input() searchingTeachers: User[];
 	@Input() searchingRoles: { id: number; role: string; icon: string }[];
@@ -397,12 +397,13 @@ export class SPSearchComponent implements OnInit, OnDestroy {
 
 		switch (this.searchTarget) {
 			case 'users':
+				``;
 				if (search !== '') {
 					this.pending$.next(true);
 					if (this.type === 'alternative') {
 						if (this.kioskMode.isKisokMode()) {
 							if (this.kioskMode.getKioskModeSettings().findByName && this.kioskMode.getKioskModeSettings().findById) {
-								of([this.userService.searchProfile(this.role, 50, search, this.status), this.userService.possibleProfileByCustomId(search)])
+								of([this.userService.searchProfile(this.role, 50, search, this.hideStatuses), this.userService.possibleProfileByCustomId(search)])
 									.pipe(switchMap((_) => combineLatest(_)))
 									.subscribe((res: any) => {
 										let finalResult = [];
@@ -422,7 +423,7 @@ export class SPSearchComponent implements OnInit, OnDestroy {
 									});
 							} else if (this.kioskMode.getKioskModeSettings().findByName && !this.kioskMode.getKioskModeSettings().findById) {
 								this.students = this.userService
-									.searchProfile(this.role, 50, search, this.status)
+									.searchProfile(this.role, 50, search, this.hideStatuses)
 									.toPromise()
 									.then((paged: any) => {
 										this.pending$.next(false);
@@ -472,7 +473,7 @@ export class SPSearchComponent implements OnInit, OnDestroy {
 									filter((v) => !!v),
 									// ensures cancelation for previous request
 									switchMap((search: string) =>
-										this.userService.searchProfile(this.role, 50, search, this.status).pipe(
+										this.userService.searchProfile(this.role, 50, search, this.hideStatuses).pipe(
 											filter(Boolean),
 											// ensures cancelation when clicking outside
 											takeUntil(this.lastClickOutside$),

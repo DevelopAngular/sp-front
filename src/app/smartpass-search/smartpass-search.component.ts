@@ -5,7 +5,7 @@ import { combineLatest, Observable, Subject } from 'rxjs';
 import { SmartpassSearchService } from '../services/smartpass-search.service';
 import { debounceTime, filter, take, takeUntil, tap } from 'rxjs/operators';
 import * as moment from 'moment';
-import { UserService } from '../services/user.service';
+import { ProfileStatus, UserService } from '../services/user.service';
 import { User } from '../models/User';
 
 @Component({
@@ -52,6 +52,7 @@ export class SmartpassSearchComponent implements OnInit, OnDestroy {
 	@Input() focused: boolean;
 	@Input() height = '40px';
 	@Input() width: string;
+	@Input() ignoreStatuses: ProfileStatus[] = [];
 
 	public isFocus: boolean;
 	public result: any[] = [];
@@ -106,7 +107,7 @@ export class SmartpassSearchComponent implements OnInit, OnDestroy {
 			this.spSearchService.clearResult();
 			return;
 		}
-		this.spSearchService.searchRequest(value);
+		this.spSearchService.searchRequest(value, this.ignoreStatuses);
 	}
 
 	goToUserPage(value) {

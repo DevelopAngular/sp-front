@@ -28,12 +28,7 @@ export class SignOutComponent implements AfterContentInit {
 		setTimeout(() => {
 			this.http.clearInternal();
 			this.loginService.clearInternal(true);
-			const path = window.location.pathname;
-			if (path.includes('parent')) {
-				window.location.href = environment.production ? '/app/auth' : '/auth';
-			} else {
-				window.location.href = environment.production ? '/app' : '/';
-			}
+			window.location.href = '/';
 		}, 500);
 	}
 }
