@@ -17,6 +17,7 @@ export class ProgressInterceptor implements HttpInterceptor {
 				}
 
 				const exeptedUrls = [
+					'parent/add_student',
 					'onboard/schools/check_school',
 					'discovery/find',
 					'discovery/email_info',
