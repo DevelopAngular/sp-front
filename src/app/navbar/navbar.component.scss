@@ -54,11 +54,9 @@
 		display: flex;
 		&-wrapper {
 			display: flex;
-			//width: 450px;
 		}
 		&-wrapper {
 			display: flex;
-			//width: unset;
 			justify-content: space-around;
 			width: 100%;
 			box-sizing: border-box;
@@ -95,11 +93,9 @@
 		display: flex;
 		&-wrapper {
 			display: flex;
-			//width: 450px;
 		}
 		&-wrapper {
 			display: flex;
-			//width: unset;
 			justify-content: space-around;
 			width: 100%;
 			box-sizing: border-box;
@@ -122,17 +118,6 @@
 }
 
 @media all and (max-width: 475px) {
-	div.teacherNav-mobile {
-		//display: flex;
-		//&-wrapper {
-		//  display: flex;
-		//  //width: unset;
-		//  justify-content: space-between;
-		//  width: 100%;
-		//  box-sizing: border-box;
-		//  padding: 0px 15px;
-		//}
-	}
 	div.nav-buttons-width {
 		width: inherit;
 	}
@@ -212,6 +197,7 @@
 	justify-content: space-between;
 	align-items: center;
 	user-select: none;
+	position: fixed;
 	&.shadow {
 		box-shadow: 2px 0 10px rgba(16, 20, 24, 0.1);
 	}
@@ -230,7 +216,6 @@
 	flex-direction: row;
 	justify-content: left;
 	width: 0;
-	//padding-left: 10%;
 }
 
 .logo {
@@ -303,7 +288,6 @@
 		display: flex;
 		justify-content: center;
 		margin: 0 10px;
-		//flex: 1 1 auto;
 		align-items: center;
 	}
 }
@@ -346,15 +330,6 @@
 	color: $navy500;
 }
 
-//.static-loading{
-//  position: fixed;
-//  z-index: 1000000;
-//  top: 0;
-//  left: 0;
-//  width: 100%;
-//  height: 3px;
-//  background-color: #04CD33;
-//}
 .ng-bar-placeholder {
 	height: 5px !important;
 }
@@ -364,7 +339,6 @@
 .support,
 .admin-view {
 	width: auto;
-	//height: 30px;
 	cursor: pointer;
 }
 
@@ -464,7 +438,6 @@
 
 .nav-buttons {
 	position: relative;
-	//flex-grow: 1;
 }
 
 .selected-tab-pointer {
@@ -503,7 +476,6 @@
 		align-items: center;
 		justify-content: center;
 		cursor: pointer;
-		// background-color: #00B476;
 		margin: 0 10px;
 		.title {
 			color: white;

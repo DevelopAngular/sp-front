@@ -46,6 +46,12 @@
 	}
 }
 
+.top-bar-container {
+	position: sticky;
+	z-index: 2000;
+	top: 0px;
+}
+
 .trial-bar {
 	width: 100%;
 
@@ -160,32 +166,18 @@
 }
 
 .toasts-wrapper {
-	//position: absolute;
 	position: relative;
 	pointer-events: none;
-	//top: 0;
-	//bottom: 0;
-	//right: 0;
-	//left: 0;
 	z-index: 9999999999999;
 	.toasts {
 		position: relative;
-
-		.toast {
-			//position: absolute;
-		}
 	}
 }
 
 ::ng-deep #hubspot-messages-iframe-container {
 	z-index: 1 !important;
 	opacity: 0 !important;
-	//right: -1000px !important;
 }
-
-//::ng-deep .Application__WidgetAppContainer-sc-1i6h88-0 {
-//  opacity: 0 !important;
-//}
 
 .help-center-content-wrapper {
 	height: 100vh;
@@ -214,9 +206,6 @@
 		height: 100vh;
 		width: 8px;
 		z-index: 1002;
-		// background-color: $gray400;
-		// border-left: 1px solid $gray400;
-		// transition: width 0.2s linear;
 		transition: box-shadow 0.3s ease-in-out;
 		&:after {
 			background-color: var(--drag-after-color, $gray400);
@@ -266,7 +255,6 @@
 		width: 100%;
 		height: 100vh;
 		overflow-y: auto;
-		// padding: 12px 12px 0;
 	}
 
 	.contact-wrapper {
