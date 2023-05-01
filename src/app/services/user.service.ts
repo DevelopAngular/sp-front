@@ -1188,6 +1188,36 @@ export class UserService implements OnDestroy {
 		return this.http.get('v1/users/grade_level', opt);
 	}
 
+	getTeacherReviews() {
+		// return this.http.get(`v1/teacher_reviews`);
+		return of([
+			{
+				name: '',
+				date: new Date(),
+				stars: 4,
+				description: '',
+			},
+			{
+				name: '',
+				date: new Date(),
+				stars: 4,
+				description: '',
+			},
+			{
+				name: '',
+				date: new Date(),
+				stars: 4,
+				description: '',
+			},
+			{
+				name: '',
+				date: new Date(),
+				stars: 4,
+				description: '',
+			},
+		]);
+	}
+
 	listOf(params: { email: string[] }) {
 		const headers = {
 			'Content-Type': 'application/json',
