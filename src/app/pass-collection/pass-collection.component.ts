@@ -373,7 +373,7 @@ export class PassCollectionComponent implements OnInit, AfterViewInit, OnDestroy
 				pass['cancellable_by_student'] = false;
 			}
 
-			const { fromPast, isActive, forFuture } = this.calculatePassStatus(pass);
+			const { fromPast, isActive, forFuture } = pass.calculatePassStatus();
 
 			data = {
 				pass: pass,
@@ -453,18 +453,5 @@ export class PassCollectionComponent implements OnInit, AfterViewInit, OnDestroy
 				this.selectedSort = sortMode;
 				this.onSortSelected(this.selectedSort);
 			});
-	}
-
-	getSearchInputPlaceholder(passes: HallPass[]) {
-		return `Search ${passes[Math.floor(Math.random() * passes.length)].destination.title}`;
-	}
-
-	private calculatePassStatus(pass: HallPass): { isActive: boolean; fromPast: boolean; forFuture: boolean } {
-		const now = new Date();
-		return {
-			isActive: now >= pass.start_time && now < pass.expiration_time,
-			fromPast: now > pass.end_time,
-			forFuture: now < pass.start_time,
-		};
 	}
 }
