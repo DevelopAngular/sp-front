@@ -1,0 +1,16 @@
+.host {
+    display: grid;
+    grid-auto-flow: column;
+    grid-gap: 20px;
+    grid-template-rows: max-content max-content;
+    grid-template-columns: 40% 40%;
+    padding: 10px;
+    align-content: center;
+    justify-content: center;
+}
+
+.review {
+    padding-bottom: 20px;
+    background: white;
+    border-radius: 12px;
+}

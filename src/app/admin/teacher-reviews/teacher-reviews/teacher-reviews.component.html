@@ -1,0 +1,7 @@
+<div class="host">
+    <ng-container *ngIf="(teacherReviews$ | async) as teacherReviews">
+        <div *ngFor="let review of teacherReviews" class="review">
+            <app-teacher-review-box [data]="review"></app-teacher-review-box>
+        </div>
+    </ng-container>
+</div>

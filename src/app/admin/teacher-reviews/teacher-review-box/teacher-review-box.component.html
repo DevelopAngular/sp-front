@@ -1,0 +1,17 @@
+<div class="review-box">
+    <div class="heading">
+        <div class="picture-and-name">
+            <div class="picture">{{data.name[0]}}{{data.name.split(' ')[1].charAt(0)}}</div>
+            <h5 class="name">{{data.name}}</h5>
+        </div>
+        <div class="date-and-stars">
+            <div class="first-shown">{{data.first_shown}}</div>
+            <div *ngIf="numberOfStars.length > 3" class="stars">
+                <img *ngFor="let i of numberOfStars" class="star" [src]="'./assets/Star (Yellow).svg' | resolveAsset" alt="Star">
+            </div>
+        </div>
+    </div>
+
+    <app-teacher-reviews-text [whatToDisplay]=data.what_to_display [testimonial]=data.testimonial></app-teacher-reviews-text>
+    
+</div>

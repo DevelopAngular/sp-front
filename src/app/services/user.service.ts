@@ -1192,28 +1192,32 @@ export class UserService implements OnDestroy {
 		// return this.http.get(`v1/teacher_reviews`);
 		return of([
 			{
-				name: '',
-				date: new Date(),
+				name: 'Kane Gui',
+				what_to_display: 'Good quote',
 				stars: 4,
-				description: '',
+				testimonial: 'this app is amazing feels great love it',
+				first_shown: 'April 18, 2022',
 			},
 			{
-				name: '',
-				date: new Date(),
-				stars: 4,
-				description: '',
+				name: 'Bobby Robert',
+				what_to_display: 'Recommend it',
+				stars: 1,
+				testimonial: '',
+				first_shown: 'April 18, 2022',
 			},
 			{
-				name: '',
-				date: new Date(),
-				stars: 4,
-				description: '',
+				name: 'Shirley Temple',
+				what_to_display: 'Valuable tool',
+				stars: 3,
+				testimonial: 'this app is amazing feels great love it adasdadadadadad',
+				first_shown: 'April 18, 2022',
 			},
 			{
-				name: '',
-				date: new Date(),
-				stars: 4,
-				description: '',
+				name: 'Ryan Park',
+				what_to_display: 'Good Quote',
+				stars: 5,
+				testimonial: 'this app is amazing feels great love it asdd   asdasd  asdasda  asdadasd  asdasda dasdadad',
+				first_shown: 'April 18, 2022',
 			},
 		]);
 	}

@@ -1,7 +1,7 @@
 import { Component, OnInit } from '@angular/core';
 
 @Component({
-	selector: 'sp-teacher-reviews-page',
+	selector: 'app-teacher-reviews-page',
 	templateUrl: './teacher-reviews-page.component.html',
 	styleUrls: ['./teacher-reviews-page.component.scss'],
 })
