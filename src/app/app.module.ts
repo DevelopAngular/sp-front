@@ -81,6 +81,7 @@ import { LoginService } from './services/login.service';
 import { CookieService } from 'ngx-cookie-service';
 import { StreaksDialogComponent } from './streaks-dialog/streaks-dialog.component';
 import { StorageService } from './services/storage.service';
+import { TrialBarComponent } from './trial-bar/trial-bar.component';
 // uncomment when app uses formatDate and so on
 //import {LOCALE_ID} from '@angular/core';
 //import {HttpService} from './services/http-service';
@@ -170,6 +171,7 @@ const appRoutes: Routes = [
 		CustomToastComponent,
 		IdcardOverlayContainerComponent,
 		StreaksDialogComponent,
+		TrialBarComponent,
 	],
 	imports: [
 		BrowserModule,
