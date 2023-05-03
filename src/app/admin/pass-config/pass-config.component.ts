@@ -26,7 +26,7 @@ import * as moment from 'moment/moment';
 import { FeatureFlagService, FLAGS } from '../../services/feature-flag.service';
 
 @Component({
-	selector: 'app-pass-congif',
+	selector: 'app-pass-config',
 	templateUrl: './pass-config.component.html',
 	styleUrls: ['./pass-config.component.scss'],
 })
@@ -445,6 +445,13 @@ export class PassConfigComponent implements OnInit, OnDestroy {
 	}
 
 	dismissWaitInLineNux() {
+		this.dialog.open(SchoolSettingDialogComponent, {
+			data: {
+				enableWil: true,
+			},
+			panelClass: 'overlay-dialog',
+			backdropClass: 'custom-bd',
+		});
 		this.showWaitInLineNux.next(false);
 		this.userService.updateIntrosWaitInLineRequest(this.introsData, 'universal', '1');
 	}

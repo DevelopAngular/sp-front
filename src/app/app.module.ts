@@ -4,7 +4,7 @@ import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { BrowserModule, HammerModule } from '@angular/platform-browser';
 import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
 import { AgmCoreModule } from '@agm/core';
-import { RouterModule, Routes } from '@angular/router';
+import { Router, RouterModule, Routes } from '@angular/router';
 import { AppComponent } from './app.component';
 import { provideErrorHandler } from './error-handler';
 import { AuthenticatedGuard } from './guards/authenticated.guard';
@@ -54,7 +54,6 @@ import { CustomToastComponent } from './custom-toast/custom-toast.component';
 import { PassesEffects } from './ngrx/passes';
 import { ContactTraceEffects } from './ngrx/contact-trace/effects';
 import { IntrosEffects } from './ngrx/intros';
-import { ServiceWorkerModule } from '@angular/service-worker';
 import { FiltersEffects } from './ngrx/pass-filters/effects';
 import { InvitationsEffects } from './ngrx/pass-like-collection/nested-states/invitations/effects';
 import { PassLikeCollectionEffects } from './ngrx/pass-like-collection/effects/pass-like-collection.effects';
@@ -81,6 +80,8 @@ import { AuthInterceptor } from './auth.interceptor';
 import { LoginService } from './services/login.service';
 import { CookieService } from 'ngx-cookie-service';
 import { StreaksDialogComponent } from './streaks-dialog/streaks-dialog.component';
+import { StorageService } from './services/storage.service';
+import { TrialBarComponent } from './trial-bar/trial-bar.component';
 // uncomment when app uses formatDate and so on
 //import {LOCALE_ID} from '@angular/core';
 //import {HttpService} from './services/http-service';
@@ -170,6 +171,7 @@ const appRoutes: Routes = [
 		CustomToastComponent,
 		IdcardOverlayContainerComponent,
 		StreaksDialogComponent,
+		TrialBarComponent,
 	],
 	imports: [
 		BrowserModule,
@@ -239,18 +241,16 @@ const appRoutes: Routes = [
 		]),
 		StoreDevtoolsModule.instrument({}),
 		HammerModule,
-		ServiceWorkerModule.register('ngsw-worker.js', { enabled: environment.production }),
 		SharedModule,
 	],
 	providers: [
 		CookieService,
 		{ provide: OverlayContainer, useFactory: InitOverlay },
-		{ provide: HTTP_INTERCEPTORS, useClass: AuthInterceptor, multi: true, deps: [LoginService] },
+		{ provide: HTTP_INTERCEPTORS, useClass: AuthInterceptor, multi: true, deps: [StorageService, CookieService, LoginService, Router] },
 		{ provide: HTTP_INTERCEPTORS, useClass: ProgressInterceptor, multi: true },
 		// { provide: HTTP_INTERCEPTORS, useClass: AccessTokenInterceptor, multi: true },
-		{ provide: APP_BASE_HREF, useValue: environment.production ? '/app' : '/' },
+		{ provide: APP_BASE_HREF, useValue: '/' },
 		{ provide: SWIPER_CONFIG, useValue: DEFAULT_SWIPER_CONFIG },
-		,
 		// uncomment when app uses formatDate and so on
 		/*{
       provide: LOCALE_ID,

@@ -2,9 +2,8 @@ import { HttpErrorResponse } from '@angular/common/http';
 import { ErrorHandler, Injectable, Provider } from '@angular/core';
 import * as Sentry from '@sentry/browser';
 import { BrowserOptions } from '@sentry/browser';
-import { SentryEvent, SentryEventHint } from '@sentry/types';
+import { Event, EventHint } from '@sentry/types';
 import { FirebaseError } from 'firebase';
-import { BUILD_INFO_REAL, RELEASE_NAME } from '../build-info';
 import { environment } from '../environments/environment';
 
 const FIREBASE_ERROR_IGNORE_LIST = ['messaging/unsupported-browser'];
@@ -39,9 +38,9 @@ export class SentryErrorHandler implements ErrorHandler {
 		console.log('Error Handler Loading.');
 
 		const sentryConfig: BrowserOptions = {
-			dsn: 'https://2efc0ebe21a14bc0a677b369124c5a03@sentry.io/1364508',
+			dsn: 'https://bd1a607220844e7b84077cf4694b8570@o4505053464494080.ingest.sentry.io/4505053466918912',
 			environment: environment.buildType,
-			beforeSend(event: SentryEvent, hint?: SentryEventHint): SentryEvent | Promise<SentryEvent | null> | null {
+			beforeSend(event: Event, hint?: EventHint): Event | Promise<Event | null> | null {
 				console.log(event);
 
 				if (event.exception && event.exception.values && event.exception.values.length > 0) {
@@ -83,12 +82,6 @@ export class SentryErrorHandler implements ErrorHandler {
 				return event;
 			},
 		};
-
-		if (BUILD_INFO_REAL) {
-			sentryConfig.release = RELEASE_NAME;
-		} else if (environment.production) {
-			console.log('Production build does not have build-info set!');
-		}
 
 		Sentry.init(sentryConfig);
 	}

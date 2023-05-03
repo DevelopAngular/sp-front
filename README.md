@@ -1,4 +1,4 @@
-# hall-pass-web
+# smartpass-frontend
 
 This is the frontend for the SmartPass system. It is an Angular web app.
 It is used on Chromebooks primarily, but also as a PWA for Android devices.
@@ -29,27 +29,23 @@ nvm install <version>
 nvm alias default <version>
 ```
 
-## Gitlab CI
+## CI/CD
 
-### testing_build
+The `smartpass-frontend` project implements the following CI/CD process:
 
-This pipeline clones the repo and builds the Angular project to ensure there are no compilation errors. The scripts for this section installs `nvm` and installs the node version specified in the `.
-nvmrc` file. Any other pipeline requiring the Angular application to be built will also include the code to install `nvm` and lock the node version.
+![review_app](./review_app.png)
 
-**Why use the unofficial node.js build for nvm?**
+Topic/Feature branches should be created for each new task. When ready, a merge request should be opened targeting 
+master. As soon as the MR is created, a preview deployment is created for that MR. Whenever the MR is updated, the 
+preview deployment gets updated as well. There can be an infinite number of MRs open at the same time and 
+an infinite number of preview deployments.
 
-Currently, it seems that the node.js team hasn't provided node binaries for Alpine Linux (which is what our current docker container runs on). We need to use the unofficial binaries build agains
-`musl` since this is what Alpine OS uses.
+Once the task has been completed, and both the preview deployment and the MR itself has been reviewed and approved,
+developers can merge their MR to master.
 
-**Why is `bash` called after installing `nvm`?**
-
-When `nvm` is installed during a terminal session, it isn't available until the terminal is restarted. When the terminal restarts, it re-reads all the exported paths and the `nvm` becomes
-available. `nvm -v` is called to make sure its installed properly.
-
-**Why doesn't `nvm install` work as intended?**
-
-This behaviour may work in the future, but at the time of writing these docs, there seems to be a problem downloading the archives through `nvm`. The package is downloaded manually using `wget`
-and places into a folder where `nvm` can look for the binary locally.
+Once the MR is merged, the project will automatically be deployed to the staging environment. 
+After reviewing on the staging environment, the exact deployment can be re-deployed to the production environment by
+triggering a manual job.
 
 ## Code scaffolding
 

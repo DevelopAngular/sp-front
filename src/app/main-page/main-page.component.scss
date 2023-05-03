@@ -2,7 +2,6 @@
 
 mat-sidenav-container,
 mat-sidenav-content {
-	//overflow: hidden !important;
 	height: 100%;
 }
 
@@ -32,7 +31,6 @@ mat-sidenav-content {
 }
 
 .settings-side-nav {
-	//overflow: hidden;
 	border-top-right-radius: 14px;
 	border-bottom-right-radius: 14px;
 	z-index: 502 !important;
@@ -98,13 +96,8 @@ mat-sidenav-content {
 mat-sidenav-container,
 mat-sidenav-content {
 	z-index: unset;
-	background-color: $gray100;
-	//position: relative;
+	background-color: inherit;
 }
-
-//mat-sidenav-content {
-//  padding-top: 50px;
-//}
 
 mat-sidenav {
 	z-index: 99;

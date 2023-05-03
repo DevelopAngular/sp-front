@@ -166,20 +166,9 @@ export class NotificationService {
 			requireInteraction: true,
 		};
 
-		if (DeviceDetection.isAndroid()) {
-			new ServiceWorkerRegistration()
-				.showNotification(notification.notification.title, notifOptions)
-				.then(() => {
-					this.showFunc.bind(this);
-				})
-				.catch(() => {
-					this.errorFunc.bind(this);
-				});
-		} else {
-			const notif = new Notification(notification.notification.title, notifOptions);
-			notif.onshow = this.showFunc.bind(this);
-			notif.onerror = this.errorFunc.bind(this);
-		}
+		const notif = new Notification(notification.notification.title, notifOptions);
+		notif.onshow = this.showFunc.bind(this);
+		notif.onerror = this.errorFunc.bind(this);
 	}
 
 	// noinspection JSMethodCanBeStatic

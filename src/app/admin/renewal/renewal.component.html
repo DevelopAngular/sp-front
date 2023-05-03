@@ -2,8 +2,10 @@
 	<div class="renewal-wrapper" #scrollableArea>
 		<div class="header-title" [ngClass]="{ expiring: status?.renewal_status === 'expiring' }">
 			<h3 [style.color]="darkTheme.getColor({ white: '#1F195E', dark: '#FFFFFF' })">Prepare for Next School Year</h3>
-			<span *ngIf="printExpiration()" [style.color]="darkTheme.getColor({ white: '#4E5D74', dark: '#FFFFFF' })"> Subscription Ends: </span>
-			<span>{{ printExpiration() }}</span>
+			<span *ngIf="status?.subscription_end_date" [style.color]="darkTheme.getColor({ white: '#4E5D74', dark: '#FFFFFF' })">
+				Subscription Ends:
+			</span>
+			<span>{{ status?.subscription_end_date | date : 'longDate' : 'UTC' }}</span>
 		</div>
 		<div class="renewal-content">
 			<div *ngIf="status && status.renewal_status !== 'renewed'" class="reminder-box" [ngClass]="{ expiring: status?.renewal_status === 'expiring' }">
@@ -102,11 +104,15 @@
 							</div>
 						</div>
 					</div>
+					<div class="customer-since" *ngIf="status?.customer_since_date">
+						<img src="./assets/Heart (Red).svg" />
+						<span>Customer since {{ status.customer_since_date | date : 'MMMM y' : 'UTC' }}</span>
+					</div>
 				</div>
 				<div class="content-box">
 					<h5>Features Coming Soon</h5>
 					<div class="feature-content">
-						<span>April 2023</span>
+						<span>May 2023</span>
 						<div (click)="handleFeatureClick(1)" class="feature-item" [ngClass]="{ selected: selectedFeature === 1 }">
 							<div>
 								<img src="./assets/Room (Blue).svg" />

@@ -55,7 +55,6 @@ and the cycle is repeating endlessly causing an UI flickering
 									class="buttons"
 									customToolTip
 									[showToolTip]="!user.isAdmin()"
-									[editable]="true"
 									[nonDisappearing]="false"
 									[contentTemplate]="tooltip"
 									[position]="'mouse'"
@@ -108,8 +107,7 @@ and the cycle is repeating endlessly causing an UI flickering
 									((passesStats$ | async)?.past_passes_today === 1 ? ' pass' : ' passes') +
 									' today.'
 								"
-								[nonDisappearing]="false"
-								[editable]="true">
+								[nonDisappearing]="false">
 								<div class="title">{{ (passesStats$ | async)?.past_passes_today }}</div>
 								<div isolate class="subtitle">today</div>
 							</div>
@@ -124,12 +122,11 @@ and the cycle is repeating endlessly causing an UI flickering
 									((passesStats$ | async)?.past_passes_week === 1 ? ' pass' : ' passes') +
 									' this week.'
 								"
-								[nonDisappearing]="false"
-								[editable]="true">
+								[nonDisappearing]="false">
 								<div class="title">{{ (passesStats$ | async)?.past_passes_week }}</div>
 								<div isolate class="subtitle">this week</div>
 							</div>
-							<div class="card-info" customToolTip [contentTemplate]="tooltip" [nonDisappearing]="false" [editable]="true">
+							<div class="card-info" customToolTip [contentTemplate]="tooltip" [nonDisappearing]="false">
 								<ng-template #tooltip>
 									<div
 										class="ds-tooltip"
@@ -209,7 +206,6 @@ and the cycle is repeating endlessly causing an UI flickering
 										*ngFor="let group of exclusionGroups$ | async"
 										[showToolTip]="!!group.notes"
 										[customToolTip]="group.notes"
-										[editable]="true"
 										[positionStrategy]="{ originX: 'center', originY: 'top', overlayX: 'center', overlayY: 'top', offsetX: 210 }">
 										<app-encounter-group
 											[group]="group"
@@ -420,7 +416,7 @@ and the cycle is repeating endlessly causing an UI flickering
 						id="right-column-header"
 						[style.top]="rightColumnHeaderTopPosition ? rightColumnHeaderTopPosition : null">
 						<div class="buttons">
-							<div class="date-button" #dateButton customToolTip="Filter stats, passes, and reports" [nonDisappearing]="false" [editable]="true">
+							<div class="date-button" #dateButton customToolTip="Filter stats, passes, and reports" [nonDisappearing]="false">
 								<app-date-button [date]="selectedDate" (buttonClick)="openDateFilter($event)"></app-date-button>
 							</div>
 
@@ -429,7 +425,6 @@ and the cycle is repeating endlessly causing an UI flickering
 								(buttonClick)="openReportForm((useChipInsteadSearch = true))"
 								customToolTip="Report student"
 								[nonDisappearing]="false"
-								[editable]="true"
 								[height]="'40px'">
 								<img width="20" [src]="'./assets/Report (Red).svg' | resolveAsset" />
 							</app-square-button>
@@ -465,7 +460,6 @@ and the cycle is repeating endlessly causing an UI flickering
 												(leave)="created.destroyClose = false"
 												customToolTip
 												[contentTemplate]="createdTemplate"
-												[editable]="true"
 												[nonDisappearing]="false">
 												<img width="13px" [src]="'./assets/Support (Gray-200).svg' | resolveAsset" />
 											</span>
@@ -494,7 +488,6 @@ and the cycle is repeating endlessly causing an UI flickering
 												(leave)="outOfClass.destroyClose = false"
 												customToolTip
 												[contentTemplate]="outOfClassTemplate"
-												[editable]="true"
 												[nonDisappearing]="false">
 												<img width="13px" [src]="'./assets/Support (Gray-200).svg' | resolveAsset" />
 											</span>
@@ -519,7 +512,6 @@ and the cycle is repeating endlessly causing an UI flickering
 												(leave)="overTime.destroyClose = false"
 												customToolTip
 												[contentTemplate]="overTimeTemplate"
-												[editable]="true"
 												[nonDisappearing]="false">
 												<img width="13px" [src]="'./assets/Support (Gray-200).svg' | resolveAsset" />
 											</span>
@@ -551,8 +543,7 @@ and the cycle is repeating endlessly causing an UI flickering
 												(leave)="autoEnded.destroyClose = false"
 												customToolTip
 												[contentTemplate]="autoEndedTemplate"
-												[nonDisappearing]="false"
-												[editable]="true">
+												[nonDisappearing]="false">
 												<img width="13px" [src]="'./assets/Support (Gray-200).svg' | resolveAsset" />
 											</span>
 											<ng-template #autoEndedTemplate>

@@ -87,10 +87,6 @@ export class LoginService implements OnDestroy {
 		private storage: StorageService,
 		private cookie: CookieService
 	) {
-		if (baseHref === '/app') {
-			this.baseHref = '/app/';
-		}
-
 		this.authObject$.pipe(takeUntil(this.destroy$)).subscribe((auth) => {
 			if (auth) {
 				const storageKey = isDemoLogin(auth)

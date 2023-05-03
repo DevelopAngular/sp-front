@@ -44,7 +44,6 @@ import * as moment from 'moment';
 import { PassLimitService } from '../services/pass-limit.service';
 import { PassLimitInfo } from '../models/HallPassLimits';
 import { MainHallPassFormComponent } from '../create-hallpass-forms/main-hallpass--form/main-hall-pass-form.component';
-import { CheckForUpdateService } from '../services/check-for-update.service';
 import { Title } from '@angular/platform-browser';
 import { FeatureFlagService, FLAGS } from '../services/feature-flag.service';
 import { WaitingInLinePass } from '../models/WaitInLine';
@@ -240,7 +239,6 @@ export class PassesComponent implements OnInit, OnDestroy {
 		private sideNavService: SideNavService,
 		private locationsService: LocationsService,
 		private passLimitsService: PassLimitService,
-		private updateService: CheckForUpdateService,
 		private cdr: ChangeDetectorRef,
 		private titleService: Title,
 		private featureService: FeatureFlagService
@@ -430,7 +428,6 @@ export class PassesComponent implements OnInit, OnDestroy {
 	}
 
 	ngOnInit() {
-		this.isUpdateBar$ = this.updateService.needToUpdate$;
 		this.futurePasses = this.liveDataService.futurePasses$;
 		this.activePasses = this.getActivePasses();
 		this.pastPasses = this.liveDataService.expiredPasses$;
@@ -513,9 +510,11 @@ export class PassesComponent implements OnInit, OnDestroy {
 
 	getActivePasses() {
 		const passes$ = this.liveDataService.activePasses$.pipe(
-			withLatestFrom(this.timeService.now$),
-			map(([passes, now]) => {
-				return passes.filter((pass) => new Date(pass.start_time).getTime() <= now.getTime());
+			map((passes) => {
+				return passes.filter((pass) => {
+					const { isActive } = pass.calculatePassStatus();
+					return isActive;
+				});
 			})
 		);
 		const excludedPasses = this.currentPass$.pipe(

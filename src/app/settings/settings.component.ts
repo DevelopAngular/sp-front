@@ -2,7 +2,6 @@ import { Component, ElementRef, Inject, Input, OnDestroy, OnInit, Optional } fro
 import { MAT_DIALOG_DATA, MatDialog, MatDialogConfig, MatDialogRef } from '@angular/material/dialog';
 import { User } from '../models/User';
 import { DarkThemeSwitch } from '../dark-theme-switch';
-import { BUILD_DATE, RELEASE_NAME } from '../../build-info';
 import { KioskModeService } from '../services/kiosk-mode.service';
 import { SideNavService } from '../services/side-nav.service';
 import { Router } from '@angular/router';
@@ -65,8 +64,6 @@ export class SettingsComponent implements OnInit, OnDestroy {
 	pressed: boolean;
 	hoveredColor: string;
 	version = 'Version 1.5';
-	currentRelease = RELEASE_NAME;
-	currentBuildTime = BUILD_DATE;
 	teacherPin$: Observable<string | number>;
 	private adjustForScroll: boolean = false;
 

@@ -1,8 +1,8 @@
-import { AfterViewInit, Component, ElementRef, HostListener, NgZone, OnDestroy, OnInit, Renderer2, SecurityContext, ViewChild } from '@angular/core';
+import { AfterViewInit, Component, ElementRef, HostListener, OnDestroy, OnInit, Renderer2, ViewChild } from '@angular/core';
 import { MatDialog, MatDialogRef } from '@angular/material/dialog';
 import { ActivatedRoute, NavigationEnd, Router } from '@angular/router';
 import { filter as _filter } from 'lodash';
-import { BehaviorSubject, combineLatest, forkJoin, fromEvent, interval, merge, Observable, of, ReplaySubject, Subject, throwError, zip } from 'rxjs';
+import { BehaviorSubject, combineLatest, fromEvent, merge, Observable, of, ReplaySubject, Subject, throwError, zip } from 'rxjs';
 
 import {
 	catchError,
@@ -18,15 +18,12 @@ import {
 	tap,
 	withLatestFrom,
 } from 'rxjs/operators';
-import { BUILD_INFO_REAL } from '../build-info';
 import { DarkThemeSwitch } from './dark-theme-switch';
 
 import { DeviceDetection } from './device-detection.helper';
 import { School } from './models/School';
-import { AdminService } from './services/admin.service';
 import { LoginService } from './services/login.service';
 import { HttpService } from './services/http-service';
-import { KioskModeService } from './services/kiosk-mode.service';
 import { StorageService } from './services/storage.service';
 import { OverlayContainer } from '@angular/cdk/overlay';
 import { APPLY_ANIMATED_CONTAINER, ConsentMenuOverlay } from './consent-menu-overlay';
@@ -41,8 +38,6 @@ import { NextReleaseService } from './next-release/services/next-release.service
 import { ScreenService } from './services/screen.service';
 import { ToastService } from './services/toast.service';
 import _refiner from 'refiner-js';
-import { CheckForUpdateService } from './services/check-for-update.service';
-import { ColorProfile } from './models/ColorProfile';
 import { Util } from '../Util';
 import { HelpCenterService } from './services/help-center.service';
 import { CallDialogComponent } from './shared/shared-components/call-dialog/call-dialog.component';
@@ -69,7 +64,6 @@ export class AppComponent implements OnInit, AfterViewInit, OnDestroy {
 	shortcuts: ShortcutInput[];
 	currentRoute: string;
 
-	needToUpdateApp$: Subject<{ active: boolean; color: ColorProfile }>;
 	helpCentreURL: SafeResourceUrl;
 
 	private dialogContainer: HTMLElement;
@@ -108,32 +102,13 @@ export class AppComponent implements OnInit, AfterViewInit, OnDestroy {
 
 	public isUserHasPhoneAccess: boolean;
 
-	// @ViewChild('help-centre-iframe') iframe: ElementRef;
-
-	trialEndDate$ = this.http.currentSchoolSubject.pipe(
-		takeUntil(this.subscriber$),
-		filter((s) => !!s?.trial_end_date),
-		map((s) => {
-			const endDate = new Date(s.trial_end_date);
-			// We want the trial to end at the end of the day specified by |trial_end_date|
-			const day = 60 * 60 * 24 * 1000 - 1;
-			const realEndDate = new Date(endDate.getTime() + day);
-			return realEndDate;
-		})
-	);
-
 	isAdmin$ = this.userService.userData.pipe(
 		filter((u) => !!u),
 		map((u) => u.isAdmin())
 	);
 
-	private todayDate = (() => {
-		const date = new Date();
-		return Date.UTC(date.getUTCFullYear(), date.getUTCMonth(), date.getUTCDate(), date.getUTCHours(), date.getUTCMinutes(), date.getUTCSeconds());
-	})();
-
 	@HostListener('window:popstate', ['$event'])
-	back(event) {
+	back() {
 		if (DeviceDetection.isAndroid() || DeviceDetection.isIOSMobile()) {
 			window.history.pushState({}, '');
 		}
@@ -150,12 +125,6 @@ export class AppComponent implements OnInit, AfterViewInit, OnDestroy {
 			);
 		}
 	}
-	// @HostListener('window:mousemove', ['$event'])
-	// onWindowBlur(event: any): void {
-	// 	addEventListener('mousemove', function (e) {
-	// 		console.log('On iframe');
-	// 	});
-	// }
 
 	constructor(
 		public darkTheme: DarkThemeSwitch,
@@ -163,19 +132,15 @@ export class AppComponent implements OnInit, AfterViewInit, OnDestroy {
 		private userService: UserService,
 		private nextReleaseService: NextReleaseService,
 		private http: HttpService,
-		private adminService: AdminService,
-		private _zone: NgZone,
 		private activatedRoute: ActivatedRoute,
 		private router: Router,
 		private dialog: MatDialog,
 		private overlayContainer: OverlayContainer,
 		private storageService: StorageService,
-		private kms: KioskModeService,
 		private notifService: NotificationService,
 		private shortcutsService: KeyboardShortcutsService,
 		private screen: ScreenService,
 		private toastService: ToastService,
-		private updateService: CheckForUpdateService,
 		public helpCenter: HelpCenterService,
 		private sanitizer: DomSanitizer,
 		public featureFlags: FeatureFlagService,
@@ -190,7 +155,6 @@ export class AppComponent implements OnInit, AfterViewInit, OnDestroy {
 	}
 
 	ngOnInit() {
-		this.updateService.check();
 		this.customToastOpen$ = this.toastService.isOpen$;
 		this.toasts$ = this.toastService.toasts$;
 		this.user$ = this.userService.user$.pipe(map((user) => User.fromJSON(user)));
@@ -210,40 +174,16 @@ export class AppComponent implements OnInit, AfterViewInit, OnDestroy {
 			}
 		});
 
-		this.needToUpdateApp$ = this.updateService.needToUpdate$;
-
 		this.helpCenter.open$.subscribe((open) => {
 			if (open) {
 				this.openHelpCenter(open);
 			}
 		});
 
-		// set only an already set up language is found
-		// otherwise let the language component try to translate
-		/*const savedLang = this.storageService.getItem('codelang');
-    if (!!savedLang) {
-      this.http.currentLang$.pipe(
-        takeUntil(this.subscriber$),
-        filter(res => !!res),
-      ).subscribe(chosenLang => {
-        try {
-          this.localize.load_localize_scripts(() => {
-            // Localizejs saves in localstorage an intem ljs-source-lang that stores the original lanuage
-            // the original language may be taken from lang html attribute of page
-            // or the official way below
-            const sourceLanguage = this.localize.getSourceLanguage();
-            this.localize.from(sourceLanguage).to(chosenLang);
-          });
-        } catch (err) {
-          this.localize.disableLanguage();
-        }
-      });
-    }*/
-
 		this.userService.loadedUser$
 			.pipe(
 				filter((l) => l),
-				switchMap((l) => this.userService.user$.pipe(take(1))),
+				switchMap(() => this.userService.user$.pipe(take(1))),
 				filter((user) => !!user),
 				map((user) => User.fromJSON(user)),
 				// Wait for schools to load so that we can register intercom and refiner correctly.
@@ -254,18 +194,13 @@ export class AppComponent implements OnInit, AfterViewInit, OnDestroy {
 				switchMap(([user, intercomWrapper]: [User, HTMLDivElement]) => {
 					this.currentRoute = window.location.pathname;
 					this.isStudent = user.isStudent();
-					const urlBlackList = [
-						'/forms',
-						'/kioskMode',
-						// '/login'
-					];
+					const urlBlackList = ['/forms', '/kioskMode'];
 					const isAllowed = urlBlackList.every((route) => !this.currentRoute.includes(route));
 					if (!user.isStudent() && !this.currentRoute.includes('/forms')) {
 						this.registerRefiner(user);
 					}
 
 					if (intercomWrapper) {
-						// intercomWrapper.style.display = user.isStudent() ? 'none' : 'block';
 						intercomWrapper.style.display = 'none';
 					}
 
@@ -323,7 +258,6 @@ export class AppComponent implements OnInit, AfterViewInit, OnDestroy {
 		this.shortcutsService.initialize();
 		this.shortcuts = this.shortcutsService.shortcuts;
 
-		// this.googleAnalytics.init();
 		const fcm_sw = localStorage.getItem('fcm_sw_registered');
 		if (fcm_sw === 'true') {
 			this.notifService.initNotifications(true);
@@ -417,27 +351,13 @@ export class AppComponent implements OnInit, AfterViewInit, OnDestroy {
 					} else if (user.isParent()) {
 						this.router.navigate(['parent']);
 					} else {
-						let showRenewalPage$ = of(false);
-						if (user.isAdmin() && this.featureFlags.isFeatureEnabled(FLAGS.RenewalChecklist)) {
-							showRenewalPage$ = this.isAdminUpForRenewal$();
+						const href = window.location.href;
+						if (href.includes('/admin') || href.includes('/main')) {
+							return;
 						}
 
-						showRenewalPage$.subscribe({
-							next: (show) => {
-								const href = window.location.href;
-								if (href.includes('/admin') || href.includes('/main')) {
-									return;
-								}
-
-								if (show) {
-									this.router.navigate(['admin', 'renewal']).then();
-									return;
-								}
-
-								const loadView = user.isAdmin() ? ['admin', 'dashboard'] : ['main', 'passes'];
-								this.router.navigate(loadView).then();
-							},
-						});
+						const loadView = user.isAdmin() ? ['admin'] : ['main', 'passes'];
+						this.router.navigate(loadView).then();
 					}
 					this.titleService.setTitle('SmartPass');
 				})
@@ -481,87 +401,14 @@ export class AppComponent implements OnInit, AfterViewInit, OnDestroy {
 				mergeMap((route) => route.data)
 			)
 			.subscribe((data) => {
-				const existingHub: any = document.querySelector('#hubspot-messages-iframe-container');
-				let newHub: any;
-
-				if (!existingHub) {
-					newHub = document.createElement('script');
-					newHub.type = 'text/javascript';
-					newHub.id = 'hs-script-loader';
-					newHub.setAttribute('id', 'hs-script-loader');
-					newHub.src = '//js.hs-scripts.com/5943240.js';
-				}
-
-				if (data.currentUser) {
-					this.hubSpotSettings(data.currentUser);
-				}
-
-				if (
-					data.hubspot &&
-					((data.currentUser && !data.currentUser.isStudent() && data.authFree) || !this.kms.getCurrentRoom().value) &&
-					!this.screen.isDeviceLargeExtra
-				) {
-					if (!existingHub) {
-						this.showSupportButton = true;
-						document.body.appendChild(newHub);
-						const dst = new Subject<any>();
-						interval(100)
-							.pipe(takeUntil(dst))
-							.subscribe(() => {
-								if (window._hsq) {
-									dst.next();
-									dst.complete();
-								}
-							});
-					} else {
-						(existingHub as HTMLElement).setAttribute('style', 'display: block !important;width: 100px;height: 100px');
-					}
-				} else {
-					if (existingHub) {
-						(existingHub as HTMLElement).setAttribute('style', 'display: none !important');
-					}
-				}
-
 				this.hideSchoolToggleBar = data.hideSchoolToggleBar;
 				this.hideScroll = data.hideScroll;
 			});
 	}
 
-	isAdminUpForRenewal$(): Observable<boolean> {
-		const intros$ = this.userService.introsData$.pipe(
-			filter((i) => !!i),
-			take(1)
-		);
-		const checkRenewal$ = forkJoin([this.adminService.getRenewalData(), intros$]).pipe(
-			take(1),
-			map(([resp, intros]) => {
-				const show = resp.renewal_status == 'expiring' || !intros.seen_renewal_page?.universal?.seen_version;
-				return { intros, show };
-			}),
-			tap(({ intros, show }) => {
-				if (show && !intros.seen_renewal_page?.universal?.seen_version) {
-					this.userService.updateIntrosSeenRenewalStatusPageRequest(intros, 'universal', '1');
-				}
-			}),
-			map(({ show }) => show),
-			catchError(() => of(false))
-		);
-
-		return this.http.currentSchool$.pipe(
-			filter((s) => !!s),
-			switchMap((s) => {
-				if (s.trial_end_date) {
-					return of(false);
-				} else {
-					return checkRenewal$;
-				}
-			})
-		);
-	}
-
 	registerRefiner(user: User) {
 		_refiner('setProject', 'e832a600-7fe2-11ec-9b7a-cd5d0014e33d');
-		_refiner('identifyUser', {
+		const data = {
 			id: user.id,
 			email: user.primary_email,
 			created_at: user.created,
@@ -578,42 +425,9 @@ export class AppComponent implements OnInit, AfterViewInit, OnDestroy {
 				id: this.http.getSchool().id, // <- School Id
 				name: this.http.getSchool().name,
 			},
-		});
-		// _refiner('showForm', '31b6c030-820a-11ec-9c99-8b41a98d875d');
-	}
-
-	getDaysUntil(date: Date): number {
-		const oneDay = 24 * 60 * 60 * 1000; // hours*minutes*seconds*milliseconds
-		// @ts-ignore
-		const diffDays = Math.round(Math.abs((date - this.todayDate) / oneDay));
-		return diffDays;
-	}
-
-	getDayText(days: number): string {
-		return days === 1 ? 'day' : 'days';
-	}
-
-	hubSpotSettings(user) {
-		const _hsq = (window._hsq = window._hsq || []);
-
-		const myPush = function (a) {
-			if (!BUILD_INFO_REAL) {
-				// console.log('Pushed:', a);
-			}
-			_hsq.push(a);
 		};
-
-		myPush([
-			'identify',
-			{
-				email: user.primary_email,
-				firstname: user.first_name,
-				lastname: user.last_name,
-			},
-		]);
-
-		myPush(['setPath', '/admin/dashboard']);
-		myPush(['trackPageView']);
+		_refiner('identifyUser', data);
+		console.log('refiner registered');
 	}
 
 	getBarBg(color, hovered, pressed) {
@@ -654,7 +468,6 @@ export class AppComponent implements OnInit, AfterViewInit, OnDestroy {
 		const listenerConfig = { childList: true, subtree: true };
 		this.intercomObserver = new MutationObserver((mutationList, observer) => {
 			for (const m of mutationList) {
-				// @ts-ignore
 				if ((m.target as HTMLElement).tagName !== 'BODY') {
 					return;
 				}
@@ -680,10 +493,6 @@ export class AppComponent implements OnInit, AfterViewInit, OnDestroy {
 		} else {
 			return '100%';
 		}
-	}
-
-	updateApp() {
-		this.updateService.update();
 	}
 
 	openHelpCenter(event) {
