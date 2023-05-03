@@ -66,6 +66,7 @@
 				[style.gridTemplateColumns]="gridTemplate"
 				[style.gridGap]="gridGap">
 				<div class="tile" *ngFor="let pass of currentPasses" [ngClass]="applyClassToTiles(pass)">
+					<!-- Previous "showProfilePicture" assignment to profileProperty input was causing profile photos not to render in Kiosk mode -->
 					<app-pass-tile
 						(tileSelected)="showPass($event)"
 						[timerEvent]="timerEvent"
@@ -76,7 +77,7 @@
 						[forStaff]="forStaff"
 						[pass]="pass"
 						[allowPopup]="true"
-						[profileImage]="showProfilePictures"
+						[profileImage]="isKioskMode ? true : showProfilePictures"
 						[isEnableProfilePictures]="(isEnabledProfilePictures$ | async) && !!user && !!user.show_profile_pictures"></app-pass-tile>
 				</div>
 			</div>
