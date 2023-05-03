@@ -1,7 +1,7 @@
 import { ChangeDetectionStrategy, ChangeDetectorRef, Component, EventEmitter, OnDestroy, OnInit, Output } from '@angular/core';
 import { AuthObject, DemoLogin, LoginErrors, LoginService } from '../../services/login.service';
 import { BehaviorSubject, combineLatest, Observable, of, Subject } from 'rxjs';
-import { concatMap, filter, finalize, map, pluck, takeUntil, tap } from 'rxjs/operators';
+import { filter, finalize, map, pluck, takeUntil, tap } from 'rxjs/operators';
 import { AuthType, HttpService } from '../../services/http-service';
 import { Meta, Title } from '@angular/platform-browser';
 import { ActivatedRoute, Router } from '@angular/router';
@@ -10,7 +10,7 @@ import { KeyboardShortcutsService } from '../../services/keyboard-shortcuts.serv
 import { StorageService } from '../../services/storage.service';
 import { DeviceDetection } from '../../device-detection.helper';
 import { ToastService } from '../../services/toast.service';
-import { QueryParams } from '../../live-data/helpers';
+import { CookieService } from 'ngx-cookie-service';
 
 declare const window;
 
@@ -95,7 +95,8 @@ export class LoginComponent implements OnInit, OnDestroy {
 		private shortcuts: KeyboardShortcutsService,
 		private storage: StorageService,
 		private cdr: ChangeDetectorRef,
-		private toast: ToastService
+		private toast: ToastService,
+		private cookieService: CookieService
 	) {
 		this.schoolAlreadyText$ = this.httpService.schoolSignInRegisterText$.asObservable();
 
@@ -146,17 +147,22 @@ export class LoginComponent implements OnInit, OnDestroy {
 	}
 
 	ngOnInit(): void {
-		combineLatest([this.loginService.checkIfAuthStored(), this.loginService.isAuthenticated$.asObservable()])
+		combineLatest([this.loginService.checkIfAuthStored(), this.loginService.isAuthenticated$.asObservable(), this.route.queryParams])
 			.pipe(
-				map(([authOnLoad, authStateChanged]) => authOnLoad || authStateChanged),
-				filter((isAuth) => !isAuth),
-				concatMap(() => this.route.queryParams),
-				takeUntil(this.destroy$),
-				filter((qp: QueryParams) => !!qp.code || !!qp.instant_login),
-				tap(() => {
+				filter(([authOnLoad, authStateChanged, qp]) => {
+					return !!qp?.code || !!qp?.instant_login;
+				}),
+				tap(([authOnLoad, authStateChanged, qp]) => {
+					const isAuth = authOnLoad || authStateChanged;
+					if (isAuth) {
+						// override the current login by removing their creds and continue to authenticate
+						this.cookieService.delete('smartpassToken');
+						this.storage.removeItem('server');
+					}
 					this.disabledButton = false;
 					this.showSpinner = true;
-				})
+				}),
+				map(([authOnLoad, authStateChanged, qp]) => qp)
 			)
 			.subscribe((qp) => {
 				// These query parameters are present after logging into the respective platforms
