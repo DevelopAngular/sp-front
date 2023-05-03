@@ -4,12 +4,12 @@
 
 <ng-template #recommendIt>
     <div *ngIf="whatToDisplay == 'Recommend it';" class="recommend-it">
-        <img class="thumbs" [src]="'./assets/Thumbs Up (Green).png' | resolveAsset" alt="Thumbs Up">
+        <img class="thumbs" [src]="'./assets/Thumbs Up (Green).svg' | resolveAsset" alt="Thumbs Up">
         <p>Recommends using SmartPass next year</p>
     </div>
 
     <div *ngIf="whatToDisplay != 'Recommend it'" class="valuable-tool">
-        <img class="cool" [src]="'./assets/Cool.png' | resolveAsset" alt="Cool emoji">
+        <img class="cool" [src]="'./assets/Cool.svg' | resolveAsset" alt="Cool emoji">
         <p>Thinks SmartPass is a valuable tool</p>
     </div>
 </ng-template>
