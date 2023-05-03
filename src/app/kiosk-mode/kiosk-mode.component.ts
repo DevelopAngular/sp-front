@@ -87,13 +87,16 @@ export class KioskModeComponent implements OnInit, AfterViewInit, OnDestroy {
 	}
 
 	ngOnInit() {
-		if (this.userService.getUserSchool()?.profile_pictures_enabled) {
+		const profilePicturesEnabled = this.userService.getUserSchool()?.profile_pictures_enabled;
+
+		if (profilePicturesEnabled) {
 			this.userService.userData.subscribe({
 				next: (user) => {
-					this.showProfilePicture = user?.show_profile_pictures === 'everywhere';
+					this.showProfilePicture = user?.show_profile_pictures === 'everywhere' || user?.show_profile_pictures === 'hall_monitor';
 				},
 			});
 		}
+
 		this.activatedRoute.data.subscribe((state) => {
 			if ('openDialog' in state && state.openDialog) {
 				this.dialog.open(KioskSettingsDialogComponent, {
