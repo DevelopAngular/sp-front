@@ -278,7 +278,7 @@ export class AppComponent implements OnInit, AfterViewInit, OnDestroy {
 			document.head.appendChild(link);
 		}
 
-		combineLatest([this.checkIfAuthOnLoad(), this.loginService.isAuthenticated$.asObservable()])
+		combineLatest([this.loginService.checkIfAuthStored(), this.loginService.isAuthenticated$.asObservable()])
 			.pipe(
 				map(([authOnLoad, authStateChanged]) => authOnLoad || authStateChanged),
 				distinctUntilChanged(),
@@ -600,21 +600,5 @@ export class AppComponent implements OnInit, AfterViewInit, OnDestroy {
 		CDC.afterClosed().subscribe((status) => {
 			window.document.querySelector('.cdk-overlay-container').style.zIndex = '1005';
 		});
-	}
-
-	private checkIfAuthOnLoad(): Observable<boolean> {
-		const isCookiePresent = !!this.cookie.get('smartpassToken');
-
-		if (!isCookiePresent) {
-			this.storageService.removeItem('server');
-			return of(false);
-		}
-
-		const svrString = this.storageService.getItem('server');
-		if (!svrString) {
-			return of(false);
-		}
-
-		return of(true);
 	}
 }
