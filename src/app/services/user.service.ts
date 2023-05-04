@@ -616,10 +616,6 @@ export class UserService implements OnDestroy {
 		return this.getUserSchool().feature_flag_new_abbreviation;
 	}
 
-	getFeatureFlagReferralProgram(): boolean {
-		return this.getUserSchool().feature_flag_referral_program;
-	}
-
 	getCurrentUpdatedSchool$(): Observable<School> {
 		return this.http.currentUpdateSchool$;
 	}
