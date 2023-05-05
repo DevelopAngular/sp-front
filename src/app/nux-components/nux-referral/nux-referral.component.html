@@ -1,18 +1,36 @@
-<div class="ns_wrapper">
+<div class="referral-container">
   <div class="cancel-btn" [mat-dialog-close]="true">
-		<img src="./assets/Cancel (Search-Gray).svg" />
+		<img src="../../../assets/Cancel (Gray-Black).svg" />
 	</div>
-	<h1>Get $250 for each school you refer</h1>
+  <div class="gift-icon">
+    <img src="../../../assets/Gift.svg"/>
+  </div>
+  <h1 class="referral-title">
+    <span class="blue-text">Get $250</span>
+    for <span class="underlined-text">each</span> school you refer
+  </h1>
+
 	<mat-dialog-content>
-		<p>You will earn a $250 cash payment per referral for any school who signs up with your link, with no upper limit!</p>
-		<h2>3 Steps to Start Earning</h2>
-		<ul>
-      <li>Apply to the Program</li>
-      <li>If accepted, you will receive a unique referral link to share with your network!</li>
-      <li>When a referral (school) has a demo and purchases SmartPass, you'll get a $250 cash payment.</li>
+		<p class="referral-description">
+      You will earn a $250 cash payment per referral for any school who signs up with your link, <span class="bold-text">with no upper limit!</span>
+    </p>
+		<h2 class="referral-steps">3 Steps to Start Earning</h2>
+    <ul class="referral-items">
+      <li>
+        <img src="../../../assets/PaperAir.svg" class="icon" alt="">
+        <span>Apply to the Program</span>
+      </li>
+      <li>
+        <img src="../../../assets/Link.svg" class="icon" alt="">
+        <span>If accepted, you will receive a unique referral link to share with your network!</span>
+      </li>
+      <li>
+        <img src="../../../assets/Cash.svg" class="icon" alt="">
+        <span>When a referral (school) has a demo and purchases SmartPass, you'll get a $250 cash payment.</span>
+      </li>
     </ul>
 	</mat-dialog-content>
-	<mat-dialog-actions>
-		<button mat-button>Learn More</button>
+	<mat-dialog-actions class="full-width">
+		<button mat-button class="learn-more-button">Learn More</button>
 	</mat-dialog-actions>
 </div>
