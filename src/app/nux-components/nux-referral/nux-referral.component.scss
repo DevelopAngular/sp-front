@@ -19,7 +19,7 @@
 	// gap: 28px;
 	// padding: 10px 0;
 	// border-radius: 20px;
-	margin:0 0 20px 0;
+	margin: 0 0 20px 0;
 }
 
 .referral-title {
@@ -27,7 +27,6 @@
 	line-height: 44px;
 	color: #1f195e;
 }
-
 
 .referral-description {
 	font-weight: 400;
@@ -37,33 +36,33 @@
 }
 
 .referral-steps {
-  font-weight: 700;
-  font-size: 19.8099px;
-  line-height: 24px;
-  color: #1f195e;
+	font-weight: 700;
+	font-size: 19.8099px;
+	line-height: 24px;
+	color: #1f195e;
 }
 
 .referral-items {
 	list-style-type: none;
-  padding-left: 0;
+	padding-left: 0;
 
 	li {
-			display: flex;
-			align-items: center;
-			margin-bottom: 1rem;
-			font-weight: 400;
-			font-size: 16px;
-			line-height: 19px;
-			color: #7083a0;
-			list-style-type: none;
+		display: flex;
+		align-items: center;
+		margin-bottom: 1rem;
+		font-weight: 400;
+		font-size: 16px;
+		line-height: 19px;
+		color: #7083a0;
+		list-style-type: none;
 
-			.icon {
-				margin-right: 1rem;
-			}
+		.icon {
+			margin-right: 1rem;
+		}
 
-			span {
-				display: inline-block;
-			}
+		span {
+			display: inline-block;
+		}
 	}
 }
 
@@ -98,20 +97,19 @@
 
 .full-width {
 	align-items: stretch;
-  width: 100%;
-  display: flex;
-  justify-content: center;
+	width: 100%;
+	display: flex;
+	justify-content: center;
 }
 
-
 .bold-text {
-  font-weight: bold;
+	font-weight: bold;
 }
 
 .underlined-text {
-  text-decoration: underline;
+	text-decoration: underline;
 }
 
 .blue-text {
-  color: #139BE6;
+	color: #139be6;
 }

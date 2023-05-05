@@ -189,7 +189,7 @@ const appRoutes: Routes = [
 		NextReleaseModule,
 		KeyboardShortcutsModule.forRoot(),
 		MatDialogModule,
-    MatButtonModule,
+		MatButtonModule,
 
 		RouterModule.forRoot(appRoutes, {
 			enableTracing: false,
@@ -245,7 +245,7 @@ const appRoutes: Routes = [
 			SmartpassSearchEffects,
 			EncounterDetectionEffects,
 			ParentsEffects,
-			ReferralModalEffects
+			ReferralModalEffects,
 		]),
 		StoreDevtoolsModule.instrument({}),
 		HammerModule,
