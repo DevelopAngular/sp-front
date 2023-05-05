@@ -444,6 +444,7 @@ export class PassesComponent implements OnInit, OnDestroy {
 			})
 		);
 		this.store.dispatch(ReferralModalActions.openReferralModal());
+		console.log('user', this.user);
 		this.schoolsLength$ = this.httpService.schoolsLength$;
 		this.user$ = this.userService.user$;
 		const notifBtnDismissExpires = moment(JSON.parse(localStorage.getItem('notif_btn_dismiss_expiration')));
