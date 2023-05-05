@@ -8,6 +8,9 @@ import { UserService } from '../../services/user.service';
 import { filter, map } from 'rxjs/operators';
 import { User } from '../../models/User';
 import { DatePipe } from '@angular/common';
+import { TeacherReviewsComponent } from '../teacher-reviews/teacher-reviews/teacher-reviews.component';
+import { HttpClient } from '@angular/common/http';
+import { HttpService } from '../../services/http-service';
 
 type ReminderData = {
 	img: string;
@@ -34,7 +37,8 @@ export class RenewalComponent implements OnInit {
 	public iframeLoading = true;
 	private iframeLoadedInterval;
 	private surveyId = '300ba7c0-ccad-11ed-b709-fb336f73b73f';
-
+	public numberOfTeacherReviews = 0;
+	teacherReviewsComponent: TeacherReviewsComponent;
 	public iFrameURL: SafeResourceUrl;
 
 	constructor(
@@ -43,10 +47,18 @@ export class RenewalComponent implements OnInit {
 		private navbarService: NavbarElementsRefsService,
 		private sanitizer: DomSanitizer,
 		private userService: UserService,
-		private datepipe: DatePipe
+		private http: HttpClient,
+		private httpService: HttpService,
+		private datepipe: DatePipe,
 	) {}
 
 	ngOnInit(): void {
+		this.teacherReviewsComponent = new TeacherReviewsComponent(this.userService, this.http, this.httpService);
+		this.teacherReviewsComponent.getReviews((reviews) => {
+			this.numberOfTeacherReviews = reviews.length;
+			console.log(this.numberOfTeacherReviews);
+		});
+		
 		this.adminService.getRenewalData().subscribe({
 			next: (data) => {
 				this.status = data;

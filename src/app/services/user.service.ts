@@ -628,6 +628,10 @@ export class UserService implements OnDestroy {
 		return this.http.get<User>('v1/users/@me');
 	}
 
+	getUserById(userId) {
+		return this.http.get<User>(`v1/users/${userId}`);
+	}
+
 	getUserPinRequest() {
 		this.store.dispatch(getUserPinAction());
 		return this.userPin$;

@@ -1,6 +1,5 @@
 .host {
     display: grid;
-    grid-auto-flow: column;
     grid-gap: 20px;
     grid-template-rows: max-content max-content;
     grid-template-columns: 40% 40%;
