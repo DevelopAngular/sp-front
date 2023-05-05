@@ -4,7 +4,7 @@ import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { BrowserModule, HammerModule } from '@angular/platform-browser';
 import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
 import { AgmCoreModule } from '@agm/core';
-import { RouterModule, Routes } from '@angular/router';
+import { Router, RouterModule, Routes } from '@angular/router';
 import { AppComponent } from './app.component';
 import { provideErrorHandler } from './error-handler';
 import { AuthenticatedGuard } from './guards/authenticated.guard';
@@ -80,6 +80,8 @@ import { AuthInterceptor } from './auth.interceptor';
 import { LoginService } from './services/login.service';
 import { CookieService } from 'ngx-cookie-service';
 import { StreaksDialogComponent } from './streaks-dialog/streaks-dialog.component';
+import { StorageService } from './services/storage.service';
+import { TrialBarComponent } from './trial-bar/trial-bar.component';
 // uncomment when app uses formatDate and so on
 //import {LOCALE_ID} from '@angular/core';
 //import {HttpService} from './services/http-service';
@@ -92,7 +94,7 @@ const DEFAULT_SWIPER_CONFIG: SwiperConfigInterface = {
 // @ts-ignore
 const appRoutes: Routes = [
 	{
-		path: 'main/intro',
+		path: 'intro',
 		canActivate: [AuthenticatedGuard],
 		loadChildren: () => import('app/intro-route/intro-route.module').then((m) => m.IntroRouteModule),
 		data: { hideSchoolToggleBar: true },
@@ -169,6 +171,7 @@ const appRoutes: Routes = [
 		CustomToastComponent,
 		IdcardOverlayContainerComponent,
 		StreaksDialogComponent,
+		TrialBarComponent,
 	],
 	imports: [
 		BrowserModule,
@@ -243,7 +246,7 @@ const appRoutes: Routes = [
 	providers: [
 		CookieService,
 		{ provide: OverlayContainer, useFactory: InitOverlay },
-		{ provide: HTTP_INTERCEPTORS, useClass: AuthInterceptor, multi: true, deps: [LoginService] },
+		{ provide: HTTP_INTERCEPTORS, useClass: AuthInterceptor, multi: true, deps: [StorageService, CookieService, LoginService, Router] },
 		{ provide: HTTP_INTERCEPTORS, useClass: ProgressInterceptor, multi: true },
 		// { provide: HTTP_INTERCEPTORS, useClass: AccessTokenInterceptor, multi: true },
 		{ provide: APP_BASE_HREF, useValue: '/' },

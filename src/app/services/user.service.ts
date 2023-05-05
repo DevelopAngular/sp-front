@@ -768,10 +768,6 @@ export class UserService implements OnDestroy {
 	}
 
 	searchProfile(role?, limit = 5, search?, ignoreProfileWithStatuses: ProfileStatus[] = ['suspended']) {
-		if (status === 'all') {
-			status = undefined;
-		}
-
 		let url: string = 'v1/users?';
 		if (role) {
 			url += `role=${role}&`;
@@ -1182,8 +1178,17 @@ export class UserService implements OnDestroy {
 		return this.http.get(`v1/users?role=_profile_student&has_grade_level=false`);
 	}
 
-	possibleProfileByCustomId(id: string): Observable<User | null> {
-		return this.http.get(`v1/users/custom_id/${id}`, { headers: { 'X-Ignore-Errors': 'true' } }).pipe(catchError((err) => of(null)));
+	possibleProfileByCustomId(id: string, ignoreProfileWithStatuses: ProfileStatus[] = ['suspended']): Observable<User | null> {
+		let url = `v1/users/custom_id/${id}?`;
+
+		for (const hideStatus of ignoreProfileWithStatuses) {
+			url += `hideStatus=${hideStatus}&`;
+		}
+		if (url[url.length - 1] === '&') {
+			url = url.slice(0, -1);
+		}
+
+		return this.http.get(url, { headers: { 'X-Ignore-Errors': 'true' } }).pipe(catchError((err) => of(null)));
 	}
 
 	getGradeLevelsByIds(ids: string[]) {

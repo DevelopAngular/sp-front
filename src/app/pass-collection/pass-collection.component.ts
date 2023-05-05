@@ -372,10 +372,14 @@ export class PassCollectionComponent implements OnInit, AfterViewInit, OnDestroy
 			if (!!this.kioskMode.getCurrentRoom().value) {
 				pass['cancellable_by_student'] = false;
 			}
+
+			const { fromPast, isActive, forFuture } = pass.calculatePassStatus();
+
 			data = {
 				pass: pass,
-				fromPast: this.fromPast,
-				forFuture: this.forFuture,
+				fromPast,
+				forFuture,
+				isActive,
 				forMonitor: this.forMonitor,
 				forStaff: this.forStaff && !this.kioskMode.getCurrentRoom().value,
 				kioskMode: !!this.kioskMode.getCurrentRoom().value,
@@ -383,7 +387,7 @@ export class PassCollectionComponent implements OnInit, AfterViewInit, OnDestroy
 				activePassTime$: this.activePassTime$,
 				showStudentInfoBlock: this.forStaff || this.kioskMode.getCurrentRoom().value,
 			};
-			data.isActive = !data.fromPast && !data.forFuture;
+			data.isActive = isActive;
 		} else {
 			data = {
 				pass: pass,
@@ -449,9 +453,5 @@ export class PassCollectionComponent implements OnInit, AfterViewInit, OnDestroy
 				this.selectedSort = sortMode;
 				this.onSortSelected(this.selectedSort);
 			});
-	}
-
-	getSearchInputPlaceholder(passes: HallPass[]) {
-		return `Search ${passes[Math.floor(Math.random() * passes.length)].destination.title}`;
 	}
 }

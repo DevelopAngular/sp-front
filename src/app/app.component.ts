@@ -1,8 +1,8 @@
-import { AfterViewInit, Component, ElementRef, HostListener, NgZone, OnDestroy, OnInit, Renderer2, SecurityContext, ViewChild } from '@angular/core';
+import { AfterViewInit, Component, ElementRef, HostListener, OnDestroy, OnInit, Renderer2, ViewChild } from '@angular/core';
 import { MatDialog, MatDialogRef } from '@angular/material/dialog';
 import { ActivatedRoute, NavigationEnd, Router } from '@angular/router';
 import { filter as _filter } from 'lodash';
-import { BehaviorSubject, combineLatest, forkJoin, fromEvent, interval, merge, Observable, of, ReplaySubject, Subject, throwError, zip } from 'rxjs';
+import { BehaviorSubject, combineLatest, fromEvent, merge, Observable, of, ReplaySubject, Subject, throwError, zip } from 'rxjs';
 
 import {
 	catchError,
@@ -22,10 +22,8 @@ import { DarkThemeSwitch } from './dark-theme-switch';
 
 import { DeviceDetection } from './device-detection.helper';
 import { School } from './models/School';
-import { AdminService } from './services/admin.service';
 import { LoginService } from './services/login.service';
 import { HttpService } from './services/http-service';
-import { KioskModeService } from './services/kiosk-mode.service';
 import { StorageService } from './services/storage.service';
 import { OverlayContainer } from '@angular/cdk/overlay';
 import { APPLY_ANIMATED_CONTAINER, ConsentMenuOverlay } from './consent-menu-overlay';
@@ -40,7 +38,6 @@ import { NextReleaseService } from './next-release/services/next-release.service
 import { ScreenService } from './services/screen.service';
 import { ToastService } from './services/toast.service';
 import _refiner from 'refiner-js';
-import { ColorProfile } from './models/ColorProfile';
 import { Util } from '../Util';
 import { HelpCenterService } from './services/help-center.service';
 import { CallDialogComponent } from './shared/shared-components/call-dialog/call-dialog.component';
@@ -105,32 +102,13 @@ export class AppComponent implements OnInit, AfterViewInit, OnDestroy {
 
 	public isUserHasPhoneAccess: boolean;
 
-	// @ViewChild('help-centre-iframe') iframe: ElementRef;
-
-	trialEndDate$ = this.http.currentSchoolSubject.pipe(
-		takeUntil(this.subscriber$),
-		filter((s) => !!s?.trial_end_date),
-		map((s) => {
-			const endDate = new Date(s.trial_end_date);
-			// We want the trial to end at the end of the day specified by |trial_end_date|
-			const day = 60 * 60 * 24 * 1000 - 1;
-			const realEndDate = new Date(endDate.getTime() + day);
-			return realEndDate;
-		})
-	);
-
 	isAdmin$ = this.userService.userData.pipe(
 		filter((u) => !!u),
 		map((u) => u.isAdmin())
 	);
 
-	private todayDate = (() => {
-		const date = new Date();
-		return Date.UTC(date.getUTCFullYear(), date.getUTCMonth(), date.getUTCDate(), date.getUTCHours(), date.getUTCMinutes(), date.getUTCSeconds());
-	})();
-
 	@HostListener('window:popstate', ['$event'])
-	back(event) {
+	back() {
 		if (DeviceDetection.isAndroid() || DeviceDetection.isIOSMobile()) {
 			window.history.pushState({}, '');
 		}
@@ -147,12 +125,6 @@ export class AppComponent implements OnInit, AfterViewInit, OnDestroy {
 			);
 		}
 	}
-	// @HostListener('window:mousemove', ['$event'])
-	// onWindowBlur(event: any): void {
-	// 	addEventListener('mousemove', function (e) {
-	// 		console.log('On iframe');
-	// 	});
-	// }
 
 	constructor(
 		public darkTheme: DarkThemeSwitch,
@@ -160,14 +132,11 @@ export class AppComponent implements OnInit, AfterViewInit, OnDestroy {
 		private userService: UserService,
 		private nextReleaseService: NextReleaseService,
 		private http: HttpService,
-		private adminService: AdminService,
-		private _zone: NgZone,
 		private activatedRoute: ActivatedRoute,
 		private router: Router,
 		private dialog: MatDialog,
 		private overlayContainer: OverlayContainer,
 		private storageService: StorageService,
-		private kms: KioskModeService,
 		private notifService: NotificationService,
 		private shortcutsService: KeyboardShortcutsService,
 		private screen: ScreenService,
@@ -211,32 +180,10 @@ export class AppComponent implements OnInit, AfterViewInit, OnDestroy {
 			}
 		});
 
-		// set only an already set up language is found
-		// otherwise let the language component try to translate
-		/*const savedLang = this.storageService.getItem('codelang');
-    if (!!savedLang) {
-      this.http.currentLang$.pipe(
-        takeUntil(this.subscriber$),
-        filter(res => !!res),
-      ).subscribe(chosenLang => {
-        try {
-          this.localize.load_localize_scripts(() => {
-            // Localizejs saves in localstorage an intem ljs-source-lang that stores the original lanuage
-            // the original language may be taken from lang html attribute of page
-            // or the official way below
-            const sourceLanguage = this.localize.getSourceLanguage();
-            this.localize.from(sourceLanguage).to(chosenLang);
-          });
-        } catch (err) {
-          this.localize.disableLanguage();
-        }
-      });
-    }*/
-
 		this.userService.loadedUser$
 			.pipe(
 				filter((l) => l),
-				switchMap((l) => this.userService.user$.pipe(take(1))),
+				switchMap(() => this.userService.user$.pipe(take(1))),
 				filter((user) => !!user),
 				map((user) => User.fromJSON(user)),
 				// Wait for schools to load so that we can register intercom and refiner correctly.
@@ -247,18 +194,13 @@ export class AppComponent implements OnInit, AfterViewInit, OnDestroy {
 				switchMap(([user, intercomWrapper]: [User, HTMLDivElement]) => {
 					this.currentRoute = window.location.pathname;
 					this.isStudent = user.isStudent();
-					const urlBlackList = [
-						'/forms',
-						'/kioskMode',
-						// '/login'
-					];
+					const urlBlackList = ['/forms', '/kioskMode'];
 					const isAllowed = urlBlackList.every((route) => !this.currentRoute.includes(route));
 					if (!user.isStudent() && !this.currentRoute.includes('/forms')) {
 						this.registerRefiner(user);
 					}
 
 					if (intercomWrapper) {
-						// intercomWrapper.style.display = user.isStudent() ? 'none' : 'block';
 						intercomWrapper.style.display = 'none';
 					}
 
@@ -316,7 +258,6 @@ export class AppComponent implements OnInit, AfterViewInit, OnDestroy {
 		this.shortcutsService.initialize();
 		this.shortcuts = this.shortcutsService.shortcuts;
 
-		// this.googleAnalytics.init();
 		const fcm_sw = localStorage.getItem('fcm_sw_registered');
 		if (fcm_sw === 'true') {
 			this.notifService.initNotifications(true);
@@ -337,7 +278,7 @@ export class AppComponent implements OnInit, AfterViewInit, OnDestroy {
 			document.head.appendChild(link);
 		}
 
-		combineLatest([this.checkIfAuthOnLoad(), this.loginService.isAuthenticated$.asObservable()])
+		combineLatest([this.loginService.checkIfAuthStored(), this.loginService.isAuthenticated$.asObservable()])
 			.pipe(
 				map(([authOnLoad, authStateChanged]) => authOnLoad || authStateChanged),
 				distinctUntilChanged(),
@@ -486,19 +427,7 @@ export class AppComponent implements OnInit, AfterViewInit, OnDestroy {
 			},
 		};
 		_refiner('identifyUser', data);
-		// _refiner('showForm', '31b6c030-820a-11ec-9c99-8b41a98d875d');
 		console.log('refiner registered');
-	}
-
-	getDaysUntil(date: Date): number {
-		const oneDay = 24 * 60 * 60 * 1000; // hours*minutes*seconds*milliseconds
-		// @ts-ignore
-		const diffDays = Math.round(Math.abs((date - this.todayDate) / oneDay));
-		return diffDays;
-	}
-
-	getDayText(days: number): string {
-		return days === 1 ? 'day' : 'days';
 	}
 
 	getBarBg(color, hovered, pressed) {
@@ -539,7 +468,6 @@ export class AppComponent implements OnInit, AfterViewInit, OnDestroy {
 		const listenerConfig = { childList: true, subtree: true };
 		this.intercomObserver = new MutationObserver((mutationList, observer) => {
 			for (const m of mutationList) {
-				// @ts-ignore
 				if ((m.target as HTMLElement).tagName !== 'BODY') {
 					return;
 				}
@@ -672,21 +600,5 @@ export class AppComponent implements OnInit, AfterViewInit, OnDestroy {
 		CDC.afterClosed().subscribe((status) => {
 			window.document.querySelector('.cdk-overlay-container').style.zIndex = '1005';
 		});
-	}
-
-	private checkIfAuthOnLoad(): Observable<boolean> {
-		const isCookiePresent = !!this.cookie.get('smartpassToken');
-
-		if (!isCookiePresent) {
-			this.storageService.removeItem('server');
-			return of(false);
-		}
-
-		const svrString = this.storageService.getItem('server');
-		if (!svrString) {
-			return of(false);
-		}
-
-		return of(true);
 	}
 }

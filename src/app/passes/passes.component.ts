@@ -510,9 +510,11 @@ export class PassesComponent implements OnInit, OnDestroy {
 
 	getActivePasses() {
 		const passes$ = this.liveDataService.activePasses$.pipe(
-			withLatestFrom(this.timeService.now$),
-			map(([passes, now]) => {
-				return passes.filter((pass) => new Date(pass.start_time).getTime() <= now.getTime());
+			map((passes) => {
+				return passes.filter((pass) => {
+					const { isActive } = pass.calculatePassStatus();
+					return isActive;
+				});
 			})
 		);
 		const excludedPasses = this.currentPass$.pipe(
