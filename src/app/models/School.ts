@@ -25,6 +25,7 @@ export class School extends BaseModel {
 		public feature_flag_wait_in_line: boolean,
 		public feature_flag_show_wait_in_line: boolean,
 		public feature_flag_new_abbreviation: boolean,
+		public feature_flag_referral_program: boolean,
 		public trial_quote_link: string,
 		public trial_end_date: Date,
 		public timezone: string
@@ -60,6 +61,7 @@ export class School extends BaseModel {
 			feature_flag_wait_in_line: boolean = !!JSON['feature_flag_wait_in_line'],
 			feature_flag_show_wait_in_line: boolean = !!JSON['feature_flag_show_wait_in_line'],
 			feature_flag_new_abbreviation: boolean = !!JSON['feature_flag_new_abbreviation'],
+			feature_flag_referral_program: boolean = !!JSON['feature_flag_referral_program'],
 			timezone: string = JSON['timezone'],
 			trial_quote_link: string = JSON['trial_quote_link'];
 		let trial_end_date: Date;
@@ -91,6 +93,7 @@ export class School extends BaseModel {
 			feature_flag_wait_in_line,
 			feature_flag_show_wait_in_line,
 			feature_flag_new_abbreviation,
+			feature_flag_referral_program,
 			trial_quote_link,
 			trial_end_date,
 			timezone
