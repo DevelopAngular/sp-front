@@ -49,7 +49,7 @@ export class RenewalComponent implements OnInit {
 		private userService: UserService,
 		private http: HttpClient,
 		private httpService: HttpService,
-		private datepipe: DatePipe,
+		private datepipe: DatePipe
 	) {}
 
 	ngOnInit(): void {
@@ -58,7 +58,7 @@ export class RenewalComponent implements OnInit {
 			this.numberOfTeacherReviews = reviews.length;
 			console.log(this.numberOfTeacherReviews);
 		});
-		
+
 		this.adminService.getRenewalData().subscribe({
 			next: (data) => {
 				this.status = data;

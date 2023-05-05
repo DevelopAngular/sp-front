@@ -9,7 +9,13 @@ import { TeacherReviewsComponent } from './teacher-reviews/teacher-reviews.compo
 import { TeacherReviewsTextComponent } from './teacher-reviews-text/teacher-reviews-text.component';
 
 @NgModule({
-	declarations: [TeacherReviewsPageComponent, TeacherReviewHeaderComponent, TeacherReviewBoxComponent, TeacherReviewsComponent, TeacherReviewsTextComponent],
+	declarations: [
+		TeacherReviewsPageComponent,
+		TeacherReviewHeaderComponent,
+		TeacherReviewBoxComponent,
+		TeacherReviewsComponent,
+		TeacherReviewsTextComponent,
+	],
 	imports: [CommonModule, SharedModule, TeacherReviewsRoutingModule],
 })
 export class TeacherReviewsModule {}

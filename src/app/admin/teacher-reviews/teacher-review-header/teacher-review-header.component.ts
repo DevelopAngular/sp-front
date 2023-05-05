@@ -1,14 +1,12 @@
 import { Component, OnInit } from '@angular/core';
 
 @Component({
-  selector: 'app-teacher-review-header',
-  templateUrl: './teacher-review-header.component.html',
-  styleUrls: ['./teacher-review-header.component.scss']
+	selector: 'app-teacher-review-header',
+	templateUrl: './teacher-review-header.component.html',
+	styleUrls: ['./teacher-review-header.component.scss'],
 })
 export class TeacherReviewHeaderComponent implements OnInit {
+	constructor() {}
 
-  constructor() { }
-
-  ngOnInit(): void {
-  }
+	ngOnInit(): void {}
 }

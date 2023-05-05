@@ -113,19 +113,18 @@
 					<div>
 						<div class="content-box">
 							<a routerLink="/admin/teacher-reviews" class="review-link">
-								<h5>See Your Staff's Reviews</h5> 
-								<img class="forward-button" [src]="'./assets/Forward Button.svg' | resolveAsset" alt="Button">
+								<h5>See Your Staff's Reviews</h5>
+								<img class="forward-button" [src]="'./assets/Forward Button.svg' | resolveAsset" alt="Button" />
 							</a>
-							<div class="five-stars"> 
-								<img class="star" [src]="'./assets/Star (Yellow).svg' | resolveAsset" alt="Star">
-								<img class="star" [src]="'./assets/Star (Yellow).svg' | resolveAsset" alt="Star">
-								<img class="star" [src]="'./assets/Star (Yellow).svg' | resolveAsset" alt="Star">
-								<img class="star" [src]="'./assets/Star (Yellow).svg' | resolveAsset" alt="Star">
-								<img class="star" [src]="'./assets/Star (Yellow).svg' | resolveAsset" alt="Star">
+							<div class="five-stars">
+								<img class="star" [src]="'./assets/Star (Yellow).svg' | resolveAsset" alt="Star" />
+								<img class="star" [src]="'./assets/Star (Yellow).svg' | resolveAsset" alt="Star" />
+								<img class="star" [src]="'./assets/Star (Yellow).svg' | resolveAsset" alt="Star" />
+								<img class="star" [src]="'./assets/Star (Yellow).svg' | resolveAsset" alt="Star" />
+								<img class="star" [src]="'./assets/Star (Yellow).svg' | resolveAsset" alt="Star" />
 								<p class="staff-review-date">Updated May 4,2023</p>
 							</div>
 							<p class="staff-review">They took the time to give their thoughts on SmartPass. Check out their reviews and ratings</p>
-	
 						</div>
 						<div class="content-box">
 							<h5>Features Coming Soon</h5>
@@ -155,7 +154,9 @@
 										<span>District Version</span>
 										<img class="dropdown-arrow" src="./assets/Chevron Right (Blue-Gray).svg" />
 									</div>
-									<p *ngIf="selectedFeature === 3">A district-wide view in SmartPass, making it easy for new schools in your district to get started.</p>
+									<p *ngIf="selectedFeature === 3">
+										A district-wide view in SmartPass, making it easy for new schools in your district to get started.
+									</p>
 								</div>
 								<div class="feature-item">
 									<div>
