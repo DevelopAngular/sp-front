@@ -9,23 +9,22 @@
 	width: 100%;
 	position: relative;
 	max-width: 100%;
-
 	background-color: #ffffff;
 	border-radius: 12px;
-
 	font-family: 'Inter';
 	font-style: normal;
 	font-weight: 700;
-	// gap: 28px;
+	gap: 10px;
 	// padding: 10px 0;
 	// border-radius: 20px;
-	margin: 0 0 20px 0;
+	//margin: 0 0 20px 0;
 }
 
 .referral-title {
 	font-size: 36px;
 	line-height: 44px;
 	color: #1f195e;
+	margin: auto;
 }
 
 .referral-description {
@@ -40,6 +39,7 @@
 	font-size: 19.8099px;
 	line-height: 24px;
 	color: #1f195e;
+	padding: 10px 0 5px 0;
 }
 
 .referral-items {
@@ -100,6 +100,7 @@
 	width: 100%;
 	display: flex;
 	justify-content: center;
+	height: 70px;
 }
 
 .bold-text {
