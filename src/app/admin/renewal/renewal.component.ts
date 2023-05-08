@@ -5,7 +5,7 @@ import _refiner from 'refiner-js';
 import { NavbarElementsRefsService } from '../../services/navbar-elements-refs.service';
 import { DomSanitizer, SafeResourceUrl } from '@angular/platform-browser';
 import { UserService } from '../../services/user.service';
-import { filter, map } from 'rxjs/operators';
+import { filter, map, tap } from "rxjs/operators";
 import { User } from '../../models/User';
 import { DatePipe } from '@angular/common';
 
@@ -47,6 +47,7 @@ export class RenewalComponent implements OnInit {
 	) {}
 
 	ngOnInit(): void {
+
 		this.adminService.getRenewalData().subscribe({
 			next: (data) => {
 				this.status = data;

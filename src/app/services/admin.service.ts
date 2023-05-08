@@ -159,6 +159,9 @@ export class AdminService {
 	getRenewalData() {
 		return this.http.post<RenewalStatus>('v2/school/renewal_info', {}, undefined, false);
 	}
+	getYearInReviewData(): Observable<YearInReviewResp> {
+		return this.http.post<YearInReviewResp>('v2/school/year_in_review', {}, undefined, false);
+	}
 
 	getOnboardProcessRequest() {
 		this.store.dispatch(getOnboardProcess());
@@ -313,3 +316,7 @@ export type RenewalStatus = {
 	subscription_end_date: string; //YYYY-MM-DD
 	using_profile_pictures: boolean;
 };
+
+export type YearInReviewResp = {
+	pdf_url: string;
+}
