@@ -5,7 +5,6 @@ import { HttpService } from '../../services/http-service';
 import { AdminService } from '../../services/admin.service';
 import { ScrollPositionService } from '../../scroll-position.service';
 import { Onboard } from '../../models/Onboard';
-import { ReferralModalService } from '../../services/referral-modal.service';
 @Component({
 	selector: 'app-dashboard',
 	templateUrl: './dashboard.component.html',
@@ -57,12 +56,7 @@ export class DashboardComponent implements OnInit, OnDestroy {
 	public onboardProgress$: Observable<{ [id: string]: Onboard }>;
 	public onboardProcessLoaded$: Observable<boolean>;
 
-	constructor(
-		private http: HttpService,
-		private adminService: AdminService,
-		private scrollPosition: ScrollPositionService,
-		private referralModalService: ReferralModalService
-	) {}
+	constructor(private http: HttpService, private adminService: AdminService, private scrollPosition: ScrollPositionService) {}
 
 	ngOnInit() {
 		this.onboardProcessLoaded$ = this.adminService.loadedOnboardProcess$;
@@ -71,7 +65,6 @@ export class DashboardComponent implements OnInit, OnDestroy {
 				return this.adminService.getOnboardProcessRequest();
 			})
 		);
-		this.referralModalService.openNuxReferralModal();
 	}
 
 	showStartPage(progress: { [id: string]: Onboard }): boolean {
