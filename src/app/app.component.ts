@@ -164,7 +164,6 @@ export class AppComponent implements OnInit, AfterViewInit, OnDestroy {
 		this.screen.customBackdropStyle$.asObservable().subscribe({
 			next: (customStyle: Record<string, any>) => (this.customStyle = customStyle),
 		});
-
 		this.hasCustomBackdrop$ = this.screen.customBackdropEvent$.asObservable();
 		this.customBackdropStyle$ = this.screen.customBackdropStyle$;
 

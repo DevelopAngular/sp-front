@@ -55,7 +55,6 @@ import { RepresentedUser } from '../navbar/navbar.component';
 import * as ReferralModalActions from '../ngrx/intros/actions/referral-modal.actions';
 import { AppModule } from '../app.module';
 import { AppState } from '../ngrx/app-state/app-state';
-
 @Component({
 	selector: 'app-passes',
 	templateUrl: './passes.component.html',
@@ -444,7 +443,6 @@ export class PassesComponent implements OnInit, OnDestroy {
 			})
 		);
 		this.store.dispatch(ReferralModalActions.openReferralModal());
-		console.log('user', this.user);
 		this.schoolsLength$ = this.httpService.schoolsLength$;
 		this.user$ = this.userService.user$;
 		const notifBtnDismissExpires = moment(JSON.parse(localStorage.getItem('notif_btn_dismiss_expiration')));
