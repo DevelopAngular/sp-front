@@ -29,7 +29,7 @@ export class NuxReferralComponent {
 			targetRoute = '/main/refer_us';
 		}
 
-		console.log('Navigating to:', targetRoute);
+		//console.log('Navigating to:', targetRoute);
 		this.router.navigate([targetRoute]);
 	}
 }
