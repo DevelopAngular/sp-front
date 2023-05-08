@@ -132,13 +132,4 @@ export class RenewalComponent implements OnInit {
 		this.showRenewConfirm = !this.showRenewConfirm;
 		this.navbarService.setRenewalIFrameFill(this.showRenewConfirm);
 	}
-
-	getNumberOfReviews(): number {
-		let numReviews = 0;
-		this.teacherReviewsComponent.getReviews().subscribe((reviews) => {
-			numReviews = reviews.length;
-			console.log(reviews.length);
-		});
-		return numReviews;
-	}
 }
