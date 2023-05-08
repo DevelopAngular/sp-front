@@ -1,6 +1,6 @@
 <div class="host">
 	<ng-container>
-		<div *ngFor="let review of teacherReviews" class="review">
+		<div *ngFor="let review of teacherReviews$ | async" class="review">
 			<app-teacher-review-box [data]="review"></app-teacher-review-box>
 		</div>
 	</ng-container>

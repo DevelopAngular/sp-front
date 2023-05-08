@@ -8,9 +8,8 @@ import { UserService } from '../../services/user.service';
 import { filter, map } from 'rxjs/operators';
 import { User } from '../../models/User';
 import { DatePipe } from '@angular/common';
-import { TeacherReviewsComponent } from '../teacher-reviews/teacher-reviews/teacher-reviews.component';
-import { HttpClient } from '@angular/common/http';
-import { HttpService } from '../../services/http-service';
+import { TeacherReviewsService } from '../../services/teacher-reviews.service';
+import { Observable } from 'rxjs';
 
 type ReminderData = {
 	img: string;
@@ -19,6 +18,14 @@ type ReminderData = {
 	button: string;
 	action: () => void;
 };
+
+interface TeacherReview {
+	name: string;
+	what_to_display: string;
+	stars: number;
+	testimonial: string;
+	first_shown: string;
+}
 
 @Component({
 	selector: 'app-renewal',
@@ -37,9 +44,8 @@ export class RenewalComponent implements OnInit {
 	public iframeLoading = true;
 	private iframeLoadedInterval;
 	private surveyId = '300ba7c0-ccad-11ed-b709-fb336f73b73f';
-	public numberOfTeacherReviews = 0;
-	teacherReviewsComponent: TeacherReviewsComponent;
 	public iFrameURL: SafeResourceUrl;
+	teacherReviews$: Observable<TeacherReview[]>;
 
 	constructor(
 		private adminService: AdminService,
@@ -47,17 +53,12 @@ export class RenewalComponent implements OnInit {
 		private navbarService: NavbarElementsRefsService,
 		private sanitizer: DomSanitizer,
 		private userService: UserService,
-		private http: HttpClient,
-		private httpService: HttpService,
-		private datepipe: DatePipe
+		private datepipe: DatePipe,
+		private teacherReviewsService: TeacherReviewsService
 	) {}
 
 	ngOnInit(): void {
-		this.teacherReviewsComponent = new TeacherReviewsComponent(this.userService, this.http, this.httpService);
-		this.teacherReviewsComponent.getReviews((reviews) => {
-			this.numberOfTeacherReviews = reviews.length;
-			console.log(this.numberOfTeacherReviews);
-		});
+		this.teacherReviews$ = this.teacherReviewsService.getReviews();
 
 		this.adminService.getRenewalData().subscribe({
 			next: (data) => {
@@ -130,5 +131,14 @@ export class RenewalComponent implements OnInit {
 	toggleConfirm() {
 		this.showRenewConfirm = !this.showRenewConfirm;
 		this.navbarService.setRenewalIFrameFill(this.showRenewConfirm);
+	}
+
+	getNumberOfReviews(): number {
+		let numReviews = 0;
+		this.teacherReviewsComponent.getReviews().subscribe((reviews) => {
+			numReviews = reviews.length;
+			console.log(reviews.length);
+		});
+		return numReviews;
 	}
 }
