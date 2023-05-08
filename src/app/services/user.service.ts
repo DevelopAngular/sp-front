@@ -1201,40 +1201,6 @@ export class UserService implements OnDestroy {
 		return this.http.get('v1/users/grade_level', opt);
 	}
 
-	getTeacherReviews() {
-		// return this.http.get(`v1/teacher_reviews`);
-		return of([
-			{
-				name: 'Kane Gui',
-				what_to_display: 'Good quote',
-				stars: 4,
-				testimonial: 'this app is amazing feels great love it',
-				first_shown: 'April 18, 2022',
-			},
-			{
-				name: 'Bobby Robert',
-				what_to_display: 'Recommend it',
-				stars: 1,
-				testimonial: '',
-				first_shown: 'April 18, 2022',
-			},
-			{
-				name: 'Shirley Temple',
-				what_to_display: 'Valuable tool',
-				stars: 3,
-				testimonial: 'this app is amazing feels great love it adasdadadadadad',
-				first_shown: 'April 18, 2022',
-			},
-			{
-				name: 'Ryan Park',
-				what_to_display: 'Good Quote',
-				stars: 5,
-				testimonial: 'this app is amazing feels great love it asdd   asdasd  asdasda  asdadasd  asdasda dasdadad',
-				first_shown: 'April 18, 2022',
-			},
-		]);
-	}
-
 	listOf(params: { email: string[] }) {
 		const headers = {
 			'Content-Type': 'application/json',
