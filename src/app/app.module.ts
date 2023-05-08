@@ -85,7 +85,6 @@ import { StreaksDialogComponent } from './streaks-dialog/streaks-dialog.componen
 import { StorageService } from './services/storage.service';
 import { TrialBarComponent } from './trial-bar/trial-bar.component';
 import { NuxReferralComponent } from './nux-components/nux-referral/nux-referral.component';
-import { ReferralModalEffects } from './ngrx/intros/effects/referral-modal.effects';
 // uncomment when app uses formatDate and so on
 //import {LOCALE_ID} from '@angular/core';
 //import {HttpService} from './services/http-service';
@@ -245,7 +244,6 @@ const appRoutes: Routes = [
 			SmartpassSearchEffects,
 			EncounterDetectionEffects,
 			ParentsEffects,
-			ReferralModalEffects,
 		]),
 		StoreDevtoolsModule.instrument({}),
 		HammerModule,

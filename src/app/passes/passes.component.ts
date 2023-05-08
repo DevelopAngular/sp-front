@@ -52,9 +52,8 @@ import { Invitation } from '../models/Invitation';
 import { InlineWaitInLineCardComponent } from '../pass-cards/inline-wait-in-line-card/inline-wait-in-line-card.component';
 import { Util } from '../../Util';
 import { RepresentedUser } from '../navbar/navbar.component';
-import * as ReferralModalActions from '../ngrx/intros/actions/referral-modal.actions';
-import { AppModule } from '../app.module';
 import { AppState } from '../ngrx/app-state/app-state';
+import { ReferralModalService } from '../services/referral-modal.service';
 @Component({
 	selector: 'app-passes',
 	templateUrl: './passes.component.html',
@@ -245,7 +244,8 @@ export class PassesComponent implements OnInit, OnDestroy {
 		private cdr: ChangeDetectorRef,
 		private titleService: Title,
 		private featureService: FeatureFlagService,
-		private store: Store<AppState>
+		private store: Store<AppState>,
+		private referralModalService: ReferralModalService
 	) {
 		this.userService.user$
 			.pipe(
@@ -442,7 +442,9 @@ export class PassesComponent implements OnInit, OnDestroy {
 				return filters['past-passes'].default;
 			})
 		);
-		this.store.dispatch(ReferralModalActions.openReferralModal());
+
+		this.referralModalService.openNuxReferralModal();
+
 		this.schoolsLength$ = this.httpService.schoolsLength$;
 		this.user$ = this.userService.user$;
 		const notifBtnDismissExpires = moment(JSON.parse(localStorage.getItem('notif_btn_dismiss_expiration')));
@@ -503,10 +505,6 @@ export class PassesComponent implements OnInit, OnDestroy {
 			this.locationsService.getLocationsWithConfigRequest('v1/locations?limit=1000&starred=false');
 			this.locationsService.getFavoriteLocationsRequest();
 		});
-	}
-
-	openReferralModal() {
-		this.store.dispatch(ReferralModalActions.openReferralModal());
 	}
 
 	ngOnDestroy(): void {
