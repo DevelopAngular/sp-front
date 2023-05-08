@@ -26,7 +26,7 @@ export class ReferralModalEffects {
 					const hasSeenModal = sessionStorage.getItem('hasSeenReferralModal');
 
 					/* In production: (!hasSeenModal && user.referral_status === 'not_applied' && userSchool.feature_flag_referral_program) */
-					if (!hasSeenModal && user.referral_status === 'not_applied' && !userSchool.feature_flag_referral_program) {
+					if (!hasSeenModal && user.referral_status === 'not_applied' && userSchool.feature_flag_referral_program) {
 						const dialogRef: MatDialogRef<NuxReferralComponent> = this.dialog.open(NuxReferralComponent, {
 							data: {
 								roles: user.roles,
