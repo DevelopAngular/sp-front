@@ -288,7 +288,6 @@ export class AppComponent implements OnInit, AfterViewInit, OnDestroy {
 				take(1)
 			)
 			.subscribe((user) => {
-				console.log('User object available:', user);
 				this.openNuxReferralModal();
 			});
 
@@ -512,8 +511,6 @@ export class AppComponent implements OnInit, AfterViewInit, OnDestroy {
 					const userInstance = User.fromJSON(user);
 					const userSchool = schoolEntities[user.school_id];
 					const hasSeenModal = sessionStorage.getItem('hasSeenReferralModal');
-
-					console.log(userInstance.isStaff());
 
 					if (
 						hasSeenModal === null &&
