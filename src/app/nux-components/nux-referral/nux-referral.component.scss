@@ -75,6 +75,10 @@
 	align-self: flex-start;
 }
 
+.gift-icon.success {
+	font-size: 46px;
+}
+
 .learn-more-button {
 	display: flex;
 	justify-content: center;
@@ -89,6 +93,10 @@
 	box-shadow: 0px 2.41679px 4.02798px rgba(0, 0, 0, 0.1);
 	border-radius: 10.2714px;
 	cursor: pointer;
+}
+
+.learn-more-button.green {
+	background: radial-gradient(98.09% 98.09% at 10.99% 0%, #15d593 0%, #00b467 100%);
 }
 
 .full-width {
@@ -109,4 +117,8 @@
 
 .blue-text {
 	color: #139be6;
+}
+
+.green-text {
+	color: $green500;
 }

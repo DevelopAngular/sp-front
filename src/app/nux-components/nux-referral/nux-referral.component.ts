@@ -30,5 +30,6 @@ export class NuxReferralComponent {
 		}
 
 		this.router.navigate([targetRoute]);
+		this.dialogRef.close();
 	}
 }
