@@ -106,6 +106,8 @@ import {
 	updateIntrosMain,
 	updateIntrosPassLimitsOnlyCertainRooms,
 	updateIntrosSearch,
+	updateIntrosSeenReferralNux,
+	updateIntrosSeenReferralSuccessNux,
 	updateIntrosSeenRenewalStatusPage,
 	updateIntrosStudentPassLimits,
 	updateIntrosWaitInLine,
@@ -703,6 +705,14 @@ export class UserService implements OnDestroy {
 		this.store.dispatch(updateIntrosSeenRenewalStatusPage({ intros, device, version }));
 	}
 
+	updateIntrosSeenReferralNuxRequest(intros, device, version) {
+		this.store.dispatch(updateIntrosSeenReferralNux({ intros, device, version }));
+	}
+
+	updateIntrosSeenReferralSuccessNuxRequest(intros, device, version) {
+		this.store.dispatch(updateIntrosSeenReferralSuccessNux({ intros, device, version }));
+	}
+
 	// TODO: Make all update functions into a single function
 	// TODO: Have all update intro endpoints be part of an enum
 	// TODO: Share that enum with `intro.effects.ts`
@@ -749,6 +759,14 @@ export class UserService implements OnDestroy {
 
 	updateIntrosSeenRenewalStatusPage(device, version) {
 		return this.http.patch(`v1/intros/seen_renewal_status_page`, { device, version });
+	}
+
+	updateIntrosSeenReferralNux(device, version) {
+		return this.http.patch(`v1/intros/seen_referral_nux`, { device, version });
+	}
+
+	updateIntrosSeenReferralSuccessNux(device, version) {
+		return this.http.patch(`v1/intros/seen_referral_success_nux`, { device, version });
 	}
 
 	saveKioskModeLocation(locId): Observable<ServerAuth> {

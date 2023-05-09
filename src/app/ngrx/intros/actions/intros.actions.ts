@@ -1,5 +1,4 @@
 import { createAction, props } from '@ngrx/store';
-import { create } from 'lodash';
 
 const INTROS = 'INTROS';
 
@@ -85,5 +84,26 @@ export const updateIntrosSeenRenewalStatusPageSuccess = createAction(
 );
 export const updateIntrosSeenRenewalStatusPageFailure = createAction(
 	`[${INTROS}] Update intros Seen Renewal Status Page Failure`,
+	props<{ errorMessage: string }>()
+);
+
+export const updateIntrosSeenReferralNux = createAction(`[${INTROS}] Update intros Seen Referral Nux`, props<UpdateIntrosProps>());
+
+export const updateIntrosSeenReferralNuxSuccess = createAction(`[${INTROS}] Update intros Seen Referral Nux Success`, props<{ data: any }>());
+
+export const updateIntrosSeenReferralNuxFailure = createAction(
+	`[${INTROS}] Update intros Seen Referral Nux Failure`,
+	props<{ errorMessage: string }>()
+);
+
+export const updateIntrosSeenReferralSuccessNux = createAction(`[${INTROS}] Update intros Seen Referral Success Nux`, props<UpdateIntrosProps>());
+
+export const updateIntrosSeenReferralSuccessNuxSuccess = createAction(
+	`[${INTROS}] Update intros Seen Referral Success Nux Success`,
+	props<{ data: any }>()
+);
+
+export const updateIntrosSeenReferralSuccessNuxFailure = createAction(
+	`[${INTROS}] Update intros Seen Referral Success Nux Failure`,
 	props<{ errorMessage: string }>()
 );

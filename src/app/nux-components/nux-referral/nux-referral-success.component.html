@@ -1,0 +1,27 @@
+<div class="referral-container">
+	<div class="cancel-btn" [mat-dialog-close]="true">
+		<img src="../../../assets/Cancel (Gray-Black).svg" />
+	</div>
+	<div class="gift-icon success">🎉</div>
+	<h1 class="referral-title"><span class="green-text">You’re in!</span> $250 for <span class="underlined-text">each</span> school you refer</h1>
+
+	<mat-dialog-content>
+		<p class="referral-description">
+			You will earn a $250 cash payment per referral for any school who signs up with your link, <span class="bold-text">with no upper limit!</span>
+		</p>
+		<h2 class="referral-steps">How to Start Earning</h2>
+		<ul class="referral-items">
+			<li>
+				<img src="../../../assets/Link.svg" class="icon" alt="" />
+				<span>If accepted, you will receive a unique referral link to share with your network!</span>
+			</li>
+			<li>
+				<img src="../../../assets/Cash.svg" class="icon" alt="" />
+				<span>When a referral (school) has a demo and purchases SmartPass, you'll get a $250 cash payment.</span>
+			</li>
+		</ul>
+	</mat-dialog-content>
+	<mat-dialog-actions class="full-width">
+		<button mat-button class="learn-more-button green" (click)="NavToReferralPage()">See Your Referral Link</button>
+	</mat-dialog-actions>
+</div>

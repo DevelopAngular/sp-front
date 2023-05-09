@@ -85,6 +85,8 @@ import { StreaksDialogComponent } from './streaks-dialog/streaks-dialog.componen
 import { StorageService } from './services/storage.service';
 import { TrialBarComponent } from './trial-bar/trial-bar.component';
 import { NuxReferralComponent } from './nux-components/nux-referral/nux-referral.component';
+import { NuxReferralSuccessComponent } from './nux-components/nux-referral/nux-referral-success.component';
+
 // uncomment when app uses formatDate and so on
 //import {LOCALE_ID} from '@angular/core';
 //import {HttpService} from './services/http-service';
@@ -176,6 +178,7 @@ const appRoutes: Routes = [
 		StreaksDialogComponent,
 		TrialBarComponent,
 		NuxReferralComponent,
+		NuxReferralSuccessComponent,
 	],
 	imports: [
 		BrowserModule,
