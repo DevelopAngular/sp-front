@@ -113,6 +113,7 @@ import { HelpCenterComponent } from './shared-components/help-center/help-center
 import { NuxHelpCenterComponent } from '../nux-components/nux-help-center/nux-help-center.component';
 import { CallDialogComponent } from './shared-components/call-dialog/call-dialog.component';
 import { TimeZoneService } from '../services/time-zone.service';
+import { YearInReviewComponent } from '../admin/year-in-review/year-in-review.component';
 const DEFAULT_SWIPER_CONFIG: SwiperConfigInterface = {
 	direction: 'horizontal',
 	slidesPerView: 'auto',
@@ -225,6 +226,7 @@ const DEFAULT_SWIPER_CONFIG: SwiperConfigInterface = {
 		HelpCenterComponent,
 		NuxHelpCenterComponent,
 		CallDialogComponent,
+		YearInReviewComponent,
 	],
 	exports: [
 		ReactiveFormsModule,
@@ -327,6 +329,7 @@ const DEFAULT_SWIPER_CONFIG: SwiperConfigInterface = {
 		HelpCenterComponent,
 		NuxHelpCenterComponent,
 		CallDialogComponent,
+		YearInReviewComponent,
 	],
 	providers: [
 		{

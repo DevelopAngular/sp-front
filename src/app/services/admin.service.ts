@@ -319,4 +319,4 @@ export type RenewalStatus = {
 
 export type YearInReviewResp = {
 	pdf_url: string;
-}
+};
