@@ -3,6 +3,9 @@ import { MatDialog, MatDialogRef } from '@angular/material/dialog';
 import { ActivatedRoute, NavigationEnd, Router } from '@angular/router';
 import { filter as _filter } from 'lodash';
 import { BehaviorSubject, combineLatest, fromEvent, merge, Observable, of, ReplaySubject, Subject, throwError, zip } from 'rxjs';
+import { Store } from '@ngrx/store';
+import { AppState } from './ngrx/app-state/app-state';
+import { NuxReferralComponent } from './nux-components/nux-referral/nux-referral.component';
 
 import {
 	catchError,
@@ -147,7 +150,8 @@ export class AppComponent implements OnInit, AfterViewInit, OnDestroy {
 		private cookie: CookieService,
 		private titleService: Title,
 		private renderer: Renderer2,
-		private parentService: ParentAccountService
+		private parentService: ParentAccountService,
+		private store: Store<AppState>
 	) {}
 
 	get isMobile() {
@@ -164,7 +168,6 @@ export class AppComponent implements OnInit, AfterViewInit, OnDestroy {
 		this.screen.customBackdropStyle$.asObservable().subscribe({
 			next: (customStyle: Record<string, any>) => (this.customStyle = customStyle),
 		});
-
 		this.hasCustomBackdrop$ = this.screen.customBackdropEvent$.asObservable();
 		this.customBackdropStyle$ = this.screen.customBackdropStyle$;
 
@@ -277,6 +280,16 @@ export class AppComponent implements OnInit, AfterViewInit, OnDestroy {
 			link.setAttribute('href', './assets/css/custom_scrollbar.css');
 			document.head.appendChild(link);
 		}
+
+		this.store
+			.select((state: AppState) => state.user.user)
+			.pipe(
+				filter((user) => user !== null),
+				take(1)
+			)
+			.subscribe((user) => {
+				this.openNuxReferralModal();
+			});
 
 		combineLatest([this.loginService.checkIfAuthStored(), this.loginService.isAuthenticated$.asObservable()])
 			.pipe(
@@ -483,6 +496,45 @@ export class AppComponent implements OnInit, AfterViewInit, OnDestroy {
 			}
 		});
 		this.intercomObserver.observe(targetNode, listenerConfig);
+	}
+
+	openNuxReferralModal(): void {
+		const subscription = this.store
+			.select((state: AppState) => ({
+				user: state.user.user,
+				schoolEntities: state.schools.entities,
+			}))
+			.pipe(
+				take(1),
+				filter(({ user }) => user !== null),
+				map(({ user, schoolEntities }) => {
+					const userInstance = User.fromJSON(user);
+					const userSchool = schoolEntities[user.school_id];
+					const hasSeenModal = sessionStorage.getItem('hasSeenReferralModal');
+
+					if (
+						hasSeenModal === null &&
+						user.referral_status === 'not_applied' &&
+						!userSchool.feature_flag_referral_program &&
+						userInstance.isStaff()
+					) {
+						const dialogRef = this.dialog.open(NuxReferralComponent, {
+							data: {
+								roles: user.roles,
+							},
+							panelClass: 'referral-dialog-container',
+						});
+
+						sessionStorage.setItem('hasSeenReferralModal', 'true');
+					}
+				})
+			)
+			.subscribe(
+				() => {},
+				(error) => {
+					console.error('openNuxReferralModal subscription error:', error);
+				}
+			);
 	}
 
 	get setHeight() {
