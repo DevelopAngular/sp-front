@@ -15,6 +15,7 @@ export enum FLAGS {
 	AbbreviateLastName = 'feature_flag_new_abbreviation',
 	ShowStreaks = 'feature_flag_streaks',
 	RenewalChecklist = 'feature_flag_renewal_checklist',
+	TeacherReviews = 'teacher_reviews'
 }
 
 // TODO: Replace individual feature flag functions with this service
@@ -32,5 +33,9 @@ export class FeatureFlagService {
 
 	isFeatureEnabled(featureFlag: FLAGS): boolean {
 		return !!this.school?.[featureFlag];
+	}
+
+	isFeatureV2Enabled(featureFlag: FLAGS): boolean {
+		return this.school?.feature_flags_v2?.includes(featureFlag);
 	}
 }

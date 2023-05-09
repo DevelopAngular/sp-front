@@ -10,6 +10,7 @@ import { User } from '../../models/User';
 import { DatePipe } from '@angular/common';
 import { TeacherReviewsService } from '../../services/teacher-reviews.service';
 import { Observable } from 'rxjs';
+import { FeatureFlagService, FLAGS } from '../../services/feature-flag.service';
 
 type ReminderData = {
 	img: string;
@@ -54,7 +55,8 @@ export class RenewalComponent implements OnInit {
 		private sanitizer: DomSanitizer,
 		private userService: UserService,
 		private datepipe: DatePipe,
-		private teacherReviewsService: TeacherReviewsService
+		private teacherReviewsService: TeacherReviewsService,
+		private featureFlagService: FeatureFlagService
 	) {}
 
 	ngOnInit(): void {
@@ -126,6 +128,11 @@ export class RenewalComponent implements OnInit {
 		} else {
 			this.selectedFeature = clicked;
 		}
+	}
+
+
+	get isTeacherReviewsEnabled() {
+		return this.featureFlagService.isFeatureV2Enabled(FLAGS.TeacherReviews);
 	}
 
 	toggleConfirm() {
