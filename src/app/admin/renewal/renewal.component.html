@@ -111,8 +111,7 @@
 				</div>
 				<div class="action-boxes">
 					<div>
-						<!-- (teacherReviews$ | async)?.length > 1 &&  -->
-						<div *ngIf="isTeacherReviewsEnabled" class="content-box">
+						<div *ngIf="(teacherReviews$ | async)?.length > 1 && isTeacherReviewsEnabled" class="content-box">
 							<a routerLink="/admin/teacher-reviews" class="review-link">
 								<h5>See Your Staff's Reviews</h5>
 								<img class="forward-button" [src]="'./assets/Forward Button.svg' | resolveAsset" alt="Button" />
