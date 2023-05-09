@@ -33,6 +33,11 @@
 		</div>
 	</div>
 	<div class="nav-bottom">
+		<div class="referral-button" (click)="goToReferralPage()">
+			<img [src]="'./assets/Blue-Gift.svg' | resolveAsset" alt="Referral Gift" />
+			<span class="referral-text"><strong>Refer a friend</strong><br />Get $250</span>
+		</div>
+
 		<app-renewal-box *ngIf="isRenewalChecklistEnabled"></app-renewal-box>
 		<div class="nav-footer">
 			<ng-template #referSuccess>
