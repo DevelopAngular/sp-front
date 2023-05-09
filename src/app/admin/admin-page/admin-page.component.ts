@@ -3,11 +3,11 @@ import { AfterViewInit, Component, OnDestroy, OnInit } from '@angular/core';
 import { BehaviorSubject, forkJoin, Observable, of, Subject } from 'rxjs';
 import { UserService } from '../../services/user.service';
 import { Router } from '@angular/router';
-import { catchError, delay, exhaustMap, filter, map, skip, switchMap, take, takeUntil, tap, withLatestFrom } from 'rxjs/operators';
-import { environment } from '../../../environments/environment';
+import { catchError, delay, exhaustMap, filter, map, skip, switchMap, take, takeUntil, tap } from 'rxjs/operators';
 import { HttpService } from '../../services/http-service';
 import { FeatureFlagService, FLAGS } from '../../services/feature-flag.service';
 import { AdminService } from '../../services/admin.service';
+import { User } from '../../models/User';
 
 declare const window;
 
@@ -88,18 +88,19 @@ export class AdminPageComponent implements OnInit, AfterViewInit, OnDestroy {
 	goToDefaultPage() {
 		of(location.pathname.split('/'))
 			.pipe(
-				takeUntil(this.destroy$),
-				map((fragments) => fragments.filter((f) => !!f)),
-				filter((value) => {
-					if (environment.production) {
-						return value.length < 3;
-					} else {
-						return value.length < 2;
-					}
-				}),
+				takeUntil<string[]>(this.destroy$),
+				map((fragments) => fragments.filter((f) => !!f?.length)),
+				/**
+				 * This filter pipe prevents the user from being taken back to the dashboard after
+				 * refreshing the page while on the referral page
+				 * It also prevents the user from being taken back to the dashboard on direct
+				 * address bar navigation to the referral page. Direct navigation may not be intended
+				 * behaviour but being redirected is also unexpected behaviour.
+				 */
+				filter((fragments) => !fragments.includes('refer_us')),
 				take(1),
 				exhaustMap(() => this.userService.user$.pipe(take(1))),
-				filter((user) => !!user)
+				filter<User>(Boolean)
 			)
 			.subscribe((user) => {
 				const availableAccessTo = user.roles.filter((_role) => _role.match('access_'));

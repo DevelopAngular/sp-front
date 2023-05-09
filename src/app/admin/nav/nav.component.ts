@@ -140,7 +140,6 @@ export class NavComponent implements OnInit, AfterViewInit, OnDestroy {
 	user: User;
 	showButton: boolean;
 	selectedSettings: boolean;
-	process: number;
 	hidePointer: boolean;
 
 	destroy$: Subject<any> = new Subject<any>();
@@ -184,6 +183,9 @@ export class NavComponent implements OnInit, AfterViewInit, OnDestroy {
 	}
 
 	ngOnInit() {
+		if (this.router.url.includes('refer_us')) {
+			this.navbarService.setPointerVisible(false);
+		}
 		const url: string[] = this.router.url.split('/');
 		this.currentTab = url[url.length - 1];
 		this.tab = url.slice(1);
@@ -196,7 +198,7 @@ export class NavComponent implements OnInit, AfterViewInit, OnDestroy {
 				this.tab = urlSplit.slice(1);
 				tabStr = JSON.stringify(this.tab);
 				this.tab = tabStr === '' || tabStr === 'admin' ? ['dashboard'] : this.tab;
-				this.navbarService.setPointerVisible(!(this.process === 100 && this.tab.indexOf('gettingstarted') !== -1));
+				this.navbarService.setPointerVisible(!this.tab.includes('gettingstarted') && !this.tab.includes('refer_us'));
 			}
 		});
 
@@ -403,6 +405,10 @@ export class NavComponent implements OnInit, AfterViewInit, OnDestroy {
 	}
 	hasRoles(roles: string[]): Observable<boolean> {
 		return this.userService.userData.pipe(map((u) => roles.every((_role) => u.roles.includes(_role))));
+	}
+
+	goToReferralPage() {
+		this.router.navigate(['admin', 'refer_us']);
 	}
 
 	protected readonly FLAGS = FLAGS;

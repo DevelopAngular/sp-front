@@ -15,19 +15,13 @@ export class NotSeenIntroGuard implements CanActivate {
 
 	canActivate(next: ActivatedRouteSnapshot, state: RouterStateSnapshot): Observable<boolean> | Promise<boolean> | boolean {
 		return this.userService.user$.pipe(
-			filter((raw) => !!raw),
+			filter(Boolean),
 			tap(() => this.userService.getIntrosRequest()),
 			map((raw) => {
 				return User.fromJSON(raw);
 			}),
 			switchMap((user) => {
-				return zip(
-					of(user),
-					this.userService.introsData$.pipe(
-						filter((res) => !!res),
-						take(1)
-					)
-				);
+				return zip(of(user), this.userService.introsData$.pipe(filter(Boolean), take(1)));
 			}),
 			map(([user, intros]: [any, any]) => {
 				if (!user) {

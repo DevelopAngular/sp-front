@@ -1,19 +1,19 @@
 import { ComponentFixture, TestBed } from '@angular/core/testing';
 
-import { FeedbackButtonComponent } from './feedback-button.component';
+import { ReferralPageComponent } from './referral-page.component';
 
-describe('FeedbackButtonComponent', () => {
-	let component: FeedbackButtonComponent;
-	let fixture: ComponentFixture<FeedbackButtonComponent>;
+describe('ReferralPageComponent', () => {
+	let component: ReferralPageComponent;
+	let fixture: ComponentFixture<ReferralPageComponent>;
 
 	beforeEach(async () => {
 		await TestBed.configureTestingModule({
-			declarations: [FeedbackButtonComponent],
+			declarations: [ReferralPageComponent],
 		}).compileComponents();
 	});
 
 	beforeEach(() => {
-		fixture = TestBed.createComponent(FeedbackButtonComponent);
+		fixture = TestBed.createComponent(ReferralPageComponent);
 		component = fixture.componentInstance;
 		fixture.detectChanges();
 	});
