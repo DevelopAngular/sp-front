@@ -1,0 +1,98 @@
+@import 'src/sp-colors';
+
+.referral-page {
+	background: #f5f5f5;
+	padding: 80px;
+	display: grid;
+	grid-template-columns: 1fr 1fr;
+
+	h1.referral-heading {
+		font-size: 50px !important;
+		font-weight: 700;
+	}
+
+	h2.referral-subheading {
+		margin-top: 70px !important;
+		font-size: 26px !important;
+	}
+
+	section.referral-earning-steps {
+		display: grid;
+		grid-template-columns: 65px auto;
+		align-items: center;
+		row-gap: 25px;
+
+		p.referral-text {
+			margin: 0;
+		}
+
+		div.icon-square {
+			height: 42px;
+			width: 42px;
+			border-radius: 5px;
+			background: $gray200;
+			display: grid;
+			place-content: center;
+			align-items: center;
+		}
+	}
+
+	section.referral-perks {
+		display: grid;
+		grid-template-columns: 1fr 1fr;
+		gap: 20px;
+
+		div.perk-card {
+			padding: 10px;
+			display: flex;
+			flex-direction: column;
+			align-items: center;
+			justify-content: center;
+			text-align: center;
+			border-radius: 11px;
+			background: white;
+			width: 244px;
+			height: 163px;
+
+			img {
+				width: 56px;
+				height: 56px;
+			}
+
+			p.referral-text {
+				margin: 8px 0;
+			}
+
+			div.social-icons {
+				img {
+					width: 32px;
+					height: 32px;
+					margin: 0 8px;
+				}
+			}
+		}
+	}
+
+	section.referral-terms {
+		li {
+			padding: 5px 0;
+		}
+	}
+
+	section.referral-sign-up {
+		width: 420px;
+		height: 557px;
+		border-radius: 10px;
+		background: white;
+		border: 1px solid #e2e6ec;
+		margin-left: auto;
+		margin-top: 188px;
+	}
+}
+
+.referral-text {
+	font-weight: 400;
+	font-size: 22px;
+	line-height: 27px;
+	color: $gray500;
+}

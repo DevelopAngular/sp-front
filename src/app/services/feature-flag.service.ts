@@ -16,6 +16,7 @@ export enum FLAGS {
 	ShowStreaks = 'feature_flag_streaks',
 	RenewalChecklist = 'feature_flag_renewal_checklist',
 	TeacherReviews = 'teacher_reviews',
+	ReferralProgramme = 'feature_flag_referral_program',
 }
 
 // TODO: Replace individual feature flag functions with this service

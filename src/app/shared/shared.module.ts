@@ -65,7 +65,6 @@ import { SettingsDescriptionPopupComponent } from '../settings-description-popup
 import { AppTextareaComponent } from '../app-textarea/app-textarea.component';
 import { SquareButtonComponent } from '../square-button/square-button.component';
 import { RoundButtonComponent } from '../round-button/round-button.component';
-import { FeedbackButtonComponent } from '../feedback-button/feedback-button.component';
 import { NuxEncounterPreventionComponent } from '../nux-components/nux-encounter-prevention/nux-encounter-prevention.component';
 import { SmartpassSearchComponent } from '../smartpass-search/smartpass-search.component';
 import { EncounterGroupComponent } from '../admin/accounts/encounter-prevention-dialog/encounter-group/encounter-group.component';
@@ -181,7 +180,6 @@ const DEFAULT_SWIPER_CONFIG: SwiperConfigInterface = {
 		AppTextareaComponent,
 		SquareButtonComponent,
 		RoundButtonComponent,
-		FeedbackButtonComponent,
 		NuxEncounterPreventionComponent,
 		SmartpassSearchComponent,
 		EncounterGroupComponent,
@@ -284,7 +282,6 @@ const DEFAULT_SWIPER_CONFIG: SwiperConfigInterface = {
 		AppTextareaComponent,
 		SquareButtonComponent,
 		RoundButtonComponent,
-		FeedbackButtonComponent,
 		CustomToolTipComponent,
 		NuxEncounterPreventionComponent,
 		SmartpassSearchComponent,

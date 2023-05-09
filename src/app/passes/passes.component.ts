@@ -1,6 +1,7 @@
 import { ChangeDetectionStrategy, ChangeDetectorRef, Component, ElementRef, HostListener, NgZone, OnDestroy, OnInit, ViewChild } from '@angular/core';
 import { MatDialog, MatDialogRef, MatDialogState } from '@angular/material/dialog';
 // TODO: Replace combineLatest with non-deprecated implementation
+import { Store } from '@ngrx/store';
 import { BehaviorSubject, combineLatest, forkJoin, interval, merge, Observable, of, Subject, timer } from 'rxjs';
 import {
 	concatMap,
@@ -51,7 +52,7 @@ import { Invitation } from '../models/Invitation';
 import { InlineWaitInLineCardComponent } from '../pass-cards/inline-wait-in-line-card/inline-wait-in-line-card.component';
 import { Util } from '../../Util';
 import { RepresentedUser } from '../navbar/navbar.component';
-
+import { AppState } from '../ngrx/app-state/app-state';
 @Component({
 	selector: 'app-passes',
 	templateUrl: './passes.component.html',
@@ -241,7 +242,8 @@ export class PassesComponent implements OnInit, OnDestroy {
 		private passLimitsService: PassLimitService,
 		private cdr: ChangeDetectorRef,
 		private titleService: Title,
-		private featureService: FeatureFlagService
+		private featureService: FeatureFlagService,
+		private store: Store<AppState>
 	) {
 		this.userService.user$
 			.pipe(
@@ -438,6 +440,7 @@ export class PassesComponent implements OnInit, OnDestroy {
 				return filters['past-passes'].default;
 			})
 		);
+
 		this.schoolsLength$ = this.httpService.schoolsLength$;
 		this.user$ = this.userService.user$;
 		const notifBtnDismissExpires = moment(JSON.parse(localStorage.getItem('notif_btn_dismiss_expiration')));

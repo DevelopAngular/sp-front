@@ -5,6 +5,8 @@ import { FeatureFlagGuard } from '../guards/feature_flag.guard';
 import { FeatureFlagService, FLAGS } from '../services/feature-flag.service';
 import { HttpService } from '../services/http-service';
 import { CommonModule } from '@angular/common';
+import { AuthenticatedGuard } from '../guards/authenticated.guard';
+import { IsTeacherOrAdminGuard } from '../guards/is-teacher-or-admin.guard';
 
 const routes: Routes = [
 	{
@@ -20,6 +22,12 @@ const routes: Routes = [
 			{ path: 'myschool', loadChildren: () => import('app/admin/my-school/my-school.module').then((m) => m.MySchoolModule) },
 			{ path: 'idcards', loadChildren: () => import('app/admin/id-cards/id-cards.module').then((m) => m.IdCardsModule) },
 			{ path: 'teacher-reviews', loadChildren: () => import('app/admin/teacher-reviews/teacher-reviews.module').then((m) => m.TeacherReviewsModule) },
+			{
+				path: 'refer_us',
+				loadChildren: () => import('app/referrals/referrals.module').then((m) => m.ReferralsModule),
+				canActivate: [FeatureFlagGuard],
+				data: { feature_flag: FLAGS.ReferralProgramme },
+			},
 			{
 				path: 'renewal',
 				loadChildren: () => import('app/admin/renewal/renewal.module').then((m) => m.RenewalModule),

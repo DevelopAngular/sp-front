@@ -1,6 +1,8 @@
 import { HTTP_INTERCEPTORS, HttpClientModule } from '@angular/common/http';
 import { NgModule } from '@angular/core';
 import { FormsModule, ReactiveFormsModule } from '@angular/forms';
+import { MatDialogModule } from '@angular/material/dialog';
+import { MatButtonModule } from '@angular/material/button';
 import { BrowserModule, HammerModule } from '@angular/platform-browser';
 import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
 import { AgmCoreModule } from '@agm/core';
@@ -82,6 +84,9 @@ import { CookieService } from 'ngx-cookie-service';
 import { StreaksDialogComponent } from './streaks-dialog/streaks-dialog.component';
 import { StorageService } from './services/storage.service';
 import { TrialBarComponent } from './trial-bar/trial-bar.component';
+import { NuxReferralComponent } from './nux-components/nux-referral/nux-referral.component';
+import { NuxReferralSuccessComponent } from './nux-components/nux-referral/nux-referral-success.component';
+
 // uncomment when app uses formatDate and so on
 //import {LOCALE_ID} from '@angular/core';
 //import {HttpService} from './services/http-service';
@@ -172,6 +177,8 @@ const appRoutes: Routes = [
 		IdcardOverlayContainerComponent,
 		StreaksDialogComponent,
 		TrialBarComponent,
+		NuxReferralComponent,
+		NuxReferralSuccessComponent,
 	],
 	imports: [
 		BrowserModule,
@@ -183,6 +190,8 @@ const appRoutes: Routes = [
 		CoreModule,
 		NextReleaseModule,
 		KeyboardShortcutsModule.forRoot(),
+		MatDialogModule,
+		MatButtonModule,
 
 		RouterModule.forRoot(appRoutes, {
 			enableTracing: false,
