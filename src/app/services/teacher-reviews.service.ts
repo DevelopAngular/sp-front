@@ -39,7 +39,7 @@ export class TeacherReviewsService {
 					const first_shown = this.formatDate(fields[8]);
 
 					if (this.httpService.getSchool().id == school_id && !do_not_share) {
-						const subscription = this.userService.getUserById(user_id).subscribe((user) => {
+						this.userService.getUserById(user_id).subscribe((user) => {
 							if (user && user.roles.includes('_profile_teacher')) {
 								const review: TeacherReview = {
 									name: user.display_name,
@@ -51,7 +51,6 @@ export class TeacherReviewsService {
 
 								reviews.push(review);
 							}
-							subscription.unsubscribe();
 						});
 					}
 				}
