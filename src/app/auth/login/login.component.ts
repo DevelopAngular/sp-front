@@ -1,7 +1,7 @@
 import { ChangeDetectionStrategy, ChangeDetectorRef, Component, EventEmitter, OnDestroy, OnInit, Output } from '@angular/core';
 import { AuthObject, DemoLogin, LoginErrors, LoginService } from '../../services/login.service';
 import { BehaviorSubject, combineLatest, Observable, of, Subject } from 'rxjs';
-import { filter, finalize, map, pluck, takeUntil, tap } from 'rxjs/operators';
+import { distinctUntilChanged, filter, finalize, map, pluck, takeUntil, tap } from 'rxjs/operators';
 import { AuthType, HttpService } from '../../services/http-service';
 import { Meta, Title } from '@angular/platform-browser';
 import { ActivatedRoute, Router } from '@angular/router';
@@ -147,7 +147,7 @@ export class LoginComponent implements OnInit, OnDestroy {
 	}
 
 	ngOnInit(): void {
-		combineLatest([this.loginService.checkIfAuthStored(), this.loginService.isAuthenticated$.asObservable(), this.route.queryParams])
+		combineLatest([this.loginService.checkIfAuthStored(), this.loginService.isAuthenticated$, this.route.queryParams])
 			.pipe(
 				filter(([authOnLoad, authStateChanged, qp]) => {
 					return !!qp?.code || !!qp?.instant_login;
@@ -162,7 +162,10 @@ export class LoginComponent implements OnInit, OnDestroy {
 					this.disabledButton = false;
 					this.showSpinner = true;
 				}),
-				map(([authOnLoad, authStateChanged, qp]) => qp)
+				map(([authOnLoad, authStateChanged, qp]) => qp),
+				distinctUntilChanged((qp1, qp2) => {
+					return qp1.code === qp2.code && qp1.scope === qp2.scope;
+				})
 			)
 			.subscribe((qp) => {
 				// These query parameters are present after logging into the respective platforms
