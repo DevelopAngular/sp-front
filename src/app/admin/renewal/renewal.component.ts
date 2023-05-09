@@ -130,7 +130,6 @@ export class RenewalComponent implements OnInit {
 		}
 	}
 
-
 	get isTeacherReviewsEnabled() {
 		return this.featureFlagService.isFeatureV2Enabled(FLAGS.TeacherReviews);
 	}

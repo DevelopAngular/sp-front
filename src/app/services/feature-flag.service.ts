@@ -15,7 +15,7 @@ export enum FLAGS {
 	AbbreviateLastName = 'feature_flag_new_abbreviation',
 	ShowStreaks = 'feature_flag_streaks',
 	RenewalChecklist = 'feature_flag_renewal_checklist',
-	TeacherReviews = 'teacher_reviews'
+	TeacherReviews = 'teacher_reviews',
 }
 
 // TODO: Replace individual feature flag functions with this service
