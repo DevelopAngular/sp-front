@@ -385,3 +385,49 @@ $arrowAnimation: translate(4px, 0);
 		display: none;
 	}
 }
+
+.five-stars {
+	display: flex;
+	flex-direction: row;
+	width: 100%;
+	align-items: center;
+}
+
+.star {
+	height: 15px;
+	width: 15px;
+	margin-right: 7px;
+}
+.staff-review-date {
+	display: flex;
+	justify-content: right;
+	width: 100%;
+	color: #4e5d74;
+	font-size: 10px;
+	font-family: 'Inter', sans-serif;
+	font-style: normal;
+	font-weight: 400;
+	margin: 0 0 0 0;
+}
+
+.staff-review {
+	color: #4e5d74;
+	font-size: 10px;
+	font-family: 'Inter', sans-serif;
+	font-style: normal;
+	font-weight: 400;
+	margin: 20px 0 0 0;
+}
+
+.review-link {
+	display: flex;
+	flex-direction: row;
+	width: fit-content;
+	text-decoration: none;
+}
+
+.forward-button {
+	height: 15px;
+	margin-left: 7px;
+	padding: 5px;
+}

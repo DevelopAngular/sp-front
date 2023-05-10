@@ -109,27 +109,106 @@
 						<span>Customer since {{ status.customer_since_date | date : 'MMMM y' : 'UTC' }}</span>
 					</div>
 				</div>
-				<div class="content-box" style="height: fit-content">
-					<h5>Features Coming Next Year</h5>
-					<div class="feature-event">
-						<span>New at SmartPass Event</span>
-						<p>See the 15+ new features hitting your hallways next school year.</p>
-						<a href="https://app.livestorm.co/smartpass/new-at-smartpass-2023?s=e1ea91d4-911c-4b11-a95b-055c8db2ba17" target="_blank">
-							<span>Watch the Event</span>
-							<img class="arrow-icon" src="./assets/Chevron Right (White).svg" />
-						</a>
+				<div class="action-boxes">
+					<div>
+						<div *ngIf="(teacherReviews$ | async)?.length > 1 && isTeacherReviewsEnabled" class="content-box">
+							<a routerLink="/admin/teacher-reviews" class="review-link">
+								<h5>See Your Staff's Reviews</h5>
+								<img class="forward-button" [src]="'./assets/Forward Button.svg' | resolveAsset" alt="Button" />
+							</a>
+							<div class="five-stars">
+								<img class="star" [src]="'./assets/Star (Yellow).svg' | resolveAsset" alt="Star" />
+								<img class="star" [src]="'./assets/Star (Yellow).svg' | resolveAsset" alt="Star" />
+								<img class="star" [src]="'./assets/Star (Yellow).svg' | resolveAsset" alt="Star" />
+								<img class="star" [src]="'./assets/Star (Yellow).svg' | resolveAsset" alt="Star" />
+								<img class="star" [src]="'./assets/Star (Yellow).svg' | resolveAsset" alt="Star" />
+								<p class="staff-review-date">Updated May 4,2023</p>
+							</div>
+							<p class="staff-review">They took the time to give their thoughts on SmartPass. Check out their reviews and ratings</p>
+						</div>
+						<div class="content-box">
+							<h5>Features Coming Soon</h5>
+							<div class="feature-content">
+								<span>May 2023</span>
+								<div (click)="handleFeatureClick(1)" class="feature-item" [ngClass]="{ selected: selectedFeature === 1 }">
+									<div>
+										<img src="./assets/Room (Blue).svg" />
+										<span>Preventing rooms from being the “origin/from” room</span>
+										<img (click)="handleFeatureClick(1)" class="dropdown-arrow" src="./assets/Chevron Right (Blue-Gray).svg" />
+									</div>
+									<p *ngIf="selectedFeature === 1">
+										Disable the bathroom, water fountain, and locker from being an “origin” room so you can collect better data.
+									</p>
+								</div>
+								<div (click)="handleFeatureClick(2)" class="feature-item" [ngClass]="{ selected: selectedFeature === 2 }">
+									<div>
+										<img src="./assets/Megaphone (Pink).svg" />
+										<span>Alert Sounds</span>
+										<img class="dropdown-arrow" src="./assets/Chevron Right (Blue-Gray).svg" />
+									</div>
+									<p *ngIf="selectedFeature === 2">Get sound alerts when students are coming to your room and when a pass is expiring.</p>
+								</div>
+								<div (click)="handleFeatureClick(3)" class="feature-item" [ngClass]="{ selected: selectedFeature === 3 }">
+									<div>
+										<img src="./assets/School (Purple).svg" />
+										<span>District Version</span>
+										<img class="dropdown-arrow" src="./assets/Chevron Right (Blue-Gray).svg" />
+									</div>
+									<p *ngIf="selectedFeature === 3">
+										A district-wide view in SmartPass, making it easy for new schools in your district to get started.
+									</p>
+								</div>
+								<div class="feature-item">
+									<div>
+										<img src="./assets/Lightbulb (Yellow).svg" />
+										<span>Suggest a feature for next year</span>
+										<img class="dropdown-arrow" src="./assets/Chevron Right (Blue-Gray).svg" />
+									</div>
+								</div>
+							</div>
+							<div class="feature-event">
+								<div>
+									<img src="./assets/SP Arrow (Gradient).svg" />
+									<span>May 9, 2023</span>
+								</div>
+								<span>Summer '23 Feature Launch</span>
+								<span>New at SmartPass Event</span>
+								<p>Join us as we reveal a revolutionary set of upgrades happening in your hallways this year!</p>
+								<ul>
+									<li>15+ New Features</li>
+									<li>Guest Speakers</li>
+									<li>Swag and Surprises</li>
+								</ul>
+								<app-countdown [dateFuture]="'May 9 2023 12:30:00 PST'"></app-countdown>
+								<a href="https://app.livestorm.co/smartpass/new-at-smartpass-2023?s=e1ea91d4-911c-4b11-a95b-055c8db2ba17" target="_blank">
+									<span>Register Now </span>
+									<img class="arrow-icon" src="./assets/Chevron Right (White).svg" />
+								</a>
+							</div>
+						</div>
+						<div class="content-box" style="height: fit-content">
+							<h5>Features Coming Next Year</h5>
+							<div class="feature-event">
+								<span>New at SmartPass Event</span>
+								<p>See the 15+ new features hitting your hallways next school year.</p>
+								<a href="https://app.livestorm.co/smartpass/new-at-smartpass-2023?s=e1ea91d4-911c-4b11-a95b-055c8db2ba17" target="_blank">
+									<span>Watch the Event</span>
+									<img class="arrow-icon" src="./assets/Chevron Right (White).svg" />
+								</a>
+							</div>
+						</div>
 					</div>
 				</div>
 			</div>
 		</div>
+		<div class="iframe-container" *ngIf="showRenewConfirm">
+			<div (click)="toggleConfirm()">
+				<img src="./assets/Chevron Left (Blue-Gray).svg" />
+			</div>
+			<div *ngIf="iframeLoading" class="loading-theme spinner ds-flex-center-center">
+				<mat-spinner [color]="'accent'" [diameter]="50"></mat-spinner>
+			</div>
+			<iframe [src]="iFrameURL" [ngClass]="{ hidden: iframeLoading }" id="renewal-iframe"></iframe>
+		</div>
 	</div>
-</div>
-<div class="iframe-container" *ngIf="showRenewConfirm">
-	<div (click)="toggleConfirm()">
-		<img src="./assets/Chevron Left (Blue-Gray).svg" />
-	</div>
-	<div *ngIf="iframeLoading" class="loading-theme spinner ds-flex-center-center">
-		<mat-spinner [color]="'accent'" [diameter]="50"></mat-spinner>
-	</div>
-	<iframe [src]="iFrameURL" [ngClass]="{ hidden: iframeLoading }" id="renewal-iframe"></iframe>
 </div>

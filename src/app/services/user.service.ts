@@ -642,6 +642,10 @@ export class UserService implements OnDestroy {
 		return this.http.get<User>('v1/users/@me');
 	}
 
+	getUserById(userId) {
+		return this.http.get<User>(`v1/users/${userId}`);
+	}
+
 	getUserPinRequest() {
 		this.store.dispatch(getUserPinAction());
 		return this.userPin$;
@@ -814,10 +818,6 @@ export class UserService implements OnDestroy {
 		}
 
 		return this.http.get<Paged<any>>(url);
-	}
-
-	searchProfileById(id) {
-		return this.http.get<User>(`v1/users/${id}`);
 	}
 
 	possibleProfileById(id: string): Observable<User | null> {

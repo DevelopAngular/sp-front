@@ -21,6 +21,7 @@ const routes: Routes = [
 			{ path: 'passconfig', loadChildren: () => import('app/admin/pass-config/pass-config.module').then((m) => m.PassConfigModule) },
 			{ path: 'myschool', loadChildren: () => import('app/admin/my-school/my-school.module').then((m) => m.MySchoolModule) },
 			{ path: 'idcards', loadChildren: () => import('app/admin/id-cards/id-cards.module').then((m) => m.IdCardsModule) },
+			{ path: 'teacher-reviews', loadChildren: () => import('app/admin/teacher-reviews/teacher-reviews.module').then((m) => m.TeacherReviewsModule) },
 			{
 				path: 'refer_us',
 				loadChildren: () => import('app/referrals/referrals.module').then((m) => m.ReferralsModule),
