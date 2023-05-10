@@ -99,7 +99,7 @@ $climb: '../../..';
 	border-radius: 10px;
 	background: white;
 	border: 1px solid #e2e6ec;
-	margin-left: auto;
+	margin: 0 auto;
 	margin-top: 188px;
 	display: flex;
 	flex-direction: column;
@@ -218,4 +218,14 @@ textarea.referral-input::placeholder {
 	font-size: 22px;
 	line-height: 27px;
 	color: $gray500;
+}
+
+.referral-rock-frame {
+	margin: 200px 0 0 20px;
+	iframe {
+		height: 540px;
+		width: 585px;
+		border: none;
+		border-radius: 12px;
+	}
 }
