@@ -20,6 +20,7 @@ import { isEmpty } from 'lodash';
 import { ComponentsService } from '../../../services/components.service';
 import { StorageService } from '../../../services/storage.service';
 import { Router } from '@angular/router';
+import { FeatureFlagService, FLAGS } from "../../../services/feature-flag.service";
 
 @Component({
 	selector: 'app-dashboard-content',
@@ -52,6 +53,9 @@ export class DashboardContentComponent implements OnInit, OnDestroy {
 	public onboardProgress$: Observable<{ [id: string]: Onboard }>;
 	public onboardProcessLoaded$: Observable<boolean>;
 
+	public hasYearInReviewPdf: boolean;
+	public yearInReviewPdfUrl: URL;
+
 	public lineChartTicks: any = {
 		suggestedMin: 0,
 		precision: 0,
@@ -78,7 +82,8 @@ export class DashboardContentComponent implements OnInit, OnDestroy {
 		private componentService: ComponentsService,
 		private storage: StorageService,
 		public router: Router,
-		private cdr: ChangeDetectorRef
+		private cdr: ChangeDetectorRef,
+		private featureFlagService: FeatureFlagService,
 	) {}
 
 	get cardHeaderColor() {
@@ -337,12 +342,30 @@ export class DashboardContentComponent implements OnInit, OnDestroy {
 				},
 			},
 		};
+
 		this.onboardProcessLoaded$ = this.adminService.loadedOnboardProcess$;
 		this.onboardProgress$ = this.http.globalReload$.pipe(
 			switchMap(() => {
 				return this.adminService.getOnboardProcessRequest();
 			})
 		);
+
+		this.updateYearInReviewData();
+	}
+	updateYearInReviewData() {
+		if (!this.featureFlagService.isFeatureEnabledV2(FLAGS.YearInReview)) {
+			this.hasYearInReviewPdf = false;
+			return;
+		}
+
+		this.adminService
+			.getYearInReviewData()
+			.subscribe((resp) => {
+				this.hasYearInReviewPdf = !!resp.pdf_url;
+				if (!!resp.pdf_url) {
+					this.yearInReviewPdfUrl = new URL(resp.pdf_url);
+				}
+			});
 	}
 
 	private drawChartXaxis() {

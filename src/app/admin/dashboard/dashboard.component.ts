@@ -2,7 +2,7 @@ import { Component, ElementRef, OnDestroy, OnInit, ViewChild } from '@angular/co
 import { interval, Observable, Subject } from 'rxjs';
 import { filter, switchMap, takeUntil, tap } from 'rxjs/operators';
 import { HttpService } from '../../services/http-service';
-import { AdminService } from '../../services/admin.service';
+import { AdminService, YearInReviewResp } from "../../services/admin.service";
 import { ScrollPositionService } from '../../scroll-position.service';
 import { Onboard } from '../../models/Onboard';
 @Component({
@@ -65,11 +65,6 @@ export class DashboardComponent implements OnInit, OnDestroy {
 				return this.adminService.getOnboardProcessRequest();
 			})
 		);
-
-		this.adminService
-			.getYearInReviewData()
-			.pipe(tap((d) => console.log('pdf url: ' + d.pdf_url)))
-			.subscribe();
 	}
 
 	showStartPage(progress: { [id: string]: Onboard }): boolean {
