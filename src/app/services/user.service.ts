@@ -812,10 +812,6 @@ export class UserService implements OnDestroy {
 		return this.http.get<Paged<any>>(url);
 	}
 
-	searchProfileById(id) {
-		return this.http.get<User>(`v1/users/${id}`);
-	}
-
 	possibleProfileById(id: string): Observable<User | null> {
 		return this.http.get<User>(`v1/users/${id}`, { headers: { 'X-Ignore-Errors': 'true' } }).pipe(catchError((err) => of(null)));
 	}
