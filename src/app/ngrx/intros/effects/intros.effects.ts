@@ -10,7 +10,7 @@ export class IntrosEffects {
 	getIntros$ = createEffect(() => {
 		return this.action$.pipe(
 			ofType(introsActions.getIntros),
-			switchMap((action: any) => {
+			switchMap(() => {
 				return this.userService.getIntros().pipe(
 					map((intros) => {
 						return introsActions.getIntrosSuccess({ data: intros });
@@ -29,7 +29,7 @@ export class IntrosEffects {
 			ofType(introsActions.updateIntrosMain),
 			switchMap((action) => {
 				return this.userService.updateIntros(action.device, action.version).pipe(
-					map((data) => {
+					map(() => {
 						const updatedData = {
 							...action.intros,
 							main_intro: {
@@ -50,7 +50,7 @@ export class IntrosEffects {
 			ofType(introsActions.updateIntros),
 			switchMap((action) => {
 				return this.userService.updateIntrosReferral(action.device, action.version).pipe(
-					map((data) => {
+					map(() => {
 						const updatedData = {
 							...action.intros,
 							referral_reminder: {
@@ -70,7 +70,7 @@ export class IntrosEffects {
 			ofType(introsActions.updateIntrosEncounter),
 			switchMap((action) => {
 				return this.userService.updateIntrosEncounter(action.device, action.version).pipe(
-					map((data) => {
+					map(() => {
 						const updatedData = {
 							...action.intros,
 							encounter_reminder: {
@@ -90,7 +90,7 @@ export class IntrosEffects {
 			ofType(introsActions.updateIntrosSearch),
 			switchMap((action) => {
 				return this.userService.updateIntrosSearch(action.device, action.version).pipe(
-					map((data) => {
+					map(() => {
 						const updatedData = {
 							...action.intros,
 							search_reminder: {
@@ -110,7 +110,7 @@ export class IntrosEffects {
 			ofType(introsActions.updateIntrosHelpCenter),
 			switchMap((action) => {
 				return this.userService.updateIntrosHelpCenter(action.device, action.version).pipe(
-					map((data) => {
+					map(() => {
 						const updatedData = {
 							...action.intros,
 							frontend_help_center: {
@@ -130,7 +130,7 @@ export class IntrosEffects {
 			ofType(introsActions.updateIntrosDisableRoom),
 			switchMap((action) => {
 				return this.userService.updateIntrosDisableRoom(action.device, action.version).pipe(
-					map((data) => {
+					map(() => {
 						const updatedData = {
 							...action.intros,
 							disable_room_reminder: {
@@ -150,7 +150,7 @@ export class IntrosEffects {
 			ofType(introsActions.updateIntrosStudentPassLimits),
 			switchMap((action) => {
 				return this.userService.updateIntrosStudentPassLimit(action.device, action.version).pipe(
-					map((data) => {
+					map(() => {
 						const updatedData = {
 							...action.intros,
 							student_pass_limit: {
@@ -170,7 +170,7 @@ export class IntrosEffects {
 			ofType(introsActions.updateIntrosAdminPassLimitsMessage),
 			switchMap((action) => {
 				return this.userService.updateIntrosAdminPassLimitMessage(action.device, action.version).pipe(
-					map((data) => {
+					map(() => {
 						const updatedData = {
 							...action.intros,
 							admin_pass_limit_message: {
@@ -190,7 +190,7 @@ export class IntrosEffects {
 			ofType(introsActions.updateIntrosWaitInLine),
 			switchMap((action) => {
 				return this.userService.updateIntrosWaitInLine(action.device, action.version).pipe(
-					map((data) => {
+					map(() => {
 						const updatedData = {
 							...action.intros,
 							admin_pass_limit_message: {
@@ -210,7 +210,7 @@ export class IntrosEffects {
 			ofType(introsActions.updateIntrosPassLimitsOnlyCertainRooms),
 			switchMap((action) => {
 				return this.userService.updateIntrosPassLimitsOnlyCertainRooms(action.device, action.version).pipe(
-					map((data) => {
+					map(() => {
 						const updatedData = {
 							...action.intros,
 							admin_pass_limits_only_certain_rooms: {
@@ -230,7 +230,7 @@ export class IntrosEffects {
 			ofType(introsActions.updateIntrosSeenRenewalStatusPage),
 			switchMap((action) => {
 				return this.userService.updateIntrosSeenRenewalStatusPage(action.device, action.version).pipe(
-					map((data) => {
+					map(() => {
 						const updatedData = {
 							...action.intros,
 							seen_renewal_status_page: {
@@ -240,6 +240,46 @@ export class IntrosEffects {
 						return introsActions.updateIntrosSeenRenewalStatusPageSuccess({ data: updatedData });
 					}),
 					catchError((error) => of(introsActions.updateIntrosSeenRenewalStatusPageFailure({ errorMessage: error.message })))
+				);
+			})
+		);
+	});
+
+	updateIntrosSeenReferralNux$ = createEffect(() => {
+		return this.action$.pipe(
+			ofType(introsActions.updateIntrosSeenReferralNux),
+			switchMap((action) => {
+				return this.userService.updateIntrosSeenReferralNux(action.device, action.version).pipe(
+					map(() => {
+						const updatedData = {
+							...action.intros,
+							seen_referral_nux: {
+								[action.device]: { seen_version: action.version },
+							},
+						};
+						return introsActions.updateIntrosSeenReferralNuxSuccess({ data: updatedData });
+					}),
+					catchError((error) => of(introsActions.updateIntrosSeenReferralNuxFailure({ errorMessage: error.message })))
+				);
+			})
+		);
+	});
+
+	updateIntrosSeenReferralSuccessNux$ = createEffect(() => {
+		return this.action$.pipe(
+			ofType(introsActions.updateIntrosSeenReferralSuccessNux),
+			switchMap((action) => {
+				return this.userService.updateIntrosSeenReferralSuccessNux(action.device, action.version).pipe(
+					map(() => {
+						const updatedData = {
+							...action.intros,
+							seen_referral_success_nux: {
+								[action.device]: { seen_version: action.version },
+							},
+						};
+						return introsActions.updateIntrosSeenReferralSuccessNuxSuccess({ data: updatedData });
+					}),
+					catchError((error) => of(introsActions.updateIntrosSeenReferralSuccessNuxFailure({ errorMessage: error.message })))
 				);
 			})
 		);

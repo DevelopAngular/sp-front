@@ -5,7 +5,6 @@ import { HttpService } from '../../services/http-service';
 import { AdminService } from '../../services/admin.service';
 import { ScrollPositionService } from '../../scroll-position.service';
 import { Onboard } from '../../models/Onboard';
-
 @Component({
 	selector: 'app-dashboard',
 	templateUrl: './dashboard.component.html',

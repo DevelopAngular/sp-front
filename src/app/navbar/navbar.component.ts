@@ -250,6 +250,10 @@ export class NavbarComponent implements AfterViewInit, OnInit, OnDestroy {
 		return this.user?.streak_count;
 	}
 
+	get referralEnabled(): boolean {
+		return this.featureService.isFeatureEnabled(FLAGS.ReferralProgramme);
+	}
+
 	get isStreaks(): boolean {
 		return this.featureService.isFeatureEnabled(FLAGS.ShowStreaks);
 	}
@@ -745,5 +749,9 @@ export class NavbarComponent implements AfterViewInit, OnInit, OnDestroy {
 		if (isLost) {
 			this.userService.updateUserRequest(this.user, { lost_streak_count: null });
 		}
+	}
+
+	goToReferralPage() {
+		this.router.navigate(['main', 'refer_us']);
 	}
 }

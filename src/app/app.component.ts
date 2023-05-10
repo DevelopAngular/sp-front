@@ -3,6 +3,9 @@ import { MatDialog, MatDialogRef } from '@angular/material/dialog';
 import { ActivatedRoute, NavigationEnd, Router } from '@angular/router';
 import { filter as _filter } from 'lodash';
 import { BehaviorSubject, combineLatest, fromEvent, merge, Observable, of, ReplaySubject, Subject, throwError, zip } from 'rxjs';
+import { Store } from '@ngrx/store';
+import { AppState } from './ngrx/app-state/app-state';
+import { NuxReferralComponent } from './nux-components/nux-referral/nux-referral.component';
 
 import {
 	catchError,
@@ -46,6 +49,7 @@ import { CookieService } from 'ngx-cookie-service';
 import { environment } from '../environments/environment';
 import { ParentAccountService } from './services/parent-account.service';
 import { HttpErrorResponse } from '@angular/common/http';
+import { NuxReferralSuccessComponent } from './nux-components/nux-referral/nux-referral-success.component';
 
 declare const window;
 declare var ResizeObserver;
@@ -84,7 +88,6 @@ export class AppComponent implements OnInit, AfterViewInit, OnDestroy {
 	public schools: School[] = [];
 	public darkThemeEnabled: boolean;
 	public isKioskMode: boolean;
-	public showSupportButton: boolean;
 	public customToastOpen$: Observable<boolean>;
 	public toasts$: Observable<any>;
 	hasCustomBackdrop: boolean;
@@ -98,7 +101,6 @@ export class AppComponent implements OnInit, AfterViewInit, OnDestroy {
 	private subscriber$ = new Subject();
 
 	public mainContentWidth: string = '100%';
-	public rightPosition;
 
 	public isUserHasPhoneAccess: boolean;
 
@@ -147,7 +149,8 @@ export class AppComponent implements OnInit, AfterViewInit, OnDestroy {
 		private cookie: CookieService,
 		private titleService: Title,
 		private renderer: Renderer2,
-		private parentService: ParentAccountService
+		private parentService: ParentAccountService,
+		private store: Store<AppState>
 	) {}
 
 	get isMobile() {
@@ -164,7 +167,6 @@ export class AppComponent implements OnInit, AfterViewInit, OnDestroy {
 		this.screen.customBackdropStyle$.asObservable().subscribe({
 			next: (customStyle: Record<string, any>) => (this.customStyle = customStyle),
 		});
-
 		this.hasCustomBackdrop$ = this.screen.customBackdropEvent$.asObservable();
 		this.customBackdropStyle$ = this.screen.customBackdropStyle$;
 
@@ -199,6 +201,7 @@ export class AppComponent implements OnInit, AfterViewInit, OnDestroy {
 					if (!user.isStudent() && !this.currentRoute.includes('/forms')) {
 						this.registerRefiner(user);
 					}
+					this.openNuxReferralModal(user);
 
 					if (intercomWrapper) {
 						intercomWrapper.style.display = 'none';
@@ -318,10 +321,10 @@ export class AppComponent implements OnInit, AfterViewInit, OnDestroy {
 						}),
 						concatMap((parentAccount) => {
 							if (!parentAccount) {
-								this.userService.getUserRequest();
 								return this.http.schools$.pipe(
 									concatMap(() => {
-										return this.userService.userData.pipe(
+										this.userService.getUserRequest();
+										return this.userService.user$.pipe(
 											takeUntil(this.subscriber$),
 											filter<User>(Boolean),
 											map((u) => User.fromJSON(u))
@@ -483,6 +486,39 @@ export class AppComponent implements OnInit, AfterViewInit, OnDestroy {
 			}
 		});
 		this.intercomObserver.observe(targetNode, listenerConfig);
+	}
+
+	openNuxReferralModal(user: User): void {
+		const featureFlag = this.userService.getFeatureFlagReferralProgram();
+		const canRefer = featureFlag && user.isStaff();
+
+		this.userService.introsData$
+			.pipe(
+				filter((i) => !!i),
+				take(1)
+			)
+			.subscribe((intros) => {
+				const hasNotSeenModal = !intros.seen_referral_nux?.universal?.seen_version;
+				const hasNotSeenSuccessModal = !intros.seen_referral_success_nux?.universal?.seen_version;
+
+				if (hasNotSeenModal && user.referralStatus === 'not_applied' && canRefer) {
+					this.dialog.open(NuxReferralComponent, {
+						data: {
+							roles: user.roles,
+						},
+						panelClass: 'referral-dialog-container',
+					});
+					this.userService.updateIntrosSeenReferralNuxRequest(intros, 'universal', '1');
+				} else if (hasNotSeenSuccessModal && user.referralStatus === 'accepted' && canRefer) {
+					this.dialog.open(NuxReferralSuccessComponent, {
+						data: {
+							roles: user.roles,
+						},
+						panelClass: 'referral-dialog-container',
+					});
+					this.userService.updateIntrosSeenReferralSuccessNuxRequest(intros, 'universal', '1');
+				}
+			});
 	}
 
 	get setHeight() {

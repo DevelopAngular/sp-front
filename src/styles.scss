@@ -701,3 +701,14 @@ body {
 }
 
 .open-intercom-btn {}
+
+.underline {
+    text-decoration: underline;
+}
+.referral-dialog-container .mat-dialog-container {
+	padding: 30px 40px 60px 40px;
+    overflow: hidden;
+    border-radius: 12px;
+    max-width: 400px;
+    box-sizing: unset;
+}

@@ -2,7 +2,7 @@ import { HttpClient, HttpErrorResponse } from '@angular/common/http';
 import { Inject, Injectable, OnDestroy } from '@angular/core';
 import { Store } from '@ngrx/store';
 import { LocalStorage } from '@ngx-pwa/local-storage';
-import { BehaviorSubject, Observable, of, ReplaySubject, Subject, throwError } from 'rxjs';
+import { BehaviorSubject, NEVER, Observable, of, ReplaySubject, Subject, throwError } from 'rxjs';
 import { catchError, delay, exhaustMap, filter, map, mapTo, switchMap, take, takeUntil, tap } from 'rxjs/operators';
 import { environment } from '../../environments/environment';
 import { School } from '../models/School';
@@ -438,13 +438,11 @@ export class HttpService implements OnDestroy {
 	}
 
 	getRedirectUrl(): string {
-		const url = [window.location.protocol, '//', window.location.host, this.baseHref].join('');
-		return url;
+		return [window.location.protocol, '//', window.location.host, this.baseHref].join('');
 	}
 
 	getEncodedRedirectUrl(): string {
-		const redirect = encodeURIComponent(this.getRedirectUrl());
-		return redirect;
+		return encodeURIComponent(this.getRedirectUrl());
 	}
 
 	loginSession(authObject: AuthObject) {
@@ -487,14 +485,6 @@ export class HttpService implements OnDestroy {
 						observe: 'response',
 					})
 					.pipe(
-						catchError((err) => {
-							if (err instanceof HttpErrorResponse) {
-								this.loginService.loginErrorMessage$.next(err.error.detail);
-								return of(null);
-							}
-
-							return throwError(err);
-						}),
 						map((response) => {
 							if (!response) {
 								return null;
@@ -622,7 +612,7 @@ export class HttpService implements OnDestroy {
 	}
 
 	get<T>(url, config?: Config, schoolOverride?: School): Observable<T> {
-		const school = schoolOverride !== undefined ? schoolOverride : this.getSchool();
+		const school = schoolOverride || this.getSchool();
 		const effectiveUserId = this.getEffectiveUserId();
 		return this.performRequest<T>((server) => this.http.get<T>(makeUrl(server, url), makeConfig(config, school, effectiveUserId)));
 	}
