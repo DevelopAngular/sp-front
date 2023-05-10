@@ -88,7 +88,6 @@ export class AppComponent implements OnInit, AfterViewInit, OnDestroy {
 	public schools: School[] = [];
 	public darkThemeEnabled: boolean;
 	public isKioskMode: boolean;
-	public showSupportButton: boolean;
 	public customToastOpen$: Observable<boolean>;
 	public toasts$: Observable<any>;
 	hasCustomBackdrop: boolean;
@@ -102,7 +101,6 @@ export class AppComponent implements OnInit, AfterViewInit, OnDestroy {
 	private subscriber$ = new Subject();
 
 	public mainContentWidth: string = '100%';
-	public rightPosition;
 
 	public isUserHasPhoneAccess: boolean;
 
@@ -323,10 +321,10 @@ export class AppComponent implements OnInit, AfterViewInit, OnDestroy {
 						}),
 						concatMap((parentAccount) => {
 							if (!parentAccount) {
-								this.userService.getUserRequest();
 								return this.http.schools$.pipe(
 									concatMap(() => {
-										return this.userService.userData.pipe(
+										this.userService.getUserRequest();
+										return this.userService.user$.pipe(
 											takeUntil(this.subscriber$),
 											filter<User>(Boolean),
 											map((u) => User.fromJSON(u))

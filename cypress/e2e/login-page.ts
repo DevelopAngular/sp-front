@@ -60,6 +60,10 @@ describe('Login Page', () => {
       clearPassword();
     });
     describe('Email Login', () => {
+      after(() => {
+        cy.logoutStudent();
+      })
+
       it('should do nothing if the button is clicked while disabled', () => {
         submit();
         cy.url().should('include', '/');
@@ -101,6 +105,19 @@ describe('Login Page', () => {
         cy.url().should('include', '/main/passes');
       });
     });
+
+    // describe.only('Third-party Logins', () => {
+    //   /**
+    //    * This test suite will only cover Google login for now since that currently works with
+    //    * our localhost
+    //    */
+    //
+    //   it('should try google', () => {
+    //     cy.enterUsername('qarun@smartpass.app');
+    //     expect(1).to.equal(1);
+    //   })
+    //
+    // })
   });
 });
 
