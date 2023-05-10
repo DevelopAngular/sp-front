@@ -17,7 +17,7 @@ export enum FLAGS {
 	RenewalChecklist = 'feature_flag_renewal_checklist',
 	ReferralProgramme = 'feature_flag_referral_program',
 	// V2 Feature Flags
-	YearInReview = 'year_in_review'
+	YearInReview = 'year_in_review',
 }
 
 // TODO: Replace individual feature flag functions with this service

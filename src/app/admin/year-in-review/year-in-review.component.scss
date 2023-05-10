@@ -10,6 +10,7 @@
 	flex-direction: row;
 	justify-content: space-between;
 	.left {
+		margin-right: 13px;
 		.title-wrap {
 			display: flex;
 			align-items: center;
@@ -49,17 +50,18 @@
 	}
 	.right {
 		.report-btn {
+			// width: 125px;
 			background: $gray050;
 			border: 1px solid $gray300;
 			border-radius: 4px;
 			display: flex;
 			gap: 7px;
-			padding: 8px;
+			// padding: 8px;
 			margin-left: auto;
 			align-items: center;
 			align-self: center;
 			color: $gray700;
-			text-decoration: none;
+			text-decoration: none !important;
 			cursor: pointer;
 			img {
 				width: 13px;
@@ -69,6 +71,7 @@
 				font-weight: 500;
 				font-size: 14px;
 				line-height: 17px;
+				text-decoration: none !important;
 			}
 			&:hover {
 				color: $gray900;

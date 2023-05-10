@@ -37,6 +37,8 @@ export class RenewalComponent implements OnInit {
 
 	public iFrameURL: SafeResourceUrl;
 
+	public hasYearInReviewPdf: boolean = true;
+
 	constructor(
 		private adminService: AdminService,
 		public darkTheme: DarkThemeSwitch,
