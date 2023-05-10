@@ -202,30 +202,24 @@ export class NavComponent implements OnInit, AfterViewInit, OnDestroy {
 			}
 		});
 
-		this.userService.user$
-			.pipe(
-				filter((user) => !!user),
-				takeUntil(this.destroy$)
-			)
-			.subscribe((user) => {
-				this.buttons.forEach((button) => {
-					if (
-						(this.activeRoute.snapshot as any)._routerState.url === `/admin/${button.route}` &&
-						!button.requiredRoles.every((_role) => user.roles.includes(_role))
-					) {
-						this.restrictAccess.emit(true);
-						this.fakeMenu.next(true);
-					} else {
-						this.restrictAccess.emit(false);
-						this.fakeMenu.next(false);
-					}
-				});
-
-				this.user = user;
-				this.showButton =
-					user.roles.includes('_profile_admin') && (user.roles.includes('_profile_teacher') || user.roles.includes('_profile_student'));
-				this.dataService.updateInbox(!this.tab.includes('settings'));
+		this.userService.currentUpdatedUser$.pipe(filter<User>(Boolean), takeUntil(this.destroy$)).subscribe((user) => {
+			this.buttons.forEach((button) => {
+				if (
+					(this.activeRoute.snapshot as any)._routerState.url === `/admin/${button.route}` &&
+					!button.requiredRoles.every((_role) => user.roles.includes(_role))
+				) {
+					this.restrictAccess.emit(true);
+					this.fakeMenu.next(true);
+				} else {
+					this.restrictAccess.emit(false);
+					this.fakeMenu.next(false);
+				}
 			});
+
+			this.user = user;
+			this.showButton = user.roles.includes('_profile_admin') && (user.roles.includes('_profile_teacher') || user.roles.includes('_profile_student'));
+			this.dataService.updateInbox(!this.tab.includes('settings'));
+		});
 
 		this.shortcutsService.onPressKeyEvent$
 			.pipe(
@@ -404,7 +398,7 @@ export class NavComponent implements OnInit, AfterViewInit, OnDestroy {
 		return this.tab.includes(route);
 	}
 	hasRoles(roles: string[]): Observable<boolean> {
-		return this.userService.userData.pipe(map((u) => roles.every((_role) => u.roles.includes(_role))));
+		return this.userService.currentUpdatedUser$.pipe(map((u) => roles.every((_role) => u.roles.includes(_role))));
 	}
 
 	goToReferralPage() {
