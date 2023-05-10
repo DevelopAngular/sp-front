@@ -14,6 +14,15 @@ export enum LoginErrors {
 	InvalidCreds = 'username/password is incorrect',
 }
 
+export const LoginErrorMap: Record<LoginErrors, string> = {
+	[LoginErrors.Suspended]: 'Account is suspended. Please contact your school admin.',
+	[LoginErrors.Disabled]: 'Account is disabled. Please contact your school admin.',
+	[LoginErrors.NotActive]: 'Account is not active. Please contact your school admin.',
+	[LoginErrors.TeacherNoAssistants]: 'Account does not have any associated teachers. Please contact your school admin.',
+	[LoginErrors.PopupBlocked]: 'Pop up blocked. Please allow pop ups.',
+	[LoginErrors.InvalidCreds]: 'Incorrect password. Try again or contact your school admin to reset it.',
+};
+
 declare const window;
 
 const STORAGE_KEY = 'google_auth';

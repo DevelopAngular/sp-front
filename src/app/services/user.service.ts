@@ -269,7 +269,15 @@ export class UserService implements OnDestroy {
 	user$: Observable<User> = this.store.select(getUserData);
 	userPin$: Observable<string | number> = this.store.select(getSelectUserPin);
 	loadedUser$: Observable<boolean> = this.store.select(getLoadedUser);
-	currentUpdatedUser$: Observable<User> = this.store.select(getCurrentUpdatedUser);
+	currentUpdatedUser$: Observable<User> = this.store.select(getCurrentUpdatedUser).pipe(
+		map((u) => {
+			try {
+				return User.fromJSON(u);
+			} catch {
+				return u;
+			}
+		})
+	);
 
 	/**
 	 * Student Groups
