@@ -224,7 +224,6 @@ $arrowAnimation: translate(4px, 0);
 }
 
 .team-container.loading {
-	// min-width: 820px;
 	min-height: 161px;
 	justify-content: center;
 }
@@ -318,29 +317,6 @@ $arrowAnimation: translate(4px, 0);
 	flex-direction: column;
 	color: rgba(255, 255, 255, 0.8);
 
-	> :first-child {
-		display: flex;
-		align-items: center;
-		margin-bottom: 37px;
-		img {
-			height: 26px;
-			width: 26px;
-		}
-		span {
-			margin-left: auto;
-			font-weight: 600;
-			font-size: 14px;
-			line-height: 17px;
-
-			background: linear-gradient(180deg, $white 0%, rgba(255, 255, 255, 0) 170.59%);
-			-webkit-background-clip: text;
-			-webkit-text-fill-color: transparent;
-			background-clip: text;
-
-			mix-blend-mode: normal;
-		}
-	}
-
 	> span {
 		font-weight: 700;
 		font-size: 16px;
@@ -348,36 +324,8 @@ $arrowAnimation: translate(4px, 0);
 		color: $white;
 	}
 
-	> span:first-of-type {
-		font-weight: 600;
-		font-size: 10px;
-		line-height: 12px;
-		color: rgba(255, 255, 255, 0.8);
-		margin-bottom: 6px;
-	}
-
 	p {
-		margin-top: 6px;
 		margin-bottom: 17px;
-	}
-
-	ul {
-		list-style-type: none;
-		padding: 0;
-		margin: 0;
-	}
-	li {
-		background-image: url($climb + '/assets/Checkmark (Silver).svg');
-		background-repeat: no-repeat;
-		background-position: 1px;
-		padding-left: 28px;
-	}
-	li:not(:last-child) {
-		margin-bottom: 11px;
-	}
-
-	li:last-child {
-		margin-bottom: 37px;
 	}
 
 	> :last-child {
