@@ -15,6 +15,7 @@ export enum FLAGS {
 	AbbreviateLastName = 'feature_flag_new_abbreviation',
 	ShowStreaks = 'feature_flag_streaks',
 	RenewalChecklist = 'feature_flag_renewal_checklist',
+	TeacherReviews = 'teacher_reviews',
 	ReferralProgramme = 'feature_flag_referral_program',
 	// V2 Feature Flags
 	YearInReview = 'year_in_review',

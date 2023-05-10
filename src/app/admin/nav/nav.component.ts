@@ -174,6 +174,10 @@ export class NavComponent implements OnInit, AfterViewInit, OnDestroy {
 		return this.featureFlagService.isFeatureEnabled(FLAGS.RenewalChecklist);
 	}
 
+	get isReferralEnabled() {
+		return this.featureFlagService.isFeatureEnabled(FLAGS.ReferralProgramme);
+	}
+
 	get showNotificationBadge() {
 		return this.user && moment(this.user.first_login).add(30, 'days').isSameOrBefore(moment());
 	}

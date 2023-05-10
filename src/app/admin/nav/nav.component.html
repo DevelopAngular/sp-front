@@ -33,7 +33,7 @@
 		</div>
 	</div>
 	<div class="nav-bottom">
-		<div class="referral-button" (click)="goToReferralPage()">
+		<div *ngIf="isReferralEnabled" class="referral-button" (click)="goToReferralPage()">
 			<img [src]="'./assets/Blue-Gift.svg' | resolveAsset" alt="Referral Gift" />
 			<span class="referral-text"><strong>Refer a friend</strong><br />Get $250</span>
 		</div>
