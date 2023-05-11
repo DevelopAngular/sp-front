@@ -50,7 +50,7 @@ import { environment } from '../environments/environment';
 import { ParentAccountService } from './services/parent-account.service';
 import { HttpErrorResponse } from '@angular/common/http';
 import { NuxReferralSuccessComponent } from './nux-components/nux-referral/nux-referral-success.component';
-import {PollingService} from "./services/polling-service";
+import { PollingService } from './services/polling-service';
 
 declare const window;
 declare var ResizeObserver;
@@ -196,7 +196,6 @@ export class AppComponent implements OnInit, AfterViewInit, OnDestroy {
 					return this.intercomLauncherAdded$.pipe(map((intercomWrapper) => [user, intercomWrapper]));
 				}),
 				switchMap(([user, intercomWrapper]: [User, HTMLDivElement]) => {
-
 					// create a websocket connection when user logs in
 					this.pollingService.refreshHeartbeatTimer();
 
