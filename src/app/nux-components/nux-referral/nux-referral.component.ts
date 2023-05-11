@@ -9,10 +9,14 @@ import { Router } from '@angular/router';
 	styleUrls: ['./nux-referral.component.scss'],
 })
 export class NuxReferralComponent {
-	roles: string[];
+	isAdmin: boolean;
 
-	constructor(public dialogRef: MatDialogRef<NuxReferralComponent>, @Inject(MAT_DIALOG_DATA) public data: any, private router: Router) {
-		this.roles = data.roles;
+	constructor(
+		public dialogRef: MatDialogRef<NuxReferralComponent>,
+		@Inject(MAT_DIALOG_DATA) public data: { isAdmin: boolean },
+		private router: Router
+	) {
+		this.isAdmin = data.isAdmin;
 	}
 
 	onNoClick(): void {
@@ -20,16 +24,11 @@ export class NuxReferralComponent {
 	}
 
 	NavToReferralPage() {
-		const isAdmin = this.data.isAdmin;
-		let targetRoute = '';
-
-		if (isAdmin) {
-			targetRoute = '/admin/refer_us';
+		if (this.isAdmin) {
+			this.router.navigate(['admin', 'refer_us']);
 		} else {
-			targetRoute = '/main/refer_us';
+			this.router.navigate(['main', 'refer_us']);
 		}
-
-		this.router.navigate([targetRoute]);
 		this.dialogRef.close();
 	}
 }

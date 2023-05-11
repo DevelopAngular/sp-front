@@ -504,7 +504,7 @@ export class AppComponent implements OnInit, AfterViewInit, OnDestroy {
 				if (hasNotSeenModal && user.referralStatus === 'not_applied' && canRefer) {
 					this.dialog.open(NuxReferralComponent, {
 						data: {
-							roles: user.roles,
+							isAdmin: user.isAdmin(),
 						},
 						panelClass: 'referral-dialog-container',
 					});
@@ -512,7 +512,7 @@ export class AppComponent implements OnInit, AfterViewInit, OnDestroy {
 				} else if (hasNotSeenSuccessModal && user.referralStatus === 'accepted' && canRefer) {
 					this.dialog.open(NuxReferralSuccessComponent, {
 						data: {
-							roles: user.roles,
+							isAdmin: user.isAdmin(),
 						},
 						panelClass: 'referral-dialog-container',
 					});
