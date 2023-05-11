@@ -1,40 +1,47 @@
-import 'cypress-wait-until';
+import 'cypress-wait-until'
+import { AuthType, DiscoverServerResponse } from '../../src/app/services/http-service'
 
 const pressLoginSubmitButton = () => {
   cy.get('app-gradient-button > div.button:not(.disabled)').click({force: true});
 };
 
-const submitUsername = (username: string) => {
+Cypress.Commands.add('enterUsername', (username: string) => {
+  // cy.intercept('GET', '/api/discovery/email_info*', ).as('emailCheck');
   cy.intercept({
     method: 'GET',
-    url: '/api/discovery/email_info*'
+    url: '/api/discovery/email_info*',
+  }, (request) => {
+    request.reply(response => {
+      const { auth_types, auth_providers } = response.body as DiscoverServerResponse;
+      if (auth_types.includes(AuthType.Google)) {
+        // response.headers['Location'] = ''
+      }
+    })
   }).as('emailCheck');
   cy.get('div.input-container input[autocomplete="username"]').type(username);
   pressLoginSubmitButton();
   cy.wait('@emailCheck');
-};
+});
 
-const submitPassword = (password: string) => {
+Cypress.Commands.add('enterPassword', (password: string) => {
   cy.intercept({
     method: 'POST',
     url: '/api/discovery/v2/find'
-  }).as('credentialCheck');
+  }).as('findServer');
   cy.get('div.input-container input[autocomplete="password"]').type(password);
   pressLoginSubmitButton();
-  cy.wait('@credentialCheck');
-};
+  cy.wait('@findServer');
+  cy.get('@findServer.all').then(xhr => { // it should only be called once
+    expect(xhr.length).to.equal(1);
+  })
+});
 
 Cypress.Commands.add('login', (username: string, password: string) => {
   cy.session([username, password], () => {
     cy.intercept({
       method: 'POST',
-      url: '/api/prod-us-central/sessions'
+      url: '/api/**/sessions'
     }).as('sessions');
-
-    cy.intercept({
-      method: 'GET',
-      url: '/api/prod-us-central/v1/**'
-    }).as('v1API');
 
     cy.intercept({
       method: 'POST',
@@ -42,12 +49,14 @@ Cypress.Commands.add('login', (username: string, password: string) => {
     }).as('intercom');
 
     cy.visit('/');
-    submitUsername(username);
+    cy.enterUsername(username);
     cy.waitUntil(() => cy.get('div.input-password').should('have.css', 'opacity', '1'));
-    submitPassword(password);
+    cy.enterPassword(password);
     cy.get('div.error').should('not.exist');
     cy.wait('@sessions', {timeout: 20000});
-    cy.wait('@v1API', {timeout: 20000});
+    cy.get('@sessions.all').then(xhr => { // it should only be called once
+      expect(xhr.length).to.equal(1);
+    })
     cy.wait('@intercom', {timeout: 20000});
     cy.wait(2000);
   })

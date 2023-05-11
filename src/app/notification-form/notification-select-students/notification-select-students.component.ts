@@ -46,7 +46,7 @@ export class NotificationSelectStudentsComponent implements OnInit {
 		const retrying = retryWhen(retryingStrategy(2, 1000));
 
 		const getUser = (id: string | number) => {
-			return this.userService.searchProfileById(id).pipe(
+			return this.userService.getUserById(id).pipe(
 				filter(Boolean),
 				map((user) => {
 					try {

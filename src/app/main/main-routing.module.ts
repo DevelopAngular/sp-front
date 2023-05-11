@@ -3,6 +3,9 @@ import { RouterModule, Routes } from '@angular/router';
 import { MainPageComponent } from '../main-page/main-page.component';
 import { SettingsComponent } from '../settings/settings.component';
 import { NotKioskModeGuard } from '../not-kiosk-mode.guard';
+import { IsTeacherOrAdminGuard } from '../guards/is-teacher-or-admin.guard';
+import { FeatureFlagGuard } from '../guards/feature_flag.guard';
+import { FLAGS } from '../services/feature-flag.service';
 
 const routes: Routes = [
 	{
@@ -20,6 +23,12 @@ const routes: Routes = [
 			{ path: 'kioskMode', loadChildren: () => import('app/kiosk-mode/kiosk-mode.module').then((m) => m.KioskModeModule) },
 			{ path: 'student/:id', loadChildren: () => import('app/student-info-card/student-info-card.module').then((m) => m.StudentInfoCardModule) },
 			{ path: 'settings', component: SettingsComponent },
+			{
+				path: 'refer_us',
+				loadChildren: () => import('app/referrals/referrals.module').then((m) => m.ReferralsModule),
+				canActivate: [IsTeacherOrAdminGuard, FeatureFlagGuard],
+				data: { feature_flag: FLAGS.RenewalChecklist },
+			},
 		],
 	},
 ];

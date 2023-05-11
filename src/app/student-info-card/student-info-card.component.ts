@@ -201,7 +201,7 @@ export class StudentInfoCardComponent implements OnInit, AfterViewInit, OnDestro
 		this.route.params
 			.pipe(
 				filter((params) => 'id' in params),
-				switchMap((params) => this.userService.searchProfileById(params['id'])),
+				switchMap((params) => this.userService.getUserById(params['id'])),
 				takeUntil(this.destroy$)
 			)
 			.subscribe({

@@ -278,6 +278,24 @@
 	justify-content: space-between;
 }
 
+.referral-button {
+	display: flex;
+	justify-content: space-evenly;
+	align-items: center;
+	width: 123px;
+	background: $blue100;
+	cursor: pointer;
+	padding: 5px 10px;
+	margin: 0 10px;
+	border-radius: 20px;
+
+	.referral-text {
+		color: $blue500;
+		font-size: 14px;
+		font-weight: 500;
+	}
+}
+
 .teacherNav {
 	height: 64px;
 	display: flex;

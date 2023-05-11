@@ -1,27 +1,19 @@
 import { ChangeDetectionStrategy, ChangeDetectorRef, Component, EventEmitter, OnDestroy, OnInit, Output } from '@angular/core';
-import { AuthObject, DemoLogin, LoginErrors, LoginService } from '../../services/login.service';
+import { AuthObject, DemoLogin, LoginErrorMap, LoginService } from '../../services/login.service';
 import { BehaviorSubject, combineLatest, Observable, of, Subject } from 'rxjs';
-import { filter, finalize, map, pluck, takeUntil, tap } from 'rxjs/operators';
+import { filter, finalize, map, pluck, switchMap, take, takeUntil } from 'rxjs/operators';
 import { AuthType, HttpService } from '../../services/http-service';
 import { Meta, Title } from '@angular/platform-browser';
-import { ActivatedRoute, Router } from '@angular/router';
+import { ActivatedRoute, Params, Router } from '@angular/router';
 import { FormControl, FormGroup } from '@angular/forms';
 import { KeyboardShortcutsService } from '../../services/keyboard-shortcuts.service';
 import { StorageService } from '../../services/storage.service';
 import { DeviceDetection } from '../../device-detection.helper';
 import { ToastService } from '../../services/toast.service';
 import { CookieService } from 'ngx-cookie-service';
+import { UserService } from '../../services/user.service';
 
 declare const window;
-
-const LoginErrorMap: Record<LoginErrors, string> = {
-	[LoginErrors.Suspended]: 'Account is suspended. Please contact your school admin.',
-	[LoginErrors.Disabled]: 'Account is disabled. Please contact your school admin.',
-	[LoginErrors.NotActive]: 'Account is not active. Please contact your school admin.',
-	[LoginErrors.TeacherNoAssistants]: 'Account does not have any associated teachers. Please contact your school admin.',
-	[LoginErrors.PopupBlocked]: 'Pop up blocked. Please allow pop ups.',
-	[LoginErrors.InvalidCreds]: 'Incorrect password. Try again or contact your school admin to reset it.',
-};
 
 export enum LoginMethod {
 	OAuth = 1,
@@ -96,7 +88,8 @@ export class LoginComponent implements OnInit, OnDestroy {
 		private storage: StorageService,
 		private cdr: ChangeDetectorRef,
 		private toast: ToastService,
-		private cookieService: CookieService
+		private cookieService: CookieService,
+		private userService: UserService
 	) {
 		this.schoolAlreadyText$ = this.httpService.schoolSignInRegisterText$.asObservable();
 
@@ -147,22 +140,28 @@ export class LoginComponent implements OnInit, OnDestroy {
 	}
 
 	ngOnInit(): void {
-		combineLatest([this.loginService.checkIfAuthStored(), this.loginService.isAuthenticated$.asObservable(), this.route.queryParams])
+		this.route.queryParams
 			.pipe(
-				filter(([authOnLoad, authStateChanged, qp]) => {
-					return !!qp?.code || !!qp?.instant_login;
+				takeUntil(this.destroy$),
+				filter((qp) => !!qp?.code || !!qp?.instant_login),
+				switchMap((qp) => {
+					return combineLatest([this.loginService.checkIfAuthStored(), this.loginService.isAuthenticated$.asObservable()]).pipe(
+						take(1),
+						map(([authOnLoad, authStateChanged]) => [authOnLoad || authStateChanged, qp])
+					);
 				}),
-				tap(([authOnLoad, authStateChanged, qp]) => {
-					const isAuth = authOnLoad || authStateChanged;
+				map(([isAuth, qp]: [boolean, Params]) => {
 					if (isAuth) {
 						// override the current login by removing their creds and continue to authenticate
 						this.cookieService.delete('smartpassToken');
 						this.storage.removeItem('server');
+						this.userService.userData.next(null);
+						this.loginService.isAuthenticated$.next(false);
 					}
 					this.disabledButton = false;
 					this.showSpinner = true;
-				}),
-				map(([authOnLoad, authStateChanged, qp]) => qp)
+					return qp;
+				})
 			)
 			.subscribe((qp) => {
 				// These query parameters are present after logging into the respective platforms

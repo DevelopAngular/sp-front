@@ -1,7 +1,7 @@
 import { Injectable } from '@angular/core';
 import { HttpErrorResponse, HttpEvent, HttpHandler, HttpInterceptor, HttpRequest } from '@angular/common/http';
 import { Observable, of, throwError } from 'rxjs';
-import { LoginService } from './services/login.service';
+import { LoginErrors, LoginService } from './services/login.service';
 import { catchError } from 'rxjs/operators';
 import { CookieService } from 'ngx-cookie-service';
 import { StorageService } from './services/storage.service';
@@ -9,7 +9,7 @@ import { Router } from '@angular/router';
 
 @Injectable()
 export class AuthInterceptor implements HttpInterceptor {
-	excludedCredUrls = ['email_info', 'sessions', 'discovery', 'storage.googleapis.com'];
+	excludedCredUrls = ['email_info', 'discovery', 'storage.googleapis.com'];
 
 	constructor(
 		private storageService: StorageService,
@@ -40,6 +40,10 @@ export class AuthInterceptor implements HttpInterceptor {
 		return next.handle(newRequest).pipe(
 			catchError((error) => {
 				if (error instanceof HttpErrorResponse && error.status === 401) {
+					if (newRequest.url.includes('sessions')) {
+						this.loginService.loginErrorMessage$.next(error.error.detail);
+					}
+
 					this.cookieService.delete('smartpassToken');
 					this.storageService.removeItem('server');
 					this.loginService.isAuthenticated$.next(false);
