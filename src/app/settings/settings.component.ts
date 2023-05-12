@@ -306,5 +306,13 @@ export class SettingsComponent implements OnInit, OnDestroy {
 					? !this.intosData.referral_reminder.universal.seen_version && this.showNotificationBadge
 					: false,
 		});
+		this.settings.push({
+			hidden: false,
+			background: '#134482',
+			icon: 'Swag Shop',
+			action: 'swagShop',
+			title: 'Swag Shop',
+			isNew: true,
+		});
 	}
 }

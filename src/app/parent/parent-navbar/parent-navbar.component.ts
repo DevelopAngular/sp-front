@@ -86,6 +86,7 @@ export class ParentNavbarComponent implements OnInit {
 					isSwitch: this.showSwitchButton,
 					settings: [
 						{ hidden: false, background: '#134482', icon: 'Language', action: 'language', title: 'Language', isNew: true, adjustForScroll: true },
+						{ hidden: false, background: '#134482', icon: 'Swag Shop', action: 'swagShop', title: 'Swag Shop', isNew: true, adjustForScroll: true },
 					],
 				},
 			});
@@ -120,6 +121,8 @@ export class ParentNavbarComponent implements OnInit {
 			this.dialog.open(SpLanguageComponent, {
 				panelClass: 'sp-form-dialog',
 			});
+		} else if (action === 'swagShop') {
+			window.open('https://shop.smartpass.app/');
 		}
 	}
 }
