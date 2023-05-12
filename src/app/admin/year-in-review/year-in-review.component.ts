@@ -4,7 +4,7 @@ import { HttpService } from '../../services/http-service';
 import { filter, take } from 'rxjs/operators';
 import { MatDialog } from '@angular/material/dialog';
 import { FeatureFlagService, FLAGS } from '../../services/feature-flag.service';
-import { FileDownloadService } from "../../services/file-download-service";
+import { FileDownloadService } from '../../services/file-download-service';
 
 @Component({
 	selector: 'sp-year-in-review',
@@ -56,9 +56,6 @@ export class YearInReviewComponent implements OnInit {
 	}
 
 	downloadPdf() {
-		this.fileDownloadService.downloadFile(
-			this.yearInReviewPdfUrl,
-			this.title
-		).subscribe();
+		this.fileDownloadService.downloadFile(this.yearInReviewPdfUrl, this.title).subscribe();
 	}
 }

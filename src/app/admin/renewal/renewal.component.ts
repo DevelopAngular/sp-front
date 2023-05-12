@@ -107,12 +107,6 @@ export class RenewalComponent implements OnInit {
 			},
 		});
 
-		this.adminService.getYearInReviewData().subscribe({
-			next: (data) => {
-				console.log('Data : ', data);
-			},
-		});
-
 		this.navbarService.setPointerVisible(false);
 		this.navbarService.setRenewalReminderFill(true);
 
