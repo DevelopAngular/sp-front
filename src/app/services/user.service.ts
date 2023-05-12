@@ -781,6 +781,10 @@ export class UserService implements OnDestroy {
 		return this.http.patch(`v1/intros/seen_referral_success_nux`, { device, version });
 	}
 
+	updateIntrosDownloadedYearInReview(device, version) {
+		return this.http.patch(`v1/intros/downloaded_year_in_review`, {device, version});
+	}
+
 	saveKioskModeLocation(locId): Observable<ServerAuth> {
 		return this.http.post('auth/kiosk', { location: locId });
 	}
