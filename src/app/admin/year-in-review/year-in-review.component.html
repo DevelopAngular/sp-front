@@ -1,0 +1,29 @@
+<div class="content-box">
+	<div class="left">
+		<div class="title-wrap">
+			<h2 [innerHTML]="title"></h2>
+			<div class="new">NEW</div>
+		</div>
+		<p>Get insights on the passes your students created this year.</p>
+	</div>
+	<div class="right">
+		<div class="report-btn">
+			<app-gradient-button
+				[size]="'editable'"
+				[leftImageWidth]="'11px'"
+				[width]="'172px'"
+				[fontSize]="'15px'"
+				[fontWeight]="'normal'"
+				[minHeight]="'40px'"
+				[gradient]="'#F5F6F8, #F5F6F8'"
+				[textColor]="'#4E5D74'"
+				[leftIcon]="'./assets/year-in-review (Gray-White).svg'"
+				[padding]="'16px'"
+				(buttonClick)="downloadPdf()">
+				Download Report
+			</app-gradient-button>
+			<!-- <img src="./assets/year-in-review (Gray-White).svg" />
+            <a [href]="yearInReviewPdfUrl" target="_blank"><span>View Report</span></a> -->
+		</div>
+	</div>
+</div>

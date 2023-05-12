@@ -1,0 +1,231 @@
+@import 'src/sp-colors';
+
+// climb to assets by a relative path
+// to get an independence of the resolveAsset pipe
+// $climb is how to get from this file to the assets folder
+$climb: '../../..';
+
+.referral-page {
+	background: #f5f5f5;
+	background-image: url($climb + '/assets/Referral Graphic.svg');
+	background-repeat: no-repeat;
+	background-position: 100% 80px;
+	padding: 80px;
+	display: grid;
+	grid-template-columns: 1fr 1fr;
+
+	h1.referral-heading {
+		font-size: 50px !important;
+		font-weight: 700;
+	}
+
+	h2.referral-subheading {
+		margin-top: 70px !important;
+		font-size: 26px !important;
+		line-height: 32px;
+	}
+
+	section.referral-earning-steps {
+		display: grid;
+		grid-template-columns: 65px auto;
+		align-items: center;
+		row-gap: 25px;
+
+		p.referral-text {
+			margin: 0;
+		}
+
+		div.icon-square {
+			height: 42px;
+			width: 42px;
+			border-radius: 5px;
+			background: $gray200;
+			display: grid;
+			place-content: center;
+			align-items: center;
+		}
+	}
+
+	section.referral-perks {
+		display: grid;
+		grid-template-columns: 1fr 1fr;
+		gap: 20px;
+
+		div.perk-card {
+			padding: 10px;
+			display: flex;
+			flex-direction: column;
+			align-items: center;
+			justify-content: center;
+			text-align: center;
+			border-radius: 11px;
+			background: white;
+			width: 244px;
+			height: 163px;
+
+			img {
+				width: 56px;
+				height: 56px;
+			}
+
+			p.referral-text {
+				margin: 8px 0;
+			}
+
+			div.social-icons {
+				img {
+					width: 32px;
+					height: 32px;
+					margin: 0 8px;
+				}
+			}
+		}
+	}
+
+	section.referral-terms {
+		li {
+			padding: 5px 0;
+		}
+	}
+}
+
+.underline {
+	color: $gray500;
+}
+
+.referral-sign-up {
+	width: 380px;
+	height: 517px;
+	border-radius: 10px;
+	background: white;
+	border: 1px solid #e2e6ec;
+	margin: 0 auto;
+	margin-top: 188px;
+	display: flex;
+	flex-direction: column;
+	align-items: center;
+	justify-content: flex-start;
+	padding: 20px;
+
+	.referral-subheading {
+		color: $navy500;
+		width: 220px;
+		margin-top: 0 !important;
+	}
+
+	#referralReason ::ng-deep textarea::placeholder {
+		color: $gray400;
+	}
+
+	div.checkbox {
+		padding: 10px 0;
+		display: flex;
+		align-items: center;
+
+		label {
+			color: $gray500;
+			font-size: 15px;
+		}
+
+		input[type='checkbox'] {
+			margin-right: 10px;
+			height: 24px;
+			width: 24px;
+		}
+	}
+
+	button {
+		background: radial-gradient(98.09% 98.09% at 10.99% 0%, #15d593 0%, #00b467 100%);
+		box-shadow: 0px 2.5px 4px rgba(0, 0, 0, 0.1);
+		border-radius: 10px;
+		font-weight: 700;
+		font-size: 21px;
+		line-height: 26px;
+		color: white;
+		padding: 24px 124px;
+		border: none;
+		cursor: pointer;
+	}
+
+	button:disabled {
+		cursor: default;
+	}
+}
+
+.referral-sign-up.approval {
+	height: 475px;
+	img {
+		height: 60px;
+		width: 84px;
+		margin-top: 80px;
+	}
+	h2 {
+		color: $green500;
+		font-weight: 700;
+		font-size: 30px;
+		line-height: 37px;
+		text-align: center;
+	}
+
+	span {
+		font-weight: 400;
+		font-size: 22px;
+		line-height: 27px;
+		color: $gray500;
+		width: 300px;
+		text-align: center;
+	}
+}
+
+.inputs {
+	display: flex;
+	gap: 12px;
+	flex-direction: column;
+}
+
+.referral-input {
+	display: flex;
+	justify-content: space-between;
+	background-color: $gray100;
+	color: $gray400;
+	padding: 16px;
+	border-radius: 8px;
+	align-items: center;
+	resize: none;
+	span {
+		font-weight: 400;
+		font-size: 14px;
+		line-height: 17px;
+	}
+
+	img {
+		height: 21px;
+		width: 30px;
+	}
+}
+
+textarea.referral-input {
+	height: 112px;
+	border: none;
+}
+
+textarea.referral-input::placeholder {
+	color: $gray400;
+}
+
+.referral-text {
+	font-weight: 400;
+	font-size: 22px;
+	line-height: 27px;
+	color: $gray500;
+}
+
+.referral-rock-frame {
+	margin: 200px 0 0 20px;
+	iframe {
+		height: 540px;
+		width: 585px;
+		border: none;
+		border-radius: 12px;
+	}
+}

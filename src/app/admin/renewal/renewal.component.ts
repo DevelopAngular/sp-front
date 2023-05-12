@@ -5,9 +5,12 @@ import _refiner from 'refiner-js';
 import { NavbarElementsRefsService } from '../../services/navbar-elements-refs.service';
 import { DomSanitizer, SafeResourceUrl } from '@angular/platform-browser';
 import { UserService } from '../../services/user.service';
-import { filter, map } from 'rxjs/operators';
+import { filter, map, tap } from 'rxjs/operators';
 import { User } from '../../models/User';
 import { DatePipe } from '@angular/common';
+import { TeacherReviewsService } from '../../services/teacher-reviews.service';
+import { Observable } from 'rxjs';
+import { FeatureFlagService, FLAGS } from '../../services/feature-flag.service';
 
 type ReminderData = {
 	img: string;
@@ -16,6 +19,14 @@ type ReminderData = {
 	button: string;
 	action: () => void;
 };
+
+interface TeacherReview {
+	name: string;
+	what_to_display: string;
+	stars: number;
+	testimonial: string;
+	first_shown: string;
+}
 
 @Component({
 	selector: 'app-renewal',
@@ -34,8 +45,10 @@ export class RenewalComponent implements OnInit {
 	public iframeLoading = true;
 	private iframeLoadedInterval;
 	private surveyId = '300ba7c0-ccad-11ed-b709-fb336f73b73f';
-
 	public iFrameURL: SafeResourceUrl;
+	teacherReviews$: Observable<TeacherReview[]>;
+
+	public hasYearInReviewPdf: boolean = true;
 
 	constructor(
 		private adminService: AdminService,
@@ -43,10 +56,14 @@ export class RenewalComponent implements OnInit {
 		private navbarService: NavbarElementsRefsService,
 		private sanitizer: DomSanitizer,
 		private userService: UserService,
-		private datepipe: DatePipe
+		private datepipe: DatePipe,
+		private teacherReviewsService: TeacherReviewsService,
+		private featureFlagService: FeatureFlagService
 	) {}
 
 	ngOnInit(): void {
+		this.teacherReviews$ = this.teacherReviewsService.getReviews();
+
 		this.adminService.getRenewalData().subscribe({
 			next: (data) => {
 				this.status = data;
@@ -113,6 +130,10 @@ export class RenewalComponent implements OnInit {
 		} else {
 			this.selectedFeature = clicked;
 		}
+	}
+
+	get isTeacherReviewsEnabled() {
+		return this.featureFlagService.isFeatureEnabledV2(FLAGS.TeacherReviews);
 	}
 
 	toggleConfirm() {

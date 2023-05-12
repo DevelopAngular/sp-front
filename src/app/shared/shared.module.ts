@@ -65,7 +65,6 @@ import { SettingsDescriptionPopupComponent } from '../settings-description-popup
 import { AppTextareaComponent } from '../app-textarea/app-textarea.component';
 import { SquareButtonComponent } from '../square-button/square-button.component';
 import { RoundButtonComponent } from '../round-button/round-button.component';
-import { FeedbackButtonComponent } from '../feedback-button/feedback-button.component';
 import { NuxEncounterPreventionComponent } from '../nux-components/nux-encounter-prevention/nux-encounter-prevention.component';
 import { SmartpassSearchComponent } from '../smartpass-search/smartpass-search.component';
 import { EncounterGroupComponent } from '../admin/accounts/encounter-prevention-dialog/encounter-group/encounter-group.component';
@@ -113,6 +112,7 @@ import { HelpCenterComponent } from './shared-components/help-center/help-center
 import { NuxHelpCenterComponent } from '../nux-components/nux-help-center/nux-help-center.component';
 import { CallDialogComponent } from './shared-components/call-dialog/call-dialog.component';
 import { TimeZoneService } from '../services/time-zone.service';
+import { YearInReviewComponent } from '../admin/year-in-review/year-in-review.component';
 const DEFAULT_SWIPER_CONFIG: SwiperConfigInterface = {
 	direction: 'horizontal',
 	slidesPerView: 'auto',
@@ -181,7 +181,6 @@ const DEFAULT_SWIPER_CONFIG: SwiperConfigInterface = {
 		AppTextareaComponent,
 		SquareButtonComponent,
 		RoundButtonComponent,
-		FeedbackButtonComponent,
 		NuxEncounterPreventionComponent,
 		SmartpassSearchComponent,
 		EncounterGroupComponent,
@@ -225,6 +224,7 @@ const DEFAULT_SWIPER_CONFIG: SwiperConfigInterface = {
 		HelpCenterComponent,
 		NuxHelpCenterComponent,
 		CallDialogComponent,
+		YearInReviewComponent,
 	],
 	exports: [
 		ReactiveFormsModule,
@@ -284,7 +284,6 @@ const DEFAULT_SWIPER_CONFIG: SwiperConfigInterface = {
 		AppTextareaComponent,
 		SquareButtonComponent,
 		RoundButtonComponent,
-		FeedbackButtonComponent,
 		CustomToolTipComponent,
 		NuxEncounterPreventionComponent,
 		SmartpassSearchComponent,
@@ -327,6 +326,7 @@ const DEFAULT_SWIPER_CONFIG: SwiperConfigInterface = {
 		HelpCenterComponent,
 		NuxHelpCenterComponent,
 		CallDialogComponent,
+		YearInReviewComponent,
 	],
 	providers: [
 		{

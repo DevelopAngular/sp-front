@@ -52,6 +52,8 @@ export class DashboardContentComponent implements OnInit, OnDestroy {
 	public onboardProgress$: Observable<{ [id: string]: Onboard }>;
 	public onboardProcessLoaded$: Observable<boolean>;
 
+	public hasYearInReviewPdf: boolean = true;
+
 	public lineChartTicks: any = {
 		suggestedMin: 0,
 		precision: 0,
@@ -337,6 +339,7 @@ export class DashboardContentComponent implements OnInit, OnDestroy {
 				},
 			},
 		};
+
 		this.onboardProcessLoaded$ = this.adminService.loadedOnboardProcess$;
 		this.onboardProgress$ = this.http.globalReload$.pipe(
 			switchMap(() => {

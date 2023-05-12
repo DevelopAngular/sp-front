@@ -1,3 +1,6 @@
+<div style="padding: 10px 40px" *ngIf="hasYearInReviewPdf">
+	<sp-year-in-review (yearInReviewEnabled)="hasYearInReviewPdf = $event"></sp-year-in-review>
+</div>
 <div class="host">
 	<div class="dashboard-wrapper">
 		<div class="left">

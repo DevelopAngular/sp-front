@@ -62,8 +62,9 @@
 					class="ds-mx-10"
 					style="cursor: pointer; display: flex; align-items: center"
 					*ngIf="user && user.isAssistant() && !screenService.isDeviceLargeExtra; else notAssistant">
-					<div class="feedback" *ngIf="!user.isStudent() && !isKioskMode && !isMobile && !isParent">
-						<app-feedback-button></app-feedback-button>
+					<div *ngIf="referralEnabled" class="referral-button" (click)="goToReferralPage()">
+						<img [src]="'./assets/Blue-Gift.svg'" alt="Renewal Icon" />
+						<span class="referral-text">Earn $250</span>
 					</div>
 					<div
 						[ngClass]="isIOSTablet ? 'ios-name' : 'name'"
@@ -107,8 +108,9 @@
 							<img width="20px" [src]="'./assets/Streaks.svg'" alt="" />
 						</div>
 					</div>
-					<div class="feedback" *ngIf="isStaff && !isKioskMode && !isParent && !isMobile && !isKioskModeSettingsPage()">
-						<app-feedback-button></app-feedback-button>
+					<div *ngIf="referralEnabled && user.isTeacher()" class="referral-button" (click)="goToReferralPage()">
+						<img [src]="'./assets/Blue-Gift.svg'" alt="Renewal Icon" />
+						<span class="referral-text">Earn $250</span>
 					</div>
 					<ng-template #referSuccess>
 						<div class="ds-tooltip">

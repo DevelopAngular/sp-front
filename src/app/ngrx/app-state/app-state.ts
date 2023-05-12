@@ -24,7 +24,7 @@ import { profilePicturesReducer } from '../profile-pictures/reducers';
 import { exclusionGroupsReducer } from '../encounters-prevention/excusion-groups/reducers/exclusion-groups.reducer';
 import { smartpassSearchReducer } from '../smartpass-search/reducers';
 import { encounterDetectionReducer } from '../encounter-detection/reducers';
-
+import { School } from '../../models/School';
 export interface AppState {
 	readonly reports;
 	readonly pinnables;
@@ -53,6 +53,7 @@ export interface AppState {
 	readonly exclusionGroups;
 	readonly smartpassSearch;
 	readonly encounterDetection;
+	readonly school: School[];
 }
 
 export const reducers = {

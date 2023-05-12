@@ -106,6 +106,8 @@ import {
 	updateIntrosMain,
 	updateIntrosPassLimitsOnlyCertainRooms,
 	updateIntrosSearch,
+	updateIntrosSeenReferralNux,
+	updateIntrosSeenReferralSuccessNux,
 	updateIntrosSeenRenewalStatusPage,
 	updateIntrosStudentPassLimits,
 	updateIntrosWaitInLine,
@@ -267,7 +269,15 @@ export class UserService implements OnDestroy {
 	user$: Observable<User> = this.store.select(getUserData);
 	userPin$: Observable<string | number> = this.store.select(getSelectUserPin);
 	loadedUser$: Observable<boolean> = this.store.select(getLoadedUser);
-	currentUpdatedUser$: Observable<User> = this.store.select(getCurrentUpdatedUser);
+	currentUpdatedUser$: Observable<User> = this.store.select(getCurrentUpdatedUser).pipe(
+		map((u) => {
+			try {
+				return User.fromJSON(u);
+			} catch {
+				return u;
+			}
+		})
+	);
 
 	/**
 	 * Student Groups
@@ -616,6 +626,10 @@ export class UserService implements OnDestroy {
 		return this.getUserSchool().feature_flag_new_abbreviation;
 	}
 
+	getFeatureFlagReferralProgram(): boolean {
+		return this.getUserSchool().feature_flag_referral_program;
+	}
+
 	getCurrentUpdatedSchool$(): Observable<School> {
 		return this.http.currentUpdateSchool$;
 	}
@@ -626,6 +640,10 @@ export class UserService implements OnDestroy {
 
 	getUser() {
 		return this.http.get<User>('v1/users/@me');
+	}
+
+	getUserById(userId) {
+		return this.http.get<User>(`v1/users/${userId}`);
 	}
 
 	getUserPinRequest() {
@@ -699,6 +717,14 @@ export class UserService implements OnDestroy {
 		this.store.dispatch(updateIntrosSeenRenewalStatusPage({ intros, device, version }));
 	}
 
+	updateIntrosSeenReferralNuxRequest(intros, device, version) {
+		this.store.dispatch(updateIntrosSeenReferralNux({ intros, device, version }));
+	}
+
+	updateIntrosSeenReferralSuccessNuxRequest(intros, device, version) {
+		this.store.dispatch(updateIntrosSeenReferralSuccessNux({ intros, device, version }));
+	}
+
 	// TODO: Make all update functions into a single function
 	// TODO: Have all update intro endpoints be part of an enum
 	// TODO: Share that enum with `intro.effects.ts`
@@ -747,6 +773,18 @@ export class UserService implements OnDestroy {
 		return this.http.patch(`v1/intros/seen_renewal_status_page`, { device, version });
 	}
 
+	updateIntrosSeenReferralNux(device, version) {
+		return this.http.patch(`v1/intros/seen_referral_nux`, { device, version });
+	}
+
+	updateIntrosSeenReferralSuccessNux(device, version) {
+		return this.http.patch(`v1/intros/seen_referral_success_nux`, { device, version });
+	}
+
+	updateIntrosDownloadedYearInReview(device, version) {
+		return this.http.patch(`v1/intros/downloaded_year_in_review`, { device, version });
+	}
+
 	saveKioskModeLocation(locId): Observable<ServerAuth> {
 		return this.http.post('auth/kiosk', { location: locId });
 	}
@@ -784,10 +822,6 @@ export class UserService implements OnDestroy {
 		}
 
 		return this.http.get<Paged<any>>(url);
-	}
-
-	searchProfileById(id) {
-		return this.http.get<User>(`v1/users/${id}`);
 	}
 
 	possibleProfileById(id: string): Observable<User | null> {

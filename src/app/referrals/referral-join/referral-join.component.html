@@ -1,0 +1,29 @@
+<section class="referral-sign-up" style="text-align: center" *ngIf="user.referralStatus === 'not_applied'">
+	<h2 class="referral-subheading">Join the SmartPass Squad</h2>
+	<div class="inputs">
+		<div class="referral-input">
+			<span>{{ user.display_name }}</span>
+			<img [src]="'./assets/Check (Green).svg' | resolveAsset" alt="Checkmark Icon" />
+		</div>
+		<div class="referral-input">
+			<span>{{ user.primary_email }}</span>
+			<img [src]="'./assets/Check (Green).svg' | resolveAsset" alt="Checkmark Icon" />
+		</div>
+		<textarea id="referralReason" placeholder="Tell us why you are an amazing fit&#10;for the program! (optional)" class="referral-input"></textarea>
+		<div class="checkbox">
+			<input type="checkbox" id="terms" (click)="toggleTerms()" />
+			<label for="terms">I agree to the <a class="underline" href="/" target="_blank">Terms and Conditions</a></label
+			><br />
+		</div>
+		<button (click)="apply()" [disabled]="!termsAccepted">Apply Now</button>
+	</div>
+</section>
+<div class="referral-sign-up approval" *ngIf="user.referralStatus === 'applied'">
+	<img [src]="'./assets/Check (Green).svg' | resolveAsset" alt="Checkmark Icon" />
+
+	<h2>Application Submitted</h2>
+	<span>Thank you! We will be in touch with next steps</span>
+</div>
+<section class="referral-rock-frame" *ngIf="user.referralStatus === 'accepted'">
+	<iframe id="referral-frame"></iframe>
+</section>
