@@ -231,8 +231,7 @@ export class KioskModeComponent implements OnInit, AfterViewInit, OnDestroy {
 		if (event.key !== 'Enter') {
 			return;
 		}
-		// let id = this.cardReaderValue;
-		let id = '998848589';
+		let id = this.cardReaderValue;
 
 		if (this.cardReaderValue && (this.cardReaderValue[0] === ';' || this.cardReaderValue[0] === '%')) {
 			id = id.substring(1);
