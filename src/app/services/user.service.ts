@@ -782,7 +782,7 @@ export class UserService implements OnDestroy {
 	}
 
 	updateIntrosDownloadedYearInReview(device, version) {
-		return this.http.patch(`v1/intros/downloaded_year_in_review`, {device, version});
+		return this.http.patch(`v1/intros/downloaded_year_in_review`, { device, version });
 	}
 
 	saveKioskModeLocation(locId): Observable<ServerAuth> {

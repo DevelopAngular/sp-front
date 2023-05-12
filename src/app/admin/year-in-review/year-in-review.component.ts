@@ -1,12 +1,12 @@
 import { Component, EventEmitter, Input, OnInit, Output } from '@angular/core';
 import { AdminService } from '../../services/admin.service';
 import { HttpService } from '../../services/http-service';
-import { filter, mergeMap, take } from "rxjs/operators";
+import { filter, mergeMap, take } from 'rxjs/operators';
 import { MatDialog } from '@angular/material/dialog';
 import { FeatureFlagService, FLAGS } from '../../services/feature-flag.service';
 import { FileDownloadService } from '../../services/file-download-service';
-import { UserService } from "../../services/user.service";
-import { of } from "rxjs";
+import { UserService } from '../../services/user.service';
+import { of } from 'rxjs';
 
 @Component({
 	selector: 'sp-year-in-review',
@@ -28,7 +28,7 @@ export class YearInReviewComponent implements OnInit {
 		private featureFlagService: FeatureFlagService,
 		private adminService: AdminService,
 		private fileDownloadService: FileDownloadService,
-		private userService: UserService,
+		private userService: UserService
 	) {}
 
 	ngOnInit(): void {
@@ -59,20 +59,20 @@ export class YearInReviewComponent implements OnInit {
 	}
 
 	downloadPdf() {
-		this.fileDownloadService.
-		downloadFile(this.yearInReviewPdfUrl, this.title).
-		pipe(
-			filter(b => !!b),
-			mergeMap(() => this.userService.introsData$),
-			filter(i => !!i),
-			mergeMap( i => {
-				if (i.downloaded_year_in_review?.universal?.seen_version) {
-					return of(i);
-				} else {
-					return this.userService.updateIntrosDownloadedYearInReview('universal', '1');
-				}
-			})
-		).
-		subscribe();
+		this.fileDownloadService
+			.downloadFile(this.yearInReviewPdfUrl, this.title)
+			.pipe(
+				filter((b) => !!b),
+				mergeMap(() => this.userService.introsData$),
+				filter((i) => !!i),
+				mergeMap((i) => {
+					if (i.downloaded_year_in_review?.universal?.seen_version) {
+						return of(i);
+					} else {
+						return this.userService.updateIntrosDownloadedYearInReview('universal', '1');
+					}
+				})
+			)
+			.subscribe();
 	}
 }
