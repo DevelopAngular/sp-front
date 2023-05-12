@@ -201,14 +201,14 @@
 				</div>
 			</div>
 		</div>
-		<div class="iframe-container" *ngIf="showRenewConfirm">
-			<div (click)="toggleConfirm()">
-				<img src="./assets/Chevron Left (Blue-Gray).svg" />
-			</div>
-			<div *ngIf="iframeLoading" class="loading-theme spinner ds-flex-center-center">
-				<mat-spinner [color]="'accent'" [diameter]="50"></mat-spinner>
-			</div>
-			<iframe [src]="iFrameURL" [ngClass]="{ hidden: iframeLoading }" id="renewal-iframe"></iframe>
-		</div>
 	</div>
+</div>
+<div class="iframe-container" *ngIf="showRenewConfirm">
+	<div (click)="toggleConfirm()">
+		<img src="./assets/Chevron Left (Blue-Gray).svg" />
+	</div>
+	<div *ngIf="iframeLoading" class="loading-theme spinner ds-flex-center-center">
+		<mat-spinner [color]="'accent'" [diameter]="50"></mat-spinner>
+	</div>
+	<iframe [src]="iFrameURL" [ngClass]="{ hidden: iframeLoading }" id="renewal-iframe"></iframe>
 </div>
