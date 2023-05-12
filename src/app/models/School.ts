@@ -7,7 +7,6 @@ export class School extends BaseModel {
 		public id: string,
 		public name: string,
 		public my_roles: string[],
-		public feature_flags_v2: string[],
 		public pass_buffer_time: number,
 		public earliest_pass_time: string,
 		public gsuite_config: any,
@@ -27,6 +26,7 @@ export class School extends BaseModel {
 		public feature_flag_show_wait_in_line: boolean,
 		public feature_flag_new_abbreviation: boolean,
 		public feature_flag_referral_program: boolean,
+		public feature_flags_v2: [string],
 		public trial_quote_link: string,
 		public trial_end_date: Date,
 		public timezone: string
@@ -44,7 +44,6 @@ export class School extends BaseModel {
 			student_can_use_mobile: boolean = JSON[' student_can_use_mobile'],
 			name: string = '' + JSON['name'],
 			my_roles: string[] = JSON['my_roles'],
-			feature_flags_v2: string[] = JSON['feature_flags_v2'],
 			pass_buffer_time: number = JSON['pass_buffer_time'],
 			earliest_pass_time: string = JSON['earliest_pass_time'],
 			gsuite_config: any = JSON['gsuite_config'],
@@ -64,6 +63,7 @@ export class School extends BaseModel {
 			feature_flag_show_wait_in_line: boolean = !!JSON['feature_flag_show_wait_in_line'],
 			feature_flag_new_abbreviation: boolean = !!JSON['feature_flag_new_abbreviation'],
 			feature_flag_referral_program: boolean = !!JSON['feature_flag_referral_program'],
+			feature_flags_v2: [string] = JSON['feature_flags_v2'],
 			timezone: string = JSON['timezone'],
 			trial_quote_link: string = JSON['trial_quote_link'];
 		let trial_end_date: Date;
@@ -77,7 +77,6 @@ export class School extends BaseModel {
 			id,
 			name,
 			my_roles,
-			feature_flags_v2,
 			pass_buffer_time,
 			earliest_pass_time,
 			gsuite_config,
@@ -97,6 +96,7 @@ export class School extends BaseModel {
 			feature_flag_show_wait_in_line,
 			feature_flag_new_abbreviation,
 			feature_flag_referral_program,
+			feature_flags_v2,
 			trial_quote_link,
 			trial_end_date,
 			timezone

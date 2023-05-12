@@ -49,7 +49,7 @@
 		</div>
 	</div>
 	<div *ngIf="buttonLink" class="wrapper-container button-link">
-		<a class="link" [href]="buttonLink" [attr.target]="linkType" name="link" [attr.draggable]="download">
+		<a class="link" [href]="buttonLink" [attr.target]="linkType" name="link" [attr.draggable]="draggable" [download]="download">
 			<img
 				draggable="false"
 				*ngIf="leftIcon"

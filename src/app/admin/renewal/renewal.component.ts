@@ -5,7 +5,7 @@ import _refiner from 'refiner-js';
 import { NavbarElementsRefsService } from '../../services/navbar-elements-refs.service';
 import { DomSanitizer, SafeResourceUrl } from '@angular/platform-browser';
 import { UserService } from '../../services/user.service';
-import { filter, map } from 'rxjs/operators';
+import { filter, map, tap } from 'rxjs/operators';
 import { User } from '../../models/User';
 import { DatePipe } from '@angular/common';
 import { TeacherReviewsService } from '../../services/teacher-reviews.service';
@@ -47,6 +47,8 @@ export class RenewalComponent implements OnInit {
 	private surveyId = '300ba7c0-ccad-11ed-b709-fb336f73b73f';
 	public iFrameURL: SafeResourceUrl;
 	teacherReviews$: Observable<TeacherReview[]>;
+
+	public hasYearInReviewPdf: boolean = true;
 
 	constructor(
 		private adminService: AdminService,
@@ -131,7 +133,7 @@ export class RenewalComponent implements OnInit {
 	}
 
 	get isTeacherReviewsEnabled() {
-		return this.featureFlagService.isFeatureV2Enabled(FLAGS.TeacherReviews);
+		return this.featureFlagService.isFeatureEnabledV2(FLAGS.TeacherReviews);
 	}
 
 	toggleConfirm() {
