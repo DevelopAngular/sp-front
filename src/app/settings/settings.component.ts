@@ -270,7 +270,7 @@ export class SettingsComponent implements OnInit, OnDestroy {
 			icon: 'Language',
 			action: 'language',
 			title: 'Language',
-			isNew: true,
+			isNew: false,
 		});
 		if (this.isStaff) {
 			this.settings.push({

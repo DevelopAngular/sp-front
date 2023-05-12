@@ -34,7 +34,13 @@
 					<div>
 						<span>{{ setting.title }}</span>
 					</div>
-					<div class="release" [class.release-language]="setting.action === 'language'" *ngIf="setting.isNew">NEW</div>
+					<div
+						class="release"
+						[class.release-language]="setting.action === 'language'"
+						[class.release-swag]="setting.action === 'swagShop'"
+						*ngIf="setting.isNew">
+						NEW
+					</div>
 				</div>
 			</div>
 		</div>
