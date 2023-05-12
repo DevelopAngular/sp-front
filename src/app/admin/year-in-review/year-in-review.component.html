@@ -11,16 +11,16 @@
 			<app-gradient-button
 				[size]="'editable'"
 				[leftImageWidth]="'11px'"
-				[width]="'145px'"
+				[width]="'172px'"
 				[fontSize]="'15px'"
 				[fontWeight]="'normal'"
 				[minHeight]="'40px'"
 				[gradient]="'#F5F6F8, #F5F6F8'"
 				[textColor]="'#4E5D74'"
 				[leftIcon]="'./assets/year-in-review (Gray-White).svg'"
-				[linkType]="'_blank'"
-				[buttonLink]="yearInReviewPdfUrl"
-				[text]="'View Report'">
+				[padding]="'16px'"
+				(buttonClick)="downloadPdf()">
+				Download Report
 			</app-gradient-button>
 			<!-- <img src="./assets/year-in-review (Gray-White).svg" />
             <a [href]="yearInReviewPdfUrl" target="_blank"><span>View Report</span></a> -->

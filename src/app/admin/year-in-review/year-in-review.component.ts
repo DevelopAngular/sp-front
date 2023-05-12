@@ -4,6 +4,7 @@ import { HttpService } from '../../services/http-service';
 import { filter, take } from 'rxjs/operators';
 import { MatDialog } from '@angular/material/dialog';
 import { FeatureFlagService, FLAGS } from '../../services/feature-flag.service';
+import { FileDownloadService } from "../../services/file-download-service";
 
 @Component({
 	selector: 'sp-year-in-review',
@@ -14,17 +15,17 @@ export class YearInReviewComponent implements OnInit {
 	@Input()
 	public pdfUrl: URL;
 
-	public title: string;
-
-	// public hasYearInReviewPdf: boolean;
 	@Output() yearInReviewEnabled: EventEmitter<boolean> = new EventEmitter<boolean>();
-	public yearInReviewPdfUrl: URL;
+	public yearInReviewPdfUrl: string;
+
+	public title: string;
 
 	constructor(
 		private httpService: HttpService,
 		private dialogService: MatDialog,
 		private featureFlagService: FeatureFlagService,
-		private adminService: AdminService
+		private adminService: AdminService,
+		private fileDownloadService: FileDownloadService
 	) {}
 
 	ngOnInit(): void {
@@ -49,8 +50,15 @@ export class YearInReviewComponent implements OnInit {
 		this.adminService.getYearInReviewData().subscribe((resp) => {
 			this.yearInReviewEnabled.emit(!!resp.pdf_url);
 			if (!!resp.pdf_url) {
-				this.yearInReviewPdfUrl = new URL(resp.pdf_url);
+				this.yearInReviewPdfUrl = resp.pdf_url;
 			}
 		});
+	}
+
+	downloadPdf() {
+		this.fileDownloadService.downloadFile(
+			this.yearInReviewPdfUrl,
+			this.title
+		).subscribe();
 	}
 }

@@ -60,7 +60,8 @@ export class GradientButtonComponent implements OnInit {
 	@Input() whiteSpace: string = 'nowrap';
 	@Input() buttonLink: string; // needs for the links so that don't brake an existing markup and the entire button is clickable
 	@Input() linkType: linkType = '_blank';
-	@Input() download: boolean = false;
+	@Input() draggable: boolean = false;
+	@Input() download: string;
 	@Input() documentType: docType;
 	@Input() isGradient: boolean;
 	@Input() customBackground: string = '';
