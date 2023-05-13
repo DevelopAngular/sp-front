@@ -45,7 +45,13 @@
 					<div class="setting-title" [style.color]="getColor('#FFFFFF', '#7f879d')">
 						{{ setting.title }}
 					</div>
-					<div class="release" [class.release-language]="setting.action === 'language'" *ngIf="setting.isNew">NEW</div>
+					<div
+						class="release"
+						[class.release-language]="setting.action === 'language'"
+						[class.release-swag]="setting.action === 'swagShop'"
+						*ngIf="setting.isNew">
+						NEW
+					</div>
 					<div class="set-up" *ngIf="!(teacherPin$ | async) && setting.action === 'myPin'">Set-Up</div>
 				</div>
 			</div>

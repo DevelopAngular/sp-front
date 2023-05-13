@@ -1,6 +1,5 @@
 @import '../../../design-system';
 @import '../../../sp-colors';
-
 .release {
 	width: 44px;
 	height: 21px;
@@ -17,6 +16,12 @@
 .release-language {
 	text-transform: uppercase;
 	background-color: $green500 !important;
+}
+
+.release-swag {
+	text-transform: uppercase;
+	background-color: $green100 !important;
+	color: $green500 !important;
 }
 
 .beta {

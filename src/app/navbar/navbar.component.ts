@@ -649,6 +649,8 @@ export class NavbarComponent implements AfterViewInit, OnInit, OnDestroy {
 				this.userService.updateIntrosRequest(this.introsData, 'universal', '1');
 			}
 			window.open('https://www.smartpass.app/referrals');
+		} else if (action === 'swagShop') {
+			window.open('https://shop.smartpass.app/');
 		}
 	}
 
