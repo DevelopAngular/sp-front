@@ -19,10 +19,16 @@
 					</div>
 				</div>
 			</div>
-			<sp-year-in-review *ngIf="hasYearInReviewPdf" (yearInReviewEnabled)="hasYearInReviewPdf = $event" class="year-in-review-thin-view"></sp-year-in-review>
+			<sp-year-in-review
+				*ngIf="hasYearInReviewPdf"
+				(yearInReviewEnabled)="hasYearInReviewPdf = $event"
+				class="year-in-review-thin-view"></sp-year-in-review>
 			<div class="action-boxes">
 				<div>
-					<sp-year-in-review *ngIf="hasYearInReviewPdf" (yearInReviewEnabled)="hasYearInReviewPdf = $event" class="year-in-review-wide-view"></sp-year-in-review>
+					<sp-year-in-review
+						*ngIf="hasYearInReviewPdf"
+						(yearInReviewEnabled)="hasYearInReviewPdf = $event"
+						class="year-in-review-wide-view"></sp-year-in-review>
 					<div class="content-box">
 						<h5>Summer Action Items</h5>
 						<div class="action-items-container" *ngIf="status?.integration_type">
