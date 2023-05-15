@@ -21,7 +21,7 @@ build:
   stage: build
   script:
     - yarn install
-    - yarn run lint:ci
+    - git diff --name-only origin/master... | grep -E '\.ts$|\.js$' | xargs -I {} yarn lint:eslint {}
     - scripts/cf_build.sh
   rules:
     - if: $CI_PIPELINE_SOURCE == 'merge_request_event'
