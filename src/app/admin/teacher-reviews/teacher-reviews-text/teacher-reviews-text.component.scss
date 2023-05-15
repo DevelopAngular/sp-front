@@ -3,6 +3,16 @@
 	justify-content: center;
 }
 
+h6 {
+	font-family: 'Inter';
+	font-style: normal;
+	font-weight: 500;
+	font-size: 20px;
+	line-height: 24px;
+	display: flex;
+	align-items: center;
+}
+
 .review-text {
 	width: 90%;
 }
@@ -17,7 +27,6 @@
 	flex-wrap: wrap;
 	width: 90%;
 	border-radius: 999px;
-	font-size: 1.1vw;
 	justify-content: center;
 }
 
@@ -31,7 +40,6 @@
 	flex-wrap: wrap;
 	width: 90%;
 	border-radius: 999px;
-	font-size: 1.1vw;
 	justify-content: center;
 }
 
@@ -50,7 +58,4 @@
 
 .testimonial {
 	margin: 0 0 0 0;
-	font-family: 'Inter', sans-serif;
-	font-style: normal;
-	font-size: 14px;
 }
