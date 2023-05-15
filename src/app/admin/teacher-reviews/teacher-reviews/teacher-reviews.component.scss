@@ -8,6 +8,11 @@
 	justify-content: center;
 }
 
+@media screen and (max-width: 1400px) {
+	.host {
+		grid-template-columns: 580px;
+	}
+}
 .review {
 	padding-bottom: 20px;
 	background: white;
