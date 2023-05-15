@@ -13,6 +13,7 @@ import {
 	finalize,
 	map,
 	mergeMap,
+	skipUntil,
 	switchMap,
 	take,
 	takeUntil,
@@ -281,18 +282,20 @@ export class AppComponent implements OnInit, AfterViewInit, OnDestroy {
 			document.head.appendChild(link);
 		}
 
+		this.showUISubject.next(true);
+
 		combineLatest([this.loginService.checkIfAuthStored(), this.loginService.isAuthenticated$.asObservable()])
 			.pipe(
+				skipUntil(this.loginService.continueAuthFlow$),
 				map(([authOnLoad, authStateChanged]) => authOnLoad || authStateChanged),
 				distinctUntilChanged(),
 				tap((isAuth) => {
+					this.isAuthenticated = isAuth;
 					const path = window.location.pathname;
 					if (!isAuth) {
 						if (path.includes('main/student')) {
 							this.storageService.setItem('initialUrl', path);
 						}
-						this.showUISubject.next(true);
-						this.isAuthenticated = false;
 					}
 				}),
 				filter(Boolean),
@@ -366,6 +369,13 @@ export class AppComponent implements OnInit, AfterViewInit, OnDestroy {
 				})
 			)
 			.subscribe();
+
+		const params = new URL(window.location.href).searchParams;
+		const [instant_login, code, scope] = [params.get('instant_login'), params.get('code'), params.get('scope')];
+		const isThirdPartyLogin = !!(instant_login || code || scope);
+		if (!isThirdPartyLogin) {
+			this.loginService.continueAuthFlow$.next(true);
+		}
 
 		this.http.schoolsCollection$
 			.pipe(
