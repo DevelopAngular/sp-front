@@ -1,8 +1,7 @@
 import { Component, OnInit } from '@angular/core';
 import { UserService } from '../../services/user.service';
-import { User } from '../../models/User';
-import { HttpService } from '../../services/http-service';
-import { finalize, map } from 'rxjs/operators';
+import { User, ReferralStatus } from '../../models/User';
+import { concatMap, finalize, map } from 'rxjs/operators';
 import { ToastService } from '../../services/toast.service';
 
 type referralRockJS = {
@@ -28,7 +27,11 @@ export class ReferralJoinComponent implements OnInit {
 	user: User;
 	termsAccepted = false;
 
-	constructor(private userService: UserService, private httpService: HttpService, private toast: ToastService) {
+	constructor(private userService: UserService, private toast: ToastService) {
+		this.setUpReferralRock();
+	}
+
+	setUpReferralRock(): void {
 		window.referralJS = window.referralJS || {};
 		window.referralJS.scriptConfig = {
 			parameters: { src: '//smartpass.referralrock.com/ReferralSdk/referral.js', transactionKey: 'f99edca6-ab8e-486e-964e-885e7bdaf31f' },
@@ -44,9 +47,9 @@ export class ReferralJoinComponent implements OnInit {
 	}
 
 	ngOnInit(): void {
-		this.userService.userData.subscribe({
+		this.userService.userData.pipe(concatMap((user) => this.userService.getUserById(user.id))).subscribe({
 			next: (user) => {
-				this.user = user;
+				this.user = User.fromJSON(user);
 				window.referralJS.access = {
 					targetId: 'referral-frame',
 					parameters: {
@@ -61,19 +64,18 @@ export class ReferralJoinComponent implements OnInit {
 
 	apply(): void {
 		this.toggleTerms();
-		this.httpService
-			.post('v2/user/referral/apply', {}, undefined, false)
+		this.userService
+			.applyForReferral()
 			.pipe(
 				map((resp: Record<string, any>) => {
-					resp.roles = this.user.userRoles();
-					return User.fromJSON(resp);
+					return resp?.referral_status ? (resp.referral_status as ReferralStatus) : undefined;
 				}),
 				finalize(() => this.toggleTerms())
 			)
 			.subscribe({
-				next: (user: User) => {
-					if (user) {
-						this.user = user;
+				next: (status) => {
+					if (status) {
+						this.user.referral_status = status;
 					}
 				},
 				error: (err) => {

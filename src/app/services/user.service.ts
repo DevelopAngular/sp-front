@@ -426,7 +426,7 @@ export class UserService implements OnDestroy {
 				switchMap((user: User) => {
 					this.blockUserPage$.next(false);
 					if (user.isAssistant() && !window.location.href.includes('/kioskMode')) {
-						return combineLatest(this.representedUsers.pipe(filter((res) => !!res)), this.http.schoolsCollection$).pipe(
+						return combineLatest([this.representedUsers.pipe(filter((res) => !!res)), this.http.schoolsCollection$]).pipe(
 							tap(([users, schools]) => {
 								if (!users.length && schools.length === 1) {
 									this.store.dispatch(getSchoolsFailure({ errorMessage: 'Assistant does`t have teachers' }));
@@ -435,7 +435,7 @@ export class UserService implements OnDestroy {
 								}
 							}),
 							filter(([users, schools]) => !!users.length || schools.length > 1),
-							map(([users, schools]) => {
+							map(([users]) => {
 								if (users && users.length) {
 									this.http.effectiveUserId.next(+users[0].user.id);
 								}
@@ -990,6 +990,10 @@ export class UserService implements OnDestroy {
 
 	updateStudentGroup(id, body) {
 		return this.http.patch(`v1/student_lists/${id}`, body);
+	}
+
+	applyForReferral() {
+		return this.http.post('v2/user/referral/apply', {}, undefined, false);
 	}
 
 	deleteStudentGroupRequest(id) {
