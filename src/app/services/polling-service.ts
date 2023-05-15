@@ -49,6 +49,7 @@ export class PollingService {
 
 	private failedHeartbeats: number = 0;
 	private lastHeartbeat: number = Date.now() + 30 * 1000;
+	private hasConnectionError: boolean = false;
 
 	constructor(private http: HttpService, private _logger: Logger, private cookie: CookieService) {
 		this.connectWebsocket();
@@ -86,6 +87,7 @@ export class PollingService {
 		ws.onOpen(() => {
 			if (this.websocket !== ws) return;
 			opened = true;
+			this.hasConnectionError = false;
 
 			console.log('Websocket opened');
 			ws.send4Direct(JSON.stringify({ action: 'authenticate', token: spCookie, token_type: 'cookie_value' }));
@@ -123,6 +125,7 @@ export class PollingService {
 		});
 
 		ws.onError((event) => {
+			this.hasConnectionError = true;
 			this.rawMessageStream.next({
 				type: 'error',
 				data: event,
@@ -203,7 +206,7 @@ export class PollingService {
 	}
 
 	private getHeartbeatTime(): number {
-		if (this.failedHeartbeats == 0) {
+		if (this.failedHeartbeats == 0 && !this.hasConnectionError) {
 			return 20 * 1000;
 		}
 		return Math.min(Math.pow(2, this.failedHeartbeats), 30) * 1000;
