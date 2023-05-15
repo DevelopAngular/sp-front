@@ -1212,7 +1212,10 @@ export class UserService implements OnDestroy {
 		return this.http.get(`v1/users?role=_profile_student&has_grade_level=false`);
 	}
 
-	possibleProfileByCustomId(id: string, ignoreProfileWithStatuses: ProfileStatus[] = ['suspended']): Observable<User | null> {
+	possibleProfileByCustomId(
+		id: string,
+		ignoreProfileWithStatuses: ProfileStatus[] = ['suspended']
+	): Observable<{ results: { user: Array<User | null> } }> {
 		let url = `v1/users/custom_id/${id}?`;
 
 		for (const hideStatus of ignoreProfileWithStatuses) {
