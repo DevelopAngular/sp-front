@@ -284,10 +284,13 @@ export class AppComponent implements OnInit, AfterViewInit, OnDestroy {
 
 		this.showUISubject.next(true);
 
-		combineLatest([this.loginService.checkIfAuthStored(), this.loginService.isAuthenticated$.asObservable()])
+		combineLatest([
+			this.loginService.continueAuthFlow$.asObservable(),
+			this.loginService.checkIfAuthStored(),
+			this.loginService.isAuthenticated$.asObservable(),
+		])
 			.pipe(
-				skipUntil(this.loginService.continueAuthFlow$),
-				map(([authOnLoad, authStateChanged]) => authOnLoad || authStateChanged),
+				map(([_, authOnLoad, authStateChanged]) => authOnLoad || authStateChanged),
 				distinctUntilChanged(),
 				tap((isAuth) => {
 					this.isAuthenticated = isAuth;
