@@ -22,7 +22,8 @@ lint:
   stage: lint
   script:
     - yarn install
-    - git diff --name-only origin/master... | grep -E '\.ts$|\.js$' | xargs -I {} sh -c 'echo {}; yarn lint:eslint {} || echo "ESLint failed with exit code $?"; exit 1'
+    - set -x
+    - git diff --name-only origin/$CI_MERGE_REQUEST_TARGET_BRANCH_NAME... | grep -E '\.ts$|\.js$' | xargs -I {} sh -c 'echo {}; yarn lint:eslint {} || echo "ESLint failed with exit code $?"; exit 1'
   rules:
     - if: $CI_PIPELINE_SOURCE == 'merge_request_event'
   interruptible: true
