@@ -26,8 +26,8 @@ lint:
     - echo "Running git diff..."
     - git diff --name-only origin/$CI_MERGE_REQUEST_TARGET_BRANCH_NAME...
     - echo "Running lint..."
-    - git diff --name-only origin/$CI_MERGE_REQUEST_TARGET_BRANCH_NAME... | grep -E '\.ts$|\.js$' || echo "No matching files found"
-    - git diff --name-only origin/$CI_MERGE_REQUEST_TARGET_BRANCH_NAME... | grep -E '\.ts$|\.js$' | xargs -I {} sh -c 'echo {}; yarn lint:eslint {} || echo "ESLint failed with exit code $?"; exit 1'
+    - FILES=$(git diff --name-only origin/$CI_MERGE_REQUEST_TARGET_BRANCH_NAME... | grep -E '\.ts$|\.js$') || echo "No matching files found"
+    - test -z "$FILES" || echo $FILES | xargs -n1 sh -c 'echo {}; yarn lint:eslint {} || echo "ESLint failed with exit code $?"; exit 1'
   rules:
     - if: $CI_PIPELINE_SOURCE == 'merge_request_event'
   interruptible: true
