@@ -12,16 +12,27 @@ cache:
     - .yarn/
 
 stages:
+  - lint
   - build
   - deploy
   - deploy_prod
   - e2e
 
+lint:
+  stage: lint
+  script:
+    - yarn install
+    - git diff --name-only origin/$CI_MERGE_REQUEST_TARGET_BRANCH_NAME... | grep -E '\.ts$|\.js$' | xargs -I {} sh -c 'echo {}; yarn lint:eslint {}'
+  rules:
+    - if: $CI_PIPELINE_SOURCE == 'merge_request_event'
+  interruptible: true
+  tags:
+    - "docker-passthrough"
+
 build:
   stage: build
   script:
     - yarn install
-    - git diff --name-only origin/master... | grep -E '\.ts$|\.js$' | xargs -I {} yarn lint:eslint {}
     - scripts/cf_build.sh
   rules:
     - if: $CI_PIPELINE_SOURCE == 'merge_request_event'
