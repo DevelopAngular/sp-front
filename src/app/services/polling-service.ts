@@ -126,6 +126,12 @@ export class PollingService {
 
 		ws.onError((event) => {
 			this.hasConnectionError = true;
+			// only add to failedHeartbeats if there aren't already any
+			// otherwise multiple errors will add too many and bump
+			// the exponential backoff too much
+			if (!this.failedHeartbeats) {
+				this.failedHeartbeats += 1;
+			}
 			this.rawMessageStream.next({
 				type: 'error',
 				data: event,
@@ -209,7 +215,17 @@ export class PollingService {
 		if (this.failedHeartbeats == 0 && !this.hasConnectionError) {
 			return 20 * 1000;
 		}
-		return Math.min(Math.pow(2, this.failedHeartbeats), 30) * 1000;
+		// This returns an exponential backoff with a random value added,
+		// in case every user gets disconnected at the same time (like when
+		// a backend deployment causes a general disconnect).
+		// The number returned will start at 1000 milliseconds, and then increase exponentially by
+		// the power of 2, with a random number of milliseconds below 1000 added.
+		// This will decrease the load on the server if everyone is trying to reconnect at once,
+		// because their connections will be slightly staggered.
+		// Note: if issues are seen in the future, may want to increase the random number added
+		// (change Math.random() * 1000 to Math.random() * 2000, for example).
+		// This will max out at 30 seconds and stop incrementing the value.
+		return Math.min((Math.pow(2, this.failedHeartbeats) * 1000) + Math.floor(Math.random() * 1000), 30000);
 	}
 
 	private listenForHeartbeat(): void {
