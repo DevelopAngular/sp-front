@@ -25,13 +25,13 @@ lint:
     - set -x
     - echo "Running lint..."
     - FILES=$(git diff --name-only origin/$CI_MERGE_REQUEST_TARGET_BRANCH_NAME... | grep -E '\.ts$|\.js$') || echo "No matching files found"
-  - |
-    if [ -n "$FILES" ]; then
-      for FILE in $FILES; do
+    - |
+      if [ -n "$FILES" ]; then
+        for FILE in $FILES; do
         echo $FILE
-        yarn lint:eslint $FILE || (echo "ESLint failed with exit code $?"; exit 1)
+          yarn lint:eslint $FILE || (echo "ESLint failed with exit code $?"; exit 1)
       done
-    fi
+      fi
   rules:
     - if: $CI_PIPELINE_SOURCE == 'merge_request_event'
   interruptible: true
