@@ -5,20 +5,47 @@ import { filter, map, publish, refCount, tap } from 'rxjs/operators';
 import { HttpService } from './http-service';
 import { Logger } from './logger.service';
 import { CookieService } from 'ngx-cookie-service';
+import { Pinnable } from '../models/Pinnable';
+
+interface SendMessage {
+	action: string;
+	data?: string;
+}
 
 interface RawMessage {
 	type: string;
-	data: any;
+	data: RawMessageData;
+}
+interface RawMessageData {
+	action: string;
+	detail?: string;
+	data?: EventData | Event;
+}
+
+export interface AttachedPictures {
+	user_id: number;
+	photo_url: string;
+	is_photo_update: true;
+}
+export interface EventData {
+	id?: string;
+	type?: string;
+	body?: string;
+	subject?: string;
+	sync_type?: string;
+	utc_time?: string;
+	attached_pictures?: AttachedPictures[];
 }
 
 export interface PollingEvent {
 	action: string;
-	data: any;
+	detail?: string;
+	data?: EventData | Pinnable;
 }
 
 function doesFilterMatch(prefix: string, path: string): boolean {
-	const prefixParts = prefix.split('.');
-	const pathParts = path.split('.');
+	const prefixParts: string[] = prefix.split('.');
+	const pathParts: string[] = path.split('.');
 
 	if (prefixParts.length > pathParts.length) {
 		return false;
@@ -42,14 +69,14 @@ export class PollingService {
 	private eventStream: Subject<PollingEvent> = new Subject();
 	private rawMessageStream: Subject<RawMessage> = new Subject();
 
-	private sendMessageQueue$ = new Subject();
+	private sendMessageQueue$: Subject<SendMessage> = new Subject();
 	private websocket: $WebSocket = null;
 
-	isConnected$: BehaviorSubject<boolean> = new BehaviorSubject(true);
+	public isConnected$: BehaviorSubject<boolean> = new BehaviorSubject(true);
 
-	private failedHeartbeats: number = 0;
-	private lastHeartbeat: number = Date.now() + 30 * 1000;
-	private hasConnectionError: boolean = false;
+	private failedHeartbeats = 0;
+	private lastHeartbeat = Date.now() + 30 * 1000;
+	private hasConnectionError = false;
 
 	constructor(private http: HttpService, private _logger: Logger, private cookie: CookieService) {
 		this.connectWebsocket();
@@ -164,7 +191,7 @@ export class PollingService {
 		this.websocket = null;
 	}
 
-	refreshHeartbeatTimer(): void {
+	public refreshHeartbeatTimer(): void {
 		this.failedHeartbeats = 0;
 		this.connectWebsocket();
 	}
@@ -172,15 +199,15 @@ export class PollingService {
 	private createEventListener(): void {
 		this.rawMessageStream
 			.pipe(
-				tap((event) => {
+				tap((event: RawMessage) => {
 					if (event.type !== 'message') {
 						this._logger.error(event);
 					}
 				}),
-				filter((event) => event.type === 'message'),
-				map((event) => event.data)
+				filter((event: RawMessage) => event.type === 'message'),
+				map((event: RawMessage) => event.data)
 			)
-			.subscribe((event) => {
+			.subscribe((event: PollingEvent) => {
 				this.eventStream.next(event);
 			});
 	}
@@ -195,7 +222,7 @@ export class PollingService {
 		});
 	}
 
-	listen(filterString?: string): Observable<PollingEvent> {
+	public listen(filterString?: string): Observable<PollingEvent> {
 		if (filterString) {
 			return this.eventStream.pipe(
 				publish(),
@@ -207,12 +234,13 @@ export class PollingService {
 		}
 	}
 
-	sendMessage(action: String, data: any) {
+	public sendMessage(action: string, data?: string): void {
 		this.sendMessageQueue$.next({ action, data });
 	}
 
 	private getHeartbeatTime(): number {
 		if (this.failedHeartbeats == 0 && !this.hasConnectionError) {
+			//console.log('returning NORMAL 20000');
 			return 20 * 1000;
 		}
 		// This returns an exponential backoff with a random value added,
@@ -225,23 +253,24 @@ export class PollingService {
 		// Note: if issues are seen in the future, may want to increase the random number added
 		// (change Math.random() * 1000 to Math.random() * 2000, for example).
 		// This will max out at 30 seconds and stop incrementing the value.
+		// console.log('returning EXPONENTIAL 20000',Math.min(Math.pow(2, this.failedHeartbeats) * 1000 + Math.floor(Math.random() * 1000), 30000));
 		return Math.min(Math.pow(2, this.failedHeartbeats) * 1000 + Math.floor(Math.random() * 1000), 30000);
 	}
 
 	private listenForHeartbeat(): void {
-		this.listen('heartbeat').subscribe((data) => {
+		this.listen('heartbeat').subscribe(() => {
 			this.lastHeartbeat = Date.now();
 		});
 	}
 
 	private listenForAuthentication(): void {
-		this.listen('authenticate.success').subscribe((data) => {
+		this.listen('authenticate.success').subscribe(() => {
 			this.isConnected$.next(true);
 		});
 	}
 
 	private checkForHeartbeat(): void {
-		if (this.lastHeartbeat < Date.now() - 20000) {
+		if (this.lastHeartbeat < Date.now() - 20000 || this.hasConnectionError) {
 			this.isConnected$.next(false);
 			this.failedHeartbeats += 1;
 			this.disconnectWebsocket();

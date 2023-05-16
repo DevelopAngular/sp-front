@@ -18,6 +18,7 @@ import { UserService } from '../../services/user.service';
 import { LocationVisibilityService } from './location-visibility.service';
 import { PassLimitInfo } from '../../models/HallPassLimits';
 import { RecurringOption } from '../../models/RecurringFutureConfig';
+import { PollingEvent } from '../../services/polling-service';
 
 export enum Role {
 	Teacher = 1,
@@ -292,9 +293,9 @@ export class MainHallPassFormComponent implements OnInit, OnDestroy {
 			.listenPinnableSocket()
 			.pipe(
 				takeUntil(this.destroy$),
-				filter((res) => !!res),
-				tap((res) => {
-					this.locationsService.updatePinnableSuccessState(res.data);
+				filter((res: PollingEvent) => !!res),
+				tap((res: PollingEvent) => {
+					this.locationsService.updatePinnableSuccessState(res.data as Pinnable);
 
 					// update interface using filtering
 					// try catch here?

@@ -53,6 +53,7 @@ import { InlineWaitInLineCardComponent } from '../pass-cards/inline-wait-in-line
 import { Util } from '../../Util';
 import { RepresentedUser } from '../navbar/navbar.component';
 import { AppState } from '../ngrx/app-state/app-state';
+import { EventData } from '../services/polling-service';
 @Component({
 	selector: 'app-passes',
 	templateUrl: './passes.component.html',
@@ -399,7 +400,7 @@ export class PassesComponent implements OnInit, OnDestroy {
 				filter(() => !this.isStaff),
 				switchMap(({ action, data }) => {
 					if (action === 'message.alert' && !this.dialog.getDialogById('startNotification')) {
-						const isFirstPass: boolean = data.type.includes('first_pass');
+						const isFirstPass: boolean = (data as EventData).type.includes('first_pass');
 						this.screenService.customBackdropEvent$.next(true);
 						const SPNC = this.dialog.open(StartPassNotificationComponent, {
 							id: 'startNotification',
