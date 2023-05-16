@@ -44,6 +44,7 @@ export class RoundInputComponent implements OnInit, OnChanges, OnDestroy {
 	@Input() selections: any[] = [];
 	@Input() isSearch: boolean;
 	@Input() backgroundColor: string = '#FFFFFF';
+	@Input() dataCy: string;
 
 	@Output() ontextupdate: EventEmitter<any> = new EventEmitter();
 	@Output() ontoggleupdate: EventEmitter<any> = new EventEmitter();

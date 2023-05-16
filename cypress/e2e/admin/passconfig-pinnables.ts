@@ -1,12 +1,12 @@
 // Updating pinnables and their settings
-
 describe('updating pinnables and their settings', function() {
   beforeEach( function() {
     cy.login(Cypress.env('adminUsername'), Cypress.env('adminPassword'));
-    cy.visit('/admin/passconfig');
+    cy.visit('admin');
+    cy.dataCy('passconfig-link').contains('Rooms').click();
   });
 
-  const testUpdatingFolderName = 'test-upd-folder';
+  const testUpdatingFolderName = 'test-upd-fld-name';
 
   context('can change the title', function() {
     context('of a pinnable location', function() {
@@ -193,6 +193,29 @@ describe('updating pinnables and their settings', function() {
       })
     })
   })
+
+  context('can change the icon', function() {
+    const testUpdateIconText = 'a';
+
+    context('Pinnable Location', function() {
+      const testUpdateIconPinnableName = 'test-upd-icon';
+
+      it('should be able to change the pinnable icon', function() {
+        clickPinnableWithTitle(testUpdateIconPinnableName);
+        setPinnableIcon(testUpdateIconText);
+        savePinnable({locationUpdate: false});
+      })
+    })
+
+    context('Pinnable Folder', function() {
+      const testUpdateIconFolderName = 'test-upd-fld-name';
+      it('should be able to change the pinnable icon', function() {
+        clickPinnableWithTitle(testUpdateIconFolderName);
+        setPinnableIcon(testUpdateIconText);
+        savePinnable({locationUpdate: false});
+      })
+    })
+  })
 })
 
 
@@ -242,7 +265,7 @@ function checkPinnableTeacherNoAssignment(teacherName: string) {
 }
 
 function removePinnableTeacherAssignment(teacherName: string) {
-  cy.dataCy('chip').each(e => {
+  cy.dataCy('chip').first().each(e => {
     cy.wrap(e).trigger('mouseenter');
     cy.dataCy('chip-delete-btn').click();
   })
@@ -290,4 +313,13 @@ function resetVisiblitySettings() {
 
   cy.dataCy('visibility-dropdown').click();
   cy.contains('Show room for all students').click();
+}
+
+function setPinnableIcon(icon_name: string) {
+  // cy.dataCy('icon-search').type(icon_name);
+  cy.dataCy('icon-search').click();
+  cy.wait(500);
+  cy.dataCy('icon-search').type('{a}');
+  cy.wait(500);
+  cy.dataCy('icon-search-result').first().click();
 }
