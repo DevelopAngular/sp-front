@@ -22,7 +22,6 @@ lint:
   stage: lint
   script:
     - yarn install
-    - set -x
     - echo "Running lint..."
     - FILES=$(git diff --name-only origin/$CI_MERGE_REQUEST_TARGET_BRANCH_NAME... | grep -E '\.ts$|\.js$') || echo "No matching files found"
     - |
