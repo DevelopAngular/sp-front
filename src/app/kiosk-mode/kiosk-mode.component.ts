@@ -232,6 +232,7 @@ export class KioskModeComponent implements OnInit, AfterViewInit, OnDestroy {
 			return;
 		}
 		let id = this.cardReaderValue;
+
 		if (this.cardReaderValue && (this.cardReaderValue[0] === ';' || this.cardReaderValue[0] === '%')) {
 			id = id.substring(1);
 		}
@@ -239,13 +240,23 @@ export class KioskModeComponent implements OnInit, AfterViewInit, OnDestroy {
 		this.userService
 			.possibleProfileByCustomId(id)
 			.pipe(
-				switchMap((user: any) => {
-					if (user.results.user.length === undefined) {
-						return of(user.results.user);
-					} else {
-						this.notFound(id, true);
-						return EMPTY;
+				switchMap((customIdResponse) => {
+					let { user } = customIdResponse.results;
+
+					/**
+					 * Why are we doing this filter?
+					 *
+					 * It seems the backend will return { results: { user: [null] } } if a user isn't found when searching by
+					 * custom ID. Not really an ideal response from the backend, this will be patched very soon
+					 */
+					user = user.filter(Boolean);
+
+					if (user.length > 0) {
+						return of(user[0]);
 					}
+
+					this.notFound(id, true);
+					return EMPTY;
 				}),
 				mergeMap((user) => {
 					return combineLatest(of(user), this.passesService.getActivePassesKioskMode(this.kioskMode.getCurrentRoom().value.id));

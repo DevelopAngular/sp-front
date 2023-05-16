@@ -3,8 +3,6 @@ import { MatDialog, MatDialogRef } from '@angular/material/dialog';
 import { ActivatedRoute, NavigationEnd, Router } from '@angular/router';
 import { filter as _filter } from 'lodash';
 import { BehaviorSubject, combineLatest, fromEvent, merge, Observable, of, ReplaySubject, Subject, throwError, zip } from 'rxjs';
-import { Store } from '@ngrx/store';
-import { AppState } from './ngrx/app-state/app-state';
 import { NuxReferralComponent } from './nux-components/nux-referral/nux-referral.component';
 
 import {
@@ -15,6 +13,7 @@ import {
 	finalize,
 	map,
 	mergeMap,
+	skipUntil,
 	switchMap,
 	take,
 	takeUntil,
@@ -45,7 +44,6 @@ import { Util } from '../Util';
 import { HelpCenterService } from './services/help-center.service';
 import { CallDialogComponent } from './shared/shared-components/call-dialog/call-dialog.component';
 import { FeatureFlagService, FLAGS } from './services/feature-flag.service';
-import { CookieService } from 'ngx-cookie-service';
 import { environment } from '../environments/environment';
 import { ParentAccountService } from './services/parent-account.service';
 import { HttpErrorResponse } from '@angular/common/http';
@@ -147,12 +145,10 @@ export class AppComponent implements OnInit, AfterViewInit, OnDestroy {
 		public helpCenter: HelpCenterService,
 		private sanitizer: DomSanitizer,
 		public featureFlags: FeatureFlagService,
-		private cookie: CookieService,
 		private titleService: Title,
 		private renderer: Renderer2,
 		private parentService: ParentAccountService,
-		private pollingService: PollingService,
-		private store: Store<AppState>
+		private pollingService: PollingService
 	) {}
 
 	get isMobile() {
@@ -286,18 +282,23 @@ export class AppComponent implements OnInit, AfterViewInit, OnDestroy {
 			document.head.appendChild(link);
 		}
 
-		combineLatest([this.loginService.checkIfAuthStored(), this.loginService.isAuthenticated$.asObservable()])
+		this.showUISubject.next(true);
+
+		combineLatest([
+			this.loginService.continueAuthFlow$.asObservable(),
+			this.loginService.checkIfAuthStored(),
+			this.loginService.isAuthenticated$.asObservable(),
+		])
 			.pipe(
-				map(([authOnLoad, authStateChanged]) => authOnLoad || authStateChanged),
+				map(([_, authOnLoad, authStateChanged]) => authOnLoad || authStateChanged),
 				distinctUntilChanged(),
 				tap((isAuth) => {
+					this.isAuthenticated = isAuth;
 					const path = window.location.pathname;
 					if (!isAuth) {
 						if (path.includes('main/student')) {
 							this.storageService.setItem('initialUrl', path);
 						}
-						this.showUISubject.next(true);
-						this.isAuthenticated = false;
 					}
 				}),
 				filter(Boolean),
@@ -371,6 +372,13 @@ export class AppComponent implements OnInit, AfterViewInit, OnDestroy {
 				})
 			)
 			.subscribe();
+
+		const params = new URL(window.location.href).searchParams;
+		const [instant_login, code, scope] = [params.get('instant_login'), params.get('code'), params.get('scope')];
+		const isThirdPartyLogin = !!(instant_login || code || scope);
+		if (!isThirdPartyLogin) {
+			this.loginService.continueAuthFlow$.next(true);
+		}
 
 		this.http.schoolsCollection$
 			.pipe(
@@ -474,7 +482,7 @@ export class AppComponent implements OnInit, AfterViewInit, OnDestroy {
 		// stop listening when the Intercom wrapper is found
 		const targetNode = document.body;
 		const listenerConfig = { childList: true, subtree: true };
-		this.intercomObserver = new MutationObserver((mutationList, observer) => {
+		this.intercomObserver = new MutationObserver((mutationList) => {
 			for (const m of mutationList) {
 				if ((m.target as HTMLElement).tagName !== 'BODY') {
 					return;
@@ -506,7 +514,7 @@ export class AppComponent implements OnInit, AfterViewInit, OnDestroy {
 				const hasNotSeenModal = !intros.seen_referral_nux?.universal?.seen_version;
 				const hasNotSeenSuccessModal = !intros.seen_referral_success_nux?.universal?.seen_version;
 
-				if (hasNotSeenModal && user.referralStatus === 'not_applied' && canRefer) {
+				if (hasNotSeenModal && user.referral_status === 'not_applied' && canRefer) {
 					this.dialog.open(NuxReferralComponent, {
 						data: {
 							isAdmin: user.isAdmin(),
@@ -514,7 +522,7 @@ export class AppComponent implements OnInit, AfterViewInit, OnDestroy {
 						panelClass: 'referral-dialog-container',
 					});
 					this.userService.updateIntrosSeenReferralNuxRequest(intros, 'universal', '1');
-				} else if (hasNotSeenSuccessModal && user.referralStatus === 'accepted' && canRefer) {
+				} else if (hasNotSeenSuccessModal && user.referral_status === 'accepted' && canRefer) {
 					this.dialog.open(NuxReferralSuccessComponent, {
 						data: {
 							isAdmin: user.isAdmin(),
@@ -609,7 +617,7 @@ export class AppComponent implements OnInit, AfterViewInit, OnDestroy {
 			const myEl = document.querySelector('#help-center-content');
 
 			// Create observer
-			const observer = new ResizeObserver((element) => {
+			const observer = new ResizeObserver(() => {
 				if (!this.helpCenter.isHelpCenterOpen.getValue()) {
 					this.mainContentWidth = '100%';
 				} else if (document.getElementById('help-center-content')) {
@@ -638,7 +646,7 @@ export class AppComponent implements OnInit, AfterViewInit, OnDestroy {
 		});
 		window.document.querySelector('.invis-backdrop-helpcenter').parentNode.style.zIndex = '1009';
 
-		CDC.afterClosed().subscribe((status) => {
+		CDC.afterClosed().subscribe(() => {
 			window.document.querySelector('.cdk-overlay-container').style.zIndex = '1005';
 		});
 	}

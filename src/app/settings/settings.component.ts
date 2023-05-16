@@ -82,7 +82,9 @@ export class SettingsComponent implements OnInit, OnDestroy {
 		private localize: LocalizejsService
 	) {
 		// this.initializeSettings();
-		this.adjustForScroll = data['adjustForScroll'];
+		if (data && data['adjustForScroll']) {
+			this.adjustForScroll = data['adjustForScroll'];
+		}
 	}
 
 	get isKioskMode(): boolean {

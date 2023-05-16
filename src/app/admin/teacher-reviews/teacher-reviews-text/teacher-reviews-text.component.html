@@ -1,15 +1,15 @@
 <div *ngIf="whatToDisplay == 'Good quote'; else recommendIt" class="review-text">
-	<p class="testimonial">{{ testimonial }}</p>
+	<h6 class="testimonial">{{ testimonial }}</h6>
 </div>
 
 <ng-template #recommendIt>
 	<div *ngIf="whatToDisplay == 'Recommend it'" class="recommend-it">
 		<img class="thumbs" [src]="'./assets/Thumbs Up (Green).svg' | resolveAsset" alt="Thumbs Up" />
-		<p>Recommends using SmartPass next year</p>
+		<h6>Recommends using SmartPass next year</h6>
 	</div>
 
 	<div *ngIf="whatToDisplay != 'Recommend it'" class="valuable-tool">
 		<img class="cool" [src]="'./assets/Cool.svg' | resolveAsset" alt="Cool emoji" />
-		<p>Thinks SmartPass is a valuable tool</p>
+		<h6>Thinks SmartPass is a valuable tool</h6>
 	</div>
 </ng-template>

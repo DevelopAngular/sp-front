@@ -363,6 +363,7 @@ export class HttpService implements OnDestroy {
 				.subscribe({
 					next: (authCtx) => {
 						this.setAuthContext(authCtx);
+						this.loginService.continueAuthFlow$.next();
 						this.loginService.isAuthenticated$.next(true);
 					},
 				});

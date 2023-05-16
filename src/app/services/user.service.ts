@@ -426,7 +426,7 @@ export class UserService implements OnDestroy {
 				switchMap((user: User) => {
 					this.blockUserPage$.next(false);
 					if (user.isAssistant() && !window.location.href.includes('/kioskMode')) {
-						return combineLatest(this.representedUsers.pipe(filter((res) => !!res)), this.http.schoolsCollection$).pipe(
+						return combineLatest([this.representedUsers.pipe(filter((res) => !!res)), this.http.schoolsCollection$]).pipe(
 							tap(([users, schools]) => {
 								if (!users.length && schools.length === 1) {
 									this.store.dispatch(getSchoolsFailure({ errorMessage: 'Assistant does`t have teachers' }));
@@ -435,7 +435,7 @@ export class UserService implements OnDestroy {
 								}
 							}),
 							filter(([users, schools]) => !!users.length || schools.length > 1),
-							map(([users, schools]) => {
+							map(([users]) => {
 								if (users && users.length) {
 									this.http.effectiveUserId.next(+users[0].user.id);
 								}
@@ -992,6 +992,10 @@ export class UserService implements OnDestroy {
 		return this.http.patch(`v1/student_lists/${id}`, body);
 	}
 
+	applyForReferral() {
+		return this.http.post('v2/user/referral/apply', {}, undefined, false);
+	}
+
 	deleteStudentGroupRequest(id) {
 		this.store.dispatch(removeStudentGroup({ id }));
 		return this.currentStudentGroup$;
@@ -1208,7 +1212,10 @@ export class UserService implements OnDestroy {
 		return this.http.get(`v1/users?role=_profile_student&has_grade_level=false`);
 	}
 
-	possibleProfileByCustomId(id: string, ignoreProfileWithStatuses: ProfileStatus[] = ['suspended']): Observable<User | null> {
+	possibleProfileByCustomId(
+		id: string,
+		ignoreProfileWithStatuses: ProfileStatus[] = ['suspended']
+	): Observable<{ results: { user: Array<User | null> } }> {
 		let url = `v1/users/custom_id/${id}?`;
 
 		for (const hideStatus of ignoreProfileWithStatuses) {

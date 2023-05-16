@@ -1,4 +1,4 @@
-<section class="referral-sign-up" style="text-align: center" *ngIf="user.referralStatus === 'not_applied'">
+<section class="referral-sign-up" style="text-align: center" *ngIf="user?.referral_status === 'not_applied'">
 	<h2 class="referral-subheading">Join the SmartPass Squad</h2>
 	<div class="inputs">
 		<div class="referral-input">
@@ -18,12 +18,12 @@
 		<button (click)="apply()" [disabled]="!termsAccepted">Apply Now</button>
 	</div>
 </section>
-<div class="referral-sign-up approval" *ngIf="user.referralStatus === 'applied'">
+<div class="referral-sign-up approval" *ngIf="user?.referral_status === 'applied'">
 	<img [src]="'./assets/Check (Green).svg' | resolveAsset" alt="Checkmark Icon" />
 
 	<h2>Application Submitted</h2>
 	<span>Thank you! We will be in touch with next steps</span>
 </div>
-<section class="referral-rock-frame" *ngIf="user.referralStatus === 'accepted'">
+<section class="referral-rock-frame" *ngIf="user?.referral_status === 'accepted'">
 	<iframe id="referral-frame"></iframe>
 </section>

@@ -19,9 +19,16 @@
 					</div>
 				</div>
 			</div>
-			<sp-year-in-review *ngIf="hasYearInReviewPdf" (yearInReviewEnabled)="hasYearInReviewPdf = $event"></sp-year-in-review>
+			<sp-year-in-review
+				*ngIf="hasYearInReviewPdf"
+				(yearInReviewEnabled)="hasYearInReviewPdf = $event"
+				class="year-in-review-thin-view"></sp-year-in-review>
 			<div class="action-boxes">
 				<div>
+					<sp-year-in-review
+						*ngIf="hasYearInReviewPdf"
+						(yearInReviewEnabled)="hasYearInReviewPdf = $event"
+						class="year-in-review-wide-view"></sp-year-in-review>
 					<div class="content-box">
 						<h5>Summer Action Items</h5>
 						<div class="action-items-container" *ngIf="status?.integration_type">
@@ -114,7 +121,7 @@
 					<div>
 						<div *ngIf="(teacherReviews$ | async)?.length > 1 && isTeacherReviewsEnabled" class="content-box">
 							<a routerLink="/admin/teacher-reviews" class="review-link">
-								<h5>See Your Staff's Reviews</h5>
+								<h5 class="review-link-text">See Your Staff's Reviews</h5>
 								<img class="forward-button" [src]="'./assets/Forward Button.svg' | resolveAsset" alt="Button" />
 							</a>
 							<div class="five-stars">
@@ -123,16 +130,16 @@
 								<img class="star" [src]="'./assets/Star (Yellow).svg' | resolveAsset" alt="Star" />
 								<img class="star" [src]="'./assets/Star (Yellow).svg' | resolveAsset" alt="Star" />
 								<img class="star" [src]="'./assets/Star (Yellow).svg' | resolveAsset" alt="Star" />
-								<p class="staff-review-date">Updated May 4,2023</p>
+								<p class="staff-review-date">Updated May 4, 2023</p>
 							</div>
-							<p class="staff-review">They took the time to give their thoughts on SmartPass. Check out their reviews and ratings</p>
+							<p class="staff-review">They took the time to give their thoughts on SmartPass. Check out their reviews and ratings.</p>
 						</div>
 						<div class="content-box" style="height: fit-content">
 							<h5>Features Coming Next Year</h5>
 							<div class="feature-event">
 								<span>New at SmartPass Event</span>
 								<p>See the 15+ new features hitting your hallways next school year.</p>
-								<a href="https://app.livestorm.co/smartpass/new-at-smartpass-2023?s=e1ea91d4-911c-4b11-a95b-055c8db2ba17" target="_blank">
+								<a href="https://www.smartpass.app/event" target="_blank">
 									<span>See the New Features</span>
 									<img class="arrow-icon" src="./assets/Chevron Right (White).svg" />
 								</a>

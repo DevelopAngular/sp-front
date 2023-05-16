@@ -1,5 +1,10 @@
 @import '../sp-colors.scss';
 @import '../design-system.scss';
+
+:host {
+	overflow-y: auto;
+}
+
 .global-container {
 	flex-grow: 1;
 	display: flex;

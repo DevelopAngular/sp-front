@@ -86,6 +86,7 @@ export class LoginService implements OnDestroy {
 	private authObject$ = new BehaviorSubject<AuthObject>(null);
 	public loginErrorMessage$: Subject<string> = new Subject<string>();
 	public isAuthenticated$ = new ReplaySubject<boolean>(1);
+	public continueAuthFlow$ = new Subject<boolean>();
 	// public isAuthenticated$ = new BehaviorSubject<boolean>(false);
 
 	destroy$: Subject<any> = new Subject<any>();
