@@ -225,7 +225,7 @@ export class PollingService {
 		// Note: if issues are seen in the future, may want to increase the random number added
 		// (change Math.random() * 1000 to Math.random() * 2000, for example).
 		// This will max out at 30 seconds and stop incrementing the value.
-		return Math.min((Math.pow(2, this.failedHeartbeats) * 1000) + Math.floor(Math.random() * 1000), 30000);
+		return Math.min(Math.pow(2, this.failedHeartbeats) * 1000 + Math.floor(Math.random() * 1000), 30000);
 	}
 
 	private listenForHeartbeat(): void {
