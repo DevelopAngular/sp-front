@@ -1,8 +1,8 @@
 <div class="host" appSafariScroll>
 	<div class="teacher-reviews-wrapper" #scrollableArea>
 		<div class="collection-container">
-			<a href="javascript:history.back()">
-				<img class="back-button" [src]="'./assets/Back Button (White-Gray).svg' | resolveAsset" alt="Back Button" />
+			<a class="button-container" href="javascript:void(0)" onclick="history.back()">
+				<img class="back-button" [src]="'./assets/Chevron Left (Blue-Gray).svg' | resolveAsset" alt="Back Button" />
 			</a>
 			<app-teacher-review-header></app-teacher-review-header>
 			<app-teacher-reviews></app-teacher-reviews>
