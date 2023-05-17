@@ -27,8 +27,6 @@
 				[onDarkShade]="true"
 				[size]="20"
 				(clickEvent)="activeTeacherPin = false"></app-icon-button>
-
-			<!--<img class="pass-card-header-close" (click)="cancelRequest($event)" [src]="'./assets/Delete (Transparent).svg' | resolveAsset">-->
 		</div>
 		<mat-divider></mat-divider>
 	</div>
@@ -132,7 +130,7 @@
 		</div>
 
 		<div class="bottom-block">
-			<div class="pin-button" *ngIf="request?.status !== 'declined'" (mouseenter)="onHover(desc, title)" (mouseleave)="onLeave(desc)">
+			<div class="pin-button" *ngIf="request?.status === 'pending'" (mouseenter)="onHover(desc, title)" (mouseleave)="onLeave(desc)">
 				<app-card-button [width]="'297px'" [height]="'81px'" [gradientColor]="request.color_profile.gradient_color" (onClick)="goToPin()">
 					<div class="resend-button-content">
 						<div class="resend-button-content-title" style="display: flex; align-items: center; padding-bottom: 5px">
