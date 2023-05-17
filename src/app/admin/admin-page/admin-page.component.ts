@@ -22,7 +22,7 @@ declare const window;
 export class AdminPageComponent implements OnInit, AfterViewInit, OnDestroy {
 	private outletDummySwitcher$ = new BehaviorSubject<boolean>(false);
 	private adminPageReload$: BehaviorSubject<boolean> = new BehaviorSubject<boolean>(true);
-	public hostVisibility: boolean = true;
+	public hostVisibility = true;
 	public showDummySwitcher$: Observable<boolean>;
 	public schoolsLength$: Observable<number>;
 	private destroy$: Subject<any> = new Subject<any>();
