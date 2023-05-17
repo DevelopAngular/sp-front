@@ -2,8 +2,9 @@ import { Component, ElementRef, EventEmitter, Inject, Input, OnDestroy, OnInit, 
 import { FormGroup, Validators } from '@angular/forms';
 import { DomSanitizer } from '@angular/platform-browser';
 import { MAT_DIALOG_DATA, MatDialog, MatDialogRef } from '@angular/material/dialog';
+import { MatCheckboxChange } from '@angular/material/checkbox';
 
-import { BehaviorSubject, combineLatest, interval, merge, Subject, zip } from 'rxjs';
+import { BehaviorSubject, interval, merge, Subject, zip } from 'rxjs';
 
 import { Location } from '../../../models/Location';
 import { Pinnable } from '../../../models/Pinnable';
@@ -11,7 +12,7 @@ import { User } from '../../../models/User';
 import { LocationsService } from '../../../services/locations.service';
 import { OverlayContainerComponent } from '../overlay-container.component';
 import { HallPassesService } from '../../../services/hall-passes.service';
-import { FolderData, OverlayDataService, Pages } from '../overlay-data.service';
+import { FolderData, FolderDataResult, OverlayDataService, OverlayPages, PageStateData, RoomInFolder, TooltipText } from '../overlay-data.service';
 import { CreateFormService } from '../../../create-hallpass-forms/create-form.service';
 import { OptionState, ValidButtons } from '../advanced-options/advanced-options.component';
 
@@ -22,6 +23,7 @@ import { ScrollPositionService } from '../../../scroll-position.service';
 import { UNANIMATED_CONTAINER } from '../../../consent-menu-overlay';
 import { ConsentMenuComponent } from '../../../consent-menu/consent-menu.component';
 import { ToastService } from '../../../services/toast.service';
+import { VisibilityOverStudents } from '../visibility-room/visibility-room.type';
 
 @Component({
 	selector: 'app-folder',
@@ -32,10 +34,7 @@ import { ToastService } from '../../../services/toast.service';
 export class FolderComponent implements OnInit, OnDestroy {
 	@Input() form: FormGroup;
 
-	@Output() folderDataResult: EventEmitter<{ data: FolderData; buttonState: ValidButtons }> = new EventEmitter<{
-		data: FolderData;
-		buttonState: ValidButtons;
-	}>();
+	@Output() folderDataResult: EventEmitter<FolderDataResult> = new EventEmitter<FolderDataResult>();
 
 	private scrollableAreaName: string;
 	private scrollableArea: HTMLElement;
@@ -78,47 +77,48 @@ export class FolderComponent implements OnInit, OnDestroy {
 		}
 	}
 
-	currentPage: number;
+	public currentPage: OverlayPages;
+	public PagesEnum = OverlayPages; // for use in template
 
-	roomsToDelete = [];
+	private roomIdsToDelete: number[] = [];
 
-	initialFolderData: {
-		folderName: string;
-		roomsInFolder: any[];
-		ignore_students_pass_limit: boolean;
-	} = { folderName: null, roomsInFolder: [], ignore_students_pass_limit: false };
+	private initialFolderData: Pick<FolderData, 'folderName' | 'roomsInFolder' | 'ignore_students_pass_limit' | 'show_as_origin_room'> = {
+		folderName: null,
+		roomsInFolder: [],
+		ignore_students_pass_limit: false,
+		show_as_origin_room: null,
+	};
 
-	folderButtonState: ValidButtons;
+	private folderButtonState: ValidButtons;
 
-	pinnable: Pinnable;
+	private pinnable: Pinnable;
 
-	advOptState: OptionState = {
+	private advOptState: OptionState = {
 		now: { state: '', data: { all_teach_assign: null, any_teach_assign: null, selectedTeachers: [] } },
 		future: { state: '', data: { all_teach_assign: null, any_teach_assign: null, selectedTeachers: [] } },
 	};
 
-	roomsImFolder: Location[] = [];
-	selectedRooms = [];
-	selectedRoomToEdit;
+	public roomsInFolder: RoomInFolder[] = [];
+	public selectedRooms: RoomInFolder[] = [];
 
-	folderName: string = '';
+	public folderName = '';
 
-	buttonsInFolder = [
-		{ title: 'New Room', icon: './assets/Plus (White).svg', page: Pages.NewRoomInFolder },
-		{ title: 'Import Rooms', icon: null, page: Pages.ImportRooms },
-		{ title: 'Add Existing', icon: null, page: Pages.AddExistingRooms },
+	public buttonsInFolder = [
+		{ title: 'New Room', icon: './assets/Plus (White).svg', page: OverlayPages.NewRoomInFolder },
+		{ title: 'Import Rooms', icon: null, page: OverlayPages.ImportRooms },
+		{ title: 'Add Existing', icon: null, page: OverlayPages.AddExistingRooms },
 	];
 
-	buttonsWithSelectedRooms = [
-		{ title: 'Bulk Edit Rooms', action: Pages.BulkEditRoomsInFolder, color: '#FFFFFF, #FFFFFF', textColor: '#1F195E', hover: '#FFFFFF' },
+	public buttonsWithSelectedRooms = [
+		{ title: 'Bulk Edit Rooms', action: OverlayPages.BulkEditRoomsInFolder, color: '#FFFFFF, #FFFFFF', textColor: '#1F195E', hover: '#FFFFFF' },
 		{ title: 'Delete Rooms', action: 'delete', textColor: '#FFFFFF', color: '#DA2370,#FB434A', hover: '#DA2370' },
 	];
 
-	folderRoomsLoaded: boolean;
+	public folderRoomsLoaded: boolean;
 
-	change$: Subject<any> = new Subject<any>();
+	private change$: Subject<any> = new Subject<any>();
 
-	frameMotion$: BehaviorSubject<any>;
+	private frameMotion$: BehaviorSubject<any>;
 
 	constructor(
 		@Inject(MAT_DIALOG_DATA) public dialogData: any,
@@ -133,7 +133,7 @@ export class FolderComponent implements OnInit, OnDestroy {
 		private toast: ToastService
 	) {}
 
-	get folderNameTitle() {
+	public get folderNameTitle(): string {
 		if (this.overlayService.pageState.getValue().data && this.overlayService.pageState.getValue().data.pinnable) {
 			return `Folder ${this.overlayService.pageState.getValue().data.pinnable.title}`;
 		} else {
@@ -141,38 +141,35 @@ export class FolderComponent implements OnInit, OnDestroy {
 		}
 	}
 
-	get sortSelectedRooms() {
-		return sortBy(this.roomsImFolder, (res) => res.title.toLowerCase());
-	}
+	public tooltipText: TooltipText;
 
-	tooltipText;
-
-	ngOnInit() {
+	public ngOnInit(): void {
 		this.tooltipText = this.overlayService.tooltipText;
 
 		this.form.get('folderName').setValidators([Validators.required, Validators.maxLength(17)]);
 		this.scrollableAreaName = `Folder ${this.folderNameTitle}`;
 		this.frameMotion$ = this.formService.getFrameMotionDirection();
 		this.currentPage = this.overlayService.pageState.getValue().currentPage;
-		const data = this.overlayService.pageState.getValue().data;
+		const data: PageStateData = this.overlayService.pageState.getValue().data;
 
 		if (data) {
 			if (data.roomsInFolderLoaded) {
 				this.initialFolderData = data.oldFolderData;
 				this.folderName = data.folderName;
-				this.roomsImFolder = data.roomsInFolder;
-				this.roomsToDelete = data.roomsToDelete;
+				this.roomsInFolder = sortBy(data.roomsInFolder, (res) => res.title.toLowerCase());
+				this.roomIdsToDelete = data.roomIdsToDelete;
 				this.folderRoomsLoaded = true;
 			} else {
 				this.initialFolderData.folderName = data.pinnable.title;
 				this.initialFolderData.ignore_students_pass_limit = data.pinnable.ignore_students_pass_limit;
+				this.initialFolderData.show_as_origin_room = data.pinnable.show_as_origin_room;
 				this.pinnable = data.pinnable;
 				this.folderName = this.pinnable.title;
 				this.locationService.getLocationsWithCategory(this.pinnable.category).subscribe((res: Location[]) => {
-					this.roomsImFolder = res;
+					this.roomsInFolder = res;
 					this.initialFolderData = {
 						...this.initialFolderData,
-						roomsInFolder: cloneDeep(this.roomsImFolder),
+						roomsInFolder: cloneDeep(this.roomsInFolder),
 					};
 					this.folderRoomsLoaded = true;
 					this.updateFolderState(); // This function depends on initialFolder data, if it's not set it won't work.
@@ -183,18 +180,19 @@ export class FolderComponent implements OnInit, OnDestroy {
 				this.dialogData['rooms'].forEach((room: Pinnable) => {
 					if (room.type === 'category') {
 						this.locationService.getLocationsWithCategory(room.category).subscribe((res: Location[]) => {
-							this.roomsImFolder = [...this.roomsImFolder, ...res];
+							this.roomsInFolder = [...this.roomsInFolder, ...res];
 							this.folderRoomsLoaded = true;
 						});
 					} else {
-						this.roomsImFolder.push(room.location);
+						this.roomsInFolder.push(room.location);
 					}
 				});
 			}
 			this.initialFolderData = {
 				folderName: 'New Folder',
-				roomsInFolder: cloneDeep(this.roomsImFolder),
+				roomsInFolder: cloneDeep(this.roomsInFolder),
 				ignore_students_pass_limit: false,
+				show_as_origin_room: true,
 			};
 			this.folderRoomsLoaded = true;
 		}
@@ -202,6 +200,7 @@ export class FolderComponent implements OnInit, OnDestroy {
 		merge(
 			this.form.get('folderName').valueChanges,
 			this.form.get('countsTowardsPassLimits').valueChanges,
+			this.form.get('showAsOriginRoom').valueChanges,
 			this.form.statusChanges,
 			this.change$
 		).subscribe(() => {
@@ -209,29 +208,29 @@ export class FolderComponent implements OnInit, OnDestroy {
 		});
 	}
 
-	ngOnDestroy(): void {
+	public ngOnDestroy(): void {
 		this.form.get('folderName').setValidators([Validators.maxLength(17)]);
 		this.scrollPosition.saveComponentScroll(this.folderNameTitle, this.scrollableArea.scrollTop);
 	}
 
-	updateFolderState() {
+	private updateFolderState(): void {
 		this.updateButtonState();
 
 		this.folderDataResult.emit({
 			data: {
 				folderName: this.form.get('folderName').value === '' ? 'New Folder' : this.form.get('folderName').value,
 				ignore_students_pass_limit: !this.form.get('countsTowardsPassLimits').value,
-				roomsInFolder: this.roomsImFolder,
+				show_as_origin_room: this.form.get('showAsOriginRoom').value,
+				roomsInFolder: this.roomsInFolder,
 				selectedRoomsInFolder: this.selectedRooms,
 				roomsInFolderLoaded: true,
-				selectedRoomToEdit: this.selectedRoomToEdit,
-				roomsToDelete: this.roomsToDelete,
+				roomIdsToDelete: this.roomIdsToDelete,
 			},
 			buttonState: this.folderButtonState,
 		});
 	}
 
-	updateButtonState() {
+	private updateButtonState(): void {
 		// Compare the folder data and set the buttons availabe
 		if (this.form.get('folderName').invalid) {
 			this.folderButtonState = { publish: false, incomplete: true, cancel: true };
@@ -243,12 +242,16 @@ export class FolderComponent implements OnInit, OnDestroy {
 			return;
 		}
 
-		if (!this.initialFolderData.ignore_students_pass_limit != this.form.get('countsTowardsPassLimits').value) {
+		if (!this.initialFolderData.ignore_students_pass_limit !== this.form.get('countsTowardsPassLimits').value) {
+			this.folderButtonState = { publish: true, incomplete: false, cancel: true };
+			return;
+		}
+		if (this.initialFolderData.show_as_origin_room !== this.form.get('showAsOriginRoom').value) {
 			this.folderButtonState = { publish: true, incomplete: false, cancel: true };
 			return;
 		}
 
-		if (!isEqual(this.initialFolderData.roomsInFolder, this.roomsImFolder)) {
+		if (!isEqual(this.initialFolderData.roomsInFolder, this.roomsInFolder)) {
 			this.folderButtonState = { publish: true, incomplete: false, cancel: true };
 			return;
 		}
@@ -256,15 +259,15 @@ export class FolderComponent implements OnInit, OnDestroy {
 		this.folderButtonState = { publish: false, incomplete: false, cancel: false };
 	}
 
-	stickyButtonClick(page) {
+	public stickyButtonClick(page): void {
 		this.formService.setFrameMotionDirection('forward');
 		setTimeout(() => {
-			if (page === 'delete') {
-				this.roomsImFolder = differenceBy(this.roomsImFolder, this.selectedRooms, 'id');
-				this.roomsToDelete = cloneDeep(this.selectedRooms);
+			if (page === OverlayPages.Delete) {
+				this.roomsInFolder = differenceBy(this.roomsInFolder, this.selectedRooms, 'id');
+				this.roomIdsToDelete = this.selectedRooms.map((sr) => sr.id);
 				this.selectedRooms = [];
 			} else {
-				this.overlayService.changePage(page, this.currentPage, {
+				this.overlayService.updatePage(page, this.currentPage, {
 					selectedRoomsInFolder: this.selectedRooms,
 				});
 			}
@@ -272,38 +275,33 @@ export class FolderComponent implements OnInit, OnDestroy {
 		}, 50);
 	}
 
-	isSelected(room) {
-		return this.selectedRooms.find((item) => {
-			return room.id === item.id;
-		});
-	}
-
-	setToEditRoom(room) {
-		this.selectedRoomToEdit = room;
+	public setToEditRoom(room: RoomInFolder): void {
 		this.generateAdvOptionsModel(room);
 		this.change$.next();
 
-		const visibility = {
+		const visibility: VisibilityOverStudents = {
 			mode: room.visibility_type,
-			over: room.visibility_students.map((s) => {
+			over: (room.visibility_students as User[]).map((s) => {
 				try {
 					return User.fromJSON(s);
-				} catch (e) {}
+				} catch (e) {
+					console.log(e);
+				}
 			}),
 		};
-		this.overlayService.changePage(Pages.EditRoomInFolder, this.currentPage, {
+		this.overlayService.updatePage(OverlayPages.EditRoomInFolder, this.currentPage, {
 			advancedOptions: this.advOptState,
 			visibility,
 			selectedRoomsInFolder: [room],
 		});
 	}
 
-	selectedRoomsEvent(event, room, all?: boolean) {
+	public selectedRoomsEvent(event: MatCheckboxChange, room: RoomInFolder, all?: boolean): void {
 		this.formService.setFrameMotionDirection('forward');
 		setTimeout(() => {
 			if (all) {
 				if (event.checked) {
-					this.selectedRooms = this.roomsImFolder;
+					this.selectedRooms = this.roomsInFolder;
 				} else {
 					this.selectedRooms = [];
 				}
@@ -315,27 +313,7 @@ export class FolderComponent implements OnInit, OnDestroy {
 		}, 100);
 	}
 
-	textColor(item) {
-		if (item.hovered) {
-			return this.sanitizer.bypassSecurityTrustStyle('#1F195E');
-		} else {
-			return this.sanitizer.bypassSecurityTrustStyle('#555558');
-		}
-	}
-
-	getBackgroundColor(item) {
-		if (item.hovered) {
-			if (item.pressed) {
-				return '#E2E7F4';
-			} else {
-				return '#ECF1FF';
-			}
-		} else {
-			return '#FFFFFF';
-		}
-	}
-
-	deleteRoom(target: HTMLElement) {
+	public deleteRoom(target: HTMLElement): void {
 		const header = `Are you sure you want to permanently delete this folder? All associated passes associated with this rooms in this folder <b>will not</b> be deleted.`;
 		const options = [{ display: 'Confirm Delete', color: '#DA2370', buttonColor: '#DA2370, #FB434A', action: 'delete' }];
 		UNANIMATED_CONTAINER.next(true);
@@ -366,50 +344,50 @@ export class FolderComponent implements OnInit, OnDestroy {
 			});
 	}
 
-	generateAdvOptionsModel(loc: Location) {
-		if (loc.request_mode === 'teacher_in_room' || loc.request_mode === 'all_teachers_in_room') {
-			const mode = loc.request_mode === 'teacher_in_room' ? 'any_teach_assign' : 'all_teach_assign';
+	private generateAdvOptionsModel(room: RoomInFolder): OptionState {
+		if (room.request_mode === 'teacher_in_room' || room.request_mode === 'all_teachers_in_room') {
+			const mode = room.request_mode === 'teacher_in_room' ? 'any_teach_assign' : 'all_teach_assign';
 
-			if (loc.request_send_destination_teachers && loc.request_send_origin_teachers) {
+			if (room.request_send_destination_teachers && room.request_send_origin_teachers) {
 				this.advOptState.now.data[mode] = 'Both';
-			} else if (loc.request_send_destination_teachers) {
+			} else if (room.request_send_destination_teachers) {
 				this.advOptState.now.data[mode] = 'This Room';
-			} else if (loc.request_send_origin_teachers) {
+			} else if (room.request_send_origin_teachers) {
 				this.advOptState.now.data[mode] = 'Origin';
 			}
-		} else if (loc.request_mode === 'specific_teachers') {
-			this.advOptState.now.data.selectedTeachers = loc.request_teachers;
+		} else if (room.request_mode === 'specific_teachers') {
+			this.advOptState.now.data.selectedTeachers = room.request_teachers as User[];
 		}
-		if (loc.scheduling_request_mode === 'teacher_in_room' || loc.scheduling_request_mode === 'all_teachers_in_room') {
-			const mode = loc.scheduling_request_mode === 'teacher_in_room' ? 'any_teach_assign' : 'all_teach_assign';
+		if (room.scheduling_request_mode === 'teacher_in_room' || room.scheduling_request_mode === 'all_teachers_in_room') {
+			const mode = room.scheduling_request_mode === 'teacher_in_room' ? 'any_teach_assign' : 'all_teach_assign';
 
-			if (loc.scheduling_request_send_destination_teachers && loc.scheduling_request_send_origin_teachers) {
+			if (room.scheduling_request_send_destination_teachers && room.scheduling_request_send_origin_teachers) {
 				this.advOptState.future.data[mode] = 'Both';
-			} else if (loc.scheduling_request_send_destination_teachers) {
+			} else if (room.scheduling_request_send_destination_teachers) {
 				this.advOptState.future.data[mode] = 'This Room';
-			} else if (loc.scheduling_request_send_origin_teachers) {
+			} else if (room.scheduling_request_send_origin_teachers) {
 				this.advOptState.future.data[mode] = 'Origin';
 			}
-		} else if (loc.scheduling_request_mode === 'specific_teachers') {
-			this.advOptState.future.data.selectedTeachers = loc.scheduling_request_teachers;
+		} else if (room.scheduling_request_mode === 'specific_teachers') {
+			this.advOptState.future.data.selectedTeachers = room.scheduling_request_teachers as User[];
 		}
 
-		if (loc.request_mode === 'any_teacher') {
+		if (room.request_mode === 'any_teacher') {
 			this.advOptState.now.state = 'Any teacher';
-		} else if (loc.request_mode === 'teacher_in_room') {
+		} else if (room.request_mode === 'teacher_in_room') {
 			this.advOptState.now.state = 'Any teachers in room';
-		} else if (loc.request_mode === 'all_teachers_in_room') {
+		} else if (room.request_mode === 'all_teachers_in_room') {
 			this.advOptState.now.state = 'All teachers in room';
-		} else if (loc.request_mode === 'specific_teachers') {
+		} else if (room.request_mode === 'specific_teachers') {
 			this.advOptState.now.state = 'Certain \n teachers';
 		}
-		if (loc.scheduling_request_mode === 'any_teacher') {
+		if (room.scheduling_request_mode === 'any_teacher') {
 			this.advOptState.future.state = 'Any teacher';
-		} else if (loc.scheduling_request_mode === 'teacher_in_room') {
+		} else if (room.scheduling_request_mode === 'teacher_in_room') {
 			this.advOptState.future.state = 'Any teachers in room';
-		} else if (loc.scheduling_request_mode === 'all_teachers_in_room') {
+		} else if (room.scheduling_request_mode === 'all_teachers_in_room') {
 			this.advOptState.future.state = 'All teachers in room';
-		} else if (loc.scheduling_request_mode === 'specific_teachers') {
+		} else if (room.scheduling_request_mode === 'specific_teachers') {
 			this.advOptState.future.state = 'Certain \n teachers';
 		}
 		return this.advOptState;

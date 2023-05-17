@@ -6,7 +6,7 @@ import { DomSanitizer } from '@angular/platform-browser';
 import { cloneDeep, isEqual } from 'lodash';
 import { Subject } from 'rxjs';
 import { FormBuilder, FormControl, FormGroup } from '@angular/forms';
-import { OverlayDataService, RoomData } from '../overlay-data.service';
+import { OverlayDataService, RoomData, TooltipText } from '../overlay-data.service';
 import { takeUntil } from 'rxjs/operators';
 import { FeatureFlagService, FLAGS } from '../../../services/feature-flag.service';
 
@@ -57,7 +57,8 @@ export class AdvancedOptionsComponent implements OnInit, OnDestroy {
 	@Input() roomData: RoomData;
 	@Input() passLimitForm: FormGroup;
 	@Input() showErrors: boolean;
-	@Input() allowChangingIgnoreStudentsPassLimit: Boolean;
+	@Input() allowChangingIgnoreStudentsPassLimit: boolean;
+	@Input() allowChangingShowAsOriginRoom: boolean;
 
 	@Output() openedOptions: EventEmitter<boolean> = new EventEmitter<boolean>();
 	@Output() resultOptions: EventEmitter<{ options: OptionState; validButtons: ValidButtons }> = new EventEmitter<{
@@ -68,38 +69,35 @@ export class AdvancedOptionsComponent implements OnInit, OnDestroy {
 	@Output() futureRestEmit: EventEmitter<boolean> = new EventEmitter<boolean>();
 	@Output() checkInEmit: EventEmitter<boolean> = new EventEmitter<boolean>();
 	@Output() ignoreStudentsPassLimitEmit: EventEmitter<boolean> = new EventEmitter<boolean>();
+	@Output() showAsOriginRoomEmit: EventEmitter<boolean> = new EventEmitter<boolean>();
 
-	hideFutureBlock: boolean;
-	tooltipText;
-	openNowOptions: boolean;
-	openFutureOptions: boolean;
+	public hideFutureBlock: boolean;
+	public tooltipText: TooltipText;
+	public openNowOptions: boolean;
+	public openFutureOptions: boolean;
 
-	limitInputsFocus: {
+	public limitInputsFocus: {
 		to: boolean;
 		from: boolean;
 	} = { to: false, from: false };
 
-	restrictionForm: FormGroup;
+	public restrictionForm: FormGroup;
 
-	toggleChoices = ['Any teacher', 'Any teachers in room', 'All teachers in room', 'Certain \n teachers'];
+	public toggleChoices = ['Any teacher', 'Any teachers in room', 'All teachers in room', 'Certain \n teachers'];
 
-	optionState: OptionState;
+	public optionState: OptionState;
+	private initialState: OptionState;
 
-	initialState: OptionState;
+	public selectedOpt;
 
-	selectedOpt;
-
-	isShowButtons: ValidButtons = {
+	private isShowButtons: ValidButtons = {
 		publish: null,
 		incomplete: null,
 		cancel: null,
 	};
 
-	hovered: boolean;
-	pressed: boolean;
-
-	change$: Subject<any> = new Subject<any>();
-	destroy$: Subject<any> = new Subject<any>();
+	public change$: Subject<any> = new Subject<any>();
+	private destroy$: Subject<any> = new Subject<any>();
 
 	constructor(
 		public darkTheme: DarkThemeSwitch,
@@ -113,7 +111,7 @@ export class AdvancedOptionsComponent implements OnInit, OnDestroy {
 		return this.featureService.isFeatureEnabled(FLAGS.WaitInLine);
 	}
 
-	ngOnInit() {
+	public ngOnInit(): void {
 		this.tooltipText = this.overlayService.tooltipText;
 		this.optionState = cloneDeep(this.data);
 		this.initialState = cloneDeep({
@@ -141,6 +139,7 @@ export class AdvancedOptionsComponent implements OnInit, OnDestroy {
 			forFuture: new FormControl(this.roomData.scheduling_restricted),
 			checkIn: new FormControl(this.roomData.needs_check_in),
 			countsTowardsPassLimits: new FormControl(!this.roomData.ignore_students_pass_limit),
+			showAsOriginRoom: new FormControl(this.roomData.show_as_origin_room),
 		});
 
 		this.futureRestEmit.emit(this.roomData.scheduling_restricted);
@@ -156,12 +155,12 @@ export class AdvancedOptionsComponent implements OnInit, OnDestroy {
 		});
 	}
 
-	ngOnDestroy() {
+	public ngOnDestroy(): void {
 		this.destroy$.next();
 		this.destroy$.complete();
 	}
 
-	buildData() {
+	private buildData(): void {
 		this.selectedOpt = {
 			anyNow: this.optionState.now.data.any_teach_assign,
 			anyFut: this.optionState.future.data.any_teach_assign,
@@ -172,32 +171,32 @@ export class AdvancedOptionsComponent implements OnInit, OnDestroy {
 		};
 	}
 
-	changeState(action, data) {
+	public changeState(action: string, data: User[] | string): void {
 		switch (action) {
 			case 'now_teacher':
-				this.optionState.now.data.selectedTeachers = data;
+				this.optionState.now.data.selectedTeachers = data as User[];
 				break;
 			case 'future_teacher':
-				this.optionState.future.data.selectedTeachers = data;
+				this.optionState.future.data.selectedTeachers = data as User[];
 				break;
 			case 'now_any':
-				this.optionState.now.data.any_teach_assign = data;
+				this.optionState.now.data.any_teach_assign = data as string;
 				break;
 			case 'now_all':
-				this.optionState.now.data.all_teach_assign = data;
+				this.optionState.now.data.all_teach_assign = data as string;
 				break;
 			case 'future_any':
-				this.optionState.future.data.any_teach_assign = data;
+				this.optionState.future.data.any_teach_assign = data as string;
 				break;
 			case 'future_all':
-				this.optionState.future.data.all_teach_assign = data;
+				this.optionState.future.data.all_teach_assign = data as string;
 				break;
 		}
 		this.checkValidOptions();
 		this.resultOptions.emit({ options: this.optionState, validButtons: this.isShowButtons });
 	}
 
-	changeOptions(action, option) {
+	public changeOptions(action, option): void {
 		if (action === 'now' && this.optionState.now.state !== option) {
 			this.optionState.now.data = { all_teach_assign: null, any_teach_assign: null, selectedTeachers: [] };
 			this.optionState.now.state = option;
@@ -210,7 +209,7 @@ export class AdvancedOptionsComponent implements OnInit, OnDestroy {
 		this.resultOptions.emit({ options: this.optionState, validButtons: this.isShowButtons });
 	}
 
-	checkValidOptions() {
+	private checkValidOptions(): void {
 		const now = this.optionState.now;
 		const future = this.optionState.future;
 		if (
@@ -273,27 +272,23 @@ export class AdvancedOptionsComponent implements OnInit, OnDestroy {
 		}
 	}
 
-	nowEvent(value) {
+	public nowEvent(value: boolean): void {
 		this.nowRestrEmit.emit(value);
 	}
 
-	futureEvent(value) {
+	public futureEvent(value: boolean): void {
 		this.futureRestEmit.emit(value);
 	}
 
-	checkInEvent(value) {
+	public checkInEvent(value: boolean): void {
 		this.checkInEmit.emit(value);
 	}
 
-	ignoreStudentsPassLimitEvent(value) {
+	public ignoreStudentsPassLimitEvent(value: boolean): void {
 		this.ignoreStudentsPassLimitEmit.emit(!value);
 	}
 
-	isRestrictionEmpty(restriction) {
-		if (!this.showErrors) return;
-
-		if (restriction === 'now') {
-			if (this.optionState.now.state === this.toggleChoices[3]) return this.optionState.now.data.selectedTeachers.length === 0;
-		} else if (this.optionState.future.state === this.toggleChoices[3]) return this.optionState.future.data.selectedTeachers.length === 0;
+	public showAsOriginRoomEvent(value: boolean): void {
+		this.showAsOriginRoomEmit.emit(value);
 	}
 }

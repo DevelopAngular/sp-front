@@ -7,7 +7,7 @@ import { StudentList } from '../../models/StudentList';
 import { NextStep } from '../../animations';
 import { BehaviorSubject, combineLatest, Subject } from 'rxjs';
 import { CreateFormService } from '../create-form.service';
-import { filter, map, takeUntil, tap } from 'rxjs/operators';
+import { distinctUntilChanged, filter, map, takeUntil, tap } from 'rxjs/operators';
 import { cloneDeep, find } from 'lodash';
 import { LocationsService } from '../../services/locations.service';
 import { ScreenService } from '../../services/screen.service';
@@ -18,6 +18,7 @@ import { UserService } from '../../services/user.service';
 import { LocationVisibilityService } from './location-visibility.service';
 import { PassLimitInfo } from '../../models/HallPassLimits';
 import { RecurringOption } from '../../models/RecurringFutureConfig';
+import { PollingEvent } from '../../services/polling-service';
 
 export enum Role {
 	Teacher = 1,
@@ -292,14 +293,23 @@ export class MainHallPassFormComponent implements OnInit, OnDestroy {
 			.listenPinnableSocket()
 			.pipe(
 				takeUntil(this.destroy$),
-				filter((res) => !!res),
+				filter<PollingEvent>(Boolean),
+				distinctUntilChanged(
+					(prev, res) =>
+						prev.data.show_as_origin_room === res.data.show_as_origin_room ||
+						prev.data.ignore_students_pass_limit.show_as_origin_room === res.data.ignore_students_pass_limit
+				),
 				tap((res) => {
-					this.locationsService.updatePinnableSuccessState(res.data);
-
-					// update interface using filtering
-					// try catch here?
-					//const loc: Location = Location.fromJSON(res.data.location);
-					//this.formService.setUpdatedChoice(loc);
+					const pinnable: Pinnable = Pinnable.fromJSON(res.data);
+					const pinnableData = {
+						// data to create the pinnable
+						ignore_students_pass_limit: pinnable.ignore_students_pass_limit,
+						show_as_origin_room: pinnable.show_as_origin_room,
+					};
+					if (this.user.isAdmin()) {
+						this.passesService.updatePinnableRequest(pinnable.id, pinnableData);
+					}
+					this.locationsService.updatePinnableSuccessState(pinnable);
 				})
 			)
 			.subscribe();

@@ -12,7 +12,7 @@ export type ReferralStatus = 'applied' | 'accepted' | 'not_applied';
 
 export class User extends BaseModel {
 	constructor(
-		public id: string,
+		public id: number,
 		public active: boolean,
 		public created: Date,
 		public demo_account: boolean,
@@ -47,23 +47,23 @@ export class User extends BaseModel {
 			return null;
 		}
 
-		const id: string = '' + JSON['id'],
-			active: boolean = !!JSON['active'],
+		const id: number = JSON['id'],
+			active = !!JSON['active'],
 			created: Date = new Date(JSON['created']),
-			demo_account: boolean = !!JSON['demo_account'],
+			demo_account = !!JSON['demo_account'],
 			last_login: Date = new Date(JSON['last_login']),
 			last_updated: Date = new Date(JSON['last_updated']),
 			first_name: string = JSON['first_name'],
 			last_name: string = JSON['last_name'],
 			display_name: string = JSON['display_name'],
-			passes_restricted: boolean = !!JSON['passes_restricted'],
+			passes_restricted = !!JSON['passes_restricted'],
 			primary_email: string = JSON['primary_email'],
 			roles: string[] = [],
 			status: string = JSON['status'],
 			referral_status = JSON['referral_status'] as ReferralStatus,
 			badge: string = JSON['badge'],
 			sync_types: string[] = [],
-			show_expired_passes: boolean = !!JSON['show_expired_passes'],
+			show_expired_passes = !!JSON['show_expired_passes'],
 			show_profile_pictures: 'everywhere' | 'hall_monitor' = JSON['show_profile_pictures'],
 			profile_picture: string = JSON['profile_picture'],
 			extras: any = JSON['extras'],

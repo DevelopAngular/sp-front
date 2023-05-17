@@ -23,13 +23,13 @@ export class TeacherReviewsService {
 		return this.http.get('../assets/xlsx/Teacher Survey.csv', { responseType: 'text' }).pipe(
 			switchMap((csvRawText) => {
 				const lines = csvRawText.split(/\n/);
-				let reviewObservables: Observable<TeacherReview>[] = [];
+				const reviewObservables: Observable<TeacherReview>[] = [];
 
 				for (let i = 1; i < lines.length; i++) {
 					const regex = /,(?=(?:[^"]*"[^"]*")*[^"]*$)/; //commas outside of quotes
 					const fields = lines[i].split(regex);
 					const what_to_display = fields[1];
-					const school_id = fields[2];
+					const school_id = +fields[2];
 					const do_not_share = fields[4];
 					const user_id = fields[5];
 					const stars = parseInt(fields[6]);

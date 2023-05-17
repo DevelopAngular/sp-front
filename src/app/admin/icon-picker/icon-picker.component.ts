@@ -33,11 +33,11 @@ export class IconPickerComponent implements OnInit {
 
 	isSearching: boolean;
 
-	@Output() selectedEvent: EventEmitter<any> = new EventEmitter();
+	@Output() selectedEvent: EventEmitter<Icon> = new EventEmitter();
 
 	public selectedIconId;
 	public showSearchInput: boolean;
-	public iconCollectionTitle: string = 'Search icons';
+	public iconCollectionTitle = 'Search icons';
 
 	destroy$: Subject<any> = new Subject<any>();
 
@@ -101,7 +101,7 @@ export class IconPickerComponent implements OnInit {
 		return name.replace(/-/g, ' ');
 	}
 
-	changeIcon(icon) {
+	changeIcon(icon: Icon): void {
 		if (this.selectedIconId === icon.id) {
 			return;
 		}
@@ -130,7 +130,7 @@ export class IconPickerComponent implements OnInit {
 	}
 
 	search(search) {
-		let isSearch: boolean = true;
+		let isSearch = true;
 		if (search === '') {
 			search = this.roomName;
 			isSearch = false;

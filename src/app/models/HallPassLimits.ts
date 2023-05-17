@@ -1,7 +1,7 @@
 import { BaseModel } from './base';
 
 export interface HallPassLimit extends BaseModel {
-	id: string;
+	id: number;
 	schoolId: number;
 	passLimit: number;
 	frequency: 'day'; // TODO: add more when more frequencies are implemented

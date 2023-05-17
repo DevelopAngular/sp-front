@@ -62,7 +62,7 @@ export class InlineRequestCardComponent implements OnInit, OnDestroy {
 	) {}
 
 	get hasDivider() {
-		if (!!this.request) {
+		if (this.request) {
 			return this.request.status === 'pending' && !this.forInput;
 		}
 	}
@@ -170,7 +170,8 @@ export class InlineRequestCardComponent implements OnInit, OnDestroy {
 			destination: this.request.destination.id,
 			attachment_message: this.request.attachment_message,
 			travel_type: this.request.travel_type,
-			teachers: this.request.teachers.map((u) => parseInt(u.id, 10)),
+			teachers: this.request.teachers.map((u) => u.id),
+			// !forFuture means that request_time is definitely null
 			duration: this.request.duration,
 		};
 

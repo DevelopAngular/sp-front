@@ -5,7 +5,7 @@ import { User } from './User';
 
 export class HallPass extends BaseModel {
 	constructor(
-		public id: string,
+		public id: number,
 		public student: User,
 		public issuer: User,
 		public reported_pass_id: number | null,
@@ -38,7 +38,7 @@ export class HallPass extends BaseModel {
 		}
 
 		// console.log(JSON);
-		const id: string = '' + JSON['id'],
+		const id: number = JSON['id'],
 			student: User = User.fromJSON(JSON['student']),
 			issuer: User = User.fromJSON(JSON['issuer']),
 			reported_pass_id: number | null = JSON['reported_pass_id'] ?? null,
@@ -57,9 +57,9 @@ export class HallPass extends BaseModel {
 			parent_invitation: string = JSON['parent_invitation'],
 			parent_request: string = JSON['parent_request'],
 			cancelled: boolean = JSON['cancelled'],
-			cancellable_by_student: boolean = !!JSON['cancellable_by_student'],
+			cancellable_by_student = !!JSON['cancellable_by_student'],
 			schedule_config_id: number = JSON['schedule_config_id'],
-			needs_check_in: boolean = !!JSON['needs_check_in'],
+			needs_check_in = !!JSON['needs_check_in'],
 			issuer_message: string = JSON['issuer_message'];
 
 		const pass = new HallPass(

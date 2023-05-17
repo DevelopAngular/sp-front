@@ -70,13 +70,17 @@ export enum HallPassErrors {
 
 export interface BulkHallPassPostResponse {
 	passes: HallPass[];
-	conflict_student_ids: string[];
+	conflict_student_ids: number[];
 	waiting_in_line_passes: WaitingInLinePassResponse[];
 }
 
 export interface StartWaitingInLinePassResponse {
 	pass: HallPass;
-	conflict_student_ids: string[];
+	conflict_student_ids: number[];
+}
+
+export interface CheckPinnableName {
+	title_used: boolean;
 }
 
 @Injectable({
@@ -145,13 +149,13 @@ export class HallPassesService {
 		return this.http.get(`v1/hall_passes?active=true&location=${locId}`);
 	}
 
-	createPass(data, future: boolean = false) {
+	createPass(data, future = false) {
 		return this.http.post(`v1/hall_passes`, data);
 	}
 
 	// response is a Partial since depending on when the route is called, the backend can
 	// return at least one of the possible keys
-	bulkCreatePass(data, future: boolean = false): Observable<Partial<BulkHallPassPostResponse>> {
+	bulkCreatePass(data, future = false): Observable<Partial<BulkHallPassPostResponse>> {
 		return this.http.post(`v1/hall_passes`, data);
 	}
 
@@ -209,7 +213,7 @@ export class HallPassesService {
 		return this.http.post('v1/pinnables', data);
 	}
 
-	updatePinnableRequest(id, pinnable) {
+	updatePinnableRequest(id, pinnable): Observable<Pinnable[]> {
 		this.store.dispatch(updatePinnable({ id, pinnable }));
 		return this.pinnables$;
 	}
@@ -218,16 +222,16 @@ export class HallPassesService {
 		return this.http.patch(`v1/pinnables/${id}`, data);
 	}
 
-	deletePinnableRequest(id, add_to_folder: boolean = false) {
+	deletePinnableRequest(id, add_to_folder = false) {
 		this.store.dispatch(removePinnable({ id, add_to_folder } as any));
 		return of(true);
 	}
 
-	deletePinnable(id, add_to_folder: boolean = false) {
+	deletePinnable(id, add_to_folder = false) {
 		return this.http.delete(`v1/pinnables/${id}?add_to_folder=${add_to_folder}`);
 	}
 
-	checkPinnableName(value) {
+	checkPinnableName(value): Observable<CheckPinnableName> {
 		return this.http.get(`v1/pinnables/check_fields?title=${value}`);
 	}
 
@@ -277,21 +281,21 @@ export class HallPassesService {
 	}
 
 	// watchStartPass listens for hall pass start events for a specific hall pass with the given |id|.
-	watchStartPass(id: string) {
+	watchStartPass(id: number) {
 		return this.filterHallPassEvent(id, this.pollingService.listen('hall_pass.start'));
 	}
 
 	// watchEndPass listens for hall pass end events for a specific hall pass with the given |id|.
-	watchEndPass(id: string) {
+	watchEndPass(id: number) {
 		return this.filterHallPassEvent(id, this.pollingService.listen('hall_pass.end'));
 	}
 
 	// watchCancelPass listens for hall pass start events for a specific hall pass with the given |id|.
-	watchCancelPass(id: string) {
+	watchCancelPass(id: number) {
 		return this.filterHallPassEvent(id, this.pollingService.listen('hall_pass.cancel'));
 	}
 
-	filterHallPassEvent(id: string, events: Observable<PollingEvent>): Observable<HallPass> {
+	filterHallPassEvent(id: number, events: Observable<PollingEvent>): Observable<HallPass> {
 		return events.pipe(
 			map((e) => HallPass.fromJSON(e.data)),
 			filter((p) => p.id == id)

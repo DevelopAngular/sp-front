@@ -51,7 +51,7 @@ import { NuxReferralSuccessComponent } from './nux-components/nux-referral/nux-r
 import { PollingService } from './services/polling-service';
 
 declare const window;
-declare var ResizeObserver;
+declare const ResizeObserver;
 
 export const INITIAL_LOCATION_PATHNAME = new ReplaySubject<string>(1);
 
@@ -99,7 +99,7 @@ export class AppComponent implements OnInit, AfterViewInit, OnDestroy {
 
 	private subscriber$ = new Subject();
 
-	public mainContentWidth: string = '100%';
+	public mainContentWidth = '100%';
 
 	public isUserHasPhoneAccess: boolean;
 
@@ -214,7 +214,7 @@ export class AppComponent implements OnInit, AfterViewInit, OnDestroy {
 					return this.nextReleaseService.getLastReleasedUpdates(DeviceDetection.platform()).pipe(
 						map((release: Array<Update>): Array<Update> => {
 							return release.filter((update) => {
-								const allowUpdate: boolean = !!update.groups.find((group) => {
+								const allowUpdate = !!update.groups.find((group) => {
 									return user.roles.includes(`_profile_${group}`);
 								});
 								return allowUpdate;
@@ -388,9 +388,11 @@ export class AppComponent implements OnInit, AfterViewInit, OnDestroy {
 			)
 			.subscribe(([schools, currentSchool]) => {
 				this.schools = schools;
-				const isCurrentSchoolInList = schools.find((s) => s.id === currentSchool.id);
-				if (currentSchool && !isCurrentSchoolInList) {
-					this.http.setSchool(schools[0]);
+				if (currentSchool) {
+					const isCurrentSchoolInList = schools.find((s) => s.id === currentSchool.id);
+					if (!isCurrentSchoolInList) {
+						this.http.setSchool(schools[0]);
+					}
 				}
 			});
 
@@ -576,7 +578,7 @@ export class AppComponent implements OnInit, AfterViewInit, OnDestroy {
 				fixedWrapper.style.width = parseInt(getComputedStyle(panel, '').width) + -1 + 'px';
 			}
 
-			let iframe = document.querySelector<HTMLIFrameElement>('.help-center-unsubscribe');
+			const iframe = document.querySelector<HTMLIFrameElement>('.help-center-unsubscribe');
 
 			const mouseDown$ = fromEvent<MouseEvent>(panel, 'mousedown');
 			const mouseMove$ = fromEvent<MouseEvent>(document, 'mousemove');

@@ -24,7 +24,7 @@ export interface WaitingInLinePassResponse {
 
 export class WaitingInLinePass extends BaseModel {
 	constructor(
-		public id: string,
+		public id: number,
 		public created: Date,
 		public entry_time: Date,
 		public missed_start_attempts: number,
@@ -49,7 +49,7 @@ export class WaitingInLinePass extends BaseModel {
 			return null;
 		}
 
-		const id: string = '' + JSON['id'],
+		const id: number = JSON['id'],
 			created: Date = new Date(JSON['created']),
 			entry_time: Date = new Date(JSON['entry_time']),
 			missed_start_attempts: number = JSON['missed_start_attempts'],
@@ -65,7 +65,7 @@ export class WaitingInLinePass extends BaseModel {
 			school_id_fk: number = JSON['school_id_fk'],
 			line_position: number = JSON['line_position'];
 
-		const start_attempt_end_time: Date = !!JSON['start_attempt_end_time'] ? new Date(JSON['start_attempt_end_time']) : null;
+		const start_attempt_end_time: Date = JSON['start_attempt_end_time'] ? new Date(JSON['start_attempt_end_time']) : null;
 
 		return new WaitingInLinePass(
 			id,

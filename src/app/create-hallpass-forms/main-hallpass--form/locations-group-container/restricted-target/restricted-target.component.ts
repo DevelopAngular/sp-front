@@ -5,6 +5,7 @@ import { CreateFormService } from '../../../create-form.service';
 import { BehaviorSubject, fromEvent } from 'rxjs';
 import { States } from '../locations-group-container.component';
 import { DomSanitizer } from '@angular/platform-browser';
+import { User } from '../../../../models/User';
 
 import { uniqBy } from 'lodash';
 import { DeviceDetection } from '../../../../device-detection.helper';
@@ -46,7 +47,7 @@ export class RestrictedTargetComponent implements OnInit {
 
 	teachers;
 
-	shadow: boolean = true;
+	shadow = true;
 
 	frameMotion$: BehaviorSubject<any>;
 
@@ -115,7 +116,7 @@ export class RestrictedTargetComponent implements OnInit {
 	}
 
 	get filteredTeachers() {
-		return uniqBy(this.quickSelectedTeachers, 'id');
+		return uniqBy(this.quickSelectedTeachers as User[], 'id');
 	}
 
 	ngOnInit() {
