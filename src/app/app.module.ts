@@ -97,7 +97,6 @@ const DEFAULT_SWIPER_CONFIG: SwiperConfigInterface = {
 	slidesPerView: 'auto',
 };
 
-// @ts-ignore
 const appRoutes: Routes = [
 	{
 		path: 'intro',
@@ -271,6 +270,4 @@ const appRoutes: Routes = [
 	],
 	bootstrap: [AppComponent],
 })
-export class AppModule {
-	constructor() {}
-}
+export class AppModule {}
