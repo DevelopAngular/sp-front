@@ -31,7 +31,7 @@ export class Alert extends BaseModel {
 			high_priority: boolean = JSON['high_priority'],
 			status_sent: boolean = JSON['status'];
 
-		let usersJSON = JSON['users'];
+		const usersJSON = JSON['users'];
 		for (let i = 0; i < usersJSON.length; i++) {
 			users.push(usersJSON[i]);
 		}

@@ -47,7 +47,7 @@ export class RestrictedTargetComponent implements OnInit {
 
 	teachers;
 
-	shadow: boolean = true;
+	shadow = true;
 
 	frameMotion$: BehaviorSubject<any>;
 

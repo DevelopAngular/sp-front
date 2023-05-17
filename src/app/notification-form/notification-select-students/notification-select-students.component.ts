@@ -30,7 +30,7 @@ export class NotificationSelectStudentsComponent implements OnInit {
 
 	ngOnInit(): void {
 		const retryingStrategy =
-			(peak: number = 1, delay: number = 1000) =>
+			(peak = 1, delay = 1000) =>
 			(errors: Observable<any>) => {
 				return errors.pipe(
 					mergeMap((error, i) => {
@@ -116,7 +116,7 @@ export class NotificationSelectStudentsComponent implements OnInit {
 			.subscribe();
 	}
 
-	showAddStudent: boolean = false;
+	showAddStudent = false;
 
 	// represents this.students inside template
 	// it is this.students twin that lives only for template

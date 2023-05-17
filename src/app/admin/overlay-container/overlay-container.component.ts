@@ -109,7 +109,7 @@ export class OverlayContainerComponent implements OnInit, OnDestroy {
 
 	private pinnableToDeleteIds: number[] = [];
 
-	public titleColor: string = 'white';
+	public titleColor = 'white';
 
 	public form: FormGroup;
 	public passLimitForm: FormGroup;
@@ -122,7 +122,7 @@ export class OverlayContainerComponent implements OnInit, OnDestroy {
 
 	public showPublishSpinner: boolean;
 	public iconTextResult$: Subject<string> = new Subject<string>();
-	public showBottomShadow: boolean = true;
+	public showBottomShadow = true;
 
 	private advOptState: OptionState = {
 		now: { state: '', data: { all_teach_assign: null, any_teach_assign: null, selectedTeachers: [] } },
@@ -173,7 +173,7 @@ export class OverlayContainerComponent implements OnInit, OnDestroy {
 	}
 
 	// how to use: change it and revert it back to FALSE after you finish
-	public isSaveButtonDisabled: boolean = false;
+	public isSaveButtonDisabled = false;
 
 	get isFormIncomplete(): boolean {
 		if (
@@ -227,7 +227,7 @@ export class OverlayContainerComponent implements OnInit, OnDestroy {
 
 	get saveButtonToolTip(): string | null {
 		if (this.isFormIncomplete) {
-			let missing = [];
+			const missing = [];
 
 			if (this.currentPage === OverlayPages.EditRoom || this.currentPage === OverlayPages.NewRoom) {
 				if (this.form.get('roomName').invalid) {
@@ -503,7 +503,7 @@ export class OverlayContainerComponent implements OnInit, OnDestroy {
 				break;
 			case 'editFolder':
 			case 'newFolder':
-				if (!!this.pinnable) {
+				if (this.pinnable) {
 					colors = this.pinnable.color_profile.gradient_color;
 					this.overlayService.changePage(OverlayPages.EditFolder, null, {
 						pinnable: this.pinnable,
@@ -557,9 +557,9 @@ export class OverlayContainerComponent implements OnInit, OnDestroy {
 	}
 
 	private buildForm(): void {
-		let countsTowardsPassLimits: boolean = true;
-		let showAsOriginRoom: boolean = true;
-		if (!!this.pinnable) {
+		let countsTowardsPassLimits = true;
+		let showAsOriginRoom = true;
+		if (this.pinnable) {
 			countsTowardsPassLimits = !this.pinnable.ignore_students_pass_limit;
 			showAsOriginRoom = this.pinnable.show_as_origin_room;
 		}
@@ -785,7 +785,7 @@ export class OverlayContainerComponent implements OnInit, OnDestroy {
 		return data;
 	}
 
-	public back(closeDialog: boolean = true): void {
+	public back(closeDialog = true): void {
 		if (closeDialog) {
 			this.dialogRef.close();
 		} else {
@@ -793,7 +793,7 @@ export class OverlayContainerComponent implements OnInit, OnDestroy {
 			setTimeout(() => {
 				const oldFolderData: FolderData = this.oldFolderData ? this.oldFolderData : this.folderData;
 				if (this.overlayService.pageState.getValue().previousPage === OverlayPages.BulkEditRoomsInFolder) {
-					if (!!this.pinnable) {
+					if (this.pinnable) {
 						this.overlayService.updatePage(OverlayPages.EditFolder, this.currentPage, { ...this.folderData, oldFolderData });
 					} else {
 						this.overlayService.updatePage(OverlayPages.NewFolder, this.currentPage, { ...this.folderData, oldFolderData });
@@ -1059,7 +1059,7 @@ export class OverlayContainerComponent implements OnInit, OnDestroy {
 		}
 
 		if (this.currentPage === OverlayPages.EditRoom) {
-			let location: Location = cloneDeep(this.pinnable.location);
+			const location: Location = cloneDeep(this.pinnable.location);
 			location.title = this.roomData.roomName;
 			location.room = this.roomData.roomNumber;
 			location.restricted = !!this.roomData.restricted;
@@ -1210,7 +1210,7 @@ export class OverlayContainerComponent implements OnInit, OnDestroy {
 		const editingRooms: any[] = this.editRooms(result.roomData, result.rooms);
 		this.folderData.roomsInFolder = [...editingRooms, ...this.folderData.roomsInFolder];
 		if (this.overlayService.pageState.getValue().previousPage === OverlayPages.ImportRooms) {
-			if (!!this.pinnable) {
+			if (this.pinnable) {
 				this.overlayService.updatePage(OverlayPages.EditFolder, this.currentPage, { ...this.folderData, oldFolderData: this.oldFolderData });
 			} else {
 				this.overlayService.updatePage(OverlayPages.NewFolder, this.currentPage, { ...this.folderData, oldFolderData: this.oldFolderData });

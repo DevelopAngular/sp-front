@@ -1,4 +1,4 @@
-import { Component, EventEmitter, Input, OnInit, Output } from '@angular/core';
+import { Component, EventEmitter, Input, Output } from '@angular/core';
 import { FormGroup } from '@angular/forms';
 
 import { BehaviorSubject, Subject } from 'rxjs';
@@ -12,7 +12,7 @@ import { DEFAULT_VISIBILITY_STUDENTS } from '../visibility-room/visibility-room.
 	templateUrl: './edit-room-in-folder.component.html',
 	styleUrls: ['./edit-room-in-folder.component.scss'],
 })
-export class EditRoomInFolderComponent implements OnInit {
+export class EditRoomInFolderComponent {
 	@Input() form: FormGroup;
 
 	@Input() passLimitForm: FormGroup;
@@ -57,8 +57,6 @@ export class EditRoomInFolderComponent implements OnInit {
 		enable: true,
 	};
 
-	constructor() {}
-
 	public get showSave(): boolean {
 		return this.roomValidButtons.getValue().publish && this.visibilityForm.valid;
 	}
@@ -70,8 +68,6 @@ export class EditRoomInFolderComponent implements OnInit {
 	public get showCancel(): boolean {
 		return this.roomValidButtons.getValue().cancel;
 	}
-
-	public ngOnInit(): void {}
 
 	public goBack(): void {
 		this.back.emit();

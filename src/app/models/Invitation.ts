@@ -44,16 +44,16 @@ export class Invitation extends BaseModel implements ReadableModel {
 			duration: number = JSON['duration'],
 			gradient_color: string = JSON['gradient_color'],
 			icon: string = JSON['icon'],
-			default_origin: Location = !!JSON['default_origin'] ? Location.fromJSON(JSON['default_orgin']) : null,
+			default_origin: Location = JSON['default_origin'] ? Location.fromJSON(JSON['default_orgin']) : null,
 			travel_type: string = JSON['travel_type'],
 			color_profile: ColorProfile = ColorProfile.fromJSON(JSON['color_profile']),
-			cancelled: Date = !!JSON['cancelled'] ? new Date(JSON['cancelled']) : null,
-			last_read: Date = !!JSON['last_read'] ? new Date(JSON['last_read']) : null,
+			cancelled: Date = JSON['cancelled'] ? new Date(JSON['cancelled']) : null,
+			last_read: Date = JSON['last_read'] ? new Date(JSON['last_read']) : null,
 			last_updated: Date = new Date(JSON['last_updated']),
 			created: Date = new Date(JSON['created']),
 			issuer_message: string = JSON['issuer_message'];
 
-		let datesJSON = JSON['date_choices'];
+		const datesJSON = JSON['date_choices'];
 		for (let i = 0; i < datesJSON.length; i++) {
 			date_choices.push(new Date(datesJSON[i]));
 		}

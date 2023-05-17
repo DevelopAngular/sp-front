@@ -182,7 +182,7 @@ export class PassesComponent implements OnInit, OnDestroy {
 	@HostListener('window:scroll', ['$event'])
 	scroll(event) {
 		this.currentScrollPosition = event.currentTarget.scrollTop;
-		if (!!this.passesService.expiredPassesNextUrl$.getValue()) {
+		if (this.passesService.expiredPassesNextUrl$.getValue()) {
 			if (event.currentTarget.offsetHeight + event.target.scrollTop >= event.currentTarget.scrollHeight - 600) {
 				combineLatest(this.expiredPassesSelectedSort$.pipe(take(1)), this.liveDataService.expiredPassesLoading$.pipe(take(1)))
 					.pipe(
@@ -317,7 +317,7 @@ export class PassesComponent implements OnInit, OnDestroy {
 					);
 				})
 			)
-			.subscribe(() => {});
+			.subscribe();
 
 		this.isActivePass$ = combineLatest(this.currentPass$, this.timeService.now$, (pass, now) => {
 			return pass !== null && new Date(pass.start_time).getTime() <= now.getTime() && now.getTime() < new Date(pass.end_time).getTime();

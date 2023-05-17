@@ -124,7 +124,7 @@ export class RequestsService {
 			map((pl) => pl.find((p) => p.id.toString() === request.destination.id.toString())),
 			take(1),
 			concatMap((pl) => {
-				const roomLimitReached = !!pl ? pl?.max_passes_to_active && pl?.max_passes_to <= pl?.to_count : false;
+				const roomLimitReached = pl ? pl?.max_passes_to_active && pl?.max_passes_to <= pl?.to_count : false;
 
 				if (!roomLimitReached) {
 					return of(body);

@@ -1,4 +1,4 @@
-import { Component, EventEmitter, Input, OnInit, Output } from '@angular/core';
+import { Component, EventEmitter, Input, Output } from '@angular/core';
 import { FormGroup } from '@angular/forms';
 import { RoomData, RoomDataResult } from '../overlay-data.service';
 import { BehaviorSubject, Subject } from 'rxjs';
@@ -12,7 +12,7 @@ import { slideOpacity } from '../../../animations';
 	styleUrls: ['./new-room-in-folder.component.scss'],
 	animations: [slideOpacity],
 })
-export class NewRoomInFolderComponent implements OnInit {
+export class NewRoomInFolderComponent {
 	@Input() form: FormGroup;
 
 	@Input() visibilityForm: FormGroup;
@@ -57,8 +57,6 @@ export class NewRoomInFolderComponent implements OnInit {
 		enable: true,
 	};
 
-	constructor() {}
-
 	public get showPubish(): boolean {
 		return this.roomValidButtons.getValue().publish && this.visibilityForm.valid;
 	}
@@ -70,8 +68,6 @@ export class NewRoomInFolderComponent implements OnInit {
 	public get showCancel(): boolean {
 		return this.roomValidButtons.getValue().cancel;
 	}
-
-	public ngOnInit(): void {}
 
 	public goBack(): void {
 		this.back.emit();

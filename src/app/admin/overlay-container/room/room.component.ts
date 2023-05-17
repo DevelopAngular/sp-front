@@ -37,7 +37,7 @@ export class RoomComponent implements OnInit, OnDestroy {
 	@Input() isEnableRoomTrigger$: Subject<boolean>;
 
 	@Input() allowChangingIgnoreStudentsPassLimit: boolean;
-	@Input() allowChangingShowAsOriginRoom: boolean = true;
+	@Input() allowChangingShowAsOriginRoom = true;
 
 	@Output() back = new EventEmitter();
 
@@ -68,7 +68,7 @@ export class RoomComponent implements OnInit, OnDestroy {
 
 	public currentPage: OverlayPages;
 	public tooltipText: TooltipText;
-	public inputFocusNumber: number = 1;
+	public inputFocusNumber = 1;
 	public forceFocus$: Subject<any> = new Subject<any>();
 
 	private advOptionsValidButtons: ValidButtons = {

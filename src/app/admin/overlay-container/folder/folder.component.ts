@@ -101,7 +101,7 @@ export class FolderComponent implements OnInit, OnDestroy {
 	public roomsInFolder: RoomInFolder[] = [];
 	public selectedRooms: RoomInFolder[] = [];
 
-	public folderName: string = '';
+	public folderName = '';
 
 	public buttonsInFolder = [
 		{ title: 'New Room', icon: './assets/Plus (White).svg', page: OverlayPages.NewRoomInFolder },
@@ -284,7 +284,9 @@ export class FolderComponent implements OnInit, OnDestroy {
 			over: (room.visibility_students as User[]).map((s) => {
 				try {
 					return User.fromJSON(s);
-				} catch (e) {}
+				} catch (e) {
+					console.log(e);
+				}
 			}),
 		};
 		this.overlayService.updatePage(OverlayPages.EditRoomInFolder, this.currentPage, {

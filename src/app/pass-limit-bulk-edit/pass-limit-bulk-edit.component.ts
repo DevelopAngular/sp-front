@@ -15,7 +15,7 @@ const individualPassLimitRangeValidator =
 			return null;
 		}
 		const num = parseInt(form.value['passLimit'], 10);
-		if (num === NaN) {
+		if (isNaN(num)) {
 			return { format: true };
 		}
 		if (num < -2 || num > 50) {

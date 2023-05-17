@@ -82,7 +82,7 @@ export class LocationsService {
 	) {}
 
 	// TODO: Convert params of function into an object
-	getLocationsWithCategory(category: string, show_removed: boolean = false): Observable<Location[]> {
+	getLocationsWithCategory(category: string, show_removed = false): Observable<Location[]> {
 		return this.http.get('v1/locations', {
 			params: {
 				category: category,

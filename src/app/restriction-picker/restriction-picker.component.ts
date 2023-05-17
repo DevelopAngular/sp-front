@@ -11,20 +11,18 @@ import { Select } from '../animations';
 export class RestrictionPickerComponent implements OnInit {
 	@Input() choices: string[];
 	@Input() width: number; // px
-	@Input() height: number = 32; // px
-	@Input() color: string = '#7F879D';
-	@Input() selectedColor: string = '#FFFFFF';
-	@Input() backgroundColor: string = '#1E194F';
+	@Input() height = 32; // px
+	@Input() color = '#7F879D';
+	@Input() selectedColor = '#FFFFFF';
+	@Input() backgroundColor = '#1E194F';
 	@Input() selectedChoice: string;
-	@Input() fontSize: number = 13; // px
+	@Input() fontSize = 13; // px
 	@Input() disabled: boolean;
 	@Input() disabledOptions: string[];
-	@Input() padding: number = 5; // px
+	@Input() padding = 5; // px
 	@Input() tooltipText: string;
 
 	@Output() result: EventEmitter<string> = new EventEmitter<string>();
-
-	constructor() {}
 
 	public ngOnInit(): void {
 		if (this.selectedChoice) {

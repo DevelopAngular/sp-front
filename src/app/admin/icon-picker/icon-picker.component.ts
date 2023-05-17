@@ -37,7 +37,7 @@ export class IconPickerComponent implements OnInit {
 
 	public selectedIconId;
 	public showSearchInput: boolean;
-	public iconCollectionTitle: string = 'Search icons';
+	public iconCollectionTitle = 'Search icons';
 
 	destroy$: Subject<any> = new Subject<any>();
 
@@ -130,7 +130,7 @@ export class IconPickerComponent implements OnInit {
 	}
 
 	search(search) {
-		let isSearch: boolean = true;
+		let isSearch = true;
 		if (search === '') {
 			search = this.roomName;
 			isSearch = false;

@@ -251,7 +251,9 @@ export class LocationsGroupContainerComponent implements OnInit, OnDestroy {
 							if (this.visibilityService.filterByVisibility(loc, student)) {
 								return p;
 							}
-						} catch (e) {}
+						} catch (e) {
+							console.log(e);
+						}
 						// folder containing pinnables
 					} else if (p.type === 'category') {
 						return p;
@@ -490,7 +492,7 @@ export class LocationsGroupContainerComponent implements OnInit, OnDestroy {
 		this.FORM_STATE.state = States.message;
 	}
 
-	async resultMessage(message, denyMessage: boolean = false) {
+	async resultMessage(message, denyMessage = false) {
 		if (!message) {
 			message = '';
 		}
@@ -500,7 +502,7 @@ export class LocationsGroupContainerComponent implements OnInit, OnDestroy {
 	}
 
 	@skipWhenWS()
-	private async postComposetData(close: boolean = false, isMessage?: boolean) {
+	private async postComposetData(close = false, isMessage?: boolean) {
 		const restricted =
 			(this.FORM_STATE.data.direction.to.restricted && !this.FORM_STATE.forLater) ||
 			(this.FORM_STATE.data.direction.to.scheduling_restricted && !!this.FORM_STATE.forLater);

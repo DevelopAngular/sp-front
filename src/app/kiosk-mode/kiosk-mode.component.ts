@@ -38,10 +38,10 @@ export class KioskModeComponent implements OnInit, AfterViewInit, OnDestroy {
 	private pinnables$: Observable<Pinnable[]> = this.passesService.getPinnablesRequest().pipe(filter((r: Pinnable[]) => !!r.length));
 	private pinnable: Pinnable;
 	private currentLocation: Location;
-	private showAsOriginRoom: boolean = true;
+	private showAsOriginRoom = true;
 
-	public showProfilePicture: boolean = false;
-	public waitInLinePassesEnabled: boolean = false;
+	public showProfilePicture = false;
+	public waitInLinePassesEnabled = false;
 	public showButtons: BehaviorSubject<boolean> = new BehaviorSubject(true);
 	public showScanner: BehaviorSubject<boolean> = new BehaviorSubject(false);
 	public invalidId: BehaviorSubject<{ id: string; show: boolean }> = new BehaviorSubject({

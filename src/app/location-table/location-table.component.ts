@@ -58,7 +58,9 @@ function Visibility(): any {
 					try {
 						v = v instanceof Location ? v : Location.fromJSON(v);
 						vv = vv.filter((loc: Location) => this.visibilityService.filterByVisibility(loc, student));
-					} catch (e) {}
+					} catch (e) {
+						console.log(e);
+					}
 				}
 				values = vv;
 			},
@@ -88,16 +90,16 @@ export class LocationTableComponent implements OnInit, OnDestroy {
 	@Input() hasLocks: boolean;
 	@Input() invalidLocation: string | number;
 	@Input() noRightStar: boolean;
-	@Input() height: string = '140px';
-	@Input() heightLeftTable: string = '189px';
-	@Input() inputWidth: string = '200px';
-	@Input() isEdit: boolean = false;
-	@Input() rightHeaderText: boolean = false;
+	@Input() height = '140px';
+	@Input() heightLeftTable = '189px';
+	@Input() inputWidth = '200px';
+	@Input() isEdit = false;
+	@Input() rightHeaderText = false;
 	@Input() mergedAllRooms: boolean;
-	@Input() dummyString: string = '';
-	@Input() withMergedStars: boolean = true;
-	@Input() searchExceptFavourites: boolean = false;
-	@Input() allowOnStar: boolean = false;
+	@Input() dummyString = '';
+	@Input() withMergedStars = true;
+	@Input() searchExceptFavourites = false;
+	@Input() allowOnStar = false;
 	@Input() isFavoriteForm: boolean;
 	@Input() originLocation: Location;
 	@Input() searchTeacherLocations: boolean;
@@ -115,11 +117,11 @@ export class LocationTableComponent implements OnInit, OnDestroy {
 
 	@Visibility()
 	public choices: Choice[] = [];
-	public noChoices: boolean = false;
-	public mainContentVisibility: boolean = false;
+	public noChoices = false;
+	public mainContentVisibility = false;
 	@Visibility()
 	public starredChoices: Choice[] = [];
-	public search: string = '';
+	public search = '';
 	public favoritesLoaded: boolean;
 	public hideFavorites: boolean;
 	private pinnables;
@@ -170,7 +172,7 @@ export class LocationTableComponent implements OnInit, OnDestroy {
 		if (this.mergedAllRooms) {
 			request$ = this.mergeLocations(url, this.withMergedStars, this.category);
 		} else if (this.forKioskMode) {
-			request$ = !!this.category
+			request$ = this.category
 				? this.locationService.getLocationsFromCategory(this.category)
 				: this.locationService.getLocationsWithConfigRequest(url);
 		} else {
@@ -404,7 +406,7 @@ export class LocationTableComponent implements OnInit, OnDestroy {
 		if (search !== '') {
 			const url =
 				'v1/' +
-				(this.type === 'teachers' ? 'users?role=_profile_teacher&' : 'locations' + (!!this.category ? '?category=' + this.category + '&' : '?')) +
+				(this.type === 'teachers' ? 'users?role=_profile_teacher&' : 'locations' + (this.category ? '?category=' + this.category + '&' : '?')) +
 				'limit=100' +
 				'&search=' +
 				search +
@@ -487,9 +489,7 @@ export class LocationTableComponent implements OnInit, OnDestroy {
 	}
 
 	private mergeLocations(url: string, withStars: boolean, category: string): Observable<Location[]> {
-		const locsRequest$ = !!category
-			? this.locationService.getLocationsFromCategory(category)
-			: this.locationService.getLocationsWithConfigRequest(url);
+		const locsRequest$ = category ? this.locationService.getLocationsFromCategory(category) : this.locationService.getLocationsWithConfigRequest(url);
 		return zip(locsRequest$, this.locationService.getFavoriteLocationsRequest()).pipe(
 			takeUntil(this.destroy$),
 			map(([rooms, favorites]: [Location[], Location[]]) => {

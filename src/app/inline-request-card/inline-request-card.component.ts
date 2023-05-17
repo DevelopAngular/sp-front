@@ -62,7 +62,7 @@ export class InlineRequestCardComponent implements OnInit, OnDestroy {
 	) {}
 
 	get hasDivider() {
-		if (!!this.request) {
+		if (this.request) {
 			return this.request.status === 'pending' && !this.forInput;
 		}
 	}

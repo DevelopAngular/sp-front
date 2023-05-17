@@ -496,17 +496,17 @@ export class UserService implements OnDestroy {
 			const school: School = this.http.getSchool();
 
 			let trialEndDate: Date;
-			if (!!school.trial_end_date) {
+			if (school.trial_end_date) {
 				const d = new Date(school.trial_end_date);
 				// Drop the time so that the date is the same when we call .toDateString()
 				trialEndDate = new Date(d.getUTCFullYear(), d.getUTCMonth(), d.getUTCDate());
 			}
 
-			let accountType = user.sync_types[0] === 'google' ? 'Google' : user.sync_types[0] === 'clever' ? 'Clever' : 'Standard';
-			let trialing = !!trialEndDate && trialEndDate > now;
-			let trialEndDateStr = !!trialEndDate ? trialEndDate.toDateString() : 'N/A';
+			const accountType = user.sync_types[0] === 'google' ? 'Google' : user.sync_types[0] === 'clever' ? 'Clever' : 'Standard';
+			const trialing = !!trialEndDate && trialEndDate > now;
+			const trialEndDateStr = trialEndDate ? trialEndDate.toDateString() : 'N/A';
 
-			let company = {
+			const company = {
 				id: school.id,
 				name: school.name,
 				'Id Card Access': school.feature_flag_digital_id,
@@ -515,7 +515,7 @@ export class UserService implements OnDestroy {
 				'Trial End Date': trialEndDateStr,
 			};
 
-			if (!!renewalStatus) {
+			if (renewalStatus) {
 				company['customer_success_advocate_hubspot_id'] = renewalStatus.customer_success_advocate_hubspot_id;
 				company['account_executive_hubspot_id'] = renewalStatus.account_executive_hubspot_id;
 				company['billing_coordinator_hubspot_id'] = renewalStatus.billing_coordinator_hubspot_id;
@@ -812,7 +812,7 @@ export class UserService implements OnDestroy {
 	}
 
 	searchProfile(role?, limit = 5, search?, ignoreProfileWithStatuses: ProfileStatus[] = ['suspended']) {
-		let url: string = 'v1/users?';
+		let url = 'v1/users?';
 		if (role) {
 			url += `role=${role}&`;
 		}
@@ -838,7 +838,7 @@ export class UserService implements OnDestroy {
 		return this.http.get<User>(`v1/users/${id}`, { headers: { 'X-Ignore-Errors': 'true' } }).pipe(catchError((err) => of(null)));
 	}
 
-	searchProfileAll(search, type: string = 'alternative', excludeProfile?: string, gSuiteRoles?: string[]) {
+	searchProfileAll(search, type = 'alternative', excludeProfile?: string, gSuiteRoles?: string[]) {
 		switch (type) {
 			case 'alternative':
 				return this.http.get(constructUrl(`v1/users`, { search: search }));
@@ -1015,16 +1015,16 @@ export class UserService implements OnDestroy {
 		return this.http.delete(`v1/student_lists/${id}`);
 	}
 
-	getUserWithTimeout(max: number = 10000): Observable<User | null> {
+	getUserWithTimeout(max = 10000): Observable<User | null> {
 		return race<User | null>(this.userData, interval(max).pipe(map(() => null))).pipe(take(1));
 	}
 
-	getAccountsRoles(role: string = '', search: string = '', limit: number = 0) {
+	getAccountsRoles(role = '', search = '', limit = 0) {
 		this.store.dispatch(getAccounts({ role, search, limit }));
 		return this.getAccountsRole(role);
 	}
 
-	getUsersList(role: string = '', search: string = '', limit: number = 0, include_numbers?: boolean) {
+	getUsersList(role = '', search = '', limit = 0, include_numbers?: boolean) {
 		const params: any = {};
 		if (role !== '' && role !== '_all') {
 			params.role = role;
@@ -1240,7 +1240,7 @@ export class UserService implements OnDestroy {
 
 	getGradeLevelsByIds(ids: string[]) {
 		const q = ids.map((x) => x.trim()).join(',');
-		const opt = !!q ? { params: new HttpParams().set('student_id', q) } : {};
+		const opt = q ? { params: new HttpParams().set('student_id', q) } : {};
 		return this.http.get('v1/users/grade_level', opt);
 	}
 

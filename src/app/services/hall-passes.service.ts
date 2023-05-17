@@ -149,13 +149,13 @@ export class HallPassesService {
 		return this.http.get(`v1/hall_passes?active=true&location=${locId}`);
 	}
 
-	createPass(data, future: boolean = false) {
+	createPass(data, future = false) {
 		return this.http.post(`v1/hall_passes`, data);
 	}
 
 	// response is a Partial since depending on when the route is called, the backend can
 	// return at least one of the possible keys
-	bulkCreatePass(data, future: boolean = false): Observable<Partial<BulkHallPassPostResponse>> {
+	bulkCreatePass(data, future = false): Observable<Partial<BulkHallPassPostResponse>> {
 		return this.http.post(`v1/hall_passes`, data);
 	}
 
@@ -222,12 +222,12 @@ export class HallPassesService {
 		return this.http.patch(`v1/pinnables/${id}`, data);
 	}
 
-	deletePinnableRequest(id, add_to_folder: boolean = false) {
+	deletePinnableRequest(id, add_to_folder = false) {
 		this.store.dispatch(removePinnable({ id, add_to_folder } as any));
 		return of(true);
 	}
 
-	deletePinnable(id, add_to_folder: boolean = false) {
+	deletePinnable(id, add_to_folder = false) {
 		return this.http.delete(`v1/pinnables/${id}?add_to_folder=${add_to_folder}`);
 	}
 

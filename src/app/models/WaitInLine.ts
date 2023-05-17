@@ -65,7 +65,7 @@ export class WaitingInLinePass extends BaseModel {
 			school_id_fk: number = JSON['school_id_fk'],
 			line_position: number = JSON['line_position'];
 
-		const start_attempt_end_time: Date = !!JSON['start_attempt_end_time'] ? new Date(JSON['start_attempt_end_time']) : null;
+		const start_attempt_end_time: Date = JSON['start_attempt_end_time'] ? new Date(JSON['start_attempt_end_time']) : null;
 
 		return new WaitingInLinePass(
 			id,

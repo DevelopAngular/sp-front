@@ -57,9 +57,9 @@ export class HallPass extends BaseModel {
 			parent_invitation: string = JSON['parent_invitation'],
 			parent_request: string = JSON['parent_request'],
 			cancelled: boolean = JSON['cancelled'],
-			cancellable_by_student: boolean = !!JSON['cancellable_by_student'],
+			cancellable_by_student = !!JSON['cancellable_by_student'],
 			schedule_config_id: number = JSON['schedule_config_id'],
-			needs_check_in: boolean = !!JSON['needs_check_in'],
+			needs_check_in = !!JSON['needs_check_in'],
 			issuer_message: string = JSON['issuer_message'];
 
 		const pass = new HallPass(

@@ -42,7 +42,7 @@ export type UnitId = 'admin' | 'teacher' | 'assistant' | 'student';
 
 export class GSuiteSelector {
 	public path: string;
-	private applicationIndicator: boolean = false;
+	private applicationIndicator = false;
 	private readonly customSelector: boolean = false;
 
 	constructor(path: string) {
@@ -104,41 +104,41 @@ interface OrgUnits {
 export class SPSearchComponent implements OnInit, OnDestroy {
 	@Input() searchTarget: SearchEntity = 'users';
 
-	@Input() disabled: boolean = false;
-	@Input() focused: boolean = true;
-	@Input() showOptions: boolean = true;
+	@Input() disabled = false;
+	@Input() focused = true;
+	@Input() showOptions = true;
 	@Input() selectedOptions: Array<User | School | GSuiteSelector | { id: number; role: string; icon: string }[] | Location> = [];
 	@Input() selectedOrgUnits: any[] = [];
-	@Input() height: string = '40px';
-	@Input() width: string = '280px';
-	@Input() list: boolean = true;
-	@Input() listMaxHeight: string = '210px';
+	@Input() height = '40px';
+	@Input() width = '280px';
+	@Input() list = true;
+	@Input() listMaxHeight = '210px';
 
-	@Input() preventRemovingLast: boolean = false;
-	@Input() emitSingleProfile: boolean = false;
-	@Input() chipsMode: boolean = false;
-	@Input() inputField: boolean = true;
-	@Input() overrideChipsInputField: boolean = false;
-	@Input() cancelButton: boolean = false;
-	@Input() rollUpAfterSelection: boolean = true;
-	@Input() role: string = '_profile_student';
+	@Input() preventRemovingLast = false;
+	@Input() emitSingleProfile = false;
+	@Input() chipsMode = false;
+	@Input() inputField = true;
+	@Input() overrideChipsInputField = false;
+	@Input() cancelButton = false;
+	@Input() rollUpAfterSelection = true;
+	@Input() role = '_profile_student';
 	@Input() gSuiteRoles: string[];
-	@Input() dummyRoleText: string = 'students';
-	@Input() placeholder: string = 'Search students';
+	@Input() dummyRoleText = 'students';
+	@Input() placeholder = 'Search students';
 	@Input() textAddButton: string | null = null;
-	@Input() type: string = 'alternative'; // Can be alternative or G_Suite or GG4L, endpoint will depend on that.
+	@Input() type = 'alternative'; // Can be alternative or G_Suite or GG4L, endpoint will depend on that.
 	@Input() isProposed: boolean;
 	@Input() proposedSearchString: string;
-	@Input() displaySelectedTitle: boolean = true;
-	@Input() showStudentInfo: boolean = true;
+	@Input() displaySelectedTitle = true;
+	@Input() showStudentInfo = true;
 	@Input() hideStatuses: ProfileStatus[] = ['suspended'];
 
 	@Input() searchingTeachers: User[];
 	@Input() searchingRoles: { id: number; role: string; icon: string }[];
-	@Input() orgUnits: String[] = [];
-	@Input() orgUnitExistCheck: BehaviorSubject<Boolean>;
+	@Input() orgUnits: string[] = [];
+	@Input() orgUnitExistCheck: BehaviorSubject<boolean>;
 
-	@Input() filteringUsersCallback?: Function;
+	@Input() filteringUsersCallback?: (users: User[] | GSuiteSelector[]) => User[] | GSuiteSelector[];
 
 	@Output() onUpdate: EventEmitter<any> = new EventEmitter();
 	@Output() blurEvent: EventEmitter<boolean> = new EventEmitter<boolean>();
@@ -218,7 +218,7 @@ export class SPSearchComponent implements OnInit, OnDestroy {
 	pending$: Subject<boolean> = new Subject();
 	students: Promise<any[]>;
 	inputValue$: Subject<string> = new Subject<string>();
-	showDummy: boolean = false;
+	showDummy = false;
 	hovered: boolean;
 	pressed: boolean;
 
@@ -316,11 +316,9 @@ export class SPSearchComponent implements OnInit, OnDestroy {
 		}
 		this.currentSchool = this.httpService.getSchool();
 
-		const selfRef = this;
-
 		if (this.searchTarget === 'schools') {
 			this.mapsApi.load().then((resource) => {
-				selfRef.currentPosition = new window.google.maps.LatLng({
+				this.currentPosition = new window.google.maps.LatLng({
 					lat: 40.73061,
 					lng: -73.935242,
 				});
@@ -704,7 +702,7 @@ export class SPSearchComponent implements OnInit, OnDestroy {
 	// otherwise it returns unchanged User[]
 	mayRemoveStudentsByCallback(students: User[] | GSuiteSelector[]): User[] | GSuiteSelector[] {
 		// if provided an extra filtering use it
-		if (!!this.filteringUsersCallback) {
+		if (this.filteringUsersCallback) {
 			const filtered = this.filteringUsersCallback(students);
 			this.showDummy = !filtered.length;
 			return filtered;

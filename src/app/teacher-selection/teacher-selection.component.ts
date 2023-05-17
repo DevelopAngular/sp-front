@@ -23,7 +23,7 @@ export class TeacherSelectionComponent implements OnInit {
 
 	frameMotion$: BehaviorSubject<any>;
 
-	shadow: boolean = true;
+	shadow = true;
 
 	headerTransition = {
 		'rest-tar-header': true,

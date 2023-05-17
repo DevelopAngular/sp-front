@@ -44,7 +44,7 @@ import { Pinnable } from '../models/Pinnable';
 	],
 })
 export class MyRoomComponent implements OnInit, OnDestroy {
-	private scrollableAreaName: string = 'MyRoom';
+	private scrollableAreaName = 'MyRoom';
 	private scrollableArea: HTMLElement;
 
 	@ViewChild('scrollableArea') set scrollable(scrollable: ElementRef) {
@@ -92,16 +92,16 @@ export class MyRoomComponent implements OnInit, OnDestroy {
 	public originPasses: any;
 	public destinationPasses: any;
 
-	public inputValue: string = '';
+	public inputValue = '';
 	public user: User;
 	private effectiveUser: RepresentedUser;
-	public isStaff: boolean = false;
+	public isStaff = false;
 	public roomOptions: Location[];
-	public showAsOriginRoom: boolean = true;
+	public showAsOriginRoom = true;
 	public selectedLocation: Location;
-	private optionsOpen: boolean = false;
-	private canView: boolean = false;
-	public userLoaded: boolean = false;
+	private optionsOpen = false;
+	private canView = false;
+	public userLoaded = false;
 
 	private buttonDown: boolean;
 
@@ -133,10 +133,10 @@ export class MyRoomComponent implements OnInit, OnDestroy {
 	public currentPasses$: Subject<void> = new Subject();
 
 	public currentPassesDates: Map<string, number> = new Map();
-	private holdScrollPosition: number = 0;
+	private holdScrollPosition = 0;
 
-	public isIOSTablet: boolean = false;
-	public UI: boolean = false;
+	public isIOSTablet = false;
+	public UI = false;
 
 	constructor(
 		private liveDataService: LiveDataService,
@@ -275,8 +275,8 @@ export class MyRoomComponent implements OnInit, OnDestroy {
 					return this.locationService.listenPinnableSocket();
 				}),
 				tap((res) => {
-					this.locationService.updatePinnableSuccessState(res.data);
-					this.showAsOriginRoom = res.data.show_as_origin_room;
+					this.locationService.updatePinnableSuccessState(res.data as Pinnable);
+					this.showAsOriginRoom = (res.data as Pinnable).show_as_origin_room;
 				}),
 				takeUntil(this.destroy$)
 			)

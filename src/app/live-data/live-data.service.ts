@@ -681,7 +681,7 @@ export class LiveDataService {
 		if (timeFilter) {
 			queryFilter += `&model_filter=past-passes&time_filter=${timeFilter}`;
 		}
-		if (!!offset) {
+		if (offset) {
 			queryFilter += `&${offset}`;
 		}
 
@@ -705,7 +705,7 @@ export class LiveDataService {
 		}
 
 		const filters: FilterFunc<WaitingInLinePass>[] = [makeSchoolFilter(this.http)];
-		let requestFilter: Partial<{ student_id: number; issuer_id: number; origin_id: number }> = {};
+		const requestFilter: Partial<{ student_id: number; issuer_id: number; origin_id: number }> = {};
 		if (filter) {
 			const { type, value } = filter;
 			switch (type) {

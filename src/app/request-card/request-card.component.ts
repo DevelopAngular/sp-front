@@ -437,9 +437,8 @@ export class RequestCardComponent implements OnInit, OnDestroy {
 	changeDate(resend_request?: boolean) {
 		if (!this.dateEditOpen) {
 			this.dateEditOpen = true;
-			let config;
 			this.dialogRef.close();
-			config = {
+			const config = {
 				panelClass: 'form-dialog-container',
 				maxWidth: '100vw',
 				backdropClass: 'custom-backdrop',
@@ -586,11 +585,9 @@ export class RequestCardComponent implements OnInit, OnDestroy {
 			this.editMessage();
 		} else if (action === 'deny_with_message') {
 			let denyMessage = '';
-			if (action.indexOf('Message') > -1) {
-			} else {
+			if (action.indexOf('Message') !== -1) {
 				this.messageEditOpen = true;
-				let config;
-				config = {
+				const config = {
 					panelClass: 'form-dialog-container',
 					backdropClass: 'invis-backdrop',
 					data: {

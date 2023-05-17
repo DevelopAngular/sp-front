@@ -1,3 +1,4 @@
+/* eslint-disable */
 // @ts-nocheck no typescript definitions for DataView, ArrayBuffer, etc
 
 import * as crypto from 'crypto-js';

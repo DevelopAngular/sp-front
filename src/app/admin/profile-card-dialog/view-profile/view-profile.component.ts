@@ -287,7 +287,7 @@ export class ViewProfileComponent implements OnInit {
 	}
 
 	goToStudent() {
-		let url = window.location.origin + `/main/student/${this.user.id}`;
+		const url = window.location.origin + `/main/student/${this.user.id}`;
 		this.dialogRef.close();
 		window.open(url, '_self');
 	}
