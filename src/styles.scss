@@ -705,10 +705,18 @@ body {
 .underline {
     text-decoration: underline;
 }
+
 .referral-dialog-container .mat-dialog-container {
 	padding: 30px 40px 60px 40px;
     overflow: hidden;
     border-radius: 12px;
     max-width: 400px;
     box-sizing: unset;
+}
+
+.insights-dialog-container .mat-dialog-container {
+    display: flex;
+    width: 509px;
+    height: fit-content;
+    padding: 60px 60px 0 60px;
 }

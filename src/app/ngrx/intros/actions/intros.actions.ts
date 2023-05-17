@@ -107,3 +107,12 @@ export const updateIntrosSeenReferralSuccessNuxFailure = createAction(
 	`[${INTROS}] Update intros Seen Referral Success Nux Failure`,
 	props<{ errorMessage: string }>()
 );
+
+export const updateIntrosSeenInsightsNux = createAction(`[${INTROS}] Update intros Seen Insights Nux`, props<UpdateIntrosProps>());
+
+export const updateIntrosSeenInsightsNuxSuccess = createAction(`[${INTROS}] Update intros Seen Insights Nux Success`, props<{ data: any }>());
+
+export const updateIntrosSeenInsightsNuxFailure = createAction(
+	`[${INTROS}] Update intros Seen Insights Nux Failure`,
+	props<{ errorMessage: string }>()
+);

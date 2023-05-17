@@ -285,5 +285,25 @@ export class IntrosEffects {
 		);
 	});
 
+	updateIntrosSeenInsightsNux$ = createEffect(() => {
+		return this.action$.pipe(
+			ofType(introsActions.updateIntrosSeenInsightsNux),
+			switchMap((action) => {
+				return this.userService.updateIntrosSeenInsightsNux(action.device, action.version).pipe(
+					map(() => {
+						const updatedData = {
+							...action.intros,
+							seen_insights_nux: {
+								[action.device]: { seen_version: action.version },
+							},
+						};
+						return introsActions.updateIntrosSeenInsightsNuxSuccess({ data: updatedData });
+					}),
+					catchError((error) => of(introsActions.updateIntrosSeenInsightsNuxFailure({ errorMessage: error.message })))
+				);
+			})
+		);
+	});
+
 	constructor(private action$: Actions, private userService: UserService) {}
 }

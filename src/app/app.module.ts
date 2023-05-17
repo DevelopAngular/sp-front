@@ -86,6 +86,7 @@ import { StorageService } from './services/storage.service';
 import { TrialBarComponent } from './trial-bar/trial-bar.component';
 import { NuxReferralComponent } from './nux-components/nux-referral/nux-referral.component';
 import { NuxReferralSuccessComponent } from './nux-components/nux-referral/nux-referral-success.component';
+import { NuxInsightsComponent } from './nux-components/nux-insights/nux-insights.component';
 
 // uncomment when app uses formatDate and so on
 //import {LOCALE_ID} from '@angular/core';
@@ -179,6 +180,7 @@ const appRoutes: Routes = [
 		TrialBarComponent,
 		NuxReferralComponent,
 		NuxReferralSuccessComponent,
+		NuxInsightsComponent,
 	],
 	imports: [
 		BrowserModule,

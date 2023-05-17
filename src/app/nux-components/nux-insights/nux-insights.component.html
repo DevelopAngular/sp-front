@@ -1,40 +1,40 @@
 <div class="insights-container">
-    <div class="close-button-container" [mat-dialog-close]="true">
-        <img class="close-button" src="../../../assets/Close Button (Gray).svg"/>
-    </div>
-    <div class="insights-heading">
-        <img class="chart-image" src="../../../assets/Chart (Up).svg" />
-        <h4 class="heading">Insights From the Year</h4>
-        <p class="heading-body">See into {{schoolName}}'s halls from this past year with SmartPass</p>
-    </div>
-    <div class="section-break"></div>
-	<div class="action-section">
-        <div class="image-and-text">
-            <img class="section-image" src="../../../assets/Confetti.svg"/>
-            <div class="section-text">
-                <p class="section-header">Year in Review Report</p>
-                <p class="section-body"> Get insights on the [#] passes your students created this year.</p>
-                <div class="button" (click)="downloadPdf()">
-                    <p>Download Your Customized Report</p>
-                    <img class="new-tab-image" src="../../../assets/new-tab.svg"/>
-                </div>
-            </div>
-        </div>
+	<div class="close-button-container" [mat-dialog-close]="true">
+		<img class="close-button" src="../../../assets/Close Button (Gray).svg" />
 	</div>
-    <div *ngIf="(teacherReviews$ | async)?.length > 1 && isTeacherReviewsEnabled" class="action-section">
-        <div class="image-and-text">
-            <img class="section-image" src="../../../assets/Dark Gray Star.svg"/>
-            <div class="section-text">
-                <p class="section-header">Staff Reviews</p>
-                <p class="section-body"> They took the time to give their thoughts on SmartPass. Check out their reviews and ratings.</p>
-                <a routerLink="/admin/teacher-reviews" class="button" target="_blank">
-                    <p>Open the Reviews</p>
-                    <img class="new-tab-image" src="../../../assets/new-tab.svg"/>
-                </a>
-            </div>
-        </div>
-    </div>
+	<div class="insights-heading">
+		<img class="chart-image" src="../../../assets/Chart (Up).svg" />
+		<h4 class="heading">Insights From the Year</h4>
+		<p class="heading-body">See into {{ schoolName }}'s halls from this past year with SmartPass</p>
+	</div>
+	<div class="section-break"></div>
+	<div *ngIf="isYearInReviewEnabled" class="action-section">
+		<div class="image-and-text">
+			<img class="section-image" src="../../../assets/Confetti.svg" />
+			<div class="section-text">
+				<p class="section-header">Year in Review Report</p>
+				<p class="section-body">Get insights on the [#] passes your students created this year.</p>
+				<div class="button" (click)="downloadPdf()">
+					<p>Download Your Customized Report</p>
+					<img class="new-tab-image" src="../../../assets/new-tab.svg" />
+				</div>
+			</div>
+		</div>
+	</div>
+	<div *ngIf="(teacherReviews$ | async)?.length > 1 && isTeacherReviewsEnabled" class="action-section">
+		<div class="image-and-text">
+			<img class="section-image" src="../../../assets/Dark Gray Star.svg" />
+			<div class="section-text">
+				<p class="section-header">Staff Reviews</p>
+				<p class="section-body">They took the time to give their thoughts on SmartPass. Check out their reviews and ratings.</p>
+				<a routerLink="/admin/teacher-reviews" class="button" target="_blank">
+					<p>Open the Reviews</p>
+					<img class="new-tab-image" src="../../../assets/new-tab.svg" />
+				</a>
+			</div>
+		</div>
+	</div>
 </div>
 <div class="footer">
-    <p>You can also find these on your Summer Rollover page.</p>
+	<p>You can also find these on your Summer Rollover page.</p>
 </div>

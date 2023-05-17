@@ -4,6 +4,7 @@ import { ActivatedRoute, NavigationEnd, Router } from '@angular/router';
 import { filter as _filter } from 'lodash';
 import { BehaviorSubject, combineLatest, fromEvent, merge, Observable, of, ReplaySubject, Subject, throwError, zip } from 'rxjs';
 import { NuxReferralComponent } from './nux-components/nux-referral/nux-referral.component';
+import { NuxInsightsComponent } from './nux-components/nux-insights/nux-insights.component';
 
 import {
 	catchError,
@@ -203,6 +204,7 @@ export class AppComponent implements OnInit, AfterViewInit, OnDestroy {
 						this.registerRefiner(user);
 					}
 					this.openNuxReferralModal(user);
+					this.openNuxInsightsModal(user);
 
 					if (intercomWrapper) {
 						intercomWrapper.style.display = 'none';
@@ -530,6 +532,29 @@ export class AppComponent implements OnInit, AfterViewInit, OnDestroy {
 						panelClass: 'referral-dialog-container',
 					});
 					this.userService.updateIntrosSeenReferralSuccessNuxRequest(intros, 'universal', '1');
+				}
+			});
+	}
+
+	openNuxInsightsModal(user: User): void {
+		const featureFlags = this.featureFlags.isFeatureEnabledV2(FLAGS.TeacherReviews) && this.featureFlags.isFeatureEnabledV2(FLAGS.YearInReview);
+
+		this.userService.introsData$
+			.pipe(
+				filter((i) => !!i),
+				take(1)
+			)
+			.subscribe((intros) => {
+				const hasNotSeenModal = !intros.seen_insights_nux?.universal?.seen_version;
+
+				if (hasNotSeenModal && featureFlags && user.isAdmin()) {
+					this.dialog.open(NuxInsightsComponent, {
+						data: {
+							isAdmin: user.isAdmin(),
+						},
+						panelClass: 'insights-dialog-container',
+					});
+					this.userService.updateIntrosSeenInsightsNuxRequest(intros, 'universal', '1');
 				}
 			});
 	}

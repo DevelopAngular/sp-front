@@ -19,50 +19,49 @@ interface TeacherReview {
 }
 
 @Component({
-  selector: 'app-nux-insights',
-  templateUrl: './nux-insights.component.html',
-  styleUrls: ['./nux-insights.component.scss']
+	selector: 'app-nux-insights',
+	templateUrl: './nux-insights.component.html',
+	styleUrls: ['./nux-insights.component.scss'],
 })
-
 export class NuxInsightsComponent implements OnInit {
-  isAdmin: boolean;
-  @Input()
+	isAdmin: boolean;
+	@Input()
 	public pdfUrl: URL;
 
 	@Output() yearInReviewEnabled: EventEmitter<boolean> = new EventEmitter<boolean>();
 	public yearInReviewPdfUrl: string;
-  public schoolName: string;
-  teacherReviews$: Observable<TeacherReview[]>;
-  public hasYearInReviewPdf: boolean = true;
+	public schoolName: string;
+	teacherReviews$: Observable<TeacherReview[]>;
+	public hasYearInReviewPdf: boolean = true;
 
-  constructor(    
-    private featureFlagService: FeatureFlagService,
-    private adminService: AdminService,
-    public dialogRef: MatDialogRef<NuxInsightsComponent>,
-    @Inject(MAT_DIALOG_DATA) public data: { isAdmin: boolean },
-    private fileDownloadService: FileDownloadService,
-    private userService: UserService,
-    private teacherReviewsService: TeacherReviewsService,
-    private httpService: HttpService,
-    private router: Router
-  ) {}
+	constructor(
+		private featureFlagService: FeatureFlagService,
+		private adminService: AdminService,
+		public dialogRef: MatDialogRef<NuxInsightsComponent>,
+		@Inject(MAT_DIALOG_DATA) public data: { isAdmin: boolean },
+		private fileDownloadService: FileDownloadService,
+		private userService: UserService,
+		private teacherReviewsService: TeacherReviewsService,
+		private httpService: HttpService,
+		private router: Router
+	) {}
 
-  ngOnInit(): void {
-    this.httpService.currentSchool$
-    .pipe(
-      filter((s) => !!s),
-      take(1)
-    )
-    .subscribe((s) => {
-      this.schoolName = s.name;
-    });
+	ngOnInit(): void {
+		this.httpService.currentSchool$
+			.pipe(
+				filter((s) => !!s),
+				take(1)
+			)
+			.subscribe((s) => {
+				this.schoolName = s.name;
+			});
 
-    this.isAdmin = this.data.isAdmin; 
-    this.teacherReviews$ = this.teacherReviewsService.getReviews();
-    this.getYearInReviewData();
-  }
+		this.isAdmin = this.data.isAdmin;
+		this.teacherReviews$ = this.teacherReviewsService.getReviews();
+		this.getYearInReviewData();
+	}
 
-  getYearInReviewData() {
+	getYearInReviewData() {
 		if (!this.featureFlagService.isFeatureEnabledV2(FLAGS.YearInReview)) {
 			this.yearInReviewEnabled.emit(false);
 			return;
@@ -77,7 +76,7 @@ export class NuxInsightsComponent implements OnInit {
 	}
 
 	downloadPdf() {
-		this.fileDownloadService 
+		this.fileDownloadService
 			.downloadFile(this.yearInReviewPdfUrl, `${this.schoolName}'s Year in Review Report`)
 			.pipe(
 				filter((b) => !!b),
@@ -94,12 +93,11 @@ export class NuxInsightsComponent implements OnInit {
 			.subscribe();
 	}
 
-
 	get isTeacherReviewsEnabled() {
 		return this.featureFlagService.isFeatureEnabledV2(FLAGS.TeacherReviews);
 	}
 
-  get isYearEndReviewEnabled() {
-    return this.featureFlagService.isFeatureEnabledV2(FLAGS.YearInReview);
-  }
+	get isYearInReviewEnabled() {
+		return this.featureFlagService.isFeatureEnabledV2(FLAGS.YearInReview);
+	}
 }
