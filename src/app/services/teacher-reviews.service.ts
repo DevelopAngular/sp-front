@@ -23,7 +23,7 @@ export class TeacherReviewsService {
 		return this.http.get('../assets/xlsx/Teacher Survey.csv', { responseType: 'text' }).pipe(
 			switchMap((csvRawText) => {
 				const lines = csvRawText.split(/\n/);
-				let reviewObservables: Observable<TeacherReview>[] = [];
+				const reviewObservables: Observable<TeacherReview>[] = [];
 
 				for (let i = 1; i < lines.length; i++) {
 					const regex = /,(?=(?:[^"]*"[^"]*")*[^"]*$)/; //commas outside of quotes
