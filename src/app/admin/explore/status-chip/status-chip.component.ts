@@ -22,9 +22,9 @@ export class StatusChipComponent implements OnInit {
 	// remoteid is the record id of a database record
 	@Input() remoteid: number;
 	// allow event to propagate
-	@Input() stopPropagation: boolean = false;
+	@Input() stopPropagation = false;
 	// force status looks like it is hovered
-	@Input() forceLookHovered: boolean = false;
+	@Input() forceLookHovered = false;
 
 	@Output() statusClick: EventEmitter<Status> = new EventEmitter<Status>();
 
@@ -33,9 +33,9 @@ export class StatusChipComponent implements OnInit {
 	// class associated with status
 	classname: string;
 	// did open the panel with status options
-	didOpen: boolean = false;
+	didOpen = false;
 	// shows a loading hint
-	isLoading: boolean = false;
+	isLoading = false;
 
 	private reportUpdated$?: Observable<any>;
 
@@ -95,7 +95,7 @@ export class StatusChipComponent implements OnInit {
 				trigger: this.trigger.nativeElement,
 				prevstatus: this.status,
 			};
-			if (!!this.remoteid) {
+			if (this.remoteid) {
 				data['remoteid'] = this.remoteid;
 			}
 			const conf = {
