@@ -32,7 +32,7 @@ export class NuxInsightsComponent implements OnInit {
 	public yearInReviewPdfUrl: string;
 	public schoolName: string;
 	teacherReviews$: Observable<TeacherReview[]>;
-	public hasYearInReviewPdf: boolean = true;
+	public hasYearInReviewPdf = true;
 
 	constructor(
 		private featureFlagService: FeatureFlagService,
@@ -69,7 +69,7 @@ export class NuxInsightsComponent implements OnInit {
 
 		this.adminService.getYearInReviewData().subscribe((resp) => {
 			this.yearInReviewEnabled.emit(!!resp.pdf_url);
-			if (!!resp.pdf_url) {
+			if (resp.pdf_url) {
 				this.yearInReviewPdfUrl = resp.pdf_url;
 			}
 		});
