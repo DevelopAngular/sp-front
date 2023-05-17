@@ -50,6 +50,7 @@ $climb: '../../..';
 		display: grid;
 		grid-template-columns: 1fr 1fr;
 		gap: 20px;
+		width: 548px;
 
 		div.perk-card {
 			padding: 10px;
@@ -60,7 +61,6 @@ $climb: '../../..';
 			text-align: center;
 			border-radius: 11px;
 			background: white;
-			width: 244px;
 			height: 163px;
 
 			img {
@@ -80,6 +80,14 @@ $climb: '../../..';
 				}
 			}
 		}
+
+		div.perk-card.wide {
+			grid-column: span 2;
+			flex-direction: row;
+			p.referral-text {
+				width: 380px;
+			}
+		}
 	}
 
 	section.referral-terms {
@@ -89,7 +97,7 @@ $climb: '../../..';
 	}
 }
 
-.underline {
+.underline.terms {
 	color: $gray500;
 }
 
