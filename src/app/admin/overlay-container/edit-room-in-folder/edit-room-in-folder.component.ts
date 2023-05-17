@@ -1,9 +1,9 @@
-import { Component, EventEmitter, Input, OnInit, Output } from '@angular/core';
+import { Component, EventEmitter, Input, Output } from '@angular/core';
 import { FormGroup } from '@angular/forms';
 
 import { BehaviorSubject, Subject } from 'rxjs';
 
-import { RoomData } from '../overlay-data.service';
+import { RoomData, RoomDataResult } from '../overlay-data.service';
 import { ValidButtons } from '../advanced-options/advanced-options.component';
 import { DEFAULT_VISIBILITY_STUDENTS } from '../visibility-room/visibility-room.type';
 
@@ -12,7 +12,7 @@ import { DEFAULT_VISIBILITY_STUDENTS } from '../visibility-room/visibility-room.
 	templateUrl: './edit-room-in-folder.component.html',
 	styleUrls: ['./edit-room-in-folder.component.scss'],
 })
-export class EditRoomInFolderComponent implements OnInit {
+export class EditRoomInFolderComponent {
 	@Input() form: FormGroup;
 
 	@Input() passLimitForm: FormGroup;
@@ -24,24 +24,21 @@ export class EditRoomInFolderComponent implements OnInit {
 	@Input() showErrors: boolean;
 
 	@Output() back = new EventEmitter();
-	@Output() deleteRoom = new EventEmitter();
+	@Output() deleteRoom: EventEmitter<number> = new EventEmitter();
 
-	@Output() roomDataResult: EventEmitter<{ data: RoomData; buttonState: ValidButtons }> = new EventEmitter<{
-		data: RoomData;
-		buttonState: ValidButtons;
-	}>();
+	@Output() roomDataResult: EventEmitter<RoomDataResult> = new EventEmitter<RoomDataResult>();
 
 	@Output() save: EventEmitter<RoomData> = new EventEmitter<RoomData>();
 
 	@Output() errorsEmit: EventEmitter<any> = new EventEmitter<any>();
 
-	roomValidButtons = new BehaviorSubject<ValidButtons>({
+	private roomValidButtons: BehaviorSubject<ValidButtons> = new BehaviorSubject<ValidButtons>({
 		publish: false,
 		incomplete: false,
 		cancel: false,
 	});
 
-	roomInFolderData: RoomData = {
+	public roomInFolderData: RoomData = {
 		roomName: '',
 		roomNumber: '',
 		timeLimit: '',
@@ -50,6 +47,7 @@ export class EditRoomInFolderComponent implements OnInit {
 		restricted: null,
 		scheduling_restricted: null,
 		ignore_students_pass_limit: false,
+		show_as_origin_room: true,
 		needs_check_in: null,
 		advOptState: {
 			now: { state: '', data: { all_teach_assign: null, any_teach_assign: null, selectedTeachers: [] } },
@@ -59,27 +57,23 @@ export class EditRoomInFolderComponent implements OnInit {
 		enable: true,
 	};
 
-	constructor() {}
-
-	get showSave() {
+	public get showSave(): boolean {
 		return this.roomValidButtons.getValue().publish && this.visibilityForm.valid;
 	}
 
-	get showIncomplete() {
+	public get showIncomplete(): boolean {
 		return this.roomValidButtons.getValue().incomplete || this.visibilityForm.invalid;
 	}
 
-	get showCancel() {
+	public get showCancel(): boolean {
 		return this.roomValidButtons.getValue().cancel;
 	}
 
-	ngOnInit() {}
-
-	goBack() {
+	public goBack(): void {
 		this.back.emit();
 	}
 
-	saveInFolder() {
+	public saveInFolder(): void {
 		if (this.roomValidButtons.getValue().incomplete || this.visibilityForm.invalid) {
 			this.errorsEmit.emit();
 			return;
@@ -88,13 +82,13 @@ export class EditRoomInFolderComponent implements OnInit {
 		this.save.emit(this.roomInFolderData);
 	}
 
-	roomResult({ data, buttonState }) {
-		this.roomInFolderData = data;
-		this.roomValidButtons.next(buttonState);
-		this.roomDataResult.emit({ data, buttonState });
+	public roomResult(result: RoomDataResult): void {
+		this.roomInFolderData = result.data;
+		this.roomValidButtons.next(result.buttonState);
+		this.roomDataResult.emit(result);
 	}
 
-	deleteRoomEvent() {
-		this.deleteRoom.emit(this.roomInFolderData);
+	public deleteRoomEvent(): void {
+		this.deleteRoom.emit(this.roomInFolderData.id);
 	}
 }

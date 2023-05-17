@@ -2,7 +2,7 @@ import { BaseModel } from './base';
 
 export class ColorProfile extends BaseModel {
 	constructor(
-		public id: string,
+		public id: number,
 		public title: string,
 		public gradient_color: string,
 		public solid_color: string,
@@ -18,7 +18,7 @@ export class ColorProfile extends BaseModel {
 			return null;
 		}
 
-		const id: string = '' + JSON['id'],
+		const id: number = JSON['id'],
 			title: string = JSON['title'],
 			gradient_color: string = JSON['gradient_color'],
 			solid_color: string = JSON['solid_color'],

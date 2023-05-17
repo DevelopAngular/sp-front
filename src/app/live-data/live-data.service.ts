@@ -681,7 +681,7 @@ export class LiveDataService {
 		if (timeFilter) {
 			queryFilter += `&model_filter=past-passes&time_filter=${timeFilter}`;
 		}
-		if (!!offset) {
+		if (offset) {
 			queryFilter += `&${offset}`;
 		}
 
@@ -705,22 +705,21 @@ export class LiveDataService {
 		}
 
 		const filters: FilterFunc<WaitingInLinePass>[] = [makeSchoolFilter(this.http)];
-		let requestFilter: Partial<{ student_id: number; issuer_id: number; origin_id: number }> = {};
+		const requestFilter: Partial<{ student_id: number; issuer_id: number; origin_id: number }> = {};
 		if (filter) {
 			const { type, value } = filter;
-			const id = parseInt(value.id, 10);
 			switch (type) {
 				case 'student':
-					requestFilter.student_id = id;
-					filters.push((wilp) => wilp.student.id == id + '');
+					requestFilter.student_id = value.id;
+					filters.push((wilp) => wilp.student.id == value.id);
 					break;
 				case 'issuer':
-					requestFilter.issuer_id = id;
-					filters.push((wilp) => wilp.issuer.id == id + '');
+					requestFilter.issuer_id = value.id;
+					filters.push((wilp) => wilp.issuer.id == value.id);
 					break;
 				case 'origin':
-					requestFilter.origin_id = id;
-					filters.push((wilp) => wilp.origin.id == id + '');
+					requestFilter.origin_id = value.id;
+					filters.push((wilp) => wilp.origin.id == value.id);
 					break;
 				default:
 					console.error('NO FILTER APPLIED');

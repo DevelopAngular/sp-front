@@ -50,7 +50,7 @@ const mocked = (n: number): Report[] => {
 		student = <unknown>{ ...basic, ...{ id: '' + i, first_name: 'Test ' + i, last_name: 'Student', display_name: 'Display name Student' + i } };
 		teacher = <unknown>{ ...basic, ...{ id: '' + i, first_name: 'Test ' + i, last_name: 'Teacher', display_name: 'Display name Teacher' + i } };
 		mocks.push({
-			id: '' + (i + 100),
+			id: i + 100,
 			student: student as User,
 			reported_pass_id: null,
 			reported_pass: null,
@@ -60,7 +60,7 @@ const mocked = (n: number): Report[] => {
 			created: new Date(),
 			last_updated: new Date(),
 			isSameObject: (that: BaseModel) => true,
-			isAssignedToSchool: (schoolId: string) => true,
+			isAssignedToSchool: (schoolId: number) => true,
 		});
 	}
 

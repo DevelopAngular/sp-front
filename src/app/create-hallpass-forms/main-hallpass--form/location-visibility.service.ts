@@ -4,8 +4,6 @@ import { User } from '../../models/User';
 
 @Injectable()
 export class LocationVisibilityService {
-	constructor() {}
-
 	getIdOrThrow(s: User): string {
 		if (s?.id) {
 			return '' + s.id;
@@ -21,7 +19,7 @@ export class LocationVisibilityService {
 		}
 
 		const students = users.map((s: User) => this.getIdOrThrow(s));
-		const ruleStudents = location.visibility_students.map((s: User) => this.getIdOrThrow(s));
+		const ruleStudents = (location.visibility_students as User[]).map((s: User) => this.getIdOrThrow(s));
 
 		let byid: string[] = [];
 
@@ -51,7 +49,7 @@ export class LocationVisibilityService {
 	}
 
 	filterByVisibility(location: Location, students: User[]): boolean {
-		let skipped = this.calculateSkipped(students, location);
+		const skipped = this.calculateSkipped(students, location);
 		return skipped.length === 0;
 	}
 }

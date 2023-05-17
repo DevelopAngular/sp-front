@@ -1,4 +1,4 @@
-import { Component, EventEmitter, Input, OnInit, Output } from '@angular/core';
+import { Component, EventEmitter, Input, Output } from '@angular/core';
 import { Pinnable } from '../../../models/Pinnable';
 import { bumpIn } from '../../../animations';
 
@@ -8,36 +8,19 @@ import { bumpIn } from '../../../animations';
 	styleUrls: ['./add-existing-room.component.scss'],
 	animations: [bumpIn],
 })
-export class AddExistingRoomComponent implements OnInit {
-	@Input() roomsInFolder;
-	@Input() set data(items: Pinnable[]) {
-		this.pinnables = items;
-	}
+export class AddExistingRoomComponent {
+	@Input() roomsInFolder: Pinnable[];
+	@Input() pinnables: Pinnable[];
 	@Input() roomName: string;
 
-	@Output() back = new EventEmitter();
-	@Output() save = new EventEmitter();
+	@Output() back: EventEmitter<void> = new EventEmitter();
+	@Output() save: EventEmitter<Pinnable[]> = new EventEmitter();
 
-	buttonDown: boolean;
-	pinnables: Pinnable[];
-
-	constructor() {}
-
-	get buttonState() {
-		return this.buttonDown ? 'down' : 'up';
-	}
-
-	ngOnInit() {}
-
-	onPress(press: boolean) {
-		this.buttonDown = press;
-	}
-
-	goBack() {
+	public goBack(): void {
 		this.back.emit();
 	}
 
-	addRooms() {
+	public addRooms(): void {
 		this.save.emit(this.roomsInFolder);
 	}
 }

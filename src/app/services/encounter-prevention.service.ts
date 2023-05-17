@@ -22,7 +22,7 @@ import { constructUrl } from '../live-data/helpers';
 import { ToastService } from './toast.service';
 
 export type ExclusionGroupQueryParams = Partial<{
-	student: string | string[];
+	student: number | number[];
 }>;
 
 @Injectable({

@@ -2,7 +2,7 @@ import { BaseModel } from './base';
 import { User } from './User';
 
 export class StudentList extends BaseModel {
-	constructor(public id: string, public title: string, public users: User[]) {
+	constructor(public id: number, public title: string, public users: User[]) {
 		super();
 	}
 
@@ -11,7 +11,7 @@ export class StudentList extends BaseModel {
 			return null;
 		}
 
-		const id: string = '' + JSON['id'],
+		const id: number = JSON['id'],
 			title: string = JSON['title'],
 			users: User[] = JSON['users'];
 

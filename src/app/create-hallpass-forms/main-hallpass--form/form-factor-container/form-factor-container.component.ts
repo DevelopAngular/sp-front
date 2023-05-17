@@ -90,7 +90,7 @@ export class FormFactorContainerComponent implements OnInit {
 			switch (this.FORM_STATE.formMode.formFactor) {
 				case this.states.HallPass:
 					this.template = new HallPass(
-						'template',
+						0,
 						user,
 						null,
 						null,
@@ -122,7 +122,7 @@ export class FormFactorContainerComponent implements OnInit {
 						}, 100);
 					} else {
 						this.template = new Request(
-							'template',
+							0,
 							null,
 							this.FORM_STATE.data.direction.from,
 							this.FORM_STATE.data.direction.to,
@@ -147,7 +147,7 @@ export class FormFactorContainerComponent implements OnInit {
 					break;
 				case this.states.Invitation:
 					this.template = new Invitation(
-						'template',
+						0,
 						null,
 						null,
 						this.FORM_STATE.data.direction.to,

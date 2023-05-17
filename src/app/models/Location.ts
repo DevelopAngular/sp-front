@@ -1,10 +1,21 @@
 import { BaseModel } from './base';
 import { User } from './User';
 import { VisibilityMode, DEFAULT_VISIBILITY_STUDENTS } from '../admin/overlay-container/visibility-room/visibility-room.type';
+import { PassLimit } from './PassLimit';
+import { RoomData } from '../admin/overlay-container/overlay-data.service';
+
+export interface Choice extends Location {
+	passLimit: PassLimit;
+	disabledToolTip: boolean;
+	isValidLocation: boolean;
+	normalizedLocation: Location;
+	roomIsHidden: boolean;
+	isSelected: boolean;
+}
 
 export class Location extends BaseModel {
 	constructor(
-		public id: string,
+		public id: number,
 		public title: string,
 		public campus: string,
 		public room: string,
@@ -13,15 +24,15 @@ export class Location extends BaseModel {
 		public request_mode: string,
 		public request_send_destination_teachers: boolean,
 		public request_send_origin_teachers: boolean,
-		public request_teachers: User[],
+		public request_teachers: User[] | number[],
 		public scheduling_restricted: boolean,
 		public scheduling_request_mode: string,
 		public scheduling_request_send_destination_teachers: boolean,
 		public scheduling_request_send_origin_teachers: boolean,
-		public scheduling_request_teachers: User[],
+		public scheduling_request_teachers: User[] | number[],
 		public required_attachments: string[],
 		public travel_types: string[],
-		public teachers: User[],
+		public teachers: User[] | number[],
 		public max_allowed_time: number,
 		public starred: boolean,
 		public max_passes_from: number,
@@ -31,12 +42,14 @@ export class Location extends BaseModel {
 		public needs_check_in: boolean,
 		public enable: boolean,
 		public visibility_type: VisibilityMode,
-		public visibility_students: User[],
+		public visibility_students: User[] | number[],
 		public visibility_grade: string[],
 		public current_active_pass_count_as_destination?: number,
 		public current_active_pass_count_as_origin?: number,
 		public has_reached_limit_as_destination?: boolean,
-		public has_reached_limit_as_origin?: boolean
+		public has_reached_limit_as_origin?: boolean,
+		public isEdit?: boolean,
+		public gradient?: string
 	) {
 		super();
 	}
@@ -46,15 +59,15 @@ export class Location extends BaseModel {
 			return null;
 		}
 
-		const id: string = '' + JSON['id'],
+		const id: number = JSON['id'],
 			title: string = JSON['title'],
 			campus: string = JSON['campus'],
 			room: string = JSON['room'],
 			category: string = JSON['category'],
-			restricted: boolean = !!JSON['restricted'],
+			restricted = !!JSON['restricted'],
 			request_mode: string = JSON['request_mode'],
-			request_send_destination_teachers: boolean = !!JSON['request_send_destination_teachers'],
-			request_send_origin_teachers: boolean = !!JSON['request_send_origin_teachers'],
+			request_send_destination_teachers = !!JSON['request_send_destination_teachers'],
+			request_send_origin_teachers = !!JSON['request_send_origin_teachers'],
 			request_teachers: User[] = [],
 			required_attachments: string[] = [],
 			travel_types: string[] = [],
@@ -63,19 +76,19 @@ export class Location extends BaseModel {
 			starred: boolean = JSON['starred'],
 			scheduling_restricted: boolean = JSON['scheduling_restricted'],
 			scheduling_request_mode: string = JSON['scheduling_request_mode'],
-			scheduling_request_send_destination_teachers: boolean = !!JSON['scheduling_request_send_destination_teachers'],
-			scheduling_request_send_origin_teachers: boolean = !!JSON['scheduling_request_send_origin_teachers'],
+			scheduling_request_send_destination_teachers = !!JSON['scheduling_request_send_destination_teachers'],
+			scheduling_request_send_origin_teachers = !!JSON['scheduling_request_send_origin_teachers'],
 			scheduling_request_teachers: User[] = [],
 			max_passes_from: number = JSON['max_passes_from'],
-			max_passes_from_active: boolean = !!JSON['max_passes_from_active'],
+			max_passes_from_active = !!JSON['max_passes_from_active'],
 			max_passes_to: number = JSON['max_passes_to'],
-			max_passes_to_active: boolean = !!JSON['max_passes_to_active'],
-			needs_check_in: boolean = !!JSON['needs_check_in'],
-			enable: boolean = !!JSON['enable'],
+			max_passes_to_active = !!JSON['max_passes_to_active'],
+			needs_check_in = !!JSON['needs_check_in'],
+			enable = !!JSON['enable'],
 			current_active_pass_count_as_destination: number = JSON['current_active_pass_count_as_destination'],
 			current_active_pass_count_as_origin: number = JSON['current_active_pass_count_as_origin'],
-			has_reached_limit_as_destination: boolean = !!JSON['has_reached_limit_as_destination'],
-			has_reached_limit_as_origin: boolean = !!JSON['has_reached_limit_as_origin'];
+			has_reached_limit_as_destination = !!JSON['has_reached_limit_as_destination'],
+			has_reached_limit_as_origin = !!JSON['has_reached_limit_as_origin'];
 
 		const attachmentsJSON = JSON['required_attachments'];
 		for (let i = 0; i < attachmentsJSON.length; i++) {

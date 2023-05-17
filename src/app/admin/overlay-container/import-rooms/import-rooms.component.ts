@@ -5,7 +5,7 @@ import { fromEvent, Observable } from 'rxjs';
 import { map, switchMap } from 'rxjs/operators';
 
 import { UserService } from '../../../services/user.service';
-import { OverlayDataService, Pages } from '../overlay-data.service';
+import { OverlayDataService, OverlayPages } from '../overlay-data.service';
 
 import { groupBy } from 'lodash';
 import * as XLSX from 'xlsx';
@@ -265,7 +265,7 @@ export class ImportRoomsComponent implements OnInit {
 	}
 
 	redirect() {
-		this.overlay.changePage(Pages.BulkEditRoomsInFolder, Pages.ImportRooms, {
+		this.overlay.updatePage(OverlayPages.BulkEditRoomsInFolder, OverlayPages.ImportRooms, {
 			selectedRoomsInFolder: this.importedRooms,
 		});
 	}

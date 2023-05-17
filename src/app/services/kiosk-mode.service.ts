@@ -33,12 +33,12 @@ const KioskCurrentRoom = 'current-kiosk-room';
 })
 export class KioskModeService {
 	private currentKioskSettings$: BehaviorSubject<KioskSettings> = new BehaviorSubject<KioskSettings>(this.getKioskModeSettings());
-	public enterKioskMode$: BehaviorSubject<Boolean> = new BehaviorSubject(false);
+	public enterKioskMode$: BehaviorSubject<boolean> = new BehaviorSubject(false);
 	private currentRoom$: BehaviorSubject<Location> = new BehaviorSubject(null);
 
 	constructor(private storageService: StorageService, private locationsService: LocationsService, private http: HttpService) {
 		const roomFromStorage = this.storageService.getItem(KioskCurrentRoom);
-		if (!!roomFromStorage) {
+		if (roomFromStorage) {
 			this.currentRoom$.next(Location.fromJSON(JSON.parse(roomFromStorage)));
 		}
 	}
@@ -64,7 +64,9 @@ export class KioskModeService {
 		let settings = null;
 		try {
 			settings = JSON.parse(this.storageService.getItem('kioskSettingsData'));
-		} catch (e) {}
+		} catch (e) {
+			console.log(e);
+		}
 
 		if (settings == null || !this.areValidSettings(settings)) {
 			return {
@@ -85,7 +87,7 @@ export class KioskModeService {
 		return this.http.patch(`v1//kiosk/${location.id}/password`);
 	}
 
-	getKioskModeLogin(locationId: string): Observable<KioskLoginResponse> {
+	getKioskModeLogin(locationId: number): Observable<KioskLoginResponse> {
 		return this.http.get(`v1/kiosk/${locationId}/login`);
 	}
 

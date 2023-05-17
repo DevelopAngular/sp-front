@@ -15,7 +15,7 @@ const individualPassLimitRangeValidator =
 			return null;
 		}
 		const num = parseInt(form.value['passLimit'], 10);
-		if (num === NaN) {
+		if (isNaN(num)) {
 			return { format: true };
 		}
 		if (num < -2 || num > 50) {
@@ -79,7 +79,7 @@ export class PassLimitBulkEditComponent implements OnInit {
 		this.passLimitService
 			.updateIndividualLimit({
 				...parsedForm,
-				students: this.data.students.map((u) => parseInt(u.id, 10)),
+				students: this.data.students.map((u) => u.id),
 			})
 			.subscribe({
 				next: () => {

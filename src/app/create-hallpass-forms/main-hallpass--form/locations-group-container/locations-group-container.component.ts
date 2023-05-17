@@ -170,20 +170,20 @@ export class LocationsGroupContainerComponent implements OnInit, OnDestroy {
 		const from = this.FORM_STATE.data.direction.from;
 		if (to.request_mode === 'teacher_in_room') {
 			if (to.request_send_origin_teachers && !to.request_send_destination_teachers) {
-				return from.teachers;
+				return from.teachers as User[];
 			} else if (!to.request_send_origin_teachers && to.request_send_destination_teachers) {
-				return to.teachers;
+				return to.teachers as User[];
 			} else if (to.request_send_origin_teachers && to.request_send_destination_teachers) {
-				return to.teachers.concat(from.teachers); // TODO does not handle teacher being in origin and destination
+				return (to.teachers as User[]).concat(from.teachers as User[]); // TODO does not handle teacher being in origin and destination
 			}
 		}
 		if (to.scheduling_request_mode === 'teacher_in_room') {
 			if (to.scheduling_request_send_origin_teachers && !to.scheduling_request_send_destination_teachers) {
-				return from.teachers;
+				return from.teachers as User[];
 			} else if (!to.scheduling_request_send_origin_teachers && to.scheduling_request_send_destination_teachers) {
-				return to.teachers;
+				return to.teachers as User[];
 			} else if (to.scheduling_request_send_origin_teachers && to.scheduling_request_send_destination_teachers) {
-				return to.teachers.concat(from.teachers);
+				return (to.teachers as User[]).concat(from.teachers as User[]);
 			}
 		}
 
@@ -251,7 +251,9 @@ export class LocationsGroupContainerComponent implements OnInit, OnDestroy {
 							if (this.visibilityService.filterByVisibility(loc, student)) {
 								return p;
 							}
-						} catch (e) {}
+						} catch (e) {
+							console.log(e);
+						}
 						// folder containing pinnables
 					} else if (p.type === 'category') {
 						return p;
@@ -327,7 +329,7 @@ export class LocationsGroupContainerComponent implements OnInit, OnDestroy {
 		if (requestMode === 'teacher_in_room') {
 			teacher = this.getTeacherChoicesForTeacherInRoom()[0];
 		} else if (requestMode === 'specific_teachers') {
-			teacher = this.FORM_STATE.data.direction.to.request_teachers[0];
+			teacher = this.FORM_STATE.data.direction.to.request_teachers[0] as User;
 		} else {
 			teacher = this.user;
 		}
@@ -490,7 +492,7 @@ export class LocationsGroupContainerComponent implements OnInit, OnDestroy {
 		this.FORM_STATE.state = States.message;
 	}
 
-	async resultMessage(message, denyMessage: boolean = false) {
+	async resultMessage(message, denyMessage = false) {
 		if (!message) {
 			message = '';
 		}
@@ -500,7 +502,7 @@ export class LocationsGroupContainerComponent implements OnInit, OnDestroy {
 	}
 
 	@skipWhenWS()
-	private async postComposetData(close: boolean = false, isMessage?: boolean) {
+	private async postComposetData(close = false, isMessage?: boolean) {
 		const restricted =
 			(this.FORM_STATE.data.direction.to.restricted && !this.FORM_STATE.forLater) ||
 			(this.FORM_STATE.data.direction.to.scheduling_restricted && !!this.FORM_STATE.forLater);
