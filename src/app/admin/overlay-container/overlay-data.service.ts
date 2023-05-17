@@ -177,8 +177,6 @@ export class OverlayDataService {
 		show_as_origin_room: 'Should this room only be allowed as a destination?',
 	};
 
-	constructor() {}
-
 	public changePage(next: OverlayPages, previous: OverlayPages, data: PageStateData): void {
 		this.pageState.next({
 			currentPage: next,
