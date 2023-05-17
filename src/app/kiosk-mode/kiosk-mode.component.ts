@@ -49,9 +49,9 @@ export class KioskModeComponent implements OnInit, AfterViewInit, OnDestroy {
 		show: false,
 	});
 
-	private mainFormRef: MatDialogRef<MainHallPassFormComponent>;
-	private frontOfWaitInLineDialogRef: MatDialogRef<InlineWaitInLineCardComponent>;
-	private alreadyOpenedWil: Record<string, boolean> = {};
+	mainFormRef: MatDialogRef<MainHallPassFormComponent>;
+	frontOfWaitInLineDialogRef: MatDialogRef<InlineWaitInLineCardComponent>;
+	alreadyOpenedWil: Record<string, boolean> = {};
 
 	@ViewChild('input', { read: ElementRef, static: true }) input: ElementRef;
 
@@ -88,13 +88,22 @@ export class KioskModeComponent implements OnInit, AfterViewInit, OnDestroy {
 	) {}
 
 	public ngOnInit(): void {
-		this.showProfilePicture = this.userService.getUserSchool()?.profile_pictures_enabled;
 		this.waitInLinePassesEnabled = this.featureService.isFeatureEnabled(FLAGS.WaitInLine);
 
 		// opens "learn more" link in show as origin error toast
 		this.toast.toastButtonClick$.pipe(filter((action) => action === 'update_show_as_origin')).subscribe((res) => {
 			window.open('https://www.smartpass.app/show-as-origin-room', '_blank');
 		});
+
+		const profilePicturesEnabled = this.userService.getUserSchool()?.profile_pictures_enabled;
+
+		if (profilePicturesEnabled) {
+			this.userService.userData.subscribe({
+				next: (user) => {
+					this.showProfilePicture = user?.show_profile_pictures === 'everywhere' || user?.show_profile_pictures === 'hall_monitor';
+				},
+			});
+		}
 
 		this.userService.userData.subscribe();
 		this.activatedRoute.data.subscribe((state) => {
@@ -156,8 +165,8 @@ export class KioskModeComponent implements OnInit, AfterViewInit, OnDestroy {
 				}),
 				tap((res) => {
 					if (this.pinnable.id === res.data.id) {
-						this.locationService.updatePinnableSuccessState(res.data);
-						this.showAsOriginRoom = res.data.show_as_origin_room;
+						this.locationService.updatePinnableSuccessState((res.data as Pinnable));
+						this.showAsOriginRoom = (res.data as Pinnable).show_as_origin_room;
 					}
 				}),
 				takeUntil(this.destroy$)
@@ -257,6 +266,7 @@ export class KioskModeComponent implements OnInit, AfterViewInit, OnDestroy {
 			return;
 		}
 		let id = this.cardReaderValue;
+
 		if (this.cardReaderValue && (this.cardReaderValue[0] === ';' || this.cardReaderValue[0] === '%')) {
 			id = id.substring(1);
 		}
@@ -264,13 +274,23 @@ export class KioskModeComponent implements OnInit, AfterViewInit, OnDestroy {
 		this.userService
 			.possibleProfileByCustomId(id)
 			.pipe(
-				switchMap((user: any) => {
-					if (user.results.user.length === undefined) {
-						return of(user.results.user);
-					} else {
-						this.notFound(id, true);
-						return EMPTY;
+				switchMap((customIdResponse) => {
+					let { user } = customIdResponse.results;
+
+					/**
+					 * Why are we doing this filter?
+					 *
+					 * It seems the backend will return { results: { user: [null] } } if a user isn't found when searching by
+					 * custom ID. Not really an ideal response from the backend, this will be patched very soon
+					 */
+					user = user.filter(Boolean);
+
+					if (user.length > 0) {
+						return of(user[0]);
 					}
+
+					this.notFound(id, true);
+					return EMPTY;
 				}),
 				mergeMap((user) => {
 					return combineLatest(of(user), this.passesService.getActivePassesKioskMode(this.kioskMode.getCurrentRoom().value.id));

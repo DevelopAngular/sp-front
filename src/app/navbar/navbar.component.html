@@ -1,17 +1,15 @@
 <ng-container *ngIf="user">
 	<div
 		class="host"
-		[ngClass]="(helpCenter.isHelpCenterOpen | async) == true ? mediaClass : ''"
+		[ngClass]="(isHelpCenterOpen$ | async) == true ? mediaClass : ''"
 		*ngIf="(showNav && !isHallMonitorRoute && showNav && !isMyRoomRoute) || (showNav && !islargeDeviceWidth)">
 		<div
 			class="bar"
 			appNavbarElementSender
-			[ngClass]="{ shadow: ((isStaff || isAssistant) && !isKioskMode && !isKioskModeSettingsPage()) || screenService.isDeviceLargeExtra }"
+			[ngClass]="{ shadow: (!isKioskMode && !isKioskModeSettingsPage()) || screenService.isDeviceLargeExtra }"
 			[ngStyle]="{
 				padding: (user && user.isStudent()) || isKioskMode ? '0 16px' : '0 16px 0 0',
-				background: darkTheme.getColor({ dark: '#0F171E', white: (isStaff || isAssistant) && !isKioskMode ? '#FFFFFF' : 'transparent' }),
-				top: (user && user.isTeacher() && hasMultipleSchools) || (isUpdateBar$ | async) ? '50px' : '0',
-				position: user && user.isTeacher() ? 'fixed' : 'relative',
+				background: darkTheme.getColor({ dark: '#0F171E', white: !isKioskMode ? '#FFFFFF' : 'transparent' }),
 				'border-bottom': (darkTheme.isEnabled$ | async) && !user.isStudent() ? '1px solid #7083A0' : 'none'
 			}"
 			#navbar>
@@ -37,7 +35,6 @@
 							</div>
 						</ng-container>
 					</div>
-					<!--        <div class="selected-tab-pointer" #tabPointer [style.left]="pointerTopSpace"></div>-->
 				</div>
 
 				<div *ngIf="user && user.isAssistant() && effectiveUser?.roles && !this.screenService.isDeviceLargeExtra" class="teacherNav">
@@ -56,7 +53,6 @@
 							</div>
 						</ng-container>
 					</div>
-					<!--        <div class="selected-tab-pointer" #tabPointer [style.left]="pointerTopSpace"></div>-->
 				</div>
 			</div>
 			<div
@@ -66,8 +62,9 @@
 					class="ds-mx-10"
 					style="cursor: pointer; display: flex; align-items: center"
 					*ngIf="user && user.isAssistant() && !screenService.isDeviceLargeExtra; else notAssistant">
-					<div class="feedback" *ngIf="!user.isStudent() && !isKioskMode && !isMobile && !isParent">
-						<app-feedback-button></app-feedback-button>
+					<div *ngIf="referralEnabled" class="referral-button" (click)="goToReferralPage()">
+						<img [src]="'./assets/Blue-Gift.svg'" alt="Renewal Icon" />
+						<span class="referral-text">Earn $100</span>
 					</div>
 					<div
 						[ngClass]="isIOSTablet ? 'ios-name' : 'name'"
@@ -111,8 +108,9 @@
 							<img width="20px" [src]="'./assets/Streaks.svg'" alt="" />
 						</div>
 					</div>
-					<div class="feedback" *ngIf="isStaff && !isKioskMode && !isParent && !isMobile && !isKioskModeSettingsPage()">
-						<app-feedback-button></app-feedback-button>
+					<div *ngIf="referralEnabled && user.isTeacher()" class="referral-button" (click)="goToReferralPage()">
+						<img [src]="'./assets/Blue-Gift.svg'" alt="Renewal Icon" />
+						<span class="referral-text">Earn $100</span>
 					</div>
 					<ng-template #referSuccess>
 						<div class="ds-tooltip">
@@ -162,8 +160,6 @@
 					(pointerClickEvent)="inboxClick()">
 					<app-icon-button [eventBubbling]="true" [srcString]="'Notifications'" [size]="20"></app-icon-button>
 					<div class="inbox-modifiers" *ngIf="(notificationBadge$ | async) > 0">
-						<!--          <img class="inbox-badge" [src]="'./assets/Inbox Notification (Red).svg' | resolveAsset">-->
-						<!--          <div class="inbox-number">{{ notificationBadge$ | async }}</div>-->
 						<img
 							class="inbox-front"
 							[src]="darkTheme.getIcon({ iconName: 'Notifications', darkFill: 'White', lightFill: 'Blue-Gray' }) | resolveAsset" />
@@ -175,7 +171,6 @@
 					class="inbox-wrapper-sm"
 					appCrossPointerEventTarget
 					(pointerClickEvent)="inboxClick()">
-					<!--        <img [@inboxAppearance] *ngIf="!isInboxClicked" class="inbox-icon" [src]="darkTheme.getIcon({iconName: 'Inbox', darkFill: 'White', lightFill: 'Blue-Gray'}) | resolveAsset">-->
 					<app-icon-button
 						[@inboxAppearance]
 						[eventBubbling]="true"
@@ -185,10 +180,7 @@
 					<div class="inbox-icon inbox-icon-arrow" [@inboxAppearance] *ngIf="isInboxClicked">
 						<app-icon-button [srcString]="'Arrow Down'" [eventBubbling]="true" [size]="20"></app-icon-button>
 					</div>
-					<!--        <img [@arrowAppearance] *ngIf="isInboxClicked" class="inbox-icon inbox-icon-arrow" [src]="darkTheme.getIcon({iconName: 'SP Arrow', darkFill: 'White', lightFill: 'Blue-Gray'}) | resolveAsset">-->
 					<div [@inboxAppearance] class="inbox-modifiers" *ngIf="(notificationBadge$ | async) > 0 && !isInboxClicked">
-						<!--          <img class="inbox-badge" [src]="'./assets/Inbox Notification (Red).svg' | resolveAsset">-->
-						<!--          <div class="inbox-number">{{ notificationBadge$ | async }}</div>-->
 						<img
 							class="inbox-front"
 							[src]="darkTheme.getIcon({ iconName: 'Notifications', darkFill: 'White', lightFill: 'Blue-Gray' }) | resolveAsset" />
@@ -232,7 +224,7 @@
 			(isAssistant && !isAdminRoute && !hideButtons && this.screenService.isDeviceLargeExtra)
 		"
 		[style.width]="screenService.windowWidth + 'px'"
-		[ngClass]="[isIOSTablet ? 'ios-teacherNav-mobile' : 'teacherNav-mobile', (helpCenter.isHelpCenterOpen | async) == true ? mediaClass : '']"
+		[ngClass]="[isIOSTablet ? 'ios-teacherNav-mobile' : 'teacherNav-mobile', (isHelpCenterOpen$ | async) == true ? mediaClass : '']"
 		[style.background-color]="darkTheme.getBackground('low', false)">
 		<div [ngClass]="isIOSTablet ? 'ios-teacherNav-mobile-wrapper' : 'teacherNav-mobile-wrapper'" #navButtonsContainerMobile>
 			<div
@@ -252,7 +244,6 @@
 					</div>
 				</ng-container>
 			</div>
-			<!--    <div [ngClass]="isIOSTablet ? 'ios-selected-tab-pointer' : 'selected-tab-pointer'" #tabPointer [style.left]="pointerTopSpace" [style.width]="'58px'"></div>-->
 		</div>
 	</div>
 

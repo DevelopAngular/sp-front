@@ -6,6 +6,8 @@ declare namespace Cypress {
      */
     dataCy(value: string): Chainable<Element>
 
+    enterUsername(username: string): Chainable;
+    enterPassword(password: string): Chainable;
     login(username: string, password: string): Chainable;
     logoutStudent(): Chainable;
     logoutTeacher(): Chainable;

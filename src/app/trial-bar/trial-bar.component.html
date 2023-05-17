@@ -1,0 +1,34 @@
+<div #trialBar class="trial-bar" *ngIf="(trialData$ | async)?.trialEndDate as trialEndDate">
+	<div class="trialing" *ngIf="trialEndDate >= todaysDate; else ended">
+		<div class="daysLeft">
+			You have
+			<div class="daysContainer">
+				<div class="daysRect"></div>
+				<div class="days">{{ (trialData$ | async).daysUntil }}</div>
+			</div>
+			day{{ (trialData$ | async).daysUntil > 0 ? 's' : '' }} left in your SmartPass trial.
+		</div>
+		<button *ngIf="!(trialData$ | async).quoteLink" class="purchase">Ready to purchase?</button>
+		<a *ngIf="(trialData$ | async).quoteLink as quoteLink" class="quote" [href]="quoteLink" target="_blank">View Price Quote.</a>
+		<div class="helpContainer">
+			<div class="daysRect"></div>
+			<button class="help">Need Help?</button>
+		</div>
+	</div>
+
+	<ng-template #ended>
+		<div class="trial-ended">
+			<img class="icon" [src]="'./assets/admin-images/hourglass.svg' | resolveAsset" />
+			<div class="text">
+				<span>Free Trial Ended:</span>
+				We hope you've loved your SmartPass trial and are planning on moving forward.<br />
+				Please contact your sales rep to purchase SmartPass!
+			</div>
+			<button *ngIf="!(trialData$ | async).quoteLink" class="contactSales">Contact sales</button>
+			<div *ngIf="(trialData$ | async).quoteLink" class="quote-container">
+				<button class="trialEndedHelp">Need Help?</button>
+				<a *ngIf="(trialData$ | async).quoteLink as quoteLink" class="quote-btn" [href]="quoteLink" target="_blank">View Price Quote</a>
+			</div>
+		</div>
+	</ng-template>
+</div>

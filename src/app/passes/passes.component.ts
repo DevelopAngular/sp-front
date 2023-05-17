@@ -1,6 +1,7 @@
 import { ChangeDetectionStrategy, ChangeDetectorRef, Component, ElementRef, HostListener, NgZone, OnDestroy, OnInit, ViewChild } from '@angular/core';
 import { MatDialog, MatDialogRef, MatDialogState } from '@angular/material/dialog';
 // TODO: Replace combineLatest with non-deprecated implementation
+import { Store } from '@ngrx/store';
 import { BehaviorSubject, combineLatest, forkJoin, interval, merge, Observable, of, Subject, timer } from 'rxjs';
 import {
 	concatMap,
@@ -51,8 +52,7 @@ import { Invitation } from '../models/Invitation';
 import { InlineWaitInLineCardComponent } from '../pass-cards/inline-wait-in-line-card/inline-wait-in-line-card.component';
 import { Util } from '../../Util';
 import { RepresentedUser } from '../navbar/navbar.component';
-import { Pinnable } from '../models/Pinnable';
-
+import { AppState } from '../ngrx/app-state/app-state';
 @Component({
 	selector: 'app-passes',
 	templateUrl: './passes.component.html',
@@ -242,7 +242,8 @@ export class PassesComponent implements OnInit, OnDestroy {
 		private passLimitsService: PassLimitService,
 		private cdr: ChangeDetectorRef,
 		private titleService: Title,
-		private featureService: FeatureFlagService
+		private featureService: FeatureFlagService,
+		private store: Store<AppState>
 	) {
 		this.userService.user$
 			.pipe(
@@ -439,6 +440,7 @@ export class PassesComponent implements OnInit, OnDestroy {
 				return filters['past-passes'].default;
 			})
 		);
+
 		this.schoolsLength$ = this.httpService.schoolsLength$;
 		this.user$ = this.userService.user$;
 		const notifBtnDismissExpires = moment(JSON.parse(localStorage.getItem('notif_btn_dismiss_expiration')));
@@ -499,18 +501,6 @@ export class PassesComponent implements OnInit, OnDestroy {
 			this.locationsService.getLocationsWithConfigRequest('v1/locations?limit=1000&starred=false');
 			this.locationsService.getFavoriteLocationsRequest();
 		});
-
-		this.locationsService
-			.listenPinnableSocket()
-			.pipe(
-				takeUntil(this.destroy$),
-				filter((res) => !!res),
-				tap((res) => {
-					const pinnable: Pinnable = Pinnable.fromJSON(res.data);
-					this.locationsService.updatePinnableSuccessState(pinnable);
-				})
-			)
-			.subscribe();
 	}
 
 	ngOnDestroy(): void {
@@ -523,9 +513,11 @@ export class PassesComponent implements OnInit, OnDestroy {
 
 	getActivePasses() {
 		const passes$ = this.liveDataService.activePasses$.pipe(
-			withLatestFrom(this.timeService.now$),
-			map(([passes, now]) => {
-				return passes.filter((pass) => new Date(pass.start_time).getTime() <= now.getTime());
+			map((passes) => {
+				return passes.filter((pass) => {
+					const { isActive } = pass.calculatePassStatus();
+					return isActive;
+				});
 			})
 		);
 		const excludedPasses = this.currentPass$.pipe(

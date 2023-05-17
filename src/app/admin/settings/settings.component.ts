@@ -40,7 +40,7 @@ export class SettingsComponent implements OnInit, OnDestroy {
 			icon: 'Language',
 			action: 'language',
 			title: 'Language',
-			isNew: true,
+			isNew: false,
 		},
 		{
 			hidden: false,
@@ -50,6 +50,13 @@ export class SettingsComponent implements OnInit, OnDestroy {
 			isNew: this.data['introsData'].referral_reminder
 				? !this.data['introsData'].referral_reminder.universal.seen_version && this.data['showNotificationBadge']
 				: false,
+		},
+		{
+			hidden: false,
+			icon: 'Swag Shop',
+			action: 'swagShop',
+			title: 'Swag Shop',
+			isNew: true,
 		},
 	];
 	private adjustForScroll: boolean = false;

@@ -1,12 +1,16 @@
-import { Component, OnInit, SecurityContext } from '@angular/core';
+import { Component, OnInit } from '@angular/core';
 import { DarkThemeSwitch } from '../../dark-theme-switch';
 import { AdminService, RenewalStatus } from '../../services/admin.service';
 import _refiner from 'refiner-js';
 import { NavbarElementsRefsService } from '../../services/navbar-elements-refs.service';
 import { DomSanitizer, SafeResourceUrl } from '@angular/platform-browser';
 import { UserService } from '../../services/user.service';
-import { filter, map, take } from 'rxjs/operators';
+import { filter, map, tap } from 'rxjs/operators';
 import { User } from '../../models/User';
+import { DatePipe } from '@angular/common';
+import { TeacherReviewsService } from '../../services/teacher-reviews.service';
+import { Observable } from 'rxjs';
+import { FeatureFlagService, FLAGS } from '../../services/feature-flag.service';
 
 type ReminderData = {
 	img: string;
@@ -16,6 +20,14 @@ type ReminderData = {
 	action: () => void;
 };
 
+interface TeacherReview {
+	name: string;
+	what_to_display: string;
+	stars: number;
+	testimonial: string;
+	first_shown: string;
+}
+
 @Component({
 	selector: 'app-renewal',
 	templateUrl: './renewal.component.html',
@@ -23,6 +35,7 @@ type ReminderData = {
 	host: {
 		class: 'root-router-child',
 	},
+	providers: [DatePipe],
 })
 export class RenewalComponent implements OnInit {
 	public selectedFeature = 0;
@@ -32,18 +45,25 @@ export class RenewalComponent implements OnInit {
 	public iframeLoading = true;
 	private iframeLoadedInterval;
 	private surveyId = '300ba7c0-ccad-11ed-b709-fb336f73b73f';
-
 	public iFrameURL: SafeResourceUrl;
+	teacherReviews$: Observable<TeacherReview[]>;
+
+	public hasYearInReviewPdf: boolean = true;
 
 	constructor(
 		private adminService: AdminService,
 		public darkTheme: DarkThemeSwitch,
 		private navbarService: NavbarElementsRefsService,
 		private sanitizer: DomSanitizer,
-		private userService: UserService
+		private userService: UserService,
+		private datepipe: DatePipe,
+		private teacherReviewsService: TeacherReviewsService,
+		private featureFlagService: FeatureFlagService
 	) {}
 
 	ngOnInit(): void {
+		this.teacherReviews$ = this.teacherReviewsService.getReviews();
+
 		this.adminService.getRenewalData().subscribe({
 			next: (data) => {
 				this.status = data;
@@ -58,7 +78,7 @@ export class RenewalComponent implements OnInit {
 						};
 						break;
 					case 'expiring':
-						const month = this.printExpiration(true);
+						const month = this.datepipe.transform(this.status?.subscription_end_date, 'MMMM', 'UTC');
 						this.reminder = {
 							img: './assets/admin-images/expiring-sub.png',
 							title: month ? 'Your SmartPass Subscription Expires in ' + month : 'Your SmartPass Subscription Expires Soon',
@@ -112,15 +132,8 @@ export class RenewalComponent implements OnInit {
 		}
 	}
 
-	printExpiration(month = false): string {
-		if (!this.status?.subscription_end_date) {
-			return '';
-		}
-		let date = new Date(this.status.subscription_end_date);
-		if (month) {
-			return date.toLocaleDateString('en-US', { timeZone: 'UTC', month: 'long' });
-		}
-		return date.toLocaleDateString('en-US', { timeZone: 'UTC', year: 'numeric', month: 'long', day: 'numeric' });
+	get isTeacherReviewsEnabled() {
+		return this.featureFlagService.isFeatureEnabledV2(FLAGS.TeacherReviews);
 	}
 
 	toggleConfirm() {

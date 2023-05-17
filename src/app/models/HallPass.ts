@@ -94,4 +94,13 @@ export class HallPass extends BaseModel {
 
 		return pass;
 	}
+
+	calculatePassStatus(): { isActive: boolean; fromPast: boolean; forFuture: boolean } {
+		const now = new Date();
+		return {
+			isActive: now >= this.start_time && now < this.end_time,
+			fromPast: now > this.end_time,
+			forFuture: now < this.start_time,
+		};
+	}
 }

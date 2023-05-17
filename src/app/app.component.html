@@ -13,46 +13,17 @@
 		</div>
 	</div>
 
-	<div #trialBar class="trial-bar" *ngIf="isAuthenticated && !isKioskMode && (isAdmin$ | async) && trialEndDate$ | async as trialEndDate">
-		<div class="trialing" *ngIf="trialEndDate >= todayDate; else ended">
-			<div class="daysLeft">
-				You have
-				<div class="daysContainer">
-					<div class="daysRect"></div>
-					<div class="days">{{ getDaysUntil(trialEndDate) }}</div>
-				</div>
-				{{ getDayText(getDaysUntil(trialEndDate)) }} left in your SmartPass trial.
-			</div>
-			<button class="purchase">Ready to purchase?</button>
-			<div class="helpContainer">
-				<div class="daysRect"></div>
-				<button class="help">Need Help?</button>
-			</div>
-		</div>
+	<div class="top-bar-container">
+		<sp-trial-bar *ngIf="isAuthenticated && !isKioskMode && (isAdmin$ | async)"></sp-trial-bar>
 
-		<ng-template #ended>
-			<div class="trial-ended">
-				<img class="icon" [src]="'./assets/admin-images/hourglass.svg' | resolveAsset" />
-				<div class="text">
-					<span style="font-weight: 700">Free Trial Ended:</span>
-					We hope you've loved your SmartPass trial and are planning on moving forward.<br />
-					Please contact your sales rep to purchase SmartPass!
-				</div>
-				<button class="contactSales">Contact sales</button>
-			</div>
-		</ng-template>
+		<app-school-toggle-bar *ngIf="isAuthenticated && schools && schools.length > 1 && !hideSchoolToggleBar && !isKioskMode" [schools]="schools">
+		</app-school-toggle-bar>
 	</div>
 
 	<div style="flex-grow: 1; display: flex; flex-direction: row; align-items: stretch">
 		<div style="flex-grow: 1; display: flex; flex-direction: column">
-			<app-school-toggle-bar *ngIf="isAuthenticated && schools && schools.length > 1 && !hideSchoolToggleBar && !isKioskMode" [schools]="schools">
-			</app-school-toggle-bar>
 			<div class="router-outlet">
-				<div
-					style="flex-grow: 1; display: flex; flex-direction: column"
-					[ngStyle]="{
-						'padding-top': isAuthenticated && schools && schools.length > 1 && !hideSchoolToggleBar && !isKioskMode ? '50px' : '0'
-					}">
+				<div style="flex-grow: 1; display: flex; flex-direction: column">
 					<router-outlet></router-outlet>
 				</div>
 			</div>

@@ -1,5 +1,5 @@
 import { Inject, Injectable, OnDestroy } from '@angular/core';
-import { BehaviorSubject, Observable, ReplaySubject, Subject } from 'rxjs';
+import { BehaviorSubject, Observable, of, ReplaySubject, Subject } from 'rxjs';
 import { filter, takeUntil } from 'rxjs/operators';
 import { StorageService } from './storage.service';
 import { APP_BASE_HREF } from '@angular/common';
@@ -13,6 +13,15 @@ export enum LoginErrors {
 	PopupBlocked = 'pop up blocked',
 	InvalidCreds = 'username/password is incorrect',
 }
+
+export const LoginErrorMap: Record<LoginErrors, string> = {
+	[LoginErrors.Suspended]: 'Account is suspended. Please contact your school admin.',
+	[LoginErrors.Disabled]: 'Account is disabled. Please contact your school admin.',
+	[LoginErrors.NotActive]: 'Account is not active. Please contact your school admin.',
+	[LoginErrors.TeacherNoAssistants]: 'Account does not have any associated teachers. Please contact your school admin.',
+	[LoginErrors.PopupBlocked]: 'Pop up blocked. Please allow pop ups.',
+	[LoginErrors.InvalidCreds]: 'Incorrect password. Try again or contact your school admin to reset it.',
+};
 
 declare const window;
 
@@ -77,6 +86,7 @@ export class LoginService implements OnDestroy {
 	private authObject$ = new BehaviorSubject<AuthObject>(null);
 	public loginErrorMessage$: Subject<string> = new Subject<string>();
 	public isAuthenticated$ = new ReplaySubject<boolean>(1);
+	public continueAuthFlow$ = new Subject<boolean>();
 	// public isAuthenticated$ = new BehaviorSubject<boolean>(false);
 
 	destroy$: Subject<any> = new Subject<any>();
@@ -98,6 +108,22 @@ export class LoginService implements OnDestroy {
 
 		const savedServerConfig = this.storage.getItem('server');
 		this.isAuthenticated$.next(!!savedServerConfig && !!this.cookie.get('smartpassToken'));
+	}
+
+	checkIfAuthStored(): Observable<boolean> {
+		const isCookiePresent = !!this.cookie.get('smartpassToken');
+
+		if (!isCookiePresent) {
+			this.storage.removeItem('server');
+			return of(false);
+		}
+
+		const svrString = this.storage.getItem('server');
+		if (!svrString) {
+			return of(false);
+		}
+
+		return of(true);
 	}
 
 	ngOnDestroy(): void {

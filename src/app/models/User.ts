@@ -8,6 +8,8 @@ export enum ROLES {
 	Parent = '_profile_parent',
 }
 
+export type ReferralStatus = 'applied' | 'accepted' | 'not_applied';
+
 export class User extends BaseModel {
 	constructor(
 		public id: number,
@@ -23,10 +25,11 @@ export class User extends BaseModel {
 		public primary_email: string,
 		public roles: string[],
 		public status: string,
+		public referral_status: ReferralStatus,
 		public badge: string,
 		public sync_types: string[],
 		public show_expired_passes: boolean,
-		public show_profile_pictures: string,
+		public show_profile_pictures: 'everywhere' | 'hall_monitor',
 		public profile_picture: string,
 		public extras: any,
 		public first_login: Date,
@@ -57,10 +60,11 @@ export class User extends BaseModel {
 			primary_email: string = JSON['primary_email'],
 			roles: string[] = [],
 			status: string = JSON['status'],
+			referral_status = JSON['referral_status'] as ReferralStatus,
 			badge: string = JSON['badge'],
 			sync_types: string[] = [],
 			show_expired_passes: boolean = !!JSON['show_expired_passes'],
-			show_profile_pictures: string = JSON['show_profile_pictures'],
+			show_profile_pictures: 'everywhere' | 'hall_monitor' = JSON['show_profile_pictures'],
 			profile_picture: string = JSON['profile_picture'],
 			extras: any = JSON['extras'],
 			first_login: Date = new Date(JSON['first_login']),
@@ -94,6 +98,7 @@ export class User extends BaseModel {
 			primary_email,
 			roles,
 			status,
+			referral_status,
 			badge,
 			sync_types,
 			show_expired_passes,

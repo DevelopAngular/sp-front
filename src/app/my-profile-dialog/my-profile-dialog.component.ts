@@ -47,13 +47,9 @@ export class MyProfileDialogComponent implements OnInit {
 	}
 
 	back() {
-		if (this.data['target'] && this.data['target'] === 'password') {
-			this.dialogRef.close();
-		} else {
-			this.formService.setFrameMotionDirection('back');
-			setTimeout(() => {
-				this.page = 1;
-			}, 100);
-		}
+		this.formService.setFrameMotionDirection('back');
+		setTimeout(() => {
+			this.page = 1;
+		}, 100);
 	}
 }

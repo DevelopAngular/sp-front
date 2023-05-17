@@ -1,12 +1,10 @@
 import {
 	AfterViewInit,
-	ChangeDetectorRef,
 	Component,
 	ElementRef,
 	EventEmitter,
 	HostListener,
 	Input,
-	NgZone,
 	OnDestroy,
 	OnInit,
 	Output,
@@ -15,7 +13,6 @@ import {
 	ViewChild,
 	ViewChildren,
 } from '@angular/core';
-import { Location } from '@angular/common';
 import { MatDialog } from '@angular/material/dialog';
 import { ActivatedRoute, NavigationEnd, Router } from '@angular/router';
 
@@ -58,6 +55,7 @@ import { SmartpassSearchComponent } from '../smartpass-search/smartpass-search.c
 import { StreaksDialogComponent } from '../streaks-dialog/streaks-dialog.component';
 import { FeatureFlagService, FLAGS } from '../services/feature-flag.service';
 import { HelpCenterService } from '../services/help-center.service';
+import { Location } from '../models/Location';
 
 declare const window;
 
@@ -110,7 +108,7 @@ export class NavbarComponent implements AfterViewInit, OnInit, OnDestroy {
 	tab = 'passes';
 	inboxVisibility: boolean = JSON.parse(this.storage.getItem('showInbox'));
 	introsData: any;
-	kioskModeLocation: any;
+	kioskModeLocation: Location;
 
 	isOpenSettings: boolean;
 
@@ -160,8 +158,6 @@ export class NavbarComponent implements AfterViewInit, OnInit, OnDestroy {
 
 	fadeClick: boolean;
 
-	private pts;
-
 	isAdminRoute: boolean;
 
 	isAssistant: boolean;
@@ -171,6 +167,8 @@ export class NavbarComponent implements AfterViewInit, OnInit, OnDestroy {
 	IDCARDDETAILS: any;
 
 	isUpdateBar$: ReplaySubject<{ active: boolean; color: any }>;
+
+	isHelpCenterOpen$ = this.helpCenter.isHelpCenterOpen;
 
 	@HostListener('window:resize')
 	checkDeviceWidth() {
@@ -193,10 +191,8 @@ export class NavbarComponent implements AfterViewInit, OnInit, OnDestroy {
 		public userService: UserService,
 		public dialog: MatDialog,
 		public router: Router,
-		private location: Location,
 		public loginService: LoginService,
 		private locationService: LocationsService,
-		private _zone: NgZone,
 		private navbarData: NavbarDataService,
 		private activeRoute: ActivatedRoute,
 		public notifService: NotificationService,
@@ -206,7 +202,6 @@ export class NavbarComponent implements AfterViewInit, OnInit, OnDestroy {
 		public kioskMode: KioskModeService,
 		public screenService: ScreenService,
 		public sideNavService: SideNavService,
-		private cdr: ChangeDetectorRef,
 		private rendered: Renderer2,
 		private navbarElementsService: NavbarElementsRefsService,
 		private shortcutsService: KeyboardShortcutsService,
@@ -215,10 +210,6 @@ export class NavbarComponent implements AfterViewInit, OnInit, OnDestroy {
 		private featureService: FeatureFlagService,
 		private helpCenter: HelpCenterService
 	) {}
-
-	get optionsOpen() {
-		return this.tab === 'settings';
-	}
 
 	get isMobile() {
 		return DeviceDetection.isMobile() || (this.screenService.windowWidth < 1170 && this.helpCenter.isHelpCenterOpen.getValue());
@@ -257,6 +248,10 @@ export class NavbarComponent implements AfterViewInit, OnInit, OnDestroy {
 
 	get streaksCount(): number {
 		return this.user?.streak_count;
+	}
+
+	get referralEnabled(): boolean {
+		return this.featureService.isFeatureEnabled(FLAGS.ReferralProgramme);
 	}
 
 	get isStreaks(): boolean {
@@ -654,6 +649,8 @@ export class NavbarComponent implements AfterViewInit, OnInit, OnDestroy {
 				this.userService.updateIntrosRequest(this.introsData, 'universal', '1');
 			}
 			window.open('https://www.smartpass.app/referrals');
+		} else if (action === 'swagShop') {
+			window.open('https://shop.smartpass.app/');
 		}
 	}
 
@@ -754,5 +751,9 @@ export class NavbarComponent implements AfterViewInit, OnInit, OnDestroy {
 		if (isLost) {
 			this.userService.updateUserRequest(this.user, { lost_streak_count: null });
 		}
+	}
+
+	goToReferralPage() {
+		this.router.navigate(['main', 'refer_us']);
 	}
 }

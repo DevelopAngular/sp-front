@@ -82,7 +82,9 @@ export class SettingsComponent implements OnInit, OnDestroy {
 		private localize: LocalizejsService
 	) {
 		// this.initializeSettings();
-		this.adjustForScroll = data['adjustForScroll'];
+		if (data && data['adjustForScroll']) {
+			this.adjustForScroll = data['adjustForScroll'];
+		}
 	}
 
 	get isKioskMode(): boolean {
@@ -270,7 +272,7 @@ export class SettingsComponent implements OnInit, OnDestroy {
 			icon: 'Language',
 			action: 'language',
 			title: 'Language',
-			isNew: true,
+			isNew: false,
 		});
 		if (this.isStaff) {
 			this.settings.push({
@@ -305,6 +307,14 @@ export class SettingsComponent implements OnInit, OnDestroy {
 				this.isStaff && this.intosData.referral_reminder
 					? !this.intosData.referral_reminder.universal.seen_version && this.showNotificationBadge
 					: false,
+		});
+		this.settings.push({
+			hidden: false,
+			background: '#134482',
+			icon: 'Swag Shop',
+			action: 'swagShop',
+			title: 'Swag Shop',
+			isNew: true,
 		});
 	}
 }

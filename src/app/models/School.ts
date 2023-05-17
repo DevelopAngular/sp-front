@@ -25,6 +25,9 @@ export class School extends BaseModel {
 		public feature_flag_wait_in_line: boolean,
 		public feature_flag_show_wait_in_line: boolean,
 		public feature_flag_new_abbreviation: boolean,
+		public feature_flag_referral_program: boolean,
+		public feature_flags_v2: [string],
+		public trial_quote_link: string,
 		public trial_end_date: Date,
 		public timezone: string
 	) {
@@ -36,7 +39,6 @@ export class School extends BaseModel {
 			return null;
 		}
 
-		// console.log(JSON);
 		const id: number = JSON['id'],
 			display_card_room: boolean = JSON['display_card_room'],
 			student_can_use_mobile: boolean = JSON[' student_can_use_mobile'],
@@ -60,8 +62,10 @@ export class School extends BaseModel {
 			feature_flag_wait_in_line: boolean = !!JSON['feature_flag_wait_in_line'],
 			feature_flag_show_wait_in_line: boolean = !!JSON['feature_flag_show_wait_in_line'],
 			feature_flag_new_abbreviation: boolean = !!JSON['feature_flag_new_abbreviation'],
-			timezone: string = JSON['timezone'];
-
+			feature_flag_referral_program: boolean = !!JSON['feature_flag_referral_program'],
+			feature_flags_v2: [string] = JSON['feature_flags_v2'],
+			timezone: string = JSON['timezone'],
+			trial_quote_link: string = JSON['trial_quote_link'];
 		let trial_end_date: Date;
 		if (JSON['trial_end_date']) {
 			trial_end_date = new Date(JSON['trial_end_date']);
@@ -91,6 +95,9 @@ export class School extends BaseModel {
 			feature_flag_wait_in_line,
 			feature_flag_show_wait_in_line,
 			feature_flag_new_abbreviation,
+			feature_flag_referral_program,
+			feature_flags_v2,
+			trial_quote_link,
 			trial_end_date,
 			timezone
 		);

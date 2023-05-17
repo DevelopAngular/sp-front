@@ -34,20 +34,22 @@ const KioskCurrentRoom = 'current-kiosk-room';
 export class KioskModeService {
 	private currentKioskSettings$: BehaviorSubject<KioskSettings> = new BehaviorSubject<KioskSettings>(this.getKioskModeSettings());
 	public enterKioskMode$: BehaviorSubject<Boolean> = new BehaviorSubject(false);
+	private currentRoom$: BehaviorSubject<Location> = new BehaviorSubject(null);
 
-	constructor(private storageService: StorageService, private locationsService: LocationsService, private http: HttpService) {}
+	constructor(private storageService: StorageService, private locationsService: LocationsService, private http: HttpService) {
+		const roomFromStorage = this.storageService.getItem(KioskCurrentRoom);
+		if (!!roomFromStorage) {
+			this.currentRoom$.next(Location.fromJSON(JSON.parse(roomFromStorage)));
+		}
+	}
 
 	getCurrentRoom(): BehaviorSubject<Location> {
-		const roomFromStorage = this.storageService.getItem(KioskCurrentRoom);
-		if (!roomFromStorage) {
-			return new BehaviorSubject(null);
-		}
-
-		return new BehaviorSubject(JSON.parse(roomFromStorage));
+		return this.currentRoom$;
 	}
 
 	setCurrentRoom(location: Location) {
 		this.storageService.setItem(KioskCurrentRoom, JSON.stringify(location));
+		this.currentRoom$.next(location);
 	}
 
 	areValidSettings(obj: any): obj is KioskSettings {

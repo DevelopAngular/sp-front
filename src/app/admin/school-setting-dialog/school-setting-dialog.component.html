@@ -14,7 +14,7 @@
 	<div class="settings-content">
 		<div class="controls-block">
 			<form [formGroup]="schoolForm"></form>
-			<div class="display-room-control" style="margin-top: 15px" *ngIf="currentSchool?.feature_flag_show_wait_in_line">
+			<div class="display-room-control" *ngIf="currentSchool?.feature_flag_show_wait_in_line" #wilControlBlock>
 				<div class="controls-description">
 					<div class="ds-cell-text-2">Enable Wait in Line</div>
 					<div class="ds-cell-description-text" style="width: 260px; margin-top: 6px">
@@ -57,7 +57,7 @@
 						(blurEvent)="hideMin = false; passBufferTimeInput.textAlign = schoolForm.get('pass_buffer_time').valid ? 'right' : 'left'"></app-input>
 				</div>
 			</div>
-			<div class="display-room-control" style="margin-top: 15px">
+			<div class="display-room-control">
 				<div class="controls-description">
 					<div class="ds-cell-text-2">Display pass counts</div>
 					<div class="ds-cell-description-text" style="width: 260px; margin-top: 6px">
@@ -76,7 +76,7 @@
 				</div>
 			</div>
 
-			<div class="display-room-control" style="margin-top: 15px">
+			<div class="display-room-control">
 				<div class="controls-description">
 					<div class="ds-cell-text-2">Allow students to use phones</div>
 					<div class="ds-cell-description-text" style="width: 260px; margin-top: 6px">

@@ -1,0 +1,62 @@
+:host {
+	display: flex;
+	justify-content: center;
+}
+
+h6 {
+	font-family: 'Inter';
+	font-style: normal;
+	font-weight: 400;
+	font-size: 18px;
+	line-height: 24px;
+	display: flex;
+	align-items: center;
+}
+
+.review-text {
+	width: 90%;
+}
+
+.recommend-it {
+	height: 50px;
+	background-color: #e5f7f1;
+	color: #00b476;
+	align-content: center;
+	align-items: center;
+	display: flex;
+	flex-wrap: wrap;
+	width: 90%;
+	border-radius: 999px;
+	justify-content: center;
+}
+
+.valuable-tool {
+	height: 50px;
+	background-color: #fdf8e5;
+	color: #4e5d74;
+	align-content: center;
+	align-items: center;
+	display: flex;
+	flex-wrap: wrap;
+	width: 90%;
+	border-radius: 999px;
+	justify-content: center;
+}
+
+.thumbs {
+	display: flex;
+	height: 1.5vw;
+	margin-right: 15px;
+	margin-bottom: 4px;
+}
+
+.cool {
+	display: flex;
+	height: 2vw;
+	margin-right: 15px;
+}
+
+.testimonial {
+	margin: 0 0 0 0;
+	color: #1f195e;
+}

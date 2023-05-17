@@ -1,0 +1,96 @@
+:host {
+	width: 100%;
+}
+
+.review-box {
+	display: flex;
+	flex-direction: column;
+	background-color: white;
+	height: 100%;
+	width: 580px;
+	border-radius: 12px;
+}
+
+.heading {
+	width: 100%;
+	display: flex;
+	flex-direction: row;
+	padding-bottom: 15px;
+	padding-top: 10px;
+}
+
+.date-and-stars {
+	position: relative;
+	top: 5px;
+	padding-top: 5px;
+	padding-bottom: 5px;
+	display: flex;
+	flex-direction: column;
+	align-items: center;
+	width: fit-content;
+	padding-right: 40px;
+	justify-content: center;
+}
+
+.first-shown {
+	display: flex;
+	justify-content: right;
+	font-family: 'Inter';
+	font-style: normal;
+	font-weight: 400;
+	font-size: 17px;
+	line-height: 21px;
+	color: #7083a0;
+	padding-bottom: 3px;
+	width: max-content;
+}
+
+.stars {
+	display: flex;
+	flex-direction: row;
+	justify-content: center;
+	width: 100%;
+}
+
+.star {
+	width: 22.06px;
+	height: 22.06px;
+	margin-left: 3px;
+}
+
+.picture-and-name {
+	display: flex;
+	flex-direction: row;
+	width: 100%;
+	align-items: center;
+	padding-left: 28px;
+}
+
+.name {
+	display: flex;
+	flex-direction: row;
+	padding-left: 16px;
+	width: fit-content;
+	color: #1f195e;
+	font-family: 'Inter';
+	font-style: normal;
+	font-weight: 700;
+	font-size: 20px;
+	line-height: 24px;
+}
+
+.picture {
+	display: flex;
+	width: 56px;
+	height: 56px;
+	border-radius: 50%;
+	background-color: #b7c1cf;
+	align-items: center;
+	justify-content: center;
+	color: white;
+	font-family: 'Inter';
+	font-style: normal;
+	font-weight: 700;
+	font-size: 16px;
+	line-height: 19px;
+}

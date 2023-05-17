@@ -106,6 +106,8 @@ import {
 	updateIntrosMain,
 	updateIntrosPassLimitsOnlyCertainRooms,
 	updateIntrosSearch,
+	updateIntrosSeenReferralNux,
+	updateIntrosSeenReferralSuccessNux,
 	updateIntrosSeenRenewalStatusPage,
 	updateIntrosShowRoomAsOrigin,
 	updateIntrosStudentPassLimits,
@@ -268,7 +270,15 @@ export class UserService implements OnDestroy {
 	user$: Observable<User> = this.store.select(getUserData);
 	userPin$: Observable<string | number> = this.store.select(getSelectUserPin);
 	loadedUser$: Observable<boolean> = this.store.select(getLoadedUser);
-	currentUpdatedUser$: Observable<User> = this.store.select(getCurrentUpdatedUser);
+	currentUpdatedUser$: Observable<User> = this.store.select(getCurrentUpdatedUser).pipe(
+		map((u) => {
+			try {
+				return User.fromJSON(u);
+			} catch {
+				return u;
+			}
+		})
+	);
 
 	/**
 	 * Student Groups
@@ -417,7 +427,7 @@ export class UserService implements OnDestroy {
 				switchMap((user: User) => {
 					this.blockUserPage$.next(false);
 					if (user.isAssistant() && !window.location.href.includes('/kioskMode')) {
-						return combineLatest(this.representedUsers.pipe(filter((res) => !!res)), this.http.schoolsCollection$).pipe(
+						return combineLatest([this.representedUsers.pipe(filter((res) => !!res)), this.http.schoolsCollection$]).pipe(
 							tap(([users, schools]) => {
 								if (!users.length && schools.length === 1) {
 									this.store.dispatch(getSchoolsFailure({ errorMessage: 'Assistant does`t have teachers' }));
@@ -426,7 +436,7 @@ export class UserService implements OnDestroy {
 								}
 							}),
 							filter(([users, schools]) => !!users.length || schools.length > 1),
-							map(([users, schools]) => {
+							map(([users]) => {
 								if (users && users.length) {
 									this.http.effectiveUserId.next(+users[0].user.id);
 								}
@@ -617,6 +627,10 @@ export class UserService implements OnDestroy {
 		return this.getUserSchool().feature_flag_new_abbreviation;
 	}
 
+	getFeatureFlagReferralProgram(): boolean {
+		return this.getUserSchool().feature_flag_referral_program;
+	}
+
 	getCurrentUpdatedSchool$(): Observable<School> {
 		return this.http.currentUpdateSchool$;
 	}
@@ -627,6 +641,10 @@ export class UserService implements OnDestroy {
 
 	getUser() {
 		return this.http.get<User>('v1/users/@me');
+	}
+
+	getUserById(userId) {
+		return this.http.get<User>(`v1/users/${userId}`);
 	}
 
 	getUserPinRequest() {
@@ -705,6 +723,14 @@ export class UserService implements OnDestroy {
 		this.store.dispatch(updateIntrosSeenRenewalStatusPage({ intros, device, version }));
 	}
 
+	updateIntrosSeenReferralNuxRequest(intros, device, version) {
+		this.store.dispatch(updateIntrosSeenReferralNux({ intros, device, version }));
+	}
+
+	updateIntrosSeenReferralSuccessNuxRequest(intros, device, version) {
+		this.store.dispatch(updateIntrosSeenReferralSuccessNux({ intros, device, version }));
+	}
+
 	// TODO: Make all update functions into a single function
 	// TODO: Have all update intro endpoints be part of an enum
 	// TODO: Share that enum with `intro.effects.ts`
@@ -757,6 +783,18 @@ export class UserService implements OnDestroy {
 		return this.http.patch(`v1/intros/seen_renewal_status_page`, { device, version });
 	}
 
+	updateIntrosSeenReferralNux(device, version) {
+		return this.http.patch(`v1/intros/seen_referral_nux`, { device, version });
+	}
+
+	updateIntrosSeenReferralSuccessNux(device, version) {
+		return this.http.patch(`v1/intros/seen_referral_success_nux`, { device, version });
+	}
+
+	updateIntrosDownloadedYearInReview(device, version) {
+		return this.http.patch(`v1/intros/downloaded_year_in_review`, { device, version });
+	}
+
 	saveKioskModeLocation(locId): Observable<ServerAuth> {
 		return this.http.post('auth/kiosk', { location: locId });
 	}
@@ -774,10 +812,6 @@ export class UserService implements OnDestroy {
 	}
 
 	searchProfile(role?, limit = 5, search?, ignoreProfileWithStatuses: ProfileStatus[] = ['suspended']) {
-		if (status === 'all') {
-			status = undefined;
-		}
-
 		let url: string = 'v1/users?';
 		if (role) {
 			url += `role=${role}&`;
@@ -798,10 +832,6 @@ export class UserService implements OnDestroy {
 		}
 
 		return this.http.get<Paged<any>>(url);
-	}
-
-	searchProfileById(id) {
-		return this.http.get<User>(`v1/users/${id}`);
 	}
 
 	possibleProfileById(id: string): Observable<User | null> {
@@ -970,6 +1000,10 @@ export class UserService implements OnDestroy {
 
 	updateStudentGroup(id, body) {
 		return this.http.patch(`v1/student_lists/${id}`, body);
+	}
+
+	applyForReferral() {
+		return this.http.post('v2/user/referral/apply', {}, undefined, false);
 	}
 
 	deleteStudentGroupRequest(id) {
@@ -1188,8 +1222,20 @@ export class UserService implements OnDestroy {
 		return this.http.get(`v1/users?role=_profile_student&has_grade_level=false`);
 	}
 
-	possibleProfileByCustomId(id: string): Observable<User | null> {
-		return this.http.get(`v1/users/custom_id/${id}`, { headers: { 'X-Ignore-Errors': 'true' } }).pipe(catchError((err) => of(null)));
+	possibleProfileByCustomId(
+		id: string,
+		ignoreProfileWithStatuses: ProfileStatus[] = ['suspended']
+	): Observable<{ results: { user: Array<User | null> } }> {
+		let url = `v1/users/custom_id/${id}?`;
+
+		for (const hideStatus of ignoreProfileWithStatuses) {
+			url += `hideStatus=${hideStatus}&`;
+		}
+		if (url[url.length - 1] === '&') {
+			url = url.slice(0, -1);
+		}
+
+		return this.http.get(url, { headers: { 'X-Ignore-Errors': 'true' } }).pipe(catchError((err) => of(null)));
 	}
 
 	getGradeLevelsByIds(ids: string[]) {

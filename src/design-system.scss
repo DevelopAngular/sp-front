@@ -43,6 +43,10 @@ sans-serif;
     @include textColor($blue-gray);
 }
 
+.ds-blue {
+    @include textColor($blue500);
+}
+
 .ds-green {
     @include textColor($green);
 }

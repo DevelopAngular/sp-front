@@ -1,12 +1,13 @@
-import { Component, OnDestroy, OnInit } from '@angular/core';
+import { AfterViewInit, Component, ElementRef, Inject, OnDestroy, OnInit, ViewChild } from '@angular/core';
 import { FormControl, FormGroup, Validators } from '@angular/forms';
-import { MatDialogRef } from '@angular/material/dialog';
+import { MAT_DIALOG_DATA, MatDialogRef } from '@angular/material/dialog';
 import { AdminService } from '../../services/admin.service';
 import { Subject } from 'rxjs';
 import { School } from '../../models/School';
 import { filter, switchMap, takeUntil } from 'rxjs/operators';
 import { HttpService } from '../../services/http-service';
 import * as moment from 'moment';
+
 declare const window;
 
 @Component({
@@ -14,7 +15,8 @@ declare const window;
 	templateUrl: './school-setting-dialog.component.html',
 	styleUrls: ['./school-setting-dialog.component.scss'],
 })
-export class SchoolSettingDialogComponent implements OnInit, OnDestroy {
+export class SchoolSettingDialogComponent implements OnInit, AfterViewInit, OnDestroy {
+	@ViewChild('wilControlBlock') wilControlBlock: ElementRef<HTMLDivElement>;
 	public schoolForm: FormGroup;
 	public currentSchool: School;
 	private initialState: {
@@ -36,7 +38,12 @@ export class SchoolSettingDialogComponent implements OnInit, OnDestroy {
 	public tzNames: string[];
 	public selectedTz: string;
 
-	constructor(private dialogRef: MatDialogRef<SchoolSettingDialogComponent>, private adminService: AdminService, private http: HttpService) {
+	constructor(
+		@Inject(MAT_DIALOG_DATA) public data: { enableWil: boolean },
+		private dialogRef: MatDialogRef<SchoolSettingDialogComponent>,
+		private adminService: AdminService,
+		private http: HttpService
+	) {
 		this.tzNames = moment.tz.names();
 	}
 
@@ -81,6 +88,30 @@ export class SchoolSettingDialogComponent implements OnInit, OnDestroy {
             type: 'success',
           });*/
 			});
+	}
+
+	public ngAfterViewInit() {
+		if (this.data?.enableWil) {
+			this.initialState = {
+				...this.schoolForm.value,
+				wait_in_line: true,
+			};
+			this.schoolForm.patchValue({
+				wait_in_line: true,
+			});
+			this.adminService.updateSchoolSettings(this.currentSchool.id, { wait_in_line: true }).subscribe({
+				next: (updatedSchool: School) => {
+					this.currentSchool = updatedSchool;
+				},
+			});
+			// this.adminService.updateSchoolSettingsRequest(this.currentSchool, { wait_in_line: true });
+			const { nativeElement } = this.wilControlBlock;
+			nativeElement.classList.add('focus-background');
+
+			setTimeout(() => {
+				nativeElement.classList.remove('focus-background');
+			}, 2000);
+		}
 	}
 
 	public ngOnDestroy(): void {

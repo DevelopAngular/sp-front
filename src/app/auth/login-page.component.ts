@@ -2,7 +2,6 @@ import { Component, ElementRef, EventEmitter, OnDestroy, OnInit, Output, ViewChi
 import { ActivatedRoute } from '@angular/router';
 import { DeviceDetection } from '../device-detection.helper';
 import { DomSanitizer, Meta, SafeUrl, Title } from '@angular/platform-browser';
-import { JwtHelperService } from '@auth0/angular-jwt';
 import { Observable, ReplaySubject, Subject } from 'rxjs';
 
 declare const window;
@@ -26,11 +25,9 @@ export class LoginPageComponent implements OnInit, OnDestroy {
 	private pendingSubject = new ReplaySubject<boolean>(1);
 	private isIOSMobile: boolean = DeviceDetection.isIOSMobile();
 	private isAndroid: boolean = DeviceDetection.isAndroid();
-	private jwt: JwtHelperService;
 	private destroyer$ = new Subject<any>();
 
 	constructor(private route: ActivatedRoute, private sanitizer: DomSanitizer, private titleService: Title, private metaService: Meta) {
-		this.jwt = new JwtHelperService();
 		this.pending$ = this.pendingSubject.asObservable();
 	}
 

@@ -9,12 +9,13 @@
 html {
     background-color: #FCFDFF;
     padding: 0 0;
-    overscroll-behavior: contain;
     right: 0;
     left: 0;
 }
 
 body {
+    position: absolute;
+    height: 100vh;
     padding: 0 0;
     margin: 0 0;
     font-family: $primaryFont;
@@ -34,7 +35,7 @@ body {
 // translation uses "var" tag to isolate dynamic parts of a phrase
 
 var {
-  font-style: inherit;
+    font-style: inherit;
 }
 
 //@media only screen and (orientation:landscape){
@@ -620,7 +621,6 @@ body {
     z-index: 1005;
 }
 
-
 /* === Hubspot Overrides === */
 
 @media screen and (max-width: 420px) {
@@ -701,3 +701,14 @@ body {
 }
 
 .open-intercom-btn {}
+
+.underline {
+    text-decoration: underline;
+}
+.referral-dialog-container .mat-dialog-container {
+	padding: 30px 40px 60px 40px;
+    overflow: hidden;
+    border-radius: 12px;
+    max-width: 400px;
+    box-sizing: unset;
+}

@@ -1,8 +1,9 @@
-import { AfterViewInit, Component, ElementRef, HostListener, NgZone, OnDestroy, OnInit, Renderer2, SecurityContext, ViewChild } from '@angular/core';
+import { AfterViewInit, Component, ElementRef, HostListener, OnDestroy, OnInit, Renderer2, ViewChild } from '@angular/core';
 import { MatDialog, MatDialogRef } from '@angular/material/dialog';
 import { ActivatedRoute, NavigationEnd, Router } from '@angular/router';
 import { filter as _filter } from 'lodash';
-import { BehaviorSubject, combineLatest, forkJoin, fromEvent, interval, merge, Observable, of, ReplaySubject, Subject, throwError, zip } from 'rxjs';
+import { BehaviorSubject, combineLatest, fromEvent, merge, Observable, of, ReplaySubject, Subject, throwError, zip } from 'rxjs';
+import { NuxReferralComponent } from './nux-components/nux-referral/nux-referral.component';
 
 import {
 	catchError,
@@ -12,6 +13,7 @@ import {
 	finalize,
 	map,
 	mergeMap,
+	skipUntil,
 	switchMap,
 	take,
 	takeUntil,
@@ -22,10 +24,8 @@ import { DarkThemeSwitch } from './dark-theme-switch';
 
 import { DeviceDetection } from './device-detection.helper';
 import { School } from './models/School';
-import { AdminService } from './services/admin.service';
 import { LoginService } from './services/login.service';
 import { HttpService } from './services/http-service';
-import { KioskModeService } from './services/kiosk-mode.service';
 import { StorageService } from './services/storage.service';
 import { OverlayContainer } from '@angular/cdk/overlay';
 import { APPLY_ANIMATED_CONTAINER, ConsentMenuOverlay } from './consent-menu-overlay';
@@ -40,15 +40,15 @@ import { NextReleaseService } from './next-release/services/next-release.service
 import { ScreenService } from './services/screen.service';
 import { ToastService } from './services/toast.service';
 import _refiner from 'refiner-js';
-import { ColorProfile } from './models/ColorProfile';
 import { Util } from '../Util';
 import { HelpCenterService } from './services/help-center.service';
 import { CallDialogComponent } from './shared/shared-components/call-dialog/call-dialog.component';
 import { FeatureFlagService, FLAGS } from './services/feature-flag.service';
-import { CookieService } from 'ngx-cookie-service';
 import { environment } from '../environments/environment';
 import { ParentAccountService } from './services/parent-account.service';
 import { HttpErrorResponse } from '@angular/common/http';
+import { NuxReferralSuccessComponent } from './nux-components/nux-referral/nux-referral-success.component';
+import { PollingService } from './services/polling-service';
 
 declare const window;
 declare var ResizeObserver;
@@ -87,7 +87,6 @@ export class AppComponent implements OnInit, AfterViewInit, OnDestroy {
 	public schools: School[] = [];
 	public darkThemeEnabled: boolean;
 	public isKioskMode: boolean;
-	public showSupportButton: boolean;
 	public customToastOpen$: Observable<boolean>;
 	public toasts$: Observable<any>;
 	hasCustomBackdrop: boolean;
@@ -101,36 +100,16 @@ export class AppComponent implements OnInit, AfterViewInit, OnDestroy {
 	private subscriber$ = new Subject();
 
 	public mainContentWidth: string = '100%';
-	public rightPosition;
 
 	public isUserHasPhoneAccess: boolean;
-
-	// @ViewChild('help-centre-iframe') iframe: ElementRef;
-
-	trialEndDate$ = this.http.currentSchoolSubject.pipe(
-		takeUntil(this.subscriber$),
-		filter((s) => !!s?.trial_end_date),
-		map((s) => {
-			const endDate = new Date(s.trial_end_date);
-			// We want the trial to end at the end of the day specified by |trial_end_date|
-			const day = 60 * 60 * 24 * 1000 - 1;
-			const realEndDate = new Date(endDate.getTime() + day);
-			return realEndDate;
-		})
-	);
 
 	isAdmin$ = this.userService.userData.pipe(
 		filter((u) => !!u),
 		map((u) => u.isAdmin())
 	);
 
-	private todayDate = (() => {
-		const date = new Date();
-		return Date.UTC(date.getUTCFullYear(), date.getUTCMonth(), date.getUTCDate(), date.getUTCHours(), date.getUTCMinutes(), date.getUTCSeconds());
-	})();
-
 	@HostListener('window:popstate', ['$event'])
-	back(event) {
+	back() {
 		if (DeviceDetection.isAndroid() || DeviceDetection.isIOSMobile()) {
 			window.history.pushState({}, '');
 		}
@@ -147,12 +126,6 @@ export class AppComponent implements OnInit, AfterViewInit, OnDestroy {
 			);
 		}
 	}
-	// @HostListener('window:mousemove', ['$event'])
-	// onWindowBlur(event: any): void {
-	// 	addEventListener('mousemove', function (e) {
-	// 		console.log('On iframe');
-	// 	});
-	// }
 
 	constructor(
 		public darkTheme: DarkThemeSwitch,
@@ -160,14 +133,11 @@ export class AppComponent implements OnInit, AfterViewInit, OnDestroy {
 		private userService: UserService,
 		private nextReleaseService: NextReleaseService,
 		private http: HttpService,
-		private adminService: AdminService,
-		private _zone: NgZone,
 		private activatedRoute: ActivatedRoute,
 		private router: Router,
 		private dialog: MatDialog,
 		private overlayContainer: OverlayContainer,
 		private storageService: StorageService,
-		private kms: KioskModeService,
 		private notifService: NotificationService,
 		private shortcutsService: KeyboardShortcutsService,
 		private screen: ScreenService,
@@ -175,10 +145,10 @@ export class AppComponent implements OnInit, AfterViewInit, OnDestroy {
 		public helpCenter: HelpCenterService,
 		private sanitizer: DomSanitizer,
 		public featureFlags: FeatureFlagService,
-		private cookie: CookieService,
 		private titleService: Title,
 		private renderer: Renderer2,
-		private parentService: ParentAccountService
+		private parentService: ParentAccountService,
+		private pollingService: PollingService
 	) {}
 
 	get isMobile() {
@@ -195,7 +165,6 @@ export class AppComponent implements OnInit, AfterViewInit, OnDestroy {
 		this.screen.customBackdropStyle$.asObservable().subscribe({
 			next: (customStyle: Record<string, any>) => (this.customStyle = customStyle),
 		});
-
 		this.hasCustomBackdrop$ = this.screen.customBackdropEvent$.asObservable();
 		this.customBackdropStyle$ = this.screen.customBackdropStyle$;
 
@@ -211,32 +180,10 @@ export class AppComponent implements OnInit, AfterViewInit, OnDestroy {
 			}
 		});
 
-		// set only an already set up language is found
-		// otherwise let the language component try to translate
-		/*const savedLang = this.storageService.getItem('codelang');
-    if (!!savedLang) {
-      this.http.currentLang$.pipe(
-        takeUntil(this.subscriber$),
-        filter(res => !!res),
-      ).subscribe(chosenLang => {
-        try {
-          this.localize.load_localize_scripts(() => {
-            // Localizejs saves in localstorage an intem ljs-source-lang that stores the original lanuage
-            // the original language may be taken from lang html attribute of page
-            // or the official way below
-            const sourceLanguage = this.localize.getSourceLanguage();
-            this.localize.from(sourceLanguage).to(chosenLang);
-          });
-        } catch (err) {
-          this.localize.disableLanguage();
-        }
-      });
-    }*/
-
 		this.userService.loadedUser$
 			.pipe(
 				filter((l) => l),
-				switchMap((l) => this.userService.user$.pipe(take(1))),
+				switchMap(() => this.userService.user$.pipe(take(1))),
 				filter((user) => !!user),
 				map((user) => User.fromJSON(user)),
 				// Wait for schools to load so that we can register intercom and refiner correctly.
@@ -245,20 +192,19 @@ export class AppComponent implements OnInit, AfterViewInit, OnDestroy {
 					return this.intercomLauncherAdded$.pipe(map((intercomWrapper) => [user, intercomWrapper]));
 				}),
 				switchMap(([user, intercomWrapper]: [User, HTMLDivElement]) => {
+					// create a websocket connection when user logs in
+					this.pollingService.refreshHeartbeatTimer();
+
 					this.currentRoute = window.location.pathname;
 					this.isStudent = user.isStudent();
-					const urlBlackList = [
-						'/forms',
-						'/kioskMode',
-						// '/login'
-					];
+					const urlBlackList = ['/forms', '/kioskMode'];
 					const isAllowed = urlBlackList.every((route) => !this.currentRoute.includes(route));
 					if (!user.isStudent() && !this.currentRoute.includes('/forms')) {
 						this.registerRefiner(user);
 					}
+					this.openNuxReferralModal(user);
 
 					if (intercomWrapper) {
-						// intercomWrapper.style.display = user.isStudent() ? 'none' : 'block';
 						intercomWrapper.style.display = 'none';
 					}
 
@@ -316,7 +262,6 @@ export class AppComponent implements OnInit, AfterViewInit, OnDestroy {
 		this.shortcutsService.initialize();
 		this.shortcuts = this.shortcutsService.shortcuts;
 
-		// this.googleAnalytics.init();
 		const fcm_sw = localStorage.getItem('fcm_sw_registered');
 		if (fcm_sw === 'true') {
 			this.notifService.initNotifications(true);
@@ -337,18 +282,23 @@ export class AppComponent implements OnInit, AfterViewInit, OnDestroy {
 			document.head.appendChild(link);
 		}
 
-		combineLatest([this.checkIfAuthOnLoad(), this.loginService.isAuthenticated$.asObservable()])
+		this.showUISubject.next(true);
+
+		combineLatest([
+			this.loginService.continueAuthFlow$.asObservable(),
+			this.loginService.checkIfAuthStored(),
+			this.loginService.isAuthenticated$.asObservable(),
+		])
 			.pipe(
-				map(([authOnLoad, authStateChanged]) => authOnLoad || authStateChanged),
+				map(([_, authOnLoad, authStateChanged]) => authOnLoad || authStateChanged),
 				distinctUntilChanged(),
 				tap((isAuth) => {
+					this.isAuthenticated = isAuth;
 					const path = window.location.pathname;
 					if (!isAuth) {
 						if (path.includes('main/student')) {
 							this.storageService.setItem('initialUrl', path);
 						}
-						this.showUISubject.next(true);
-						this.isAuthenticated = false;
 					}
 				}),
 				filter(Boolean),
@@ -377,10 +327,10 @@ export class AppComponent implements OnInit, AfterViewInit, OnDestroy {
 						}),
 						concatMap((parentAccount) => {
 							if (!parentAccount) {
-								this.userService.getUserRequest();
 								return this.http.schools$.pipe(
 									concatMap(() => {
-										return this.userService.userData.pipe(
+										this.userService.getUserRequest();
+										return this.userService.user$.pipe(
 											takeUntil(this.subscriber$),
 											filter<User>(Boolean),
 											map((u) => User.fromJSON(u))
@@ -422,6 +372,13 @@ export class AppComponent implements OnInit, AfterViewInit, OnDestroy {
 				})
 			)
 			.subscribe();
+
+		const params = new URL(window.location.href).searchParams;
+		const [instant_login, code, scope] = [params.get('instant_login'), params.get('code'), params.get('scope')];
+		const isThirdPartyLogin = !!(instant_login || code || scope);
+		if (!isThirdPartyLogin) {
+			this.loginService.continueAuthFlow$.next(true);
+		}
 
 		this.http.schoolsCollection$
 			.pipe(
@@ -488,19 +445,7 @@ export class AppComponent implements OnInit, AfterViewInit, OnDestroy {
 			},
 		};
 		_refiner('identifyUser', data);
-		// _refiner('showForm', '31b6c030-820a-11ec-9c99-8b41a98d875d');
 		console.log('refiner registered');
-	}
-
-	getDaysUntil(date: Date): number {
-		const oneDay = 24 * 60 * 60 * 1000; // hours*minutes*seconds*milliseconds
-		// @ts-ignore
-		const diffDays = Math.round(Math.abs((date - this.todayDate) / oneDay));
-		return diffDays;
-	}
-
-	getDayText(days: number): string {
-		return days === 1 ? 'day' : 'days';
 	}
 
 	getBarBg(color, hovered, pressed) {
@@ -539,9 +484,8 @@ export class AppComponent implements OnInit, AfterViewInit, OnDestroy {
 		// stop listening when the Intercom wrapper is found
 		const targetNode = document.body;
 		const listenerConfig = { childList: true, subtree: true };
-		this.intercomObserver = new MutationObserver((mutationList, observer) => {
+		this.intercomObserver = new MutationObserver((mutationList) => {
 			for (const m of mutationList) {
-				// @ts-ignore
 				if ((m.target as HTMLElement).tagName !== 'BODY') {
 					return;
 				}
@@ -557,6 +501,39 @@ export class AppComponent implements OnInit, AfterViewInit, OnDestroy {
 			}
 		});
 		this.intercomObserver.observe(targetNode, listenerConfig);
+	}
+
+	openNuxReferralModal(user: User): void {
+		const featureFlag = this.userService.getFeatureFlagReferralProgram();
+		const canRefer = featureFlag && user.isStaff();
+
+		this.userService.introsData$
+			.pipe(
+				filter((i) => !!i),
+				take(1)
+			)
+			.subscribe((intros) => {
+				const hasNotSeenModal = !intros.seen_referral_nux?.universal?.seen_version;
+				const hasNotSeenSuccessModal = !intros.seen_referral_success_nux?.universal?.seen_version;
+
+				if (hasNotSeenModal && user.referral_status === 'not_applied' && canRefer) {
+					this.dialog.open(NuxReferralComponent, {
+						data: {
+							isAdmin: user.isAdmin(),
+						},
+						panelClass: 'referral-dialog-container',
+					});
+					this.userService.updateIntrosSeenReferralNuxRequest(intros, 'universal', '1');
+				} else if (hasNotSeenSuccessModal && user.referral_status === 'accepted' && canRefer) {
+					this.dialog.open(NuxReferralSuccessComponent, {
+						data: {
+							isAdmin: user.isAdmin(),
+						},
+						panelClass: 'referral-dialog-container',
+					});
+					this.userService.updateIntrosSeenReferralSuccessNuxRequest(intros, 'universal', '1');
+				}
+			});
 	}
 
 	get setHeight() {
@@ -642,7 +619,7 @@ export class AppComponent implements OnInit, AfterViewInit, OnDestroy {
 			const myEl = document.querySelector('#help-center-content');
 
 			// Create observer
-			const observer = new ResizeObserver((element) => {
+			const observer = new ResizeObserver(() => {
 				if (!this.helpCenter.isHelpCenterOpen.getValue()) {
 					this.mainContentWidth = '100%';
 				} else if (document.getElementById('help-center-content')) {
@@ -671,24 +648,8 @@ export class AppComponent implements OnInit, AfterViewInit, OnDestroy {
 		});
 		window.document.querySelector('.invis-backdrop-helpcenter').parentNode.style.zIndex = '1009';
 
-		CDC.afterClosed().subscribe((status) => {
+		CDC.afterClosed().subscribe(() => {
 			window.document.querySelector('.cdk-overlay-container').style.zIndex = '1005';
 		});
-	}
-
-	private checkIfAuthOnLoad(): Observable<boolean> {
-		const isCookiePresent = !!this.cookie.get('smartpassToken');
-
-		if (!isCookiePresent) {
-			this.storageService.removeItem('server');
-			return of(false);
-		}
-
-		const svrString = this.storageService.getItem('server');
-		if (!svrString) {
-			return of(false);
-		}
-
-		return of(true);
 	}
 }

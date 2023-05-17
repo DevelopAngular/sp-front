@@ -397,6 +397,7 @@ export class SPSearchComponent implements OnInit, OnDestroy {
 
 		switch (this.searchTarget) {
 			case 'users':
+				``;
 				if (search !== '') {
 					this.pending$.next(true);
 					if (this.type === 'alternative') {
@@ -435,17 +436,11 @@ export class SPSearchComponent implements OnInit, OnDestroy {
 									.possibleProfileByCustomId(search)
 									.toPromise()
 									.then((paged: any) => {
-										if (paged.results?.user?.length === undefined) {
-											this.pending$.next(false);
-											this.isOpenedOptions.emit(true);
-											const uu = this.removeDuplicateStudents([paged.results.user]);
-											return this.mayRemoveStudentsByCallback(uu);
-										} else {
-											this.pending$.next(false);
-											this.isOpenedOptions.emit(true);
-											const uu = this.removeDuplicateStudents([]);
-											return this.mayRemoveStudentsByCallback(uu);
-										}
+										console.log(paged?.results?.user?.length);
+										this.pending$.next(false);
+										this.isOpenedOptions.emit(true);
+										const uu = this.removeDuplicateStudents(paged?.results?.user || []);
+										return this.mayRemoveStudentsByCallback(uu);
 									})
 									.catch((err) => {
 										return [];

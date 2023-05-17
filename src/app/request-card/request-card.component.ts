@@ -612,7 +612,6 @@ export class RequestCardComponent implements OnInit, OnDestroy {
 					.afterClosed()
 					.pipe(filter((res) => !!res))
 					.subscribe((matData) => {
-						// denyMessage = data['message'];
 						if (isNull(matData.data.message)) {
 							this.messageEditOpen = false;
 							return;
@@ -771,11 +770,17 @@ export class RequestCardComponent implements OnInit, OnDestroy {
 			student_id: this.formState.data.kioskModeStudent.id,
 		};
 
+		const preRequestStatus = this.request.status;
+		this.request.status = 'pending';
+
 		this.requestService.createRequest(body).subscribe({
 			next: () => {
 				console.log('pass request resent');
 			},
-			error: console.log,
+			error: (err) => {
+				console.error('While resending a pass request: ', err);
+				this.request.status = preRequestStatus;
+			},
 		});
 	}
 }
