@@ -12,7 +12,7 @@ import { forkJoin, of } from 'rxjs';
 import { openToastAction } from '../../toast/actions';
 import { Toast } from '../../../models/Toast';
 import { ProfilePicture } from '../../../models/ProfilePicture';
-import { PollingService } from '../../../services/polling-service';
+import { EventData, PollingService } from '../../../services/polling-service';
 
 @Injectable()
 export class AccountsEffects {
@@ -329,7 +329,7 @@ export class AccountsEffects {
 						return this.pollingService.listen('admin.profile_pictures.attach_profile_pics_end');
 					}),
 					map(({ data }) => {
-						return { ...profile, profile_picture: data.attached_pictures[0].photo_url };
+						return { ...profile, profile_picture: (data as EventData).attached_pictures[0].photo_url };
 					}),
 					map((user: User) => {
 						if (role === '_profile_admin') {

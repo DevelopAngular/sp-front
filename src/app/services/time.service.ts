@@ -1,7 +1,7 @@
 import { Injectable } from '@angular/core';
 import { BehaviorSubject, defer, interval, Observable } from 'rxjs';
 import { distinctUntilChanged, map, publishReplay, refCount, repeat, scan, switchMap, take } from 'rxjs/operators';
-import { PollingEvent, PollingService } from './polling-service';
+import { EventData, PollingEvent, PollingService } from './polling-service';
 
 interface RTTimeReport {
 	requestTime: number;
@@ -117,10 +117,10 @@ export class TimeService {
 			this.pollingService.sendMessage('time.time_request', null);
 
 			return this.timeResponse$.pipe(
-				map((event) => {
+				map((event: PollingEvent) => {
 					return {
 						requestTime: requestTime,
-						serverTime: Date.parse(event.data.utc_time),
+						serverTime: Date.parse((event.data as EventData).utc_time),
 						responseTime: Date.now(),
 					};
 				}),

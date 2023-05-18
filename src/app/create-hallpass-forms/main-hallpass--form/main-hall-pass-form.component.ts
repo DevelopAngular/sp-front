@@ -296,11 +296,11 @@ export class MainHallPassFormComponent implements OnInit, OnDestroy {
 				filter<PollingEvent>(Boolean),
 				distinctUntilChanged(
 					(prev, res) =>
-						prev.data.show_as_origin_room === res.data.show_as_origin_room ||
-						prev.data.ignore_students_pass_limit.show_as_origin_room === res.data.ignore_students_pass_limit
+						(prev.data as Pinnable).show_as_origin_room === (res.data as Pinnable).show_as_origin_room ||
+						(prev.data as Pinnable).ignore_students_pass_limit === (res.data as Pinnable).ignore_students_pass_limit
 				),
 				tap((res) => {
-					const pinnable: Pinnable = Pinnable.fromJSON(res.data);
+					const pinnable: Pinnable = Pinnable.fromJSON(res.data as Pinnable);
 					const pinnableData = {
 						// data to create the pinnable
 						ignore_students_pass_limit: pinnable.ignore_students_pass_limit,

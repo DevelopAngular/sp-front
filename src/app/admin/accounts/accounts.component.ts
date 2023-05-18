@@ -23,7 +23,7 @@ import { ToastService } from '../../services/toast.service';
 import { Onboard } from '../../models/Onboard';
 import { TableService } from '../sp-data-table/table.service';
 import { CleverInfo } from '../../models/CleverInfo';
-import { PollingService } from '../../services/polling-service';
+import { EventData, PollingEvent, PollingService } from '../../services/polling-service';
 import { ProfilePictureComponent } from './profile-picture/profile-picture.component';
 import { XlsxService } from '../../services/xlsx.service';
 import { EncounterPreventionDialogComponent } from './encounter-prevention-dialog/encounter-prevention-dialog.component';
@@ -120,17 +120,17 @@ export class AccountsComponent implements OnInit, OnDestroy {
 		this.polingService
 			.listen('admin.user_sync.sync_start')
 			.pipe(takeUntil(this.destroy$))
-			.subscribe((res) => {
+			.subscribe((res: PollingEvent) => {
 				this.adminService.syncLoading();
 			});
 
 		this.polingService
 			.listen('admin.user_sync.sync_end')
 			.pipe(takeUntil(this.destroy$))
-			.subscribe((res) => {
-				if (res.data.sync_type === 'clever') {
+			.subscribe((res: PollingEvent) => {
+				if ((res.data as EventData).sync_type === 'clever') {
 					this.adminService.updateCleverInfo(res.data);
-				} else if (res.data.sync_type === 'gsuite') {
+				} else if ((res.data as EventData).sync_type === 'gsuite') {
 					this.adminService.updateGsuiteInfo(res.data);
 				}
 			});

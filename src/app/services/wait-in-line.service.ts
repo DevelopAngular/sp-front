@@ -5,6 +5,7 @@ import { HttpService } from './http-service';
 import { filter } from 'rxjs/operators';
 import { StartWaitingInLinePassResponse } from './hall-passes.service';
 import { LiveDataService } from '../live-data/live-data.service';
+import { PollingEvent } from './polling-service';
 
 export const sortWil = (pass1: WaitingInLinePass, pass2: WaitingInLinePass): number => {
 	const date = new Date();
@@ -38,10 +39,10 @@ export class WaitInLineService {
 	}
 
 	listenForWilUpdate(id: string | number) {
-		return this.liveData.watchUpdatedWaitingInLine().pipe(filter((event) => event.data.id == id));
+		return this.liveData.watchUpdatedWaitingInLine().pipe(filter((event: PollingEvent) => event.data.id == id));
 	}
 
 	listenForWilDeletion(id: string | number) {
-		return this.liveData.watchDeletedWaitingInLine().pipe(filter((event) => event.data.id == id));
+		return this.liveData.watchDeletedWaitingInLine().pipe(filter((event: PollingEvent) => event.data.id == id));
 	}
 }
