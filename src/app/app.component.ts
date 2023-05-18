@@ -565,14 +565,13 @@ export class AppComponent implements OnInit, AfterViewInit, OnDestroy {
 					.subscribe((intros) => {
 						const hasNotSeenModal = !intros.seen_insights_nux?.universal?.seen_version;
 
-						if (!hasNotSeenModal && featureFlags && user.isAdmin() && hasPdfOrReviews) {
+						if (hasNotSeenModal && featureFlags && user.isAdmin() && hasPdfOrReviews) {
 							this.dialog.open(NuxInsightsComponent, {
 								data: {
 									isAdmin: user.isAdmin(),
 								},
 								panelClass: 'insights-dialog-container',
 							});
-							this.userService.updateIntrosSeenInsightsNuxRequest(intros, 'universal', '1');
 						}
 					});
 			});

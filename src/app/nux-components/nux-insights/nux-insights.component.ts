@@ -59,6 +59,16 @@ export class NuxInsightsComponent implements OnInit {
 		this.isAdmin = this.data.isAdmin;
 		this.teacherReviews$ = this.teacherReviewsService.getReviews();
 		this.getYearInReviewData();
+
+		// Mark intros nux as seen.
+		this.userService.introsData$
+			.pipe(
+				filter((i) => !!i),
+				take(1)
+			)
+			.subscribe((intros) => {
+				this.userService.updateIntrosSeenInsightsNuxRequest(intros, 'universal', '1');
+			});
 	}
 
 	getYearInReviewData() {
