@@ -539,7 +539,7 @@ export class AppComponent implements OnInit, AfterViewInit, OnDestroy {
 	}
 
 	openNuxInsightsModal(user: User): void {
-		const featureFlags = this.featureFlags.isFeatureEnabledV2(FLAGS.TeacherReviews) && this.featureFlags.isFeatureEnabledV2(FLAGS.YearInReview);
+		const featureFlags = this.featureFlags.isFeatureEnabledV2(FLAGS.TeacherReviews) || this.featureFlags.isFeatureEnabledV2(FLAGS.YearInReview);
 
 		this.userService.introsData$
 			.pipe(
