@@ -264,6 +264,8 @@
 							[icon]="'./assets/Hand (Navy).svg'"
 							(pushOutValue)="change$.next({ value: $event, action: 'to' })"></app-toggle-input>
 					</div>
+
+
 					<div class="toggle-content">
 						<div class="title-line">
 							<div class="label" [style.color]="passLimitForm.get('toEnabled').value ? '#1F194E' : '#7F879D'">Active Pass Limit</div>
@@ -286,6 +288,9 @@
 							</ng-template>
 						</div>
 					</div>
+
+
+
 				</div>
 				<div class="active-block" *ngIf="passLimitForm.get('toEnabled').value">
 					<div [style.width]="'145px'">

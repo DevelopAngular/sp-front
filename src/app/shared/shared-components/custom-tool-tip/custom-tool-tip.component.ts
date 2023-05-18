@@ -1,4 +1,4 @@
-import { ChangeDetectionStrategy, Component, EventEmitter, Input, OnInit, Output, TemplateRef, ViewChild } from '@angular/core';
+import { ChangeDetectionStrategy, Component, EventEmitter, Input, OnInit, Output, TemplateRef, ViewChild, HostListener } from '@angular/core';
 import { tooltipAnimation } from '../../../animations';
 
 @Component({
@@ -18,14 +18,25 @@ export class CustomToolTipComponent implements OnInit {
 	@Input() width: string;
 	@Input() nonDisappearing: boolean;
 
-	@Output() overEvent: EventEmitter<boolean> = new EventEmitter<boolean>();
-	@Output() closeTooltip: EventEmitter<boolean> = new EventEmitter<boolean>();
-
-	constructor() {}
+	// @Output() overEvent: EventEmitter<boolean> = new EventEmitter<boolean>();
+	// @Output() closeTooltip: EventEmitter<boolean> = new EventEmitter<boolean>();
 
 	ngOnInit() {
 		if (!this.contentTemplate) {
 			this.contentTemplate = this.defaultTpl;
 		}
+	}
+
+	@Output() enterTooltip: EventEmitter<void> = new EventEmitter<void>();
+	@Output() leaveTooltip: EventEmitter<void> = new EventEmitter<void>();
+
+	@HostListener('mouseenter')
+	onMouseEnter() {
+		this.enterTooltip.emit();
+	}
+
+	@HostListener('mouseleave')
+	onMouseLeave() {
+		this.leaveTooltip.emit();
 	}
 }

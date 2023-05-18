@@ -1,4 +1,4 @@
-<div class="wrapper" (mouseleave)="closeTooltip.emit(true)" (mouseenter)="overEvent.emit()" [ngClass]="{ before: nonDisappearing }">
+<div class="wrapper" (mouseenter)="enterTooltip.emit()" (mouseleave)="leaveTooltip.emit()" [ngClass]="{ before: nonDisappearing }">
 	<div class="tooltip-container" @tooltipAnimate>
 		<ng-template #simpleText>
 			<ng-container *ngIf="!allowVarTag; else allowed">
@@ -13,3 +13,6 @@
 		<ng-container *ngTemplateOutlet="contentTemplate || simpleText"> </ng-container>
 	</div>
 </div>
+
+
+<!-- (mouseleave)="closeTooltip.emit(true)" (mouseenter)="overEvent.emit()" -->
