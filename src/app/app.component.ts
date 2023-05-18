@@ -17,7 +17,6 @@ import {
 	finalize,
 	map,
 	mergeMap,
-	skipUntil,
 	switchMap,
 	take,
 	takeUntil,
@@ -53,6 +52,7 @@ import { ParentAccountService } from './services/parent-account.service';
 import { HttpErrorResponse } from '@angular/common/http';
 import { NuxReferralSuccessComponent } from './nux-components/nux-referral/nux-referral-success.component';
 import { PollingService } from './services/polling-service';
+import { ToastObj } from './ngrx/toast/states';
 
 declare const window;
 declare let ResizeObserver;
@@ -92,7 +92,7 @@ export class AppComponent implements OnInit, AfterViewInit, OnDestroy {
 	public darkThemeEnabled: boolean;
 	public isKioskMode: boolean;
 	public customToastOpen$: Observable<boolean>;
-	public toasts$: Observable<any>;
+	public toasts$: Observable<ToastObj[]>;
 	hasCustomBackdrop: boolean;
 	customStyle: Record<string, any>;
 	public hasCustomBackdrop$: Observable<boolean>;
@@ -197,6 +197,10 @@ export class AppComponent implements OnInit, AfterViewInit, OnDestroy {
 				switchMap(() => this.userService.user$.pipe(take(1))),
 				filter((user) => !!user),
 				map((user) => User.fromJSON(user)),
+				tap((user) => {
+					this.openNuxReferralModal(user);
+					this.openNuxInsightsModal(user);
+				}),
 				// Wait for schools to load so that we can register intercom and refiner correctly.
 				mergeMap((user) => this.http.schools$.pipe(map(() => user))),
 				concatMap((user) => {
@@ -213,8 +217,6 @@ export class AppComponent implements OnInit, AfterViewInit, OnDestroy {
 					if (!user.isStudent() && !this.currentRoute.includes('/forms')) {
 						this.registerRefiner(user);
 					}
-					this.openNuxReferralModal(user);
-					this.openNuxInsightsModal(user);
 
 					if (intercomWrapper) {
 						intercomWrapper.style.display = 'none';

@@ -28,6 +28,8 @@ export class ReferralJoinComponent implements OnInit {
 	user: User;
 	termsAccepted = false;
 	referralRockLoaded = false;
+	showValidationMsg = false;
+	makingRequest = false;
 
 	constructor(private userService: UserService, private toast: ToastService) {
 		this.initReferralRock();
@@ -91,14 +93,18 @@ export class ReferralJoinComponent implements OnInit {
 	}
 
 	apply(): void {
-		this.toggleTerms();
+		if (!this.termsAccepted) {
+			this.showValidationMsg = true;
+			return;
+		}
+		this.makingRequest = true;
 		this.userService
 			.applyForReferral()
 			.pipe(
 				map((resp: Record<string, unknown>) => {
 					return resp?.referral_status ? (resp.referral_status as ReferralStatus) : undefined;
 				}),
-				finalize(() => this.toggleTerms())
+				finalize(() => (this.makingRequest = false))
 			)
 			.subscribe({
 				next: (status) => {
@@ -119,5 +125,8 @@ export class ReferralJoinComponent implements OnInit {
 
 	toggleTerms(): void {
 		this.termsAccepted = !this.termsAccepted;
+		if (this.termsAccepted) {
+			this.showValidationMsg = false;
+		}
 	}
 }

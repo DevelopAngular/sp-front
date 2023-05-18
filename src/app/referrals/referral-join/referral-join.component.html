@@ -11,13 +11,18 @@
 		</div>
 		<textarea id="referralReason" placeholder="Tell us why you are an amazing fit&#10;for the program! (optional)" class="referral-input"></textarea>
 		<div class="checkbox">
-			<input type="checkbox" id="terms" (click)="toggleTerms()" />
-			<label for="terms"
-				>I agree to the
-				<a class="underline terms" href="https://www.smartpass.app/referral-program-terms" target="_blank">Terms and Conditions</a></label
-			><br />
+			<input type="checkbox" id="terms" (click)="toggleTerms()" required />
+			<div>
+				<label for="terms"
+					>I agree to the
+					<a class="underline terms" href="https://www.smartpass.app/referral-program-terms" target="_blank">Terms and Conditions</a></label
+				>
+				<div>
+					<span class="validation-text" *ngIf="showValidationMsg">Required</span>
+				</div>
+			</div>
 		</div>
-		<button (click)="apply()" [disabled]="!termsAccepted">Apply Now</button>
+		<button (click)="apply()" [disabled]="makingRequest">Apply Now</button>
 	</div>
 </section>
 <div class="referral-sign-up approval" *ngIf="user?.referral_status === 'applied'">
