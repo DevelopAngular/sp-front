@@ -1,8 +1,9 @@
 import { Component, OnInit } from '@angular/core';
 import { UserService } from '../../services/user.service';
 import { User, ReferralStatus } from '../../models/User';
-import { concatMap, finalize, map } from 'rxjs/operators';
+import { finalize, map, switchMap, takeWhile, tap } from 'rxjs/operators';
 import { ToastService } from '../../services/toast.service';
+import { interval } from 'rxjs';
 
 type referralRockJS = {
 	scriptConfig?: { parameters: { src: string; transactionKey: string } };
@@ -26,12 +27,13 @@ declare const window: Window & typeof globalThis & { referralJS: referralRockJS 
 export class ReferralJoinComponent implements OnInit {
 	user: User;
 	termsAccepted = false;
+	referralRockLoaded = false;
 
 	constructor(private userService: UserService, private toast: ToastService) {
-		this.setUpReferralRock();
+		this.initReferralRock();
 	}
 
-	setUpReferralRock(): void {
+	initReferralRock() {
 		window.referralJS = window.referralJS || {};
 		window.referralJS.scriptConfig = {
 			parameters: { src: '//smartpass.referralrock.com/ReferralSdk/referral.js', transactionKey: 'f99edca6-ab8e-486e-964e-885e7bdaf31f' },
@@ -39,7 +41,7 @@ export class ReferralJoinComponent implements OnInit {
 		(function (f, r, n, _, b, y) {
 			(b = f.createElement(r)), (y = f.getElementsByTagName(r)[0]);
 			b.async = 1;
-			b.src = n + '?referrer=' + encodeURIComponent(window.location.origin + window.location.pathname).replace(/[!'()*]/g, escape);
+			b.src = n + '?referrer=' + encodeURIComponent(window.location.origin + window.location.pathname).replace(/[!'()*]/g, encodeURIComponent);
 			b.id = 'RR_DIVID_V5';
 			b.setAttribute('transactionKey', window.referralJS.scriptConfig.parameters.transactionKey);
 			y.parentNode.insertBefore(b, y);
@@ -47,19 +49,45 @@ export class ReferralJoinComponent implements OnInit {
 	}
 
 	ngOnInit(): void {
-		this.userService.userData.pipe(concatMap((user) => this.userService.getUserById(user.id))).subscribe({
-			next: (user) => {
-				this.user = User.fromJSON(user);
-				window.referralJS.access = {
-					targetId: 'referral-frame',
-					parameters: {
-						view: 'iframe',
-						programIdentifier: '8fd54047-b36c-430e-8f2d-1546fc4b3675',
-						email: user.primary_email,
-					},
-				};
+		this.userService.userData
+			.pipe(
+				tap((user) => this.userService.getUserById(user.id)),
+				tap((user) => {
+					this.user = User.fromJSON(user);
+					this.loadReferralRockFrame();
+				}),
+				switchMap(() => interval(500)),
+				tap(() => {
+					this.loadReferralRockFrame();
+					this.checkReferralRockIframeLoaded();
+				}),
+				takeWhile(() => this.referralRockIframePresent() && !this.referralRockLoaded)
+			)
+			.subscribe();
+	}
+
+	// Loads the referral rock iFrame. The timing can be wonky, so we repeat it
+	loadReferralRockFrame() {
+		window.referralJS.access = {
+			targetId: 'referral-frame',
+			parameters: {
+				view: 'iframe',
+				programIdentifier: '8fd54047-b36c-430e-8f2d-1546fc4b3675',
+				email: this.user.primary_email,
 			},
-		});
+		};
+	}
+
+	// If the iFrame isn't present, don't bother running the script
+	referralRockIframePresent(): boolean {
+		return !!document.getElementById('referral-frame');
+	}
+
+	// Check if referral rock is loaded
+	checkReferralRockIframeLoaded() {
+		if (document.getElementById('referral-frame')?.hasAttribute('src')) {
+			this.referralRockLoaded = true;
+		}
 	}
 
 	apply(): void {
@@ -67,7 +95,7 @@ export class ReferralJoinComponent implements OnInit {
 		this.userService
 			.applyForReferral()
 			.pipe(
-				map((resp: Record<string, any>) => {
+				map((resp: Record<string, unknown>) => {
 					return resp?.referral_status ? (resp.referral_status as ReferralStatus) : undefined;
 				}),
 				finalize(() => this.toggleTerms())
