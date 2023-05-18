@@ -83,10 +83,16 @@ $climb: '../../..';
 
 		div.perk-card.wide {
 			grid-column: span 2;
-			flex-direction: row;
+			align-items: start;
+			img {
+				margin-left: 34px;
+			}
 			p.referral-text {
 				width: 380px;
 			}
+			background-image: url($climb + '/assets/Gift Bag.svg');
+			background-repeat: no-repeat;
+			background-position: 100% 100%;
 		}
 	}
 
