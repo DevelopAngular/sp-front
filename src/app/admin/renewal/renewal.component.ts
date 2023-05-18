@@ -63,6 +63,7 @@ export class RenewalComponent implements OnInit {
 
 	ngOnInit(): void {
 		this.teacherReviews$ = this.teacherReviewsService.getReviews();
+		let month;
 
 		this.adminService.getRenewalData().subscribe({
 			next: (data) => {
@@ -78,7 +79,7 @@ export class RenewalComponent implements OnInit {
 						};
 						break;
 					case 'expiring':
-						const month = this.datepipe.transform(this.status?.subscription_end_date, 'MMMM', 'UTC');
+						month = this.datepipe.transform(this.status?.subscription_end_date, 'MMMM', 'UTC');
 						this.reminder = {
 							img: './assets/admin-images/expiring-sub.png',
 							title: month ? 'Your SmartPass Subscription Expires in ' + month : 'Your SmartPass Subscription Expires Soon',
