@@ -18,9 +18,6 @@ export class CustomToolTipComponent implements OnInit {
 	@Input() width: string;
 	@Input() nonDisappearing: boolean;
 
-	// @Output() overEvent: EventEmitter<boolean> = new EventEmitter<boolean>();
-	// @Output() closeTooltip: EventEmitter<boolean> = new EventEmitter<boolean>();
-
 	ngOnInit() {
 		if (!this.contentTemplate) {
 			this.contentTemplate = this.defaultTpl;

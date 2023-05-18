@@ -73,7 +73,6 @@ export class ToolTipRendererDirective implements OnInit, OnDestroy, OnChanges {
 			.flexibleConnectedTo(this._elementRef)
 			.withPositions([this.positionStrategy ? this.positionStrategy : this.getPosition()]);
 
-		//const scrollStrategy = this._overlay.scrollStrategies.reposition({autoClose: true});
 		const scrollStrategy = this._overlay.scrollStrategies.close();
 
 		this._overlayRef = this._overlay.create({
@@ -170,7 +169,6 @@ export class ToolTipRendererDirective implements OnInit, OnDestroy, OnChanges {
 		}
 	}
 
-	@HostListener('pointerout')
 	@HostListener('mouseleave')
 	beginHideTooltip() {
 		this.hideTooltipWithDelay();
@@ -206,10 +204,7 @@ export class ToolTipRendererDirective implements OnInit, OnDestroy, OnChanges {
 						this.isOpen.emit(true);
 						this.tooltipRef.instance.allowVarTag = this.allowVarTag;
 
-						merge(
-							this.tooltipRef.instance.enterTooltip.pipe(map(() => 'enter')),
-							this.tooltipRef.instance.leaveTooltip.pipe(map(() => 'leave')) // Changed from closeTooltip to leaveTooltip
-						)
+						merge(this.tooltipRef.instance.enterTooltip.pipe(map(() => 'enter')), this.tooltipRef.instance.leaveTooltip.pipe(map(() => 'leave')))
 							.pipe(takeUntil(this.destroyOpen$))
 							.subscribe((eventType) => {
 								if (eventType === 'enter') {
