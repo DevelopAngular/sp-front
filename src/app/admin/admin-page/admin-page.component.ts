@@ -80,7 +80,7 @@ export class AdminPageComponent implements OnInit, AfterViewInit, OnDestroy {
 			)
 			.subscribe({
 				next: (show) => {
-					if (this.router.url === '/admin/teacher-reviews') {
+					if (this.router.url.includes('/teacher-reviews') || this.router.url.includes('/refer_us')) {
 						return;
 					}
 
