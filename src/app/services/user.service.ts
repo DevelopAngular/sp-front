@@ -108,6 +108,7 @@ import {
 	updateIntrosSearch,
 	updateIntrosSeenReferralNux,
 	updateIntrosSeenReferralSuccessNux,
+	updateIntrosSeenInsightsNux,
 	updateIntrosSeenRenewalStatusPage,
 	updateIntrosShowRoomAsOrigin,
 	updateIntrosStudentPassLimits,
@@ -631,6 +632,10 @@ export class UserService implements OnDestroy {
 		return this.getUserSchool().feature_flag_referral_program;
 	}
 
+	// getFeatureFlagInsights(): boolean {
+	// 	return this.getUserSchool().feature_flag_insights;
+	// }
+
 	getCurrentUpdatedSchool$(): Observable<School> {
 		return this.http.currentUpdateSchool$;
 	}
@@ -731,6 +736,10 @@ export class UserService implements OnDestroy {
 		this.store.dispatch(updateIntrosSeenReferralSuccessNux({ intros, device, version }));
 	}
 
+	updateIntrosSeenInsightsNuxRequest(intros, device, version) {
+		this.store.dispatch(updateIntrosSeenInsightsNux({ intros, device, version }));
+	}
+
 	// TODO: Make all update functions into a single function
 	// TODO: Have all update intro endpoints be part of an enum
 	// TODO: Share that enum with `intro.effects.ts`
@@ -789,6 +798,10 @@ export class UserService implements OnDestroy {
 
 	updateIntrosSeenReferralSuccessNux(device, version) {
 		return this.http.patch(`v1/intros/seen_referral_success_nux`, { device, version });
+	}
+
+	updateIntrosSeenInsightsNux(device, version) {
+		return this.http.patch(`v1/intros/seen_insights_nux`, { device, version });
 	}
 
 	updateIntrosDownloadedYearInReview(device, version) {

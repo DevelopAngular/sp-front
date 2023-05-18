@@ -22,7 +22,7 @@ declare const window;
 export class AdminPageComponent implements OnInit, AfterViewInit, OnDestroy {
 	private outletDummySwitcher$ = new BehaviorSubject<boolean>(false);
 	private adminPageReload$: BehaviorSubject<boolean> = new BehaviorSubject<boolean>(true);
-	public hostVisibility: boolean = true;
+	public hostVisibility = true;
 	public showDummySwitcher$: Observable<boolean>;
 	public schoolsLength$: Observable<number>;
 	private destroy$: Subject<any> = new Subject<any>();
@@ -80,6 +80,10 @@ export class AdminPageComponent implements OnInit, AfterViewInit, OnDestroy {
 			)
 			.subscribe({
 				next: (show) => {
+					if (this.router.url.includes('/teacher-reviews') || this.router.url.includes('/refer_us')) {
+						return;
+					}
+
 					if (show) {
 						this.router.navigate(['admin', 'renewal']).then();
 						return;
@@ -95,14 +99,6 @@ export class AdminPageComponent implements OnInit, AfterViewInit, OnDestroy {
 			.pipe(
 				takeUntil<string[]>(this.destroy$),
 				map((fragments) => fragments.filter((f) => !!f?.length)),
-				/**
-				 * This filter pipe prevents the user from being taken back to the dashboard after
-				 * refreshing the page while on the referral page
-				 * It also prevents the user from being taken back to the dashboard on direct
-				 * address bar navigation to the referral page. Direct navigation may not be intended
-				 * behaviour but being redirected is also unexpected behaviour.
-				 */
-				filter((fragments) => !fragments.includes('refer_us')),
 				take(1),
 				exhaustMap(() => this.userService.currentUpdatedUser$.pipe(take(1))),
 				filter<User>(Boolean)
