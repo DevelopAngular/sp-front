@@ -5,6 +5,9 @@ import { filter as _filter } from 'lodash';
 import { BehaviorSubject, combineLatest, fromEvent, merge, Observable, of, ReplaySubject, Subject, throwError, zip } from 'rxjs';
 import { NuxReferralComponent } from './nux-components/nux-referral/nux-referral.component';
 import { NuxInsightsComponent } from './nux-components/nux-insights/nux-insights.component';
+import { AdminService } from './services/admin.service';
+import { TeacherReviewsService } from './services/teacher-reviews.service';
+import { toArray } from 'rxjs/operators';
 
 import {
 	catchError,
@@ -97,6 +100,7 @@ export class AppComponent implements OnInit, AfterViewInit, OnDestroy {
 	public user$: Observable<User>;
 	intercomLauncherAdded$: BehaviorSubject<HTMLDivElement> = new BehaviorSubject<HTMLDivElement>(null);
 	intercomObserver: MutationObserver;
+	public hasPdfUrl: boolean;
 
 	private subscriber$ = new Subject();
 
@@ -149,7 +153,9 @@ export class AppComponent implements OnInit, AfterViewInit, OnDestroy {
 		private titleService: Title,
 		private renderer: Renderer2,
 		private parentService: ParentAccountService,
-		private pollingService: PollingService
+		private pollingService: PollingService,
+		private adminService: AdminService,
+		private teacherReviewsService: TeacherReviewsService
 	) {}
 
 	get isMobile() {
@@ -179,6 +185,10 @@ export class AppComponent implements OnInit, AfterViewInit, OnDestroy {
 			if (open) {
 				this.openHelpCenter(open);
 			}
+		});
+
+		this.adminService.getYearInReviewData().subscribe((resp) => {
+			this.hasPdfUrl = !!resp.pdf_url;
 		});
 
 		this.userService.loadedUser$
@@ -539,25 +549,32 @@ export class AppComponent implements OnInit, AfterViewInit, OnDestroy {
 	}
 
 	openNuxInsightsModal(user: User): void {
-		const featureFlags = this.featureFlags.isFeatureEnabledV2(FLAGS.TeacherReviews) || this.featureFlags.isFeatureEnabledV2(FLAGS.YearInReview);
+		this.teacherReviewsService
+			.getReviews()
+			.pipe(toArray())
+			.toPromise()
+			.then((reviews) => {
+				const featureFlags = this.featureFlags.isFeatureEnabledV2(FLAGS.TeacherReviews) || this.featureFlags.isFeatureEnabledV2(FLAGS.YearInReview);
+				const numTeacherReviews = reviews[0]?.length;
+				const hasPdfOrReviews = this.hasPdfUrl || numTeacherReviews > 1;
+				this.userService.introsData$
+					.pipe(
+						filter((i) => !!i),
+						take(1)
+					)
+					.subscribe((intros) => {
+						const hasNotSeenModal = !intros.seen_insights_nux?.universal?.seen_version;
 
-		this.userService.introsData$
-			.pipe(
-				filter((i) => !!i),
-				take(1)
-			)
-			.subscribe((intros) => {
-				const hasNotSeenModal = !intros.seen_insights_nux?.universal?.seen_version;
-
-				if (hasNotSeenModal && featureFlags && user.isAdmin()) {
-					this.dialog.open(NuxInsightsComponent, {
-						data: {
-							isAdmin: user.isAdmin(),
-						},
-						panelClass: 'insights-dialog-container',
+						if (!hasNotSeenModal && featureFlags && user.isAdmin() && hasPdfOrReviews) {
+							this.dialog.open(NuxInsightsComponent, {
+								data: {
+									isAdmin: user.isAdmin(),
+								},
+								panelClass: 'insights-dialog-container',
+							});
+							this.userService.updateIntrosSeenInsightsNuxRequest(intros, 'universal', '1');
+						}
 					});
-					this.userService.updateIntrosSeenInsightsNuxRequest(intros, 'universal', '1');
-				}
 			});
 	}
 
