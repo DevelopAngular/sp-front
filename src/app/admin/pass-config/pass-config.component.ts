@@ -6,7 +6,7 @@ import { debounceTime, filter, map, switchMap, take, takeUntil, tap } from 'rxjs
 
 import { HttpService } from '../../services/http-service';
 import { Pinnable } from '../../models/Pinnable';
-import { OverlayContainerComponent } from '../overlay-container/overlay-container.component';
+import { OverlayContainerComponent, RoomDialogData } from '../overlay-container/overlay-container.component';
 import { PinnableCollectionComponent } from '../pinnable-collection/pinnable-collection.component';
 import { isArray } from 'lodash';
 import { HallPassesService } from '../../services/hall-passes.service';
@@ -91,7 +91,7 @@ export class PassConfigComponent implements OnInit, OnDestroy {
 
 	buttonMenuOpen: boolean;
 	bulkSelect: boolean;
-	bottomShadow: boolean = true;
+	bottomShadow = true;
 
 	// // Needs for OverlayContainer opening if an admin comes from teachers profile card on Accounts&Profiles tab
 	private forceSelectedLocation: Location;
@@ -105,6 +105,7 @@ export class PassConfigComponent implements OnInit, OnDestroy {
 	showRooms: boolean;
 	globalReloadSubs: Subscription;
 	showWaitInLineNux = new Subject<boolean>();
+	private showRoomAsOriginNux = new Subject<boolean>();
 	introsData: any;
 
 	@HostListener('window:scroll', ['$event'])
@@ -193,10 +194,12 @@ export class PassConfigComponent implements OnInit, OnDestroy {
 			.pipe(debounceTime(1000), takeUntil(this.destroy$))
 			.subscribe(([intros, user]) => {
 				this.introsData = intros;
-
 				if (this.features.isFeatureEnabled(FLAGS.ShowWaitInLine)) {
 					const showNux = moment(user.first_login).isBefore(this.waitInLineLaunchDate) && !intros?.wait_in_line?.universal?.seen_version;
 					this.showWaitInLineNux.next(showNux);
+				}
+				if (!this.introsData.show_as_origin_room) {
+					this.showRoomAsOriginNux.next(true);
 				}
 			});
 	}
@@ -300,8 +303,8 @@ export class PassConfigComponent implements OnInit, OnDestroy {
 		}
 	}
 
-	buildData(action) {
-		let data;
+	buildData(action: string): void {
+		let data: RoomDialogData;
 		const component = OverlayContainerComponent;
 		switch (action) {
 			case 'newRoom':
@@ -324,7 +327,7 @@ export class PassConfigComponent implements OnInit, OnDestroy {
 				break;
 			case 'editFolder':
 				data = {
-					type: 'newFolder',
+					type: action,
 					pinnable: this.pinnable,
 					pinnables$: this.pinnables$,
 					isEditFolder: true,
@@ -369,7 +372,7 @@ export class PassConfigComponent implements OnInit, OnDestroy {
 		return this.dialogContainer(data, component);
 	}
 
-	dialogContainer(data, component) {
+	dialogContainer(data: RoomDialogData, component): void {
 		this.forceSelectedLocation = null;
 		const overlayDialog = this.dialog.open(component, {
 			panelClass: 'overlay-dialog-no-background',
@@ -454,5 +457,9 @@ export class PassConfigComponent implements OnInit, OnDestroy {
 		});
 		this.showWaitInLineNux.next(false);
 		this.userService.updateIntrosWaitInLineRequest(this.introsData, 'universal', '1');
+	}
+	dismissShowRoomAsOriginNux() {
+		this.showRoomAsOriginNux.next(false);
+		this.userService.updateIntrosShowRoomAsOriginRequest(this.introsData, 'universal', '1');
 	}
 }

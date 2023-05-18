@@ -64,7 +64,7 @@
 					*ngIf="user && user.isAssistant() && !screenService.isDeviceLargeExtra; else notAssistant">
 					<div *ngIf="referralEnabled" class="referral-button" (click)="goToReferralPage()">
 						<img [src]="'./assets/Blue-Gift.svg'" alt="Renewal Icon" />
-						<span class="referral-text">Earn $250</span>
+						<span class="referral-text">Get $100</span>
 					</div>
 					<div
 						[ngClass]="isIOSTablet ? 'ios-name' : 'name'"
@@ -110,7 +110,7 @@
 					</div>
 					<div *ngIf="referralEnabled && user.isTeacher()" class="referral-button" (click)="goToReferralPage()">
 						<img [src]="'./assets/Blue-Gift.svg'" alt="Renewal Icon" />
-						<span class="referral-text">Earn $250</span>
+						<span class="referral-text">Get $100</span>
 					</div>
 					<ng-template #referSuccess>
 						<div class="ds-tooltip">

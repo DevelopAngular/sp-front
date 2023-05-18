@@ -3,7 +3,7 @@ import { Component, ElementRef, EventEmitter, HostListener, Inject, Input, OnIni
 import { Navigation } from '../../main-hall-pass-form.component';
 import { Pinnable } from '../../../../models/Pinnable';
 import { User } from '../../../../models/User';
-import { Location } from '../../../../models/Location';
+import { Choice, Location } from '../../../../models/Location';
 import { CreateFormService } from '../../../create-form.service';
 import { Observable, BehaviorSubject, fromEvent, Subject, of, combineLatest } from 'rxjs';
 import { filter, tap, takeUntil, map, shareReplay } from 'rxjs/operators';
@@ -61,7 +61,7 @@ export class ToCategoryComponent implements OnInit {
 	@ViewChild('confirmDialogBodyVisibility') confirmDialogVisibility: TemplateRef<HTMLElement>;
 
 	pinnable: Pinnable;
-	animationDirection: string = 'forward';
+	animationDirection = 'forward';
 
 	frameMotion$: BehaviorSubject<any>;
 
@@ -70,7 +70,7 @@ export class ToCategoryComponent implements OnInit {
 		'category-header_animation-back': false,
 	};
 
-	shadow: boolean = true;
+	shadow = true;
 
 	destroy$: Subject<any> = new Subject<any>();
 
@@ -185,7 +185,7 @@ export class ToCategoryComponent implements OnInit {
 						}
 
 						// update choices
-						let choices = myLocations as Location[];
+						const choices = myLocations as Location[];
 						const updated = choices.map((x: Location) => {
 							if ('' + x.id === '' + loc.id) {
 								return loc;
@@ -207,7 +207,7 @@ export class ToCategoryComponent implements OnInit {
 							pinn.myLocations = updated;
 						}
 						// trigger RV filtering here
-						this.locTableRef.choices = updated;
+						this.locTableRef.choices = updated as Choice[];
 					} catch (e) {
 						console.log(e);
 					}
@@ -246,7 +246,7 @@ export class ToCategoryComponent implements OnInit {
 		// staff only
 		const students = [...this.selectedStudents];
 		// skipped are students that do not qualify to go forward
-		let skipped = this.visibilityService.calculateSkipped(students, location);
+		const skipped = this.visibilityService.calculateSkipped(students, location);
 
 		if (skipped.length === 0) {
 			forwardAndEmit();
@@ -254,7 +254,7 @@ export class ToCategoryComponent implements OnInit {
 		}
 
 		let text = 'This room is only available to certain students';
-		let names = this.selectedStudents.filter((s) => skipped.includes('' + s.id)).map((s) => s.display_name);
+		const names = this.selectedStudents.filter((s) => skipped.includes('' + s.id)).map((s) => s.display_name);
 		let title = 'Student does not have permission to go to this room';
 		let denyText = 'Skip';
 		if (names.length > 1) {

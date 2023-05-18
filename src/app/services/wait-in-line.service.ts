@@ -29,13 +29,12 @@ export const sortWil = (pass1: WaitingInLinePass, pass2: WaitingInLinePass): num
 export class WaitInLineService {
 	constructor(private http: HttpService, private liveData: LiveDataService) {}
 
-	startWilPassNow(id: string | number): Observable<StartWaitingInLinePassResponse> {
-		const waiting_in_line_pass_id = parseInt(id.toString(), 10);
+	startWilPassNow(id: number): Observable<StartWaitingInLinePassResponse> {
+		const waiting_in_line_pass_id = id;
 		return this.http.post<StartWaitingInLinePassResponse>('v2/hall_passes/start_waiting_in_line_pass', { waiting_in_line_pass_id }, undefined, false);
 	}
 
-	deleteWilPass(id: string | number): Observable<never> {
-		id = parseInt(id.toString(), 10); // force convert to number
+	deleteWilPass(id: number): Observable<never> {
 		return this.http.post('v2/waiting_in_line_pass/delete', { waiting_in_line_pass_id: id }, undefined, false);
 	}
 

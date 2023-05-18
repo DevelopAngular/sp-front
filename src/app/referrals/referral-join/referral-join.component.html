@@ -11,19 +11,28 @@
 		</div>
 		<textarea id="referralReason" placeholder="Tell us why you are an amazing fit&#10;for the program! (optional)" class="referral-input"></textarea>
 		<div class="checkbox">
-			<input type="checkbox" id="terms" (click)="toggleTerms()" />
-			<label for="terms">I agree to the <a class="underline" href="/" target="_blank">Terms and Conditions</a></label
-			><br />
+			<input type="checkbox" id="terms" (click)="toggleTerms()" required />
+			<div>
+				<label for="terms"
+					>I agree to the
+					<a class="underline terms" href="https://www.smartpass.app/referral-program-terms" target="_blank">Terms and Conditions</a></label
+				>
+				<div>
+					<span class="validation-text" *ngIf="showValidationMsg">Required</span>
+				</div>
+			</div>
 		</div>
-		<button (click)="apply()" [disabled]="!termsAccepted">Apply Now</button>
+		<button (click)="apply()" [disabled]="makingRequest">Apply Now</button>
 	</div>
 </section>
 <div class="referral-sign-up approval" *ngIf="user?.referral_status === 'applied'">
 	<img [src]="'./assets/Check (Green).svg' | resolveAsset" alt="Checkmark Icon" />
-
 	<h2>Application Submitted</h2>
 	<span>Thank you! We will be in touch with next steps</span>
 </div>
 <section class="referral-rock-frame" *ngIf="user?.referral_status === 'accepted'">
+	<div *ngIf="!referralRockLoaded" class="loading-theme_blue-gray spinner">
+		<mat-spinner style="margin: auto" [color]="'accent'" [diameter]="100"></mat-spinner>
+	</div>
 	<iframe id="referral-frame"></iframe>
 </section>

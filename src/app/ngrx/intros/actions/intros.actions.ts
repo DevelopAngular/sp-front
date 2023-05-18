@@ -17,6 +17,7 @@ export const updateIntrosMainSuccess = createAction(`[${INTROS}] Update intros M
 export const updateIntrosMainFailure = createAction(`[${INTROS}] Update intros Main Failure`, props<{ errorMessage: string }>());
 
 export const updateIntrosEncounter = createAction(`[${INTROS}] Update intros Encounter`, props<UpdateIntrosProps>());
+export const updateIntrosShowRoomAsOrigin = createAction(`[${INTROS}] Update intros Show Room As Origin`, props<UpdateIntrosProps>());
 export const updateIntrosEncounterSuccess = createAction(`[${INTROS}] Update intros Encounter Success`, props<{ data: any }>());
 export const updateIntrosEncounterFailure = createAction(`[${INTROS}] Update intros Encounter Failure`, props<{ errorMessage: string }>());
 
@@ -43,8 +44,16 @@ export const updateIntrosStudentPassLimits = createAction(
 	props<{ intros: any; device: string; version: string }>()
 );
 export const updateIntrosStudentPassLimitsSuccess = createAction(`[${INTROS}] Update intros Student Pass Limits Success`, props<{ data: any }>());
+
 export const updateIntrosStudentPassLimitsFailure = createAction(
 	`[${INTROS}] Update intros Student Pass Limits Failure`,
+	props<{ errorMessage: string }>()
+);
+
+export const updateIntrosShowAsOriginRoomSuccess = createAction(`[${INTROS}] Update intros Show As Origin Room Success`, props<{ data: any }>());
+
+export const updateIntrosShowRoomAsOriginFailure = createAction(
+	`[${INTROS}] Update intros Show As Origin Room Failure`,
 	props<{ errorMessage: string }>()
 );
 
@@ -105,5 +114,14 @@ export const updateIntrosSeenReferralSuccessNuxSuccess = createAction(
 
 export const updateIntrosSeenReferralSuccessNuxFailure = createAction(
 	`[${INTROS}] Update intros Seen Referral Success Nux Failure`,
+	props<{ errorMessage: string }>()
+);
+
+export const updateIntrosSeenInsightsNux = createAction(`[${INTROS}] Update intros Seen Insights Nux`, props<UpdateIntrosProps>());
+
+export const updateIntrosSeenInsightsNuxSuccess = createAction(`[${INTROS}] Update intros Seen Insights Nux Success`, props<{ data: any }>());
+
+export const updateIntrosSeenInsightsNuxFailure = createAction(
+	`[${INTROS}] Update intros Seen Insights Nux Failure`,
 	props<{ errorMessage: string }>()
 );

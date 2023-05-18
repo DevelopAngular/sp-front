@@ -4,6 +4,10 @@ import { ActivatedRoute, NavigationEnd, Router } from '@angular/router';
 import { filter as _filter } from 'lodash';
 import { BehaviorSubject, combineLatest, fromEvent, merge, Observable, of, ReplaySubject, Subject, throwError, zip } from 'rxjs';
 import { NuxReferralComponent } from './nux-components/nux-referral/nux-referral.component';
+import { NuxInsightsComponent } from './nux-components/nux-insights/nux-insights.component';
+import { AdminService } from './services/admin.service';
+import { TeacherReviewsService } from './services/teacher-reviews.service';
+import { toArray } from 'rxjs/operators';
 
 import {
 	catchError,
@@ -13,7 +17,6 @@ import {
 	finalize,
 	map,
 	mergeMap,
-	skipUntil,
 	switchMap,
 	take,
 	takeUntil,
@@ -49,9 +52,10 @@ import { ParentAccountService } from './services/parent-account.service';
 import { HttpErrorResponse } from '@angular/common/http';
 import { NuxReferralSuccessComponent } from './nux-components/nux-referral/nux-referral-success.component';
 import { PollingService } from './services/polling-service';
+import { ToastObj } from './ngrx/toast/states';
 
 declare const window;
-declare var ResizeObserver;
+declare let ResizeObserver;
 
 export const INITIAL_LOCATION_PATHNAME = new ReplaySubject<string>(1);
 
@@ -88,7 +92,7 @@ export class AppComponent implements OnInit, AfterViewInit, OnDestroy {
 	public darkThemeEnabled: boolean;
 	public isKioskMode: boolean;
 	public customToastOpen$: Observable<boolean>;
-	public toasts$: Observable<any>;
+	public toasts$: Observable<ToastObj[]>;
 	hasCustomBackdrop: boolean;
 	customStyle: Record<string, any>;
 	public hasCustomBackdrop$: Observable<boolean>;
@@ -96,10 +100,11 @@ export class AppComponent implements OnInit, AfterViewInit, OnDestroy {
 	public user$: Observable<User>;
 	intercomLauncherAdded$: BehaviorSubject<HTMLDivElement> = new BehaviorSubject<HTMLDivElement>(null);
 	intercomObserver: MutationObserver;
+	public hasPdfUrl: boolean;
 
 	private subscriber$ = new Subject();
 
-	public mainContentWidth: string = '100%';
+	public mainContentWidth = '100%';
 
 	public isUserHasPhoneAccess: boolean;
 
@@ -148,7 +153,9 @@ export class AppComponent implements OnInit, AfterViewInit, OnDestroy {
 		private titleService: Title,
 		private renderer: Renderer2,
 		private parentService: ParentAccountService,
-		private pollingService: PollingService
+		private pollingService: PollingService,
+		private adminService: AdminService,
+		private teacherReviewsService: TeacherReviewsService
 	) {}
 
 	get isMobile() {
@@ -180,12 +187,20 @@ export class AppComponent implements OnInit, AfterViewInit, OnDestroy {
 			}
 		});
 
+		this.adminService.getYearInReviewData().subscribe((resp) => {
+			this.hasPdfUrl = !!resp.pdf_url;
+		});
+
 		this.userService.loadedUser$
 			.pipe(
 				filter((l) => l),
 				switchMap(() => this.userService.user$.pipe(take(1))),
 				filter((user) => !!user),
 				map((user) => User.fromJSON(user)),
+				tap((user) => {
+					this.openNuxReferralModal(user);
+					this.openNuxInsightsModal(user);
+				}),
 				// Wait for schools to load so that we can register intercom and refiner correctly.
 				mergeMap((user) => this.http.schools$.pipe(map(() => user))),
 				concatMap((user) => {
@@ -202,7 +217,6 @@ export class AppComponent implements OnInit, AfterViewInit, OnDestroy {
 					if (!user.isStudent() && !this.currentRoute.includes('/forms')) {
 						this.registerRefiner(user);
 					}
-					this.openNuxReferralModal(user);
 
 					if (intercomWrapper) {
 						intercomWrapper.style.display = 'none';
@@ -214,7 +228,7 @@ export class AppComponent implements OnInit, AfterViewInit, OnDestroy {
 					return this.nextReleaseService.getLastReleasedUpdates(DeviceDetection.platform()).pipe(
 						map((release: Array<Update>): Array<Update> => {
 							return release.filter((update) => {
-								const allowUpdate: boolean = !!update.groups.find((group) => {
+								const allowUpdate = !!update.groups.find((group) => {
 									return user.roles.includes(`_profile_${group}`);
 								});
 								return allowUpdate;
@@ -388,9 +402,11 @@ export class AppComponent implements OnInit, AfterViewInit, OnDestroy {
 			)
 			.subscribe(([schools, currentSchool]) => {
 				this.schools = schools;
-				const isCurrentSchoolInList = schools.find((s) => s.id === currentSchool.id);
-				if (currentSchool && !isCurrentSchoolInList) {
-					this.http.setSchool(schools[0]);
+				if (currentSchool) {
+					const isCurrentSchoolInList = schools.find((s) => s.id === currentSchool.id);
+					if (!isCurrentSchoolInList) {
+						this.http.setSchool(schools[0]);
+					}
 				}
 			});
 
@@ -534,6 +550,35 @@ export class AppComponent implements OnInit, AfterViewInit, OnDestroy {
 			});
 	}
 
+	openNuxInsightsModal(user: User): void {
+		this.teacherReviewsService
+			.getReviews()
+			.pipe(toArray())
+			.toPromise()
+			.then((reviews) => {
+				const featureFlags = this.featureFlags.isFeatureEnabledV2(FLAGS.TeacherReviews) || this.featureFlags.isFeatureEnabledV2(FLAGS.YearInReview);
+				const numTeacherReviews = reviews[0]?.length;
+				const hasPdfOrReviews = this.hasPdfUrl || numTeacherReviews > 1;
+				this.userService.introsData$
+					.pipe(
+						filter((i) => !!i),
+						take(1)
+					)
+					.subscribe((intros) => {
+						const hasNotSeenModal = !intros.seen_insights_nux?.universal?.seen_version;
+
+						if (hasNotSeenModal && featureFlags && user.isAdmin() && hasPdfOrReviews) {
+							this.dialog.open(NuxInsightsComponent, {
+								data: {
+									isAdmin: user.isAdmin(),
+								},
+								panelClass: 'insights-dialog-container',
+							});
+						}
+					});
+			});
+	}
+
 	get setHeight() {
 		if (this.trialBarElementView?.nativeElement?.offsetHeight && document.getElementById('school_toggle_bar')) {
 			return `calc(100% - ${this.trialBarElementView?.nativeElement?.offsetHeight}px - 51px)`;
@@ -576,7 +621,7 @@ export class AppComponent implements OnInit, AfterViewInit, OnDestroy {
 				fixedWrapper.style.width = parseInt(getComputedStyle(panel, '').width) + -1 + 'px';
 			}
 
-			let iframe = document.querySelector<HTMLIFrameElement>('.help-center-unsubscribe');
+			const iframe = document.querySelector<HTMLIFrameElement>('.help-center-unsubscribe');
 
 			const mouseDown$ = fromEvent<MouseEvent>(panel, 'mousedown');
 			const mouseMove$ = fromEvent<MouseEvent>(document, 'mousemove');

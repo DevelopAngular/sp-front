@@ -3,7 +3,6 @@ import { Util } from '../../Util';
 import { Request } from '../models/Request';
 import { ConsentMenuComponent } from '../consent-menu/consent-menu.component';
 import { MatDialog } from '@angular/material/dialog';
-import { DataService } from '../services/data-service';
 import { RequestsService } from '../services/requests.service';
 import { UNANIMATED_CONTAINER } from '../consent-menu-overlay';
 import { concatMap, map, takeUntil, tap } from 'rxjs/operators';
@@ -53,7 +52,6 @@ export class InlineRequestCardComponent implements OnInit, OnDestroy {
 	constructor(
 		private requestService: RequestsService,
 		public dialog: MatDialog,
-		private dataService: DataService,
 		private formService: CreateFormService,
 		private screenService: ScreenService,
 		private renderer: Renderer2,
@@ -64,7 +62,7 @@ export class InlineRequestCardComponent implements OnInit, OnDestroy {
 	) {}
 
 	get hasDivider() {
-		if (!!this.request) {
+		if (this.request) {
 			return this.request.status === 'pending' && !this.forInput;
 		}
 	}
@@ -141,7 +139,6 @@ export class InlineRequestCardComponent implements OnInit, OnDestroy {
 			);
 			this.header = 'Are you sure you want to delete this pass request you sent?';
 
-			// if (!this.screenService.isDeviceMid) {
 			this.cancelOpen = true;
 			UNANIMATED_CONTAINER.next(true);
 			const cancelDialog = this.dialog.open(ConsentMenuComponent, {
@@ -157,7 +154,6 @@ export class InlineRequestCardComponent implements OnInit, OnDestroy {
 					this.cancelOpen = false;
 					this.chooseAction(action);
 				});
-			// }
 		}
 	}
 
@@ -166,13 +162,15 @@ export class InlineRequestCardComponent implements OnInit, OnDestroy {
 			// TODO(2019-01-07) a lot of the resend logic in request-card and inline-request-card should probably be unified.
 			throw new Error('Changing date time not currently supported by this component.');
 		}
+		const preRequestStatus = this.request.status;
+		this.request.status = 'pending';
 
 		const body: any = {
 			origin: this.request.origin.id,
 			destination: this.request.destination.id,
 			attachment_message: this.request.attachment_message,
 			travel_type: this.request.travel_type,
-			teachers: this.request.teachers.map((u) => parseInt(u.id, 10)),
+			teachers: this.request.teachers.map((u) => u.id),
 			// !forFuture means that request_time is definitely null
 			duration: this.request.duration,
 		};
@@ -185,7 +183,10 @@ export class InlineRequestCardComponent implements OnInit, OnDestroy {
 					this.closeDialog();
 					console.log('pass request resent');
 				},
-				error: console.log,
+				error: (err) => {
+					console.error('While resending a pass request: ', err);
+					this.request.status = preRequestStatus;
+				},
 			});
 	}
 

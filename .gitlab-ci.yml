@@ -23,7 +23,7 @@ lint:
   script:
     - yarn install
     - echo "Running lint..."
-    - FILES=$(git diff --name-only origin/$CI_MERGE_REQUEST_TARGET_BRANCH_NAME... | grep -E '\.ts$|\.js$') || echo "No matching files found"
+    - FILES=$(git diff --diff-filter=ACMR --name-only origin/$CI_MERGE_REQUEST_TARGET_BRANCH_NAME... | grep -E '\.ts$|\.js$') || echo "No matching files found"
     - |
       if [ -n "$FILES" ]; then
         for FILE in $FILES; do
@@ -169,7 +169,3 @@ e2e:
   dependencies: []
   tags:
     - "docker-passthrough"
-
-
-
-# git diff --name-only origin/$CI_MERGE_REQUEST_TARGET_BRANCH_NAME... | grep -E '\.ts$|\.js$' | xargs -I {} sh -c 'echo {}; yarn lint:eslint {}'

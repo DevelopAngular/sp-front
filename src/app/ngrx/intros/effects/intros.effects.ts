@@ -4,6 +4,7 @@ import * as introsActions from '../actions';
 import { catchError, map, switchMap } from 'rxjs/operators';
 import { UserService } from '../../../services/user.service';
 import { of } from 'rxjs';
+import { updateIntrosShowAsOriginRoomSuccess } from '../actions';
 
 @Injectable()
 export class IntrosEffects {
@@ -165,6 +166,26 @@ export class IntrosEffects {
 		);
 	});
 
+	updateIntroShowAsOriginRoom$ = createEffect(() => {
+		return this.action$.pipe(
+			ofType(introsActions.updateIntrosShowRoomAsOrigin),
+			switchMap((action) => {
+				return this.userService.updateIntrosShowRoomAsOrigin(action.device, action.version).pipe(
+					map((data) => {
+						const updatedData = {
+							...action.intros,
+							show_as_origin_room: {
+								[action.device]: { seen_version: action.version },
+							},
+						};
+						return introsActions.updateIntrosShowAsOriginRoomSuccess({ data: updatedData });
+					}),
+					catchError((error) => of(introsActions.updateIntrosShowRoomAsOriginFailure({ errorMessage: error.message })))
+				);
+			})
+		);
+	});
+
 	updateIntroAdminPassLimitsMessage$ = createEffect(() => {
 		return this.action$.pipe(
 			ofType(introsActions.updateIntrosAdminPassLimitsMessage),
@@ -280,6 +301,26 @@ export class IntrosEffects {
 						return introsActions.updateIntrosSeenReferralSuccessNuxSuccess({ data: updatedData });
 					}),
 					catchError((error) => of(introsActions.updateIntrosSeenReferralSuccessNuxFailure({ errorMessage: error.message })))
+				);
+			})
+		);
+	});
+
+	updateIntrosSeenInsightsNux$ = createEffect(() => {
+		return this.action$.pipe(
+			ofType(introsActions.updateIntrosSeenInsightsNux),
+			switchMap((action) => {
+				return this.userService.updateIntrosSeenInsightsNux(action.device, action.version).pipe(
+					map(() => {
+						const updatedData = {
+							...action.intros,
+							seen_insights_nux: {
+								[action.device]: { seen_version: action.version },
+							},
+						};
+						return introsActions.updateIntrosSeenInsightsNuxSuccess({ data: updatedData });
+					}),
+					catchError((error) => of(introsActions.updateIntrosSeenInsightsNuxFailure({ errorMessage: error.message })))
 				);
 			})
 		);

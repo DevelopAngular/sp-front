@@ -1,7 +1,7 @@
 <div
 	class="kiosk-mode-container"
-	[ngClass]="{ 'wait-in-line-wrapper': (activePassesKiosk | async)?.length > 0 && isWaitInLine }"
-	[ngStyle]="{ 'flex-direction': (activePassesKiosk | async)?.length > 0 ? (isWaitInLine ? '' : 'column') : '' }">
+	[ngClass]="{ 'wait-in-line-wrapper': (activePassesKiosk | async)?.length > 0 && waitInLinePassesEnabled }"
+	[ngStyle]="{ 'flex-direction': (activePassesKiosk | async)?.length > 0 ? (waitInLinePassesEnabled ? '' : 'column') : '' }">
 	<div class="main-page-left">
 		<div class="current-pass ds-p-25">
 			<app-display-card [title]="'Create Pass'" [hasDivider]="true" [fontSize]="'20px'">
@@ -45,7 +45,7 @@
 		</div>
 		<div class="waitinline-passes pass-collection">
 			<app-pass-collection
-				*ngIf="waitInLinePassesPresent"
+				*ngIf="waitInLinePassesEnabled"
 				[waitInLine]="true"
 				[forStaff]="true"
 				[style.width]="'460px'"
@@ -57,7 +57,7 @@
 		</div>
 	</div>
 	<div class="main-page-right" *ngIf="(activePassesKiosk | async)?.length > 0">
-		<div class="active-passes" *ngIf="activePassesKiosk" [style.margin]="isWaitInLine ? '0 20px' : 'auto'">
+		<div class="active-passes" *ngIf="activePassesKiosk" [style.margin]="waitInLinePassesEnabled ? '0 20px' : 'auto'">
 			<app-pass-collection
 				[isActive]="true"
 				[forStaff]="true"

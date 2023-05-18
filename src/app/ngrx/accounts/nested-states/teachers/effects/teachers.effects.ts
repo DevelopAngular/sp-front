@@ -213,7 +213,7 @@ export class TeachersEffects {
 			exhaustMap((action: any) => {
 				return zip(
 					...action.locations.map((loc: Location) => {
-						return this.locationService.updateLocation(loc.id, { teachers: loc.teachers.map((t) => t.id) });
+						return this.locationService.updateLocation(loc.id, { teachers: (loc.teachers as User[]).map((t) => t.id) });
 					})
 				).pipe(
 					map((locations: any) => {

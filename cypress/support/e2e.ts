@@ -18,12 +18,18 @@ import './commands';
 
 // ignores errors from application, ideally this shouldn't be here
 Cypress.on('uncaught:exception', (err, runnable) => {
-  return false;
+	return false;
 });
 
 /**
  * Adds custom command "cy.dataCy" to the global "cy" object
  *
- * @example cy.dataCy('greeting')
+ * Usage:
+ * Add the following as an attribute to the target element.
+ * data-cy="<value>"
+ *
+ * @example cy.dataCy('greeting') for data-cy="greeting"
  */
-Cypress.Commands.add('dataCy', (value) => cy.get(`[data-cy=${value}]`))
+Cypress.Commands.add('dataCy', (value) => {
+	cy.get(`[data-cy=${value}]`);
+});

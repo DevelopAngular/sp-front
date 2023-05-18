@@ -5,6 +5,7 @@ import { BehaviorSubject } from 'rxjs';
 import { CreateFormService } from '../create-hallpass-forms/create-form.service';
 import { Navigation } from '../create-hallpass-forms/main-hallpass--form/main-hall-pass-form.component';
 import { HallPass } from '../models/HallPass';
+import { User } from '../models/User';
 
 @Component({
 	selector: 'app-teacher-selection',
@@ -22,7 +23,7 @@ export class TeacherSelectionComponent implements OnInit {
 
 	frameMotion$: BehaviorSubject<any>;
 
-	shadow: boolean = true;
+	shadow = true;
 
 	headerTransition = {
 		'rest-tar-header': true,
@@ -73,7 +74,7 @@ export class TeacherSelectionComponent implements OnInit {
 	}
 
 	get filteredTeachers() {
-		return uniqBy(this.quickSelectedTeachers, 'id');
+		return uniqBy(this.quickSelectedTeachers as User[], 'id');
 	}
 
 	ngOnInit(): void {

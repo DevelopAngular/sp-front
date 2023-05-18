@@ -287,7 +287,7 @@ export class ViewProfileComponent implements OnInit {
 	}
 
 	goToStudent() {
-		let url = window.location.origin + `/main/student/${this.user.id}`;
+		const url = window.location.origin + `/main/student/${this.user.id}`;
 		this.dialogRef.close();
 		window.open(url, '_self');
 	}
@@ -297,11 +297,11 @@ export class ViewProfileComponent implements OnInit {
 
 		if (!isEqual(this.teacherRoomsInitialState, this.teacherRooms)) {
 			const locsToRemove = differenceBy(this.teacherRoomsInitialState, this.teacherRooms, 'id').map((l) => {
-				l.teachers = l.teachers.filter((t) => +t.id !== +this.user.id);
+				l.teachers = (l.teachers as User[]).filter((t) => +t.id !== +this.user.id);
 				return l;
 			});
 			const locsToAdd = differenceBy(this.teacherRooms, this.teacherRoomsInitialState, 'id').map((l) => {
-				l.teachers = [...l.teachers, this.user];
+				l.teachers = [...l.teachers, this.user] as User[];
 				return l;
 			});
 

@@ -1,3 +1,4 @@
+/* eslint-disable */
 // @ts-nocheck no typescript definitions for DataView, ArrayBuffer, etc
 
 import * as crypto from 'crypto-js';
@@ -6,7 +7,7 @@ import { sum } from 'lodash';
 // generateRoomCode expects the number of seconds since epoch and the location id.
 // It returns a 3 character string that is the room's code. Within a 30 second period, the room code will be identical.
 // After 30 seconds, this function should be called again to get correct room code.
-export function generateRoomCode(secondsSinceEpoch: number, locationId: string): string {
+export function generateRoomCode(secondsSinceEpoch: number, locationId: number): string {
 	// period must be an integer in order to convert to a BigInt
 	const period = Math.floor(secondsSinceEpoch / 30);
 

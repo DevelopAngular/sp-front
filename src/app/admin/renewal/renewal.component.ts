@@ -5,7 +5,7 @@ import _refiner from 'refiner-js';
 import { NavbarElementsRefsService } from '../../services/navbar-elements-refs.service';
 import { DomSanitizer, SafeResourceUrl } from '@angular/platform-browser';
 import { UserService } from '../../services/user.service';
-import { filter, map, tap } from 'rxjs/operators';
+import { filter, map } from 'rxjs/operators';
 import { User } from '../../models/User';
 import { DatePipe } from '@angular/common';
 import { TeacherReviewsService } from '../../services/teacher-reviews.service';
@@ -48,7 +48,7 @@ export class RenewalComponent implements OnInit {
 	public iFrameURL: SafeResourceUrl;
 	teacherReviews$: Observable<TeacherReview[]>;
 
-	public hasYearInReviewPdf: boolean = true;
+	public hasYearInReviewPdf = true;
 
 	constructor(
 		private adminService: AdminService,
@@ -63,6 +63,7 @@ export class RenewalComponent implements OnInit {
 
 	ngOnInit(): void {
 		this.teacherReviews$ = this.teacherReviewsService.getReviews();
+		let month;
 
 		this.adminService.getRenewalData().subscribe({
 			next: (data) => {
@@ -78,7 +79,7 @@ export class RenewalComponent implements OnInit {
 						};
 						break;
 					case 'expiring':
-						const month = this.datepipe.transform(this.status?.subscription_end_date, 'MMMM', 'UTC');
+						month = this.datepipe.transform(this.status?.subscription_end_date, 'MMMM', 'UTC');
 						this.reminder = {
 							img: './assets/admin-images/expiring-sub.png',
 							title: month ? 'Your SmartPass Subscription Expires in ' + month : 'Your SmartPass Subscription Expires Soon',

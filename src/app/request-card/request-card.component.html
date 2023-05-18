@@ -386,7 +386,7 @@
 
 	<div
 		class="student-footer-info"
-		*ngIf="(forStaff && isModal) || (formState && formState.kioskMode && request.id !== 'template' && request.status !== 'declined')"
+		*ngIf="(forStaff && isModal) || (formState && formState.kioskMode && request.id !== null && request.status !== 'declined')"
 		[style.marginTop]="forStaff ? '64px' : '20px'">
 		<app-student-passes [pass]="request" [profile]="request.student"></app-student-passes>
 	</div>

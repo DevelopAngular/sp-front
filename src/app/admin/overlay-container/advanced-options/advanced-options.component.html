@@ -27,6 +27,36 @@
 				</div>
 			</div>
 
+			<div class="block" *ngIf="allowChangingShowAsOriginRoom">
+				<div class="line">
+					<div class="toggle">
+						<app-toggle-input
+							[form]="restrictionForm"
+							[controlName]="'showAsOriginRoom'"
+							[delimiter]="false"
+							[controlSize]="'small'"
+							[hasIcon]="true"
+							[icon]="'./assets/Locked (Navy).svg'"
+							[color]="'#1F195E'"
+							(pushOutValue)="showAsOriginRoomEvent($event)"></app-toggle-input>
+					</div>
+					<div class="toggle-content">
+						<div class="title-line">
+							<div class="label" [style.color]="restrictionForm.get('showAsOriginRoom').value ? '#1F194E' : '#7F879D'">Show as Origin Room</div>
+							<img customToolTip [contentTemplate]="showAsOriginRoomText" class="support-icon" [src]="'./assets/Support (Gray).svg' | resolveAsset" />
+						</div>
+
+						<ng-template #showAsOriginRoomText>
+							<div class="ds-tooltip" style="width: 200px">
+								<!-- TODO NEEDS URL TO LINK TO-->
+								{{ tooltipText.show_as_origin_room }}
+								<a href="https://www.smartpass.app/show-as-origin-room" target="_blank" class="link">Learn more</a>
+							</div>
+						</ng-template>
+					</div>
+				</div>
+			</div>
+
 			<div class="block">
 				<div class="line">
 					<div class="toggle">
@@ -42,7 +72,15 @@
 					</div>
 					<div class="toggle-content">
 						<div class="title-line">
-							<div class="label" [style.color]="nowRestricted ? (isRestrictionEmpty('now') ? '#E32C66' : '#1F194E') : '#7F879D'">
+							<div
+								class="label"
+								[style.color]="
+									nowRestricted
+										? showErrors && this.optionState.now.state === this.toggleChoices[3] && optionState.now.data.selectedTeachers.length === 0
+											? '#E32C66'
+											: '#1F194E'
+										: '#7F879D'
+								">
 								Restriction for now
 							</div>
 							<img [customToolTip]="tooltipText.restriction" class="support-icon" [src]="'./assets/Support (Gray).svg' | resolveAsset" />
@@ -139,7 +177,17 @@
 					</div>
 					<div class="toggle-content">
 						<div class="title-line">
-							<div class="label" [style.color]="futureRestricted ? (isRestrictionEmpty('future') ? '#E32C66' : '#1F194E') : '#7F879D'">
+							<div
+								class="label"
+								[style.color]="
+									futureRestricted
+										? showErrors &&
+										  this.optionState.future.state === this.toggleChoices[3] &&
+										  this.optionState.future.data.selectedTeachers.length === 0
+											? '#E32C66'
+											: '#1F194E'
+										: '#7F879D'
+								">
 								Restriction for future
 							</div>
 							<img [customToolTip]="tooltipText.scheduling_restricted" class="support-icon" [src]="'./assets/Support (Gray).svg' | resolveAsset" />
@@ -237,7 +285,17 @@
 					</div>
 					<div class="toggle-content">
 						<div class="title-line">
-							<div class="label" [style.color]="futureRestricted ? (isRestrictionEmpty('future') ? '#E32C66' : '#1F194E') : '#7F879D'">
+							<div
+								class="label"
+								[style.color]="
+									futureRestricted
+										? showErrors &&
+										  this.optionState.future.state === this.toggleChoices[3] &&
+										  this.optionState.future.data.selectedTeachers.length === 0
+											? '#E32C66'
+											: '#1F194E'
+										: '#7F879D'
+								">
 								Restrict Ending Passes
 							</div>
 							<img customToolTip [contentTemplate]="needCheckInText" class="support-icon" [src]="'./assets/Support (Gray).svg' | resolveAsset" />
@@ -264,6 +322,8 @@
 							[icon]="'./assets/Hand (Navy).svg'"
 							(pushOutValue)="change$.next({ value: $event, action: 'to' })"></app-toggle-input>
 					</div>
+
+
 					<div class="toggle-content">
 						<div class="title-line">
 							<div class="label" [style.color]="passLimitForm.get('toEnabled').value ? '#1F194E' : '#7F879D'">Active Pass Limit</div>
@@ -286,6 +346,9 @@
 							</ng-template>
 						</div>
 					</div>
+
+
+
 				</div>
 				<div class="active-block" *ngIf="passLimitForm.get('toEnabled').value">
 					<div [style.width]="'145px'">
