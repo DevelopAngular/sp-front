@@ -32,7 +32,6 @@ export class NuxInsightsComponent implements OnInit {
 	public yearInReviewPdfUrl: string;
 	public schoolName: string;
 	teacherReviews$: Observable<TeacherReview[]>;
-	public hasYearInReviewPdf = true;
 
 	constructor(
 		private featureFlagService: FeatureFlagService,
@@ -109,5 +108,9 @@ export class NuxInsightsComponent implements OnInit {
 
 	get isYearInReviewEnabled() {
 		return this.featureFlagService.isFeatureEnabledV2(FLAGS.YearInReview);
+	}
+
+	get hasYearInReviewPdf() {
+		return !!this.yearInReviewPdfUrl;
 	}
 }

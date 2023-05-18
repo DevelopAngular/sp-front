@@ -100,7 +100,6 @@ export class AppComponent implements OnInit, AfterViewInit, OnDestroy {
 	public user$: Observable<User>;
 	intercomLauncherAdded$: BehaviorSubject<HTMLDivElement> = new BehaviorSubject<HTMLDivElement>(null);
 	intercomObserver: MutationObserver;
-	public hasPdfUrl: boolean;
 
 	private subscriber$ = new Subject();
 
@@ -185,10 +184,6 @@ export class AppComponent implements OnInit, AfterViewInit, OnDestroy {
 			if (open) {
 				this.openHelpCenter(open);
 			}
-		});
-
-		this.adminService.getYearInReviewData().subscribe((resp) => {
-			this.hasPdfUrl = !!resp.pdf_url;
 		});
 
 		this.userService.loadedUser$
@@ -549,32 +544,36 @@ export class AppComponent implements OnInit, AfterViewInit, OnDestroy {
 	}
 
 	openNuxInsightsModal(user: User): void {
-		this.teacherReviewsService
-			.getReviews()
-			.pipe(toArray())
-			.toPromise()
-			.then((reviews) => {
-				const featureFlags = this.featureFlags.isFeatureEnabledV2(FLAGS.TeacherReviews) || this.featureFlags.isFeatureEnabledV2(FLAGS.YearInReview);
-				const numTeacherReviews = reviews[0]?.length;
-				const hasPdfOrReviews = this.hasPdfUrl || numTeacherReviews > 1;
-				this.userService.introsData$
-					.pipe(
-						filter((i) => !!i),
-						take(1)
-					)
-					.subscribe((intros) => {
-						const hasNotSeenModal = !intros.seen_insights_nux?.universal?.seen_version;
+		this.adminService.getYearInReviewData().subscribe((resp) => {
+			const hasPdfUrl = !!resp.pdf_url;
+			this.teacherReviewsService
+				.getReviews()
+				.pipe(toArray())
+				.toPromise()
+				.then((reviews) => {
+					const numTeacherReviews = reviews[0]?.length;
+					const hasTeacherReviews = this.featureFlags.isFeatureEnabledV2(FLAGS.TeacherReviews) && numTeacherReviews > 1;
+					const hasYearInReview = this.featureFlags.isFeatureEnabledV2(FLAGS.YearInReview) && hasPdfUrl;
 
-						if (hasNotSeenModal && featureFlags && user.isAdmin() && hasPdfOrReviews) {
-							this.dialog.open(NuxInsightsComponent, {
-								data: {
-									isAdmin: user.isAdmin(),
-								},
-								panelClass: 'insights-dialog-container',
-							});
-						}
-					});
-			});
+					this.userService.introsData$
+						.pipe(
+							filter((i) => !!i),
+							take(1)
+						)
+						.subscribe((intros) => {
+							const hasNotSeenModal = !intros.seen_insights_nux?.universal?.seen_version;
+
+							if (hasNotSeenModal && user.isAdmin() && (hasTeacherReviews || hasYearInReview)) {
+								this.dialog.open(NuxInsightsComponent, {
+									data: {
+										isAdmin: user.isAdmin(),
+									},
+									panelClass: 'insights-dialog-container',
+								});
+							}
+						});
+				});
+		});
 	}
 
 	get setHeight() {
