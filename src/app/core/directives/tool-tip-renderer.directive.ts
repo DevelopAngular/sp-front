@@ -52,7 +52,7 @@ export class ToolTipRendererDirective implements OnInit, OnDestroy, OnChanges {
 	private _overlayRef: OverlayRef;
 	private tooltipRef: ComponentRef<CustomToolTipComponent>;
 
-	private hideTooltipTimeout: any;
+	hideTooltipTimeout: ReturnType<typeof setTimeout>;
 
 	constructor(private _overlay: Overlay, private _overlayPositionBuilder: OverlayPositionBuilder, private _elementRef: ElementRef) {}
 
