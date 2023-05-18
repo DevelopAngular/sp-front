@@ -16,8 +16,8 @@ import { Overlay, OverlayPositionBuilder, OverlayRef } from '@angular/cdk/overla
 import { ComponentPortal } from '@angular/cdk/portal';
 import { CustomToolTipComponent } from '../../shared/shared-components/custom-tool-tip/custom-tool-tip.component';
 import { ConnectedPosition } from '@angular/cdk/overlay/position/flexible-connected-position-strategy';
-import { of, race, Subject, timer } from 'rxjs';
-import { switchMap, takeUntil } from 'rxjs/operators';
+import { of, race, Subject, timer, merge } from 'rxjs';
+import { map, switchMap, takeUntil } from 'rxjs/operators';
 
 @Directive({
 	selector: '[customToolTip]',
@@ -27,13 +27,13 @@ export class ToolTipRendererDirective implements OnInit, OnDestroy, OnChanges {
 	 * This will be used to show tooltip or not
 	 * This can be used to show the tooltip conditionally
 	 */
-	@Input() showToolTip: boolean = true;
-	@Input() nonDisappearing: boolean = true;
+	@Input() showToolTip = true;
+	@Input() nonDisappearing = true;
 	@Input() position: 'mouse' | 'top' | 'bottom' | 'left' | 'right' = 'bottom';
-	@Input() editable: boolean = true;
+	@Input() editable = true;
 	@Input() positionStrategy: ConnectedPosition;
-	@Input() width: string = 'auto';
-	@Input() allowVarTag: boolean = false;
+	@Input() width = 'auto';
+	@Input() allowVarTag = false;
 
 	// If this is specified then specified text will be showin in the tooltip
 	@Input(`customToolTip`) text: string;
@@ -51,6 +51,8 @@ export class ToolTipRendererDirective implements OnInit, OnDestroy, OnChanges {
 
 	private _overlayRef: OverlayRef;
 	private tooltipRef: ComponentRef<CustomToolTipComponent>;
+
+	private hideTooltipTimeout: any;
 
 	constructor(private _overlay: Overlay, private _overlayPositionBuilder: OverlayPositionBuilder, private _elementRef: ElementRef) {}
 
@@ -104,8 +106,8 @@ export class ToolTipRendererDirective implements OnInit, OnDestroy, OnChanges {
 			});
 	}
 
-	private mousex: number = 0;
-	private mousey: number = 0;
+	private mousex = 0;
+	private mousey = 0;
 
 	ngOnChanges(changes: SimpleChanges) {
 		if (changes?.['showToolTip']?.currentValue) {
@@ -168,6 +170,12 @@ export class ToolTipRendererDirective implements OnInit, OnDestroy, OnChanges {
 		}
 	}
 
+	@HostListener('pointerout')
+	@HostListener('mouseleave')
+	beginHideTooltip() {
+		this.hideTooltipWithDelay();
+	}
+
 	click$: Subject<Event> = new Subject<Event>();
 	hover$: Subject<Event> = new Subject<Event>();
 
@@ -179,11 +187,12 @@ export class ToolTipRendererDirective implements OnInit, OnDestroy, OnChanges {
 	gotHover(evt: Event) {
 		this.hover$.next(evt);
 	}
+
 	show() {
-		// attach the component if it has not already attached to the overlay
 		if (!(this.text || this.contentTemplate)) {
 			return;
 		}
+
 		timer(300)
 			.pipe(
 				takeUntil(this.destroyOpen$),
@@ -197,7 +206,20 @@ export class ToolTipRendererDirective implements OnInit, OnDestroy, OnChanges {
 						this.isOpen.emit(true);
 						this.tooltipRef.instance.allowVarTag = this.allowVarTag;
 
-						return this.tooltipRef.instance.closeTooltip;
+						merge(
+							this.tooltipRef.instance.enterTooltip.pipe(map(() => 'enter')),
+							this.tooltipRef.instance.leaveTooltip.pipe(map(() => 'leave')) // Changed from closeTooltip to leaveTooltip
+						)
+							.pipe(takeUntil(this.destroyOpen$))
+							.subscribe((eventType) => {
+								if (eventType === 'enter') {
+									this.cancelHideTooltip();
+								} else {
+									this.hideTooltipWithDelay();
+								}
+							});
+
+						return this.tooltipRef.instance.leaveTooltip;
 					}
 					return of(null);
 				})
@@ -207,11 +229,25 @@ export class ToolTipRendererDirective implements OnInit, OnDestroy, OnChanges {
 			});
 	}
 
-	@HostListener('pointerout')
-	@HostListener('mouseleave')
-	hide() {
-		this.closeToolTip();
-		this.destroyOpen$.next();
+	hideTooltipWithDelay() {
+		this.cancelHideTooltip();
+		this.hideTooltipTimeout = setTimeout(() => this.closeToolTip(), 300);
+	}
+
+	cancelHideTooltip() {
+		if (this.hideTooltipTimeout) {
+			clearTimeout(this.hideTooltipTimeout);
+			this.hideTooltipTimeout = null;
+		}
+	}
+
+	private closeToolTip() {
+		this.cancelHideTooltip();
+		if (this._overlayRef) {
+			this._overlayRef.detach();
+			this.leave.emit();
+			this.isOpen.emit(false);
+		}
 	}
 
 	ngOnDestroy() {
@@ -221,13 +257,5 @@ export class ToolTipRendererDirective implements OnInit, OnDestroy, OnChanges {
 
 		this.destroy$.next();
 		this.destroy$.complete();
-	}
-
-	private closeToolTip() {
-		if (this._overlayRef) {
-			this._overlayRef.detach();
-			this.leave.emit();
-			this.isOpen.emit(false);
-		}
 	}
 }
