@@ -678,8 +678,11 @@ export class OverlayContainerComponent implements OnInit, OnDestroy {
 					if (this.currentPage === OverlayPages.NewRoom || this.currentPage === OverlayPages.NewRoomInFolder) {
 						return res.title_used ? { room_name: true } : null;
 					} else {
-						let currentRoomName: string = this.overlayService.pageState.getValue()?.data?.selectedRoomsInFolder[0]?.title;
-						if (!currentRoomName) {
+						let currentRoomName = '';
+						if (this.overlayService.pageState.getValue()?.data?.selectedRoomsInFolder) {
+							currentRoomName = this.overlayService.pageState.getValue().data.selectedRoomsInFolder[0].title;
+						}
+						if (currentRoomName === '') {
 							currentRoomName = this.pinnable.location.title;
 						}
 						return res.title_used && currentRoomName !== this.roomData.roomName ? { room_name: true } : null;
