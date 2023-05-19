@@ -207,7 +207,9 @@ export class PassConfigComponent implements OnInit, OnDestroy {
 	waitInLineLaunchDate = moment('03-15-2023', 'MM-DD-YYYY');
 
 	ngOnDestroy() {
-		this.scrollPosition.saveComponentScroll(this.scrollableAreaName, this.scrollableArea.scrollTop);
+		if (this.scrollableArea) {
+			this.scrollPosition.saveComponentScroll(this.scrollableAreaName, this.scrollableArea.scrollTop);
+		}
 		this.destroy$.next();
 		this.destroy$.complete();
 		if (this.globalReloadSubs) {
