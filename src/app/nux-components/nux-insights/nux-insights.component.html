@@ -8,7 +8,7 @@
 		<p class="heading-body">See into {{ schoolName }}'s halls from this past year with SmartPass</p>
 	</div>
 	<div class="section-break"></div>
-	<div *ngIf="isYearInReviewEnabled" class="action-section">
+	<div *ngIf="isYearInReviewEnabled && hasYearInReviewPdf" class="action-section">
 		<div class="image-and-text">
 			<img class="section-image" src="../../../assets/Confetti.svg" />
 			<div class="section-text">
