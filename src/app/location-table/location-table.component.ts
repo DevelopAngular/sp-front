@@ -330,7 +330,7 @@ export class LocationTableComponent implements OnInit, OnDestroy {
 			// choice with a category is within a pinnable folder
 			else if (loc.category !== null) {
 				const pinnable = this.pinnables[loc.category];
-				if (pinnable.show_as_origin_room) {
+				if (!pinnable || pinnable.show_as_origin_room) {
 					return loc;
 				}
 			}
