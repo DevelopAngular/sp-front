@@ -442,7 +442,8 @@ export class LocationTableComponent implements OnInit, OnDestroy {
 					})
 				)
 				.subscribe((p) => {
-					const parsedLocations: Choice[] = this.parseLocations(p);
+					const choices: Location[] = this.filterChoicesForShowAsOrigin(p);
+					const parsedLocations: Choice[] = this.parseLocations(choices);
 					this.hideFavorites = true;
 					const filtFevLoc = _filter(this.starredChoices, (item) => {
 						return item.title.toLowerCase().includes(this.search);
@@ -463,12 +464,13 @@ export class LocationTableComponent implements OnInit, OnDestroy {
 			iif(() => !!this.category, this.locationService.locsFromCategory$, this.locationService.locations$)
 				.pipe(takeUntil(this.destroy$))
 				.subscribe((res: Location[]) => {
-					const choices: Location[] = res.filter((r) => {
+					const locations: Location[] = res.filter((r) => {
 						if (this.category) {
 							return r.category === this.category;
 						}
 						return r;
 					});
+					const choices: Location[] = this.filterChoicesForShowAsOrigin(locations);
 					this.choices = this.parseLocations(choices);
 					this.hideFavorites = false;
 					this.noChoices = !this.choices.length;
