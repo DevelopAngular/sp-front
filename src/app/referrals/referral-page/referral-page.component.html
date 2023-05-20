@@ -1,33 +1,88 @@
-<div class="referral-page">
-	<div class="left">
-		<h1 class="ds-big-heading referral-heading"><span class="ds-blue">Get $100</span> for <span class="underline">each</span> friend you refer</h1>
+<div
+	class="referral-page"
+	[ngClass]="{
+		'': !darkTheme.isEnabled$.value,
+		__dark: darkTheme.isEnabled$.value
+	}">
+	<div class="left" [ngClass]="{ accepted: user?.referral_status === 'accepted' }">
+		<h1
+			class="ds-big-heading referral-heading"
+			[ngClass]="{
+				'': !darkTheme.isEnabled$.value,
+				__dark: darkTheme.isEnabled$.value
+			}">
+			<span class="ds-blue">Get $100</span> for <span class="underline">each</span> friend you refer
+		</h1>
 		<p class="referral-text">
 			You will earn a $100 Amazon Gift Card per referral for any school who signs up with your link.
 			<strong>Treat your staff, or keep it for personal use!</strong>
 		</p>
 
-		<h2 class="ds-big-heading referral-subheading">3 Steps to Start Earning</h2>
-		<section class="referral-earning-steps">
-			<div class="icon-square">
-				<img [src]="'./assets/paper-plane.svg' | resolveAsset" alt="Apply to the program" />
-			</div>
-			<p class="referral-text">Apply to the program.</p>
+		<div [ngSwitch]="user?.referral_status">
+			<div *ngSwitchCase="'accepted'">
+				<h2
+					class="ds-big-heading referral-subheading"
+					[ngClass]="{
+						'': !darkTheme.isEnabled$.value,
+						__dark: darkTheme.isEnabled$.value
+					}">
+					Start Earning
+				</h2>
+				<section class="referral-earning-steps">
+					<div class="icon-square" style="align-self: start">
+						<img [src]="'./assets/chain-links.svg' | resolveAsset" alt="Receive Referral Link" />
+					</div>
+					<p class="referral-text">Use your unique referral link to share with your network!</p>
 
-			<div class="icon-square" style="align-self: start">
-				<img [src]="'./assets/chain-links.svg' | resolveAsset" alt="Receive Referral Link" />
+					<div class="icon-square" style="align-self: start">
+						<img [src]="'./assets/cash-stack.svg' | resolveAsset" alt="Get cash on Referral" />
+					</div>
+					<p class="referral-text">
+						When a referral (school) has a demo and purchases SmartPass, you'll get a $100 Amazon Gift Card.
+						<strong>Plus, there's no upper limit!</strong>
+					</p>
+				</section>
 			</div>
-			<p class="referral-text">If accepted, you will receive a unique referral link to share with your network!</p>
 
-			<div class="icon-square" style="align-self: start">
-				<img [src]="'./assets/cash-stack.svg' | resolveAsset" alt="Get cash on Referral" />
+			<div *ngSwitchDefault>
+				<h2
+					class="ds-big-heading referral-subheading"
+					[ngClass]="{
+						'': !darkTheme.isEnabled$.value,
+						__dark: darkTheme.isEnabled$.value
+					}">
+					3 Steps to Start Earning
+				</h2>
+				<section class="referral-earning-steps">
+					<div class="icon-square">
+						<img [src]="'./assets/paper-plane.svg' | resolveAsset" alt="Apply to the program" />
+					</div>
+					<p class="referral-text">Apply to the program.</p>
+
+					<div class="icon-square" style="align-self: start">
+						<img [src]="'./assets/chain-links.svg' | resolveAsset" alt="Receive Referral Link" />
+					</div>
+					<p class="referral-text">If accepted, you will receive a unique referral link to share with your network!</p>
+
+					<div class="icon-square" style="align-self: start">
+						<img [src]="'./assets/cash-stack.svg' | resolveAsset" alt="Get cash on Referral" />
+					</div>
+					<p class="referral-text">
+						When a referral (school) has a demo and purchases SmartPass, you'll get a $100 Amazon Gift Card.
+						<strong>Plus, there's no upper limit!</strong>
+					</p>
+				</section>
 			</div>
-			<p class="referral-text">
-				When a referral (school) has a demo and purchases SmartPass, you'll get a $100 Amazon Gift Card.
-				<strong>Plus, there's no upper limit!</strong>
-			</p>
-		</section>
+		</div>
 
-		<h2 class="ds-big-heading referral-subheading">Additional Program Perks</h2>
+		<h2
+			class="ds-big-heading referral-subheading"
+			[ngClass]="{
+				'': !darkTheme.isEnabled$.value,
+				__dark: darkTheme.isEnabled$.value
+			}">
+			Additional Program Perks
+		</h2>
 		<section class="referral-perks">
 			<div class="perk-card">
 				<div class="social-icons">
@@ -58,7 +113,14 @@
 			</div>
 		</section>
 
-		<h2 class="ds-big-heading referral-subheading">Terms</h2>
+		<h2
+			class="ds-big-heading referral-subheading"
+			[ngClass]="{
+				'': !darkTheme.isEnabled$.value,
+				__dark: darkTheme.isEnabled$.value
+			}">
+			Terms
+		</h2>
 		<section class="referral-terms">
 			<ul style="width: 400px">
 				<li class="referral-text">Digital ads bidding (PPC, social media) on the SmartPass brand name is not allowed</li>
@@ -72,7 +134,7 @@
 			</ul>
 		</section>
 	</div>
-	<div class="right">
-		<sp-referral-join></sp-referral-join>
+	<div class="right" [ngClass]="{ unaccepted: user?.referral_status !== 'accepted' }">
+		<sp-referral-join [user]="user"></sp-referral-join>
 	</div>
 </div>

@@ -23,6 +23,7 @@ body {
     // IOS PWA styles
     -webkit-overflow-scrolling: touch;
     -webkit-user-select: none;
+    user-select: none;
     -webkit-tap-highlight-color: transparent;
     -webkit-touch-callout: none;
     input,
@@ -38,12 +39,6 @@ var {
     font-style: inherit;
 }
 
-//@media only screen and (orientation:landscape){
-//  body {
-//    height: 100vw;
-//    transform: rotate(90deg);
-//  }
-//}
 .filter-shadow {
     filter: url("#dropshadow");
 }
@@ -56,6 +51,7 @@ img {
     user-drag: none;
     -moz-user-select: none;
     -webkit-user-drag: none;
+    user-select: none;
 }
 
 div {
@@ -116,8 +112,6 @@ div {
             height: 390px;
             overflow: auto;
             .using {
-                //display: flex;
-                //flex-direction: column;
                 padding: 20px;
                 .title {
                     font-size: 15px;
@@ -231,7 +225,6 @@ div {
     border-radius: 14px;
     background-color: transparent;
     overflow: visible;
-    //box-shadow: 0 2px 26px 0px rgba(0, 0, 0, 0.15);
     box-shadow: none;
     margin: 0;
     padding: 0;
@@ -260,7 +253,6 @@ div {
     box-shadow: none;
     margin: 0;
     padding: 0;
-    //height: 451px;
     background-color: transparent;
 }
 
@@ -280,31 +272,15 @@ div {
     box-shadow: 0 2px 26px 0px rgba(0, 0, 0, 0.15);
     margin: 0;
     padding: 0;
-    //width: 334px;
-    //height: 451px;
-    //margin-left: 219px !important;
-}
-
-.accounts-profiles-dialog {
-    //margin-left: 219px !important;
 }
 
 .accounts-profiles-dialog .mat-dialog-container {
     border-radius: 14px;
     box-shadow: 0 2px 26px 0px rgba(0, 0, 0, 0.15);
-    //margin: 10px;
     padding: 0;
 }
 
-.overlay-dialog {
-    //margin-left: 219px !important;
-}
-
-@media all and (max-width: 1110px) {
-    .overlay-dialog {
-        //margin-left: 0 !important;
-    }
-}
+@media all and (max-width: 1110px) {}
 
 .overlay-dialog .mat-dialog-container {
     border-radius: 16px;
@@ -399,7 +375,6 @@ div {
     overflow: visible;
     padding: 0;
     background-color: transparent;
-    //text-align: center;
     z-index: 1009;
 }
 }
@@ -437,7 +412,6 @@ textarea:focus {
 }
 
 .custom-backdrop {
-    /* z-index: 0; */
     background-color: rgba(0, 0, 0, 0.5);
 }
 
@@ -468,7 +442,6 @@ textarea:focus {
 }
 
 .custom-bd {
-    //background-image: linear-gradient(to right, transparent 219px,rgba(0, 0, 0, 0.3) 0);
     @extend .custom-backdrop;
 }
 
@@ -591,10 +564,6 @@ body {
     .teacher-pass-card-dialog-container {
         max-width: unset !important;
     }
-    .main-form-dialog-container,
-    .form-dialog-container {
-        //max-width: 335px !important;
-    }
 }
 
 // Side nav scroll hiding
@@ -634,13 +603,7 @@ body {
     @supports (-webkit-appearance: none) {
         @media all and (max-width: 1024px) {
             html {
-                //height: 100vh;
-                //max-height: 100vh;
-                //overflow: hidden;
                 overflow: auto;
-                //overflow-y: auto;
-                //overflow-x: hidden;
-                //background: red !important;
                 -webkit-overflow-scrolling: touch;
             }
             body {
@@ -670,48 +633,29 @@ body {
                 min-height: 100vh;
                 height: auto !important;
                 overflow: visible !important;
-                //overflow: auto;
             }
         }
     }
 }
 
-//@media all and (display-mode: standalone) {
-//  body {
-//    opacity: .3 !important;
-//  }
 //  /* Here goes the CSS rules that will only apply if app is running standalone */
-//}
-//
-//body {
-//  overflow: hidden !important;
-//  position: fixed !important;
-//  top: 0 !important;
-//  left: 0 !important;
-//}
-@media all and (prefers-color-scheme: light) {
-    body {
-        //display: none !important;
-    }
-}
+@media all and (prefers-color-scheme: light) {}
 
 .mat-jade {
     color: white !important;
     background-color: $jade !important;
 }
 
-.open-intercom-btn {}
-
 .underline {
     text-decoration: underline;
 }
 
 .referral-dialog-container .mat-dialog-container {
-	padding: 30px 40px 60px 40px;
-    overflow: hidden;
+	padding: 19px 19px 54px;
     border-radius: 12px;
-    max-width: 400px;
-    box-sizing: unset;
+    overflow: hidden;
+    width: 509px;
+    box-shadow: 0px 16px 48px rgba(16, 20, 24, 0.18);
 }
 
 .insights-dialog-container .mat-dialog-container {

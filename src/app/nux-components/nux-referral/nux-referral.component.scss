@@ -5,8 +5,6 @@
 	flex-direction: column;
 	justify-content: space-between;
 	align-items: center;
-	height: 100%;
-	width: 100%;
 	position: relative;
 	max-width: 100%;
 	background-color: #ffffff;
@@ -15,6 +13,8 @@
 	font-style: normal;
 	font-weight: 700;
 	gap: 10px;
+	padding: 34px;
+	width: 389px;
 }
 
 .referral-title {
@@ -64,7 +64,7 @@
 }
 
 .cancel-btn {
-	align-self: flex-end;
+	float: right;
 	img {
 		height: 27px;
 		cursor: pointer;

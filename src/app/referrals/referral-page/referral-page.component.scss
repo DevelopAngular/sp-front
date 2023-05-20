@@ -6,23 +6,72 @@
 $climb: '../../..';
 
 .referral-page {
-	background: #f5f5f5;
-	background-image: url($climb + '/assets/Referral Graphic.svg');
-	background-repeat: no-repeat;
-	background-position: 100% 80px;
+	background-color: $gray100;
 	padding: 80px;
 	display: grid;
 	grid-template-columns: 1fr 1fr;
+	animation: main 0.2s ease forwards;
+
+	.left {
+		max-width: 548px;
+	}
+
+	.left.accepted {
+		background-image: url($climb + '/assets/Referral Graphic.png');
+		background-repeat: no-repeat;
+		background-size: 540px;
+		padding-top: 130px;
+	}
+
+	.right {
+		width: 548px;
+	}
+
+	.right.unaccepted {
+		background-image: url($climb + '/assets/Referral Graphic.png');
+		background-size: 540px;
+		background-repeat: no-repeat;
+	}
 
 	h1.referral-heading {
 		font-size: 50px !important;
 		font-weight: 700;
+		background: linear-gradient(180deg, rgba(240, 242, 245, 0) -4.75%, $gray100 44.81%);
+		animation: heading 0.2s ease forwards;
+	}
+
+	h1.referral-heading.__dark {
+		color: white !important;
+		background: linear-gradient(180deg, rgba(240, 242, 245, 0) -4.75%, #0f171e 44.81%);
+		animation: heading__dark 0.2s ease forwards;
 	}
 
 	h2.referral-subheading {
 		margin-top: 70px !important;
 		font-size: 26px !important;
 		line-height: 32px;
+	}
+
+	h2.referral-subheading.__dark {
+		color: white !important;
+	}
+
+	@keyframes heading {
+		0% {
+			background: linear-gradient(180deg, rgba(240, 242, 245, 0) -4.75%, #0f171e 44.81%);
+		}
+		100% {
+			background: linear-gradient(180deg, rgba(240, 242, 245, 0) -4.75%, $gray100 44.81%);
+		}
+	}
+
+	@keyframes heading__dark {
+		0% {
+			background: linear-gradient(180deg, rgba(240, 242, 245, 0) -4.75%, $gray100 44.81%);
+		}
+		100% {
+			background: linear-gradient(180deg, rgba(240, 242, 245, 0) -4.75%, #0f171e 44.81%);
+		}
 	}
 
 	section.referral-earning-steps {
@@ -90,8 +139,9 @@ $climb: '../../..';
 			p.referral-text {
 				width: 380px;
 			}
-			background-image: url($climb + '/assets/Gift Bag.svg');
+			background-image: url($climb + '/assets/Gift Bag.png');
 			background-repeat: no-repeat;
+			background-size: 42%;
 			background-position: 100% 100%;
 		}
 	}
@@ -100,6 +150,29 @@ $climb: '../../..';
 		li {
 			padding: 5px 0;
 		}
+	}
+}
+
+.referral-page.__dark {
+	background-color: #0f171e;
+	animation: main__dark 0.2s ease forwards;
+}
+
+@keyframes main {
+	0% {
+		background-color: #0f171e;
+	}
+	100% {
+		background-color: $gray100;
+	}
+}
+
+@keyframes main__dark {
+	0% {
+		background-color: $gray100;
+	}
+	100% {
+		background-color: #0f171e;
 	}
 }
 
@@ -125,6 +198,7 @@ $climb: '../../..';
 	align-items: center;
 	justify-content: flex-start;
 	padding: 20px;
+	box-shadow: 0px 2.21831px 3.69718px rgba(0, 0, 0, 0.05);
 
 	.referral-subheading {
 		color: $navy500;
@@ -234,6 +308,8 @@ $climb: '../../..';
 textarea.referral-input {
 	height: 112px;
 	border: none;
+	font-size: 14px;
+	color: $navy500;
 }
 
 textarea.referral-input::placeholder {
@@ -254,5 +330,6 @@ textarea.referral-input::placeholder {
 		width: 585px;
 		border: none;
 		border-radius: 12px;
+		box-shadow: 0px 2.21831px 3.69718px rgba(0, 0, 0, 0.05);
 	}
 }

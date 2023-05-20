@@ -1,7 +1,7 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, Input, OnInit } from '@angular/core';
 import { UserService } from '../../services/user.service';
 import { User, ReferralStatus } from '../../models/User';
-import { finalize, map, switchMap, takeWhile, tap } from 'rxjs/operators';
+import { finalize, map, takeWhile, tap } from 'rxjs/operators';
 import { ToastService } from '../../services/toast.service';
 import { interval } from 'rxjs';
 
@@ -25,7 +25,7 @@ declare const window: Window & typeof globalThis & { referralJS: referralRockJS 
 	styleUrls: ['../referral-page/referral-page.component.scss'],
 })
 export class ReferralJoinComponent implements OnInit {
-	user: User;
+	@Input() user: User = null;
 	termsAccepted = false;
 	referralRockLoaded = false;
 	showValidationMsg = false;
@@ -51,33 +51,30 @@ export class ReferralJoinComponent implements OnInit {
 	}
 
 	ngOnInit(): void {
-		this.userService.userData
+		this.loadReferralRockFrame();
+		interval(500)
 			.pipe(
-				tap((user) => this.userService.getUserById(user.id)),
-				tap((user) => {
-					this.user = User.fromJSON(user);
-					this.loadReferralRockFrame();
-				}),
-				switchMap(() => interval(500)),
+				takeWhile(() => this.referralRockIframePresent() && !this.referralRockLoaded),
 				tap(() => {
 					this.loadReferralRockFrame();
 					this.checkReferralRockIframeLoaded();
-				}),
-				takeWhile(() => this.referralRockIframePresent() && !this.referralRockLoaded)
+				})
 			)
 			.subscribe();
 	}
 
 	// Loads the referral rock iFrame. The timing can be wonky, so we repeat it
 	loadReferralRockFrame() {
-		window.referralJS.access = {
-			targetId: 'referral-frame',
-			parameters: {
-				view: 'iframe',
-				programIdentifier: '8fd54047-b36c-430e-8f2d-1546fc4b3675',
-				email: this.user.primary_email,
-			},
-		};
+		if (this.user) {
+			window.referralJS.access = {
+				targetId: 'referral-frame',
+				parameters: {
+					view: 'iframe',
+					programIdentifier: '8fd54047-b36c-430e-8f2d-1546fc4b3675',
+					email: this.user.primary_email,
+				},
+			};
+		}
 	}
 
 	// If the iFrame isn't present, don't bother running the script
