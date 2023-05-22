@@ -36,7 +36,7 @@ export class NotSeenIntroGuard implements CanActivate {
 					isSaveOnServer = true;
 				}
 				if (!isSaveOnServer && !user.isAdmin()) {
-					this.router.navigateByUrl('intro').catch((e) => this.errorHandler.handleError(e));
+					this.router.navigate(['intro'], { skipLocationChange: true }).catch((e) => this.errorHandler.handleError(e));
 				}
 				return true;
 			})
