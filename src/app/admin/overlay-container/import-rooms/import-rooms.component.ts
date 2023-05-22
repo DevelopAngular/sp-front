@@ -9,7 +9,7 @@ import { OverlayDataService, OverlayPages } from '../overlay-data.service';
 
 import { groupBy } from 'lodash';
 import * as XLSX from 'xlsx';
-import { ToastService } from "../../../services/toast.service";
+import { ToastService } from '../../../services/toast.service';
 
 export interface RoomInfo {
 	id: string;
@@ -134,11 +134,7 @@ export class ImportRoomsComponent implements OnInit {
 
 	selectedFile: ElementRef;
 
-	constructor(
-		private userService: UserService,
-		private overlay: OverlayDataService,
-		private toastService: ToastService,
-	) {}
+	constructor(private userService: UserService, private overlay: OverlayDataService, private toastService: ToastService) {}
 
 	get showCancel() {
 		return this.importedRooms.length && this.uploadingProgress.completed;
@@ -226,16 +222,18 @@ export class ImportRoomsComponent implements OnInit {
 					);
 				})
 			)
-			.subscribe((rooms) => {
-				setTimeout(() => {
-					this.uploadingProgress.inProgress = false;
-					this.uploadingProgress.completed = true;
-				}, 1500);
-				this.importedRooms = rooms;
-			},
-				error => {
-					this.toastService.openToast({ title: 'Something went wrong', subtitle: 'Sorry, please upload a file ending in .xlsx', type: 'error' })
-				});
+			.subscribe(
+				(rooms) => {
+					setTimeout(() => {
+						this.uploadingProgress.inProgress = false;
+						this.uploadingProgress.completed = true;
+					}, 1500);
+					this.importedRooms = rooms;
+				},
+				(error) => {
+					this.toastService.openToast({ title: 'Something went wrong', subtitle: 'Sorry, please upload a file ending in .xlsx', type: 'error' });
+				}
+			);
 
 		this.overlay.dragEvent$.subscribe((dropAreaColor) => {
 			if (this.dropArea && this.dropArea.nativeElement && this.getRoomImportScreen() === 1) {
