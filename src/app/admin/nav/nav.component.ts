@@ -4,7 +4,6 @@ import {
 	Component,
 	ElementRef,
 	EventEmitter,
-	NgZone,
 	OnDestroy,
 	OnInit,
 	Output,
@@ -153,7 +152,6 @@ export class NavComponent implements OnInit, AfterViewInit, OnDestroy {
 		private dataService: DataService,
 		private userService: UserService,
 		private dialog: MatDialog,
-		private _zone: NgZone,
 		public darkTheme: DarkThemeSwitch,
 		private shortcutsService: KeyboardShortcutsService,
 		private storage: StorageService,
@@ -374,7 +372,7 @@ export class NavComponent implements OnInit, AfterViewInit, OnDestroy {
 					if (this.introsData.referral_reminder.universal && !this.introsData.referral_reminder.universal.seen_version) {
 						this.userService.updateIntrosRequest(this.introsData, 'universal', '1');
 					}
-					window.open('https://www.smartpass.app/referrals');
+					this.goToReferralPage();
 				} else if (action === 'swagShop') {
 					window.open('https://shop.smartpass.app/');
 				}
@@ -382,7 +380,7 @@ export class NavComponent implements OnInit, AfterViewInit, OnDestroy {
 		}
 	}
 
-	setCurrentUnderlinePos(refsArray: QueryList<ElementRef>, buttonsContainer: ElementRef, timeout: number = 50) {
+	setCurrentUnderlinePos(refsArray: QueryList<ElementRef>, buttonsContainer: ElementRef, timeout = 50) {
 		setTimeout(() => {
 			const tabRefsArray = refsArray.toArray();
 			const selectedTabRef = this.buttons.findIndex((button) => button.route === this.currentTab);

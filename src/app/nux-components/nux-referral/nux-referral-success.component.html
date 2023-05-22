@@ -1,11 +1,10 @@
 <div class="cancel-btn" [mat-dialog-close]="true">
 	<img src="../../../assets/Cancel (Gray-Black).svg" />
 </div>
-<div class="referral-container">
-	<div class="gift-icon success">🎉</div>
-	<h1 class="referral-title"><span class="green-text">You’re in!</span> $100 for <span class="underlined-text">each</span> school you refer</h1>
-
+<div class="referral-container success">
 	<mat-dialog-content>
+		<div class="gift-icon success">🎉</div>
+		<h1 class="referral-title"><span class="green-text">You’re in!</span> $100 for <span class="underlined-text">each</span> school you refer</h1>
 		<p class="referral-description">
 			You will earn a $100 Amazon Gift Card per referral for any school who signs up with your link.
 			<b>Treat your staff, or keep it for personal use!</b>
@@ -23,8 +22,8 @@
 				>
 			</li>
 		</ul>
+		<mat-dialog-actions class="full-width">
+			<button mat-button class="learn-more-button green" (click)="NavToReferralPage()">See Your Referral Link</button>
+		</mat-dialog-actions>
 	</mat-dialog-content>
-	<mat-dialog-actions class="full-width">
-		<button mat-button class="learn-more-button green" (click)="NavToReferralPage()">See Your Referral Link</button>
-	</mat-dialog-actions>
 </div>

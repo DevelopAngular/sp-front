@@ -75,7 +75,7 @@ const minStreakCount = 2;
 export class NavbarComponent implements AfterViewInit, OnInit, OnDestroy {
 	@Input() hasNav = true;
 	@Input() hasMultipleSchools = false;
-	@Input() isParent: boolean = false;
+	@Input() isParent = false;
 	@ViewChild('tabPointer') tabPointer: ElementRef;
 	@ViewChild('navButtonsContainer') navButtonsContainer: ElementRef;
 	@ViewChildren('tabRef') tabRefs: QueryList<ElementRef>;
@@ -101,7 +101,7 @@ export class NavbarComponent implements AfterViewInit, OnInit, OnDestroy {
 	private destroyer$ = new Subject<any>();
 
 	isStaff: boolean;
-	showSwitchButton: boolean = false;
+	showSwitchButton = false;
 	user: User;
 	representedUsers: RepresentedUser[];
 	effectiveUser: RepresentedUser;
@@ -112,7 +112,7 @@ export class NavbarComponent implements AfterViewInit, OnInit, OnDestroy {
 
 	isOpenSettings: boolean;
 
-	isStreaksOpen: boolean = false;
+	isStreaksOpen = false;
 	@ViewChild('streaksButton') streaksButton: ElementRef;
 
 	hideButtons: boolean;
@@ -162,7 +162,7 @@ export class NavbarComponent implements AfterViewInit, OnInit, OnDestroy {
 
 	isAssistant: boolean;
 
-	IDCardEnabled: boolean = false;
+	IDCardEnabled = false;
 
 	IDCARDDETAILS: any;
 
@@ -314,8 +314,7 @@ export class NavbarComponent implements AfterViewInit, OnInit, OnDestroy {
 		this.router.events.subscribe((value) => {
 			if (value instanceof NavigationEnd) {
 				this.hideButtons = this.router.url.includes('kioskMode') || this.router.url.includes('parent');
-				// this.hideButtons = this.router.url.includes("parent");
-				let urlSplit: string[] = value.url.split('/');
+				const urlSplit: string[] = value.url.split('/');
 				this.tab = urlSplit[urlSplit.length - 1];
 				this.tab = this.tab === '' || this.tab === 'main' ? 'passes' : this.tab;
 				this.inboxVisibility = this.tab !== 'settings';
@@ -412,7 +411,7 @@ export class NavbarComponent implements AfterViewInit, OnInit, OnDestroy {
 				filter((r) => !!r),
 				takeUntil(this.destroyer$)
 			)
-			.subscribe((res) => this.showOptions(this.settingsButton));
+			.subscribe(() => this.showOptions(this.settingsButton));
 
 		this.islargeDeviceWidth = this.screenService.isDeviceLargeExtra;
 
@@ -443,13 +442,13 @@ export class NavbarComponent implements AfterViewInit, OnInit, OnDestroy {
 	poofAnimation() {
 		const poof_target = document.querySelector<HTMLElement>('#puff');
 		function animatePoof() {
-			var bgTop = 0,
-				frame = 0,
-				frames = 6,
+			let bgTop = 0,
+				frame = 0;
+			const frames = 6,
 				frameSize = 32,
 				frameRate = 200,
 				puff = poof_target;
-			var animate = function () {
+			const animate = function () {
 				if (frame < frames) {
 					puff.style.backgroundPosition = '0 ' + bgTop + 'px';
 					bgTop = bgTop - frameSize;
@@ -564,7 +563,7 @@ export class NavbarComponent implements AfterViewInit, OnInit, OnDestroy {
 		if (action === 'signout') {
 			this.router.navigate(['sign-out']);
 		} else if (action === 'myPin') {
-			const teachPinDialog = this.dialog.open(TeacherPinComponent, {
+			this.dialog.open(TeacherPinComponent, {
 				panelClass: 'sp-form-dialog',
 				backdropClass: 'custom-backdrop',
 			});
@@ -593,10 +592,9 @@ export class NavbarComponent implements AfterViewInit, OnInit, OnDestroy {
 				Notification.requestPermission();
 			}
 
-			let notifRef;
 			if (NotificationService.hasSupport && NotificationService.canRequestPermission && !this.isSafari) {
-				this.notifService.initNotifications(true).then((hasPerm) => {
-					notifRef = this.dialog.open(NotificationFormComponent, {
+				this.notifService.initNotifications(true).then(() => {
+					this.dialog.open(NotificationFormComponent, {
 						panelClass: 'form-dialog-container',
 						backdropClass: 'custom-backdrop',
 						width: '462px',
@@ -604,7 +602,7 @@ export class NavbarComponent implements AfterViewInit, OnInit, OnDestroy {
 					});
 				});
 			} else {
-				notifRef = this.dialog.open(NotificationFormComponent, {
+				this.dialog.open(NotificationFormComponent, {
 					panelClass: 'form-dialog-container',
 					backdropClass: 'custom-backdrop',
 					width: '462px',
@@ -648,7 +646,7 @@ export class NavbarComponent implements AfterViewInit, OnInit, OnDestroy {
 			if (this.introsData?.referral_reminder.universal && !this.introsData?.referral_reminder.universal.seen_version) {
 				this.userService.updateIntrosRequest(this.introsData, 'universal', '1');
 			}
-			window.open('https://www.smartpass.app/referrals');
+			this.goToReferralPage();
 		} else if (action === 'swagShop') {
 			window.open('https://shop.smartpass.app/');
 		}
@@ -656,7 +654,6 @@ export class NavbarComponent implements AfterViewInit, OnInit, OnDestroy {
 
 	updateTab(route: string) {
 		this.tab = route;
-		// console.log('[updateTab()]: ', this.tab);
 		this.router.navigateByUrl('/main/' + this.tab);
 	}
 
@@ -709,9 +706,7 @@ export class NavbarComponent implements AfterViewInit, OnInit, OnDestroy {
 			showCustomID: this.IDCARDDETAILS.show_custom_ids,
 		};
 
-		// idCardData.idNumberData.barcodeURL = await this.qrBarcodeGenerator.selectBarcodeType('code39', 123456);
-
-		const dialogRef = this.dialog.open(IdcardOverlayContainerComponent, {
+		this.dialog.open(IdcardOverlayContainerComponent, {
 			panelClass: 'id-card-overlay-container',
 			backdropClass: 'custom-bd',
 			data: { idCardData: idCardData, isLoggedIn: true },
@@ -723,7 +718,7 @@ export class NavbarComponent implements AfterViewInit, OnInit, OnDestroy {
 		return false;
 	}
 
-	openStreaks(event, isLost: boolean = false) {
+	openStreaks(event, isLost = false) {
 		this.isStreaksOpen = true;
 		let target;
 		if (isLost) {
@@ -744,7 +739,7 @@ export class NavbarComponent implements AfterViewInit, OnInit, OnDestroy {
 			},
 		});
 
-		SDC.afterClosed().subscribe((status) => {
+		SDC.afterClosed().subscribe(() => {
 			this.isStreaksOpen = false;
 		});
 
