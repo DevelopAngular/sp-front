@@ -240,8 +240,6 @@ export class MainPageComponent implements OnInit, AfterViewInit, OnDestroy {
 		// return this.userService.userData.pipe(map(u => u.isStudent() || u.isTeacher() || u.isAssistant()));
 	}
 
-	onSwipe(event) {}
-
 	goHome(user) {
 		const studentRedirectFromAdmin = this.storage.getItem('admin_not_teacher_student_redirect');
 		if (studentRedirectFromAdmin) {
