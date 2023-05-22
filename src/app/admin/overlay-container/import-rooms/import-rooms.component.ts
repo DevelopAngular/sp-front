@@ -9,6 +9,7 @@ import { OverlayDataService, OverlayPages } from '../overlay-data.service';
 
 import { groupBy } from 'lodash';
 import * as XLSX from 'xlsx';
+import { ToastService } from "../../../services/toast.service";
 
 export interface RoomInfo {
 	id: string;
@@ -50,7 +51,6 @@ export class ImportRoomsComponent implements OnInit {
 						const rows = data.slice(1);
 						return rows.map((row, index) => {
 							return {
-								id: `Fake ${Math.floor(Math.random() * (1 - 1000)) + 1000}`,
 								title: ('' + row[0]).trim(),
 								room: ('' + row[1]).trim(),
 								teachers: <string>row[2] ? row[2].split(',').map((t) => t.trim()) : [],
@@ -134,7 +134,11 @@ export class ImportRoomsComponent implements OnInit {
 
 	selectedFile: ElementRef;
 
-	constructor(private userService: UserService, private overlay: OverlayDataService) {}
+	constructor(
+		private userService: UserService,
+		private overlay: OverlayDataService,
+		private toastService: ToastService,
+	) {}
 
 	get showCancel() {
 		return this.importedRooms.length && this.uploadingProgress.completed;
@@ -161,7 +165,6 @@ export class ImportRoomsComponent implements OnInit {
 					let rows = data.slice(1);
 					rows = rows.map((row, index) => {
 						return {
-							id: `Fake ${Math.floor(Math.random() * (1 - 1000)) + 1000}`,
 							title: ('' + row[0]).trim(),
 							room: ('' + row[1]).trim(),
 							teachers: <string>row[2] ? row[2].split(',').map((t) => t.trim()) : [],
@@ -229,7 +232,10 @@ export class ImportRoomsComponent implements OnInit {
 					this.uploadingProgress.completed = true;
 				}, 1500);
 				this.importedRooms = rooms;
-			});
+			},
+				error => {
+					this.toastService.openToast({ title: 'Something went wrong', subtitle: 'Sorry, please upload a file ending in .xlsx', type: 'error' })
+				});
 
 		this.overlay.dragEvent$.subscribe((dropAreaColor) => {
 			if (this.dropArea && this.dropArea.nativeElement && this.getRoomImportScreen() === 1) {
