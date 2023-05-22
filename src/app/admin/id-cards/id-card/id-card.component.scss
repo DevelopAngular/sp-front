@@ -12,10 +12,26 @@
 	// height: 388px;
 	.design {
 		position: absolute;
-		top: 0;
+		top: -34px;
 		right: 32px;
-		height: inherit;
+		height: calc(110%);
+		overflow: hidden;
 	}
+
+	.design img {
+		position: relative;
+		animation: scrollSPLogo 2s linear infinite;
+	}
+
+	@keyframes scrollSPLogo {
+		0% {
+			transform: translateY(0);
+		}
+		100% {
+			transform: translateY(34px);
+		}
+	}
+
 	.top {
 		border-radius: 15px;
 		min-height: 100%;
