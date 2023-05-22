@@ -23,12 +23,12 @@ declare const window;
 	animations: [bumpIn, NextStep],
 })
 export class IntroComponent implements OnInit, AfterViewInit {
-	@Input() usedAsEntryComponent: boolean = false;
+	@Input() usedAsEntryComponent = false;
 	@Output() endIntroEvent: EventEmitter<boolean> = new EventEmitter();
 
 	user: User;
 	isStaff: boolean;
-	slideIndex: number = 1;
+	slideIndex = 1;
 	buttons = { left: false, right: false };
 	slides;
 
@@ -325,8 +325,6 @@ export class IntroComponent implements OnInit, AfterViewInit {
 		});
 	}
 
-	ngAfterViewInit(): void {}
-
 	clickDots(pageNumber) {
 		this.slideIndex = pageNumber;
 	}
@@ -408,7 +406,7 @@ export class IntroComponent implements OnInit, AfterViewInit {
 		return this.buttons[id] ? 'down' : 'up';
 	}
 
-	slide(direction: string = 'forward') {
+	slide(direction = 'forward') {
 		const MIN_SLIDE = 1;
 		const MAX_SLIDE = 4;
 
