@@ -47,7 +47,9 @@
 				<pre [innerHTML]="urlify(backsideText)"></pre>
 			</div>
 		</div>
-		<img class="design" [src]="'./assets/DIgital ID Card Design.svg' | resolveAsset" alt="" />
+		<div class="design">
+			<img [src]="'./assets/DIgital ID Card Design.svg' | resolveAsset" alt="" />
+		</div>
 	</div>
 	<div class="button flip-btn">
 		<app-gradient-button
