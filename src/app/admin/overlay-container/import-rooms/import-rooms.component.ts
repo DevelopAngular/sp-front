@@ -231,7 +231,7 @@ export class ImportRoomsComponent implements OnInit {
 					this.importedRooms = rooms;
 				},
 				(error) => {
-					this.toastService.openToast({ title: 'Something went wrong', subtitle: 'Sorry, please upload a file ending in .xlsx', type: 'error' });
+					this.toastService.openToast({ title: 'Something went wrong', subtitle: 'Please try refreshing the page. If the issue keeps occuring, contact us at support@smartpass.app.', type: 'error' });
 				}
 			);
 
