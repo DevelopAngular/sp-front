@@ -15,6 +15,15 @@
 	gap: 10px;
 	padding: 34px;
 	width: 389px;
+	mat-dialog-content {
+		height: 582px;
+	}
+}
+
+.referral-container.success {
+	mat-dialog-content {
+		height: 526px;
+	}
 }
 
 .referral-title {
