@@ -1,5 +1,5 @@
 import { AfterViewInit, ChangeDetectorRef, Component, EventEmitter, Input, NgZone, OnInit, Optional, Output } from '@angular/core';
-import { Router } from '@angular/router';
+import { NavigationExtras, Router } from '@angular/router';
 import { DataService } from '../services/data-service';
 import { LoadingService } from '../services/loading.service';
 import { User } from '../models/User';
@@ -388,7 +388,14 @@ export class IntroComponent implements OnInit, AfterViewInit {
 				if (this.usedAsEntryComponent) {
 					this.endIntroEvent.emit(true);
 				} else {
-					this.user.isAdmin() && !this.user.isTeacher() ? this.router.navigate(['/admin']) : this.router.navigate(['/main']);
+					const navigationExtras: NavigationExtras = {
+						queryParams: {
+							bypassIntroGuards: true,
+						},
+					};
+					this.user.isAdmin() && !this.user.isTeacher()
+						? this.router.navigate(['/admin'], navigationExtras)
+						: this.router.navigate(['/main'], navigationExtras);
 				}
 			});
 	}

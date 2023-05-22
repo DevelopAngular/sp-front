@@ -54,6 +54,7 @@ import { Util } from '../../Util';
 import { RepresentedUser } from '../navbar/navbar.component';
 import { AppState } from '../ngrx/app-state/app-state';
 import { EventData } from '../services/polling-service';
+import { NavigationExtras, Router } from '@angular/router';
 @Component({
 	selector: 'app-passes',
 	templateUrl: './passes.component.html',
@@ -244,7 +245,8 @@ export class PassesComponent implements OnInit, OnDestroy {
 		private cdr: ChangeDetectorRef,
 		private titleService: Title,
 		private featureService: FeatureFlagService,
-		private store: Store<AppState>
+		private store: Store<AppState>,
+		private router: Router
 	) {
 		this.userService.user$
 			.pipe(
@@ -431,6 +433,15 @@ export class PassesComponent implements OnInit, OnDestroy {
 	}
 
 	ngOnInit() {
+		const queryParamsToRemove = ['bypassIntroGuards']; // Specify the query parameters to remove
+		const currentQueryParams = { ...this.router.parseUrl(this.router.url).queryParams }; // Get the current query parameters
+		queryParamsToRemove.forEach((param) => delete currentQueryParams[param]); // Remove the specified query parameters
+		const navigationExtras: NavigationExtras = {
+			queryParams: currentQueryParams,
+		};
+
+		this.router.navigate([], navigationExtras);
+
 		this.futurePasses = this.liveDataService.futurePasses$;
 		this.activePasses = this.getActivePasses();
 		this.pastPasses = this.liveDataService.expiredPasses$;
