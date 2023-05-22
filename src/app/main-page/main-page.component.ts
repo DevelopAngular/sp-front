@@ -8,7 +8,7 @@ import { DataService } from '../services/data-service';
 import { LiveDataService } from '../live-data/live-data.service';
 import { Request } from '../models/Request';
 import { DarkThemeSwitch } from '../dark-theme-switch';
-import { NavigationEnd, Router } from '@angular/router';
+import { NavigationEnd, NavigationExtras, Router } from '@angular/router';
 import { filter as _filter } from 'lodash';
 import { HttpService } from '../services/http-service';
 import { HallPassesService } from '../services/hall-passes.service';
@@ -174,6 +174,15 @@ export class MainPageComponent implements OnInit, AfterViewInit, OnDestroy {
 	}
 
 	ngOnInit() {
+		const queryParamsToRemove = ['bypassIntroGuards']; // Specify the query parameters to remove
+		const currentQueryParams = { ...this.router.parseUrl(this.router.url).queryParams }; // Get the current query parameters
+		queryParamsToRemove.forEach((param) => delete currentQueryParams[param]); // Remove the specified query parameters
+		const navigationExtras: NavigationExtras = {
+			queryParams: currentQueryParams,
+		};
+
+		this.router.navigate([], navigationExtras);
+
 		this.isKioskMode = this.kioskModeService.isKisokMode();
 		this.toggleLeft = this.sideNavService.toggleLeft;
 		this.toggleRight = this.sideNavService.toggleRight;
