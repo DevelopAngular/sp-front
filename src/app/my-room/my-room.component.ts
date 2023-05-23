@@ -355,7 +355,7 @@ export class MyRoomComponent implements OnInit, OnDestroy {
 		if (this.selectedLocation.category) {
 			pin = this.pinnables.find((p: Pinnable) => p.category === this.selectedLocation.category);
 		} else {
-			pin = this.pinnables.find((p: Pinnable) => p.location.id === this.selectedLocation.id);
+			pin = this.pinnables.find((p: Pinnable) => p.location?.id === this.selectedLocation.id);
 		}
 		if (pin) {
 			this.showAsOriginRoom = pin.show_as_origin_room;
