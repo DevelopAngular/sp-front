@@ -8,7 +8,10 @@
 	(click)="wrapper.pressed = false; clickEvent.emit($event)"
 	[@pressState]="wrapper.pressed ? 'down' : 'up'"
 	[style.background-color]="backgroundColor ? backgroundColor : 'transparent'">
-	<div class="group-name" *ngIf="group.name">{{ group.name }}</div>
+	<div class="group-name">
+		<span *ngIf="group.name">{{ group.name }}</span>
+		<div class="chip" *ngIf="!group.enabled">Disabled</div>
+	</div>
 	<div class="students">
 		<div class="student" *ngFor="let student of group.users">
 			<div class="student-picture">
@@ -20,9 +23,6 @@
 				</ng-template>
 			</div>
 			<div class="name" notranslate>{{ student.display_name }}</div>
-			<!--      <div *ngIf="chip.hovered" class="delete">-->
-			<!--        <img [src]="'./assets/Cancel (Navy).svg'" width="16" alt="Check.svg">-->
-			<!--      </div>-->
 		</div>
 	</div>
 	<ng-template #name>
