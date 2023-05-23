@@ -25,9 +25,11 @@ export class NuxReferralComponent {
 
 	NavToReferralPage() {
 		if (this.isAdmin) {
-			this.router.navigate(['admin', 'refer_us']);
+			const url = this.router.serializeUrl(this.router.createUrlTree(['admin', 'refer_us']));
+			window.open(url, '_blank');
 		} else {
-			this.router.navigate(['main', 'refer_us']);
+			const url = this.router.serializeUrl(this.router.createUrlTree(['main', 'refer_us']));
+			window.open(url, '_blank');
 		}
 		this.dialogRef.close();
 	}

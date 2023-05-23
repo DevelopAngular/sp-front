@@ -2,7 +2,7 @@ import { AfterViewInit, Component, OnDestroy, OnInit } from '@angular/core';
 
 import { BehaviorSubject, forkJoin, Observable, of, Subject } from 'rxjs';
 import { UserService } from '../../services/user.service';
-import { Router } from '@angular/router';
+import { NavigationExtras, Router } from '@angular/router';
 import { catchError, concatMap, delay, exhaustMap, filter, map, skip, switchMap, take, takeUntil, tap } from 'rxjs/operators';
 import { HttpService } from '../../services/http-service';
 import { FeatureFlagService, FLAGS } from '../../services/feature-flag.service';
@@ -46,6 +46,15 @@ export class AdminPageComponent implements OnInit, AfterViewInit, OnDestroy {
 	}
 
 	public ngOnInit(): void {
+		const queryParamsToRemove = ['bypassIntroGuards']; // Specify the query parameters to remove
+		const currentQueryParams = { ...this.router.parseUrl(this.router.url).queryParams }; // Get the current query parameters
+		queryParamsToRemove.forEach((param) => delete currentQueryParams[param]); // Remove the specified query parameters
+		const navigationExtras: NavigationExtras = {
+			queryParams: currentQueryParams,
+		};
+
+		this.router.navigate([], navigationExtras);
+
 		this.schoolsLength$ = this.httpService.schoolsLength$;
 
 		this.adminPageReload$
