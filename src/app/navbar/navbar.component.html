@@ -62,7 +62,7 @@
 					class="ds-mx-10"
 					style="cursor: pointer; display: flex; align-items: center"
 					*ngIf="user && user.isAssistant() && !screenService.isDeviceLargeExtra; else notAssistant">
-					<div *ngIf="referralEnabled" class="referral-button" (click)="goToReferralPage()">
+					<div *ngIf="referralEnabled && !isKioskMode" class="referral-button" (click)="goToReferralPage()">
 						<img [src]="'./assets/Blue-Gift.svg'" alt="Renewal Icon" />
 						<span class="referral-text">Get $100</span>
 					</div>
@@ -108,7 +108,7 @@
 							<img width="20px" [src]="'./assets/Streaks.svg'" alt="" />
 						</div>
 					</div>
-					<div *ngIf="referralEnabled && user.isTeacher()" class="referral-button" (click)="goToReferralPage()">
+					<div *ngIf="referralEnabled && user.isTeacher() && !isKioskMode" class="referral-button" (click)="goToReferralPage()">
 						<img [src]="'./assets/Blue-Gift.svg'" alt="Renewal Icon" />
 						<span class="referral-text">Get $100</span>
 					</div>
