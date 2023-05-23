@@ -1,4 +1,4 @@
-import { AfterViewInit, ChangeDetectorRef, Component, EventEmitter, Input, NgZone, OnInit, Optional, Output } from '@angular/core';
+import { ChangeDetectorRef, Component, EventEmitter, Input, NgZone, OnInit, Optional, Output } from '@angular/core';
 import { NavigationExtras, Router } from '@angular/router';
 import { DataService } from '../services/data-service';
 import { LoadingService } from '../services/loading.service';
@@ -22,7 +22,7 @@ declare const window;
 	styleUrls: ['./intro.component.scss'],
 	animations: [bumpIn, NextStep],
 })
-export class IntroComponent implements OnInit, AfterViewInit {
+export class IntroComponent implements OnInit {
 	@Input() usedAsEntryComponent = false;
 	@Output() endIntroEvent: EventEmitter<boolean> = new EventEmitter();
 
