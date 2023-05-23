@@ -13,12 +13,10 @@ export class TeamMemberComponent implements OnInit {
 
 	public picUrl: string;
 	public name: string;
-	public email: string;
 
 	ngOnInit(): void {
-		let teamMember = teamMembers[this.uid];
+		const teamMember = teamMembers[this.uid];
 		this.picUrl = './assets/team-profiles/' + teamMember.image_name;
 		this.name = teamMember.name;
-		this.email = teamMember.email;
 	}
 }
