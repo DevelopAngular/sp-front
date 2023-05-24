@@ -585,7 +585,7 @@ export class RequestCardComponent implements OnInit, OnDestroy {
 			this.editMessage();
 		} else if (action === 'deny_with_message') {
 			let denyMessage = '';
-			if (action.indexOf('Message') !== -1) {
+			if (action.indexOf('message') !== -1) {
 				this.messageEditOpen = true;
 				const config = {
 					panelClass: 'form-dialog-container',
