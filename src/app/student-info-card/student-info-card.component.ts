@@ -212,16 +212,7 @@ export class StudentInfoCardComponent implements OnInit, AfterViewInit, OnDestro
 					this.passesService.getQuickPreviewPassesRequest(this.profile.id, true);
 					this.getUserStats();
 
-					this.liveDataService
-						.watchFutureHallPasses()
-						.pipe(
-							map((passes) => passes.filter((p) => p.student.id == this.profile.id)),
-							takeUntil(this.destroy$),
-							distinctUntilChanged((passes1, passes2) => JSON.stringify(passes1) === JSON.stringify(passes2))
-						)
-						.subscribe({
-							next: (futurePasses) => (this.futurePasses = futurePasses),
-						});
+					this.liveDataService.watchFutureHallPasses({ type: 'student', value: this.profile }).subscribe((passes) => (this.futurePasses = passes));
 
 					this.studentStats$ = this.userService.studentsStats$.pipe(
 						map<Record<string, UserStats>, UserStats>((allStats) => allStats[this.profile.id]),
@@ -544,7 +535,7 @@ export class StudentInfoCardComponent implements OnInit, AfterViewInit, OnDestro
 			});
 	}
 
-	openReportForm(useChipInsteadSearch: boolean = false) {
+	openReportForm(useChipInsteadSearch = false) {
 		const RF = this.dialog.open(ReportFormComponent, {
 			panelClass: ['form-dialog-container', 'report-dialog'],
 			backdropClass: 'custom-backdrop',
