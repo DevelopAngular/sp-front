@@ -1,6 +1,6 @@
 @import '../../../../sp-colors';
 
-$margin: 20px;
+$margin: 20px 0 20px 20px;
 
 .renewal-notif {
 	font-family: 'Inter';
@@ -11,6 +11,7 @@ $margin: 20px;
 	text-decoration: none;
 	padding: 12px;
 	margin: $margin;
+	width: 147px;
 	cursor: pointer;
 
 	color: $navy;
