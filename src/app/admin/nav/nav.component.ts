@@ -12,7 +12,7 @@ import {
 	ViewChildren,
 } from '@angular/core';
 import { ActivatedRoute, NavigationEnd, Router } from '@angular/router';
-import { BehaviorSubject, Observable, Subject } from 'rxjs';
+import { BehaviorSubject, combineLatest, Observable, Subject } from 'rxjs';
 import { DataService } from '../../services/data-service';
 import { User } from '../../models/User';
 import { UserService } from '../../services/user.service';
@@ -35,18 +35,23 @@ import { ComponentsService } from '../../services/components.service';
 import { School } from '../../models/School';
 import { NavbarElementsRefsService } from '../../services/navbar-elements-refs.service';
 import { FeatureFlagService, FLAGS } from '../../services/feature-flag.service';
+import { OverflowDetectionService } from '../../overflow-detection.service';
+import { IntroData } from '../../ngrx/intros';
 
 declare const window;
 
-interface NavButtons {
+interface NavButton {
 	title: string;
 	id: string;
 	route: string;
 	type: string;
 	imgUrl: string;
 	requiredRoles: string[];
+	topButton?: boolean;
 	isExpand?: boolean;
 	isPro?: boolean;
+	externalApp?: string;
+	link?: string;
 }
 
 @Component({
@@ -56,12 +61,13 @@ interface NavButtons {
 })
 export class NavComponent implements OnInit, AfterViewInit, OnDestroy {
 	@ViewChild('settingsButton', { static: true }) settingsButton: ElementRef;
-	@ViewChild('navButtonsContainter', { static: true }) navButtonsContainterRef: ElementRef;
+	@ViewChild('navButtonsContainer', { static: true }) navButtonsContainerRef: ElementRef;
+	@ViewChild('navBottom', { static: true }) navBottom: ElementRef;
 	@ViewChildren('tabRef') tabRefs: QueryList<ElementRef>;
 
 	@Output('restrictAccess') restrictAccess: EventEmitter<boolean> = new EventEmitter();
 
-	buttons: NavButtons[] = [
+	buttons: NavButton[] = [
 		{
 			title: 'Dashboard',
 			id: 'dashboard',
@@ -69,6 +75,7 @@ export class NavComponent implements OnInit, AfterViewInit, OnDestroy {
 			type: 'routerLink',
 			imgUrl: 'Dashboard',
 			requiredRoles: ['_profile_admin', 'access_admin_dashboard'],
+			topButton: true,
 		},
 		{
 			title: 'Hall Monitor',
@@ -77,6 +84,7 @@ export class NavComponent implements OnInit, AfterViewInit, OnDestroy {
 			type: 'routerLink',
 			imgUrl: 'Walking',
 			requiredRoles: ['_profile_admin', 'admin_hall_monitor'],
+			topButton: true,
 		},
 		{
 			title: 'Explore',
@@ -86,6 +94,7 @@ export class NavComponent implements OnInit, AfterViewInit, OnDestroy {
 			imgUrl: 'Search Eye',
 			requiredRoles: ['_profile_admin', 'access_admin_search'],
 			isExpand: true,
+			topButton: true,
 		},
 		{
 			title: 'Rooms',
@@ -133,7 +142,7 @@ export class NavComponent implements OnInit, AfterViewInit, OnDestroy {
 	fakeMenu = new BehaviorSubject<boolean>(false);
 	tab: string[] = ['dashboard'];
 	currentTab: string;
-	introsData: any;
+	introsData: IntroData;
 	public pts: string;
 
 	user: User;
@@ -141,7 +150,7 @@ export class NavComponent implements OnInit, AfterViewInit, OnDestroy {
 	selectedSettings: boolean;
 	hidePointer: boolean;
 
-	destroy$: Subject<any> = new Subject<any>();
+	destroy$: Subject<unknown> = new Subject<unknown>();
 
 	currentSchool: School;
 
@@ -157,7 +166,8 @@ export class NavComponent implements OnInit, AfterViewInit, OnDestroy {
 		private storage: StorageService,
 		private cdr: ChangeDetectorRef,
 		private componentService: ComponentsService,
-		private navbarService: NavbarElementsRefsService
+		private navbarService: NavbarElementsRefsService,
+		private overflowDetectionService: OverflowDetectionService
 	) {}
 
 	get pointerTopSpace() {
@@ -181,7 +191,7 @@ export class NavComponent implements OnInit, AfterViewInit, OnDestroy {
 	}
 
 	ngAfterViewInit() {
-		this.setCurrentUnderlinePos(this.tabRefs, this.navButtonsContainterRef);
+		this.setCurrentUnderlinePos(this.tabRefs, this.navButtonsContainerRef);
 	}
 
 	ngOnInit() {
@@ -206,10 +216,15 @@ export class NavComponent implements OnInit, AfterViewInit, OnDestroy {
 
 		this.userService.currentUpdatedUser$.pipe(filter<User>(Boolean), takeUntil(this.destroy$)).subscribe((user) => {
 			this.buttons.forEach((button) => {
-				if (
-					(this.activeRoute.snapshot as any)._routerState.url === `/admin/${button.route}` &&
-					!button.requiredRoles.every((_role) => user.roles.includes(_role))
-				) {
+				// Manually traverses through all parent routes and collects the result URL
+				const url =
+					'/' +
+					this.activeRoute.pathFromRoot
+						.map((r) => r.snapshot.url)
+						.filter((f) => !!f[0])
+						.map(([f]) => f.path)
+						.join('/');
+				if (url === `/admin/${button.route}` && !button.requiredRoles.every((_role) => user.roles.includes(_role))) {
 					this.restrictAccess.emit(true);
 					this.fakeMenu.next(true);
 				} else {
@@ -248,7 +263,7 @@ export class NavComponent implements OnInit, AfterViewInit, OnDestroy {
 					const currentButton = this.buttons.find((button) => button.route === route[key[0]]);
 					this.route(currentButton);
 					if (!this.router.url.includes(currentButton.route)) {
-						this.setCurrentUnderlinePos(this.tabRefs, this.navButtonsContainterRef);
+						this.setCurrentUnderlinePos(this.tabRefs, this.navButtonsContainerRef);
 					}
 				}
 			});
@@ -262,8 +277,17 @@ export class NavComponent implements OnInit, AfterViewInit, OnDestroy {
 				this.introsData = data;
 			});
 
-		this.navbarService.getPointerVisible().subscribe((visible) => {
-			this.hidePointer = !visible;
+		// The highlight pointer looks weird when the scrollbar is enabled, so
+		// it's disabled when scrolling
+		combineLatest([
+			this.navbarService.getPointerVisible(),
+			this.overflowDetectionService.createOverflowObserver(this.navBottom.nativeElement),
+		]).subscribe(([visible, overflowing]) => {
+			if (overflowing) {
+				this.hidePointer = true;
+			} else {
+				this.hidePointer = !visible;
+			}
 		});
 	}
 
@@ -272,7 +296,7 @@ export class NavComponent implements OnInit, AfterViewInit, OnDestroy {
 		this.destroy$.complete();
 	}
 
-	route(button: any) {
+	route(button: NavButton) {
 		switch (button.type) {
 			case 'routerLink':
 				this.tab = ['admin', button.route];

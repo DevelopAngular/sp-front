@@ -1,5 +1,5 @@
 <div class="nav-wrapper">
-	<div class="nav-main" #navButtonsContainter>
+	<div class="nav-main" #navButtonsContainer>
 		<div class="selected-tab-pointer" [style.opacity]="hidePointer ? '0' : '1'" [style.margin-top]="pointerTopSpace">
 			<!-- Just a shape -->
 		</div>
@@ -10,7 +10,7 @@
 		<div class="nav-buttons">
 			<div *ngIf="!(fakeMenu | async)">
 				<div *ngFor="let button of buttons; let i = index" [style.transition]="'transform .4s ease'" appCrossPointerEventTarget #tabRef>
-					<ng-container *ngIf="hasRoles(button.requiredRoles) | async">
+					<ng-container *ngIf="(hasRoles(button.requiredRoles) | async) && button?.topButton">
 						<app-nav-button
 							[style.margin-bottom]="'15px'"
 							[selected]="isSelected(button.route)"
@@ -18,12 +18,12 @@
 							[isExpand]="button.isExpand ? true : false"
 							[content]="button.title"
 							[icon]="button.imgUrl"
-							(selectedButton)="selectTab(tabRef, navButtonsContainter)"
-							(onClick)="route(button); button.type == 'routerLink' ? selectTab(tabRef, navButtonsContainter) : null">
+							(selectedButton)="selectTab(tabRef, navButtonsContainer)"
+							(onClick)="route(button); button.type == 'routerLink' ? selectTab(tabRef, navButtonsContainer) : null">
 						</app-nav-button>
-						<mat-divider style="margin: 7px 0" *ngIf="button.route === 'explore'"></mat-divider>
 					</ng-container>
 				</div>
+				<mat-divider style="margin: 7px 0"></mat-divider>
 			</div>
 			<div *ngIf="fakeMenu | async">
 				<ng-container *ngFor="let button of buttons">
@@ -32,13 +32,33 @@
 			</div>
 		</div>
 	</div>
-	<div class="nav-bottom">
-		<div *ngIf="isReferralEnabled" class="referral-button" (click)="goToReferralPage()">
-			<img [src]="'./assets/Blue-Gift.svg' | resolveAsset" alt="Referral Gift" />
-			<span class="referral-text"><strong>Refer a friend</strong><br />Get $100</span>
+	<div class="nav-bottom" #navBottom>
+		<div class="nav-buttons">
+			<div *ngIf="!(fakeMenu | async)">
+				<div *ngFor="let button of buttons; let i = index" [style.transition]="'transform .4s ease'" appCrossPointerEventTarget #tabRef>
+					<ng-container *ngIf="(hasRoles(button.requiredRoles) | async) && !button?.topButton">
+						<app-nav-button
+							[style.margin-bottom]="'15px'"
+							[selected]="isSelected(button.route)"
+							[button]="button"
+							[isExpand]="button.isExpand ? true : false"
+							[content]="button.title"
+							[icon]="button.imgUrl"
+							(selectedButton)="selectTab(tabRef, navButtonsContainer)"
+							(onClick)="route(button); button.type == 'routerLink' ? selectTab(tabRef, navButtonsContainer) : null">
+						</app-nav-button>
+					</ng-container>
+				</div>
+			</div>
+		</div>
+		<div class="notice-buttons">
+			<div *ngIf="isReferralEnabled" class="referral-button" (click)="goToReferralPage()">
+				<img [src]="'./assets/Blue-Gift.svg' | resolveAsset" alt="Referral Gift" />
+				<span class="referral-text"><strong>Refer a friend</strong><br />Get $100</span>
+			</div>
+			<app-renewal-box *ngIf="isRenewalChecklistEnabled"></app-renewal-box>
 		</div>
 
-		<app-renewal-box *ngIf="isRenewalChecklistEnabled"></app-renewal-box>
 		<div class="nav-footer">
 			<ng-template #referSuccess>
 				<div class="ds-tooltip">
