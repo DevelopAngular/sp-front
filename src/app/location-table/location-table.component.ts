@@ -320,6 +320,9 @@ export class LocationTableComponent implements OnInit, OnDestroy {
 	}
 
 	private filterChoicesForShowAsOrigin(choices: Location[]): Location[] {
+		if (this.currentPage === 'to') {
+			return choices;
+		}
 		return choices.filter((loc) => {
 			if (this.pinnables && this.pinnables[loc.id]) {
 				const pinnable = this.pinnables[loc.id];
