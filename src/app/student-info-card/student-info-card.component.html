@@ -208,6 +208,7 @@ and the cycle is repeating endlessly causing an UI flickering
 										[customToolTip]="group.notes"
 										[positionStrategy]="{ originX: 'center', originY: 'top', overlayX: 'center', overlayY: 'top', offsetX: 210 }">
 										<app-encounter-group
+											[infoCard]="true"
 											[group]="group"
 											[backgroundColor]="'#FFFFFF'"
 											(clickEvent)="openEncounterPrevention('groupDescription', group)"></app-encounter-group>
