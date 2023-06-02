@@ -1,5 +1,6 @@
 <div
 	class="wrapper"
+	[ngClass]="{'info-card': infoCard}"
 	#wrapper
 	[style.padding]="group.name ? '6px 0' : 0"
 	(mouseenter)="wrapper.hovered = true"

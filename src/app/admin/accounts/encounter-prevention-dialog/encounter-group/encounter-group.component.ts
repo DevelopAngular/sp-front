@@ -1,4 +1,4 @@
-import { ChangeDetectionStrategy, Component, EventEmitter, Input, OnInit, Output } from '@angular/core';
+import { ChangeDetectionStrategy, Component, EventEmitter, Input, Output } from '@angular/core';
 import { ExclusionGroup } from '../../../../models/ExclusionGroup';
 import { bumpIn } from '../../../../animations';
 
@@ -9,13 +9,10 @@ import { bumpIn } from '../../../../animations';
 	changeDetection: ChangeDetectionStrategy.OnPush,
 	animations: [bumpIn],
 })
-export class EncounterGroupComponent implements OnInit {
+export class EncounterGroupComponent {
 	@Input() group: ExclusionGroup;
 	@Input() backgroundColor: string;
+	@Input() infoCard = false;
 
 	@Output() clickEvent: EventEmitter<any> = new EventEmitter<any>();
-
-	constructor() {}
-
-	ngOnInit(): void {}
 }
