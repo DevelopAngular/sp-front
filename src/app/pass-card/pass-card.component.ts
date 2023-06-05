@@ -94,7 +94,7 @@ export class PassCardComponent implements OnInit, OnDestroy {
 
 	performingAction: boolean;
 	isModal: boolean;
-	showStudentInfoBlock: boolean = true;
+	showStudentInfoBlock = true;
 	passForStudentsComponent: boolean;
 	hideButton: boolean;
 
@@ -413,7 +413,7 @@ export class PassCardComponent implements OnInit, OnDestroy {
 
 	private prepareTemplateDataVisibility({ visibility_alerts, students }, origin, destination) {
 		const out = [];
-		for (let a of visibility_alerts) {
+		for (const a of visibility_alerts) {
 			const ss = a['room_students'].map((sid) => {
 				const found = students.find((s) => s.User.id === sid);
 				if (!found) return '<unknown name>';
@@ -695,7 +695,13 @@ export class PassCardComponent implements OnInit, OnDestroy {
 					);
 				}),
 				catchError((error: HttpErrorResponse) => {
-					if (error.error.detail === 'could not create pass' && this.pass.student.status === 'suspended') {
+					if (error.error.detail.match(/You must wait (\d+[hms]?\d*[hms]?) seconds before creating another pass/)) {
+						this.toastService.openToast({
+							title: error.error.detail,
+							type: 'error',
+						});
+						return throwError(error);
+					} else if (error.error.detail === 'could not create pass' && this.pass.student.status === 'suspended') {
 						this.toastService.openToast({
 							title: 'Your account is suspended. Please contact your school admin',
 							type: 'error',

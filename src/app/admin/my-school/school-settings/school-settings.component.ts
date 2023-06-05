@@ -67,6 +67,7 @@ export class SchoolSettingsComponent implements OnInit, OnDestroy {
 					return this.adminService.updateSchoolSettingsRequest(this.school, {
 						...this.schoolForm.value,
 						pass_buffer_time: this.school.pass_buffer_time,
+						pass_cooldown: this.school.pass_cooldown,
 						display_card_room: this.school.display_card_room,
 					});
 				}),
