@@ -94,7 +94,7 @@ export class PassCardComponent implements OnInit, OnDestroy {
 
 	performingAction: boolean;
 	isModal: boolean;
-	showStudentInfoBlock: boolean = true;
+	showStudentInfoBlock = true;
 	passForStudentsComponent: boolean;
 	hideButton: boolean;
 
@@ -413,7 +413,7 @@ export class PassCardComponent implements OnInit, OnDestroy {
 
 	private prepareTemplateDataVisibility({ visibility_alerts, students }, origin, destination) {
 		const out = [];
-		for (let a of visibility_alerts) {
+		for (const a of visibility_alerts) {
 			const ss = a['room_students'].map((sid) => {
 				const found = students.find((s) => s.User.id === sid);
 				if (!found) return '<unknown name>';
@@ -488,7 +488,26 @@ export class PassCardComponent implements OnInit, OnDestroy {
 			.pipe(
 				concatMap((b) => (this.forStaff ? this.hallPassService.bulkCreatePass(b) : this.hallPassService.createPass(b))),
 				takeUntil(this.destroy$),
-				switchMap(({ conflict_student_ids, passes }) => {
+				switchMap(({ conflict_student_ids, passes, error }) => {
+					if (error) {
+						const code = error.code;
+						switch (code) {
+							case 'pass_cooldown':
+								this.toastService.openToast({
+									title: error.message,
+									type: 'error',
+								});
+								break;
+							default:
+								this.toastService.openToast({
+									title: 'Unknown error code',
+									type: 'error',
+								});
+								break;
+						}
+						return of(null);
+					}
+
 					if (conflict_student_ids) {
 						if (!this.forStaff) {
 							this.hallPassService.showEncounterPreventionToast({

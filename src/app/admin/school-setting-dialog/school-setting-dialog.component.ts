@@ -22,6 +22,7 @@ export class SchoolSettingDialogComponent implements OnInit, AfterViewInit, OnDe
 	private initialState: {
 		display_card_room: boolean;
 		pass_buffer_time: string | number;
+		pass_cooldown: string | number;
 		show_active_passes_number: boolean;
 		student_can_use_mobile: boolean;
 		wait_in_line: boolean;
@@ -63,6 +64,7 @@ export class SchoolSettingDialogComponent implements OnInit, AfterViewInit, OnDe
 			this.changeForm =
 				res.display_card_room !== this.initialState.display_card_room ||
 				+res.pass_buffer_time !== +this.initialState.pass_buffer_time ||
+				+res.pass_cooldown !== +this.initialState.pass_cooldown ||
 				res.show_active_passes_number !== this.initialState.show_active_passes_number ||
 				res.student_can_use_mobile !== this.initialState.student_can_use_mobile ||
 				res.wait_in_line !== this.initialState.wait_in_line;
@@ -104,7 +106,7 @@ export class SchoolSettingDialogComponent implements OnInit, AfterViewInit, OnDe
 					this.currentSchool = updatedSchool;
 				},
 			});
-			// this.adminService.updateSchoolSettingsRequest(this.currentSchool, { wait_in_line: true });
+
 			const { nativeElement } = this.wilControlBlock;
 			nativeElement.classList.add('focus-background');
 
@@ -123,6 +125,12 @@ export class SchoolSettingDialogComponent implements OnInit, AfterViewInit, OnDe
 		this.schoolForm = new FormGroup({
 			display_card_room: new FormControl(school.display_card_room),
 			pass_buffer_time: new FormControl(school.pass_buffer_time || 0, [
+				Validators.required,
+				Validators.pattern('^[0-9]*?[0-9]+$'),
+				Validators.max(999),
+				Validators.min(0),
+			]),
+			pass_cooldown: new FormControl(school.pass_cooldown || 0, [
 				Validators.required,
 				Validators.pattern('^[0-9]*?[0-9]+$'),
 				Validators.max(999),

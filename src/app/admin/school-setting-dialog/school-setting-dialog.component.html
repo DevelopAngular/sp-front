@@ -57,6 +57,25 @@
 						(blurEvent)="hideMin = false; passBufferTimeInput.textAlign = schoolForm.get('pass_buffer_time').valid ? 'right' : 'left'"></app-input>
 				</div>
 			</div>
+			<div class="buffer-time-control">
+				<div class="control-text" style="width: 210px">
+					<span class="ds-cell-text-2">Pass Cooldown <span *ngIf="!hideMin">(min)</span></span> <br />
+					<span class="ds-cell-description-text">How long before a student can create another pass</span
+					>
+				</div>
+				<div class="control-input">
+					<app-input
+						#passCooldownInput
+						[width]="'75px'"
+						[isErrorIcon]="false"
+						[textAlign]="'right'"
+						[formGroup]="schoolForm"
+						[input_value]="schoolForm.get('pass_cooldown').value"
+						[controlName]="schoolForm.get('pass_cooldown')"
+						(focusEvent)="hideMin = true; passCooldownInput.textAlign = 'left'"
+						(blurEvent)="hideMin = false; passCooldownInput.textAlign = schoolForm.get('pass_cooldown').valid ? 'right' : 'left'"></app-input>
+				</div>
+			</div>
 			<div class="display-room-control">
 				<div class="controls-description">
 					<div class="ds-cell-text-2">Display pass counts</div>
