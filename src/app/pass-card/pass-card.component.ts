@@ -488,7 +488,26 @@ export class PassCardComponent implements OnInit, OnDestroy {
 			.pipe(
 				concatMap((b) => (this.forStaff ? this.hallPassService.bulkCreatePass(b) : this.hallPassService.createPass(b))),
 				takeUntil(this.destroy$),
-				switchMap(({ conflict_student_ids, passes }) => {
+				switchMap(({ conflict_student_ids, passes, error }) => {
+					if (error) {
+						const code = error.code;
+						switch (code) {
+							case 'pass_cooldown':
+								this.toastService.openToast({
+									title: error.message,
+									type: 'error',
+								});
+								break;
+							default:
+								this.toastService.openToast({
+									title: 'Unknown error code',
+									type: 'error',
+								});
+								break;
+						}
+						return of(null);
+					}
+
 					if (conflict_student_ids) {
 						if (!this.forStaff) {
 							this.hallPassService.showEncounterPreventionToast({
@@ -695,13 +714,7 @@ export class PassCardComponent implements OnInit, OnDestroy {
 					);
 				}),
 				catchError((error: HttpErrorResponse) => {
-					if (error.error.detail.match(/You must wait (\d+[hms]?\d*[hms]?) seconds before creating another pass/)) {
-						this.toastService.openToast({
-							title: error.error.detail,
-							type: 'error',
-						});
-						return throwError(error);
-					} else if (error.error.detail === 'could not create pass' && this.pass.student.status === 'suspended') {
+					if (error.error.detail === 'could not create pass' && this.pass.student.status === 'suspended') {
 						this.toastService.openToast({
 							title: 'Your account is suspended. Please contact your school admin',
 							type: 'error',

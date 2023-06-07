@@ -63,6 +63,11 @@ interface EncounterPreventionToast {
 	exclusionGroups?: ExclusionGroup[];
 }
 
+interface HallPassError {
+	Code: string;
+	Message: string;
+}
+
 // error codes that are used locally on the UI
 export enum HallPassErrors {
 	Encounter = 'ENCOUNTER PREVENTION',
@@ -72,6 +77,7 @@ export interface BulkHallPassPostResponse {
 	passes: HallPass[];
 	conflict_student_ids: number[];
 	waiting_in_line_passes: WaitingInLinePassResponse[];
+	error: HallPassError;
 }
 
 export interface StartWaitingInLinePassResponse {
